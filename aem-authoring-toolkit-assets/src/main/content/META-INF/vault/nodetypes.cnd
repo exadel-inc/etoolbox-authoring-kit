@@ -1,0 +1,20 @@
+<'cq'='http://www.day.com/jcr/cq/1.0'>
+<'sling'='http://sling.apache.org/jcr/sling/1.0'>
+<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+<'rep'='internal'>
+
+[cq:ClientLibraryFolder] > sling:Folder
+  - channels (string) multiple
+  - categories (string) multiple
+  - dependencies (string) multiple
+  - embed (string) multiple
+
+[sling:Folder] > nt:folder
+  - * (undefined) multiple
+  - * (undefined)
+  + * (nt:base) = sling:Folder version
+
+[rep:RepoAccessControllable]
+  mixin
+  + rep:repoPolicy (rep:Policy) protected ignore
+
