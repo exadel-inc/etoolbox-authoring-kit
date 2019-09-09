@@ -1,4 +1,5 @@
 # AEM Authoring Toolkit
+![AEM Authoring Toolkit Logo](https://github.com/exadel-inc/aem-authoring-toolkit/blob/master/aem-authoring-toolkit-assets/src/main/content/META-INF/vault/definition/thumbnail.png)
 
 **AEM Authoring Toolkit** is the set of tools for creating comprehensive TouchUI dialogs for AEM components  with use of existing and/or specially designed Java classes. The plugin aimed at providing the fastest and most intuitive way to supplement a Sling model class or a POJO with a TouchUI dialog compliant with the newest facilities of AEM 6.4+ / Coral UI v.3+ and support for Coral UI v.2.  In the course of plugin development, a thorough comparative investigation of Coral v.2 and Coral v.3 has been carried out, their features and drawbacks tested, so that backward compatibility is preserved to a highest degree possible.
 
