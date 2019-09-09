@@ -21,7 +21,7 @@ The main parts of the Toolkit are:
 - Package processing module **aem-authoring-toolkit-plugin** - comes as the Maven plugin,
 - Fronted module **aem-authoring-toolkit-assets** - comes as the deployable AEM package.
 
-**AEM Authoring Toolkit** has been developed in the course of _Exadel&trade; Digital Marketing Practice_. It is an evolving project that has yet to rich its maturity. Many new features are planned to be implemented, and more testing for the present features is required. The authors of the **Toolkit** heartily welcome the creative input from the AEM community worldwide to bring the best of programming techniques and design for creating best authoring and user experience.
+**AEM Authoring Toolkit** has been developed in the course of _Exadel&trade; Digital Marketing Practice_. It is an evolving project that has yet to reach its maturity. Many new features are planned to be implemented, and more testing for the present features is required. The authors of the **Toolkit** heartily welcome the creative input from the AEM community worldwide to bring the best of programming techniques and design for creating best authoring and user experience.
 
 ## Installation
 
