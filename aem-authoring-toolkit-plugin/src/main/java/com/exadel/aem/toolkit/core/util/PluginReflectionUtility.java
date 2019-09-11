@@ -204,6 +204,7 @@ public class PluginReflectionUtility {
      * @param field The field of handler to populate
      */
     private static void populateRuntimeContext(Object handler, Field field) {
+        field.setAccessible(true);
         try {
             field.set(handler, PluginRuntime.context());
         } catch (IllegalAccessException e) {
