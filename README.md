@@ -730,7 +730,7 @@ You may change this behavior by specifying validationPolicy in plugin's <configu
 ###Customization 
 The AEM Authoring Toolkit allows to flexibly customize the structure of TouchUI dialog markup using the following approaches
 ####Custom annotations and handlers
-You can create your custom annotations to change existing node structure of a particular field. One requirement for a custom annotation is to be in turn annotated with `@DialogAnnotation` or `@DialogWidgetAnnotation`. Its required *source* property is needed to pick up appropriate custom handler (see below).
+You can create your custom annotations to change existing node structure of a particular field. One requirement for a custom annotation is to be in turn annotated with `@DialogAnnotation` or `@DialogWidgetAnnotation`. Its *source* property is needed to pick up appropriate custom handler (see below).
 ```java
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -748,11 +748,16 @@ The *Element* instance represents root element of the corresponding XML file, an
 
 Same way, if you want to apply the handler's logic to only particular field of class, you can add `@DialogWidgetComponent` to an own-written annotation, and then implement `DialogWidgetHandler` interface that extends `BiCounsumer<Element, Field>`.
 
+If you want your annotations' fields to be automatically transformed to TouchUI node properties, supply you annotation with `@PropertyMapping`. This way they will get to the final XML markup with no need of a handler.
+ 
+ To automatically map only *some* properties, you may populate `mappings` attribute of `@PropertyMapping` with names of corresponding fields. The other way around, you may add specific `@IgnorePropertyMapping` annotation to some of the fields themselves. The first way is more convenient if you have only several of the multitude of fields to be auto-mapped, while the second if rather for the case that you have only several fields to skip, and many others to auto-map.   
+
 Here is how a custom DialogAnnotation and a custom DialogHandler may look like:
 ```java
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @DialogAnnotation(source = "testSource")
+@PropertyMapping
 public @interface CustomDialog {
     String greeting() default "Hello World!";
 }
@@ -781,10 +786,12 @@ public class CustomStructureDialog {
     String field1;
 }
 ```
-...the `@CustomDialog` annotation will result in *test* attribute being added to the *\<cq:dialog>* node of TouchUI markup.
+...the `@CustomDialog` annotation will result in *greeting* and *test* attributes being added to the *\<cq:dialog>* node of TouchUI markup (first from the auto-mapping, and second because of handler routine).
+
+There's another option for `@PropertyMapping`, and this is to specify its _prefix_ value. If *prefix* is set to simple literal, like *"cq:"*, all of the auto-mapped attribute names will be prepended with this. Yet if the prefix is a relative path, like *"granite:data/"*, all of the auto-mapped attributes will go to the specifically created sub-node (particularly useful for creating *granite:data* nodes for TouchUI tweaks).
    
 ####Runtime methods for custom handlers
-If you define in your handler class a field of type ```RuntimeContext```, the link to the global `RuntimeContext` object will be injected by the Maven plugin. It allows to engage a number of utility methods and techniques, such as those of the [`XmlUtility`](aem-authoring-toolkit-api/src/main/java/com/exadel/aem/toolkit/api/runtime/XmlUtility.java) interface. Of special interest are the methods `.createNodeElement()` with overloads for creating nodes with specific *jcr:primaryType*, *sling:resourceType* and other attributes, `.appendChild()` with overloads for appending or merging a newcomer node to a set of existing child nodes of a local root, and `.setAttribute()` with overloads for populating previously created node with generic-typed annotation values, optionally validated and then optionally fallen back to defaults.   
+If you define in your handler class a field of type `RuntimeContext` marked with `@Injected` annotation, the link to the global *RuntimeContext* object will be injected by the Maven plugin. It allows to engage a number of utility methods and techniques, such as those of the [`XmlUtility`](aem-authoring-toolkit-api/src/main/java/com/exadel/aem/toolkit/api/runtime/XmlUtility.java) interface. Of special interest are the methods `.createNodeElement()` with overloads for creating nodes with specific *jcr:primaryType*, *sling:resourceType* and other attributes, `.appendChild()` with overloads for appending or merging a newcomer node to a set of existing child nodes of a local root, and `.setAttribute()` with overloads for populating previously created node with generic-typed annotation values, optionally validated and then optionally fallen back to defaults.   
 
 Developer can (and is encouraged to) also call `.getExceptionHandler()` method whenever his or her logic is ought to throw or manage an exception. This way, all the exceptions from either built-in or custom routines are managed uniformly.
 
