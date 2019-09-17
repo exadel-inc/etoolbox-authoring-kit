@@ -19,7 +19,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
@@ -35,14 +34,13 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.RICHTEXT)
-@IgnorePropertyMapping
+@PropertyMapping(mappings = {"useFixedInlineToolbar"})
 @SuppressWarnings("unused")
 public @interface RichTextEditor {
     /**
      * Maps to the 'useFixedInlineToolbar' attribute of this TouchUI dialog component's node.
      * @return True or false
      */
-    @PropertyMapping
     boolean useFixedInlineToolbar() default true;
     /**
      * Represents the set of "features" (i.e. plugins, corresponding toolbar icons and relevant logic) for this RichTextEditor

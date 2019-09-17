@@ -30,11 +30,11 @@ public class DependsOnTabHandler implements Handler, BiConsumer<Element, Class<?
     }
 
     private void handleDependsOnTab(Element element, DependsOnTab value) {
-        Element tabItemsNode = getXmlUtil().getDescendantElementNode(element,
+        Element tabItemsNode = getXmlUtil().getChildElement(element, String.join(DialogConstants.PATH_SEPARATOR,
                 DialogConstants.NN_CONTENT,
                 DialogConstants.NN_ITEMS,
                 DialogConstants.NN_TABS,
-                DialogConstants.NN_ITEMS);
+                DialogConstants.NN_ITEMS));
         if (tabItemsNode == null) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(NO_TABS_EXCEPTION_MESSAGE));
             return;
@@ -42,7 +42,7 @@ public class DependsOnTabHandler implements Handler, BiConsumer<Element, Class<?
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(DependsOnHandler.EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
         }
-        Element targetTab = getXmlUtil().getChildElementNode(tabItemsNode, getXmlUtil().getValidName(value.tabTitle()));
+        Element targetTab = getXmlUtil().getChildElement(tabItemsNode, getXmlUtil().getValidName(value.tabTitle()));
         getXmlUtil().appendDataAttributes(targetTab, ImmutableMap.of(
                 DialogConstants.PN_DEPENDS_ON, value.query(),
                 DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY

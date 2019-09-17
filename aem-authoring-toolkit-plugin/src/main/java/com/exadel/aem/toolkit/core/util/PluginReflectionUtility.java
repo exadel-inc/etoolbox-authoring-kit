@@ -23,7 +23,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,6 +35,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -46,6 +47,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreField;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
@@ -94,10 +96,12 @@ public class PluginReflectionUtility {
         }
         return 0;
     };
+    private static final String PACKAGE_BASE_WILDCARD = ".*";
 
     private org.reflections.Reflections reflections;
-    private List<DialogWidgetHandler> customDialogComponentHandlers;
+    private List<DialogWidgetHandler> customDialogWidgetHandlers;
     private List<DialogHandler> customDialogHandlers;
+    private String packageBase;
 
 
     private PluginReflectionUtility() {
@@ -106,10 +110,12 @@ public class PluginReflectionUtility {
     /**
      * Used to initialize {@code PluginReflectionUtility} instance based on list of available classpath entries in the
      * scope of this Maven plugin
-     * @param elements Classpath elements
+     * @param elements List of classpath elements
+     * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
+     *                      If not specified, all available components will be processed
      * @return {@link PluginReflectionUtility} instance
      */
-    public static PluginReflectionUtility fromClassPathElements(List<String> elements) {
+    public static PluginReflectionUtility fromCodeScope(List<String> elements, String packageBase) {
         URL[] urls = new URL[] {};
         if (elements != null) {
             urls = elements.stream()
@@ -124,6 +130,8 @@ public class PluginReflectionUtility {
                 .setScanners(new TypeAnnotationsScanner(), new SubTypesScanner()));
         PluginReflectionUtility newInstance = new PluginReflectionUtility();
         newInstance.reflections = reflections;
+        newInstance.packageBase = StringUtils.strip(StringUtils.defaultString(packageBase, StringUtils.EMPTY),
+                PACKAGE_BASE_WILDCARD);
         return newInstance;
     }
 
@@ -132,12 +140,12 @@ public class PluginReflectionUtility {
      * scope the plugin is operating in
      * @return {@link List<DialogWidgetHandler>} of instances
      */
-    public List<DialogWidgetHandler> getCustomDialogComponentHandlers() {
-        if (customDialogComponentHandlers != null) {
-            return customDialogComponentHandlers;
+    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers() {
+        if (customDialogWidgetHandlers != null) {
+            return customDialogWidgetHandlers;
         }
-        customDialogComponentHandlers = getHandlers(DialogWidgetHandler.class);
-        return customDialogComponentHandlers;
+        customDialogWidgetHandlers = getHandlers(DialogWidgetHandler.class);
+        return customDialogWidgetHandlers;
     }
 
     /**
@@ -154,12 +162,15 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Returns list of all {@code @Dialog}-annotated classes within the Compile scope the plugin is operating in, to
-     * determine which of the component folders to process
+     * Returns list of {@code @Dialog}-annotated classes within the Compile scope the plugin is operating in, to
+     * determine which of the component folders to process.
+     * If {@code componentsPath} is set for this instance, classes are tested to be under that path
      * @return {@link List<Class>} of instances
      */
     public List<Class<?>> getComponentClasses() {
-        return new ArrayList<>(reflections.getTypesAnnotatedWith(Dialog.class, true));
+        return reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
+                .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -177,7 +188,8 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Creates new instance object of a handler {@code Class}
+     * Creates new instance object of a handler {@code Class} and populates {@link RuntimeContext} instance to
+     * every field annotated with {@link Injected}
      * @param handlerClass The class to instantiate
      * @param <T> Instance type
      * @return New object instance
@@ -186,7 +198,8 @@ public class PluginReflectionUtility {
         try {
             T instance = handlerClass.getConstructor().newInstance();
             Arrays.stream(handlerClass.getDeclaredFields())
-                    .filter(field -> field.getType().equals(RuntimeContext.class))
+                    .filter(field -> field.isAnnotationPresent(Injected.class)
+                            && ClassUtils.isAssignable(field.getType(), RuntimeContext.class))
                     .forEach(field -> populateRuntimeContext(instance, field));
             return instance;
         } catch (InstantiationException
