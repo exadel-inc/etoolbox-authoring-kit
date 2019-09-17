@@ -11,20 +11,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets;
+package com.exadel.aem.toolkit.api.annotations.widgets.property;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
- * Used to specify one or more TouchUI dialog widgets annotations in a batch
+ * Represent a name-value pair to be rendered as a TouchUI Dialog element attribute and its value
+ * @see Properties
  */
-@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@SuppressWarnings("unused")
-public @interface DialogWidgets {
-    Class<? extends Annotation>[] value() default {};
+public @interface Property {
+    /**
+     * Indicates the attribute name
+     * @return String value, non-blank
+     */
+    String name();
+    /**
+     * Indicates the attribute value
+     * @return String value
+     */
+    String value();
 }

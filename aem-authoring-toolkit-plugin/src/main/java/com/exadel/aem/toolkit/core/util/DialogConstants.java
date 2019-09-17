@@ -20,8 +20,9 @@ package com.exadel.aem.toolkit.core.util;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class DialogConstants {
     public static final String PATH_SEPARATOR = "/";
-    public static final String VALUE_SEPARATOR = ";";
+    public static final String EXTENSION_SEPARATOR = ".";
     public static final String RELATIVE_PATH_PREFIX = "./";
+    public static final String VALUE_SEPARATOR = ";";
 
     public static final String NN_ALLOW_BASICS = "allowBasics";
     public static final String NN_CHARS = "chars";
@@ -71,6 +72,7 @@ public class DialogConstants {
 
     public static final String NT_CHILD_EDITORS_CONFIG = "cq:ChildEditorConfig";
     public static final String NT_COMPONENT = "cq:Component";
+    public static final String NT_DROP_TARGET_CONFIG = "cq:DropTargetConfig";
     public static final String NT_EDIT_CONFIG = "cq:EditConfig";
     public static final String NT_INPLACE_EDITING_CONFIG = "cq:InplaceEditingConfig";
     public static final String NT_LISTENERS = "cq:EditListenersConfig";

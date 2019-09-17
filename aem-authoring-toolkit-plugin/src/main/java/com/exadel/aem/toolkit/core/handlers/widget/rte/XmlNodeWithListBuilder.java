@@ -55,7 +55,7 @@ class XmlNodeWithListBuilder extends XmlNodeBuilderBase {
         XmlUtility xmlUtil = PluginRuntime.context().getXmlUtility();
         Element result = xmlUtil.createNodeElement(getName());
         xmlUtil.setAttribute(result, getAttributeName(), argumentList);
-        if (childBuilder != null) xmlUtil.appendChild(result, childBuilder.build());
+        if (childBuilder != null) xmlUtil.appendNonemptyChild(result, childBuilder.build());
         if (getPostprocessing() != null) getPostprocessing().accept(result);
         return result;
     }

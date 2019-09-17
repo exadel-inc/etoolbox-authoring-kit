@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -63,21 +64,18 @@ import com.exadel.aem.toolkit.core.util.validation.Validation;
  * Utility methods to process, verify and store AEM TouchUI dialog-related data to XML markup
  */
 public class PluginXmlUtility implements XmlUtility {
-    private static final String NAMESPACE_CQ = "http://www.day.com/jcr/cq/1.0";
-    private static final String NAMESPACE_JCR = "http://www.jcp.org/jcr/1.0";
-    private static final String NAMESPACE_GRANITE = "http://www.adobe.com/jcr/granite/1.0";
-    private static final String NAMESPACE_NT = "http://www.jcp.org/jcr/nt/1.0";
-
-    private static final String NS_ATTR_SLING = "xmlns:sling";
-    private static final String NS_ATTR_CQ = "xmlns:cq";
-    private static final String NS_ATTR_JCR = "xmlns:jcr";
-    private static final String NS_ATTR_GRANITE = "xmlns:granite";
-    private static final String NS_ATTR_NT = "xmlns:nt";
-
     private static final String INVALID_NODE_NAME_PATTERN = "^\\W*:|\\W+:$|[^\\w:]+";
     private static final String NODE_NAME_SPACE_PATTERN = "\\s+";
     private static final String NODE_NAME_INDEX_PATTERN = "\\d*$";
     private static final String NODE_NAME_VERB_SEPARATOR = "_";
+
+    static final Map<String, String> XML_NAMESPACES = ImmutableMap.of(
+            "xmlns:jcr",  "http://www.jcp.org/jcr/1.0",
+            "xmlns:nt", "http://www.jcp.org/jcr/nt/1.0",
+            "xmlns:sling", JcrResourceConstants.SLING_NAMESPACE_URI,
+            "xmlns:cq", "http://www.day.com/jcr/cq/1.0",
+            "xmlns:granite", "http://www.adobe.com/jcr/granite/1.0"
+    );
 
     public static final String ATTRIBUTE_LIST_TEMPLATE = "[%s]";
     public static final String ATTRIBUTE_LIST_SPLIT_PATTERN = "\\s*,\\s*";
@@ -99,13 +97,7 @@ public class PluginXmlUtility implements XmlUtility {
      */
     Element newDocumentRoot(DocumentBuilder builder) {
         document = builder.newDocument();
-        Element rootElement = createNodeElement(DialogConstants.NN_ROOT, new ImmutableMap.Builder<String, String>()
-                .put(NS_ATTR_SLING, JcrResourceConstants.SLING_NAMESPACE_URI)
-                .put(NS_ATTR_CQ, NAMESPACE_CQ)
-                .put(NS_ATTR_JCR, NAMESPACE_JCR)
-                .put(NS_ATTR_NT, NAMESPACE_NT)
-                .put(NS_ATTR_GRANITE, NAMESPACE_GRANITE)
-                .build());
+        Element rootElement = createNodeElement(DialogConstants.NN_ROOT, XML_NAMESPACES);
         document.appendChild(rootElement);
         return rootElement;
     }
@@ -135,7 +127,7 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public Element createNodeElement(String name, String nodeType, Map<String,String> properties, String resourceType){
+    public Element createNodeElement(String name, String nodeType, Map<String,String> properties, String resourceType) {
         Element element = document.createElement(getValidName(name));
         if(nodeType == null){
             nodeType = DialogConstants.NT_UNSTRUCTURED;
@@ -153,17 +145,17 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public Element createNodeElement(String name, String nodeType, Map<String,String> properties){
+    public Element createNodeElement(String name, String nodeType, Map<String,String> properties) {
         return createNodeElement(name, nodeType, properties, null);
     }
 
     @Override
-    public Element createNodeElement(String name, Map<String,String> properties, String resourceType){
+    public Element createNodeElement(String name, Map<String,String> properties, String resourceType) {
         return createNodeElement(name, null, properties, resourceType);
     }
 
     @Override
-    public Element createNodeElement(String name, String resourceType){
+    public Element createNodeElement(String name, String resourceType) {
         return createNodeElement(name, null, new HashMap<>(), resourceType);
     }
 
@@ -173,7 +165,7 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public Element createNodeElement(String name){
+    public Element createNodeElement(String name) {
         return createNodeElement(name, null, new HashMap<>());
     }
 
@@ -192,7 +184,7 @@ public class PluginXmlUtility implements XmlUtility {
     public Element createNodeElement(String name, Function<Annotation, String> childNodeNameProvider, Annotation[] sources) {
         Element newNode = createNodeElement(name);
         Arrays.stream(sources)
-                .forEach(source -> appendChild(newNode, createNodeElement(childNodeNameProvider, source)));
+                .forEach(source -> appendNonemptyChild(newNode, createNodeElement(childNodeNameProvider, source)));
         return newNode;
     }
 
@@ -245,7 +237,7 @@ public class PluginXmlUtility implements XmlUtility {
             return result;
         }
         int index = 1;
-        while (getChildElementNode(context, result) != null) {
+        while (getChildElement(context, result) != null) {
             result = result.replaceFirst(NODE_NAME_INDEX_PATTERN, String.valueOf(index++));
         }
         return result;
@@ -345,19 +337,25 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public void mapProperties(Element element, Annotation annotation, List<String> skippedFields){
-        if (annotation.annotationType().isAnnotationPresent(IgnorePropertyMapping.class)) {
-            Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                    .filter(m -> m.isAnnotationPresent(PropertyMapping.class) && !skippedFields.contains(m.getName()))
-                    .forEach(m -> populateProperty(m, element, annotation));
+    public void mapProperties(Element element, Annotation annotation, List<String> skipped) {
+        PropertyMapping propMapping = annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class);
+        if (propMapping == null) {
             return;
         }
-        if (!annotation.annotationType().isAnnotationPresent(PropertyMapping.class)) {
-            return;
-        }
+        String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
+        String nodePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
+                ? StringUtils.substringBeforeLast(prefix, DialogConstants.PATH_SEPARATOR)
+                : StringUtils.EMPTY;
+
+        Element currentElement = StringUtils.isEmpty(nodePrefix)
+                ? element
+                : Pattern.compile(DialogConstants.PATH_SEPARATOR).splitAsStream(nodePrefix)
+                .reduce(element, this::ensureChildElement, (prev, next) -> next);
         Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .filter(m -> !m.isAnnotationPresent(IgnorePropertyMapping.class) && !skippedFields.contains(m.getName()))
-                .forEach(m -> populateProperty(m, element, annotation));
+                .filter(m -> ArrayUtils.isEmpty(propMapping.mappings()) || ArrayUtils.contains(propMapping.mappings(), m.getName()))
+                .filter(m -> !m.isAnnotationPresent(IgnorePropertyMapping.class))
+                .filter(m -> !skipped.contains(m.getName()))
+                .forEach(m -> populateProperty(m, currentElement, annotation));
     }
 
     /**
@@ -366,7 +364,7 @@ public class PluginXmlUtility implements XmlUtility {
      * @param element Element node
      * @param annotation Annotation to look for a value in
      */
-    private static void populateProperty(Method method, Element element, Annotation annotation){
+    private static void populateProperty(Method method, Element element, Annotation annotation) {
         String name = method.getName();
         boolean ignorePrefix = false;
         if (method.isAnnotationPresent(PropertyName.class)) {
@@ -374,12 +372,12 @@ public class PluginXmlUtility implements XmlUtility {
             name = propertyName.value();
             ignorePrefix = propertyName.ignorePrefix();
         }
-        String prefix = "";
-        if (annotation.annotationType().getAnnotation(PropertyMapping.class) != null) {
-            prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
-        }
+        String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
+        String namePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
+                ? StringUtils.substringAfterLast(prefix, DialogConstants.PATH_SEPARATOR)
+                : prefix;
         if (!ignorePrefix && StringUtils.isNotBlank(prefix)) {
-            name = prefix + name;
+            name = namePrefix + name;
         }
         BinaryOperator<String> merger = PluginXmlUtility::mergeStringAttributes;
         XmlAttributeSettingHelper.forMethod(annotation, method)
@@ -397,51 +395,51 @@ public class PluginXmlUtility implements XmlUtility {
 
     /**
      * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
-     * If child node with same name already exists, it is updated with attribute values of the newcomer node
-     * @param parent Element to serve as parent
-     * @param child Element to serve as child
-     * @return Appended child
-     */
-    public Element appendChild(Supplier<Element> parent, Element child) {
-        return appendChild(parent, child, DEFAULT_ATTRIBUTE_MERGER);
-    }
-
-    /**
-     * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
+     * Appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
+     * or a child node
      * If child node with same name already exists, it is updated with attribute values of the newcomer node
      * @param parent Routine than provides Element to serve as parent
      * @param child Element to serve as child
      * @param attributeMerger Function that manages an existing attribute value and a new one
      *                        in case when a new value is set to an existing {@code Element}
+     */
+    public void appendNonemptyChild(Supplier<Element> parent, Element child, BinaryOperator<String> attributeMerger) {
+        if (isBlankElement(child)) {
+            return;
+        }
+        appendNonemptyChild(parent.get(), child, attributeMerger);
+    }
+
+    @Override
+    public Element appendNonemptyChild(Element parent, Element child) {
+        if (parent == null || isBlankElement(child)) {
+            return null;
+        }
+        return appendNonemptyChild(parent, child, DEFAULT_ATTRIBUTE_MERGER);
+    }
+
+    /**
+     * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
+     * Appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
+     * or a child node
+     * If child node with same name already exists, it is updated with attribute values of the arriving node
+     * @param parent Element to serve as parent
+     * @param child Element to serve as child
+     * @param attributeMerger Function that manages an existing attribute value and a new one
+     *                        in case when a new value is set to an existing {@code Element}
      * @return Appended child
      */
-    public Element appendChild(Supplier<Element> parent, Element child, BinaryOperator<String> attributeMerger) {
-        if (isBlankElement(child)) {
-            return null;
-        }
-        return appendChild(parent.get(), child, attributeMerger);
-    }
-
-    @Override
-    public Element appendChild(Element parent, Element child) {
+    public Element appendNonemptyChild(Element parent, Element child, BinaryOperator<String> attributeMerger) {
         if (parent == null || isBlankElement(child)) {
             return null;
         }
-        return appendChild(parent, child, DEFAULT_ATTRIBUTE_MERGER);
-    }
-
-    @Override
-    public Element appendChild(Element parent, Element child, BinaryOperator<String> attributeMerger) {
-        if (parent == null || isBlankElement(child)) {
-            return null;
-        }
-        Element existingChild = getChildElementNode(parent, child.getNodeName());
+        Element existingChild = getChildElement(parent, child.getNodeName());
         if (existingChild == null) {
             return (Element) parent.appendChild(child.cloneNode(true));
         }
         Node grandchild = child.getFirstChild();
         while (grandchild != null) {
-            appendChild(existingChild, (Element)grandchild, attributeMerger);
+            appendNonemptyChild(existingChild, (Element)grandchild, attributeMerger);
             grandchild = grandchild.getNextSibling();
         }
         return mergeAttributes(existingChild, child, attributeMerger);
@@ -487,26 +485,32 @@ public class PluginXmlUtility implements XmlUtility {
         return String.format(ATTRIBUTE_LIST_TEMPLATE, String.join(RteFeatures.FEATURE_SEPARATOR, result));
     }
 
-    /**
-     * Retrieves child {@code Element} node of the specified node by name
-     * @param parent Element to analyze
-     * @param childName Name of child to look for
-     * @return Element instance or null value
-     */
     @Override
-    public Element getChildElementNode(Element parent, String childName) {
-        return getChildElementNode(parent, childName, () -> null);
+    public Element ensureChildElement(Element parent, String child) {
+        return getChildElementNode(parent,
+                child,
+                parentElement -> (Element) parentElement.appendChild(createNodeElement(child)));
     }
+
+    @Override
+    public Element getChildElement(Element parent, String child) {
+        return getChildElementNode(parent, child, p -> null);
+    }
+
     /**
      * Retrieve child {@code Element} node of the specified node by name
      * @param parent Element to analyze
      * @param childName Name of child to look for
-     * @param fallbackSupplier Routine that returns a fallback Element instance if child not found
+     * @param fallbackSupplier Routine that returns a fallback Element instance if parent node does not exist or child not found
      * @return Element instance
      */
-    public Element getChildElementNode(Element parent, String childName, Supplier<Element> fallbackSupplier) {
+    public Element getChildElementNode(Element parent, String childName, UnaryOperator<Element> fallbackSupplier) {
         if (parent == null) {
-            return fallbackSupplier.get();
+            return fallbackSupplier.apply(null);
+        }
+        if (childName.contains(DialogConstants.PATH_SEPARATOR)) {
+            return Arrays.stream(StringUtils.split(childName, DialogConstants.PATH_SEPARATOR))
+                    .reduce(parent, (p, c) -> getChildElementNode(p, c, fallbackSupplier), (c1, c2) -> c2);
         }
         Node child = parent.getFirstChild();
         while (child != null) {
@@ -515,24 +519,7 @@ public class PluginXmlUtility implements XmlUtility {
             }
             child = child.getNextSibling();
         }
-        return fallbackSupplier.get();
-    }
-
-    /**
-     * Retrieves descendant {@code Element} node of the specified node using sequence of child nodes' names
-     * @param element Element to analyze
-     * @param children Sequence of child node names to look for
-     * @return Element instance
-     */
-    public Element getDescendantElementNode(Element element, String... children) {
-        Element current = element;
-        for (String child : children) {
-            if (current == null) {
-                return null;
-            }
-            current = getChildElementNode(current, child);
-        }
-        return current;
+        return fallbackSupplier.apply(parent);
     }
 
     /**
@@ -586,9 +573,8 @@ public class PluginXmlUtility implements XmlUtility {
         if (data == null || data.isEmpty()) {
             return;
         }
-        Element graniteDataNode = getChildElementNode(element,
-                DialogConstants.NN_DATA,
-                () -> (Element) element.appendChild(createNodeElement(DialogConstants.NN_DATA)));
+        Element graniteDataNode = ensureChildElement(element,
+                DialogConstants.NN_DATA);
         data.entrySet().stream()
                 .filter(entry -> StringUtils.isNotBlank(entry.getKey()))
                 .forEach(entry -> graniteDataNode.setAttribute(entry.getKey(), entry.getValue()));

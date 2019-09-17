@@ -4,8 +4,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.api.annotations.custom.Properties;
-import com.exadel.aem.toolkit.api.annotations.custom.Property;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 
 @SuppressWarnings("unused")

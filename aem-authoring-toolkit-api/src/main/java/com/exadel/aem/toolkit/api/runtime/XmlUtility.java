@@ -167,26 +167,6 @@ public interface XmlUtility {
     void mapProperties(Element element, Annotation annotation, List<String> skippedFields);
 
     /**
-     * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
-     * If child node with same name already exists, it is updated with attribute values of the newcoming node
-     * @param parent Routine than provides Element to serve as parent
-     * @param child Element to serve as child
-     * @return Appended child
-     */
-    Element appendChild(Element parent, Element child);
-
-    /**
-     * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
-     * If child node with same name already exists, it is updated with attribute values of the newcoming node
-     * @param parent Element to serve as parent
-     * @param child Element to serve as child
-     * @param attributeMerger Function that manages an existing attribute value and a new one
-     *                        in case when a new value is set to an existing {@code Element}
-     * @return Appended child
-     */
-    Element appendChild(Element parent, Element child, BinaryOperator<String> attributeMerger);
-
-    /**
      * Appends to the current {@code Element} node a child {@code datasource} node bearing link to an ACS Commons list
      * @param element Element to store data in
      * @param path Path to ACS Commons List in JCR repository
@@ -208,14 +188,35 @@ public interface XmlUtility {
      */
     void appendDataAttributes(Element element, Map<String, String> data);
 
+    /**
+     * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
+     * Appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
+     * or a child node
+     * If child node with same name already exists, it is updated with attribute values of the newcoming node
+     * @param parent Routine than provides Element to serve as parent
+     * @param child Element to serve as child
+     * @return Appended child
+     */
+    Element appendNonemptyChild(Element parent, Element child);
 
     /**
-     * Retrieve child {@code Element} node of the specified node by name
+     * Retrieves child {@code Element} node of the specified node by its name / relative path. Same as {@link XmlUtility#ensureChildElement(Element, String)},
+     * but if the parent's child (or any of the specified grandchildren) do not exist, null value is returned
      * @param parent Element to analyze
-     * @param childName Name of child to look for
-     * @return Element instance or null value
+     * @param child  Name of child to look for, can be a simple name or a relative path e.g. {@code child/otherChild/yetAnotherChild}
+     * @return Element instance if path traversing was successfull, null otherwise
      */
-    Element getChildElementNode(Element parent, String childName);
+    Element getChildElement(Element parent, String child);
+
+    /**
+     * Retrieves child {@code Element} node of the specified node by its name / relative path.Same as {@link XmlUtility#getChildElement(Element, String)},
+     * but as soon as the parent's child (or any of the specified grandchildren) not found, an empty node of {@code jcr:primaryType="nt:unstructured"}
+     * is created
+     * @param parent Element to analyze
+     * @param child Name of child to look for, can be a simple name or a relative path e.g. {@code child/otherChild/yetAnotherChild}
+     * @return Element instance
+     */
+    Element ensureChildElement(Element parent, String child);
 
     /**
      * Generates compliant XML tag name from an arbitrary string
@@ -223,6 +224,7 @@ public interface XmlUtility {
      * @return Valid tag name
      */
     String getValidName(String name);
+
     /**
      * Generates compliant XML tag name from an arbitrary string
      * @param name Raw (unchecked) string for a tag name

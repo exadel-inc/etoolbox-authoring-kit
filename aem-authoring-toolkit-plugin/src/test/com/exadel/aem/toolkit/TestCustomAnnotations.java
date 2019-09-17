@@ -14,11 +14,21 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 public class TestCustomAnnotations {
     @DialogField
     @TextField
-    @TestCustomAnnotation(customField = "Custom!")
+    @CustomAnnotation(customField = "Custom!")
     String testCustomAnnotation;
 
     @DialogField
     @TextField
-    @TestCustomAnnotation
+    @CustomAnnotation
     String testCustomAnnotationDefault;
+
+    @DialogField
+    @TextField
+    @CustomAnnotationAutomapping(customField = "Custom!")
+    String testCustomAnnotationAuto;
+
+    @DialogField
+    @TextField
+    @CustomAnnotationAutomapping
+    String testCustomAnnotationAutoDefault;
 }

@@ -20,9 +20,9 @@ import java.util.function.BiConsumer;
 
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.custom.Properties;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogWidgets;
+import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
@@ -32,12 +32,12 @@ public class CustomHandler implements Handler, BiConsumer<Element, Field> {
     public void accept(Element element, Field field) {
         PluginReflectionUtility.getFieldAnnotations(field).filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
                 .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
-                .flatMap(source -> PluginRuntime.context().getReflectionUtility().getCustomDialogComponentHandlers().stream()
+                .flatMap(source -> PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers().stream()
                         .filter(handler -> source.equals(handler.getName())))
                 .forEach(handler -> handler.accept(element, field));
 
-        PluginRuntime.context().getReflectionUtility().getCustomDialogComponentHandlers().stream()
-                .filter(c -> c.getClass().isAnnotationPresent(DialogWidgets.class))
+        PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers().stream()
+                .filter(c -> c.getClass().isAnnotationPresent(HandlesWidgets.class))
                 .filter(c -> PluginReflectionUtility.getFieldAnnotations(field).anyMatch(a -> this.matchDialogComponentsAnnotations(a, c.getClass())))
                 .forEach(handler -> handler.accept(element, field));
         if (field.isAnnotationPresent(Properties.class)) {
@@ -47,7 +47,7 @@ public class CustomHandler implements Handler, BiConsumer<Element, Field> {
     }
 
     private boolean matchDialogComponentsAnnotations(Class<? extends Annotation> widgetAnnotation, Class<?> handlerClass) {
-        DialogWidgets dialogWidgets = (DialogWidgets) handlerClass.getDeclaredAnnotations()[0];
-        return Arrays.asList(dialogWidgets.value()).contains(widgetAnnotation);
+        HandlesWidgets handlesWidgets = (HandlesWidgets) handlerClass.getDeclaredAnnotations()[0];
+        return Arrays.asList(handlesWidgets.value()).contains(widgetAnnotation);
     }
 }

@@ -2,18 +2,14 @@ package com.exadel.aem.toolkit;
 
 import java.lang.reflect.Field;
 
-import javax.inject.Inject;
-
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogWidgets;
-import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 
-@DialogWidgets(TextField.class)
 public class TestCustomHandler implements DialogWidgetHandler {
-    @Inject
+    @Injected
     private RuntimeContext runtimeContext;
 
     @Override
@@ -21,13 +17,9 @@ public class TestCustomHandler implements DialogWidgetHandler {
         return "testCustomAnnotation";
     }
 
-    public RuntimeContext getRuntimeContext() {
-        return runtimeContext;
-    }
-
     @Override
     public void accept(Element element, Field field) {
-        TestCustomAnnotation testCustomAnnotation = field.getAnnotationsByType(TestCustomAnnotation.class)[0];
+        CustomAnnotation testCustomAnnotation = field.getDeclaredAnnotation(CustomAnnotation.class);
         element.setAttribute("customField", testCustomAnnotation.customField());
     }
 }

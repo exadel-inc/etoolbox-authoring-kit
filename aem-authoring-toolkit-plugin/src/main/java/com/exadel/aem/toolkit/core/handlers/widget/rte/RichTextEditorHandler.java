@@ -104,8 +104,8 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
         ).forEach(featureItem -> processFeatureItem(featureItem, tableEditBuilder, pluginsBuilder));
 
         // build uiSettings node with subnodes, append conditionally if not empty
-        Element uiSettings = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_UI_SETTINGS);
-        Element cui = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_CUI);
+        Element uiSettings = getXmlUtil().createNodeElement(DialogConstants.NN_UI_SETTINGS);
+        Element cui = getXmlUtil().createNodeElement(DialogConstants.NN_CUI);
         appendElement(cui, inlineBuilder.build());
         // if .features() are set, but .fullscreenFeatures() are not
         // build either node './inline', './fullscreen' and './dialogFullScreen' (if latter is needed)  from .features()
@@ -143,21 +143,21 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     }
 
     private Element appendElement(Element parent, Element child) {
-        return getXmlUtil().appendChild(parent, child);
+        return getXmlUtil().appendNonemptyChild(parent, child);
     }
     private void appendElement(Element parent, Element child, BinaryOperator<String> merger) {
-        getXmlUtil().appendChild(parent, child, merger);
+        getXmlUtil().appendNonemptyChild(parent, child, merger);
     }
     private void appendElement(Element parent, String existingChildName, Element newChild) {
-        Element existingChild = getXmlUtil().getChildElementNode(parent, existingChildName);
-        getXmlUtil().appendChild(existingChild, newChild);
+        Element existingChild = getXmlUtil().getChildElement(parent, existingChildName);
+        getXmlUtil().appendNonemptyChild(existingChild, newChild);
     }
     private void appendElement(Element parent, String existingChildName, Consumer<Supplier<Element>> elementConsumer) {
         if (parent == null) {
             return;
         }
         Element child = getXmlUtil().getChildElementNode(parent, existingChildName,
-                () -> PluginRuntime.context().getXmlUtility().createNodeElement(existingChildName));
+                p -> PluginRuntime.context().getXmlUtility().createNodeElement(existingChildName));
         elementConsumer.accept(() -> {
             if (child.getParentNode() != null) {
                 return child; // not to 'reattach' the previously existed child, which would change sequence of children
@@ -203,12 +203,12 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     }
 
     private Element getIconsNode() {
-        return PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_ICONS,
+        return getXmlUtil().createNodeElement(DialogConstants.NN_ICONS,
                 iconMapping -> ((IconMapping)iconMapping).command(),
                 rteAnnotation.icons());
     }
     private Element getFormatNode(){
-        Element result = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_FORMATS,
+        Element result = getXmlUtil().createNodeElement(DialogConstants.NN_FORMATS,
                 paragraphFormat -> ((ParagraphFormat)paragraphFormat).tag(),
                 rteAnnotation.formats());
         result.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION);
@@ -219,11 +219,11 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
             Characters chars = (Characters)c;
             return chars.rangeStart() > 0 ? String.valueOf(chars.rangeStart()) : chars.entity();
         };
-        Element charsConfigNode = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_SPECIAL_CHARS_CONFIG);
-        Element charsNode = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_CHARS,
+        Element charsConfigNode = getXmlUtil().createNodeElement(DialogConstants.NN_SPECIAL_CHARS_CONFIG);
+        Element charsNode = getXmlUtil().createNodeElement(DialogConstants.NN_CHARS,
                 childNodeNameProvider,
                 rteAnnotation.specialCharacters());
-        getXmlUtil().appendChild(charsConfigNode, charsNode);
+        getXmlUtil().appendNonemptyChild(charsConfigNode, charsNode);
         return charsConfigNode;
     }
 
@@ -235,7 +235,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
         }
         Element nestedStylesNode = getXmlUtil().createNodeElement(DialogConstants.NN_STYLES, style -> ((Style)style).cssName(), rteAnnotation.styles());
         nestedStylesNode.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION);
-        getXmlUtil().appendChild(stylesElement, nestedStylesNode, PluginXmlUtility::mergeStringAttributes);
+        getXmlUtil().appendNonemptyChild(stylesElement, nestedStylesNode, PluginXmlUtility::mergeStringAttributes);
         getXmlUtil().setAttribute(stylesElement, DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION);
     }
 
@@ -264,7 +264,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
         getXmlUtil().setAttribute(htmlPasteRulesNode, DialogConstants.PN_ALLOW_BLOCK_TAGS, Arrays.asList(rules.allowedBlockTags()));
         getXmlUtil().setAttribute(htmlPasteRulesNode, DialogConstants.PN_FALLBACK_BLOCK_TAG, rules.fallbackBlockTag());
 
-        getXmlUtil().appendChild(elementSupplier, htmlPasteRulesNode, RichTextEditorHandler::mergeFeatureAttributes);
+        getXmlUtil().appendNonemptyChild(elementSupplier, htmlPasteRulesNode, RichTextEditorHandler::mergeFeatureAttributes);
         getXmlUtil().setAttribute(elementSupplier, DialogConstants.PN_DEFAULT_PASTE_MODE, rteAnnotation);
     }
     private Element getHtmlPasteRulesNode(String disallowedEntity, AllowElement allowRule) {

@@ -12,8 +12,8 @@ public class PluginRuntime {
         return INSTANCE.get();
     }
 
-    static void initialize(List<String> classPathElements, String criticalExceptions) {
-        INSTANCE.set(new LoadedRuntimeContext(classPathElements, criticalExceptions));
+    static void initialize(List<String> classPathElements, String packageBase, String criticalExceptions) {
+        INSTANCE.set(new LoadedRuntimeContext(classPathElements, packageBase, criticalExceptions));
     }
 
     static void close() {

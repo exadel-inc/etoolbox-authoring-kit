@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.core.handlers.editconfig;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -35,7 +36,9 @@ public class DropTargetsHandler implements Handler, BiConsumer<Element, EditConf
         root.appendChild(dropTargetsElement);
         for (int i = 0; i < editConfig.dropTargets().length; i++) {
             DropTargetConfig dropTargetConfig = editConfig.dropTargets()[i];
-            Element currentConfig = getXmlUtil().createNodeElement(dropTargetConfig.nodeName());
+            Element currentConfig = getXmlUtil().createNodeElement(dropTargetConfig.nodeName(),
+                    DialogConstants.NT_DROP_TARGET_CONFIG,
+                    Collections.emptyMap());
             dropTargetsElement.appendChild(currentConfig);
             getXmlUtil().mapProperties(currentConfig, dropTargetConfig);
             List<String> accept = Arrays.stream(dropTargetConfig.accept()).collect(Collectors.toList());

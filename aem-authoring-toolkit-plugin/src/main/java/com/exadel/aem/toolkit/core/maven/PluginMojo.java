@@ -14,9 +14,7 @@
 package com.exadel.aem.toolkit.core.maven;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
@@ -33,8 +31,8 @@ import com.exadel.aem.toolkit.core.util.PackageWriter;
 @Mojo(name = "aem-authoring", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyCollection = ResolutionScope.COMPILE)
 @SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
 public class PluginMojo extends AbstractMojo {
-    private static final String DEPENDENCY_RESOLUTION_EXCEPTION_MESSAGE = "AEM Authoring Toolkit could not resolve dependencies of project ";
-    private static final String PLUGIN_EXECUTION_EXCEPTION_MESSAGE = "AEM Authoring Toolkit terminated due to an exception in project ";
+    private static final String DEPENDENCY_RESOLUTION_EXCEPTION_MESSAGE = "AEM Authoring Toolkit could not resolve dependencies of project %s: %s";
+    private static final String PLUGIN_EXECUTION_EXCEPTION_MESSAGE = "AEM Authoring Toolkit terminated due to %s in project %s: %s";
 
     @Parameter(readonly = true, defaultValue = "${project}")
     private MavenProject project;
@@ -54,20 +52,23 @@ public class PluginMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         List<String> classpathElements;
         try {
-            classpathElements = project.getCompileClasspathElements().stream()
-                    .filter(element -> StringUtils.isBlank(componentsReferenceBase) || element.startsWith(componentsReferenceBase))
-                    .collect(Collectors.toList());
+            classpathElements = project.getCompileClasspathElements();
         } catch (DependencyResolutionRequiredException e) {
-            throw new MojoExecutionException(DEPENDENCY_RESOLUTION_EXCEPTION_MESSAGE + project.getBuild().getFinalName(), e);
+            throw new MojoExecutionException(String.format(DEPENDENCY_RESOLUTION_EXCEPTION_MESSAGE,
+                    project.getBuild().getFinalName(),
+                    e.getMessage()), e);
         }
         pluginDependencies.stream().findFirst().ifPresent(d -> classpathElements.add(d.getFile().getPath()));
 
-        PluginRuntime.initialize(classpathElements, terminateOn);
+        PluginRuntime.initialize(classpathElements, componentsReferenceBase, terminateOn);
 
         try (PackageWriter packageWriter = PackageWriter.forMavenProject(project, componentsPathBase)) {
             PluginRuntime.context().getReflectionUtility().getComponentClasses().forEach(packageWriter::write);
         } catch (PluginException e) {
-            throw new MojoExecutionException(PLUGIN_EXECUTION_EXCEPTION_MESSAGE + project.getBuild().getFinalName(), e);
+            throw new MojoExecutionException(String.format(PLUGIN_EXECUTION_EXCEPTION_MESSAGE,
+                    e.getCause() != null ? e.getCause().getClass().getSimpleName() : e.getClass().getSimpleName(),
+                    project.getBuild().getFinalName(),
+                    e.getMessage()), e);
         }
 
         PluginRuntime.close();

@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  * Marks that property/properties of a specific annotation not to be automapped to XML attributes
  * If set to entire annotation, this setting is eligible to all its properties unless explicitly marked with {@link PropertyMapping}
  */
-@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IgnorePropertyMapping {
 }

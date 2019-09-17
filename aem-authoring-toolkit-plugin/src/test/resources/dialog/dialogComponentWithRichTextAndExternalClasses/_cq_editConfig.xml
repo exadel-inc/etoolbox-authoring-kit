@@ -4,12 +4,12 @@
     jcr:primaryType="cq:EditConfig">
     <cq:dropTargets jcr:primaryType="nt:unstructured">
         <featuredimage1
-            jcr:primaryType="nt:unstructured"
+            jcr:primaryType="cq:DropTargetConfig"
             accept="[image/.*]"
             groups="[media]"
             propertyName="first_Image1reference1"/>
         <featuredimage2
-            jcr:primaryType="nt:unstructured"
+            jcr:primaryType="cq:DropTargetConfig"
             accept="[image/.*]"
             groups="[media]"
             propertyName="second_Image2reference2"/>
