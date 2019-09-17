@@ -5,17 +5,17 @@
     jcr:primaryType="cq:EditConfig">
     <cq:dropTargets jcr:primaryType="nt:unstructured">
         <target1
-            jcr:primaryType="nt:unstructured"
+            jcr:primaryType="cq:DropTargetConfig"
             accept="[targets/.*]"
             groups="[TargetsGroup]"
             propertyName="drop_target1/reference"/>
         <target2
-            jcr:primaryType="nt:unstructured"
+            jcr:primaryType="cq:DropTargetConfig"
             accept="[targets/.*]"
             groups="[TargetsGroup]"
             propertyName="drop_target2/reference"/>
         <target3
-            jcr:primaryType="nt:unstructured"
+            jcr:primaryType="cq:DropTargetConfig"
             accept="[targets/.*]"
             groups="[TargetsGroup]"
             propertyName="drop_target3/reference"/>
