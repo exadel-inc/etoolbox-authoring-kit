@@ -71,7 +71,7 @@ class FilesComparator {
         if (differencesCount > 0) {
             LOG.warn("{} {}", differencesCount, differences);
         }
-        return differencesCount > 0;
+        return differencesCount == 0;
     }
 
     private static Document getXmlDocument(String xmlString) throws ParserConfigurationException, IOException, SAXException {
