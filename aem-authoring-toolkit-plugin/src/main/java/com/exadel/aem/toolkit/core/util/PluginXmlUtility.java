@@ -64,7 +64,7 @@ import com.exadel.aem.toolkit.core.util.validation.Validation;
  * Utility methods to process, verify and store AEM TouchUI dialog-related data to XML markup
  */
 public class PluginXmlUtility implements XmlUtility {
-    private static final String INVALID_NODE_NAME_PATTERN = "^\\W*:|\\W+:$|[^\\w:]+";
+    private static final String INVALID_NODE_NAME_PATTERN_NAMESPACE = "^\\W*:|\\W+:$|[^\\w:]+";
     private static final String NODE_NAME_SPACE_PATTERN = "\\s+";
     private static final String NODE_NAME_INDEX_PATTERN = "\\d*$";
     private static final String NODE_NAME_VERB_SEPARATOR = "_";
@@ -207,7 +207,7 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public String getValidName(String name) {
-        return getValidName(name, INVALID_NODE_NAME_PATTERN, DialogConstants.NN_ITEM);
+        return getValidName(name, INVALID_NODE_NAME_PATTERN_NAMESPACE, DialogConstants.NN_ITEM);
     }
 
     @Override
@@ -227,7 +227,7 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public String getUniqueName(String name, Element context) {
-        return getUniqueName(name, INVALID_NODE_NAME_PATTERN, DialogConstants.NN_ITEM, context);
+        return getUniqueName(name, INVALID_NODE_NAME_PATTERN_NAMESPACE, DialogConstants.NN_ITEM, context);
     }
 
     @Override

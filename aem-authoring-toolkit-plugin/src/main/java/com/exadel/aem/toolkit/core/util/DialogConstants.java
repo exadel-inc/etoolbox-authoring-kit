@@ -136,6 +136,7 @@ public class DialogConstants {
     public static final String PN_WIDTH = "width";
 
     public static final String INVALID_NAME_PATTERN = "^\\W+|[^\\w-\\/]+";
+    public static final String INVALID_NODE_NAME_PATTERN = "\\W+";
 
     private DialogConstants() {}
 }
