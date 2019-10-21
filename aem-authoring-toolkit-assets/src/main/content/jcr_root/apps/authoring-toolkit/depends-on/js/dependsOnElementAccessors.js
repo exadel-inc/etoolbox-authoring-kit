@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.0.0
+ * @version 1.1.0
  *
  * DependsOn ElementAccessors Registry
  * */
@@ -26,7 +26,9 @@
         },
         visibility: function ($el, state) {
             $el.attr('hidden', state ? null : 'true');
-            $el.closest(FIELD_WRAPPER).attr('hidden', state ? null : 'true');
+            $el.closest(FIELD_WRAPPER)
+                .attr('hidden', state ? null : 'true')
+                .attr('data-dependson-controllable', 'true');
             if (!state) {
                 ns.ElementAccessors.clearValidity($el);
             }

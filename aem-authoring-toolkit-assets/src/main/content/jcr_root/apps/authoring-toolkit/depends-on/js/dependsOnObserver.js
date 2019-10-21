@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.0.0
+ * @version 1.1.0
  *
  * DependsOn plugin entry point
  *
@@ -101,9 +101,9 @@
     // ----
     // Validation control: exclude element and its child from validation in hidden state.
     $(window).adaptTo('foundation-registry').register('foundation.validation.selector', {
-        exclusion: '[data-dependson][hidden]'
+        exclusion: '[data-dependson][hidden], [data-dependson-controllable][hidden]'
     });
     $(window).adaptTo('foundation-registry').register('foundation.validation.selector', {
-        exclusion: '[data-dependson][hidden] *'
+        exclusion: '[data-dependson][hidden] *, [data-dependson-controllable][hidden] *'
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
