@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  *  {@link Validator} implementation for testing that provided string is a valid JCR path
  */
 public class JcrPathValidator extends NotBlankValidator {
-    private static final Pattern JCR_PATH_PATTERN = Pattern.compile("^(\\/[\\w:.-]+)+\\/?$");
+    private static final Pattern JCR_PATH_PATTERN = Pattern.compile("^(/[\\w:.-]+)+/?$");
     private static final Pattern PROP_INJECT_PATTERN = Pattern.compile("^\\$\\{\\w+(?:\\.\\w+)*}$");
     private static final String MSG_JCR_PATH_EXPECTED = "complete JCR path expected";
 

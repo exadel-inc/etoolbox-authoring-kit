@@ -29,5 +29,16 @@ public class TestSelect {
             @Option(text = "4 stars", value = "4", disabled=true),
             @Option(text = "5 stars", value = "5", disabled=true)
     }, emptyText = "Select rating")
-    String dropdown;
+    String rating;
+
+    @DialogField(label = "Timezone")
+    @Select(options = {
+            @Option(text = "UTC +2", value = "+02:00"),
+            @Option(text = "UTC +1", value = "+01:00"),
+            @Option(text = "UTC", value = "00:00"),
+            @Option(text = "UTC -1", value = "-01:00"),
+            @Option(text = "UTC -2", value = "-02:00")
+    }, emptyText = "Select timezone")
+    String timezone;
+
 }
