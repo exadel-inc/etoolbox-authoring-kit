@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.0.0
+ * @version 1.2.0
  *
  * Coral 3 RTE accessor
  * */
@@ -30,7 +30,7 @@
             const $rteInput = $rteContainer.find(RTE_INPUT_SELECTOR);
             $rteInput.each(function () {this.required = !!val;});
             $rteContainer.find(RTE_EDITOR_SELECTOR).attr('aria-required', !!val);
-            ns.ElementAccessors.updateValidity($rteInput);
+            ns.ElementAccessors.updateValidity($rteInput, true);
         },
         visibility: function ($el, val) {
             const $rteContainer = $el.closest(RTE_CONTAINER);

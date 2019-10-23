@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.1.0
+ * @version 1.2.0
  *
  * DependsOn ElementAccessors Registry
  * */
@@ -20,9 +20,8 @@
             $el.val(value);
         },
         required: function ($el, val) {
-            $el.attr('required', val ? 'true' : null);
             $el.attr('aria-required', val ? 'true' : null);
-            ns.ElementAccessors.updateValidity($el);
+            ns.ElementAccessors.updateValidity($el, true);
         },
         visibility: function ($el, state) {
             $el.attr('hidden', state ? null : 'true');
