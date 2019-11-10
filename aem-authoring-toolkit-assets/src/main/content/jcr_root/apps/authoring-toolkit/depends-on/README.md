@@ -1,8 +1,8 @@
-## DependsOn Plugin clientlib
+## DependsOn Plugin client library
 
 Author _Alexey Stsefanovich (ala'n)_
 
-Version _1.0.0_
+Version _1.2.0_
  
 DependsOn Plugin is a clientlib that executes defined action on dependent fields.
  
@@ -32,9 +32,9 @@ References are external elements whose values can be used inside of Query.
 
 For dependent field:
 
-* **dependsOn** (data-dependson) - to provide Query with condition or expression for the Action.
-* **dependsOnAction** (data-dependsonaction) - (optional) to define Action that should be executed. 
-* **dependsOnSkipInitial** (data-dependsonskipinitial) - (optional) marker to disable initial execution.
+* **dependsOn** (`data-dependson`) - to provide Query with condition or expression for the Action.
+* **dependsOnAction** (`data-dependsonaction`) - (optional) to define Action that should be executed. 
+* **dependsOnSkipInitial** (`data-dependsonskipinitial`) - (optional) marker to disable initial execution.
 
 For referenced field:
 
@@ -61,7 +61,7 @@ Custom action can be specified using `Granite.DependsOnPlugin.ActionRegistry`.
 
 Action should have name and function to execute. 
 For example build-in `set` action is defined as follows:
-```javascript
+```
 Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('set', function setValue(value) {
      ns.ElementAccessors.setValue(this.$el, value);
 });
@@ -83,7 +83,7 @@ Registry `Granite.DependsOnPlugin.ElementAccessors` - can be used to define cust
 Accessor provide the information how to get/set value, set a require/visibility state or returns `preferableType` for specific type of component.
 
 For example default accessor descriptor is defined as follows:
-```javascript
+```
 Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
     selector: '*', // Selector to filter element
     preferableType: 'string',
@@ -189,7 +189,7 @@ public class Component {
 
 Field text is shown when `selectbox` value is "Show Text"
 
-```java
+```
 public class Component {
     @DependsOnRef(name = "selectbox")
     @DialogField
@@ -211,7 +211,7 @@ public class Component {
 
 Field text is shown when `selectbox` value is "Show Text 1" or "Show Text 2"
 
-```java
+```
 public class Component {
     @DependsOnRef(name = "selectbox")
     @DialogField
@@ -282,15 +282,15 @@ public class Component {
     @DialogField
     @TextField
     @PlaceOnTab("tab2")
-    private String somefield;
+    private String someField;
 }
 ```
 
 #### 5. Scoped binding
 
-List of items (reused fragments or multifield), each item should have `field1` if `conditionGlobal` (globally) and `conditionItem` in current item checked.
+List of items (reused fragments or MultiField), each item should have `field1` if `conditionGlobal` (globally) and `conditionItem` in current item checked.
 
-```java
+```
 public class Component {
     @DialogField
     @DependsOnRef(name = "conditionGlobal")
@@ -309,7 +309,7 @@ public class Component {
         private boolean conditionItem;
          
         @DialogField
-        // We should define the scope for @conditionItem reference as each multifield item contains a reference called 'conditionItem'
+        // We should define the scope for @conditionItem reference as each MultiField item contains a reference called 'conditionItem'
         @DependsOn(query = "@conditionItem(coral-multifield-item) && @conditionGlobal")
         @TextField
         private String field1;
@@ -396,8 +396,8 @@ public class Component {
     private String field;
 }
 ```
-```javascript
-(function (Granite, $) {
+```
+(function (Granite, $, DependsOn) {
     'use strict';
     Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('customAsyncAction', function (path) {
          const $el = this.$el;

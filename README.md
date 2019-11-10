@@ -1,4 +1,5 @@
 # AEM Authoring Toolkit
+![AEM Authoring Toolkit Logo](https://github.com/exadel-inc/aem-authoring-toolkit/blob/master/aem-authoring-toolkit-assets/src/main/content/META-INF/vault/definition/thumbnail.png)
 
 **AEM Authoring Toolkit** is the set of tools for creating comprehensive TouchUI dialogs for AEM components  with use of existing and/or specially designed Java classes. The plugin aimed at providing the fastest and most intuitive way to supplement a Sling model class or a POJO with a TouchUI dialog compliant with the newest facilities of AEM 6.4+ / Coral UI v.3+ and support for Coral UI v.2.  In the course of plugin development, a thorough comparative investigation of Coral v.2 and Coral v.3 has been carried out, their features and drawbacks tested, so that backward compatibility is preserved to a highest degree possible.
 
@@ -20,16 +21,16 @@ The main parts of the Toolkit are:
 - Package processing module **aem-authoring-toolkit-plugin** - comes as the Maven plugin,
 - Fronted module **aem-authoring-toolkit-assets** - comes as the deployable AEM package.
 
-**AEM Authoring Toolkit** has been developed in the course of _Exadel&trade; Digital Marketing Practice_. It is an evolving project that has yet to rich its maturity. Many new features are planned to be implemented, and more testing for the present features is required. The authros of the **Toolkit** heartly welcome the creative input from the AEM community worldwide to bring the best of programming techniques and design for creating best authoring and user experience.
+**AEM Authoring Toolkit** has been developed in the course of _Exadel&trade; Digital Marketing Practice_. It is an evolving project that has yet to reach its maturity. Many new features are planned to be implemented, and more testing for the present features is required. The authors of the **Toolkit** heartily welcome the creative input from the AEM community worldwide to bring the best of programming techniques and design for creating best authoring and user experience.
 
 ## Installation
 
 #### Compiling project by hand
-Feel free to clone the project sources and run ```mvn clean install``` from the project's root folder. The plugin and the API artifacts will be installed in local .m2 repository. The compiled _aem-authoring-toolkit-assets_ package will be found under _/target_ subfolder of the corresponding module. You may then deploy it to your AEM authoring instance as usual.
+Feel free to clone the project sources and run ```mvn clean install``` from the project's root folder. The plugin and the API artifacts will be installed in local .m2 repository. The compiled _aem-authoring-toolkit-assets_ package will be found under _/distrib_ folder of the project. You may then deploy it to your AEM authoring instance as usual.
   
 #### Using precompiled artifacts
 ##### Repository configuration
-Add links to the repository to "repositories" and "pluginRepositorues" sections of you Maven settings file (<user_profile_folder>/.m2/settings.xml):
+Add links to the repository to "repositories" and "pluginRepositories" sections of you Maven settings file (<user_profile_folder>/.m2/settings.xml):
 ```
 <repositories>
     <!-- AEM-Authroring Toolkit -->
@@ -52,7 +53,7 @@ Add links to the repository to "repositories" and "pluginRepositorues" sections 
     </pluginRepository>
 </pluginRepositories>
 ```
-### pom.xml configuration
+### POM files configuration
 1) Insert dependency to the API module in the _\<dependencies>_ section of the POM file of your **bundle**:
 ```xml
 <dependency>
@@ -80,18 +81,22 @@ Add links to the repository to "repositories" and "pluginRepositorues" sections 
         <componentsPathBase>jcr_root/apps/projectName/components</componentsPathBase>
         <!-- OPTIONAL: specify root package for component classes --> 
         <componentsReferenceBase>com.acme.project.samples</componentsReferenceBase>
-        <!-- OPTIONAL: specify list of exceptions, comma-separated, that woutl cause this plugin to terminate
-the build process. 'ALL' and 'NONE' may be specified as well. default is java.io.IOException -->
+        <!-- OPTIONAL: specify list of exceptions, comma-separated, that would cause this plugin to terminate
+            the build process. 'ALL' and 'NONE' may be specified as well. 
+            Default is java.io.IOException -->
         <terminateOn>ALL</terminateOn>
     </configuration>
 </plugin>
 ```
+###Installing Assets
+For some of the **Toolkit**'s features to work properly, namely the `DependsOn` set of instructions, you need to deploy the _aem-authoring-toolkit-assets-[version].zip_ package to your AEM author instance, The file can be found under the _/distrib_ folder of current repository.
+
 ## Usage: API
 
 ### @Dialog annotation
 In order to create a dialog you need create a Java class and mark it with `@Dialog` annotation. All required root attributes and namespace fields for the XML markup of cq:dialog  will be added.
 
-Besides, `@Dialog` possesses properties that are translated into common attributes of AEM component itself, according to the Adobe specification, thus covering most of the usecases. See the code snippet below:
+Besides, `@Dialog` possesses properties that are translated into common attributes of AEM component itself, according to the Adobe specification, thus covering most of the use-cases. See the code snippet below:
 ```java
 @Dialog(
     name = "myComponent",
@@ -251,7 +256,7 @@ public class DatePickerDialog {
 }
 ```
 ###### @FileUpload
-Used to render the FileUpload components in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on FileUpload](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/numberfield/index.html). You can specify MIME types of files acceptable, graphic styles of the created component. It is required to specify uploadUrl to an actual and accessible JCR path (may also specify a subnode of an existing node that will be created as needed). Sling shortcut  *${suffix.path}* for component-relative JCR path is also supported.
+Used to render the FileUpload components in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on FileUpload](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/numberfield/index.html). You can specify MIME types of files acceptable, graphic styles of the created component. It is required to specify uploadUrl to an actual and accessible JCR path (may also specify a sub-node of an existing node that will be created as needed). Sling shortcut  *${suffix.path}* for component-relative JCR path is also supported.
 ```java
 public class FileUploadDialog {
     @DialogField
@@ -272,7 +277,7 @@ public class FileUploadDialog {
 }
 ```
 ###### @ImageUpload
-Designed as a companion to @FileUpload,  mimics the features of FileUpload component that was there [before Coral 3 was introduced](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/form/fileupload/index.html), and the build-it upload component situdated at _cq/gui/components/authoring/dialog/fileupload_ in your AEM installation. Technically, this is but another rendition of FileUpload logic aimed at mainly uploading images via drag-and-drop
+Designed as a companion to @FileUpload,  mimics the features of FileUpload component that was there [before Coral 3 was introduced](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/form/fileupload/index.html), and the build-it upload component situated at _cq/gui/components/authoring/dialog/fileupload_ in your AEM installation. Technically, this is but another rendition of FileUpload logic aimed at mainly uploading images via drag-and-drop
 ```java
 public class ImageFieldDialog {
     @DialogField
@@ -437,9 +442,9 @@ public class DialogWithHtmlAttributes {
 }
 ```
 ####Implementing RichTextEditor
-[RichTextEditor (RTE)](https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/rich-text-editor.html) is somehow special yet vastly demanded Coral dialog component that provides possibility of editing strings and texts with WYSIWIG experience. the functionality of the component is based upon set of plugins, either built-in or custom. Most plugins expose sets of "features" reflected by UI elements (buttons, or dropdown lists, or button panels, or floating panels - so called "popovers").
+[RichTextEditor (RTE)](https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/rich-text-editor.html) is somehow special yet vastly demanded Coral dialog component that provides possibility of editing strings and texts with WYSIWYG experience. the functionality of the component is based upon set of plugins, either built-in or custom. Most plugins expose sets of "features" reflected by UI elements (buttons, or dropdown lists, or button panels, or floating panels - so called "popovers").
 
-Traditionally, to add a feature to RichTextEditor a user needs to include a string representing a button in `toolbar` attributes of one or more XML nodes, include another node representing a plugin to a corresponding plugin tree and/or populate `features`  attribute of that node and then possibly set plugin's custom features, each in one's own specific format. It the feature is to sit in a floating panel, the `<popovers>`  node and its subnodes must be additionally taken care of.
+Traditionally, to add a feature to RichTextEditor a user needs to include a string representing a button in `toolbar` attributes of one or more XML nodes, include another node representing a plugin to a corresponding plugin tree and/or populate `features`  attribute of that node and then possibly set plugin's custom features, each in one's own specific format. It the feature is to sit in a floating panel, the `<popovers>`  node and its sub-nodes must be additionally taken care of.
  
  The **AEM Authoring Toolkit**  streamlines that process a lot.
 ######RTE features and popovers
@@ -507,7 +512,7 @@ Generally it is recommended that a narrower set of features be used for the *inl
 If neither *features* nor *fullscreenFeatures* are populated, a default set of buttons will be generated for each of the three editor modes.
 
 ######Toolbar icons
-A user can override existing or add new icon definitions for toolbar buttons via *icons* property. Several icon definitions may be missing from Coral installation. To provide complete user experience with abovementioned full feature set, you may use the following snippet:
+A user can override existing or add new icon definitions for toolbar buttons via *icons* property. Several icon definitions may be missing from Coral installation. To provide complete user experience with the mentioned full feature set, you may use the following snippet:
 ```
 @RichTextEditor ( /* ... */
     icons = {
@@ -565,7 +570,7 @@ Among the commonly user RTE assets is the `misctools#specialchars` feature that 
 )
 ```
 ######Paragraph tagging and text styles
-Set of formatting tags for a paraformat button may be defined in [formats](https://helpx.adobe.com/experience-manager/6-5sites/administering/using/configure-rich-text-editor-plug-ins.html#paraformats) property as in the snippet:
+Set of formatting tags for a "paraformat" button may be defined in [formats](https://helpx.adobe.com/experience-manager/6-5sites/administering/using/configure-rich-text-editor-plug-ins.html#paraformats) property as in the snippet:
 ```
 @RichTextEditor ( /* ... */
     formats = {
@@ -618,7 +623,7 @@ Yet make sure that all the fields involved have the same component annotation. A
 Also mind that when you extend a field and add another field-specific annotation to override some properties (like in the sample above), property values are either replaced or appended (like adding values from an array-typed property of "child" to the array-typed property of "parent"), but not erased. You cannot replace a non-empty value of a "parent" with a blank, or empty, value of a "child". So take care to design you "inheritance tree" starting from fields with more abstract, less populated component annotations, and then shifting to more specific ones.
 
 ### Editing configuration
-If you wish to engage such TouchUI dialog features as listeners or inplace editing (those living in *\<cq:editConfig>* node and, accordingly, *_cq_editConfig.xml* file), add `@EditConfig` annotation to your Java class.
+If you wish to engage such TouchUI dialog features as listeners or in-place editing (those living in *\<cq:editConfig>* node and, accordingly, *_cq_editConfig.xml* file), add `@EditConfig` annotation to your Java class.
 
 It facilitates setting of the following properties and features:
 
@@ -644,7 +649,7 @@ To specify in-place editing configurations for your component, populate the  *in
         propertyName = "header"
     )
 )
-public class CustomPropetiesDialog {
+public class CustomPropertiesDialog {
     @DialogField
     @TextField
     String field1;
@@ -671,7 +676,7 @@ There is the possibility to create [multiple in-place editors](https://helpx.ado
         )
     }
 )
-public class CustomPropetiesDialog {
+public class CustomPropertiesDialog {
     @DialogField
     @TextField
     String field1;
@@ -725,7 +730,7 @@ You may change this behavior by specifying validationPolicy in plugin's <configu
 ###Customization 
 The AEM Authoring Toolkit allows to flexibly customize the structure of TouchUI dialog markup using the following approaches
 ####Custom annotations and handlers
-You can create your custom annotations to change existing node structure of a particular field. One requirement for a custom annotation is to be in turn annotated with `@DialogAnnotation` or `@DialogWidgetAnnotation`. Its required *source* property is needed to pick up appropriate custom handler (see below).
+You can create your custom annotations to change existing node structure of a particular field. One requirement for a custom annotation is to be in turn annotated with `@DialogAnnotation` or `@DialogWidgetAnnotation`. Its *source* property is needed to pick up appropriate custom handler (see below).
 ```java
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -743,11 +748,16 @@ The *Element* instance represents root element of the corresponding XML file, an
 
 Same way, if you want to apply the handler's logic to only particular field of class, you can add `@DialogWidgetComponent` to an own-written annotation, and then implement `DialogWidgetHandler` interface that extends `BiCounsumer<Element, Field>`.
 
+If you want your annotations' fields to be automatically transformed to TouchUI node properties, supply you annotation with `@PropertyMapping`. This way they will get to the final XML markup with no need of a handler.
+ 
+ To automatically map only *some* properties, you may populate `mappings` attribute of `@PropertyMapping` with names of corresponding fields. The other way around, you may add specific `@IgnorePropertyMapping` annotation to some of the fields themselves. The first way is more convenient if you have only several of the multitude of fields to be auto-mapped, while the second if rather for the case that you have only several fields to skip, and many others to auto-map.   
+
 Here is how a custom DialogAnnotation and a custom DialogHandler may look like:
 ```java
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @DialogAnnotation(source = "testSource")
+@PropertyMapping
 public @interface CustomDialog {
     String greeting() default "Hello World!";
 }
@@ -776,10 +786,12 @@ public class CustomStructureDialog {
     String field1;
 }
 ```
-...the `@CustomDialog` annotation will result in *test* attribute being added to the *\<cq:dialog>* node of TouchUI markup.
+...the `@CustomDialog` annotation will result in *greeting* and *test* attributes being added to the *\<cq:dialog>* node of TouchUI markup (first from the auto-mapping, and second because of handler routine).
+
+There's another option for `@PropertyMapping`, and this is to specify its _prefix_ value. If *prefix* is set to simple literal, like *"cq:"*, all of the auto-mapped attribute names will be prepended with this. Yet if the prefix is a relative path, like *"granite:data/"*, all of the auto-mapped attributes will go to the specifically created sub-node (particularly useful for creating *granite:data* nodes for TouchUI tweaks).
    
 ####Runtime methods for custom handlers
-If you define in your handler class a field of type ```RuntimeContext```, the link to the global `RuntimeContext` object will be injected by the Maven plugin. It allows to engage a number of utility methods and techniques, such as those of [`XmlUtility`](aem-authoring-toolkit-api/src/main/java/com/exadel/aem/toolkit/api/runtime/XmlUtility.java) interface. Of special interest are the methods `.createNodeElement()` with overloads for creating nodes with specific *jcr:primaryType*, *sling:resourceType* and other attributes, `.appendChild()` with overloads for appending or merging a newcomer node to a set of existing child nodes of a local root, and `.setAttribute()` with overloads for populating previously created node with generic-typed annotation values, optionally validated and then optionally fallen back to defaults.   
+If you define in your handler class a field of type `RuntimeContext` marked with `@Injected` annotation, the link to the global *RuntimeContext* object will be injected by the Maven plugin. It allows to engage a number of utility methods and techniques, such as those of the [`XmlUtility`](aem-authoring-toolkit-api/src/main/java/com/exadel/aem/toolkit/api/runtime/XmlUtility.java) interface. Of special interest are the methods `.createNodeElement()` with overloads for creating nodes with specific *jcr:primaryType*, *sling:resourceType* and other attributes, `.appendChild()` with overloads for appending or merging a newcomer node to a set of existing child nodes of a local root, and `.setAttribute()` with overloads for populating previously created node with generic-typed annotation values, optionally validated and then optionally fallen back to defaults.   
 
 Developer can (and is encouraged to) also call `.getExceptionHandler()` method whenever his or her logic is ought to throw or manage an exception. This way, all the exceptions from either built-in or custom routines are managed uniformly.
 
@@ -822,7 +834,7 @@ Arbitrary attributes can be set to in-place editing configurations. For that, se
         @Property(name="booleanAttr", value = "{Boolean}true")
     }
 )
-public class CustomPropetiesDialog { /* ... */ }
+public class CustomPropertiesDialog { /* ... */ }
 ```
 #####Dialog-wide properties
 Yet another mechanism available is to specify custom properties at Java class level. This may be used:
@@ -836,7 +848,7 @@ For these goals, `@CommonProperties` annotation is designed. It accepts similar 
 @CommonProperties({
     @CommonProperty(name = "stringAttr", value = "Hello World"), // goes to .content.xml by default
     @CommonProperty(scope = XmlScope.CQ_DIALOG, name = "numericAttr", value = "{Long}-1000"),
-    @CommonProperty(scope = XmlScope.CQ_EDIT_CONFIG, name = "arrayAttr", value = "[eeny,meeny,minny,moe]"),
+    @CommonProperty(scope = XmlScope.CQ_EDIT_CONFIG, name = "arrayAttr", value = "[any,many,minny,moe]"),
     @CommonProperty(
         scope = XmlScope.CQ_EDIT_CONFIG,
         path = "/root/inplaceEditing/config/rtePlugins/edit/htmlPasteRules/table",
@@ -850,7 +862,7 @@ For these goals, `@CommonProperties` annotation is designed. It accepts similar 
         value = "S"
     ),
 })
-public class CustomPropetiesDialog { /* ... */ }
+public class CustomPropertiesDialog { /* ... */ }
 ```
 Pay attention to the third and forth `@CommonProperty`-s. Specifying the *path* value gives the ability to traverse to any child node of the prepared XML with use of an XPath-formatted string.
 
@@ -868,13 +880,13 @@ Afterwards you can set breakpoints in your IDE, start a debugging session and co
 ##Frontend assets
 ### DependsOn
 
-(see more in [DependsOn Readme](aem-authoring-toolkit-assets/src/main/content/jcr_root/apps/authoring-toolkit/depends-on/README.md)) 
+(see more in [DependsOn Readme](./aem-authoring-toolkit-assets/src/main/content/jcr_root/apps/authoring-toolkit/depends-on/README.md)) 
 
-DependsOn asset is a client library that triggers prederined action on dependent TouchUI dialog fields in the authoring interface on the AEM installation frontend.
+**DependsOn** asset is a client library that triggers pre-defined actions over a dependent TouchUI dialog widget or tab upon a change of other (referenced) widget/field in the authoring interface on the AEM installation frontend. Typical use-case for *DependsOn* is changing widget's visibility or turning it enabled/disabled because upon triggering some switch, and also storing conditional data to a widget's input field.  
  
-DependsOn Plugin uses data attributes for fetching expected configuration. 
+DependsOn uses data attributes for fetching expected configuration. 
 To define data attribute from JCR use _granite:data_ sub-node under the widget node.
-AEM Authoring Toolkit provides a set of annotations to use DependsOn from Java code.
+**AEM Authoring Toolkit** provides a set of annotations to use DependsOn from Java code.
 
 `DependsOn` is based on the following data attributes.
 
@@ -886,12 +898,40 @@ For dependent field:
 
 For referenced field:
 
-* _dependsOnRef_ (data-dependsonref) - to mark a field, that is referenced from the query.
-* _dependsOnRefType_ (data-dependsonreftype) - (optional) to define expected type of reference value. 
+* _dependsOnRef_ (`data-dependsonref`) - to mark a field, that is referenced from the query.
+* _dependsOnRefType_ (`data-dependsonreftype`) - (optional) to define expected type of reference value. 
 
 ### DependsOn Usage
 
-##### Actions
+##### DependsOn annotations 
+
+* `@DependsOn` - to define single DependsOn Action with the Query. Multiple annotations per element can be used.
+* `@DependsOnRef` - to define referenced element name and type. Only a single annotation is allowed. 
+* `@DependsOnTab` - to define DependsOn query with `tab-visibility` action for tab.
+
+The following snippet discloses the `@DependsOn` usage in brief:
+```java
+public class DependsOnSample {
+    @DialogField(
+            label = "The switch",
+            description = "Turn the fieldset visibility on/off"
+    )
+    @Switch
+    @DependsOnRef(name = "first")
+    private boolean firstDialogEnabled;
+
+    @DialogField
+    @FieldSet(
+            title = "Conditional fieldset",
+            description = "This will be shown or hidden depending on the switch"
+    )
+    @DependsOn(query = "@first")
+    @PlaceOnTab(TAB_ADDITIONAL_TOPICS)
+    private SomeFieldsetDefinitionClass fieldsetDefinitionClass;
+}
+``` 
+
+##### DependsOn actions
 
 Built-in plugin actions are:
  * `visibility` - hide the element if the query result is 'falsy'
@@ -926,9 +966,3 @@ Back and forward selectors are separated by '|>' combination.
 
 For example:
 * `@enableCta (section |> .fieldset-1)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of element with `fieldset-1` class placed in the closest parent section element.
-
-#### Authoring Toolkit DependsOn annotations 
-
-* `@DependsOn` - to define single DependsOn Action with the Query. Multiple annotations per element can be used.
-* `@DependsOnRef` - to define referenced element name and type. Only a single annotation is allowed. 
-* `@DependsOnTab` - to define DependsOn query with `tab-visibility` action for tab.

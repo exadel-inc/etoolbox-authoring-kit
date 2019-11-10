@@ -8,7 +8,7 @@ package com.exadel.aem.toolkit.api.annotations.assets.dependson;
 public class DependsOnActions {
     private DependsOnActions() {
     }
-    static final String VISIBILITY = "visibility";
+    public static final String VISIBILITY = "visibility";
     public static final String TAB_VISIBILITY = "tab-visibility";
     public static final String VALIDATE = "validate";
     public static final String REQUIRED = "required";

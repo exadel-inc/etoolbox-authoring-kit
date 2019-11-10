@@ -35,7 +35,7 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 
 public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
     private static final String DEFAULT_TAB_NAME = "tab1";
-    private static final String INVALID_TAB_NAME_PATTERN = "[^\\w]";
+
 
     @Override
     public void accept(Class<?> clazz, Element parent) {
@@ -56,7 +56,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
         Element firstTabElement = null;
         for (int i = 0; i < dialogTabs.length; i++){
             Tab tab = dialogTabs[i];
-            String nodeName = getXmlUtil().getUniqueName(tab.title(), INVALID_TAB_NAME_PATTERN, DEFAULT_TAB_NAME, tabItems);
+            String nodeName = getXmlUtil().getUniqueName(tab.title(), DialogConstants.INVALID_NODE_NAME_PATTERN, DEFAULT_TAB_NAME, tabItems);
             Element tabElement = (Element) tabItems.appendChild(getXmlUtil().createNodeElement(nodeName));
             tabElement.setAttribute(JcrConstants.PN_TITLE, tab.title());
             appendAttributes(tabElement, tab);
@@ -80,7 +80,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
 
     private void addTab(Class<?> tabClass, Element itemsNode){
         Tab tab = tabClass.getAnnotation(Tab.class);
-        String nodeName = getXmlUtil().getUniqueName(tab.title(), INVALID_TAB_NAME_PATTERN, DEFAULT_TAB_NAME, itemsNode);
+        String nodeName = getXmlUtil().getUniqueName(tab.title(), DialogConstants.INVALID_NODE_NAME_PATTERN, DEFAULT_TAB_NAME, itemsNode);
         Element tabElement = getXmlUtil().createNodeElement(nodeName, Collections.singletonMap(JcrConstants.PN_TITLE, tab.title()));
         itemsNode.appendChild(tabElement);
         appendAttributes(tabElement, tab);

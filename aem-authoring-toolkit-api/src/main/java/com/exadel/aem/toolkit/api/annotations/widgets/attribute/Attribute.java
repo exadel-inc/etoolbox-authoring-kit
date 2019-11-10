@@ -59,7 +59,7 @@ public @interface Attribute {
      */
     boolean hidden() default false;
     /**
-     * Optional collection of extra attributes represenred as name-value pairs
+     * Optional collection of extra attributes represented as name-value pairs
      * @return Single {@code @Data} annotation value, or an array of {@code @Data}
      */
     @IgnorePropertyMapping

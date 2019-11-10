@@ -14,11 +14,13 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.custom.CommonProperties;
-import com.exadel.aem.toolkit.api.annotations.custom.CommonProperty;
+import com.exadel.aem.toolkit.api.annotations.main.CommonProperties;
+import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
@@ -44,6 +46,15 @@ abstract class PackageEntryWriter {
             return;
         }
         try (Writer writer = Files.newBufferedWriter(componentPath.resolve(getXmlScope().toString()), StandardOpenOption.CREATE)) {
+            if (getXmlScope() != XmlScope.COMPONENT) {
+                // markup can be stored by hand in a _cq_dialog/.content.xml structure instead of _cq_dialog.xml file
+                // at first, folder-like storage must be deleted, or we might end up with two versions of component markup within same package
+                Path nestedFolderPath = componentPath.resolve(StringUtils.substringBeforeLast(getXmlScope().toString(), DialogConstants.EXTENSION_SEPARATOR));
+                Path nestedFilePath = nestedFolderPath.resolve(XmlScope.COMPONENT.toString());
+                Files.deleteIfExists(nestedFilePath);
+                Files.deleteIfExists(nestedFolderPath);
+            }
+            // then second we store the newly generated class
             writeXml(componentClass, writer);
         } catch (IOException e) {
             PluginRuntime.context().getExceptionHandler().handle(e);

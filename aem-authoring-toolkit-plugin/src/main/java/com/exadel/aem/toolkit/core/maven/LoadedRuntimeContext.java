@@ -12,8 +12,8 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
     private final ExceptionHandler exceptionHandler;
     private final PluginXmlUtility xmlUtility;
 
-    LoadedRuntimeContext(List<String> classPathElements, String criticalExceptions) {
-        this.pluginReflections = PluginReflectionUtility.fromClassPathElements(classPathElements);
+    LoadedRuntimeContext(List<String> classPathElements, String packageBase, String criticalExceptions) {
+        this.pluginReflections = PluginReflectionUtility.fromCodeScope(classPathElements, packageBase);
         this.exceptionHandler = PluginExceptionHandlers.getHandler(criticalExceptions);
         this.xmlUtility = new PluginXmlUtility();
     }

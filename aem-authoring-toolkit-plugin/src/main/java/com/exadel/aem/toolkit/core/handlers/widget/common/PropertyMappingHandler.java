@@ -19,12 +19,14 @@ import java.util.function.BiConsumer;
 
 import org.w3c.dom.Element;
 
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 public class PropertyMappingHandler implements BiConsumer<Element, Field> {
     @Override
     public void accept(Element element, Field field) {
         Arrays.stream(field.getDeclaredAnnotations())
-            .forEach(a-> PluginRuntime.context().getXmlUtility().mapProperties(element, a));
+                .filter(a -> a.annotationType().isAnnotationPresent(PropertyMapping.class))
+                .forEach(a -> PluginRuntime.context().getXmlUtility().mapProperties(element, a));
     }
 }

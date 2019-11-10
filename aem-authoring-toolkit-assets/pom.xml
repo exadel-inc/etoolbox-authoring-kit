@@ -46,10 +46,11 @@
                     <properties>
                         <name>${project.parent.name}</name>
                         <version>${project.parent.version}</version>
-                        <description>${parent.name} - Assets (clientlibs)</description>
+                        <description>${project.parent.name} - Assets (Client Libraries)</description>
                         <packagePath>${project.artifactId}-${project.parent.version}.zip</packagePath>
                     </properties>
                     <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
+                    <outputDirectory>${project.parent.basedir}/distrib</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>
