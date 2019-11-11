@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -20,7 +20,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Validator;
  */
 public final class PermissiveValidator implements Validator {
     /**
-     * Default (fully permissive) test
+     * {@inheritDoc}. In {@code PermissiveValidator}, defines the completely permissive testing routine
      */
     @Override
     public boolean test(Object obj) {
@@ -28,7 +28,7 @@ public final class PermissiveValidator implements Validator {
     }
 
     /**
-     * Default (fully permissive) predicate
+     * {@inheritDoc}. In {@code PermissiveValidator}, defines the allow-all kind of predicate
      */
     @Override
     public boolean isApplicableTo(Object obj) {
@@ -36,7 +36,7 @@ public final class PermissiveValidator implements Validator {
     }
 
     /**
-     * Default (permissive) filter
+     * {@inheritDoc}. In {@code PermissiveValidator}, defines the zero-change function
      */
     @Override
     public Object getFilteredValue(Object obj) {

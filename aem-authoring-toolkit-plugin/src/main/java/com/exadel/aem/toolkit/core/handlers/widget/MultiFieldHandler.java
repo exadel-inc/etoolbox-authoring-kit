@@ -53,7 +53,7 @@ public class MultiFieldHandler implements Handler, BiConsumer<Element, Field> {
             // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
             String restoredNamePrefix = getXmlUtil().getNamePrefix();
             getXmlUtil().setNamePrefix(restoredNamePrefix.startsWith(DialogConstants.RELATIVE_PATH_PREFIX) ? restoredNamePrefix.substring(2) : restoredNamePrefix);
-            Handler.appendContainer(fieldClassFields, containerElement);
+            Handler.appendToContainer(fieldClassFields, containerElement);
             getXmlUtil().setNamePrefix(restoredNamePrefix);
             return;
         }

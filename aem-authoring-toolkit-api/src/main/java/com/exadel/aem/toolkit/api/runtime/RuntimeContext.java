@@ -6,11 +6,11 @@ package com.exadel.aem.toolkit.api.runtime;
  */
 public interface RuntimeContext {
     /**
-     * Gets the active {@link ExceptionHandler} instance
+     * Provides the reference to the active {@link ExceptionHandler} instance
      */
     ExceptionHandler getExceptionHandler();
     /**
-     * Gets the active {@link XmlUtility} instance
+     * Provides the reference to the active {@link XmlUtility} instance
      */
     XmlUtility getXmlUtility();
 }

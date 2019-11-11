@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -26,9 +26,18 @@ import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 
+/**
+ * The {@link Handler} for a fixed-columns TouchUI dialog.
+ */
 public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Element> {
+    /**
+     * Implements {@code BiConsumer<Class<?>, Element>} pattern
+     * to process component-backing Java class and append the results to the XML root node
+     * @param componentClass {@code Class<?>} instance used as the source of markup
+     * @param parentElement XML document root element
+     */
     @Override
-    public void accept(Class<?> clazz, Element parentElement) {
+    public void accept(Class<?> componentClass, Element parentElement) {
         Element content = getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER);
 
         Element layout = getXmlUtil().createNodeElement(
@@ -49,7 +58,7 @@ public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Elemen
 
         contentItems.appendChild(column);
 
-        List<Field> allFields = PluginReflectionUtility.getAllNonStaticFields(clazz);
-        Handler.appendContainer(allFields, column);
+        List<Field> allFields = PluginReflectionUtility.getAllNonStaticFields(componentClass);
+        Handler.appendToContainer(allFields, column);
     }
 }

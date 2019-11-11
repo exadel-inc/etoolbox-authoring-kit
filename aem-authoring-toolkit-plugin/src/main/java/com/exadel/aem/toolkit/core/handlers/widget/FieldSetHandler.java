@@ -45,7 +45,7 @@ public class FieldSetHandler implements Handler, BiConsumer<Element, Field> {
                     .collect(Collectors.toList());
         }
 
-        Handler.appendContainer(fields, element, false);
+        Handler.appendToContainer(fields, element, false);
         getXmlUtil().setNamePrefix(restoredNamePrefix);
     }
 }

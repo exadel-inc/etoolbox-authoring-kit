@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -33,26 +33,34 @@ import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 
+/**
+ * The {@link Handler} for a tabbed TouchUI dialog
+ */
 public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
     private static final String DEFAULT_TAB_NAME = "tab1";
 
-
+    /**
+     * Implements {@code BiConsumer<Class<?>, Element>} pattern
+     * to process component-backing Java class and append the results to the XML root node
+     * @param componentClass {@code Class<?>} instance used as the source of markup
+     * @param parentElement XML document root element
+     */
     @Override
-    public void accept(Class<?> clazz, Element parent) {
-        Element tabItems = (Element) parent.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER))
+    public void accept(Class<?> componentClass, Element parentElement) {
+        Element tabItems = (Element) parentElement.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_TABS, ResourceTypes.TABS))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
-        Dialog dialog = clazz.getDeclaredAnnotation(Dialog.class);
+        Dialog dialog = componentClass.getDeclaredAnnotation(Dialog.class);
         Tab[] dialogTabs = dialog.tabs();
         if(dialogTabs.length == 0){
-            Class[] innerClasses = clazz.getDeclaredClasses();
+            Class[] innerClasses = componentClass.getDeclaredClasses();
             ArrayUtils.reverse(innerClasses);
             Arrays.stream(innerClasses).filter(c -> c.isAnnotationPresent(Tab.class))
                     .forEach(tabClass->addTab(tabClass, tabItems));
             return;
         }
-        List<Field> allFields = PluginReflectionUtility.getAllNonStaticFields(clazz);
+        List<Field> allFields = PluginReflectionUtility.getAllNonStaticFields(componentClass);
         Element firstTabElement = null;
         for (int i = 0; i < dialogTabs.length; i++){
             Tab tab = dialogTabs[i];
@@ -70,29 +78,45 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
             List<Field> thisTabFields = allFields.stream()
                     .filter(f -> isFieldForTab(f, tab))
                     .collect(Collectors.toList());
-            Handler.appendContainer(thisTabFields, tabElement);
+            Handler.appendToContainer(thisTabFields, tabElement);
             allFields.removeAll(thisTabFields);
         }
         if (!allFields.isEmpty()) {
-            Handler.appendContainer(allFields, firstTabElement);
+            Handler.appendToContainer(allFields, firstTabElement);
         }
     }
 
+    /**
+     * Adds a tab definition to the XML markup
+     * @param tabClass The {@code Class<?>} instance to build tab markup from
+     * @param itemsNode The {@link Element} instance to append particular fields' markup
+     */
     private void addTab(Class<?> tabClass, Element itemsNode){
         Tab tab = tabClass.getAnnotation(Tab.class);
         String nodeName = getXmlUtil().getUniqueName(tab.title(), DialogConstants.INVALID_NODE_NAME_PATTERN, DEFAULT_TAB_NAME, itemsNode);
         Element tabElement = getXmlUtil().createNodeElement(nodeName, Collections.singletonMap(JcrConstants.PN_TITLE, tab.title()));
         itemsNode.appendChild(tabElement);
         appendAttributes(tabElement, tab);
-        Handler.appendContainer(Arrays.asList(tabClass.getDeclaredFields()), tabElement);
+        Handler.appendToContainer(Arrays.asList(tabClass.getDeclaredFields()), tabElement);
     }
 
+    /**
+     * Appends tab attributes to a pre-built tab-defining XML element
+     * @param tabElement {@link Element} instance representing a TouchUI dialog tab
+     * @param tab {@link Tab} annotation that contains settings
+     */
     private void appendAttributes(Element tabElement, Tab tab){
         Attribute attribute = tab.attribute();
         getXmlUtil().mapProperties(tabElement, attribute);
         getXmlUtil().appendDataAttributes(tabElement, attribute.data());
     }
 
+    /**
+     * The predicate to match a {@code Field} against particular {@code Tab}
+     * @param field  {@link Field} instance to analyze
+     * @param tab {@link Tab} annotation to analyze
+     * @return True or false
+     */
     private static boolean isFieldForTab(Field field, Tab tab) {
         if (!field.isAnnotationPresent(PlaceOnTab.class)) {
             return false;
