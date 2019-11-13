@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -50,6 +50,10 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 
+/**
+ * {@link Handler} implementation for creating markup responsible for Granite UI {@code RichTextEditor} widget functionality
+ * within the {@code cq:dialog} and {@code cq:editConfig} XML nodes
+ */
 public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field> {
     private static final String KEYWORD_AUTO = "auto";
 
@@ -72,10 +76,21 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
         this.renderDialogFullScreenNode = renderDialogFullScreenNode;
     }
 
+    /**
+     * Processes the user-defined data and writes it to XML entity
+     * @param element Current XML element
+     * @param field Current {@code Field} instance
+     */
     @Override
-    public void accept(Element element, Field rteField) {
-        accept(element, rteField.getAnnotation(RichTextEditor.class));
+    public void accept(Element element, Field field) {
+        accept(element, field.getAnnotation(RichTextEditor.class));
     }
+
+    /**
+     * Processes the user-defined data and writes it to XML entity
+     * @param element Current XML element
+     * @param rteAnnotation Current {@link RichTextEditor} instance
+     */
     public void accept(Element element, RichTextEditor rteAnnotation) {
         this.rteAnnotation = rteAnnotation;
         // create 4 basic builders: for ./uiSettings/cui/inline, ./uiSettings/cui/dialogFullScreen, ./uiSettings/cui/tableEditOptions
@@ -142,16 +157,46 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
         populateHtmlLinkRules(element);
     }
 
+    /**
+     * Appends non-empty child XML node to a parent node. If same-named child node exists, merges attributes of the
+     * provided child with those of the existing child with use of the default merging routine
+     * @param parent {@code Element} instance representing parent node
+     * @param child {@code Element} instance representing child node
+     * @return {@code Element} instance representing the appended node
+     */
     private Element appendElement(Element parent, Element child) {
         return getXmlUtil().appendNonemptyChild(parent, child);
     }
+
+    /**
+     * Appends non-empty child XML node to a parent node. If same-named child node exists, merges attributes of the
+     * provided child with those of the existing child with use of the provided merger
+     * @param parent {@code Element} instance representing parent node
+     * @param child {@code Element} instance representing child node
+     * @param merger {@code BinaryOperator<String>} instance
+     */
     private void appendElement(Element parent, Element child, BinaryOperator<String> merger) {
         getXmlUtil().appendNonemptyChild(parent, child, merger);
     }
+
+    /**
+     * Appends non-empty child XML node to the child node of the provided parent that has the specified name
+     * @param parent {@code Element} instance representing parent node
+     * @param existingChildName String representing the name of the existing child
+     * @param newChild {@code Element} instance representing new child node
+     */
     private void appendElement(Element parent, String existingChildName, Element newChild) {
         Element existingChild = getXmlUtil().getChildElement(parent, existingChildName);
         getXmlUtil().appendNonemptyChild(existingChild, newChild);
     }
+
+    /**
+     * Appends non-empty child XML node to the child node of the provided parent that has the specified name
+     * @param parent {@code Element} instance representing parent node
+     * @param existingChildName String representing the name of the existing child
+     * @param elementConsumer {@code Consumer<Supplier<Element>>} routine that implements lazy generation of child
+     * {@code Element} (one that is triggered only if element with {@code existingChildName} actually present)
+     */
     private void appendElement(Element parent, String existingChildName, Consumer<Supplier<Element>> elementConsumer) {
         if (parent == null) {
             return;

@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -53,6 +53,10 @@ import com.exadel.aem.toolkit.core.handlers.widget.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 
+/**
+ * Generates and triggers the chain of handlers to store XML markup required to implement particular Granite UI widget
+ * based on a field of a component class
+ */
 public enum DialogComponent {
     CUSTOM_FIELD(),
     TEXT_FIELD(TextField.class),
@@ -78,7 +82,6 @@ public enum DialogComponent {
 
     private Class<? extends Annotation> annotation;
     private BiConsumer<Element, Field> handler;
-    private BiConsumer<Element, Field> basicHandlerChain;
 
     DialogComponent() {
         this.handler = (componentNode, field) -> {};
@@ -94,24 +97,49 @@ public enum DialogComponent {
         this.handler = handler;
     }
 
+    /**
+     * Appends Granite UI markup based on the current {@code Field} to the parent XML node with a default name
+     * (equal to the field's name)
+     * @param parentNode {@code Element} instance
+     * @param field Current {@code Field}
+     */
     public void append(Element parentNode, Field field) {
         this.append(parentNode, field, null);
     }
 
-    public void append(Element parentNode, Field field, String name){
+    /**
+     * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified name
+     * @param parentNode {@code Element} instance
+     * @param field Current {@code Field}
+     */
+    public void append(Element parentNode, Field field, String name) {
         Element componentNode = PluginRuntime.context().getXmlUtility().createNodeElement(name != null ? name : field.getName());
         parentNode.appendChild(componentNode);
         getHandlerChain().accept(componentNode, field);
     }
 
+    /**
+     * Gets a {@code Class} definition bound to this instance
+     * @return {@code Class} object
+     */
     public Class<? extends Annotation> getAnnotationClass() {
         return annotation;
     }
 
-    public static boolean isPresent(Field field){
+    /**
+     * Gets whether the specified {@code Field} has any particular Granite UI widget-defining annotation
+     * @param field {@code Field} of a component class
+     * @return True or false
+     */
+    public static boolean isPresent(Field field) {
         return getComponentAnnotationClass(field) != null;
     }
 
+    /**
+     * Gets a {@link DialogComponent} bound to this {@code Field} of a component class, if any
+     * @param field {@code Field} of a component class
+     * @return Optional {@code DialogComponent} value
+     */
     public static Optional<DialogComponent> fromField(Field field) {
         Class<? extends Annotation> fieldAnnotationClass = getComponentAnnotationClass(field);
         if (fieldAnnotationClass == null) {
@@ -132,6 +160,11 @@ public enum DialogComponent {
         return result;
     }
 
+    /**
+     * Gets {@code Class} definition of a {@code DialogComponent}-defining annotation of the current {@code Field}
+     * @param field {@code Field} of a component class
+     * @return {@code Class} object
+     */
     private static Class<? extends Annotation> getComponentAnnotationClass(Field field) {
         // get first in-built component annotation attached to this field
         Class<? extends Annotation> annotationClass = Arrays.stream(values())
@@ -149,14 +182,30 @@ public enum DialogComponent {
                 .orElse(null);
     }
 
+    /**
+     * Gets whether this {@code Field} has the particular {@code DialogComponent}-defining annotation
+     * @param field {@code Field} of a component class
+     * @param widget {@code DialogComponent} instance
+     * @return True or false
+     */
     private static boolean isAnnotated(Field field, DialogComponent widget) {
         return Objects.nonNull(widget.getAnnotationClass())
                 && PluginReflectionUtility.getFieldAnnotations(field).anyMatch(fa -> fa.equals(widget.getAnnotationClass()));
     }
+
+    /**
+     * Gets whether this {@code Annotation} is a custom dialog annotation
+     * @param value {@code Class} definition of the annotation
+     * @return True or false
+     */
     private static boolean isCustomDialogComponentAnnotation(Class<? extends Annotation> value) {
         return value.isAnnotationPresent(DialogWidgetAnnotation.class);
     }
 
+    /**
+     * Generates the chain of handlers to store {@code cq:editConfig} XML markup
+     * @return {@code BiConsumer<Element, Field>} instance
+     */
     private BiConsumer<Element, Field> getHandlerChain() {
         BiConsumer<Element, Field> mainChain = new GenericPropertiesHandler()
                         .andThen(new PropertyMappingHandler())

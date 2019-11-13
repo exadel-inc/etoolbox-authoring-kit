@@ -36,7 +36,8 @@ public enum DialogContainer {
     }
 
     /**
-     * Builds dialog markup based on the set of component class fields
+     * Called via {@link com.exadel.aem.toolkit.core.util.PackageWriter} to build dialog markup based on the set
+     * of component class fields
      * @param componentClass {@code Class<?>} instance used as the source of markup
      * @param parentElement XML document root element
      */

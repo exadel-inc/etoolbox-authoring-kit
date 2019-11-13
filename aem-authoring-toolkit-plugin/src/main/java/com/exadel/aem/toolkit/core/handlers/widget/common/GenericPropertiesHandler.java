@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -24,9 +24,17 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogComponent;
 
+/**
+ * Handler for storing {@link ResourceType} and like properties to a Granite UI widget XML node
+ */
 public class GenericPropertiesHandler implements BiConsumer<Element, Field> {
     private static final String RESTYPE_MISSING_EXCEPTION_MESSAGE = "@ResourceType is not present in ";
 
+    /**
+     * Processes the user-defined data and writes it to XML entity
+     * @param element XML element
+     * @param field Current {@code Field} instance
+     */
     @Override
     public void accept(Element element, Field field) {
         DialogComponent dialogComponent = DialogComponent.fromField(field).orElse(null);
@@ -36,13 +44,18 @@ public class GenericPropertiesHandler implements BiConsumer<Element, Field> {
         element.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, this.getResourceType(dialogComponent.getAnnotationClass()));
     }
 
-    private String getResourceType(Class<?> annotationClass){
-        if(!annotationClass.isAnnotationPresent(ResourceType.class)){
+    /**
+     * Extracts {@link ResourceType} value from a Granite UI widget-defining annotation
+     * @param value {@code Class} definition of the annotation
+     * @return String representing the resource type
+     */
+    private String getResourceType(Class<?> value) {
+        if(!value.isAnnotationPresent(ResourceType.class)){
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
-                    RESTYPE_MISSING_EXCEPTION_MESSAGE + annotationClass.getName()));
+                    RESTYPE_MISSING_EXCEPTION_MESSAGE + value.getName()));
             return null;
         }
-        ResourceType resourceType = annotationClass.getDeclaredAnnotation(ResourceType.class);
+        ResourceType resourceType = value.getDeclaredAnnotation(ResourceType.class);
         return resourceType.value();
     }
 }

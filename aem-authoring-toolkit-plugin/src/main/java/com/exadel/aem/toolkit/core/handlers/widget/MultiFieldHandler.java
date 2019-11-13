@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -27,9 +27,18 @@ import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
+/**
+ * {@link Handler} implementation for creating markup responsible for Granite UI {@code Multifield} widget functionality
+ * within the {@code cq:dialog} XML node
+ */
 public class MultiFieldHandler implements Handler, BiConsumer<Element, Field> {
     private static final String EMPTY_CLASS_EXCEPTION_MESSAGE = "Empty multifield class ";
 
+    /**
+     * Processes the user-defined data and writes it to XML entity
+     * @param element Current XML element
+     * @param field Current {@code Field} instance
+     */
     @Override
     public void accept(Element element, Field field) {
         MultiField multiField = field.getDeclaredAnnotation(MultiField.class);
@@ -49,7 +58,8 @@ public class MultiFieldHandler implements Handler, BiConsumer<Element, Field> {
             Element containerElement = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_FIELD);
             containerElement.setAttribute(DialogConstants.PN_NAME, name);
             element.appendChild(containerElement);
-            // in case there are multiple fields in multifield container, their "name" values must not be preceded with "./" which is by default
+            // in case there are multiple fields in multifield container, their "name" values must not be preceded
+            // with "./" which is by default
             // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
             String restoredNamePrefix = getXmlUtil().getNamePrefix();
             getXmlUtil().setNamePrefix(restoredNamePrefix.startsWith(DialogConstants.RELATIVE_PATH_PREFIX) ? restoredNamePrefix.substring(2) : restoredNamePrefix);

@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 
 /**
  * Manifests the common interface for AEM Authoring Toolkit plugin {@code widget}s', {@code editConfig}s',
- * {@code container}s' handlers. Encapsulates utility methods for container-widget manupulations
+ * {@code container}s' handlers. Encapsulates utility methods for fitting containers and widgets together
  */
 public interface Handler {
     /**

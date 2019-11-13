@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -28,16 +28,25 @@ import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 
+/**
+ * {@link Handler} implementation for creating markup responsible for Granite UI {@code Checkbox} widget functionality
+ * within the {@code cq:dialog} XML node
+ */
 public class CheckboxHandler implements Handler, BiConsumer<Element, Field> {
     private static final String POSTFIX_FOR_ROOT_CHECKBOX = "Checkbox";
 
+    /**
+     * Processes the user-defined data and writes it to XML entity
+     * @param element Current XML element
+     * @param field Current {@code Field} instance
+     */
     @Override
     public void accept(Element element, Field field) {
         Checkbox checkbox = field.getDeclaredAnnotation(Checkbox.class);
 
         if (checkbox.sublist()[0] == Object.class) {
             getXmlUtil().mapProperties(element, checkbox);
-            validateTextProperty(element, field);
+            setTextAttribute(element, field);
         } else {
             element.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.NESTED_CHECKBOX_LIST);
             Element itemsElement = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
@@ -51,6 +60,11 @@ public class CheckboxHandler implements Handler, BiConsumer<Element, Field> {
         }
     }
 
+    /**
+     * Creates and appends markup correspondent to a Granite UI nested {@code Checkbox} structure
+     * @param element {@code Element} instance representing current XML node
+     * @param field Current {@code Field} of a component class
+     */
     private void appendNestedCheckBoxList(Element element, Field field) {
         Element sublist = getXmlUtil().createNodeElement(DialogConstants.NN_SUBLIST, ResourceTypes.NESTED_CHECKBOX_LIST);
         getXmlUtil().setAttribute(sublist, DialogConstants.PN_DISCONNECTED, field.getAnnotation(Checkbox.class).disconnectedSublist());
@@ -62,6 +76,11 @@ public class CheckboxHandler implements Handler, BiConsumer<Element, Field> {
         appendCheckbox(itemsElement, field);
     }
 
+    /**
+     * Creates and appends single Granite UI {@code Checkbox} markup to the current XML node
+     * @param element {@code Element} instance representing current XML node
+     * @param field Current {@code Field} of a component class
+     */
     private void appendCheckbox(Element element, Field field) {
         Checkbox checkbox = field.getAnnotation(Checkbox.class);
 
@@ -72,7 +91,7 @@ public class CheckboxHandler implements Handler, BiConsumer<Element, Field> {
             for (Field innerField : fields) {
                 Element checkboxElement = getXmlUtil().createNodeElement(innerField.getName(), ResourceTypes.CHECKBOX);
                 getXmlUtil().mapProperties(checkboxElement, innerField.getAnnotation(Checkbox.class));
-                validateTextProperty(checkboxElement, innerField);
+                setTextAttribute(checkboxElement, innerField);
 
                 element.appendChild(checkboxElement);
 
@@ -80,16 +99,20 @@ public class CheckboxHandler implements Handler, BiConsumer<Element, Field> {
                     appendNestedCheckBoxList(checkboxElement, innerField);
                 }
             }
-
         }
     }
 
-    private void validateTextProperty(Element checkboxElement, Field field) {
+    /**
+     * Decides which property of the current field to use as the {@code text} attribute of checkbox node and populates it
+     * @param element {@code Element} instance representing current XML node
+     * @param field Current {@code Field} of a component class
+     */
+    private void setTextAttribute(Element element, Field field) {
         Checkbox checkbox = field.getAnnotation(Checkbox.class);
         if (checkbox.text().isEmpty() && field.getAnnotation(DialogField.class) != null) {
-            checkboxElement.setAttribute(DialogConstants.PN_TEXT, field.getAnnotation(DialogField.class).label());
+            element.setAttribute(DialogConstants.PN_TEXT, field.getAnnotation(DialogField.class).label());
         } else if (checkbox.text().isEmpty()) {
-            checkboxElement.setAttribute(DialogConstants.PN_TEXT, field.getName());
+            element.setAttribute(DialogConstants.PN_TEXT, field.getName());
         }
     }
 }
