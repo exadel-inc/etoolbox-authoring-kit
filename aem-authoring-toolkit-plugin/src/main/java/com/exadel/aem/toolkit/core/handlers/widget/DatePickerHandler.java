@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -32,10 +32,19 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.validation.Validation;
 
+/**
+ * {@link Handler} implementation used to create markup responsible for Granite UI {@code DatePicker} widget functionality
+ * within the {@code cq:dialog} XML node
+ */
 public class DatePickerHandler implements Handler, BiConsumer<Element, Field> {
     private static final String INVALID_FORMAT_EXCEPTION_TEMPLATE = "Invalid %s '%s' for @DatePicker field '%s'";
     private static final String INVALID_VALUE_EXCEPTION_TEMPLATE = "Property '%s' of @DatePicker does not correspond to specified valueFormat";
 
+    /**
+     * Processes the user-defined data and writes it to XML entity
+     * @param element Current XML element
+     * @param field Current {@code Field} instance
+     */
     @Override
     public void accept(Element element, Field field) {
         DatePicker datePickerAttribute = field.getAnnotationsByType(DatePicker.class)[0];
@@ -56,7 +65,7 @@ public class DatePickerHandler implements Handler, BiConsumer<Element, Field> {
         if (datePickerAttribute.typeHint() == TypeHint.STRING
             && !StringUtils.isEmpty(datePickerAttribute.valueFormat())) {
             try {
-                // Java8 DateTimeFormatter interprets D as 'day of year', unlike Coral engine
+                // Java DateTimeFormatter interprets D as 'day of year', unlike Coral engine
                 // so a primitive replacement here to make sure 'DD' as in 'YYYY-MM-DD' is not passed to formatter
                 String patchedValueFormat = datePickerAttribute.valueFormat().replaceAll("\\bD{1,2}\\b", "dd");
                 dateTimeFormatter = DateTimeFormatter.ofPattern(patchedValueFormat);
@@ -74,6 +83,13 @@ public class DatePickerHandler implements Handler, BiConsumer<Element, Field> {
         storeDateValue(element, DialogConstants.PN_MAX_DATE, datePickerAttribute.maxDate(), dateTimeFormatter);
     }
 
+    /**
+     * Writes formatted {@link DateTimeValue} attribute to XML node
+     * @param element XML {@code Element} to store data in
+     * @param attribute Name of date-preserving attribute
+     * @param value The {@code DateTimeValue} to store
+     * @param formatter {@link DateTimeFormatter} instance
+     */
     private void storeDateValue(
             Element element,
             String attribute,
@@ -96,6 +112,11 @@ public class DatePickerHandler implements Handler, BiConsumer<Element, Field> {
         }
     }
 
+    /**
+     * Tests whether the provided {@link DateTimeValue} is an empty (non-initialized) instance
+     * @param value {@code DateTimeValue} annotation instance
+     * @return True or false
+     */
     private static boolean isEmptyDateTime(DateTimeValue value) {
         return StringUtils.isEmpty(value.timezone())
                 && value.minute() == 0

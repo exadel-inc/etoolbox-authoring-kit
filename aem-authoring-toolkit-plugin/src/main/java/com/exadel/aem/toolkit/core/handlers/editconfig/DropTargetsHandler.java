@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -26,7 +26,15 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
+/**
+ * {@link Handler} implementation for storing {@link DropTargetConfig} arguments to {@code cq:editConfig} XML node
+ */
 public class DropTargetsHandler implements Handler, BiConsumer<Element, EditConfig> {
+    /**
+     * Processes the user-defined data and writes it to XML entity
+     * @param root XML element
+     * @param editConfig {@code EditConfig} annotation instance
+     */
     @Override
     public void accept(Element root, EditConfig editConfig) {
         if(editConfig.dropTargets().length == 0){

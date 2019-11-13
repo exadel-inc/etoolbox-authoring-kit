@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -26,6 +26,10 @@ import org.w3c.dom.Element;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
+/**
+ * Used to build XML nodes for feature representations with nested XML nodes within RichTextEditor config XML, such as
+ * {@code plugins} node
+ */
 class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
     private static final String FEATURE_SEPARATOR = ":";
 
@@ -88,6 +92,12 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
         return result;
     }
 
+    /**
+     * Creates a nested XML node within the tree-like XML config
+     * @param pluginId RTE Plugin name
+     * @param features Feature identifiers
+     * @return {@code Element} instance representing the nested config node
+     */
     private Element createChildNode(String pluginId, Set<String> features) {
         Element node = xmlUtil.createNodeElement(pluginId);
         List<String> valueList = features.stream()

@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -23,7 +23,16 @@ import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
+/**
+ * {@link Handler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
+ * within the {@code cq:dialog} XML node
+ */
 public class AutocompleteHandler implements Handler, BiConsumer<Element, Field> {
+    /**
+     * Processes the user-defined data and writes it to XML entity
+     * @param element Current XML element
+     * @param field Current {@code Field} instance
+     */
     @Override
     public void accept(Element element, Field field) {
         Autocomplete autocomplete = field.getDeclaredAnnotation(Autocomplete.class);

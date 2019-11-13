@@ -69,6 +69,7 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.resource</artifactId>
+            <version>3.0.18</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
