@@ -30,6 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 public @interface PlaceOnTab {
     /**
      * String equal to appropriate {@link Tab#title()} value
+     * @return String value
      */
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String value();

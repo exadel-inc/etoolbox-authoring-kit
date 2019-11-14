@@ -15,7 +15,7 @@ package com.exadel.aem.toolkit.core.util;
 
 /**
  * Contains common string constants used as AEM TouchUI Component and Dialog building blocks
- * @link <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/user-guide.html?topic=/experience-manager/6-5/sites/developing/morehelp/components.ug.js">Adobe documentation</a>
+ * @see <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/user-guide.html?topic=/experience-manager/6-5/sites/developing/morehelp/components.ug.js">Adobe documentation</a>
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class DialogConstants {

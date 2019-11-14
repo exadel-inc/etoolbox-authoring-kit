@@ -27,11 +27,13 @@ import java.lang.annotation.Target;
 public @interface Extends {
     /**
      * Class to inherit setup from
+     * @return {@code Class<?>} object
      */
     Class<?> value() default Object.class;
 
     /**
      * Field name (if not specified, the field with identical name to the current field's name is implied)
+     * @return Optional String value
      */
     String field() default "";
 }

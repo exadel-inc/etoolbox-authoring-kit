@@ -138,7 +138,7 @@ public class PluginReflectionUtility {
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
      * scope the plugin is operating in
-     * @return {@link List<DialogWidgetHandler>} of instances
+     * @return {@code List<DialogWidgetHandler>} of instances
      */
     public List<DialogWidgetHandler> getCustomDialogWidgetHandlers() {
         if (customDialogWidgetHandlers != null) {
@@ -151,7 +151,7 @@ public class PluginReflectionUtility {
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogHandler}s defined within the Compile
      * scope the plugin is operating in
-     * @return {@link List<DialogHandler>} of instances
+     * @return {@code List<DialogHandler>} of instances
      */
     List<DialogHandler> getCustomDialogHandlers() {
         if (customDialogHandlers != null) {
@@ -165,7 +165,7 @@ public class PluginReflectionUtility {
      * Returns list of {@code @Dialog}-annotated classes within the Compile scope the plugin is operating in, to
      * determine which of the component folders to process.
      * If {@code componentsPath} is set for this instance, classes are tested to be under that path
-     * @return {@link List<Class>} of instances
+     * @return {@code List<Class>} of instances
      */
     public List<Class<?>> getComponentClasses() {
         return reflections.getTypesAnnotatedWith(Dialog.class, true).stream()

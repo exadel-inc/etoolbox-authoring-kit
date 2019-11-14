@@ -32,6 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 public @interface PropertyScope {
     /**
      * Defines valid {@code XmlScope} or scopes
+     * @return Array of {@link XmlScope} values
      */
     XmlScope[] value() default {XmlScope.COMPONENT, XmlScope.CQ_DIALOG, XmlScope.CQ_EDIT_CONFIG};
 }

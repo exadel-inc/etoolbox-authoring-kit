@@ -154,6 +154,7 @@ public interface XmlUtility {
      * honoring {@link XmlScope} specified for an annotation or a particular annotation method
      * @param element Element node
      * @param annotation Annotation to take property values from
+     * @param scope Current {@code XmlScope}
      */
     void mapProperties(Element element, Annotation annotation, XmlScope scope);
 
@@ -170,7 +171,7 @@ public interface XmlUtility {
      * Appends to the current {@code Element} node a child {@code datasource} node bearing link to an ACS Commons list
      * @param element Element to store data in
      * @param path Path to ACS Commons List in JCR repository
-     * @param resourceType <Optional>Use this to set {@code sling:resourceType} of data source, other than standard</Optional>
+     * @param resourceType Use this to set {@code sling:resourceType} of data source, other than standard
      */
     void appendAcsCommonsList(Element element, String path, String resourceType);
 
@@ -228,8 +229,9 @@ public interface XmlUtility {
     /**
      * Generates compliant XML tag name from an arbitrary string
      * @param name Raw (unchecked) string for a tag name
-     * @param invalidNamePattern Regex string {@param name} to be tested against in order to skip invalid characters
-     * @param defaultValue Fallback name to be used if {@param name} is either blank or is reduced to blank as a result of testing
+     * @param invalidNamePattern Regex string that {@code name} is to be tested against in order to skip invalid characters
+     * @param defaultValue Fallback name to be used if {@code name} is either blank or is reduced to blank
+     *                     as a result of testing
      * @return Valid tag name
      */
     String getValidName(String name, String invalidNamePattern, String defaultValue);
@@ -245,8 +247,9 @@ public interface XmlUtility {
     /**
      * Generates compliant XML tag name thai is unique within the scope of specified parent node
      * @param name Raw (unchecked) string for a tag name
-     * @param invalidNamePattern Regex string {@param name} to be tested against in order to skip invalid characters
-     * @param defaultValue Fallback name to be used if {@param name} is either blank or is reduced to blank as a result of testing
+     * @param invalidNamePattern Regex string that {@code name} is to be tested against in order to skip invalid characters
+     * @param defaultValue Fallback name to be used if {@code name} is either blank or is reduced to blank
+     *                     as a result of testing
      * @param context Parent node
      * @return Valid and locally unique tag name
      */

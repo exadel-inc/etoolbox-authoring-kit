@@ -20,11 +20,13 @@ package com.exadel.aem.toolkit.api.annotations.editconfig.listener;
 public @interface Listener {
     /**
      * Name of a {@code cq:listeners} attribute
+     * @return String value
      * @see ListenerConstants
      */
     String event();
     /**
      * Value of {@code cq:listeners} attribute
+     * @return String value
      * @see ListenerConstants
      */
     String action();

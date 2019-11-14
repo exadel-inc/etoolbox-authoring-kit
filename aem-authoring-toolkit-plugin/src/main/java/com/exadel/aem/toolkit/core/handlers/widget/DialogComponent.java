@@ -111,6 +111,7 @@ public enum DialogComponent {
      * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified name
      * @param parentNode {@code Element} instance
      * @param field Current {@code Field}
+     * @param name The node name to store
      */
     public void append(Element parentNode, Field field, String name) {
         Element componentNode = PluginRuntime.context().getXmlUtility().createNodeElement(name != null ? name : field.getName());

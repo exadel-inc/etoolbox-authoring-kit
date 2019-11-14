@@ -33,7 +33,8 @@ import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
  */
 public interface Handler {
     /**
-     * Shortcut method for getting the {@link XmlUtility} instance associated with the current context
+     * Shortcut method for getting the {@link XmlUtility} descendant associated with the current context
+     * @return The {@link PluginXmlUtility} instance
      */
     default PluginXmlUtility getXmlUtil() {
         return PluginRuntime.context().getXmlUtility();

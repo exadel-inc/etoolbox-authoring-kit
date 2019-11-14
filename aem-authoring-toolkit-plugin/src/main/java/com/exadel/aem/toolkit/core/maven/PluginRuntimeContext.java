@@ -25,7 +25,10 @@ import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 public interface PluginRuntimeContext extends RuntimeContext {
     /**
      * Provides the reference to the active {@link PluginReflectionUtility} instance
+     * @return {@code PluginReflectionUtility} initialized for this context
      */
     PluginReflectionUtility getReflectionUtility();
+
+    @Override
     PluginXmlUtility getXmlUtility();
 }

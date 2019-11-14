@@ -5,8 +5,10 @@
     <parent>
         <artifactId>aem-authoring-toolkit</artifactId>
         <groupId>com.exadel.aem</groupId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.1</version>
     </parent>
+
+    <name>${project.prettyName} Assets (Client Libraries)</name>
 
     <artifactId>aem-authoring-toolkit-assets</artifactId>
     <packaging>content-package</packaging>
@@ -31,28 +33,35 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <includeEmptyDirs>true</includeEmptyDirs>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.day.jcr.vault</groupId>
                 <artifactId>content-package-maven-plugin</artifactId>
-                <version>0.0.20</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <group>${project.parent.artifactId}</group>
-                    <properties>
-                        <name>${project.parent.name}</name>
-                        <version>${project.parent.version}</version>
-                        <description>${project.parent.name} - Assets (Client Libraries)</description>
-                        <packagePath>${project.artifactId}-${project.parent.version}.zip</packagePath>
-                    </properties>
-                    <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
-                    <outputDirectory>${project.parent.basedir}/distrib</outputDirectory>
-                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution><id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals><goal>sign</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
