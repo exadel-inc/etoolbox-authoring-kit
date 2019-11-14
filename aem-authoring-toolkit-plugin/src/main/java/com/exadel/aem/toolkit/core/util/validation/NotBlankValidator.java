@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -34,7 +34,7 @@ public class NotBlankValidator implements Validator {
     }
 
     /**
-     * Default (fully permissive) predicate
+     * {@inheritDoc}. In {@code NotBlankValidator}, defines the allow-all kind of predicate
      */
     @Override
     public boolean isApplicableTo(Object obj) {
@@ -42,7 +42,7 @@ public class NotBlankValidator implements Validator {
     }
 
     /**
-     * Default (permissive) filter
+     * {@inheritDoc}. In {@code NotBlankValidator}, defines the zero-change function
      */
     @Override
     public Object getFilteredValue(Object obj) {

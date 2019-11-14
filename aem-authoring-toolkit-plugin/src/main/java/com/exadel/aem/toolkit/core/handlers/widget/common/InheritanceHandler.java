@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -24,12 +24,21 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogComponent;
 
+/**
+ * Handler for processing Granite UI widgets features "inherited" by the current component class {@code Field} from
+ * other fields via {@link Extends} mechanism
+ */
 public class InheritanceHandler implements BiConsumer<Element, Field> {
     private BiConsumer<Element, Field> descendantChain;
     public InheritanceHandler(BiConsumer<Element, Field> descendantChain) {
         this.descendantChain = descendantChain;
     }
 
+    /**
+     * Processes the user-defined data and writes it to XML entity
+     * @param element XML element
+     * @param field Current {@code Field} instance
+     */
     @Override
     public void accept(Element element, Field field) {
         if (descendantChain == null) return;
@@ -39,6 +48,11 @@ public class InheritanceHandler implements BiConsumer<Element, Field> {
         }
     }
 
+    /**
+     * Builds the inheritance sequence for the current {@code Field}
+     * @param field Current {@code Field} instance
+     * @return Ancestral {@code Field}s, as an ordered sequence
+     */
     private static Deque<Field> getInheritanceTree(Field field) {
         Deque<Field> result = new LinkedList<>();
         DialogComponent referencedComponent = DialogComponent.fromField(field).orElse(null);

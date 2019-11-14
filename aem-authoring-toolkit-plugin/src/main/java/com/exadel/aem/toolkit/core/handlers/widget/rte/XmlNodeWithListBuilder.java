@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -21,6 +21,10 @@ import org.w3c.dom.Element;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
+/**
+ * Used to build XML nodes for flat-string array feature representations within RichTextEditor config XML, such as
+ * {@code features} or {@code table} node
+ */
 class XmlNodeWithListBuilder extends XmlNodeBuilderBase {
     private List<String> argumentList;
     private XmlTreeWithListsBuilder childBuilder;

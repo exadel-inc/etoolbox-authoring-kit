@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -19,13 +19,27 @@ import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 
+/**
+ * Generates and triggers the chain of handlers to store {@code cq:editConfig} XML markup
+ */
 public class EditingConfiguration {
     private EditingConfiguration() {
     }
+
+    /**
+     * Called via {@link com.exadel.aem.toolkit.core.util.PackageWriter} to build in-place editing markup based on the
+     * set of component class fields
+     * @param element {@code Element} representing {@code cq:editConfig} XML node
+     * @param editConfig {@link EditConfig} instance
+     */
     public static void append(Element element, EditConfig editConfig){
         getHandlerChain().accept(element, editConfig);
     }
 
+    /**
+     * Generates the chain of handlers to store {@code cq:editConfig} XML markup
+     * @return {@code BiConsumer<Element, EditConfig>} instance
+     */
     private static BiConsumer<Element, EditConfig> getHandlerChain() {
         return new PropertiesHandler()
                 .andThen(new DropTargetsHandler())

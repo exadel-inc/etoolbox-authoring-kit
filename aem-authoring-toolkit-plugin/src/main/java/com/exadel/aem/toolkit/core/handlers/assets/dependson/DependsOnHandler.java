@@ -1,3 +1,17 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.exadel.aem.toolkit.core.handlers.assets.dependson;
 
 import java.lang.reflect.Field;
@@ -22,9 +36,17 @@ import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
+/**
+ * {@link Handler} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
+ */
 public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
     static final String EMPTY_VALUES_EXCEPTION_MESSAGE = "Non-empty string values required for DependsOn params";
 
+    /**
+     * Processes the user-defined data and writes it to XML entity
+     * @param element Current XML element
+     * @param field Current {@code Field} instance
+     */
     @Override
     public void accept(Element element, Field field) {
         if (field.isAnnotationPresent(DependsOn.class)) {
@@ -35,6 +57,11 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
         handleDependsOnRefValue(element, field.getDeclaredAnnotation(DependsOnRef.class));
     }
 
+    /**
+     * Called by {@link DependsOnHandler#accept(Element, Field)} to store particular {@code DependsOn} value in XML markup
+     * @param element Current XML element
+     * @param value Current {@link DependsOn} value
+     */
     private void handleDependsOn(Element element, DependsOn value) {
         if (StringUtils.isAnyBlank(value.query(), value.action())) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(EMPTY_VALUES_EXCEPTION_MESSAGE));
@@ -48,12 +75,17 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
         getXmlUtil().appendDataAttributes(element, valueMap);
     }
 
-    private void handleDependsOnConfig(Element element, DependsOnConfig config) {
-        String queries = Arrays.stream(config.value())
+    /**
+     * Called by {@link DependsOnHandler#accept(Element, Field)} to store {@code DependsOnConfig} value in XML markup
+     * @param element Current XML element
+     * @param value Current {@link DependsOnConfig} value
+     */
+    private void handleDependsOnConfig(Element element, DependsOnConfig value) {
+        String queries = Arrays.stream(value.value())
                 .filter(conf -> StringUtils.isNoneBlank(conf.action(), conf.query()))
                 .map(DependsOn::query)
                 .collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
-        String actions = Arrays.stream(config.value())
+        String actions = Arrays.stream(value.value())
                 .filter(conf -> StringUtils.isNoneBlank(conf.action(), conf.query()))
                 .map(DependsOn::action)
                 .collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
@@ -70,6 +102,11 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
         ));
     }
 
+    /**
+     * Called by {@link DependsOnHandler#accept(Element, Field)} to store particular {@code DependsOnRef} value in XML markup
+     * @param element Current XML element
+     * @param value Current {@link DependsOnRef} value
+     */
     private void handleDependsOnRefValue(Element element, DependsOnRef value) {
         if (value == null) {
             return;

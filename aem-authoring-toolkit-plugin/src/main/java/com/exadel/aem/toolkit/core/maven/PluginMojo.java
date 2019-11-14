@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -28,6 +28,9 @@ import org.apache.maven.project.MavenProject;
 import com.exadel.aem.toolkit.core.exceptions.PluginException;
 import com.exadel.aem.toolkit.core.util.PackageWriter;
 
+/**
+ * Represents the entry-point of AEM Authoring Toolkit execution
+ */
 @Mojo(name = "aem-authoring", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyCollection = ResolutionScope.COMPILE)
 @SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
 public class PluginMojo extends AbstractMojo {
@@ -49,6 +52,16 @@ public class PluginMojo extends AbstractMojo {
     @Parameter(readonly = true, defaultValue = "java.io.IOException")
     private String terminateOn;
 
+    /**
+     * Executes AEM Authoring Toolkit Maven plugin. This is done by initializing {@link PluginRuntime} and then
+     * enumerating classpath entries present in the Maven reactor. Relevant AEM component classes (POJOs or Sling models)
+     * are extracted and processed with {@link PackageWriter} instance created for particular Maven project; the result
+     * is written down to the AEM package zip file. The method is run once for each package module that has AEM Authoring
+     * Toolkit plugin included in the POM file
+     * @throws MojoExecutionException in case package processing cannot proceed (due to e.g. file system failure
+     * or improper initializtion) or in case an internal exception is thrown that corresponds to the {@code terminateOn}
+     * setting
+     */
     public void execute() throws MojoExecutionException {
         List<String> classpathElements;
         try {

@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -83,7 +83,7 @@ public class PluginXmlUtility implements XmlUtility {
     public static final Pattern ATTRIBUTE_LIST_PATTERN = Pattern.compile("^\\[.+]$");
 
     /**
-     * Default routine that manages two values of an XML attribute by suppressing existing value with a non-empty new one
+     * Default routine to manage merging two values of an XML attribute by suppressing existing value with a non-empty new one
      */
     public static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
@@ -463,6 +463,7 @@ public class PluginXmlUtility implements XmlUtility {
         }
         return first;
     }
+
     /**
      * Merges string attributes of two {@code Element} nodes, e.g. when a child node is appended to a parent node that already
      * has another child with same name, the existing child is updated with values from the newcomer.
