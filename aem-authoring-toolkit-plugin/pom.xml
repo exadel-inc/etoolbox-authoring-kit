@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.exadel.aem</groupId>
         <artifactId>aem-authoring-toolkit</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>aem-authoring-toolkit-plugin</artifactId>

@@ -2,10 +2,43 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>AEM Authoring Toolkit</name>
     <groupId>com.exadel.aem</groupId>
     <artifactId>aem-authoring-toolkit</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
+
+    <name>AEM Authoring Toolkit</name>
+    <description>Automates generating rich and responsive authoring interfaces for Adobe Experience Manager (TM) via Maven-powered build and deployment workflow</description>
+    <url>https://github.com/exadel-inc/aem-authoring-toolkit</url>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/exadel-inc/aem-authoring-toolkit.git</connection>
+        <developerConnection>scm:git:git@github.com:exadel-inc/aem-authoring-toolkit.git</developerConnection>
+        <url>https://github.com/exadel-inc/aem-authoring-toolkit</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/exadel-inc/aem-authoring-toolkit/issues</url>
+    </issueManagement>
 
     <packaging>pom</packaging>
 
@@ -27,6 +60,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.1</version>
                 <configuration>
+                    <encoding>UTF-8</encoding>
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
@@ -39,29 +73,6 @@
         </plugins>
     </build>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.26</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.sling</groupId>
-                <artifactId>org.apache.sling.jcr.resource</artifactId>
-                <version>3.0.18</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-   	<repositories>
-		<repository>
-			<id>adobe</id>
-			<name>Adobe Public Repository</name>
-			<url>http://repo.adobe.com/nexus/content/groups/public/</url>
-			<layout>default</layout>
-		</repository>
-	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>adobe</id>
@@ -70,16 +81,4 @@
 			<layout>default</layout>
 		</pluginRepository>
 	</pluginRepositories>
-    <distributionManagement>
-        <repository>
-            <id>exadel-aem-dialog</id>
-            <name>exadel-aem-dialog-releases</name>
-            <url>https://dmt-nexus.exadel.com/repository/exadel-aem-dialog-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>exadel-aem-dialog</id>
-            <name>exadel-aem-dialog-snapshots</name>
-            <url>https://dmt-nexus.exadel.com/repository/exadel-aem-dialog-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>

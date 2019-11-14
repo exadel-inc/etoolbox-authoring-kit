@@ -59,7 +59,7 @@ Add links to the repository to "repositories" and "pluginRepositories" sections 
 <dependency>
    <groupId>com.exadel.aem</groupId>
    <artifactId>aem-authoring-toolkit-api</artifactId>
-   <version>1.0.1-SNAPSHOT</version> <!-- prefer latest stable version whenever possible -->
+   <version>1.0.1</version> <!-- prefer latest stable version whenever possible -->
 </dependency>
 ```
 2) Insert plugin's config in the _\<plugins>_ section of the POM file of your **package**:
@@ -68,7 +68,7 @@ Add links to the repository to "repositories" and "pluginRepositories" sections 
 <plugin>
     <groupId>com.exadel.aem</groupId>
     <artifactId>aem-dialog-maven-plugin</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <executions>
         <execution>
             <goals>
@@ -89,7 +89,40 @@ Add links to the repository to "repositories" and "pluginRepositories" sections 
 </plugin>
 ```
 ###Installing Assets
-For some of the **Toolkit**'s features to work properly, namely the `DependsOn` set of instructions, you need to deploy the _aem-authoring-toolkit-assets-[version].zip_ package to your AEM author instance, The file can be found under the _/distrib_ folder of current repository.
+For some of the **Toolkit**'s features to work properly, namely the `DependsOn` set of instructions, you need to deploy the _aem-authoring-toolkit-assets-[version].zip_ package to your AEM author instance.
+
+If you compile the **Toolkit** from the source code, you'll find the zip file under _./aem-authoring-toolkit/aem-authoring-toolkit-assets/target_ directory. 
+
+If you are using ready artifacts, the easiest way is to append the `DependsOn` package to one of your content packages. Since `DependsOn` is small in size, this will not hamper your deployment process.
+
+Add the following dependency to your content package's _POM_ file.
+```xml
+<dependency>
+    <groupId>com.exadel.aem</groupId>
+    <artifactId>aem-authoring-toolkit-assets</artifactId>
+    <version>1.0.1</version>
+    <type>content-package</type>
+</dependency>
+```
+ And then specify the subpackage in your _Vault_ plugin.
+ ```xml
+    <plugin>
+        <groupId>com.day.jcr.vault</groupId>
+        <artifactId>content-package-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+            <!-- ... -->
+            <subPackages>
+                <subPackage>
+                    <groupId>com.exadel.aem</groupId>
+                    <artifactId>aem-authoring-toolkit-assets</artifactId>
+                    <filter>true</filter>
+                </subPackage>
+            </subPackages>
+            <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
+        </configuration>
+    </plugin>
+```
 
 ## Usage: API
 

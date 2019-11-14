@@ -5,7 +5,7 @@
     <parent>
         <artifactId>aem-authoring-toolkit</artifactId>
         <groupId>com.exadel.aem</groupId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>aem-authoring-toolkit-assets</artifactId>
@@ -39,18 +39,17 @@
             <plugin>
                 <groupId>com.day.jcr.vault</groupId>
                 <artifactId>content-package-maven-plugin</artifactId>
-                <version>0.0.20</version>
+                <version>0.0.24</version>
                 <extensions>true</extensions>
                 <configuration>
                     <group>${project.parent.artifactId}</group>
                     <properties>
-                        <name>${project.parent.name}</name>
+                        <name>${project.name}</name>
                         <version>${project.parent.version}</version>
-                        <description>${project.parent.name} - Assets (Client Libraries)</description>
+                        <description>${project.name} - Assets (Client Libraries)</description>
                         <packagePath>${project.artifactId}-${project.parent.version}.zip</packagePath>
                     </properties>
                     <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
-                    <outputDirectory>${project.parent.basedir}/distrib</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>
