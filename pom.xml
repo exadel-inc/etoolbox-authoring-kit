@@ -10,6 +10,24 @@
     <description>Automates generating rich and responsive authoring interfaces for Adobe Experience Manager (TM) via Maven-powered build and deployment workflow</description>
     <url>https://github.com/exadel-inc/aem-authoring-toolkit</url>
 
+    <organization>
+        <name>Exadel, Inc.</name>
+        <url>https://exadel.com</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>edmtp</id>
+            <name>Exadel DMTP Team</name>
+            <organization>Exadel, Inc.</organization>
+            <organizationUrl>https://exadel.com</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>Europe/Minsk</timezone>
+        </developer>
+    </developers>
+
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
@@ -144,6 +162,12 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
@@ -172,6 +196,18 @@
                         </plugin>
                     </plugins>
                 </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution><id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals><goal>sign</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
     </profiles>
