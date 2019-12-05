@@ -62,6 +62,14 @@
     });
 
     /**
+     * Change disable marker of the field
+     * query type: boolean
+     * */
+    ns.ActionRegistry.register('disabled', function setDisabled(state) {
+        ns.ElementAccessors.setDisabled(this.$el, state);
+    });
+
+    /**
      * Set field value from query result
      * query type: string
      * */

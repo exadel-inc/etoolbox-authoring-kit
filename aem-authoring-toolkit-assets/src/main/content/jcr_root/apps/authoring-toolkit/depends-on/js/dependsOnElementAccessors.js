@@ -31,6 +31,13 @@
             if (!state) {
                 ns.ElementAccessors.clearValidity($el);
             }
+        },
+        disabled: function ($el, state) {
+            $el.attr('disabled', state ? 'true' : null);
+            $el.closest(FIELD_WRAPPER).attr('disabled', state ? 'true' : null);
+            if (!state) {
+                ns.ElementAccessors.clearValidity($el);
+            }
         }
     };
 
@@ -61,6 +68,9 @@
         }
         static setVisibility($el, value) {
             ElementAccessors._findAccessorHandler($el, 'visibility')($el, value);
+        }
+        static setDisabled($el, value) {
+            ElementAccessors._findAccessorHandler($el, 'disabled')($el, value);
         }
 
         static registerAccessor(accessorDescriptor) {
