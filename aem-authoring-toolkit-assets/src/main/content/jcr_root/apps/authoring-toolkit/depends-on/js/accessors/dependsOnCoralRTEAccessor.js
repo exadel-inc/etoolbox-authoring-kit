@@ -35,6 +35,12 @@
         visibility: function ($el, val) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($rteContainer, val);
+        },
+        disabled: function ($el, val) {
+            const fieldAPI = $el.adaptTo('foundation-field');
+            if(fieldAPI && fieldAPI.setDisabled) {
+                fieldAPI.setDisabled(val);
+            }
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
