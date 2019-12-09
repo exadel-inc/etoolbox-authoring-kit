@@ -7,6 +7,7 @@
 (function ($, ns) {
     const SELECTOR = '.cq-FileUpload.coral3-FileUpload';
     const FILEUPLOAD_FILE_REFERENCE = '[data-cq-fileupload-parameter="filereference"]';
+    const FILEUPLOAD_EDIT_BUTTON = '.cq-FileUpload-edit';
 
     ns.ElementAccessors.registerAccessor({
         selector: SELECTOR,
@@ -20,6 +21,17 @@
         required: function ($el, val) {
             $el.attr('data-cq-fileupload-required', val ? 'true' : null);
             ns.ElementAccessors.updateValidity($el, true);
+        },
+        disabled: function ($el, val) {
+            $el.attr('disabled', val ? 'true' : null);
+
+            const inputs = $el.find('input');
+            Array.from(inputs).forEach(input => {
+                input.disabled = val;
+            });
+
+            const $editButton = $el.find(FILEUPLOAD_EDIT_BUTTON);
+            $editButton && $editButton.attr('disabled', val ? 'true' : null);
         }
     });
 
