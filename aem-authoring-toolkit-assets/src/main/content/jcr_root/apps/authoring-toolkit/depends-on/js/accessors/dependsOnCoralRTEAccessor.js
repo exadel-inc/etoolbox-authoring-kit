@@ -38,8 +38,21 @@
         },
         disabled: function ($el, val) {
             const fieldAPI = $el.adaptTo('foundation-field');
+            const rteInstance = $el.data(RTE_DATA_INSTANCE);
+
+            //disable rte input
             if(fieldAPI && fieldAPI.setDisabled) {
                 fieldAPI.setDisabled(val);
+            }
+
+            //disable rte editing
+            if (rteInstance) {
+                if (val) { rteInstance.suspend(); }
+                else {
+                    //use old content like initial content to reactivate rte
+                    const initContent = rteInstance.editorKernel && rteInstance.editorKernel.getProcessedHtml();
+                    rteInstance.reactivate(initContent);
+                }
             }
         }
     });
