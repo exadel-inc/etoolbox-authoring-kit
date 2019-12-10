@@ -25,13 +25,11 @@
         disabled: function ($el, val) {
             $el.attr('disabled', val ? 'true' : null);
 
-            const inputs = $el.find('input');
-            Array.from(inputs).forEach(input => {
-                input.disabled = val;
+            $el.find(':input').each(function () {
+                    this.disabled = val;
             });
 
-            const $editButton = $el.find(FILEUPLOAD_EDIT_BUTTON);
-            $editButton && $editButton.attr('disabled', val ? 'true' : null);
+            $el.find(FILEUPLOAD_EDIT_BUTTON).attr('disabled', val ? 'true' : null);
         }
     });
 

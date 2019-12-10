@@ -47,8 +47,9 @@
 
             //disable rte editing
             if (rteInstance) {
-                if (val) { rteInstance.suspend(); }
-                else {
+                if (val) {
+                    rteInstance.suspend();
+                } else {
                     //use old content like initial content to reactivate rte
                     const initContent = rteInstance.editorKernel && rteInstance.editorKernel.getProcessedHtml();
                     rteInstance.reactivate(initContent);
