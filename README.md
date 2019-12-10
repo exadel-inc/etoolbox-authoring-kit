@@ -61,12 +61,12 @@ Feel free to clone the project sources and run ```mvn clean install``` from the 
 
 <plugin>
     <groupId>com.exadel.aem</groupId>
-    <artifactId>aem-dialog-maven-plugin</artifactId>
+    <artifactId>aem-authoring-toolkit-plugin</artifactId>
     <version>1.0.1</version>
     <executions>
         <execution>
             <goals>
-                <goal>aem-dialog</goal>
+                <goal>aem-authoring</goal>
             </goals>
         </execution>
     </executions>
