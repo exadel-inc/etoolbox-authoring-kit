@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.0.0
+ * @version 1.3.0
  *
  * CQ Coral3 based FileUpload accessor
  * */

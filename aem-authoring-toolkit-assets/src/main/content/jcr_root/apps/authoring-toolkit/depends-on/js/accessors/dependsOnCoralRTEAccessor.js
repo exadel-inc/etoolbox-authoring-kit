@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.2.0
+ * @version 1.3.0
  *
  * Coral 3 RTE accessor
  * */
