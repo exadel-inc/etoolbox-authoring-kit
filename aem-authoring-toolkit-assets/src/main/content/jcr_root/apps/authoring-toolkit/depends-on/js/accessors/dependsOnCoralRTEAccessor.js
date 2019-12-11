@@ -37,13 +37,7 @@
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($rteContainer, val);
         },
         disabled: function ($el, val) {
-            const fieldAPI = $el.adaptTo('foundation-field');
             const rteInstance = $el.data(RTE_DATA_INSTANCE);
-
-            //disable rte input
-            if(fieldAPI && fieldAPI.setDisabled) {
-                fieldAPI.setDisabled(val);
-            }
 
             //disable rte editing
             if (rteInstance) {

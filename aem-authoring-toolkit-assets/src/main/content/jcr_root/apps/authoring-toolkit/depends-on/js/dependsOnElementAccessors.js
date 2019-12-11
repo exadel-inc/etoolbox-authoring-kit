@@ -33,10 +33,17 @@
             }
         },
         disabled: function ($el, state) {
+            const fieldAPI = $el.adaptTo('foundation-field');
+
             $el.attr('disabled', state ? 'true' : null);
             $el.closest(FIELD_WRAPPER).attr('disabled', state ? 'true' : null);
             if (!state) {
                 ns.ElementAccessors.clearValidity($el);
+            }
+
+            //disable field's inner input
+            if(fieldAPI && fieldAPI.setDisabled) {
+                fieldAPI.setDisabled(state);
             }
         }
     };
