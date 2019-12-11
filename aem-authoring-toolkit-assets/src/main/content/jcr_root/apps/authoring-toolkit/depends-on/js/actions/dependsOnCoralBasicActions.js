@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.0.0
+ * @version 1.3.0
  *
  * DependsOn Coral 3 Basic Actions
  *
@@ -59,6 +59,14 @@
         // Update label according to state
         ns.ElementAccessors.setLabelRequired(this.$el, state);
         ns.ElementAccessors.setRequired(this.$el, state);
+    });
+
+    /**
+     * Change disable marker of the field
+     * query type: boolean
+     * */
+    ns.ActionRegistry.register('disabled', function setDisabled(state) {
+        ns.ElementAccessors.setDisabled(this.$el, state);
     });
 
     /**

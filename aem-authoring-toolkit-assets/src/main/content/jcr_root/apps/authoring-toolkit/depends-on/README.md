@@ -2,7 +2,7 @@
 
 Author _Alexey Stsefanovich (ala'n)_
 
-Version _1.2.0_
+Version _1.3.0_
  
 DependsOn Plugin is a clientlib that executes defined action on dependent fields.
  
@@ -52,6 +52,7 @@ Built-in plugin actions are:
  * `set-if-blank` - set the query result as field's value only if the current value is blank
  * `required` - set the required marker of the field from the query result.
  * `validate` - set the validation state of the field from the query result.
+ * `disabled` - set the field's disabled state from the query result.
 
 If the action is not specified then `visibility` is used by default.
 
@@ -101,6 +102,13 @@ Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
     visibility: function ($el, state) {
         $el.attr('hidden', state ? null : 'true');
         $el.closest('.coral-Form-fieldwrapper').attr('hidden', state ? null : 'true');
+        if (!state) {
+            ns.ElementAccessors.clearValidity($el);
+        }
+    },
+    disabled: function ($el, state) {
+        $el.attr('disabled', state ? 'true' : null);
+        $el.closest('.coral-Form-fieldwrapper').attr('disabled', state ? 'true' : null);
         if (!state) {
             ns.ElementAccessors.clearValidity($el);
         }
