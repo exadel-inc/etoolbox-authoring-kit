@@ -1,5 +1,5 @@
 /**
- * @author Alexey Stsefanovich (ala'n)
+ * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
  * @version 1.3.0
  *
  * Coral 3 RTE accessor
@@ -37,6 +37,8 @@
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($rteContainer, val);
         },
         disabled: function ($el, val) {
+            ns.ElementAccessors.DEFAULT_ACCESSOR.disabled($el, val);
+
             const rteInstance = $el.data(RTE_DATA_INSTANCE);
 
             //disable rte editing

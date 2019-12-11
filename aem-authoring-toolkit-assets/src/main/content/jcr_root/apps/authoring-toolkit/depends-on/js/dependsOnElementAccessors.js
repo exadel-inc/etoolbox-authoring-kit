@@ -1,5 +1,5 @@
 /**
- * @author Alexey Stsefanovich (ala'n)
+ * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
  * @version 1.3.0
  *
  * DependsOn ElementAccessors Registry
@@ -33,17 +33,17 @@
             }
         },
         disabled: function ($el, state) {
-            const fieldAPI = $el.adaptTo('foundation-field');
-
             $el.attr('disabled', state ? 'true' : null);
             $el.closest(FIELD_WRAPPER).attr('disabled', state ? 'true' : null);
-            if (!state) {
-                ns.ElementAccessors.clearValidity($el);
-            }
 
-            //disable field's inner input
+            const fieldAPI = $el.adaptTo('foundation-field');
+            //try disable field by foundation api
             if(fieldAPI && fieldAPI.setDisabled) {
                 fieldAPI.setDisabled(state);
+            }
+
+            if (!state) {
+                ns.ElementAccessors.clearValidity($el);
             }
         }
     };

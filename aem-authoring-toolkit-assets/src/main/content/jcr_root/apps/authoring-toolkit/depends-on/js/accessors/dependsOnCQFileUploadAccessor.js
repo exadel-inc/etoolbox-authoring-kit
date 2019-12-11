@@ -1,5 +1,5 @@
 /**
- * @author Alexey Stsefanovich (ala'n)
+ * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
  * @version 1.3.0
  *
  * CQ Coral3 based FileUpload accessor
@@ -22,7 +22,7 @@
             ns.ElementAccessors.updateValidity($el, true);
         },
         disabled: function ($el, val) {
-            $el.attr('disabled', val ? 'true' : null);
+            ns.ElementAccessors.DEFAULT_ACCESSOR.disabled($el, val);
 
             $el.find(':input, button').each(function () {
                     this.disabled = val;
