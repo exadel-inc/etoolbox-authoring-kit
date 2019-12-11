@@ -1,18 +1,7 @@
-@light-gray = #f5f5f5;
-
 section[data-dependson-validate],
 coral-panel[data-dependson-validate]{
   &.dependsOnValidate-invalid {
     outline: dashed red 1px;
     outline-offset: 7px;
   }
-}
-
-/* disabled rte textarea style */
-[data-cq-richtext-input][disabled] ~ .cq-RichText-editable {
-  margin-top: 1rem;
-  background-color: @light-gray;
-  opacity: .6;
-  -webkit-filter: grayscale(100%);
-  filter: grayscale(100%);
 }
