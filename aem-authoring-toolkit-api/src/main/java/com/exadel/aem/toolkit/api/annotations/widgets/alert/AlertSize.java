@@ -11,31 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets.common;
-
-import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
+package com.exadel.aem.toolkit.api.annotations.widgets.alert;
 
 /**
- * Contains possible values of {@link FileUpload#iconSize()} property and similarly formatted properties of other TouchUI dialog components
+ * Contains possible values of {@link Alert#size()} property and similarly formatted properties of other TouchUI dialog components
  */
 @SuppressWarnings("unused")
-public enum IconSize {
-    EXTRA_SMALL {
-        @Override
-        public String toString() {
-            return "XS";
-        }
-    },
+public enum AlertSize {
     SMALL {
         @Override
         public String toString() {
             return "S";
-        }
-    },
-    MEDIUM {
-        @Override
-        public String toString() {
-            return "M";
         }
     },
     LARGE {

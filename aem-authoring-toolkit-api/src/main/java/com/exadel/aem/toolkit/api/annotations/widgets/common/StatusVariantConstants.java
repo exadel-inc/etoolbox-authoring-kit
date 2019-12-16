@@ -1,4 +1,4 @@
-package com.exadel.aem.toolkit.api.annotations.widgets.select;
+package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 @SuppressWarnings("unused")
 public class StatusVariantConstants {

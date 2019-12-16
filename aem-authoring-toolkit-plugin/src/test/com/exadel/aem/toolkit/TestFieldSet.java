@@ -5,7 +5,7 @@ import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.api.annotations.widgets.select.StatusVariantConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
 
 @Dialog(
         name = "test-component",
