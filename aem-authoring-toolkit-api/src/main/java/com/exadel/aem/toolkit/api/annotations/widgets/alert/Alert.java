@@ -15,7 +15,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.alert;
 
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.*;
-import com.exadel.aem.toolkit.api.annotations.widgets.select.StatusVariantConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
