@@ -2,7 +2,7 @@
 
 Author _Alexey Stsefanovich (ala'n)_
 
-Version _1.3.0_
+Version _1.3.1_
  
 DependsOn Plugin is a clientlib that executes defined action on dependent fields.
  
