@@ -1,6 +1,18 @@
 package com.exadel.aem.toolkit.core.maven;
 
-import com.exadel.aem.toolkit.*;
+import com.exadel.aem.toolkit.TestAlert;
+import com.exadel.aem.toolkit.TestAttributes;
+import com.exadel.aem.toolkit.TestCustomAnnotations;
+import com.exadel.aem.toolkit.TestDatePicker;
+import com.exadel.aem.toolkit.TestEditConfig;
+import com.exadel.aem.toolkit.TestFieldSet;
+import com.exadel.aem.toolkit.TestFileUpload;
+import com.exadel.aem.toolkit.TestMultiField;
+import com.exadel.aem.toolkit.TestNestedCheckboxList;
+import com.exadel.aem.toolkit.TestProperties;
+import com.exadel.aem.toolkit.TestRadioGroup;
+import com.exadel.aem.toolkit.TestSelect;
+import com.exadel.aem.toolkit.TestTabs;
 import org.junit.Test;
 
 public class WidgetsTest extends ComponentTestBase {
