@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 import org.w3c.dom.Element;
-
+import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
@@ -76,7 +76,8 @@ public enum DialogComponent {
     RICH_TEXT_EDITOR(RichTextEditor.class, new RichTextEditorHandler()),
     HIDDEN(Hidden.class),
     AUTOCOMPLETE(Autocomplete.class, new AutocompleteHandler()),
-    PASSWORD(Password.class, new PasswordHandler());
+    PASSWORD(Password.class, new PasswordHandler()),
+    ALERT(Alert.class);
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";
 
