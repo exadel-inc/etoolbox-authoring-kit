@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.0.0
+ * @version 2.0.0
  *
  * DependsOn Reference Registry
  * - hold Reference list
@@ -50,7 +50,7 @@
             try {
                 const ids = ReferenceRegistry.keys;
                 const args = ids.join(',');
-                const values = ids.map((id) => valueMap[id].getCachedValue());
+                const values = ids.map((id) => valueMap[id]);
 
                 const exec = new Function(args, 'return ' + query + ';'); //NOSONAR: not a javascript:S3523 case, real evaluation should be done
                 return exec.apply(context || null, values);
@@ -88,7 +88,8 @@
         static _processQuery(query, $root) {
             return query.replace(REFERENCE_REGEXP, (q, id, selWrapper, sel) => {
                 const $el = ReferenceRegistry.findBaseElement($root, sel).find('[data-dependsonref="' + id + '"]');
-                return ReferenceRegistry.registerElement($el).id;
+                const ref = ReferenceRegistry.registerElement($el).id;
+                return `${ref}.value`;
             });
         }
 

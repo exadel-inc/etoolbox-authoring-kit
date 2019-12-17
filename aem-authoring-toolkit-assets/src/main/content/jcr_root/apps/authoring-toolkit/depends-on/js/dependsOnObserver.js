@@ -1,8 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.1.0
- *
- * DependsOn plugin entry point
+ * @version 2.0.0
  *
  * Initialize DependsOnObserver - instance that linked with the target element.
  * DependsOnObserver compile query using DependsOnRegistry and apply defined acton to the target.
@@ -31,6 +29,14 @@
      * Initiate references registration
      * */
     class DependsOnObserver {
+
+        /**
+         * Shortcut to initialize observer
+         * */
+        static init($el) {
+            new DependsOnObserver($el);
+        }
+
         constructor($el) {
             if ($el.data('dependsonobserver')) {
                 return $el.data('dependsonobserver');
@@ -84,26 +90,4 @@
     }
 
     ns.DependsOnObserver = DependsOnObserver;
-
-    // ----
-    // Find and init plugin observers
-    ns.initialize = function () {
-        $('[data-dependson]').each(function () {
-            Coral.commons.ready($(this), function ($el) {
-                new ns.DependsOnObserver($el);
-            });
-        });
-        // Initiate DependsOn GC if reinitialization requested
-        setTimeout(() => ns.ReferenceRegistry.cleanDetachedRefs());
-    };
-    $(document).on('foundation-contentloaded', ns.initialize);
-
-    // ----
-    // Validation control: exclude element and its child from validation in hidden state.
-    $(window).adaptTo('foundation-registry').register('foundation.validation.selector', {
-        exclusion: '[data-dependson][hidden], [data-dependson-controllable][hidden]'
-    });
-    $(window).adaptTo('foundation-registry').register('foundation.validation.selector', {
-        exclusion: '[data-dependson][hidden] *, [data-dependson-controllable][hidden] *'
-    });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.0.0
+ * @version 2.0.0
  *
  * DependsOn plugin Element Observable Reference
  * @extends ObservedReference
@@ -64,9 +64,5 @@
         };
     }
     ns.ElementReference = ElementReference;
-
-    $(document)
-        .off('change.dependsOn').on('change.dependsOn', '[data-dependsonref]', ElementReference.handleChange)
-        .off('selected.dependsOn').on('selected.dependsOn', '[data-dependsonref]', ElementReference.handleChange);
 
 })(document, Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
