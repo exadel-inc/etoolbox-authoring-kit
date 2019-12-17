@@ -31,11 +31,11 @@
          * Evaluate query
          * */
         static evaluateQuery(query, context) {
-            try {
-                const ids = ns.ReferenceRegistry.ids;
-                const args = ids.join(',');
-                const refs = ns.ReferenceRegistry.refs;
+            const ids = ns.ReferenceRegistry.ids;
+            const args = ids.join(',');
+            const refs = ns.ReferenceRegistry.refs;
 
+            try {
                 const exec = new Function(args, 'return ' + query + ';'); //NOSONAR: not a javascript:S3523 case, real evaluation should be done
                 return exec.apply(context || null, refs);
             } catch (e) {
