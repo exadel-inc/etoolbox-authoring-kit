@@ -19,7 +19,7 @@
         if (typeof a !== typeof b) return false;
         if (a !== a && b !== b) return true; // Both are NaNs
         if (Array.isArray(a) && Array.isArray(b)) {
-            return a.length === b.length && a.every((val, i) => ObservedReference.isEqual(val, b[i]));
+            return a.length === b.length && a.every((val, i) => isEqual(val, b[i]));
         }
         return false;
     };

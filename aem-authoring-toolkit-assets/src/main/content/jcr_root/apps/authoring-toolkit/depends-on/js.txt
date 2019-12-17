@@ -3,8 +3,9 @@ js/dependsOnElementAccessors.js
 js/references/dependsOnObservedReference.js
 js/references/dependsOnElementReference.js
 js/references/dependsOnElementReferenceReg.js
+js/references/dependsOnHeavyReference.js
 
-# Core Registries
+# Core
 js/dependsOnActionRegistry.js
 js/dependsOnQueryProcessor.js
 js/dependsOnObserver.js

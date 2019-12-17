@@ -9,33 +9,18 @@
     'use strict';
 
     const $document = $(document);
-    const REFERENCE_REGEXP = /@(\w+)([\s]*\(([^)]+)\))?/g;
+    const REFERENCE_REGEXP = /@(@)?(\w+)([\s]*\(([^)]+)\))?/g;
 
     class QueryProcessor {
         static get REFERENCE_REGEXP() { return REFERENCE_REGEXP; }
 
         /**
-         * Subscribe callback cb to the references used in the parsed query
-         * */
-        static subscribeQuery(query, cb) {
-            QueryProcessor.getReferences(query).map(ns.ReferenceRegistry.getById).forEach((ref) => {
-                if (ref) {
-                    ref.subscribe(cb);
-                } else {
-                    console.error('[DependsOn] Reference ' + id + ' not found');
-                }
-            });
-        }
-
-        /**
          * Evaluate query
          * */
         static evaluateQuery(query, context) {
-            const ids = ns.ReferenceRegistry.ids;
-            const args = ids.join(',');
-            const refs = ns.ReferenceRegistry.refs;
-
+            const refs = [].concat(ns.ReferenceRegistry.refs).concat(ns.HeavyReferenceRegistry.refs);
             try {
+                const args = refs.map((ref) => ref.id).join(',');
                 const exec = new Function(args, 'return ' + query + ';'); //NOSONAR: not a javascript:S3523 case, real evaluation should be done
                 return exec.apply(context || null, refs);
             } catch (e) {
@@ -50,20 +35,22 @@
          * {Function} [cb]
          * */
         static registerQuery(query, $root, changeHandlerCB) {
-            const processedQuery = QueryProcessor._processQuery(query, $root);
-            QueryProcessor.subscribeQuery(processedQuery, changeHandlerCB);
-            return processedQuery;
+            return query.replace(REFERENCE_REGEXP, (q, heavy, id, selWrapper, sel) => {
+                const $context = QueryProcessor.findBaseElement($root, sel);
+                const reference = QueryProcessor.getReference(id, $context, !!heavy);
+
+                reference.subscribe(changeHandlerCB);
+                return `${reference.id}.value`;
+            });
         }
 
-        /**
-         * @private
-         * */
-        static _processQuery(query, $root) {
-            return query.replace(REFERENCE_REGEXP, (q, id, selWrapper, sel) => {
-                const $el = QueryProcessor.findBaseElement($root, sel).find('[data-dependsonref="' + id + '"]');
-                const ref = ns.ReferenceRegistry.registerElement($el).id;
-                return `${ref}.value`;
-            });
+        static getReference(id, $context, isHeavy) {
+            if (isHeavy) {
+                return  ns.HeavyReferenceRegistry.registerElement(id, $context);
+            } else {
+                const $el = $context.find('[data-dependsonref="' + id + '"]');
+                return  ns.ReferenceRegistry.registerElement($el);
+            }
         }
 
         static findBaseElement($root, sel) {
@@ -75,16 +62,6 @@
             } else {
                 return $root.closest(sel.trim());
             }
-        }
-
-        static getReferences(query) {
-            const regexp = /(\$\w+)/g;
-            const matchesMap = {};
-            let match;
-            while ((match = regexp.exec(query))) {
-                matchesMap[match[1]] = true;
-            }
-            return Object.keys(matchesMap);
         }
     }
     ns.QueryProcessor = QueryProcessor;
