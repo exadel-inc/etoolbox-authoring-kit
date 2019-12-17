@@ -53,7 +53,7 @@
             }
 
             // Delegate query registration to reference registry
-            this.queries = this.originalQueries.map((query, index) => ns.ReferenceRegistry.registerQuery(
+            this.queries = this.originalQueries.map((query, index) => ns.QueryProcessor.registerQuery(
                 query,
                 this.$el,
                 this.update.bind(this, index)
@@ -71,7 +71,7 @@
          * Request evaluation of query and set state accordingly.
          * */
         update(index) {
-            const queryResult = ns.ReferenceRegistry.evaluateQuery(this.queries[index], this.$el);
+            const queryResult = ns.QueryProcessor.evaluateQuery(this.queries[index], this.$el);
             this.setState(this.actions[index], queryResult);
         }
         /**

@@ -26,7 +26,7 @@
 
     class ObservedReference {
         constructor(id) {
-            this.id = '$' + id;
+            this.id = id;
             this._listeners = [];
         }
 

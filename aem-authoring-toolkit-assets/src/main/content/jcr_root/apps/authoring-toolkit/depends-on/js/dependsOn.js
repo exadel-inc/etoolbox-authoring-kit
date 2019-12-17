@@ -30,8 +30,8 @@
     };
     $(document).on('foundation-contentloaded', ns.initialize);
     $(document)
-        .off('change.dependsOn').on('change.dependsOn', '[data-dependsonref]', ns.ElementReference.handleChange)
-        .off('selected.dependsOn').on('selected.dependsOn', '[data-dependsonref]', ns.ElementReference.handleChange);
+        .off('change.dependsOn').on('change.dependsOn', '[data-dependsonref]', ns.ReferenceRegistry.handleChange)
+        .off('selected.dependsOn').on('selected.dependsOn', '[data-dependsonref]', ns.ReferenceRegistry.handleChange);
 
     // ----
     // Validation control: exclude element and its child from validation in hidden state.
