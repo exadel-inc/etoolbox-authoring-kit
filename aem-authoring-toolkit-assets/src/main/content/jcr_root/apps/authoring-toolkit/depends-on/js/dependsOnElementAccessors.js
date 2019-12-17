@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 1.3.1
+ * @version 1.3.0
  *
  * DependsOn ElementAccessors Registry
  * */
@@ -17,7 +17,7 @@
             return $el.val() || '';
         },
         set: function ($el, value) {
-            $el.val(value).trigger('change');
+            $el.val(value);
         },
         required: function ($el, val) {
             $el.attr('aria-required', val ? 'true' : null);
