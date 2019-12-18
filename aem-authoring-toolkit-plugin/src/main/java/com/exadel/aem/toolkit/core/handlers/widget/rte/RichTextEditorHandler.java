@@ -176,7 +176,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
      * @param merger {@code BinaryOperator<String>} instance
      */
     private void appendElement(Element parent, Element child, BinaryOperator<String> merger) {
-        getXmlUtil().appendNonemptyChild(parent, child, merger);
+        getXmlUtil().appendNonemptyChildElement(parent, child, merger);
     }
 
     /**
@@ -311,7 +311,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
         }
         Element nestedStylesNode = getXmlUtil().createNodeElement(DialogConstants.NN_STYLES, style -> ((Style)style).cssName(), rteAnnotation.styles());
         nestedStylesNode.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION);
-        getXmlUtil().appendNonemptyChild(stylesElement, nestedStylesNode, PluginXmlUtility::mergeStringAttributes);
+        getXmlUtil().appendNonemptyChildElement(stylesElement, nestedStylesNode, PluginXmlUtility::mergeStringAttributes);
         getXmlUtil().setAttribute(stylesElement, DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION);
     }
 
@@ -345,7 +345,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
         getXmlUtil().setAttribute(htmlPasteRulesNode, DialogConstants.PN_ALLOW_BLOCK_TAGS, Arrays.asList(rules.allowedBlockTags()));
         getXmlUtil().setAttribute(htmlPasteRulesNode, DialogConstants.PN_FALLBACK_BLOCK_TAG, rules.fallbackBlockTag());
 
-        getXmlUtil().appendNonemptyChild(elementSupplier, htmlPasteRulesNode, RichTextEditorHandler::mergeFeatureAttributes);
+        getXmlUtil().appendNonemptyChildElement(elementSupplier, htmlPasteRulesNode, RichTextEditorHandler::mergeFeatureAttributes);
         getXmlUtil().setAttribute(elementSupplier, DialogConstants.PN_DEFAULT_PASTE_MODE, rteAnnotation);
     }
 

@@ -2,23 +2,23 @@ package com.exadel.aem.toolkit.core.maven;
 
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.TestDependsOnRef;
-import com.exadel.aem.toolkit.TestDependsOnRequired;
-import com.exadel.aem.toolkit.TestDependsOnSetFragmentReference;
+import com.exadel.aem.toolkit.test.dependson.DependsOnRefAnnotation;
+import com.exadel.aem.toolkit.test.dependson.DependsOnRequiredAnnotation;
+import com.exadel.aem.toolkit.test.dependson.DependsOnSetFragmentReference;
 
 public class DependsOnTest extends ComponentTestBase {
     @Test
     public void testDependsOnRequired() {
-        testComponent(TestDependsOnRequired.class);
+        testComponent(DependsOnRequiredAnnotation.class);
     }
 
     @Test
     public void testDependsOnSetFragmentReference() {
-        testComponent(TestDependsOnSetFragmentReference.class);
+        testComponent(DependsOnSetFragmentReference.class);
     }
 
     @Test
     public void testDependsOnRef() {
-        testComponent(TestDependsOnRef.class);
+        testComponent(DependsOnRefAnnotation.class);
     }
 }

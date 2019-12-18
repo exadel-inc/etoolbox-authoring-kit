@@ -20,6 +20,7 @@ import java.util.function.BiConsumer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.w3c.dom.Element;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
@@ -39,11 +40,16 @@ public class RadioGroupHandler implements Handler, BiConsumer<Element, Field> {
         RadioGroup radioGroup = field.getDeclaredAnnotation(RadioGroup.class);
         if(ArrayUtils.isNotEmpty(radioGroup.buttons())){
             Element items = (Element) element.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
-            Arrays.stream(radioGroup.buttons()).forEach(button -> {
-                Element item = (Element) items.appendChild(getXmlUtil().createNodeElement(getXmlUtil().getUniqueName(button.value(), items)));
-                getXmlUtil().mapProperties(item, button);
-            });
+            Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));
         }
         getXmlUtil().appendAcsCommonsList(element, radioGroup.acsListPath(), radioGroup.acsListResourceType());
+    }
+
+    private void renderButton(RadioButton buttonInstance, Element parentElement) {
+        Element xmlItem = getXmlUtil().createNodeElement(getXmlUtil().getUniqueName(buttonInstance.value(),
+                DialogConstants.NN_ITEM,
+                parentElement));
+        parentElement.appendChild(xmlItem);
+        getXmlUtil().mapProperties(xmlItem, buttonInstance);
     }
 }
