@@ -198,7 +198,7 @@ public interface XmlUtility {
      * @param child Element to serve as child
      * @return Appended child
      */
-    Element appendNonemptyChild(Element parent, Element child);
+    Element appendNonemptyChildElement(Element parent, Element child);
 
     /**
      * Retrieves child {@code Element} node of the specified node by its name / relative path. Same as {@link XmlUtility#getOrAddChildElement(Element, String)},

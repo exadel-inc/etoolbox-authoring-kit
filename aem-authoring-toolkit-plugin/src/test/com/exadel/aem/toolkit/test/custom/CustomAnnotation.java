@@ -20,10 +20,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @DialogWidgetAnnotation(source = "testCustomAnnotation")
+@ResourceType("test-components/form/customfield")
 @SuppressWarnings("unused")
 public @interface CustomAnnotation {
     String customField() default "Custom annotation's field!";

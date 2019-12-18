@@ -46,7 +46,7 @@ public class MultiFieldHandler implements Handler, BiConsumer<Element, Field> {
         element.removeAttribute(DialogConstants.PN_NAME);
         Class<?> fieldClass = multiField.field();
         List<Field> fieldClassFields = Arrays.stream(fieldClass.getDeclaredFields())
-            .filter(DialogComponent::isPresent).collect(Collectors.toList());
+            .filter(DialogWidgets::isPresent).collect(Collectors.toList());
         if(fieldClassFields.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
                     EMPTY_CLASS_EXCEPTION_MESSAGE + fieldClass.getName()
@@ -67,7 +67,10 @@ public class MultiFieldHandler implements Handler, BiConsumer<Element, Field> {
             getXmlUtil().setNamePrefix(restoredNamePrefix);
             return;
         }
-        DialogComponent.fromField(fieldClassFields.get(0))
-                .ifPresent(comp -> comp.append(element, fieldClassFields.get(0), DialogConstants.NN_FIELD));
+        DialogWidget widget = DialogWidgets.fromField(fieldClassFields.get(0));
+        if (widget == null) {
+            return;
+        }
+        widget.append(element, fieldClassFields.get(0), DialogConstants.NN_FIELD);
     }
 }
