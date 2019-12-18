@@ -51,6 +51,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
         layout = DialogLayout.TABS,
         disableTargeting = true,
         resourceSuperType = "TestComponentSuperType",
+        extraClientlibs = "cq.common.wcm",
         tabs = {
                 @Tab(title = "First tab"),
                 @Tab(title = "Second tab"),
@@ -95,7 +96,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
         }
 )
 @SuppressWarnings("unused")
-public class FeedVideoImage {
+public class ComplexComponent2 {
     private static final String TAB_TITLE_FEED = "Feed";
 
     private static final String PRIMARY_ELEMENT_LABEL = "Primary Element";

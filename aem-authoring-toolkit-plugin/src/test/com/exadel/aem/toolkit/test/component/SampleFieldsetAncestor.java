@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 
 @SuppressWarnings("unused")
-class SampleDialog {
+class SampleFieldsetAncestor {
     private static final String FIELD_TITLE = "title";
     private static final String FIELD_DESCRIPTION = "description";
 

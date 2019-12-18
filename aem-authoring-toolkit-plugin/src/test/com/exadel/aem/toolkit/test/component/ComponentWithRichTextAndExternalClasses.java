@@ -186,14 +186,14 @@ public class ComponentWithRichTextAndExternalClasses {
             name = FIELD_LINKS,
             label = LABEL_LINKS
     )
-    @MultiField(field = com.exadel.aem.toolkit.test.component.SecondExternalClass.class)
+    @MultiField(field = SampleMultifieldBase.class)
     @PlaceOnTab(TAB_LINKS)
-    private List<SecondExternalClass> links;
+    private List<SampleMultifieldBase> links;
 
     @FieldSet(namePrefix = PREFIX_FIRST)
     @PlaceOnTab(TAB_FEATURED_CARD_1)
     @Attribute(clas = "first-card", data = {@Data(name = "data-name", value = "data-value")})
-    private FirstExternalClass firstCard;
+    private SampleFieldsetBase1 firstCard;
 
     @DialogField(
             name = FIELD_ENABLE_SECOND_CARD,
@@ -207,5 +207,5 @@ public class ComponentWithRichTextAndExternalClasses {
     @FieldSet(namePrefix = PREFIX_SECOND)
     @Attribute(data = {@Data(name = "second-data-name", value = "second-data-value")})
     @PlaceOnTab(TAB_FEATURED_CARD_2)
-    private FirstExternalClass secondCard;
+    private SampleFieldsetBase1 secondCard;
 }

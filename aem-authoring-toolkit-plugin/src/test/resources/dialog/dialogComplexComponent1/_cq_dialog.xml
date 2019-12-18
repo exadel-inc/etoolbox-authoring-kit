@@ -3,6 +3,7 @@
     jcr:primaryType="nt:unstructured"
     jcr:title="Component"
     sling:resourceType="cq/gui/components/authoring/dialog"
+    extraClientlibs="[cq.common.wcm,core.wcm.page.properties,cq.wcm.msm.properties]"
     height="{Double}480.0"
     width="{Double}800.0">
     <content

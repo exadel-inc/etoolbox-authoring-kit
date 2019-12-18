@@ -18,7 +18,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 @SuppressWarnings("unused")
-class SampleFieldSet {
+class SampleFieldsetBase3 {
     private static final String FIELD =  "Content";
     private static final String LABEL = "Content label";
     private static final String DESCRIPTION = "Content description";
