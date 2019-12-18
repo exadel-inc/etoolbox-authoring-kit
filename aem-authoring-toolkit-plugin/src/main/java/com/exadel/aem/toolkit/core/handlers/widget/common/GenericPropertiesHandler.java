@@ -20,9 +20,10 @@ import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
-import com.exadel.aem.toolkit.core.handlers.widget.DialogComponent;
+import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
 
 /**
  * Handler for storing {@link ResourceType} and like properties to a Granite UI widget XML node
@@ -37,11 +38,11 @@ public class GenericPropertiesHandler implements BiConsumer<Element, Field> {
      */
     @Override
     public void accept(Element element, Field field) {
-        DialogComponent dialogComponent = DialogComponent.fromField(field).orElse(null);
-        if (dialogComponent == null || dialogComponent.getAnnotationClass() == null) {
+        DialogWidget dialogWidget = DialogWidgets.fromField(field);
+        if (dialogWidget == null || dialogWidget.getAnnotationClass() == null) {
             return;
         }
-        element.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, this.getResourceType(dialogComponent.getAnnotationClass()));
+        element.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, getResourceType(dialogWidget.getAnnotationClass()));
     }
 
     /**
