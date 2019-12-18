@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.3.0
+ * @version 1.3.1
  *
  * DependsOn Coral 3 Basic Actions
  *
@@ -75,6 +75,7 @@
      * */
     ns.ActionRegistry.register('set', function setValue(value) {
         ns.ElementAccessors.setValue(this.$el, value);
+        this.$el.trigger('change');
     });
 
     /**
@@ -85,6 +86,7 @@
         const current = ns.ElementAccessors.getValue(this.$el);
         if (current === '' || current === null || current === undefined) {
             ns.ElementAccessors.setValue(this.$el, value);
+            this.$el.trigger('change');
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

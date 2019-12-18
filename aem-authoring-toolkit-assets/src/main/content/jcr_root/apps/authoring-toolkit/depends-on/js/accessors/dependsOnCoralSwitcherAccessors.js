@@ -13,7 +13,9 @@
             return $el[0].checked;
         },
         set: function ($el, val) {
-            $el[0].checked = val;
+            $el.each(function () {
+                this.checked = val;
+            });
         }
     });
 
