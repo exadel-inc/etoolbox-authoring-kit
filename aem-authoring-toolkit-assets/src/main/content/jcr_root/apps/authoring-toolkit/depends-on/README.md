@@ -120,11 +120,20 @@ Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
 
 Query is a plain JavaScript condition or expression. 
 Any global and native JavaScript object can be used inside of Query.
-We can also use dynamic references to access other fields' values.
-To define a reference we should specify referenced field name in dependsOnRef attribute on it.
-Then it's accessible in the query by this name via @ symbol. 
+You can also use dynamic references to access other fields' values.
+In order to define a reference, referenced field's name should be specified in dependsOnRef attribute.
+Then reference will be accessible in the query using @ or @@ symbol and reference name. 
 
 ##### Query Reference Syntax
+
+There are two versions of references available in the Queries:
+ - Single reference:  `@reference`. Single reference starts from the @ symbol in the query, it allows to access a defined field value.
+Single reference should reference existing field and will not be reattached on dynamic DOM change.
+ - Multiple reference: `@@reference`. Starts from double @ symbols. Allows to access a group of field values marked by the same reference name. 
+ Multiple reference always returns array in the query.
+ 
+Note: multiple reference triggers query update on any group update: changing some of group fields value, adding or removing referenced field. 
+So usage of multiple reference can slow down queries performance.
 
 Area to find referenced field can be narrowed down by providing the Scope. 
 Scope is a CSS Selector of the closest container element. 

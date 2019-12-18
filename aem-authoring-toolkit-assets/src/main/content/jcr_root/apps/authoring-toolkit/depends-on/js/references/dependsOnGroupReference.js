@@ -35,6 +35,7 @@
          * Update child references list
          * */
         updateRefList() {
+            this.refs.forEach((ref) => ref.unsubscribe(this.onChange));
             this.refs = ns.ElementReferenceRegistry.getAllByRefName(this.name, this.$context);
             this.refs.forEach((ref) => ref.subscribe(this.onChange));
         }

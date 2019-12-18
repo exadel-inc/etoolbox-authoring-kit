@@ -13,30 +13,41 @@
     const $document = $(document);
 
     // Find and init element references
-    ns.initRefs = function () {
-        $('[data-dependsonref]').each(function () {
+    ns.initRefs = function (container) {
+        $('[data-dependsonref]', container).each(function () {
             ns.ElementReferenceRegistry.registerElement($(this));
         });
         ns.GroupReferenceRegistry.updateGroupReferences();
     };
     // Find and init plugin observers
-    ns.initObservers = function () {
-        $('[data-dependson]').each(function () {
+    ns.initObservers = function (container) {
+        $('[data-dependson]', container).each(function () {
             Coral.commons.ready($(this), ($el) => ns.DependsOnObserver.init($el));
         });
     };
 
-    ns.initialize = function () {
-        ns.initRefs();
-        ns.initObservers();
+    ns.initialize = function (e) {
+        const container = e && e.target || document;
+
+        ns.initRefs(container);
+        ns.initObservers(container);
 
         // Initiate DependsOn GC if reinitialization requested
         setTimeout(() => ns.ElementReferenceRegistry.cleanDetachedRefs());
     };
-    $document.on('foundation-contentloaded', ns.initialize);
+
+    // Track new component initialization
+    $document.off('foundation-contentloaded.dependsOn').on('foundation-contentloaded.dependsOn', ns.initialize);
+    // Track reference field changes
     $document
         .off('change.dependsOn').on('change.dependsOn', '[data-dependsonref]', ns.ElementReferenceRegistry.handleChange)
         .off('selected.dependsOn').on('selected.dependsOn', '[data-dependsonref]', ns.ElementReferenceRegistry.handleChange);
+    // Track collection change to update dynamic references
+    $document
+        .off('coral-collection:remove.dependsOn').on('coral-collection:remove.dependsOn', 'coral-multifield', () => {
+            ns.ElementReferenceRegistry.cleanDetachedRefs();
+            ns.GroupReferenceRegistry.updateGroupReferences();
+        });
 
     // ----
     // Validation control: exclude element and its child from validation in hidden state.

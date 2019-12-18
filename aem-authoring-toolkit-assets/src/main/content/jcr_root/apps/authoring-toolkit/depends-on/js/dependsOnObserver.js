@@ -71,6 +71,10 @@
          * Request evaluation of query and set state accordingly.
          * */
         update(index) {
+            if (!this.$el || this.$el.closest('html').length === 0) {
+                // Remove if detached
+                return true;
+            }
             const queryResult = ns.QueryProcessor.evaluateQuery(this.queries[index], this.$el);
             this.setState(this.actions[index], queryResult);
         }

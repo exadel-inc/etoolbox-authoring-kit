@@ -31,10 +31,20 @@
         }
 
         /**
+         * Remove observer
+         * */
+        unsubscribe(listener) {
+            let index;
+            if (typeof listener === 'function' && (index = this._listeners.indexOf(listener)) !== -1) {
+                this._listeners.splice(index, 1);
+            }
+        }
+
+        /**
          * Emit change
          * */
         emit() {
-            this._listeners.forEach((cb) => cb.call(null, this));
+            this._listeners = this._listeners.filter((cb) => !cb.call(null, this));
         }
 
         // noinspection JSMethodCanBeStatic
