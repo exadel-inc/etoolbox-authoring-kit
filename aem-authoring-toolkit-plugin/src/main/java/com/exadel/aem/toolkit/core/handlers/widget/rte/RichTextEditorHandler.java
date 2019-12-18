@@ -165,7 +165,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
      * @return {@code Element} instance representing the appended node
      */
     private Element appendElement(Element parent, Element child) {
-        return getXmlUtil().appendNonemptyChild(parent, child);
+        return getXmlUtil().appendNonemptyChildElement(parent, child);
     }
 
     /**
@@ -187,7 +187,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
      */
     private void appendElement(Element parent, String existingChildName, Element newChild) {
         Element existingChild = getXmlUtil().getChildElement(parent, existingChildName);
-        getXmlUtil().appendNonemptyChild(existingChild, newChild);
+        getXmlUtil().appendNonemptyChildElement(existingChild, newChild);
     }
 
     /**
@@ -294,7 +294,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
         Element charsNode = getXmlUtil().createNodeElement(DialogConstants.NN_CHARS,
                 childNodeNameProvider,
                 rteAnnotation.specialCharacters());
-        getXmlUtil().appendNonemptyChild(charsConfigNode, charsNode);
+        getXmlUtil().appendNonemptyChildElement(charsConfigNode, charsNode);
         return charsConfigNode;
     }
 

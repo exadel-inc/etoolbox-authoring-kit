@@ -182,7 +182,7 @@ public class PluginXmlUtility implements XmlUtility {
     public Element createNodeElement(String name, Function<Annotation, String> childNodeNameProvider, Annotation[] sources) {
         Element newNode = createNodeElement(name);
         Arrays.stream(sources)
-                .forEach(source -> appendNonemptyChild(newNode, createNodeElement(childNodeNameProvider, source)));
+                .forEach(source -> appendNonemptyChildElement(newNode, createNodeElement(childNodeNameProvider, source)));
         return newNode;
     }
 
@@ -398,7 +398,7 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public Element appendNonemptyChild(Element parent, Element child) {
+    public Element appendNonemptyChildElement(Element parent, Element child) {
         if (parent == null || isBlankElement(child)) {
             return null;
         }
