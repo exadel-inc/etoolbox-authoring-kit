@@ -206,7 +206,7 @@ public class Component {
 
 Field text is shown when `selectbox` value is "Show Text"
 
-```
+```java
 public class Component {
     @DependsOnRef(name = "selectbox")
     @DialogField
@@ -228,7 +228,7 @@ public class Component {
 
 Field text is shown when `selectbox` value is "Show Text 1" or "Show Text 2"
 
-```
+```java
 public class Component {
     @DependsOnRef(name = "selectbox")
     @DialogField
@@ -307,7 +307,7 @@ public class Component {
 
 List of items (reused fragments or MultiField), each item should have `field1` if `conditionGlobal` (globally) and `conditionItem` in current item checked.
 
-```
+```java
 public class Component {
     @DialogField
     @DependsOnRef(name = "conditionGlobal")
@@ -373,7 +373,7 @@ public class Component {
 }
 ```
 
-#### 7. Function usages
+#### 7. Query function usage
 
 Global functions are available in the queries. (Note: only pure functions are supported, as query recalculates only on reference change)
 
@@ -413,7 +413,7 @@ public class Component {
     private String field;
 }
 ```
-```
+```javascript
 (function (Granite, $, DependsOn) {
     'use strict';
     Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('customAsyncAction', function (path) {
@@ -422,8 +422,7 @@ public class Component {
              function (data) { return data && data.result; },
              function () { return false; }
          ).then(function (res) {
-             $el.attr('value', res);
-             $el.trigger('change');
+             DependsOn.ElementAccessors.setValue($el, res);
          });
     });
 })(Granite, Granite.$, Granite.DependsOnPlugin);
@@ -450,5 +449,47 @@ public class Component {
     @DialogField
     @TextField
     private String text;
+}
+```
+
+#### 10. Group references
+
+Allow to select 'active' only in one item in multifield
+```java
+public class MultifieldItem {
+    @DependsOnRef(name = "active")
+    @DependsOn(
+            action = DependsOnActions.DISABLED,
+            // @active(coral-multifield-item) will rich to the 'active' checkbox in bounds of coral-multifield-item (the current one)
+            // We disable checkbox if it is not selected but some of checboxes with reference name 'active' is selected
+            query = "!@active(coral-multifield-item) && @@active.some((val) => val)"
+    )
+    @DialogField
+    @Checkbox
+    private boolean active;
+     
+    // ...
+    // other fields
+}
+```
+
+
+One of the way to validate min and max multifield item count (by 2 min and 5 max in the current example)
+```java
+public class Component {
+    
+    @DependsOn(action = DependsOnActions.VALIDATE, query = "@@item(this).length >= 2 && @@item(this).length <= 5")
+    @MultiField(field = Component.Item.class)
+    @FieldSet
+    private List<Item> items;
+ 
+    public static class Item {
+        @DialogField
+        @DependsOnRef(name = "item")
+        @Checkbox
+        private boolean firstItem;
+         
+        // ...
+    }
 }
 ```
