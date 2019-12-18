@@ -6,7 +6,6 @@ public class TestsConstants {
     private TestsConstants() {
     }
     public static final String PATH_TO_EXPECTED_FILES = "src\\test\\resources\\dialog";
-    static final String TESTCASE_PACKAGE = "com.exadel.aem.toolkit";
 
     private static final String API_MODULE_NAME = "aem-authoring-toolkit-api";
     private static final String PLUGIN_MODULE_NAME = "aem-authoring-toolkit-plugin";

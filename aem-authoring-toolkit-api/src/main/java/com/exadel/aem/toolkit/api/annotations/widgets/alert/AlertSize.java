@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.widgets.alert;
 
 /**
- * Contains possible values of {@link Alert#size()} property and similarly formatted properties of other TouchUI dialog components
+ * Contains possible values of {@link Alert#size()} property
  */
 @SuppressWarnings("unused")
 public enum AlertSize {

@@ -2,29 +2,29 @@ package com.exadel.aem.toolkit.core.maven;
 
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.TestComponentWithRichTextAndExternalClasses;
-import com.exadel.aem.toolkit.TestComponentWithTabsAndInnerClass;
-import com.exadel.aem.toolkit.TestFeedVideoImage;
-import com.exadel.aem.toolkit.TestSampleComponent;
+import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
+import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
+import com.exadel.aem.toolkit.test.component.FeedVideoImage;
+import com.exadel.aem.toolkit.test.component.ComplexComponent;
 
 public class DialogsTest extends ComponentTestBase {
     @Test
     public void testComponentWithRichTextAndExternalClasses() {
-        testComponent(TestComponentWithRichTextAndExternalClasses.class);
+        testComponent(ComponentWithRichTextAndExternalClasses.class);
     }
 
     @Test
     public void testDialogWithTabsAndInnerClass() {
-        testComponent(TestComponentWithTabsAndInnerClass.class);
+        testComponent(ComponentWithTabsAndInnerClass.class);
     }
 
     @Test
     public void testFeedVideoImageDialog() {
-        testComponent(TestFeedVideoImage.class);
+        testComponent(FeedVideoImage.class);
     }
 
     @Test
     public void testSampleComponent() {
-        testComponent(TestSampleComponent.class);
+        testComponent(ComplexComponent.class);
     }
 }
