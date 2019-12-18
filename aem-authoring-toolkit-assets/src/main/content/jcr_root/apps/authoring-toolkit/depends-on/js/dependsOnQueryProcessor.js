@@ -18,7 +18,7 @@
          * Evaluate query
          * */
         static evaluateQuery(query, context) {
-            const refs = [].concat(ns.ReferenceRegistry.refs).concat(ns.HeavyReferenceRegistry.refs);
+            const refs = [].concat(ns.ElementReferenceRegistry.refs).concat(ns.GroupReferenceRegistry.refs).concat(ns.ElementAccessors);
             try {
                 const args = refs.map((ref) => ref.id).join(',');
                 const exec = new Function(args, 'return ' + query + ';'); //NOSONAR: not a javascript:S3523 case, real evaluation should be done
@@ -35,24 +35,28 @@
          * {Function} [cb]
          * */
         static registerQuery(query, $root, changeHandlerCB) {
-            return query.replace(REFERENCE_REGEXP, (q, heavy, id, selWrapper, sel) => {
+            return query.replace(REFERENCE_REGEXP, (q, isGroup, name, selWrapper, sel) => {
                 const $context = QueryProcessor.findBaseElement($root, sel);
-                const reference = QueryProcessor.getReference(id, $context, !!heavy);
+                const reference = isGroup ?
+                    ns.GroupReferenceRegistry.register(name, $context) :
+                    ns.ElementReferenceRegistry.register(name, $context);
 
                 reference.subscribe(changeHandlerCB);
                 return `${reference.id}.value`;
             });
         }
 
-        static getReference(id, $context, isHeavy) {
-            if (isHeavy) {
-                return  ns.HeavyReferenceRegistry.registerElement(id, $context);
-            } else {
-                const $el = $context.find('[data-dependsonref="' + id + '"]');
-                return  ns.ReferenceRegistry.registerElement($el);
-            }
-        }
-
+        /**
+         * Find element by provided selector. Use back-forward search:
+         * First part of selector will be used to find closest element
+         * If the second part after '|>' provided will search back element by second part of selector inside of closest parent
+         * founded on the previous state.
+         * If 'this' passed as a sel $root will be returned
+         * If sel is not provided then result will be $(document).
+         *
+         * @param $root {JQuery}
+         * @param sel {string}
+         * */
         static findBaseElement($root, sel) {
             if (!sel) return $document;
             if (sel.trim() === 'this') return $root;

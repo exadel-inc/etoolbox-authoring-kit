@@ -1,9 +1,9 @@
 # Core Handlers
+js/dependsOnUtils.js
 js/dependsOnElementAccessors.js
 js/references/dependsOnObservedReference.js
 js/references/dependsOnElementReference.js
-js/references/dependsOnElementReferenceReg.js
-js/references/dependsOnHeavyReference.js
+js/references/dependsOnGroupReference.js
 
 # Core
 js/dependsOnActionRegistry.js

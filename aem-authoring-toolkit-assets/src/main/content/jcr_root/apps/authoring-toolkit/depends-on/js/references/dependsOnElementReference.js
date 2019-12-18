@@ -2,35 +2,14 @@
  * @author Alexey Stsefanovich (ala'n)
  * @version 2.0.0
  *
- * DependsOn plugin Element Observable Reference
- * @extends ObservedReference
- *
- * Define simple element reverence. Observe form input value change.
+ * DependsOn plugin Elements Reference Registry
+ * Store and mange known elements references
  * */
 (function (document, $, ns) {
     'use strict';
 
     let referenceIdCounter = 0;
-
     class ElementReference extends ns.ObservedReference {
-        /**
-         * Cast field value to the type
-         * */
-        static castToType(val, type) {
-            switch (type.toLowerCase()) {
-                case 'boolean':
-                    return Boolean(val);
-                case 'boolstring':
-                    return String(val) === 'true';
-                case 'number':
-                    return Number(val);
-                case 'string':
-                    return String(val);
-                default:
-                    return val;
-            }
-        }
-
         /**
          * Initialize element observable adapter
          * Only one instance per element can be initialized
@@ -55,7 +34,7 @@
             if (!type) {
                 type = ns.ElementAccessors.getPreferableType(this.$el);
             }
-            return ElementReference.castToType(ns.ElementAccessors.getValue(this.$el), type);
+            return ns.castToType(ns.ElementAccessors.getValue(this.$el), type);
         };
 
         /**
@@ -66,12 +45,72 @@
          * */
         is(name, $context) {
             if (this.name !== name) return false;
-            if ($context) {
-                return !!this.$el.closest($context).length;
-            }
+            if ($context) return !!this.$el.closest($context).length;
             return true;
         }
     }
-    ns.ElementReference = ElementReference;
+
+    const refs = [];
+    class ElementReferenceRegistry {
+        /**
+         * Register {ElementReference}
+         * Returns existing if it is already registered
+         * */
+        static register(name, $context) {
+            return ElementReferenceRegistry.registerElement($context.find('[data-dependsonref="' + name + '"]'));
+        }
+
+        /**
+         * Register {ElementReference}
+         * Returns existing if it is already registered
+         * */
+        static registerElement($el) {
+            const subj = new ElementReference($el);
+            if (refs.indexOf(subj) === -1) refs.push(subj);
+            return subj;
+        }
+
+        /**
+         * Handle events from referenced target
+         * @param event {Event}
+         */
+        static handleChange(event) {
+            const reference = $(event.currentTarget).data('dependsonsubject');
+            if (reference && reference.update) {
+                reference.update();
+            }
+        }
+
+        /**
+         * Returns all known Element References.
+         * @returns {Array<ElementReference>}
+         * */
+        static get refs() { return refs; }
+
+        /**
+         * Get Reference instance by element
+         * @param refName {string}
+         * @param $context {JQuery | HTMLElement | string}
+         * @returns {Array<ElementReference>}
+         * */
+        static getAllByRefName(refName, $context) {
+            return refs.filter((ref) => ref.is(refName, $context));
+        }
+
+        /**
+         * Remove references that out of html from registry
+         * */
+        static cleanDetachedRefs() {
+            for (let i = 0; i < refs.length ; ++i) {
+                const ref = refs[i];
+                // Skip if referencing element is in actual html
+                if (ref.$el.closest('html').length > 0) continue;
+                // Delete reference otherwise
+                ref.clean();
+                refs.splice(i--, 1);
+            }
+        }
+    }
+    ns.ElementReferenceRegistry = ElementReferenceRegistry;
 
 })(document, Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
