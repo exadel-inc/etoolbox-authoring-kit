@@ -38,7 +38,7 @@
         };
 
         /**
-         * Check is the Element Reference accept passed referenced definition
+         * Check is the Element Reference accepts passed referenced definition
          * @param name {string}
          * @param [$context] {jQuery | HTMLElement | string}
          * @returns {boolean}
@@ -54,7 +54,7 @@
     class ElementReferenceRegistry {
         /**
          * Register {ElementReference}
-         * Returns existing if it is already registered
+         * Returns the existing if it is already registered
          * */
         static register(name, $context) {
             return ElementReferenceRegistry.registerElement($context.find('[data-dependsonref="' + name + '"]'));
@@ -98,12 +98,12 @@
         }
 
         /**
-         * Remove references that out of html from registry
+         * Remove references that are out of html from registry
          * */
         static cleanDetachedRefs() {
             for (let i = 0; i < refs.length ; ++i) {
                 const ref = refs[i];
-                // Skip if referencing element is in actual html
+                // Skip if the referencing element is in actual html
                 if (ref.$el.closest('html').length > 0) continue;
                 // Delete reference otherwise
                 ref.clean();

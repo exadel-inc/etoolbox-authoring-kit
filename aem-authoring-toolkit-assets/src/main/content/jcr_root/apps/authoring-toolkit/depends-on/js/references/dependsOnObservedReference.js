@@ -31,7 +31,7 @@
         }
 
         /**
-         * Emmit change
+         * Emit change
          * */
         emit() {
             this._listeners.forEach((cb) => cb.call(null, this));

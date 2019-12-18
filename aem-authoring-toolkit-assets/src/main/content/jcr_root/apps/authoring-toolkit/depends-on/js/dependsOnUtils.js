@@ -2,9 +2,7 @@
  * @author Alexey Stsefanovich (ala'n)
  * @version 2.0.0
  *
- * DependsOn plugin entry point
- *
- * Initialize DependsOnObserver and DependsOnElementReferences
+ * DependsOn plugin utils
  * */
 (function ($, ns) {
     'use strict';

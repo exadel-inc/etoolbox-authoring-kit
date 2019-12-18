@@ -24,7 +24,7 @@
                 const exec = new Function(args, 'return ' + query + ';'); //NOSONAR: not a javascript:S3523 case, real evaluation should be done
                 return exec.apply(context || null, refs);
             } catch (e) {
-                console.log('[DependsOn]: error while evaluating "' + query + '" using ', refs, e);
+                console.error('[DependsOn]: error while evaluating "' + query + '" using ', refs, e);
             }
         }
 

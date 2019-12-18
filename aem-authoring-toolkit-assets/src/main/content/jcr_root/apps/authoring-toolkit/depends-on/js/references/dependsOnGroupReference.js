@@ -10,10 +10,10 @@
 
     let referenceIdCounter = 0;
     class GroupReference extends ns.ObservedReference {
-        constructor(refName, $context) {
+        constructor(name, $context) {
             super(`$$${referenceIdCounter++}`);
             this.refs = [];
-            this.name = refName;
+            this.name = name;
             this.$context = $context;
 
             this.updateRefList();
@@ -40,10 +40,13 @@
         }
 
         /**
-         * Check if the reference accept passed definition
+         * Check if the reference accepts passed definition
+         * @param name {string}
+         * @param [$context] {jQuery | HTMLElement | string}
+         * @returns {boolean}
          * */
-        is(refName, $context) {
-            return refName === this.name && this.$context.is($context);
+        is(name, $context) {
+            return name === this.name && this.$context.is($context);
         }
     }
 
@@ -53,11 +56,11 @@
          * Register {GroupReference}
          * Returns existing if it is already registered
          * */
-        static register(refName, $context) {
+        static register(name, $context) {
             for (let ref of refs) {
-                if (ref.is(refName, $context)) return ref;
+                if (ref.is(name, $context)) return ref;
             }
-            const newRef = new GroupReference(refName, $context);
+            const newRef = new GroupReference(name, $context);
             refs.push(newRef);
             return newRef;
         }
