@@ -56,9 +56,6 @@
     }
 
     class ElementAccessors {
-        /** To pass ElementAccessors into query */
-        static get id() { return '$accessor' };
-
         /**
          * Default accessor definition
          * */

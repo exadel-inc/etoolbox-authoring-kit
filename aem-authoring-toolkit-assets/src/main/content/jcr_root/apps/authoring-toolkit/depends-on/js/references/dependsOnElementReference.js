@@ -19,7 +19,7 @@
             let instance = $el.data('dependsonsubject');
             if (instance) return instance;
 
-            super(`$${referenceIdCounter++}`);
+            super(`$ref${referenceIdCounter++}`);
             this.$el = $el;
             this.name = $el.data('dependsonref');
 

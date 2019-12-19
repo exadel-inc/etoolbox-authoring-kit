@@ -11,7 +11,7 @@
     let referenceIdCounter = 0;
     class GroupReference extends ns.ObservedReference {
         constructor(name, $context) {
-            super(`$$${referenceIdCounter++}`);
+            super(`$group${referenceIdCounter++}`);
             this.refs = [];
             this.name = name;
             this.$context = $context;

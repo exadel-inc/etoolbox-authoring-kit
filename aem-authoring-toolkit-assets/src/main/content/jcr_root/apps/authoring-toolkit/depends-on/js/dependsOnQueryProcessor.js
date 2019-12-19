@@ -18,7 +18,7 @@
          * Evaluate query
          * */
         static evaluateQuery(query, context) {
-            const refs = [].concat(ns.ElementReferenceRegistry.refs).concat(ns.GroupReferenceRegistry.refs).concat(ns.ElementAccessors);
+            const refs = [].concat(ns.ElementReferenceRegistry.refs).concat(ns.GroupReferenceRegistry.refs);
             try {
                 const args = refs.map((ref) => ref.id).join(',');
                 const exec = new Function(args, 'return ' + query + ';'); //NOSONAR: not a javascript:S3523 case, real evaluation should be done
