@@ -3,7 +3,7 @@
  * @version 2.0.0
  *
  * DependsOn plugin Group Reference Registry
- * Store and mange known group references
+ * Store and manage known group references
  * */
 (function (document, $, ns) {
     'use strict';

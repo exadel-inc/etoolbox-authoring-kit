@@ -37,9 +37,16 @@
         static registerQuery(query, $root, changeHandlerCB) {
             return query.replace(REFERENCE_REGEXP, (q, isGroup, name, selWrapper, sel) => {
                 const $context = QueryProcessor.findBaseElement($root, sel);
-                const reference = isGroup ?
-                    ns.GroupReferenceRegistry.register(name, $context) :
-                    ns.ElementReferenceRegistry.register(name, $context);
+
+                if (name === 'this' && (isGroup || sel)) {
+                    console.log(`[DependsOn]: WARN: ${q} is always referencing current element, could be replaced by simple @this`);
+                }
+
+                const reference = name === 'this' ?
+                    ns.ElementReferenceRegistry.registerElement($root) :
+                    isGroup ?
+                        ns.GroupReferenceRegistry.register(name, $context) :
+                        ns.ElementReferenceRegistry.register(name, $context);
 
                 reference.subscribe(changeHandlerCB);
                 return `${reference.id}.value`;

@@ -13,38 +13,38 @@
     class ObservedReference {
         constructor(id) {
             this.id = id;
-            this._listeners = [];
+            this._listenersSet = new Set();
         }
 
         clean() {
-            this._listeners = [];
-            delete this.id;
+            this._listenersSet.clear();
         }
 
         /**
          * Add observer
          * */
         subscribe(listener) {
-            if (typeof listener === 'function' && this._listeners.indexOf(listener) === -1) {
-                this._listeners.push(listener);
-            }
+            if (typeof listener !== 'function') return;
+            this._listenersSet.add(listener);
         }
 
         /**
          * Remove observer
          * */
         unsubscribe(listener) {
-            let index;
-            if (typeof listener === 'function' && (index = this._listeners.indexOf(listener)) !== -1) {
-                this._listeners.splice(index, 1);
-            }
+            if (typeof listener !== 'function') return;
+            this._listenersSet.delete(listener);
         }
 
         /**
          * Emit change
          * */
         emit() {
-            this._listeners = this._listeners.filter((cb) => !cb.call(null, this));
+            this._listenersSet.forEach((listener) => {
+                if (listener.call(null, this)) {
+                    this._listenersSet.delete(listener);
+                }
+            });
         }
 
         // noinspection JSMethodCanBeStatic

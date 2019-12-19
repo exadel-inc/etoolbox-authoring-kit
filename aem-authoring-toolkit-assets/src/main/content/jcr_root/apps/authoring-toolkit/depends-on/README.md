@@ -135,6 +135,9 @@ Single reference should reference existing field and will not be reattached on d
 Note: multiple reference triggers query update on any group update: changing some of group fields value, adding or removing referenced field. 
 So usage of multiple reference can slow down queries performance.
 
+Reference can not be named as 'this', that name is reserved and always reach current element value.
+Reference name is not necessary for referencing current element by this. 
+
 Area to find referenced field can be narrowed down by providing the Scope. 
 Scope is a CSS Selector of the closest container element. 
 Scope is defined in parentheses after reference name.

@@ -3,7 +3,7 @@
  * @version 2.0.0
  *
  * DependsOn plugin Elements Reference Registry
- * Store and mange known elements references
+ * Store and manage known elements references
  * */
 (function (document, $, ns) {
     'use strict';
@@ -21,7 +21,11 @@
 
             super(`$ref${referenceIdCounter++}`);
             this.$el = $el;
-            this.name = $el.data('dependsonref');
+            this.name = this.$el.attr('data-dependsonref');
+
+            if (this.name === 'this') {
+                console.error('[DependsOn]: "this" reference name is not allowed');
+            }
 
             this.$el.data('dependsonsubject', this);
         }
