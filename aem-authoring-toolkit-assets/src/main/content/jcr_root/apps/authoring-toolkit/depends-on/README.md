@@ -460,8 +460,8 @@ public class MultifieldItem {
     @DependsOnRef(name = "active")
     @DependsOn(
             action = DependsOnActions.DISABLED,
-            // @active(coral-multifield-item) will rich to the 'active' checkbox in bounds of coral-multifield-item (the current one)
-            // We disable checkbox if it is not selected but some of checboxes with reference name 'active' is selected
+            // @active(coral-multifield-item) will access the 'active' checkbox in bounds of coral-multifield-item (the current one)
+            // We disable checkbox if it is not selected but some of checboxes with reference name 'active' are selected
             query = "!@active(coral-multifield-item) && @@active.some((val) => val)"
     )
     @DialogField
@@ -474,7 +474,7 @@ public class MultifieldItem {
 ```
 
 
-One of the way to validate min and max multifield item count (by 2 min and 5 max in the current example)
+One of the ways to validate min and max multifield items count (by 2 min and 5 max in the current example)
 ```java
 public class Component {
     
