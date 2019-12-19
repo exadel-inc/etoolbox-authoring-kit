@@ -8,7 +8,6 @@
 (function (document, $, ns) {
     'use strict';
 
-    const $document = $(document);
     const REFERENCE_REGEXP = /@(@)?(\w+)([\s]*\(([^)]+)\))?/g;
 
     class QueryProcessor {
@@ -65,7 +64,7 @@
          * @param sel {string}
          * */
         static findBaseElement($root, sel) {
-            if (!sel) return $document;
+            if (!sel) return $(document.body);
             if (sel.trim() === 'this') return $root;
             const selParts = sel.split('|>');
             if (selParts.length > 1) {

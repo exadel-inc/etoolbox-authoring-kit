@@ -52,6 +52,14 @@
             if ($context) return !!this.$el.closest($context).length;
             return true;
         }
+
+        /**
+         * Check if reference detached from actual tree
+         * @return {boolean}
+         * */
+        isOutdated() {
+            return !this.$el.closest('html').length;
+        }
     }
 
     const refs = [];
@@ -102,16 +110,15 @@
         }
 
         /**
-         * Remove references that are out of html from registry
+         * Remove references that are detached
          * */
-        static cleanDetachedRefs() {
+        static actualize() {
             for (let i = 0; i < refs.length ; ++i) {
                 const ref = refs[i];
-                // Skip if the referencing element is in actual html
-                if (ref.$el.closest('html').length > 0) continue;
-                // Delete reference otherwise
-                ref.clean();
-                refs.splice(i--, 1);
+                if (ref.isOutdated()) {
+                    ref.remove();
+                    refs.splice(i--, 1);
+                }
             }
         }
     }

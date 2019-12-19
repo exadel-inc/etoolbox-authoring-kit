@@ -20,6 +20,15 @@
         }
 
         /**
+         * Destroy reference
+         * */
+        remove() {
+            super.remove();
+            delete this.refs;
+            delete this.$context;
+        }
+
+        /**
          * Child reference changed
          * */
         onChange = () => { this.update(); };
@@ -49,9 +58,17 @@
         is(name, $context) {
             return name === this.name && this.$context.is($context);
         }
+
+        /**
+         * Check if group reference have listeners and actual context
+         * @returns {boolean}
+         * */
+        isOutdated() {
+            return !this.listenersCount || !this.$context.closest('html').length;
+        }
     }
 
-    const refs = [];
+    let refs = [];
     class GroupReferenceRegistry {
         /**
          * Register {GroupReference}
@@ -72,10 +89,18 @@
          * */
         static get refs() { return refs; }
 
-        static updateGroupReferences() {
-            refs.forEach((ref) => {
+        /**
+         * Remove outdated references and update actual ones
+         * */
+        static actualize() {
+            refs = refs.filter((ref) => {
+                if (ref.isOutdated()) {
+                    ref.remove();
+                    return false;
+                }
                 ref.updateRefList();
                 ref.update();
+                return true;
             });
         }
     }

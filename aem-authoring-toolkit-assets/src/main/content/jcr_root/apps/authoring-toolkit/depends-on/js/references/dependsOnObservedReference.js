@@ -16,7 +16,10 @@
             this._listenersSet = new Set();
         }
 
-        clean() {
+        /**
+         * Destroy reference
+         * */
+        remove() {
             this._listenersSet.clear();
         }
 
@@ -67,6 +70,10 @@
                 this.emit();
             }
         };
+
+        get listenersCount() {
+            return this._listenersSet.size;
+        }
 
         /**
          * Get cached value of element, request current element value if undefined

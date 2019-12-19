@@ -17,7 +17,7 @@
         $('[data-dependsonref]', container).each(function () {
             ns.ElementReferenceRegistry.registerElement($(this));
         });
-        ns.GroupReferenceRegistry.updateGroupReferences();
+        ns.GroupReferenceRegistry.actualize();
     };
     // Find and init plugin observers
     ns.initObservers = function (container) {
@@ -32,8 +32,7 @@
         ns.initRefs(container);
         ns.initObservers(container);
 
-        // Initiate DependsOn GC if reinitialization requested
-        setTimeout(() => ns.ElementReferenceRegistry.cleanDetachedRefs());
+        setTimeout(() => ns.ElementReferenceRegistry.actualize());
     };
 
     // Track new component initialization
@@ -45,8 +44,8 @@
     // Track collection change to update dynamic references
     $document
         .off('coral-collection:remove.dependsOn').on('coral-collection:remove.dependsOn', 'coral-multifield', () => {
-            ns.ElementReferenceRegistry.cleanDetachedRefs();
-            ns.GroupReferenceRegistry.updateGroupReferences();
+            ns.ElementReferenceRegistry.actualize();
+            ns.GroupReferenceRegistry.actualize();
         });
 
     // ----
