@@ -1,0 +1,8 @@
+<sly data-sly-use.data="com.exadel.aem.toolkit.samples.models.AttributeTestComponent"></sly>
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"></sly>
+<sly data-sly-call="${clientlib.css @ categories='authoring-toolkit.samples.components'}"></sly>
+
+<div class="attribute-test-wrap">
+    <div class="attribute-test-title">Just a little bit of test text</div>
+    <div class="attribute-test-text">${data.toggledText @context='text'}</div>
+</div>
