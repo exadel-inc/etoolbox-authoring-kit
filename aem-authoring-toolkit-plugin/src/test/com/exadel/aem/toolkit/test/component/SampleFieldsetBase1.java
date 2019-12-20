@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 
 @SuppressWarnings("unused")
-class FirstExternalClass {
+class SampleFieldsetBase1 {
 
     private static final String LABEL_CAPTION = "Caption";
     private static final String DESCRIPTION_CAPTION = "Provide the text to be shown as the Caption.";

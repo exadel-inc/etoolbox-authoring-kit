@@ -38,7 +38,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 @SuppressWarnings("unused")
 public @interface Dialog {
     /**
-     * Maps to the 'jcr:title' attributes of both the component root node node and its {@code cq:dialog} subnode
+     * Maps to the 'jcr:title' attributes of both the component root node node and its {@code cq:dialog} node
      * @return String value, non-blank
      */
     @PropertyName(JcrConstants.PN_TITLE)
@@ -103,14 +103,14 @@ public @interface Dialog {
     String templatePath() default "";
 
     /**
-     * When set to non-blank, renders as the `helpPath` attribute of component's {@code cq:dialog} subnode
+     * When set to non-blank, renders as the `helpPath` attribute of component's {@code cq:dialog} node
      * @return String value
      */
     @PropertyScope(XmlScope.CQ_DIALOG)
     String helpPath() default "";
 
     /**
-     * Renders as the `height` attribute of component's {@code cq:dialog} subnode. If no value, or a value less or equal to zero provided, default 480 is used
+     * Renders as the `height` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal to zero provided, default 480 is used
      * @return Double
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
@@ -118,7 +118,7 @@ public @interface Dialog {
     double height() default 480;
 
     /**
-     * Renders as the `width` attribute of component's {@code cq:dialog} subnode. If no value, or a value less or equal to zero provided, default 560 is used
+     * Renders as the `width` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal to zero provided, default 560 is used
      * @return Double
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
@@ -156,6 +156,14 @@ public @interface Dialog {
      */
     @IgnorePropertyMapping
     DialogLayout layout() default DialogLayout.FIXED_COLUMNS;
+
+    /**
+     * When set to a non-blank String or an array of strings, renders as the `extraClientlibs` attribute
+     * of component's {@code cq:dialog} node
+     * @return String value, or an array of strings
+     */
+    @PropertyScope(XmlScope.CQ_DIALOG)
+    String[] extraClientlibs() default {};
 
     /**
      * For the tabbed TouchUI dialog layout, enumerates the tabs to be rendered

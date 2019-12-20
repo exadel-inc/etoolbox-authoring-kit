@@ -2,10 +2,10 @@ package com.exadel.aem.toolkit.core.maven;
 
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.test.component.ComplexComponent1;
+import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
-import com.exadel.aem.toolkit.test.component.FeedVideoImage;
-import com.exadel.aem.toolkit.test.component.ComplexComponent;
 
 public class DialogsTest extends ComponentTestBase {
     @Test
@@ -19,12 +19,12 @@ public class DialogsTest extends ComponentTestBase {
     }
 
     @Test
-    public void testFeedVideoImageDialog() {
-        testComponent(FeedVideoImage.class);
+    public void testComplexComponent1() {
+        testComponent(ComplexComponent1.class);
     }
 
     @Test
-    public void testSampleComponent() {
-        testComponent(ComplexComponent.class);
+    public void testComplexComponent2() {
+        testComponent(ComplexComponent2.class);
     }
 }

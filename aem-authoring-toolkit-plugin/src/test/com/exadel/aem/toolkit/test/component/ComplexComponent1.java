@@ -44,6 +44,11 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
         disableTargeting = true,
         isContainer = true,
         width = 800,
+        extraClientlibs = {
+                "cq.common.wcm",
+                "core.wcm.page.properties",
+                "cq.wcm.msm.properties"
+        },
         tabs = {
                 @Tab(title = "Tab_1"),
                 @Tab(title = "Tab_2"),
@@ -93,7 +98,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
                         propertyName = "description",
                         type = EditorType.TEXT,
                         editElementQuery = ".editable-description",
-                        richText = @Extends(value = ComplexComponent.class, field = "secondField")
+                        richText = @Extends(value = ComplexComponent1.class, field = "secondField")
                 ),
                 @InplaceEditingConfig(
                         title = "Primary Topic 1 Title",
@@ -106,7 +111,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
                         propertyName = "primary1_topicDescription",
                         type = EditorType.TEXT,
                         editElementQuery = ".editable-prtopic1description",
-                        richText = @Extends(value = SampleDialog.class, field = "description")
+                        richText = @Extends(value = SampleFieldsetAncestor.class, field = "description")
                 ),
                 @InplaceEditingConfig(
                         title = "Primary Topic 2 Title",
@@ -119,7 +124,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
                         propertyName = "primary2_topicDescription",
                         type = EditorType.TEXT,
                         editElementQuery = ".editable-prtopic2description",
-                        richText = @Extends(value = SampleDialog.class, field = "description")
+                        richText = @Extends(value = SampleFieldsetAncestor.class, field = "description")
                 ),
                 @InplaceEditingConfig(
                         title = "Primary Topic 3 Title",
@@ -132,7 +137,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
                         propertyName = "primary3_topicDescription",
                         type = EditorType.TEXT,
                         editElementQuery = ".editable-prtopic3description",
-                        richText = @Extends(value = SampleDialog.class, field = "description")
+                        richText = @Extends(value = SampleFieldsetAncestor.class, field = "description")
                 ),
                 @InplaceEditingConfig(
                         title = "Secondary Topic 1 Title",
@@ -145,7 +150,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
                         propertyName = "secondary1_topicDescription",
                         type = EditorType.TEXT,
                         editElementQuery = ".editable-sectopic1description",
-                        richText = @Extends(value = SampleDialog.class, field = "description")
+                        richText = @Extends(value = SampleFieldsetAncestor.class, field = "description")
                 ),
                 @InplaceEditingConfig(
                         title = "Secondary Topic 2 Title",
@@ -158,12 +163,12 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
                         propertyName = "secondary2_topicDescription",
                         type = EditorType.TEXT,
                         editElementQuery = ".editable-sectopic2description",
-                        richText = @Extends(value = SampleDialog.class, field = "description")
+                        richText = @Extends(value = SampleFieldsetAncestor.class, field = "description")
                 ),
         }
 )
 @SuppressWarnings("unused")
-public class ComplexComponent {
+public class ComplexComponent1 {
     private static final String TAB_TOPIC_1 = "Topic 1";
     private static final String TAB_TOPIC_2 = "Topic 2";
     private static final String TAB_TOPIC_3 = "Topic 3";
@@ -229,17 +234,17 @@ public class ComplexComponent {
     @DialogField
     @FieldSet(namePrefix = PREFIX_FIRST_PRIMARY_DIALOG)
     @PlaceOnTab(TAB_TOPIC_1)
-    private SamplePrimaryDialog firstPrimaryDialog;
+    private SampleFieldsetBase2 firstPrimaryDialog;
 
     @DialogField
     @FieldSet(namePrefix = PREFIX_SECOND_PRIMARY_DIALOG)
     @PlaceOnTab(TAB_TOPIC_2)
-    private SamplePrimaryDialog secondPrimaryDialog;
+    private SampleFieldsetBase2 secondPrimaryDialog;
 
     @DialogField
     @FieldSet(namePrefix = PREFIX_THIRD_PRIMARY_DIALOG)
     @PlaceOnTab(TAB_TOPIC_3)
-    private SamplePrimaryDialog thirdPrimaryDialog;
+    private SampleFieldsetBase2 thirdPrimaryDialog;
 
     @DialogField(
             name = FIELD_FIRST_SECONDARY_ENABLED,
@@ -257,7 +262,7 @@ public class ComplexComponent {
     )
     @DependsOn(query = "@first")
     @PlaceOnTab(TAB_ADDITIONAL_TOPICS)
-    private SampleDialog firstExampleDialog;
+    private SampleFieldsetAncestor firstExampleDialog;
 
     @DialogField(
             name = SECOND_EXAMPLE_DIALOG_ENABLED,
@@ -273,7 +278,7 @@ public class ComplexComponent {
             namePrefix = PREFIX_SECOND_SECONDARY_DIALOG
     )
     @PlaceOnTab(TAB_ADDITIONAL_TOPICS)
-    private SampleDialog secondExampleDialogDialog;
+    private SampleFieldsetAncestor secondExampleDialogDialog;
 
     @DialogField(
             name = "first_number_field",
@@ -298,5 +303,5 @@ public class ComplexComponent {
     @DialogField
     @FieldSet
     @PlaceOnTab("Tab_7")
-    private SampleFieldSet exampleFieldSet;
+    private SampleFieldsetBase3 exampleFieldSet;
 }

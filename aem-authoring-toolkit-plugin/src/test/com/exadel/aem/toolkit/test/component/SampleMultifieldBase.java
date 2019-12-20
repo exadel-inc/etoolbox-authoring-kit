@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 
 @SuppressWarnings("unused")
-class SecondExternalClass {
+class SampleMultifieldBase {
     @DialogField(
             name = "Label's name",
             label = "Label",
