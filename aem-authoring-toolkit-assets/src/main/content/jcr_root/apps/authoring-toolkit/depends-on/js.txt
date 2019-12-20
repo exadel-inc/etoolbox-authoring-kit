@@ -1,10 +1,13 @@
 # Core Handlers
+js/dependsOnUtils.js
 js/dependsOnElementAccessors.js
-js/dependsOnObservedReference.js
-js/dependsOnElementReference.js
-# Core Registries
-js/dependsOnReferenceRegistry.js
+js/references/dependsOnObservedReference.js
+js/references/dependsOnElementReference.js
+js/references/dependsOnGroupReference.js
+
+# Core
 js/dependsOnActionRegistry.js
+js/dependsOnQueryProcessor.js
 js/dependsOnObserver.js
 
 # Accessors
@@ -14,3 +17,6 @@ js/accessors/dependsOnCQFileUploadAccessor.js
 # Actions
 js/actions/dependsOnCoralBasicActions.js
 js/actions/dependsOnCoralValidateAction.js
+
+# Init
+js/dependsOn.js

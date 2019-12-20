@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 1.3.0
+ * @version 2.0.0
  *
  * DependsOn ElementAccessors Registry
  * */
@@ -28,6 +28,7 @@
             $el.closest(FIELD_WRAPPER)
                 .attr('hidden', state ? null : 'true')
                 .attr('data-dependson-controllable', 'true');
+            // Force update validity if field hidden
             if (!state) {
                 ns.ElementAccessors.clearValidity($el);
             }
@@ -37,11 +38,11 @@
             $el.closest(FIELD_WRAPPER).attr('disabled', state ? 'true' : null);
 
             const fieldAPI = $el.adaptTo('foundation-field');
-            //try disable field by foundation api
-            if(fieldAPI && fieldAPI.setDisabled) {
+            // Try to disable field by foundation api
+            if (fieldAPI && fieldAPI.setDisabled) {
                 fieldAPI.setDisabled(state);
             }
-
+            // Force update validity if field disabled
             if (!state) {
                 ns.ElementAccessors.clearValidity($el);
             }

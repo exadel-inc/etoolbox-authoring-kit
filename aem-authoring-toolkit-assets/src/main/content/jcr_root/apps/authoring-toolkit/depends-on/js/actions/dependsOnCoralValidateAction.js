@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.0.0
+ * @version 2.0.0
  *
  * DependsOn Coral 3 Validate Actions
  * Additional action which sets query result as validation state
@@ -18,6 +18,7 @@
 (function ($, ns) {
     'use strict';
 
+    const DEFAULT_MSG = 'Incorrect data';
     const INVALID_CLASS = 'dependsOnValidate-invalid';
     const DATA_MSG_ATTR = 'data-dependson-validate-msg';
     const DATA_MARKER_ATTR = 'data-dependson-validate';
@@ -61,7 +62,7 @@
         if (typeof result === 'string') {
             this.$el.attr(DATA_MARKER_ATTR, result);
         } else {
-            this.$el.attr(DATA_MARKER_ATTR, result ? '' : this.$el.attr(DATA_MSG_ATTR));
+            this.$el.attr(DATA_MARKER_ATTR, result ? '' : (this.$el.attr(DATA_MSG_ATTR) || DEFAULT_MSG));
         }
         ns.ElementAccessors.updateValidity(this.$el, true); // force validation
     });
