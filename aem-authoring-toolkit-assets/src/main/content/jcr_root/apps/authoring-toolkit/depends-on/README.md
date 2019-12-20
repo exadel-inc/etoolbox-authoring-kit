@@ -24,7 +24,7 @@ Action defines what the plugin should do with the dependent field (show/hide, se
  
 Query always goes with the Action and defines an expression that should be used as Action's input.
  
-References are external elements whose values can be used inside of Query.
+References are external elements or group of elements whose values can be used inside of Query.
  
 #### Introduction  
 
@@ -62,9 +62,9 @@ Custom action can be specified using `Granite.DependsOnPlugin.ActionRegistry`.
 
 Action should have name and function to execute. 
 For example build-in `set` action is defined as follows:
-```
+```javascript
 Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('set', function setValue(value) {
-     ns.ElementAccessors.setValue(this.$el, value);
+     Granite.DependsOnPlugin.ElementAccessors.setValue(this.$el, value);
 });
 ```
 
@@ -84,7 +84,7 @@ Registry `Granite.DependsOnPlugin.ElementAccessors` - can be used to define cust
 Accessor provide the information how to get/set value, set a require/visibility state or returns `preferableType` for specific type of component.
 
 For example default accessor descriptor is defined as follows:
-```
+```javascript
 Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
     selector: '*', // Selector to filter element
     preferableType: 'string',
@@ -97,20 +97,20 @@ Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
     required: function($el, val) {
         $el.attr('required', val ? 'true' : null);
         $el.attr('aria-required', val ? 'true' : null);
-        ns.ElementAccessors.updateValidity($el);
+        Granite.DependsOnPlugin.ElementAccessors.updateValidity($el);
     },
     visibility: function ($el, state) {
         $el.attr('hidden', state ? null : 'true');
         $el.closest('.coral-Form-fieldwrapper').attr('hidden', state ? null : 'true');
         if (!state) {
-            ns.ElementAccessors.clearValidity($el);
+            Granite.DependsOnPlugin.ElementAccessors.clearValidity($el);
         }
     },
     disabled: function ($el, state) {
         $el.attr('disabled', state ? 'true' : null);
         $el.closest('.coral-Form-fieldwrapper').attr('disabled', state ? 'true' : null);
         if (!state) {
-            ns.ElementAccessors.clearValidity($el);
+            Granite.DependsOnPlugin.ElementAccessors.clearValidity($el);
         }
     }
 });
@@ -136,7 +136,7 @@ Note: multiple reference triggers query update on any group update: changing som
 So usage of multiple reference can slow down queries performance.
 
 Reference can not be named as 'this', that name is reserved and always reach current element value.
-Reference name is not necessary for referencing current element by this. 
+Reference name is not necessary for referencing current element by this.
 
 Area to find referenced field can be narrowed down by providing the Scope. 
 Scope is a CSS Selector of the closest container element. 
@@ -145,6 +145,7 @@ Scope is defined in parentheses after reference name.
 Examples:
 * `@enableCta (coral-panel)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of the closest parent Panel element.
 * `@enableCta (.my-fieldset)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of the closest parent container element with "my-fieldset" class.
+* `@@enableCta (coral-multifield)` - will references all values of the fields marked by `dependsOnRef=enableCta` in bounds of the closest multifield.
 
 "Back-forward" CSS selectors are available in the Scope syntax, i.e. we can define CSS selector to determinate parent element and then provide selector to search the target element for scope in bounds of found parent. 
 Back and forward selectors are separated by '|>' combination. 
@@ -455,7 +456,19 @@ public class Component {
 }
 ```
 
-#### 10. Group references
+#### 10. Custom validation
+Depends On allows you to simply validate field value.
+Here is an example of character count validation
+```java
+public class Component {
+    @DependsOn(query = "( @this || '').length > 5", action = DependsOnActions.VALIDATE)
+    @DialogField
+    @TextField
+    private String text;
+}
+```
+
+#### 11. Group references
 
 Allow to select 'active' only in one item in multifield
 ```java
@@ -463,9 +476,8 @@ public class MultifieldItem {
     @DependsOnRef(name = "active")
     @DependsOn(
             action = DependsOnActions.DISABLED,
-            // @active(coral-multifield-item) will access the 'active' checkbox in bounds of coral-multifield-item (the current one)
             // We disable checkbox if it is not selected but some of checboxes with reference name 'active' are selected
-            query = "!@active(coral-multifield-item) && @@active.some((val) => val)"
+            query = "!@this && @@active.some((val) => val)"
     )
     @DialogField
     @Checkbox

@@ -71,12 +71,15 @@
             }
         };
 
+        /**
+         * @returns {number} actual listeners count
+         * */
         get listenersCount() {
             return this._listenersSet.size;
         }
 
         /**
-         * Get cached value of element, request current element value if undefined
+         * @returns cached value of element
          * */
         get value() {
             if (!this.hasOwnProperty('_value')) {
