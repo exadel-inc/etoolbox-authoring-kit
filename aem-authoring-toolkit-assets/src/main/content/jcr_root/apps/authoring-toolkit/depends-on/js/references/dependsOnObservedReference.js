@@ -11,6 +11,10 @@
     'use strict';
 
     class ObservedReference {
+        /**
+         * @constructor
+         * @param id {string} alias to access reference in parsed query
+         * */
         constructor(id) {
             this.id = id;
             this._listenersSet = new Set();
@@ -52,9 +56,10 @@
 
         // noinspection JSMethodCanBeStatic
         /**
+         * Get element value
          * @abstract
          * */
-        getValue() {
+        getReferenceValue() {
             return null;
         }
 
@@ -64,7 +69,7 @@
          * @param {Boolean} [force] - force update
          * */
         update(force) {
-            const value = this.getValue();
+            const value = this.getReferenceValue();
             if (force || !ns.isEqual(value, this._value)) {
                 this._value = value;
                 this.emit();
@@ -72,18 +77,20 @@
         };
 
         /**
-         * @returns {number} actual listeners count
+         * Returns actual listeners count
+         * @returns {number}
          * */
         get listenersCount() {
             return this._listenersSet.size;
         }
 
         /**
-         * @returns cached value of element
+         * Accessor to the cached value of element
+         * @returns cached value
          * */
         get value() {
             if (!this.hasOwnProperty('_value')) {
-                return (this._value = this.getValue());
+                return (this._value = this.getReferenceValue());
             }
             return this._value;
         }

@@ -53,7 +53,7 @@
             }
 
             // Delegate query registration to reference registry
-            this.queries = this.originalQueries.map((query, index) => ns.QueryProcessor.registerQuery(
+            this.queries = this.originalQueries.map((query, index) => ns.QueryProcessor.parseQuery(
                 query,
                 this.$el,
                 this.update.bind(this, index)
@@ -68,7 +68,8 @@
         }
 
         /**
-         * Request evaluation of query and set state accordingly.
+         * Request evaluation of query and execute action.
+         * @param index {number} - index of action and query
          * */
         update(index) {
             if (!this.$el || this.$el.closest('html').length === 0) {
@@ -76,7 +77,7 @@
                 return true;
             }
             const queryResult = ns.QueryProcessor.evaluateQuery(this.queries[index], this.$el);
-            this.setState(this.actions[index], queryResult);
+            this.executeAction(this.actions[index], queryResult);
         }
         /**
          * Request evaluation of all queries and set state accordingly.
@@ -87,9 +88,11 @@
 
         /**
          * Execute action with the new state
+         * @param actionName {string}
+         * @param queryResult
          * */
-        setState(actionName, value) {
-            ns.ActionRegistry.getAction(actionName).call(this, value, this);
+        executeAction(actionName, queryResult) {
+            ns.ActionRegistry.getAction(actionName).call(this, queryResult, this);
         }
     }
 

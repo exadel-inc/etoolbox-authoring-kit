@@ -40,4 +40,26 @@
                 return value;
         }
     };
+
+    /**
+     * Find element by provided selector. Use back-forward search:
+     * First part of selector will be used to find closest element
+     * If the second part after '|>' provided will search back element by second part of selector inside of closest parent
+     * founded on the previous state.
+     * If 'this' passed as a sel $root will be returned
+     * If sel is not provided then result will be $(document).
+     *
+     * @param $root {JQuery}
+     * @param sel {string}
+     * */
+    ns.findBaseElement = function ($root, sel) {
+        if (!sel) return $(document.body);
+        if (sel.trim() === 'this') return $root;
+        const selParts = sel.split('|>');
+        if (selParts.length > 1) {
+            return $root.closest(selParts[0].trim()).find(selParts[1].trim());
+        } else {
+            return $root.closest(sel.trim());
+        }
+    };
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

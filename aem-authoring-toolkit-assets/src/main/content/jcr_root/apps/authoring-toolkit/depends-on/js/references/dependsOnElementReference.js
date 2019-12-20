@@ -33,7 +33,7 @@
         /**
          * Get current element value
          * */
-        getValue() {
+        getReferenceValue() {
             let type = (this.$el.attr('data-dependsonreftype') || '').trim();
             if (!type) {
                 type = ns.ElementAccessors.getPreferableType(this.$el);
@@ -65,16 +65,19 @@
     const refs = [];
     class ElementReferenceRegistry {
         /**
-         * Register {ElementReference}
-         * Returns the existing if it is already registered
+         * Register {ElementReference} by name and context
+         * @param name {string}
+         * @param $context {JQuery | HTMLElement}
+         * @returns {ElementReference} (returns the existing one if it is already registered)
          * */
         static register(name, $context) {
             return ElementReferenceRegistry.registerElement($context.find('[data-dependsonref="' + name + '"]'));
         }
 
         /**
-         * Register {ElementReference}
-         * Returns existing if it is already registered
+         * Register {ElementReference} by element
+         * @param {JQuery} $el
+         * @returns {ElementReference} (returns existing one if it is already registered)
          * */
         static registerElement($el) {
             const subj = new ElementReference($el);

@@ -36,7 +36,7 @@
         /**
          * Get current element value
          * */
-        getValue() {
+        getReferenceValue() {
             return (this.refs || []).map((ref) => ref.value);
         }
 

@@ -14,7 +14,9 @@
         static get REFERENCE_REGEXP() { return REFERENCE_REGEXP; }
 
         /**
-         * Evaluate query
+         * Evaluate parsed query
+         * @param query {string} - parsed query
+         * @param context {object} - context to execute
          * */
         static evaluateQuery(query, context) {
             const refs = [].concat(ns.ElementReferenceRegistry.refs).concat(ns.GroupReferenceRegistry.refs);
@@ -28,14 +30,14 @@
         }
 
         /**
-         * Register new query
+         * Parse query to evaluateable one, replace references definitions by reference instances aliases
          * {String} query
          * {JQueryElement} $root
-         * {Function} [cb]
+         * {Function} [changeHandlerCB]
          * */
-        static registerQuery(query, $root, changeHandlerCB) {
+        static parseQuery(query, $root, changeHandlerCB) {
             return query.replace(REFERENCE_REGEXP, (q, isGroup, name, selWrapper, sel) => {
-                const $context = QueryProcessor.findBaseElement($root, sel);
+                const $context = ns.findBaseElement($root, sel);
 
                 if (name === 'this' && (isGroup || sel)) {
                     console.log(`[DependsOn]: WARN: ${q} is always referencing current element, could be replaced by simple @this`);
@@ -50,28 +52,6 @@
                 reference.subscribe(changeHandlerCB);
                 return `${reference.id}.value`;
             });
-        }
-
-        /**
-         * Find element by provided selector. Use back-forward search:
-         * First part of selector will be used to find closest element
-         * If the second part after '|>' provided will search back element by second part of selector inside of closest parent
-         * founded on the previous state.
-         * If 'this' passed as a sel $root will be returned
-         * If sel is not provided then result will be $(document).
-         *
-         * @param $root {JQuery}
-         * @param sel {string}
-         * */
-        static findBaseElement($root, sel) {
-            if (!sel) return $(document.body);
-            if (sel.trim() === 'this') return $root;
-            const selParts = sel.split('|>');
-            if (selParts.length > 1) {
-                return $root.closest(selParts[0].trim()).find(selParts[1].trim());
-            } else {
-                return $root.closest(sel.trim());
-            }
         }
     }
     ns.QueryProcessor = QueryProcessor;
