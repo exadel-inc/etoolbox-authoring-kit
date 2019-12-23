@@ -2,84 +2,83 @@ package com.exadel.aem.toolkit.core.maven;
 
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.TestAttributes;
-import com.exadel.aem.toolkit.TestCustomAnnotations;
-import com.exadel.aem.toolkit.TestDatePicker;
-import com.exadel.aem.toolkit.TestEditConfig;
-import com.exadel.aem.toolkit.TestFieldSet;
-import com.exadel.aem.toolkit.TestFileUpload;
-import com.exadel.aem.toolkit.TestMultiField;
-import com.exadel.aem.toolkit.TestNestedCheckboxList;
-import com.exadel.aem.toolkit.TestProperties;
-import com.exadel.aem.toolkit.TestRadioGroup;
-import com.exadel.aem.toolkit.TestSelect;
-import com.exadel.aem.toolkit.TestTabs;
+import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
+import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
+import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
+import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
+import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
+import com.exadel.aem.toolkit.test.widget.MultiFieldWidget;
+import com.exadel.aem.toolkit.test.widget.NestedCheckboxListWidget;
+import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
+import com.exadel.aem.toolkit.test.widget.RadioGroupWidget;
+import com.exadel.aem.toolkit.test.widget.Tabs;
+import com.exadel.aem.toolkit.test.widget.AlertWidget;
+import com.exadel.aem.toolkit.test.widget.SelectWidget;
 
 public class WidgetsTest extends ComponentTestBase {
 
+    @Test
+    public void testAlert() {
+        testComponent(AlertWidget.class);
+    }
 
     @Test
     public void testAttributes() {
-        testComponent(TestAttributes.class);
+        testComponent(AttributesAnnotation.class);
     }
 
     @Test
     public void testDatePicker() {
-        testComponent(TestDatePicker.class);
+        testComponent(DatePickerWidget.class);
     }
 
     @Test
     public void testDialogProperties() {
-        testComponent(TestProperties.class);
+        testComponent(PropertiesAnnotation.class);
     }
 
     @Test
     public void testEditConfig() {
-        testComponent(TestEditConfig.class);
-    }
-
-    @Test
-    public void testFieldSet() {
-        testComponent(TestFieldSet.class);
+        testComponent(EditConfigAnnotation.class);
     }
 
     @Test
     public void testFileUpload() {
-        testComponent(TestFileUpload.class);
+        testComponent(FileUploadWidget.class);
     }
 
     @Test
     public void testImageUpload() {
-        testComponent(TestFileUpload.class);
+        testComponent(FileUploadWidget.class);
     }
 
     @Test
     public void testMultiField() {
-        testComponent(TestMultiField.class);
+        testComponent(MultiFieldWidget.class);
     }
 
     @Test
     public void testNestedCheckboxList() {
-        testComponent(TestNestedCheckboxList.class);
+        testComponent(NestedCheckboxListWidget.class);
     }
 
     @Test
     public void testRadioGroup() {
-        testComponent(TestRadioGroup.class);
+        testComponent(RadioGroupWidget.class);
     }
 
     @Test
     public void testSelect() {
-        testComponent(TestSelect.class);
+        testComponent(SelectWidget.class);
     }
 
     @Test
     public void testTabs() {
-        testComponent(TestTabs.class);
+        testComponent(Tabs.class);
     }
 
     @Test
     public void testCustom() {
-        testComponent(TestCustomAnnotations.class);
+        testComponent(CustomAnnotations.class);
     }
 }

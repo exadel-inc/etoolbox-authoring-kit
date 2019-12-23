@@ -198,10 +198,10 @@ public interface XmlUtility {
      * @param child Element to serve as child
      * @return Appended child
      */
-    Element appendNonemptyChild(Element parent, Element child);
+    Element appendNonemptyChildElement(Element parent, Element child);
 
     /**
-     * Retrieves child {@code Element} node of the specified node by its name / relative path. Same as {@link XmlUtility#ensureChildElement(Element, String)},
+     * Retrieves child {@code Element} node of the specified node by its name / relative path. Same as {@link XmlUtility#getOrAddChildElement(Element, String)},
      * but if the parent's child (or any of the specified grandchildren) do not exist, null value is returned
      * @param parent Element to analyze
      * @param child  Name of child to look for, can be a simple name or a relative path e.g. {@code child/otherChild/yetAnotherChild}
@@ -217,41 +217,35 @@ public interface XmlUtility {
      * @param child Name of child to look for, can be a simple name or a relative path e.g. {@code child/otherChild/yetAnotherChild}
      * @return Element instance
      */
-    Element ensureChildElement(Element parent, String child);
+    Element getOrAddChildElement(Element parent, String child);
 
     /**
-     * Generates compliant XML tag name from an arbitrary string
-     * @param name Raw (unchecked) string for a tag name
-     * @return Valid tag name
+     * Generates compliant XML tag or attribute name (optionally prepended by an XML namespace) from an arbitrary string
+     * @param name Raw (unchecked) string for a tag / attribute name
+     * @return Valid tag / attribute name
      */
     String getValidName(String name);
 
     /**
-     * Generates compliant XML tag name from an arbitrary string
-     * @param name Raw (unchecked) string for a tag name
-     * @param invalidNamePattern Regex string that {@code name} is to be tested against in order to skip invalid characters
-     * @param defaultValue Fallback name to be used if {@code name} is either blank or is reduced to blank
-     *                     as a result of testing
-     * @return Valid tag name
+     * Generates compliant XML tag or attribute name without a namespace part from an arbitrary string
+     * @param name Raw (unchecked) string for a tag / attribute name
+     * @return Valid tag / attribute name
      */
-    String getValidName(String name, String invalidNamePattern, String defaultValue);
+    String getValidSimpleName(String name);
+
+    /**
+     * Generates compliant XML field name from an arbitrary string
+     * @param name Raw (unchecked) string for a field name
+     * @return Valid field name
+     */
+    String getValidFieldName(String name);
 
     /**
      * Generates compliant XML tag name thai is unique within the scope of specified parent node
      * @param name Raw (unchecked) string for a tag name
+     * @param defaultValue Source string for unique (indexed) name generation
      * @param context Parent node
      * @return Valid and locally unique tag name
      */
-    String getUniqueName(String name, Element context);
-
-    /**
-     * Generates compliant XML tag name thai is unique within the scope of specified parent node
-     * @param name Raw (unchecked) string for a tag name
-     * @param invalidNamePattern Regex string that {@code name} is to be tested against in order to skip invalid characters
-     * @param defaultValue Fallback name to be used if {@code name} is either blank or is reduced to blank
-     *                     as a result of testing
-     * @param context Parent node
-     * @return Valid and locally unique tag name
-     */
-    String getUniqueName(String name, String invalidNamePattern, String defaultValue, Element context);
+    String getUniqueName(String name, String defaultValue, Element context);
 }

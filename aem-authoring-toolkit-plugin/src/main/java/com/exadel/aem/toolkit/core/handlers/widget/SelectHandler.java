@@ -40,10 +40,7 @@ public class SelectHandler implements Handler, BiConsumer<Element, Field> {
         if(ArrayUtils.isNotEmpty(select.options())){
             Element items = (Element) element.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
             for (Option option: select.options()) {
-                String elementName = getXmlUtil().getUniqueName(option.value(),
-                        DialogConstants.INVALID_NODE_NAME_PATTERN,
-                        DialogConstants.NN_ITEM,
-                        items);
+                String elementName = getXmlUtil().getUniqueName(option.value(), DialogConstants.NN_ITEM, items);
                 Element item = (Element) items.appendChild(getXmlUtil().createNodeElement(elementName));
                 getXmlUtil().mapProperties(item, option);
             }

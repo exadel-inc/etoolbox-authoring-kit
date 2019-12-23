@@ -59,7 +59,7 @@ public class PluginMojo extends AbstractMojo {
      * is written down to the AEM package zip file. The method is run once for each package module that has AEM Authoring
      * Toolkit plugin included in the POM file
      * @throws MojoExecutionException in case package processing cannot proceed (due to e.g. file system failure
-     * or improper initializtion) or in case an internal exception is thrown that corresponds to the {@code terminateOn}
+     * or improper initialization) or in case an internal exception is thrown that corresponds to the {@code terminateOn}
      * setting
      */
     public void execute() throws MojoExecutionException {

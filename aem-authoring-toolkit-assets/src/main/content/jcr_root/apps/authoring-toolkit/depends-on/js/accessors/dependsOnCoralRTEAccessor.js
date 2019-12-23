@@ -1,6 +1,6 @@
 /**
- * @author Alexey Stsefanovich (ala'n)
- * @version 1.2.0
+ * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
+ * @version 2.0.0
  *
  * Coral 3 RTE accessor
  * */
@@ -35,6 +35,22 @@
         visibility: function ($el, val) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($rteContainer, val);
+        },
+        disabled: function ($el, val) {
+            ns.ElementAccessors.DEFAULT_ACCESSOR.disabled($el, val);
+
+            const rteInstance = $el.data(RTE_DATA_INSTANCE);
+
+            //disable rte editing
+            if (rteInstance) {
+                if (val) {
+                    rteInstance.suspend();
+                } else {
+                    //use old content like initial content to reactivate rte
+                    const initContent = rteInstance.editorKernel && rteInstance.editorKernel.getProcessedHtml();
+                    rteInstance.reactivate(initContent);
+                }
+            }
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

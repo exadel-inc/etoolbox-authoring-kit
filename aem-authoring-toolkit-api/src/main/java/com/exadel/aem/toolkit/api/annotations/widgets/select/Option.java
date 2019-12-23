@@ -20,6 +20,7 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnoreValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
 
 /**
  * Used to define an option within {@link Select#options()} set

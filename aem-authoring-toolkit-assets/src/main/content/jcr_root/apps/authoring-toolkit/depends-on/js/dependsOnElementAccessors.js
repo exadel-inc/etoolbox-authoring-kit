@@ -1,6 +1,6 @@
 /**
- * @author Alexey Stsefanovich (ala'n)
- * @version 1.2.0
+ * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
+ * @version 2.0.0
  *
  * DependsOn ElementAccessors Registry
  * */
@@ -28,6 +28,21 @@
             $el.closest(FIELD_WRAPPER)
                 .attr('hidden', state ? null : 'true')
                 .attr('data-dependson-controllable', 'true');
+            // Force update validity if field hidden
+            if (!state) {
+                ns.ElementAccessors.clearValidity($el);
+            }
+        },
+        disabled: function ($el, state) {
+            $el.attr('disabled', state ? 'true' : null);
+            $el.closest(FIELD_WRAPPER).attr('disabled', state ? 'true' : null);
+
+            const fieldAPI = $el.adaptTo('foundation-field');
+            // Try to disable field by foundation api
+            if (fieldAPI && fieldAPI.setDisabled) {
+                fieldAPI.setDisabled(state);
+            }
+            // Force update validity if field disabled
             if (!state) {
                 ns.ElementAccessors.clearValidity($el);
             }
@@ -61,6 +76,9 @@
         }
         static setVisibility($el, value) {
             ElementAccessors._findAccessorHandler($el, 'visibility')($el, value);
+        }
+        static setDisabled($el, value) {
+            ElementAccessors._findAccessorHandler($el, 'disabled')($el, value);
         }
 
         static registerAccessor(accessorDescriptor) {

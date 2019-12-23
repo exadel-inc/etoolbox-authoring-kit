@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.0.0
+ * @version 2.0.0
  *
  * DependsOn Coral 3 Basic Actions
  *
@@ -62,11 +62,20 @@
     });
 
     /**
+     * Change disable marker of the field
+     * query type: boolean
+     * */
+    ns.ActionRegistry.register('disabled', function setDisabled(state) {
+        ns.ElementAccessors.setDisabled(this.$el, state);
+    });
+
+    /**
      * Set field value from query result
      * query type: string
      * */
     ns.ActionRegistry.register('set', function setValue(value) {
         ns.ElementAccessors.setValue(this.$el, value);
+        this.$el.trigger('change');
     });
 
     /**
@@ -77,6 +86,7 @@
         const current = ns.ElementAccessors.getValue(this.$el);
         if (current === '' || current === null || current === undefined) {
             ns.ElementAccessors.setValue(this.$el, value);
+            this.$el.trigger('change');
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

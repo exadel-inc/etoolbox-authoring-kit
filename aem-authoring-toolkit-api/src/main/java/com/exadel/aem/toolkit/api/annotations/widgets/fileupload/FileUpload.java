@@ -27,7 +27,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.IconSize;
 
 /**
  * Used to set up

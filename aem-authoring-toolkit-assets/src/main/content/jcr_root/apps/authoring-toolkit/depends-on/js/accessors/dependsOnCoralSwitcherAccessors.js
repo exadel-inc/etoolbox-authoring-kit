@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.0.0
+ * @version 2.0.0
  *
  * Coral 3 Single Radio Button/Checkbox/Switch and Radio Group accessors
  * */
@@ -13,7 +13,9 @@
             return $el[0].checked;
         },
         set: function ($el, val) {
-            $el[0].checked = val;
+            $el.each(function () {
+                this.checked = val;
+            });
         }
     });
 

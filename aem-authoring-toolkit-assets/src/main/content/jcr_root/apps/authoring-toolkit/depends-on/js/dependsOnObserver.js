@@ -1,8 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.1.0
- *
- * DependsOn plugin entry point
+ * @version 2.0.0
  *
  * Initialize DependsOnObserver - instance that linked with the target element.
  * DependsOnObserver compile query using DependsOnRegistry and apply defined acton to the target.
@@ -31,6 +29,14 @@
      * Initiate references registration
      * */
     class DependsOnObserver {
+
+        /**
+         * Shortcut to initialize observer
+         * */
+        static init($el) {
+            new DependsOnObserver($el);
+        }
+
         constructor($el) {
             if ($el.data('dependsonobserver')) {
                 return $el.data('dependsonobserver');
@@ -47,7 +53,7 @@
             }
 
             // Delegate query registration to reference registry
-            this.queries = this.originalQueries.map((query, index) => ns.ReferenceRegistry.registerQuery(
+            this.queries = this.originalQueries.map((query, index) => ns.QueryProcessor.parseQuery(
                 query,
                 this.$el,
                 this.update.bind(this, index)
@@ -62,11 +68,16 @@
         }
 
         /**
-         * Request evaluation of query and set state accordingly.
+         * Request evaluation of query and execute action.
+         * @param index {number} - index of action and query
          * */
         update(index) {
-            const queryResult = ns.ReferenceRegistry.evaluateQuery(this.queries[index], this.$el);
-            this.setState(this.actions[index], queryResult);
+            if (!this.$el || this.$el.closest('html').length === 0) {
+                // Remove if detached
+                return true;
+            }
+            const queryResult = ns.QueryProcessor.evaluateQuery(this.queries[index], this.$el);
+            this.executeAction(this.actions[index], queryResult);
         }
         /**
          * Request evaluation of all queries and set state accordingly.
@@ -77,33 +88,13 @@
 
         /**
          * Execute action with the new state
+         * @param actionName {string}
+         * @param queryResult
          * */
-        setState(actionName, value) {
-            ns.ActionRegistry.getAction(actionName).call(this, value, this);
+        executeAction(actionName, queryResult) {
+            ns.ActionRegistry.getAction(actionName).call(this, queryResult, this);
         }
     }
 
     ns.DependsOnObserver = DependsOnObserver;
-
-    // ----
-    // Find and init plugin observers
-    ns.initialize = function () {
-        $('[data-dependson]').each(function () {
-            Coral.commons.ready($(this), function ($el) {
-                new ns.DependsOnObserver($el);
-            });
-        });
-        // Initiate DependsOn GC if reinitialization requested
-        setTimeout(() => ns.ReferenceRegistry.cleanDetachedRefs());
-    };
-    $(document).on('foundation-contentloaded', ns.initialize);
-
-    // ----
-    // Validation control: exclude element and its child from validation in hidden state.
-    $(window).adaptTo('foundation-registry').register('foundation.validation.selector', {
-        exclusion: '[data-dependson][hidden], [data-dependson-controllable][hidden]'
-    });
-    $(window).adaptTo('foundation-registry').register('foundation.validation.selector', {
-        exclusion: '[data-dependson][hidden] *, [data-dependson-controllable][hidden] *'
-    });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
