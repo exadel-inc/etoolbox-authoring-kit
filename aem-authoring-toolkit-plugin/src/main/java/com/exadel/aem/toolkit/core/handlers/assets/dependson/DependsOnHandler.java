@@ -72,7 +72,7 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
         Map<String, String> valueMap = Maps.newHashMap();
         valueMap.put(DialogConstants.PN_DEPENDS_ON, value.query());
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, value.action());
-        valueMap.putAll(buildParamsMap(value));
+        valueMap.putAll(buildParamsMap(value, 0));
         getXmlUtil().appendDataAttributes(element, valueMap);
     }
 
@@ -99,19 +99,33 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
         valueMap.put(DialogConstants.PN_DEPENDS_ON, queries);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, actions);
 
-        validDeclarations.stream().map(DependsOnHandler::buildParamsMap).forEach(valueMap::putAll);
+        Map<String, Integer> counter = new HashMap<>();
+        validDeclarations.stream()
+                // Counting actions separately
+                .map(dependsOn -> DependsOnHandler.buildParamsMap(dependsOn, counter.merge(dependsOn.action(), 1, Integer::sum) - 1))
+                .forEach(valueMap::putAll);
 
         getXmlUtil().appendDataAttributes(element, valueMap);
     }
 
     /**
      * Build {@code DependsOnParam} parameters for the passed {@code DependsOn} annotation
-     * @param dependsOn Current {@link DependsOn} value
+     * Param pattern:
+     * - for the first action (index = 0): dependson-{action}-{param}
+     * - otherwise: dependson-{action}-{param}-{index}
+     *
+     * @param dependsOn current {@link DependsOn} value
+     * @param index index of action
      */
-    private static Map<String, String> buildParamsMap(DependsOn dependsOn){
+    private static Map<String, String> buildParamsMap(DependsOn dependsOn, int index){
         Map<String, String> valueMap = new HashMap<>();
         for (DependsOnParam param : dependsOn.params()) {
-            String paramName = StringUtils.joinWith(TERM_SEPARATOR, DialogConstants.PN_DEPENDS_ON, dependsOn.action(), param.name());
+            String paramName = StringUtils.joinWith(TERM_SEPARATOR,
+                    DialogConstants.PN_DEPENDS_ON,
+                    dependsOn.action(),
+                    param.name(),
+                    index > 0 ? index : StringUtils.EMPTY
+            );
             valueMap.put(paramName, param.value());
         }
         return valueMap;
