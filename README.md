@@ -137,6 +137,7 @@ Besides, `@Dialog` possesses properties that are translated into common attribut
     isContainer = true,
     width = 800,
     height = 600,
+    extraClientlibs = "cq.common.wcm",
     layout = DialogLayout.TABS
 )
 @Properties({
@@ -383,9 +384,9 @@ Used to produce text inputs in TouchUI dialogs. Exposes properties as described 
 
 #### Field grouping and multiplying
 ##### @FieldSet
-Used to logically group a number of different fields as described in [Adobe's Granite UI manual on FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html). This goal is achieved by a nested class that encapsulates grouping fields. Then a *\<NestedClass>*-typed field is declared, and `@FieldSet` annotation is added. 
+Used to logically group a number of different fields as described in [Adobe's Granite UI manual on FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html). This goal is achieved by an external or a nested class that encapsulates grouping fields. Then a *\<OtherClass>*-typed field is declared, and `@FieldSet` annotation is added. 
 
-Hierarchy of nested classes is honored (so that a *FieldSet*-producing class may extend another class from same or even foreign scope. Proper field order within a fieldset can be guaranteed by use of *ranking* values (see chapter on `@DialogField` above). 
+Hierarchy of classes is honored (so that a *FieldSet*-producing class may extend another class from same or even foreign scope. Proper field order within a fieldset can be guaranteed by use of *ranking* values (see chapter on `@DialogField` above). 
 
 Names of fields added to a FieldSet may share common prefix. This is specified in *namePrefix* property. 
 ```java
@@ -452,6 +453,7 @@ public class CompositeMultiFieldDialog {
     }
 }
 ```
+Note that the inheritance of class(-es) encapsulating multifield items works here the same way as for the `@FieldSet`.   
 ##### Fields common attributes
 Components TouchUI dialogs honor the concept of [global HTML attributes](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/docs/server/commonattrs.html) added to rendered HTML tags. To set them via AEM-Dialog-Plugin, you use the @Attribute annotation.
 ```java
