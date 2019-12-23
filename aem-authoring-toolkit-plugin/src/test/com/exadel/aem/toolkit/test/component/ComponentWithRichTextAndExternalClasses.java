@@ -115,6 +115,8 @@ public class ComponentWithRichTextAndExternalClasses {
 
     private static final String FIELD_LINKS = "links";
     private static final String LABEL_LINKS = "Links";
+    private static final String FIELD_EXTENDED_LINKS = "extendedLinks";
+    private static final String LABEL_EXTENDED_LINKS = "Extended Links";
 
     private static final String FIELD_ENABLE_SECOND_CARD = "enableSecondCard";
     private static final String LABEL_ENABLE_SECOND_CARD = "Enable Second Card?";
@@ -208,4 +210,12 @@ public class ComponentWithRichTextAndExternalClasses {
     @Attribute(data = {@Data(name = "second-data-name", value = "second-data-value")})
     @PlaceOnTab(TAB_FEATURED_CARD_2)
     private SampleFieldsetBase1 secondCard;
+
+    @DialogField(
+            name = FIELD_EXTENDED_LINKS,
+            label = LABEL_EXTENDED_LINKS
+    )
+    @MultiField(field = SampleMultifieldExtension.class)
+    @PlaceOnTab(TAB_LINKS)
+    private List<SampleMultifieldBase> extendedLinks;
 }

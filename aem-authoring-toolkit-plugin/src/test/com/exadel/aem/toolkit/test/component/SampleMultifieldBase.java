@@ -48,8 +48,8 @@ class SampleMultifieldBase {
 
     @DialogField(
             name = "CheckboxName",
-            label = "Checkbox's label",
-            description = "Checkbox's description"
+            label = "Checkbox label",
+            description = "Checkbox description"
     )
     @Checkbox
     @PlaceOnTab("Main tab")

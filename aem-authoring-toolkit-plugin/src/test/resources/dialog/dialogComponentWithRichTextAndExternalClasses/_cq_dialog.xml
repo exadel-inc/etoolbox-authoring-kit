@@ -174,12 +174,12 @@
                                             autosubmit="{Boolean}false"
                                             checked="{Boolean}false"
                                             disabled="{Boolean}false"
-                                            fieldDescription="Checkbox's description"
-                                            fieldLabel="Checkbox's label"
+                                            fieldDescription="Checkbox description"
+                                            fieldLabel="Checkbox label"
                                             name="CheckboxName"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}false"
-                                            text="Checkbox's label"
+                                            text="Checkbox label"
                                             uncheckedValue="{Boolean}false"
                                             value="{Boolean}true"/>
                                         <iconName
@@ -196,6 +196,88 @@
                                     </items>
                                 </field>
                             </links>
+                            <extendedLinks
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                    composite="{Boolean}true"
+                                    disabled="{Boolean}false"
+                                    fieldLabel="Extended Links"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false">
+                                <field
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/container"
+                                        name="./extendedLinks">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <label
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="description"
+                                                fieldLabel="Label"
+                                                name="labelsName"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}true"/>
+                                        <url
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Field's description"
+                                                fieldLabel="Field label"
+                                                name="FieldName"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}true"
+                                                rootPath="root/path"/>
+                                        <checkbox
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
+                                                autosubmit="{Boolean}false"
+                                                checked="{Boolean}false"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Checkbox description"
+                                                fieldLabel="Checkbox label"
+                                                name="CheckboxName"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}false"
+                                                text="Checkbox label"
+                                                uncheckedValue="{Boolean}false"
+                                                value="{Boolean}true"/>
+                                        <iconName
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                                attribute="attribute_value"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Icon description"
+                                                fieldLabel="Icon label"
+                                                name="iconName"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}true"
+                                                rootPath="icons/folder/path"/>
+                                        <additionalLabel
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Sample multifield - additional info"
+                                                fieldLabel="Additional info"
+                                                name="additionalLabel"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}false"/>
+                                        <additionalInfo
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
+                                                autofocus="{Boolean}false"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Sample multifield - additional info"
+                                                fieldLabel="Additional info"
+                                                maxlength="{Long}9223372036854775807"
+                                                name="additionalInfo"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}false"
+                                                resize="NONE"
+                                                rows="{Long}15"/>
+                                    </items>
+                                </field>
+                            </extendedLinks>
                         </items>
                     </links>
                     <featuredCard1
