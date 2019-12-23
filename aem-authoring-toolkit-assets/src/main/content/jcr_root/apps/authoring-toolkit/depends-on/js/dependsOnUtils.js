@@ -8,6 +8,16 @@
     'use strict';
 
     /**
+     * Split string by {@param separator} and trim
+     * @param value {string}
+     * @param [separator] {string} (default ';')
+     * @returns {string[]}
+     * */
+    ns.splitAndTrim = function splitAndTrim(value, separator = ';') {
+        return value.split(separator).map((term) => term.trim());
+    };
+
+    /**
      * Extended comparison that supports NaN and Arrays
      * @returns {boolean}
      * */
@@ -61,5 +71,29 @@
         } else {
             return $root.closest(sel.trim());
         }
+    };
+
+    /**
+     * Parse action data params into object
+     * @param el {HTMLElement}
+     * @param actionName {string}
+     * @param [index] {number}
+     * */
+    ns.parseActionData = function (el, actionName = '', index = 0) {
+        const prefix = `data-dependson-${actionName}-`;
+        const suffix = index ? `-${index}`: '';
+
+        let attrs = [].slice.call(el.attributes);
+        attrs = attrs.filter((attr) => attr.name.slice(0, prefix.length) === prefix);
+        attrs = index ?
+            attrs.filter((attr) => attr.name.slice(-suffix.length) === suffix) :
+            attrs.filter((attr) => !/-(\d+)$/.test(attr.name));
+
+        // Build object
+        return attrs.reduce((data, attr) => {
+            const name = attr.name.slice(prefix.length, attr.name.length - suffix.length);
+            if (name) data[name] = attr.value;
+            return data
+        }, {});
     };
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
