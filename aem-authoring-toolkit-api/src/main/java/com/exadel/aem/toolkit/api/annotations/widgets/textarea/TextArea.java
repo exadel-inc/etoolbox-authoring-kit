@@ -72,7 +72,6 @@ public @interface TextArea {
      * @return Long value
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
-    @IgnoreValue("5")
     long rows() default 5;
     /**
      * Maps to the 'validation' attribute of this TouchUI dialog component's node.
