@@ -67,7 +67,7 @@
      * Change readonly marker of the field
      * query type: boolean
      * */
-    ns.ActionRegistry.register('readonly', function setDisabled(state) {
+    ns.ActionRegistry.register('readonly', function setReadonly(state) {
         this.$el.attr('readonly', state ? 'true' : null);
     });
 

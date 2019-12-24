@@ -8,6 +8,14 @@
     'use strict';
 
     /**
+     * Sequence generator
+     * */
+    ns.createSequence = function() {
+        let index = 1;
+        return { next: () => index++ };
+    };
+
+    /**
      * Split string by {@param separator} and trim
      * @param value {string}
      * @param [separator] {string} (default ';')

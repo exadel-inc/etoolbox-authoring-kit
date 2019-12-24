@@ -18,6 +18,8 @@
 (function ($, ns) {
     'use strict';
 
+    const OBSERVERS_SQ = ns.createSequence();
+
     /**
      * DependsOn Observer (Target) instance
      * Attached to dependent element
@@ -72,6 +74,7 @@
          * @param data {object}
          * */
         constructor($el, query, action, data = {}) {
+            this.id = OBSERVERS_SQ.next();
             this.$el = $el;
             this.data = data;
             this.action = action;

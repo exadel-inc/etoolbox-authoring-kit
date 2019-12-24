@@ -8,7 +8,7 @@
 (function (document, $, ns) {
     'use strict';
 
-    let referenceIdCounter = 0;
+    const ELEMENT_REf_SQ = ns.createSequence();
     class ElementReference extends ns.ObservedReference {
         /**
          * Initialize element observable adapter
@@ -19,7 +19,7 @@
             let instance = $el.data('dependsonsubject');
             if (instance) return instance;
 
-            super(`$ref${referenceIdCounter++}`);
+            super(`$ref${ELEMENT_REf_SQ.next()}`);
             this.$el = $el;
             this.name = this.$el.attr('data-dependsonref');
 

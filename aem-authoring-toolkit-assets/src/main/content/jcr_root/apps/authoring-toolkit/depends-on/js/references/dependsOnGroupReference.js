@@ -8,10 +8,10 @@
 (function (document, $, ns) {
     'use strict';
 
-    let referenceIdCounter = 0;
+    const GROUP_REf_SQ = ns.createSequence();
     class GroupReference extends ns.ObservedReference {
         constructor(name, $context) {
-            super(`$group${referenceIdCounter++}`);
+            super(`$group${GROUP_REf_SQ.next()}`);
             this.refs = [];
             this.name = name;
             this.$context = $context;
