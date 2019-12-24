@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.0.0
+ * @version 2.1.0
  *
  * DependsOn plugin Elements Reference Registry
  * Store and manage known elements references
@@ -24,7 +24,7 @@
             this.name = this.$el.attr('data-dependsonref');
 
             if (this.name === 'this') {
-                console.error('[DependsOn]: "this" reference name is not allowed');
+                console.error('[DependsOn]: "this" reference name is not allowed, it can not be reached by queries');
             }
 
             this.$el.data('dependsonsubject', this);
@@ -43,8 +43,8 @@
 
         /**
          * Check is the Element Reference accepts passed referenced definition
-         * @param name {string}
-         * @param [$context] {jQuery | HTMLElement | string}
+         * @param {string} name
+         * @param {jQuery | HTMLElement | string} [$context]
          * @returns {boolean}
          * */
         is(name, $context) {
@@ -66,8 +66,8 @@
     class ElementReferenceRegistry {
         /**
          * Register {ElementReference} by name and context
-         * @param name {string}
-         * @param $context {JQuery | HTMLElement}
+         * @param {string} name
+         * @param {JQuery | HTMLElement} $context
          * @returns {ElementReference} (returns the existing one if it is already registered)
          * */
         static register(name, $context) {
@@ -80,14 +80,17 @@
          * @returns {ElementReference} (returns existing one if it is already registered)
          * */
         static registerElement($el) {
-            const subj = new ElementReference($el);
+            if ($el.length > 1) {
+                console.warn(`[DependsOn]: requested reference with multiple targets, the first target is used.`, $el);
+            }
+            const subj = new ElementReference($el.first());
             if (refs.indexOf(subj) === -1) refs.push(subj);
             return subj;
         }
 
         /**
          * Handle events from referenced target
-         * @param event {Event}
+         * @param {Event} event
          */
         static handleChange(event) {
             const reference = $(event.currentTarget).data('dependsonsubject');
@@ -104,8 +107,8 @@
 
         /**
          * Get Reference instance by element
-         * @param refName {string}
-         * @param $context {JQuery | HTMLElement | string}
+         * @param {string} refName
+         * @param {JQuery | HTMLElement | string} $context
          * @returns {Array<ElementReference>}
          * */
         static getAllByRefName(refName, $context) {

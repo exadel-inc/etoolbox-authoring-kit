@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.0.0
+ * @version 2.1.0
  *
  * DependsOn plugin entry point
  *
@@ -15,8 +15,8 @@
     /**
      * Depends On entry point
      * Initialize DependsOn for container
-     * @param container {HTMLElement}
-     * @param [callback] {function}
+     * @param {HTMLElement} container
+     * @param {function} [callback]
      * */
     ns.initialize = function (container, callback) {
         // Wait core-components:ready for new content and then plan initialization task

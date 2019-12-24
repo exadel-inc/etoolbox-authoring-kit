@@ -28,13 +28,14 @@
         static DATA_STORE = 'dependsonobserver';
 
         /**
-         * @param $el {JQuery}
+         * Initialize dependson observer instances on the target
+         * @param {JQuery} $el - target element
          * */
         static init($el) {
             if ($el.data(DependsOnQueryObserver.DATA_STORE)) return $el.data(DependsOnQueryObserver.DATA_STORE);
 
             const queries = ns.splitAndTrim($el.attr('data-dependson') || '');
-            const actions = ns.splitAndTrim($el.attr('data-dependsonaction') || 'visibility');
+            const actions = ns.splitAndTrim($el.attr('data-dependsonaction') || ns.ActionRegistry.default);
             if (actions.length !== queries.length) {
                 throw new Error('[DependsOn]: The number of actions and queries does not match');
             }
@@ -52,9 +53,9 @@
 
         /**
          * Initialize observer instances
-         * @param $el {JQuery}
-         * @param queries {string[]}
-         * @param actions {string[]}
+         * @param {JQuery} $el
+         * @param {string[]} queries
+         * @param {string[]} actions
          * */
         static initObserversList($el, queries, actions) {
             const actionCounter = {};
@@ -68,10 +69,10 @@
 
         /**
          * @constructor
-         * @param $el {JQuery}
-         * @param query {string}
-         * @param action {string}
-         * @param data {object}
+         * @param {JQuery} $el
+         * @param {string} query
+         * @param {string} action
+         * @param {object} [data]
          * */
         constructor($el, query, action, data = {}) {
             this.id = OBSERVERS_SQ.next();

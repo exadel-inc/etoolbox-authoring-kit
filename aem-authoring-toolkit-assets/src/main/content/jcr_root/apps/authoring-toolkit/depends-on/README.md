@@ -487,7 +487,7 @@ public class MultifieldItem {
     @DependsOnRef(name = "active")
     @DependsOn(
             action = DependsOnActions.DISABLED,
-            // We disable checkbox if it is not selected but some of checboxes with reference name 'active' are selected
+            // We disable checkbox if it is not selected but some of checkboxes with reference name 'active' are selected
             query = "!@this && @@active.some((val) => val)"
     )
     @DialogField

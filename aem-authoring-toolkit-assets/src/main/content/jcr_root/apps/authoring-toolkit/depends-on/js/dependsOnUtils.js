@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.0.0
+ * @version 2.1.0
  *
  * DependsOn plugin utils
  * */
@@ -8,7 +8,7 @@
     'use strict';
 
     /**
-     * Sequence generator
+     * Create sequence generator
      * */
     ns.createSequence = function() {
         let index = 1;
@@ -17,8 +17,8 @@
 
     /**
      * Split string by {@param separator} and trim
-     * @param value {string}
-     * @param [separator] {string} (default ';')
+     * @param {string} value
+     * @param {string} [separator] (default ';')
      * @returns {string[]}
      * */
     ns.splitAndTrim = function splitAndTrim(value, separator = ';') {
@@ -42,7 +42,7 @@
     /**
      * Cast field value to passed type
      * @param value
-     * @param type {'boolean'|'boolstring'|'number'|'string'|'any'}
+     * @param {'boolean'|'boolstring'|'number'|'string'|'any'} type
      * */
     ns.castToType = function (value, type) {
         switch (type.toLowerCase()) {
@@ -67,8 +67,8 @@
      * If 'this' passed as a sel $root will be returned
      * If sel is not provided then result will be $(document).
      *
-     * @param $root {JQuery}
-     * @param sel {string}
+     * @param {JQuery} $root
+     * @param {string} sel
      * */
     ns.findBaseElement = function ($root, sel) {
         if (!sel) return $(document.body);
@@ -83,9 +83,10 @@
 
     /**
      * Parse action data params into object
-     * @param el {HTMLElement}
-     * @param actionName {string}
-     * @param [index] {number}
+     * @param {HTMLElement} el - target element
+     * @param {string} actionName
+     * @param {number} [index] - action order if multiple actions of the same type attached
+     * @returns {object}
      * */
     ns.parseActionData = function (el, actionName = '', index = 0) {
         const prefix = `data-dependson-${actionName}-`;

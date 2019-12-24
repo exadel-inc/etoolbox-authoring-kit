@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.0.0
+ * @version 2.1.0
  *
  * DependsOn Query Processor
  * parse & compile DependsOn queries
@@ -11,12 +11,15 @@
     const REFERENCE_REGEXP = /@(@)?(\w+)([\s]*\(([^)]+)\))?/g;
 
     class QueryProcessor {
+        /**
+         * @readonly
+         * */
         static get REFERENCE_REGEXP() { return REFERENCE_REGEXP; }
 
         /**
          * Evaluate parsed query
-         * @param query {string} - parsed query
-         * @param context {object} - context to execute
+         * @param {string} query - parsed query
+         * @param {object} context - context to execute
          * */
         static evaluateQuery(query, context) {
             const refs = [].concat(ns.ElementReferenceRegistry.refs).concat(ns.GroupReferenceRegistry.refs);
@@ -30,17 +33,17 @@
         }
 
         /**
-         * Parse query to evaluateable one, replace references definitions by reference instances aliases
-         * {String} query
-         * {JQueryElement} $root
-         * {Function} [changeHandlerCB]
+         * Parse query to evaluable one, replace references definitions by reference instances aliases
+         * @param {string} query
+         * @param {JQuery} $root
+         * @param {function} [changeHandlerCB]
          * */
         static parseQuery(query, $root, changeHandlerCB) {
             return query.replace(REFERENCE_REGEXP, (q, isGroup, name, selWrapper, sel) => {
                 const $context = ns.findBaseElement($root, sel);
 
                 if (name === 'this' && (isGroup || sel)) {
-                    console.log(`[DependsOn]: WARN: ${q} is always referencing current element, could be replaced by simple @this`);
+                    console.warn(`[DependsOn]: ${q} is always referencing current element, could be replaced by simple @this`);
                 }
 
                 const reference = name === 'this' ?
