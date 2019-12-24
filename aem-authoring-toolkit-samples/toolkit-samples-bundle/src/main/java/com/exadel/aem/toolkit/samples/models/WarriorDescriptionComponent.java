@@ -78,8 +78,6 @@ public class WarriorDescriptionComponent {
                     RteFeatures.SEPARATOR,
                     RteFeatures.MISCTOOLS_SPECIALCHARS,
                     RteFeatures.SEPARATOR,
-                    RteFeatures.SPELLCHECK_CHECKTEXT,
-                    RteFeatures.SEPARATOR,
                     RteFeatures.Popovers.PARAFORMAT
             },
             htmlPasteRules = @HtmlPasteRules(

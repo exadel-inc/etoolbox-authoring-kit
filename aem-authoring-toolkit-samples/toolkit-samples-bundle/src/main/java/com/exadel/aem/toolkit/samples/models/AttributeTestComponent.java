@@ -17,7 +17,7 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 @Dialog(
         name = "content/attribute-test-component",
-        title = "Attribute Test Component",
+        title = "@Attribute test component",
         description = "Component for testing attribute annotation",
         resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
         componentGroup = "Toolkit Samples",
@@ -31,18 +31,22 @@ public class AttributeTestComponent {
     public static final String TAB_MAIN = "Main";
 
     @FieldSet(title = "First fieldSet")
-    @DialogField(label = "Toggle fieldSet")
+    @DialogField(label = "Checkbox fieldset")
     @Self
     private AttributeFieldSet firstFieldSet;
 
     @Attribute(clas = "toggle-fieldSet")
     @FieldSet(title = "Second fieldSet")
-    @DialogField(label = "Passive fieldSet")
+    @DialogField(
+            label = "Checkbox fieldset",
+            description = "Check all checkboxes from this group to show text field"
+    )
     @Self
     private AttributeFieldSet secondFieldSet;
 
-    @DependsOn(query = "@switch (coral-panel |> .toggle-fieldSet)", action = DependsOnActions.DISABLED)
-    @TextField
+    @DependsOn(query = "@@checkbox(coral-panel |> .toggle-fieldSet).every(item => item)")
+    @DependsOn(query = "@@checkbox.every(item => item)", action = DependsOnActions.DISABLED)
+    @TextField(emptyText = "Check all checkboxes to disable this text field")
     @DialogField(label = "Toggled text")
     @ValueMapValue
     private String toggledText;
