@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.0.0
+ * @version 2.1.0
  *
  * DependsOn Coral 3 Validate Actions
  * Additional action which sets query result as validation state
@@ -18,20 +18,28 @@
 (function ($, ns) {
     'use strict';
 
-    const DEFAULT_MSG = 'Incorrect data';
-    const INVALID_CLASS = 'dependsOnValidate-invalid';
-    const DATA_MARKER_ATTR = 'data-dependson-validate';
-    const TARGET_SEL = '[' + DATA_MARKER_ATTR + ']';
+    const ACTION_NAME = 'validate';
 
+    const DEFAULT_MSG = 'Incorrect data';
+    const DEFAULT_INVALID_CLASS = 'dependson-validate-invalid';
+
+    const TARGET_ATTR = 'data-dependson-validate';
+    const TARGET_SEL = '[' + TARGET_ATTR + ']';
 
     // Just return dependsOn validate result and set marker class accordingly
     function checkDependsOnValidator(el) {
-        const marker = el.getAttribute(DATA_MARKER_ATTR) || '';
-        el.classList.remove(INVALID_CLASS);
-        if (marker.length) {
-            el.classList.add(INVALID_CLASS);
-            return marker;
+        const $el = $(el);
+        const instances = $el.data(ns.DependsOnObserver.DATA_STORE);
+        const validateInstances = instances.filter((observer) => observer.action === ACTION_NAME);
+
+        let resultMsg = undefined;
+        for (let validate of validateInstances) {
+            const res = validate.data._validationResult;
+            const invalidCls = validate.data.cls || DEFAULT_INVALID_CLASS;
+            $el.toggleClass(invalidCls, !!res);
+            resultMsg = resultMsg || res;
         }
+        return resultMsg;
     }
 
     let dependsOnValidatorRegistered = false;
@@ -54,15 +62,17 @@
 
     // Action itself
     // Provide validator result
-    ns.ActionRegistry.register('validate',function (result, params) {
-        if (!dependsOnValidatorRegistered) {
-            register();
-        }
+    ns.ActionRegistry.register(ACTION_NAME,function (result, payload) {
+        if (!dependsOnValidatorRegistered) register();
+
+        this.$el.attr(TARGET_ATTR, ''); // Mark element for validator
+
         if (typeof result === 'string') {
-            this.$el.attr(DATA_MARKER_ATTR, result);
+            payload._validationResult = result;
         } else {
-            this.$el.attr(DATA_MARKER_ATTR, result ? '' : (params.msg || DEFAULT_MSG));
+            payload._validationResult = result ? '' : (payload.msg || DEFAULT_MSG);
         }
+
         ns.ElementAccessors.updateValidity(this.$el, true); // force validation
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

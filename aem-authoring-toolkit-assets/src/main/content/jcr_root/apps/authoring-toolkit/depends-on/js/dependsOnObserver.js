@@ -26,12 +26,13 @@
      * Initiate references registration
      * */
     class DependsOnObserver {
+        static DATA_STORE = 'dependsonobserver';
 
         /**
          * @param $el {JQuery}
          * */
         static init($el) {
-            if ($el.data('dependsonobserver')) return $el.data('dependsonobserver');
+            if ($el.data(DependsOnObserver.DATA_STORE)) return $el.data(DependsOnObserver.DATA_STORE);
 
             const queries = ns.splitAndTrim($el.attr('data-dependson') || '');
             const actions = ns.splitAndTrim($el.attr('data-dependsonaction') || 'visibility');
@@ -47,7 +48,7 @@
                 observers.forEach((observer) => observer.update());
             }
 
-            $el.data('dependsonobserver', observers);
+            $el.data(DependsOnObserver.DATA_STORE, observers);
         }
 
         /**
