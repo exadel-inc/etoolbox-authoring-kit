@@ -17,7 +17,7 @@
         static getAction(name) {
             const action = actionRegistryMap[name];
             if (typeof action !== 'function') {
-                throw new Error(`[DependsOn]: Action ${action} doesn't have a valid definition in DependsOnPlugin.ActionRegistry`);
+                throw new Error(`[DependsOn]: Action "${name}" doesn't have a valid definition in DependsOnPlugin.ActionRegistry`);
             }
             return action;
         }

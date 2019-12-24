@@ -93,8 +93,10 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
 
         Map<String, String> valueMap = new HashMap<>();
 
-        String queries = validDeclarations.stream().map(DependsOn::query).collect(Collectors.joining());
-        String actions = validDeclarations.stream().map(DependsOn::action).collect(Collectors.joining());
+        String queries = validDeclarations.stream()
+                .map(DependsOn::query).collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
+        String actions = validDeclarations.stream()
+                .map(DependsOn::action).collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
 
         valueMap.put(DialogConstants.PN_DEPENDS_ON, queries);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, actions);
@@ -120,12 +122,11 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
     private static Map<String, String> buildParamsMap(DependsOn dependsOn, int index){
         Map<String, String> valueMap = new HashMap<>();
         for (DependsOnParam param : dependsOn.params()) {
-            String paramName = StringUtils.joinWith(TERM_SEPARATOR,
-                    DialogConstants.PN_DEPENDS_ON,
-                    dependsOn.action(),
-                    param.name(),
-                    index > 0 ? index : StringUtils.EMPTY
-            );
+            String paramName =
+                    StringUtils.joinWith(TERM_SEPARATOR, DialogConstants.PN_DEPENDS_ON, dependsOn.action(), param.name());
+            if (index > 0) {
+                paramName = StringUtils.joinWith(TERM_SEPARATOR, paramName, index);
+            }
             valueMap.put(paramName, param.value());
         }
         return valueMap;

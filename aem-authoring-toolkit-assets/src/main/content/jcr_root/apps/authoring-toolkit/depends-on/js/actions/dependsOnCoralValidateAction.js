@@ -20,7 +20,6 @@
 
     const DEFAULT_MSG = 'Incorrect data';
     const INVALID_CLASS = 'dependsOnValidate-invalid';
-    const DATA_MSG_ATTR = 'data-dependson-validate-msg';
     const DATA_MARKER_ATTR = 'data-dependson-validate';
     const TARGET_SEL = '[' + DATA_MARKER_ATTR + ']';
 
@@ -55,14 +54,14 @@
 
     // Action itself
     // Provide validator result
-    ns.ActionRegistry.register('validate',function (result) {
+    ns.ActionRegistry.register('validate',function (result, params) {
         if (!dependsOnValidatorRegistered) {
             register();
         }
         if (typeof result === 'string') {
             this.$el.attr(DATA_MARKER_ATTR, result);
         } else {
-            this.$el.attr(DATA_MARKER_ATTR, result ? '' : (this.$el.attr(DATA_MSG_ATTR) || DEFAULT_MSG));
+            this.$el.attr(DATA_MARKER_ATTR, result ? '' : (params.msg || DEFAULT_MSG));
         }
         ns.ElementAccessors.updateValidity(this.$el, true); // force validation
     });

@@ -12,6 +12,7 @@ public class DependsOnActions {
     public static final String TAB_VISIBILITY = "tab-visibility";
     public static final String VALIDATE = "validate";
     public static final String REQUIRED = "required";
+    public static final String READONLY = "readonly";
     public static final String DISABLED = "disabled";
     public static final String SET = "set";
     public static final String SET_IF_BLANK = "set-if-blank";
