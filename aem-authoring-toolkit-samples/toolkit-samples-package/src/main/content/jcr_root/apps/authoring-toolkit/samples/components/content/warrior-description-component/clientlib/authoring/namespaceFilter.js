@@ -1,3 +1,9 @@
+/*
+Custom dependsOn action for @Autocomplete.
+The action is intended for dynamic changing tags scope depending on the Warrior component
+(that is the main container for other components in the samples module) color theme
+*/
+
 (function (Granite, $, DependsOn) {
 
     'use strict';
@@ -9,43 +15,76 @@
     const SELECT_LIST_SELECTOR = '.coral-SelectList';
     const TAG_LIST_SELECTOR = '.coral-TagList';
 
-    function removeTagPath(tag) {
+    /**
+     * @param tag {string}
+     * @returns {string}
+     * @private
+     */
+    function _removeTagPath(tag) {
         return tag.replace(TAG_PATH_REGEX, '$2').trim();
     }
 
-    function changeActiveTagsTitle(activeTags) {
+    /**
+     * Replace displaying full tag path with a tag name
+     * @param activeTags {Array<HTMLElement>}
+     * @private
+     */
+    function _changeActiveTagsTitle(activeTags) {
         let tagLabel = null;
         activeTags.map(tag => {
             tagLabel = tag.querySelector(TAG_LABEL_SELECTOR);
-            tagLabel.innerHTML = removeTagPath(tagLabel.innerHTML);
+            tagLabel.innerHTML = _removeTagPath(tagLabel.innerHTML);
         });
     }
 
-    function getColor(tag) {
+    /**
+     * Get color theme from the tag path
+     * @param tag {string}
+     * @returns {string}
+     * @private
+     */
+    function _getColor(tag) {
         return tag.replace(TAG_PATH_REGEX, '$1');
     }
 
-    function success(data) {
+    /**
+     * Decide which scope of tags to use (true - dark theme, default - light theme)
+     * @param data {*}
+     * @returns {boolean}
+     * @private
+     */
+    function _success(data) {
         if (!data) { return false; }
         return (data.colorTheme === 'true');
     }
 
-    function sortTags(tagList, colorTheme) {
+    /**
+     * Choosing tags depending on the color theme
+     * @param tagList {Array<HTMLElement>}
+     * @param colorTheme {'light' / 'dark'}
+     * @private
+     */
+    function _sortTags(tagList, colorTheme) {
         let tagTitle = null;
         tagList.map(tagElement => {
-            tagTitle = getColor(tagElement.dataset.value) === colorTheme
-                ? removeTagPath(tagElement.dataset.value)
+            tagTitle = _getColor(tagElement.dataset.value) === colorTheme
+                ? _removeTagPath(tagElement.dataset.value)
                 : null;
             tagElement.hidden = !tagTitle;
             tagElement.innerHTML = tagTitle || '';
         });
     }
 
+    /**
+     * Register namespaceFilter custom action
+     */
     DependsOn.ActionRegistry.register('namespaceFilter', function namespaceFilter(parentPath) {
         const element = this.$el.context;
+
+        // Receiving Warrior component structure
         let promise = $.get(Granite.HTTP.externalize(PORT + parentPath + COMPONENT_FORMAT));
         promise
-            .then(success, () => false)
+            .then(_success, () => false)
             .then(
             function handler(isDark) {
 
@@ -54,12 +93,13 @@
                 const activeTagsElement = element.querySelector(TAG_LIST_SELECTOR);
                 const activeTagsList = Array.from(activeTagsElement && activeTagsElement.children);
                 const oldColorTheme = activeTagsList.length > 0
-                ? getColor(activeTagsList[0].querySelector('input').value)
+                ? _getColor(activeTagsList[0].querySelector('input').value)
                 : null;
 
-                changeActiveTagsTitle(activeTagsList);
-                sortTags(tagList, colorTheme);
+                _changeActiveTagsTitle(activeTagsList);
+                _sortTags(tagList, colorTheme);
 
+                // Discard active tags if color theme was changed
                 if (oldColorTheme && (oldColorTheme !== colorTheme)) {
                     activeTagsElement.innerHTML = '';
                 }

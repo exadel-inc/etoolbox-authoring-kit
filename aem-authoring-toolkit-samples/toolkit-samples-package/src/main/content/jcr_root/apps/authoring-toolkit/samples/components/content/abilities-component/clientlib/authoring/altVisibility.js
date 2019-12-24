@@ -1,13 +1,28 @@
+/*
+Custom dependsOn action.
+The action is intended for deleting hidden by dependsOn fields from content in JCR and not sending them with the form submitting.
+ */
+
 (function (Granite, $, DependsOn) {
 
     'use strict';
 
-    function onShow(element) {
+    /**
+     * Remove custom input with a name field_name@Delete when a field need to be shown
+     * @param element {HTMLElement}
+     * @private
+     */
+    function _onShow(element) {
         const customInput = element.parentNode.querySelector('.alt-visibility-input');
         customInput.remove();
     }
 
-    function onHide(element) {
+    /**
+     * Insert custom input with a name field_name@Delete when a field need to be hidden
+     * @param element
+     * @private
+     */
+    function _onHide(element) {
         const elementName = element.name;
         const customInput = document.createElement('input');
 
@@ -19,6 +34,9 @@
     }
 
 
+    /**
+     * Registry altVisibility custom action
+     */
     DependsOn.ActionRegistry.register('alt-visibility', function altVisibility(state) {
 
         DependsOn.ElementAccessors.setVisibility(this.$el, state);
@@ -26,12 +44,8 @@
         const element = this.$el.context;
 
         if (element) {
-            const targetInput = (element.tagName === 'INPUT')
-                ? element
-                : element.querySelector('input[data-dependson]');
-
-            if (state) { onShow(element); }
-            else { onHide(element); }
+            if (state) { _onShow(element); }
+            else { _onHide(element); }
         }
     });
 })(Granite, Granite.$, Granite.DependsOnPlugin);
