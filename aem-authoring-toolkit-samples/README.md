@@ -6,14 +6,17 @@
 1. [Annotations map](#annotations-map)
     - [@Dialog, @DialogField, @Tab, @PlaceOnTab](#dialog-dialogfield-tab-placeontab)
     - [@Autocomplete](#autocomplete)
+    - [@Attribute](#attribute)
     - [@Checkbox](#checkbox)
     - [@ColorField](#colorfield)
     - [@DatePicker](#datepicker)
+    - [@Extends]
     - [@ImageUpload (@FileUpload)](#imageupload-fileupload)
     - [@Hidden](#hidden)
     - [@NumberField](#numberfield)
     - [@Password](#password)
     - [@PathField](#pathfield)
+    - [@Properties, @Property](#properties-property)
     - [@RadioGroup](#radiogroup)
     - [@Select, @Option](#select-option)
     - [@Switch](#switch)
@@ -84,6 +87,12 @@ These annotations are used in the every model (just there is no `@PlaceOnTab` in
 
 ***
 
+#### `@Attribute`
+
+`@Attribute` annotation is used in the **AttributeTestComponent**.
+
+***
+
 #### `@Checkbox`
 
 `@Checkbox` annotation is used in the **WarriorDescriptionComponent**.
@@ -99,6 +108,12 @@ These annotations are used in the every model (just there is no `@PlaceOnTab` in
 #### `@DatePicker`
 
 `@DatePicker` annotation is used in the **WarriorDescriptionComponent**.
+
+***
+
+#### `@Extends`
+
+`@Extends` annotation is used in the **ExtendsAndPropertyTestComponent**.
 
 ***
 
@@ -151,6 +166,12 @@ public class FileUploadDialog {
 #### `@PathField`
 
 `@PathField` annotation is used in the **WarriorComponent**.
+
+***
+
+#### `@Properties`, `@Property`
+
+`@Properties` and `@Property` annotation is used in the **ExtendsAndPropertyTestComponent** to override children of extended `@Select`.
 
 ***
 
@@ -216,7 +237,7 @@ Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.anno
 
 ## DependsOn
 
-`@DependsOn` and `@DependsOnRef` annotations are used in the **AbilitiesComponent** and **WarriorDescriptionComponent**.
+`@DependsOn` and `@DependsOnRef` annotations are used in the **AbilitiesComponent** (`@DependsOnRef`, `@DependsOn`), **WarriorDescriptionComponent** (`@DependsOnRef`, `@DependsOn` `@DependsOnTab`) and **AttributeTestComponent** (`@DependsOnRef`, `@DependsOn`, group reference and selectors).
 
 Also there are some examples of custom dependsOn actions creating. They are placed in the module `toolkit-samples-package`.
 In the package `apps.authoring-toolkit.samples.components.content` are placed components with their logic and styles. Custom logic of the components is placed in `component_name/clientlib/authoring`.

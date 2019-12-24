@@ -19,7 +19,7 @@ The action is intended for deleting hidden by dependsOn fields from content in J
 
     /**
      * Insert custom input with a name field_name@Delete when a field need to be hidden
-     * @param element
+     * @param element {HTMLElement}
      * @private
      */
     function _onHide(element) {
