@@ -12,7 +12,7 @@
 
     <artifactId>aem-authoring-toolkit-samples</artifactId>
     <name>AEM Authoring Toolkit - Samples</name>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
@@ -73,7 +73,7 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>aem-authoring-toolkit-api</artifactId>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>1.0.2-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
