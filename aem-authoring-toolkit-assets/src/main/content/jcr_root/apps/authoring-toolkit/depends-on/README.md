@@ -12,19 +12,21 @@ AEM Authoring Toolkit provides a set of annotations to use DependsOn from Java c
 
 DependsOn workflow consists of the following steps:
 
-**Reference**  ─┐
+**ObservedReference**  ─┐
 
-**Reference**  ─── **Query***  ─── **Action*** 
+**ObservedReference**  ─── **QueryObserver[Query]***  ─── **Action*** 
 
-**Reference**  ─┘
+**ObservedReference**  ─┘
  
-Query and Action are always a part of DependsOn plugin workflow. 
+**QueryObserver** and **Action** are always a part of DependsOn plugin workflow. 
  
-Action defines what the plugin should do with the dependent field (show/hide, set value, etc).
+**Action** defines what the plugin should do with the dependent field (show/hide, set value, etc).
+
+**Query** always goes with the Action and defines an expression that should be used as Action's input.
+
+**QueryObserver** holds and process **Query** and initiates **Action** on **ObservedReferences** change.
  
-Query always goes with the Action and defines an expression that should be used as Action's input.
- 
-References are external elements or group of elements whose values can be used inside of Query.
+**ObservedReferences** are external elements or group of elements whose values can be used inside of **Query**.
  
 #### Introduction  
 
@@ -32,14 +34,14 @@ References are external elements or group of elements whose values can be used i
 
 For dependent field:
 
-* **dependsOn** (`data-dependson`) - to provide Query with condition or expression for the Action.
-* **dependsOnAction** (`data-dependsonaction`) - (optional) to define Action that should be executed. 
-* **dependsOnSkipInitial** (`data-dependsonskipinitial`) - (optional) marker to disable initial execution.
+* `data-dependson` - to provide Query with condition or expression for the Action.
+* `data-dependsonaction` - (optional) to define Action that should be executed. 
+* `data-dependsonskipinitial` - (optional) marker to disable initial execution.
 
 For referenced field:
 
-* **dependsOnRef** (data-dependsonref) - to mark a field, that is referenced from the Query.
-* **dependsOnRefType** (data-dependsonreftype) - (optional) to define expected type of reference value. 
+* `data-dependsonref` - to mark a field, that is referenced from the Query.
+* `data-dependsonreftype` - (optional) to define expected type of reference value. 
 
 #### DependsOn Usage
 
@@ -50,6 +52,7 @@ Built-in plugin actions are:
  * `tab-visibility` - hide the tab or element's parent tab if the query result is 'falsy'
  * `set` - set the query result as field's value
  * `set-if-blank` - set the query result as field's value only if the current value is blank
+ * `readonly` - set the readonly marker of the field from the query result.
  * `required` - set the required marker of the field from the query result.
  * `validate` - set the validation state of the field from the query result.
  * `disabled` - set the field's disabled state from the query result.
@@ -69,6 +72,7 @@ Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('set', function s
 ```
 
 ##### Reference Types
+
 Allowed reference types:
 * `boolean` - cast to boolean (according to JS cast rules)
 * `boolstring` - cast as a string value to boolean (true if string cast equals "true")
@@ -81,7 +85,7 @@ If the type is not specified manually it will be chosen automatically based on e
 ##### ElementsAccessor Registry
 
 Registry `Granite.DependsOnPlugin.ElementAccessors` - can be used to define custom accessors of element. 
-Accessor provide the information how to get/set value, set a require/visibility state or returns `preferableType` for specific type of component.
+Accessor provide the information how to get/set value, set a require/visibility/disabled state or returns `preferableType` for specific type of component.
 
 For example default accessor descriptor is defined as follows:
 ```javascript
@@ -157,7 +161,12 @@ For example:
  Multiple actions with queries could be defined.
  Single query/action should be separated by ';' and placed in the same order.
  The number of actions should match the number of queries.
-
+ 
+ Action static params could be passed though data attributes with special syntax:
+ - for a single and first action `data-dependson-{action}-{paramName}` can be easily accessed and used from action,
+ e.g. `data-dependson-validate-msg` will be used by validate action as invalid state message
+ - for multiple actions of the same type additional actions params should end with `-{index}` (1 for the second action, 2 for the third).
+ e.g. `data-dependson-validate-msg-1` will be used by second validate action as invalid state message
 
 #### Authoring Toolkit DependsOn annotations 
 
@@ -461,7 +470,9 @@ Depends On allows you to simply validate field value.
 Here is an example of character count validation
 ```java
 public class Component {
-    @DependsOn(query = "( @this || '').length > 5", action = DependsOnActions.VALIDATE)
+    @DependsOn(query = "( @this || '' ).length > 5", action = DependsOnActions.VALIDATE, params = {
+       @DependsOnParam(name = "msg", value = "Limit exceeded")
+    })
     @DialogField
     @TextField
     private String text;

@@ -85,7 +85,6 @@
      * */
     ns.ActionRegistry.register('set', function setValue(value) {
         ns.ElementAccessors.setValue(this.$el, value);
-        this.$el.trigger('change');
     });
 
     /**
@@ -96,7 +95,6 @@
         const current = ns.ElementAccessors.getValue(this.$el);
         if (current === '' || current === null || current === undefined) {
             ns.ElementAccessors.setValue(this.$el, value);
-            this.$el.trigger('change');
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

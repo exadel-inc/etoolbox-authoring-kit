@@ -16,8 +16,9 @@
         get: function ($el) {
             return $el.val() || '';
         },
-        set: function ($el, value) {
+        set: function ($el, value, notify) {
             $el.val(value);
+            notify && $el.trigger('change');
         },
         required: function ($el, val) {
             $el.attr('aria-required', val ? 'true' : null);
@@ -68,8 +69,8 @@
         static getPreferableType($el) {
             return ElementAccessors._findAccessorHandler($el, 'preferableType');
         }
-        static setValue($el, value) {
-            ElementAccessors._findAccessorHandler($el, 'set')($el, value);
+        static setValue($el, value, notify = true) {
+            ElementAccessors._findAccessorHandler($el, 'set')($el, value, notify);
         }
         static setRequired($el, value) {
             ElementAccessors._findAccessorHandler($el, 'required')($el, value);

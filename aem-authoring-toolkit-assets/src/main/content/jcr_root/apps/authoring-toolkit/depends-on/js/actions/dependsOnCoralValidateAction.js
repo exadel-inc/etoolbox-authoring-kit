@@ -5,7 +5,7 @@
  * DependsOn Coral 3 Validate Actions
  * Additional action which sets query result as validation state
  *
- * If the query result is string then
+ * If the query result is a string then
  *     blank string - indicates valid state
  *     not blank string - indicates invalid state and used as validation massage
  * If the query result is boolean then
@@ -13,7 +13,11 @@
  *     false - indicates invalid state (data-dependson-validate-msg attribute is used as validation message)
  * Otherwise the result is cast to boolean.
  *
- * NOTE: common data-dependson-validate value indicates invalid state & message
+ * Options:
+ * data-dependson-validate-msg - message of invalid state if query result is boolean
+ * data-dependson-validate-cls - invalid class, default 'dependson-validate-invalid'
+ *
+ * NOTE: common data-dependson-validate marker just indicates that field will be processed by dependson validator
  * */
 (function ($, ns) {
     'use strict';
@@ -29,14 +33,14 @@
     // Just return dependsOn validate result and set marker class accordingly
     function checkDependsOnValidator(el) {
         const $el = $(el);
-        const instances = $el.data(ns.DependsOnObserver.DATA_STORE);
+        const instances = $el.data(ns.DependsOnQueryObserver.DATA_STORE);
         const validateInstances = instances.filter((observer) => observer.action === ACTION_NAME);
 
         let resultMsg = undefined;
         for (let validate of validateInstances) {
             const res = validate.data._validationResult;
             const invalidCls = validate.data.cls || DEFAULT_INVALID_CLASS;
-            $el.toggleClass(invalidCls, !!res);
+            invalidCls && $el.toggleClass(invalidCls, !!res);
             resultMsg = resultMsg || res;
         }
         return resultMsg;

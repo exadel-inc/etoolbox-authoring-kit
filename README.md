@@ -901,28 +901,13 @@ Afterwards you can set breakpoints in your IDE, start a debugging session and co
 ## Frontend assets
 ### DependsOn
 
-(see more in [DependsOn Readme](./aem-authoring-toolkit-assets/src/main/content/jcr_root/apps/authoring-toolkit/depends-on/README.md)) 
-
 **DependsOn** asset is a client library that triggers pre-defined actions over a dependent TouchUI dialog widget or tab upon a change of other (referenced) widget/field in the authoring interface on the AEM installation frontend. Typical use-case for *DependsOn* is changing widget's visibility or turning it enabled/disabled because upon triggering some switch, and also storing conditional data to a widget's input field.  
- 
+
 DependsOn uses data attributes for fetching expected configuration. 
 To define data attribute from JCR use _granite:data_ sub-node under the widget node.
 **AEM Authoring Toolkit** provides a set of annotations to use DependsOn from Java code.
 
-`DependsOn` is based on the following data attributes.
-
-For dependent field:
-
-* _dependsOn_ (`data-dependson`) - to provide query with condition or expression for the action.
-* _dependsOnAction_ (`data-dependsonaction`) - (optional) to define action that should be executed. 
-* _dependsOnSkipInitial_ (`data-dependsonskipinitial`) - (optional) marker to disable initial execution.
-
-For referenced field:
-
-* _dependsOnRef_ (`data-dependsonref`) - to mark a field, that is referenced from the query.
-* _dependsOnRefType_ (`data-dependsonreftype`) - (optional) to define expected type of reference value. 
-
-### DependsOn Usage
+(see more in [DependsOn Readme](./aem-authoring-toolkit-assets/src/main/content/jcr_root/apps/authoring-toolkit/depends-on/README.md))
 
 ##### DependsOn annotations 
 
@@ -932,58 +917,24 @@ For referenced field:
 
 The following snippet discloses the `@DependsOn` usage in brief:
 ```java
+@Dialog(
+  // ...
+  tabs = {
+    @Tab(name = "tab"), 
+    @Tab(name = "conditionalTab")
+  }
+)
+@DependsOnTab(tabTitle = "conditionalTab", query = "@ref")
 public class DependsOnSample {
-    @DialogField(
-            label = "The switch",
-            description = "Turn the fieldset visibility on/off"
-    )
+    @DialogField(label = "The switch")
     @Switch
-    @DependsOnRef(name = "first")
+    @DependsOnRef(name = "ref", type = DependsOnRefTypes.BOOLEAN)
     private boolean firstDialogEnabled;
 
     @DialogField
-    @FieldSet(
-            title = "Conditional fieldset",
-            description = "This will be shown or hidden depending on the switch"
-    )
-    @DependsOn(query = "@first")
+    @FieldSet(title = "Conditional fieldset")
+    @DependsOn(query = "@ref", action = "someAction", params = {@DependsOnParam(name = "param", value = "paramValue")} )
     @PlaceOnTab(TAB_ADDITIONAL_TOPICS)
     private SomeFieldsetDefinitionClass fieldsetDefinitionClass;
 }
 ``` 
-
-##### DependsOn actions
-
-Built-in plugin actions are:
- * `visibility` - hide the element if the query result is 'falsy'
- * `tab-visibility` - hide the tab or element's parent tab if the query result is 'falsy'
- * `set` - set the query result as field's value
- * `set-if-blank` - set the query result as field's value only if the current value is blank
- * `required` - set the required marker of the field from the query result.
- * `validate` - set the validation state of the field from the query result.
-
-If the action is not specified then `visibility` is used by default.
-
-##### Query Syntax
-
-Query is a plain JavaScript condition or expression. 
-Any global and native JavaScript object can be used inside of Query.
-We can also use dynamic references to access other fields' values.
-To define a reference we should specify referenced field name in dependsOnRef attribute on it.
-Then it's accessible in the query by this name via @ symbol. 
-
-##### Query Reference Syntax
-
-Area to find referenced field can be narrowed down by providing the Scope. 
-Scope is a CSS Selector of the closest container element. 
-Scope is defined in parentheses after reference name.
-
-Examples:
-* `@enableCta (coral-panel)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of the closest parent Panel element.
-* `@enableCta (.my-fieldset)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of the closest parent container element with "my-fieldset" class.
-
-"Back-forward" CSS selectors are available in the Scope syntax, i.e. we can define CSS selector to determinate parent element and then provide selector to search the target element for scope in bounds of found parent. 
-Back and forward selectors are separated by '|>' combination. 
-
-For example:
-* `@enableCta (section |> .fieldset-1)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of element with `fieldset-1` class placed in the closest parent section element.

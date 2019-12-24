@@ -12,10 +12,11 @@
         get: function ($el) {
             return $el[0].checked;
         },
-        set: function ($el, val) {
+        set: function ($el, val, notify) {
             $el.each(function () {
                 this.checked = val;
             });
+            notify && $el.trigger('change');
         }
     });
 
@@ -26,10 +27,11 @@
         get: function ($el) {
             return $el.find('coral-radio[checked]').val() || '';
         },
-        set: function ($el, val) {
+        set: function ($el, val, notify) {
             $el.find('coral-radio').each(function () {
                 this.checked = val === this.value;
             });
+            notify && $el.trigger('change');
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

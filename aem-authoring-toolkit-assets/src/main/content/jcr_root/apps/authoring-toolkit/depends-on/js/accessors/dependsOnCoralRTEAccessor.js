@@ -16,7 +16,7 @@
         get: function($el) {
             return $el.closest(RTE_CONTAINER).find(RTE_INPUT_SELECTOR).val() || '';
         },
-        set: function ($el, value) {
+        set: function ($el, value, notify) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
             const rteInstance = $rteContainer.find(RTE_EDITOR_SELECTOR).data(RTE_DATA_INSTANCE);
 
@@ -24,6 +24,8 @@
             if (rteInstance && typeof rteInstance.setContent === 'function') {
                 rteInstance.setContent(value);
             }
+
+            notify && $el.trigger('change');
         },
         required: function ($el, val) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
