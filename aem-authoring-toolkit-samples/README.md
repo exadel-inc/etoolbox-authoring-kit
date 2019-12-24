@@ -10,7 +10,7 @@
     - [@Checkbox](#checkbox)
     - [@ColorField](#colorfield)
     - [@DatePicker](#datepicker)
-    - [@Extends]
+    - [@Extends](#extends)
     - [@ImageUpload (@FileUpload)](#imageupload-fileupload)
     - [@Hidden](#hidden)
     - [@NumberField](#numberfield)
