@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
     <filter root="/apps/authoring-toolkit/samples"/>
-    <filter root="/apps/acs-list"/>
     <filter root="/content/aem-authoring-toolkit-samples"/>
-    <filter root="/content/acs-list"/>
-    <filter root="/content/cq:tags"/>
-    <filter root="/etc/designs"/>
+    <filter root="/content/cq:tags/films"/>
+    <filter root="/content/cq:tags/fruits"/>
 </workspaceFilter>
