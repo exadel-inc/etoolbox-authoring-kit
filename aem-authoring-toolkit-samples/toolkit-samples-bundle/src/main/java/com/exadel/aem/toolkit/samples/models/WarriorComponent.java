@@ -52,8 +52,11 @@ public class WarriorComponent {
     public static final String TAB_MAIN = "Main info";
     public static final String TAB_ICON = "Icon";
     public static final String TAB_THEME = "Color theme";
+    public static final String DEFAULT_NAME = "The Guy";
+
     private final String DEFAULT_TITLE = "Make your warrior";
-    private final String DEFAULT_NAME = "The Guy";
+    private final String DARK_THEME_CLASS = "dark-theme";
+    private final String LIGHT_THEME_CLASS = "light-theme";
 
     @Attribute(clas = "test")
     @TextField(emptyText = DEFAULT_TITLE)
@@ -64,7 +67,7 @@ public class WarriorComponent {
     @ValueMapValue
     private String title;
 
-    @TextField(emptyText = DEFAULT_NAME)
+    @TextField(emptyText = WarriorComponent.DEFAULT_NAME)
     @DialogField(
             label = "Warrior name",
             name = "./warriorName"
@@ -95,24 +98,20 @@ public class WarriorComponent {
     private boolean colorTheme;
 
     public String getTitle() {
-        if (title != null && !"".equals(title)) {
-            return title;
-        }
-        return DEFAULT_TITLE;
+        return (title != null && !"".equals(title))
+                ? title
+                : DEFAULT_TITLE;
     }
 
     public String getWarriorName() {
-        if (warriorName != null && !"".equals(warriorName)) {
-            return warriorName;
-        }
-        return DEFAULT_NAME;
+        return (warriorName != null && !"".equals(warriorName))
+                ? warriorName
+                : DEFAULT_NAME;
     }
 
     public String getIconPath() {
         return iconPath;
     }
 
-    public String getColorTheme() {
-        return colorTheme ? "dark-theme" : "light-theme";
-    }
+    public String getColorTheme() { return colorTheme ? DARK_THEME_CLASS : LIGHT_THEME_CLASS; }
 }

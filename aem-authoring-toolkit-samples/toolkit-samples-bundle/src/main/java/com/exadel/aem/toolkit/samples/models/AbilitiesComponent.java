@@ -55,7 +55,7 @@ public class AbilitiesComponent {
     @ValueMapValue
     private String ability;
 
-    @DependsOn(query = "@ability === \"magic\"")
+    @DependsOn(query = "@ability === 'magic'")
     @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
     @MultiField(field = Element.class)
     @DialogField(
@@ -87,10 +87,7 @@ public class AbilitiesComponent {
     public String getAbility() { return ability; }
 
     public String[] getElements() {
-        if (elements != null) {
-            return elements;
-        }
-        return (new String[0]);
+        return (elements != null)? elements : new String[0];
     }
 
     public String getAbilityLevel() { return String.valueOf(abilityLevel); }

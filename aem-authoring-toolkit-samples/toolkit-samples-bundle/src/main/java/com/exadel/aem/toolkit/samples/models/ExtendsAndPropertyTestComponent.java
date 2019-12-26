@@ -28,6 +28,8 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ExtendsAndPropertyTestComponent extends FatherSelectComponent{
 
+        private final String DEFAULT_TEXT = "@Extends-in and @Property test component";
+
         @Extends(value = WarriorDescriptionComponent.class, field = "description")
         @RichTextEditor(
                 features = {
@@ -47,9 +49,8 @@ public class ExtendsAndPropertyTestComponent extends FatherSelectComponent{
         private String fatherSelect;
 
         public String getSampleText() {
-                if (sampleText == null || "".equals(sampleText)) {
-                        return "@Extends-in and @Property test component";
-                }
-                return sampleText;
+                return (sampleText == null || "".equals(sampleText))
+                        ? DEFAULT_TEXT
+                        : sampleText;
         }
 }

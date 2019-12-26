@@ -32,6 +32,8 @@ public class ArmorColorComponent {
         public static final String FIELDS_PREFIX = "color";
         public static final String FIELDS_POSTFIX = "-test";
 
+        private static final String DEFAULT_COLOR = "#A9A9A9";
+
         @FieldsetPostfix(postfix = ArmorColorComponent.FIELDS_POSTFIX)
         @FieldSet(
                 title = "Color of warrior's armor",
@@ -51,7 +53,7 @@ public class ArmorColorComponent {
                         name = "./armor",
                         ranking = 2
                 )
-                @Default(values = {"#A9A9A9"})
+                @Default(values = {DEFAULT_COLOR})
                 @ValueMapValue(name = ArmorColorComponent.FIELDS_PREFIX + "armor" + ArmorColorComponent.FIELDS_POSTFIX)
                 private String armor;
 
@@ -63,7 +65,7 @@ public class ArmorColorComponent {
                         name = "./shoes",
                         ranking = 3
                 )
-                @Default(values = {"#A9A9A9"})
+                @Default(values = {DEFAULT_COLOR})
                 @ValueMapValue(name = ArmorColorComponent.FIELDS_PREFIX + "shoes" + ArmorColorComponent.FIELDS_POSTFIX)
                 private String shoes;
 
@@ -75,7 +77,7 @@ public class ArmorColorComponent {
                         name = "./helmet",
                         ranking = 1
                 )
-                @Default(values = {"#A9A9A9"})
+                @Default(values = {DEFAULT_COLOR})
                 @ValueMapValue(name = ArmorColorComponent.FIELDS_PREFIX + "helmet" + ArmorColorComponent.FIELDS_POSTFIX)
                 private String helmet;
 

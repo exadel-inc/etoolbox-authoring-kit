@@ -8,8 +8,6 @@ The action is intended for dynamic changing tags scope depending on the Warrior 
 
     'use strict';
 
-    const PORT = 'http://localhost:4502';
-    const COMPONENT_FORMAT = '.json';
     const TAG_PATH_REGEX = /^(?:.*:)(.*?)(?:\/(.*))?$/;
     const TAG_LABEL_SELECTOR = '.coral-TagList-tag-label';
     const SELECT_LIST_SELECTOR = '.coral-SelectList';
@@ -48,23 +46,12 @@ The action is intended for dynamic changing tags scope depending on the Warrior 
     }
 
     /**
-     * Decide which scope of tags to use (true - dark theme, default - light theme)
-     * @param data {*}
-     * @returns {boolean}
-     * @private
-     */
-    function _success(data) {
-        if (!data) { return false; }
-        return (data.colorTheme === 'true');
-    }
-
-    /**
      * Choosing tags depending on the color theme
      * @param tagList {Array<HTMLElement>}
      * @param colorTheme {'light' / 'dark'}
      * @private
      */
-    function _sortTags(tagList, colorTheme) {
+    function _filterTags(tagList, colorTheme) {
         let tagTitle = null;
         tagList.map(tagElement => {
             tagTitle = _getColor(tagElement.dataset.value) === colorTheme
@@ -78,33 +65,23 @@ The action is intended for dynamic changing tags scope depending on the Warrior 
     /**
      * Register namespaceFilter custom action
      */
-    DependsOn.ActionRegistry.register('namespaceFilter', function namespaceFilter(parentPath) {
-        const element = this.$el.context;
+    DependsOn.ActionRegistry.register('namespaceFilter', function namespaceFilter(isDark) {
 
-        // Receiving Warrior component structure
-        let promise = $.get(Granite.HTTP.externalize(PORT + parentPath + COMPONENT_FORMAT));
-        promise
-            .then(_success, () => false)
-            .then(
-            function handler(isDark) {
+        const element = this.$el[0];
+        const colorTheme = isDark ? 'dark' : 'light';
+        const tagList = Array.from(element.querySelector(SELECT_LIST_SELECTOR).children);
+        const activeTagsElement = element.querySelector(TAG_LIST_SELECTOR);
+        const activeTagsList = Array.from(activeTagsElement && activeTagsElement.children);
+        const oldColorTheme = activeTagsList.length > 0
+            ? _getColor(activeTagsList[0].querySelector('input').value)
+            : null;
 
-                const colorTheme = isDark ? 'dark' : 'light';
-                const tagList =  Array.from(element.querySelector(SELECT_LIST_SELECTOR).children);
-                const activeTagsElement = element.querySelector(TAG_LIST_SELECTOR);
-                const activeTagsList = Array.from(activeTagsElement && activeTagsElement.children);
-                const oldColorTheme = activeTagsList.length > 0
-                ? _getColor(activeTagsList[0].querySelector('input').value)
-                : null;
+        _changeActiveTagsTitle(activeTagsList);
+        _filterTags(tagList, colorTheme);
 
-                _changeActiveTagsTitle(activeTagsList);
-                _sortTags(tagList, colorTheme);
-
-                // Discard active tags if color theme was changed
-                if (oldColorTheme && (oldColorTheme !== colorTheme)) {
-                    activeTagsElement.innerHTML = '';
-                }
-
-            }.bind(this)
-        );
+        // Discard active tags if color theme was changed
+        if (oldColorTheme && (oldColorTheme !== colorTheme)) {
+            activeTagsElement.innerHTML = '';
+        }
     });
 })(Granite, Granite.$, Granite.DependsOnPlugin);

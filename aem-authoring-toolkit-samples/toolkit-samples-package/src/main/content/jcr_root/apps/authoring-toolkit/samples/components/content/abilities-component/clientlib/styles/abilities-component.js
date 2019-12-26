@@ -1,8 +1,9 @@
 (function () {
 
     function elementsButtonEvent(event) {
-        if (event.target.id === "warrior-abilities-button") {
-            let elementsList = document.getElementById("warrior-abilities-list");
+        if (event.target.classList.contains('warrior-abilities-button')) {
+            const component = event.target.closest('.warrior-ability');
+            const elementsList = component.querySelector('.warrior-abilities-list');
             elementsList.hidden = !elementsList.hidden;
         }
     }

@@ -3,6 +3,7 @@ package com.exadel.aem.toolkit.samples.models;
 import com.day.cq.tagging.TagManager;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRefTypes;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
@@ -33,6 +34,7 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Dialog(
         name = "content/warrior-description-component",
@@ -56,7 +58,17 @@ public class WarriorDescriptionComponent {
     public static final String TAB_TASTES = "Tastes";
     public static final String TAB_FRUITS = "Fruits";
     public static final String TAB_FILMS = "Films";
-    public static final String EXTERNAL_STYLE_PATH = "/apps/authoring-toolkit/samples/components/content/warrior-description-component/clientlib/styles/rte-style.css";
+
+    private final String DESCRIPTION_TEMPLATE = "%s was born on the cold but bright day %s. He is %s. %s, and %s";
+    private final String DEFAULT_BIRTHDAY = "29.03.2000";
+    private final String DEFAULT_CHARACTER = "always creepy smiling";
+    private final String DEFAULT_FRUITS_TEXT = "He doesn't like fruits";
+    private final String DEFAULT_FILMS_TEXT = "he doesn't like films";
+
+
+    private final String FRUITS_TEXT = "His favorite fruits: ";
+    private final String FILMS_TEXT = "his favorite film genres: ";
+    private final String TAGS_DELIMITER = ", ";
 
     @Inject
     private ResourceResolver resourceResolver;
@@ -85,7 +97,7 @@ public class WarriorDescriptionComponent {
                     allowLists = AllowElement.DISALLOW,
                     allowTables = AllowElement.DISALLOW
             ),
-            externalStyleSheets = {WarriorDescriptionComponent.EXTERNAL_STYLE_PATH},
+            externalStyleSheets = {PathConstants.EXTERNAL_STYLE_PATH},
             styles = {
                     @Style(cssName = "rte-style", text = "Aggressive style"),
             },
@@ -178,8 +190,13 @@ public class WarriorDescriptionComponent {
     @ValueMapValue
     private boolean isLikeFilms;
 
+    @Hidden
+    @DependsOn(query = "@parentPath", action = "getParentColorTheme")
+    @DependsOnRef(name = "isDarkColorTheme", type = DependsOnRefTypes.BOOLEAN)
+    private boolean isDarkColorTheme;
+
     @PlaceOnTab(WarriorDescriptionComponent.TAB_FILMS)
-    @DependsOn(query = "@parentPath", action = "namespaceFilter")
+    @DependsOn(query = "@isDarkColorTheme", action = "namespaceFilter")
     @Autocomplete(
             multiple = true,
             forceSelection = true,
@@ -214,50 +231,40 @@ public class WarriorDescriptionComponent {
             warriorName = resource.getValueMap().get("warriorName", String.class);
         }
 
-        return (warriorName != null ? warriorName : "The Guy");
+        return (warriorName != null ? warriorName : WarriorComponent.DEFAULT_NAME);
     }
 
     public String getDescription() { return description; }
 
-    public String getBirthday() {
-
-        if (birthday != null) {
-            return birthday;
-        }
-        return "29.03.2000";
-    }
+    public String getBirthday() { return birthday != null ? birthday : DEFAULT_BIRTHDAY; }
 
     public String getFilms() {
         if (isLikeFilms && films != null) {
-            return ("his favorite film genres: " + String.join(", ",
-                    Arrays.stream(films).
-                            map(film -> film.replaceAll("^.*/(.*)$", "$1")).
-                             toArray(String[]::new)));
+            return (FILMS_TEXT +
+                    Arrays.stream(films)
+                            .map(film -> film.replaceAll("^.*/(.*)$", "$1"))
+                            .collect(Collectors.joining(TAGS_DELIMITER)));
         }
-        return "he doesn't like films";
+        return DEFAULT_FILMS_TEXT;
     }
 
     public String getFruits() {
         if (isLikeFruits && fruits != null) {
             TagManager tagManager = resourceResolver.adaptTo(TagManager.class);
-            return ("His favorite fruits: " + String.join(", ",
-                    Arrays.stream(fruits).
-                            map(fruit -> tagManager.resolve(fruit).getTitle()).
-                            toArray(String[]::new)));
+            return (FRUITS_TEXT +
+                    Arrays.stream(fruits)
+                            .map(fruit -> tagManager.resolve(fruit).getTitle())
+                            .collect(Collectors.joining(TAGS_DELIMITER)));
         }
-        return "He doesn't like fruits";
+        return DEFAULT_FRUITS_TEXT;
     }
 
     public String getInitDescription() {
         return
-                String.format("%s was born on the cold but bright day %s. He is %s. %s, and %s",
+                String.format(DESCRIPTION_TEMPLATE,
                         getWarriorName(), getBirthday(), getCharacter(), getFruits(), getFilms());
     }
 
-    public String getCharacter() {
-        if (character != null) {
-            return character;
-        }
-        return "always creepy smiling";
-    }
+    public String getCharacter() { return character != null ? character : DEFAULT_CHARACTER; }
+
 }

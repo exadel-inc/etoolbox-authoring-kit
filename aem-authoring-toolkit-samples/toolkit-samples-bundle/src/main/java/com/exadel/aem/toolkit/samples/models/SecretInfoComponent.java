@@ -31,6 +31,8 @@ public class SecretInfoComponent {
         public static final String TAB_PASSWORD = "Password";
         public static final String TAB_SECRET = "Secret";
 
+        private final String DEFAULT_SECRET = "This warrior is clear";
+
         @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
         @Password(retype = "confirmPassword")
         @DialogField(
@@ -59,9 +61,8 @@ public class SecretInfoComponent {
         public String getPassword() { return password; }
 
         public String getInfo() {
-                if (info != null && !"".equals(info)) {
-                        return info;
-                }
-                return "This warrior is clear";
+                return (info != null && !"".equals(info))
+                        ? info
+                        : DEFAULT_SECRET;
         }
 }

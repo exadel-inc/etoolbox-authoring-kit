@@ -21,6 +21,7 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 public class FatherSelectComponent {
 
         public static final String TAB_MAIN = "Main";
+        private final String DEFAULT_SELECT_TEXT = "nothing is selected";
 
         @Select(options = {
                 @Option(text = "A", value = "a"),
@@ -30,10 +31,5 @@ public class FatherSelectComponent {
         @ValueMapValue
         private String fatherSelect;
 
-        public String getFatherSelect() {
-                if (fatherSelect == null) {
-                        return "nothing is selected";
-                }
-                return fatherSelect;
-        }
+        public String getFatherSelect() { return (fatherSelect == null) ? DEFAULT_SELECT_TEXT : fatherSelect; }
 }
