@@ -41,7 +41,7 @@ public class ExtendsAndPropertyTestComponent extends FatherSelectComponent{
                 @Option(text = "C", value = "c"),
                 @Option(text = "D", value = "d")
         })
-        @DialogField(label = "Select with overrode children")
+        @DialogField(label = "Select with overridden children")
         @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
         @ValueMapValue
         private String fatherSelect;

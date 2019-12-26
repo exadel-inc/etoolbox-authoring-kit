@@ -1,6 +1,6 @@
 # AEM Authoring Toolkit Samples
 
-**AEM Authoring Toolkit Samples** is the example of using AEM Authoring Toolkit functional in the form of components set. Here you can find examples of using all AAT annotations, example of custom annotation and dependsOn actions.
+**AEM Authoring Toolkit Samples** is an example of using AEM Authoring Toolkit functionality in the form of components set. Here you can find examples of using all AAT annotations, examples of custom annotation and dependsOn actions.
 
 ## Table of contents
 1. [Annotations map](#annotations-map)
@@ -37,9 +37,9 @@ Sling models with the examples are placed in the module `toolkit-samples-bundle`
     
 #### `@Dialog`, `@DialogField`, `@Tab`, `@PlaceOnTab`
 
-These annotations are used in the every model (just there is no `@PlaceOnTab` in the HomelandComponent).
+These annotations are used in every model (just there is no `@PlaceOnTab` in the HomelandComponent).
 
-  * Tab in form of nested class is used in the **HomelandComponent** model.
+  * Tab in the form of a nested class is used in the **HomelandComponent** model.
   
   ```
     @Dialog(
@@ -55,7 +55,7 @@ These annotations are used in the every model (just there is no `@PlaceOnTab` in
     }
   ```
     
-  * Tabs in form of array of `@Tab` within `@Dialog` are used in the **every** model _instead_ HomelandComponent.
+  * Tabs in the form of an array of `@Tab` within `@Dialog` are used in the **every** model _except_ HomelandComponent.
     
   ```
     @Dialog(
@@ -119,7 +119,7 @@ These annotations are used in the every model (just there is no `@PlaceOnTab` in
 
 #### `@ImageUpload`, `@FileUpload`
 
-`@ImageUpload` annotation is used in the **HomelandComponent** and is special case of the `@FileUpload`.
+`@ImageUpload` annotation is used in the **HomelandComponent** and is a special case of the `@FileUpload`.
 
 `@FileUpload` annotation is used similarly:
 
@@ -231,7 +231,7 @@ These annotations are used in the **WarriorDescriptionComponent**.
 
 ## Custom annotations and handlers
 
-Let's look custom annotation as an example of a postfix for `@FieldSet`. 
+Let's look at custom annotation as an example of a postfix for `@FieldSet`. 
 The example is placed in the the module `toolkit-camples-bundle` package `com.exadel.aem.toolkit.samples.annotations`.
 Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.annotations.handlers`
 
@@ -241,5 +241,5 @@ Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.anno
 
 Also there are some examples of custom dependsOn actions creating. They are placed in the module `toolkit-samples-package`.
 In the package `apps.authoring-toolkit.samples.components.content` are placed components with their logic and styles. Custom logic of the components is placed in `component_name/clientlib/authoring`.
-There is custom dependsOn actions in the `abilities-component ` and `warrior-description-component`.
+There are custom dependsOn actions in the `abilities-component ` and `warrior-description-component`.
 

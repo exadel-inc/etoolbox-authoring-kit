@@ -26,7 +26,7 @@ public class FatherSelectComponent {
                 @Option(text = "A", value = "a"),
                 @Option(text = "B", value = "b")
         })
-        @DialogField(label = "Select with overrode children")
+        @DialogField(label = "Select with overridden children")
         @ValueMapValue
         private String fatherSelect;
 
