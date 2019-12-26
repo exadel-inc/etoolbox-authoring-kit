@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.0.0
+ * @version 2.1.0
  *
  * DependsOn plugin Group Reference Registry
  * Store and manage known group references
@@ -8,10 +8,10 @@
 (function (document, $, ns) {
     'use strict';
 
-    let referenceIdCounter = 0;
+    const GROUP_REF_SQ = ns.createSequence();
     class GroupReference extends ns.ObservedReference {
         constructor(name, $context) {
-            super(`$group${referenceIdCounter++}`);
+            super(`$group${GROUP_REF_SQ.next()}`);
             this.refs = [];
             this.name = name;
             this.$context = $context;
@@ -51,8 +51,8 @@
 
         /**
          * Check if the reference accepts passed definition
-         * @param name {string}
-         * @param [$context] {jQuery | HTMLElement | string}
+         * @param {string} name
+         * @param {jQuery | HTMLElement | string} [$context]
          * @returns {boolean}
          * */
         is(name, $context) {

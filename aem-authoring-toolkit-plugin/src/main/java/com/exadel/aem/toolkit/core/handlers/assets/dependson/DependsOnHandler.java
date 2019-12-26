@@ -14,33 +14,35 @@
 
 package com.exadel.aem.toolkit.core.handlers.assets.dependson;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Element;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
-import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnConfig;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnParam;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRefTypes;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Element;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 /**
  * {@link Handler} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
  */
 public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
+
     static final String EMPTY_VALUES_EXCEPTION_MESSAGE = "Non-empty string values required for DependsOn params";
+
+    private static final String TERM_SEPARATOR = "-";
 
     /**
      * Processes the user-defined data and writes it to XML entity
@@ -69,9 +71,8 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
         }
         Map<String, String> valueMap = Maps.newHashMap();
         valueMap.put(DialogConstants.PN_DEPENDS_ON, value.query());
-        if (!value.action().equals(DependsOnActions.VISIBILITY)) {
-            valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, value.action());
-        }
+        valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, value.action());
+        valueMap.putAll(buildParamsMap(value, 0));
         getXmlUtil().appendDataAttributes(element, valueMap);
     }
 
@@ -81,25 +82,54 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
      * @param value Current {@link DependsOnConfig} value
      */
     private void handleDependsOnConfig(Element element, DependsOnConfig value) {
-        String queries = Arrays.stream(value.value())
-                .filter(conf -> StringUtils.isNoneBlank(conf.action(), conf.query()))
-                .map(DependsOn::query)
-                .collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
-        String actions = Arrays.stream(value.value())
-                .filter(conf -> StringUtils.isNoneBlank(conf.action(), conf.query()))
-                .map(DependsOn::action)
-                .collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
-        if (StringUtils.isAllEmpty(queries, actions))  {
-            return;
+        List<DependsOn> validDeclarations = Arrays.stream(value.value())
+                .filter(dependsOn -> StringUtils.isNoneBlank(dependsOn.action(), dependsOn.query()))
+                .collect(Collectors.toList());
+
+        if (value.value().length != validDeclarations.size()) {
+            PluginRuntime.context().getExceptionHandler()
+                    .handle(new ValidationException(EMPTY_VALUES_EXCEPTION_MESSAGE));
         }
-        if (StringUtils.isAnyBlank(actions, queries)) {
-            PluginRuntime.context().getExceptionHandler().handle(new ValidationException(EMPTY_VALUES_EXCEPTION_MESSAGE));
-            return;
+
+        Map<String, String> valueMap = new HashMap<>();
+
+        String queries = validDeclarations.stream()
+                .map(DependsOn::query).collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
+        String actions = validDeclarations.stream()
+                .map(DependsOn::action).collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
+
+        valueMap.put(DialogConstants.PN_DEPENDS_ON, queries);
+        valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, actions);
+
+        Map<String, Integer> counter = new HashMap<>();
+        validDeclarations.stream()
+                // Counting actions separately
+                .map(dependsOn -> DependsOnHandler.buildParamsMap(dependsOn, counter.merge(dependsOn.action(), 1, Integer::sum) - 1))
+                .forEach(valueMap::putAll);
+
+        getXmlUtil().appendDataAttributes(element, valueMap);
+    }
+
+    /**
+     * Build {@code DependsOnParam} parameters for the passed {@code DependsOn} annotation
+     * Param pattern:
+     * - for the first action (index = 0): dependson-{action}-{param}
+     * - otherwise: dependson-{action}-{param}-{index}
+     *
+     * @param dependsOn current {@link DependsOn} value
+     * @param index index of action
+     */
+    private static Map<String, String> buildParamsMap(DependsOn dependsOn, int index){
+        Map<String, String> valueMap = new HashMap<>();
+        for (DependsOnParam param : dependsOn.params()) {
+            String paramName =
+                    StringUtils.joinWith(TERM_SEPARATOR, DialogConstants.PN_DEPENDS_ON, dependsOn.action(), param.name());
+            if (index > 0) {
+                paramName = StringUtils.joinWith(TERM_SEPARATOR, paramName, index);
+            }
+            valueMap.put(paramName, param.value());
         }
-        getXmlUtil().appendDataAttributes(element, ImmutableMap.of(
-                DialogConstants.PN_DEPENDS_ON, queries,
-                DialogConstants.PN_DEPENDS_ON_ACTION, actions
-        ));
+        return valueMap;
     }
 
     /**

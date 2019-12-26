@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.0.0
+ * @version 2.1.0
  *
  * DependsOn Coral 3 Basic Actions
  *
@@ -8,6 +8,8 @@
  * - visibility - set field visibility (also hide form field wrapper)
  * - tab-visibility - set visibility of tab-panel and related tab-control
  * - required - set the require marker of the field
+ * - readonly - set readonly state of field
+ * - disabled - set disabled state of field
  * - set - set field value from query result
  * - set-if-blank - set field value from query result if field value is blank
  * */
@@ -62,6 +64,14 @@
     });
 
     /**
+     * Change readonly marker of the field
+     * query type: boolean
+     * */
+    ns.ActionRegistry.register('readonly', function setReadonly(state) {
+        this.$el.attr('readonly', state ? 'true' : null);
+    });
+
+    /**
      * Change disable marker of the field
      * query type: boolean
      * */
@@ -75,7 +85,6 @@
      * */
     ns.ActionRegistry.register('set', function setValue(value) {
         ns.ElementAccessors.setValue(this.$el, value);
-        this.$el.trigger('change');
     });
 
     /**
@@ -86,7 +95,6 @@
         const current = ns.ElementAccessors.getValue(this.$el);
         if (current === '' || current === null || current === undefined) {
             ns.ElementAccessors.setValue(this.$el, value);
-            this.$el.trigger('change');
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

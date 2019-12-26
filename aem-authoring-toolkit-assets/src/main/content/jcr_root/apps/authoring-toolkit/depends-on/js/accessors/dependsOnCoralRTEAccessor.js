@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.0.0
+ * @version 2.1.0
  *
  * Coral 3 RTE accessor
  * */
@@ -16,7 +16,7 @@
         get: function($el) {
             return $el.closest(RTE_CONTAINER).find(RTE_INPUT_SELECTOR).val() || '';
         },
-        set: function ($el, value) {
+        set: function ($el, value, notify) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
             const rteInstance = $rteContainer.find(RTE_EDITOR_SELECTOR).data(RTE_DATA_INSTANCE);
 
@@ -24,6 +24,8 @@
             if (rteInstance && typeof rteInstance.setContent === 'function') {
                 rteInstance.setContent(value);
             }
+
+            notify && $el.trigger('change');
         },
         required: function ($el, val) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
@@ -40,16 +42,15 @@
             ns.ElementAccessors.DEFAULT_ACCESSOR.disabled($el, val);
 
             const rteInstance = $el.data(RTE_DATA_INSTANCE);
+            if (!rteInstance) return;
 
-            //disable rte editing
-            if (rteInstance) {
-                if (val) {
-                    rteInstance.suspend();
-                } else {
-                    //use old content like initial content to reactivate rte
-                    const initContent = rteInstance.editorKernel && rteInstance.editorKernel.getProcessedHtml();
-                    rteInstance.reactivate(initContent);
-                }
+            // disable rte editing
+            if (val) {
+                rteInstance.suspend();
+            } else {
+                // use old content as initial content to reactivate rte
+                const initContent = rteInstance.editorKernel && rteInstance.editorKernel.getProcessedHtml();
+                rteInstance.reactivate(initContent);
             }
         }
     });

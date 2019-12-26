@@ -8,12 +8,13 @@ js/references/dependsOnGroupReference.js
 # Core
 js/dependsOnActionRegistry.js
 js/dependsOnQueryProcessor.js
-js/dependsOnObserver.js
+js/dependsOnQueryObserver.js
 
 # Accessors
 js/accessors/dependsOnCoralSwitcherAccessors.js
 js/accessors/dependsOnCoralRTEAccessor.js
 js/accessors/dependsOnCQFileUploadAccessor.js
+
 # Actions
 js/actions/dependsOnCoralBasicActions.js
 js/actions/dependsOnCoralValidateAction.js
