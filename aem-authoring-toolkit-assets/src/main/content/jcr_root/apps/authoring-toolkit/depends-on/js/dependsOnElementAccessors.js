@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.0.0
+ * @version 2.1.0
  *
  * DependsOn ElementAccessors Registry
  * */
@@ -16,8 +16,9 @@
         get: function ($el) {
             return $el.val() || '';
         },
-        set: function ($el, value) {
+        set: function ($el, value, notify) {
             $el.val(value);
+            notify && $el.trigger('change');
         },
         required: function ($el, val) {
             $el.attr('aria-required', val ? 'true' : null);
@@ -59,28 +60,64 @@
     class ElementAccessors {
         /**
          * Default accessor definition
+         * @readonly
          * */
         static get DEFAULT_ACCESSOR() { return DEFAULT_ACCESSOR; }
 
+        /**
+         * Get $el value
+         * @param {JQuery} $el - target element
+         * */
         static getValue($el) {
             return ElementAccessors._findAccessorHandler($el, 'get')($el);
         }
+        /**
+         * Get preferable type to cast for $el
+         * @param {JQuery} $el - target element
+         * @returns {string}
+         * */
         static getPreferableType($el) {
             return ElementAccessors._findAccessorHandler($el, 'preferableType');
         }
-        static setValue($el, value) {
-            ElementAccessors._findAccessorHandler($el, 'set')($el, value);
+        /**
+         * Set $el value
+         * @param {JQuery} $el - target element
+         * @param {*} value - value to set
+         * @param {boolean} [notify] - produce change event
+         * */
+        static setValue($el, value, notify = true) {
+            ElementAccessors._findAccessorHandler($el, 'set')($el, value, notify);
         }
+        /**
+         * Set required state of the $el
+         * @param {JQuery} $el - target element
+         * @param {boolean} value - state to set
+         * */
         static setRequired($el, value) {
             ElementAccessors._findAccessorHandler($el, 'required')($el, value);
         }
+        /**
+         * Set required state of the $el
+         * @param {JQuery} $el - target element
+         * @param {boolean} value - state to set
+         * */
         static setVisibility($el, value) {
             ElementAccessors._findAccessorHandler($el, 'visibility')($el, value);
         }
+        /**
+         * Set disabled state of the $el
+         * @param {JQuery} $el - target element
+         * @param {boolean} value - state to set
+         * */
         static setDisabled($el, value) {
             ElementAccessors._findAccessorHandler($el, 'disabled')($el, value);
         }
 
+        /**
+         * Register accessor.
+         * Accessor descriptor should contain selector property - css selector to determine target element types.
+         * @param {object} accessorDescriptor
+         * */
         static registerAccessor(accessorDescriptor) {
             validate(accessorDescriptor);
             accessorsList.push(accessorDescriptor);
@@ -88,8 +125,8 @@
 
         /**
          * Update validity
-         * @param $el {JQueryElement}
-         * @param [lazy] {boolean} - true to skip initial validation
+         * @param {JQuery} $el - target element
+         * @param {boolean} [lazy] - true to skip initial validation
          * */
         static updateValidity($el, lazy) {
             const api = $el.adaptTo('foundation-validation');
@@ -101,7 +138,7 @@
         /**
          * Clear validity
          * Exclude all child submittables from validation cache.
-         * @param $el {JQueryElement}
+         * @param {JQuery} $el - target element
          * */
         static clearValidity($el) {
             $el.find(':-foundation-submittable').trigger('foundation-validation-valid');
@@ -109,8 +146,8 @@
 
         /**
          * Set label asterisk according to state
-         * @param $el {JQueryElement}
-         * @param required {boolean}
+         * @param {JQuery} $el - target element
+         * @param {boolean} required - required state
          * */
         static setLabelRequired($el, required) {
             const $label = $el.closest(FIELD_WRAPPER).find(FIELD_LABEL);

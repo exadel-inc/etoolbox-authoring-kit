@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.0.0
+ * @version 2.1.0
  *
  * DependsOn Actions Registry
  * Action defines steps to process query result
@@ -11,20 +11,25 @@
     const actionRegistryMap = {};
     class ActionRegistry {
         /**
-         * @param name {string} - action name
+         * Default action name
+         * */
+        static default = 'visibility';
+
+        /**
+         * @param {string} name - action name
          * @returns {function} action callback
          * */
         static getAction(name) {
             const action = actionRegistryMap[name];
             if (typeof action !== 'function') {
-                throw new Error(`[DependsOn]: Action ${action} doesn't have a valid definition in DependsOnPlugin.ActionRegistry`);
+                throw new Error(`[DependsOn]: Action "${name}" doesn't have a valid definition in DependsOnPlugin.ActionRegistry`);
             }
             return action;
         }
 
         /**
-         * @param name {string} - is action name
-         * @param actionFn {function} - function to set state (queryresult: any) => void
+         * @param {string} name - is action name
+         * @param {function} actionFn - function to set state (queryresult: any) => void
          * @returns {function} actual actionCb after register
          * */
         static register(name, actionFn) {

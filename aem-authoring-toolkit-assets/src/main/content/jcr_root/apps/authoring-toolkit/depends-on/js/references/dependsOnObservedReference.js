@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.0.0
+ * @version 2.1.0
  *
  * DependsOn plugin Observed Reference
  * ObservedReference is a base class for references
@@ -13,7 +13,7 @@
     class ObservedReference {
         /**
          * @constructor
-         * @param id {string} alias to access reference in parsed query
+         * @param {string} id alias to access reference in parsed query
          * */
         constructor(id) {
             this.id = id;
@@ -66,7 +66,7 @@
         /**
          * Triggers value update.
          * Fetch current value, update cached, notify subscribers if value changed.
-         * @param {Boolean} [force] - force update
+         * @param {boolean} [force] - force update
          * */
         update(force) {
             const value = this.getReferenceValue();

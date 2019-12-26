@@ -1,10 +1,10 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.0.0
+ * @version 2.1.0
  *
  * DependsOn plugin entry point
  *
- * Initialize DependsOnObserver and DependsOnElementReferences
+ * Initialize DependsOnQueryObserver and DependsOnElementReferences
  * */
 (function ($, ns) {
     'use strict';
@@ -15,8 +15,8 @@
     /**
      * Depends On entry point
      * Initialize DependsOn for container
-     * @param container {HTMLElement}
-     * @param [callback] {function}
+     * @param {HTMLElement} container
+     * @param {function} [callback]
      * */
     ns.initialize = function (container, callback) {
         // Wait core-components:ready for new content and then plan initialization task
@@ -27,7 +27,7 @@
             // GC for group references
             ns.GroupReferenceRegistry.actualize();
             // Observers initialization
-            $('[data-dependson]', container).each((i, el) => ns.DependsOnObserver.init($(el)));
+            $('[data-dependson]', container).each((i, el) => ns.DependsOnQueryObserver.init($(el)));
             // Execute callback if provided
             (typeof callback === 'function') && callback();
         }));

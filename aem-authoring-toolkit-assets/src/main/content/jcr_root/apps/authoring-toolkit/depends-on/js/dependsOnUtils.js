@@ -1,11 +1,29 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.0.0
+ * @version 2.1.0
  *
  * DependsOn plugin utils
  * */
 (function ($, ns) {
     'use strict';
+
+    /**
+     * Create sequence generator
+     * */
+    ns.createSequence = function() {
+        let index = 1;
+        return { next: () => index++ };
+    };
+
+    /**
+     * Split string by {@param separator} and trim
+     * @param {string} value
+     * @param {string} [separator] (default ';')
+     * @returns {string[]}
+     * */
+    ns.splitAndTrim = function splitAndTrim(value, separator = ';') {
+        return value.split(separator).map((term) => term.trim());
+    };
 
     /**
      * Extended comparison that supports NaN and Arrays
@@ -24,7 +42,7 @@
     /**
      * Cast field value to passed type
      * @param value
-     * @param type {'boolean'|'boolstring'|'number'|'string'|'any'}
+     * @param {'boolean'|'boolstring'|'number'|'string'|'any'} type
      * */
     ns.castToType = function (value, type) {
         switch (type.toLowerCase()) {
@@ -49,8 +67,8 @@
      * If 'this' passed as a sel $root will be returned
      * If sel is not provided then result will be $(document).
      *
-     * @param $root {JQuery}
-     * @param sel {string}
+     * @param {JQuery} $root
+     * @param {string} sel
      * */
     ns.findBaseElement = function ($root, sel) {
         if (!sel) return $(document.body);
@@ -61,5 +79,30 @@
         } else {
             return $root.closest(sel.trim());
         }
+    };
+
+    /**
+     * Parse action data params into object
+     * @param {HTMLElement} el - target element
+     * @param {string} actionName
+     * @param {number} [index] - action order if multiple actions of the same type attached
+     * @returns {object}
+     * */
+    ns.parseActionData = function (el, actionName = '', index = 0) {
+        const prefix = `data-dependson-${actionName}-`;
+        const suffix = index ? `-${index}`: '';
+
+        let attrs = [].slice.call(el.attributes);
+        attrs = attrs.filter((attr) => attr.name.slice(0, prefix.length) === prefix);
+        attrs = index ?
+            attrs.filter((attr) => attr.name.slice(-suffix.length) === suffix) :
+            attrs.filter((attr) => !/-(\d+)$/.test(attr.name));
+
+        // Build object
+        return attrs.reduce((data, attr) => {
+            const name = attr.name.slice(prefix.length, attr.name.length - suffix.length);
+            if (name) data[name] = attr.value;
+            return data
+        }, {});
     };
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
