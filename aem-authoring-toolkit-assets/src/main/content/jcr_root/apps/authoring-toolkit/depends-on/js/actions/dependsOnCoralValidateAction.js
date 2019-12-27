@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.1.0
+ * @version 2.2.0
  *
  * DependsOn Coral 3 Validate Actions
  * Additional action which sets query result as validation state
@@ -16,6 +16,7 @@
  * Options:
  * data-dependson-validate-msg - message of invalid state if query result is boolean
  * data-dependson-validate-cls - invalid class, default 'dependson-validate-invalid'
+ * data-dependson-validate-force - force to setup validity state
  *
  * NOTE: common data-dependson-validate marker just indicates that field will be processed by dependson validator
  * */
@@ -77,6 +78,6 @@
             payload._validationResult = result ? '' : (payload.msg || DEFAULT_MSG);
         }
 
-        ns.ElementAccessors.updateValidity(this.$el, true); // force validation
+        ns.ElementAccessors.updateValidity(this.$el, !payload.force); // force validation
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
