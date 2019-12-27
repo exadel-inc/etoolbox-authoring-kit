@@ -16,7 +16,7 @@
  * Options:
  * data-dependson-validate-msg - message of invalid state if query result is boolean
  * data-dependson-validate-cls - invalid class, default 'dependson-validate-invalid'
- * data-dependson-validate-force - force to setup validity state
+ * data-dependson-validate-strict - force to setup validity state after initial update
  *
  * NOTE: common data-dependson-validate marker just indicates that field will be processed by dependson validator
  * */
@@ -35,7 +35,7 @@
     function checkDependsOnValidator(el) {
         const $el = $(el);
         const instances = $el.data(ns.DependsOnQueryObserver.DATA_STORE);
-        const validateInstances = instances.filter((observer) => observer.action === ACTION_NAME);
+        const validateInstances = (instances || []).filter((observer) => observer.action === ACTION_NAME);
 
         let resultMsg = undefined;
         for (let validate of validateInstances) {
@@ -70,14 +70,17 @@
     ns.ActionRegistry.register(ACTION_NAME,function (result, payload) {
         if (!dependsOnValidatorRegistered) register();
 
-        this.$el.attr(TARGET_ATTR, ''); // Mark element for validator
-
         if (typeof result === 'string') {
             payload._validationResult = result;
         } else {
             payload._validationResult = result ? '' : (payload.msg || DEFAULT_MSG);
         }
 
-        ns.ElementAccessors.updateValidity(this.$el, !payload.force); // force validation
+        if (this.$el.is(TARGET_SEL)) {
+            ns.ElementAccessors.updateValidity(this.$el, !payload.strict);
+        } else {
+            this.$el.attr(TARGET_ATTR, ''); // Mark element for validator
+            ns.ElementAccessors.updateValidity(this.$el, true);
+        }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
