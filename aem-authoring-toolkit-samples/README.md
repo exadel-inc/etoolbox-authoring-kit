@@ -39,7 +39,7 @@ Sling models with the examples are placed in the module `toolkit-samples-bundle`
 
 These annotations are used in every model (just there is no `@PlaceOnTab` in the HomelandComponent).
 
-  * Tab in the form of a nested class is used in the **HomelandComponent** model.
+  * Tab in the form of a nested class is used in the [**HomelandComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/HomelandComponent.java).
   
   ```
     @Dialog(
@@ -83,43 +83,43 @@ These annotations are used in every model (just there is no `@PlaceOnTab` in the
 
 #### `@Autocomplete`
 
-`@Autocomplete` annotation is used in the **WarriorDescriptionComponent**.
+`@Autocomplete` annotation is used in the [**WarriorDescriptionComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java).
 
 ***
 
 #### `@Attribute`
 
-`@Attribute` annotation is used in the **AttributeTestComponent**.
+`@Attribute` annotation is used in the [**AttributeTestComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/AttributeTestComponent.java).
 
 ***
 
 #### `@Checkbox`
 
-`@Checkbox` annotation is used in the **WarriorDescriptionComponent**.
+`@Checkbox` annotation is used in the [**WarriorDescriptionComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java).
 
 ***
 
 #### `@ColorField`
 
-`@ColorField` annotation is used in the **ArmorColorComponent**.
+`@ColorField` annotation is used in the [**ArmorColorComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/ArmorColorComponent.java).
 
 ***
 
 #### `@DatePicker`
 
-`@DatePicker` annotation is used in the **WarriorDescriptionComponent**.
+`@DatePicker` annotation is used in the [**WarriorDescriptionComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java).
 
 ***
 
 #### `@Extends`
 
-`@Extends` annotation is used in the **ExtendsAndPropertyTestComponent**.
+`@Extends` annotation is used in the [**ExtendsAndPropertyTestComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/ExtendsAndPropertyTestComponent.java).
 
 ***
 
 #### `@ImageUpload`, `@FileUpload`
 
-`@ImageUpload` annotation is used in the **HomelandComponent** and is a special case of the `@FileUpload`.
+`@ImageUpload` annotation is used in the [**HomelandComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/HomelandComponent.java) and is a special case of the `@FileUpload`.
 
 `@FileUpload` annotation is used similarly:
 
@@ -147,85 +147,85 @@ public class FileUploadDialog {
 
 #### `@Hidden`
 
-`@Hidden` annotation is used in the **WarriorDescriptionComponent**.
+`@Hidden` annotation is used in the [**WarriorDescriptionComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java).
 
 ***
 
 #### `@NumberField`
 
-`@NumberField` annotation is used in the **AbilitiesComponent**.
+`@NumberField` annotation is used in the [**AbilitiesComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/AbilitiesComponent.java).
 
 ***
 
 #### `@Password`
 
-`@Password` annotation is used in the **SecretInfoComponent**.
+`@Password` annotation is used in the [**SecretInfoComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/SecretInfoComponent.java).
 
 ***
 
 #### `@PathField`
 
-`@PathField` annotation is used in the **WarriorComponent**.
+`@PathField` annotation is used in the [**WarriorComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorComponent.java).
 
 ***
 
 #### `@Properties`, `@Property`
 
-`@Properties` and `@Property` annotation is used in the **ExtendsAndPropertyTestComponent** to override children of extended `@Select`.
+`@Properties` and `@Property` annotation is used in the [**ExtendsAndPropertyTestComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/ExtendsAndPropertyTestComponent.java) to override children of extended `@Select`.
 
 ***
 
 #### `@RadioGroup`
 
-`@RadioGroup` annotation is used in the **WarriorDescriptionComponent**.
+`@RadioGroup` annotation is used in the [**WarriorDescriptionComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java).
 
 ***
 
 #### `@Select`, `@Option`
 
-`@Select` and `@Option` annotations are used in the **AbilitiesComponent**.
+`@Select` and `@Option` annotations are used in the [**AbilitiesComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/AbilitiesComponent.java).
 
 ***
 
 #### `@Switch`
 
-`@Switch` annotation is used in the **WarriorComponent**.
+`@Switch` annotation is used in the [**WarriorComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorComponent.java).
 
 ***
 
 #### `@TextArea`
 
-`@TextArea` annotation is used in the **SecretInfoComponent**.
+`@TextArea` annotation is used in the [**SecretInfoComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/SecretInfoComponent.java).
 
 ***
 
 #### `@TextField`
 
-`@TextField` annotation is used in the **WarriorComponent** and **AbilitiesComponent**.
+`@TextField` annotation is used in the [**WarriorComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorComponent.java) and [**AbilitiesComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/AbilitiesComponent.java).
 
 ***
 
 #### `@FieldSet`
 
-`@FieldSet` annotation is used in the **ArmorColorComponent**.
+`@FieldSet` annotation is used in the [**ArmorColorComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/ArmorColorComponent.java).
 
 ***
 
 #### `@MultiField`
 
-`@MultiField` annotation is used in the **AbilitiesComponent**.
+`@MultiField` annotation is used in the [**AbilitiesComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/AbilitiesComponent.java).
 
 ***
 
 #### `@RichTextEditor`, `@IconMapping`, `@HtmlPasteRules`, `@HtmlLinkRules`, `@Characters`, `@ParagraphFormat`, `@Style`
 
-These annotations are used in the **WarriorDescriptionComponent**.
+These annotations are used in the [**WarriorDescriptionComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java).
 
 ***
 
 #### `@EditConfig`, `@InplaceEditingConfig`
 
-`@EditConfig` and `@InplaceEditingConfig` annotations are used in the **WarriorComponent**.
+`@EditConfig` and `@InplaceEditingConfig` annotations are used in the [**WarriorComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorComponent.java).
 
 ***
 
@@ -237,9 +237,43 @@ Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.anno
 
 ## DependsOn
 
-`@DependsOn` and `@DependsOnRef` annotations are used in the **AbilitiesComponent** (`@DependsOnRef`, `@DependsOn`), **WarriorDescriptionComponent** (`@DependsOnRef`, `@DependsOn` `@DependsOnTab`) and **AttributeTestComponent** (`@DependsOnRef`, `@DependsOn`, group reference and selectors).
+#### `@DependsOn`
 
-Also there are some examples of custom dependsOn actions creating. They are placed in the module `toolkit-samples-package`.
-In the package `apps.authoring-toolkit.samples.components.content` are placed components with their logic and styles. Custom logic of the components is placed in `component_name/clientlib/authoring`.
-There are custom dependsOn actions in the `abilities-component ` and `warrior-description-component`.
+`@DependsOn` annotation is used in the:
+ - [**AbilitiesComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/AbilitiesComponent.java) to switch visibility (default action) of a multifield with the simple boolean query:
+   ```
+   @DependsOn(query = "@ability === 'magic'")
+   ```
+ - [**WarriorDescriptionComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java) 
+   - to call custom action with a parent component's path argument, that gets color theme of a parent:
+   ```
+   @DependsOn(query = "@parentPath", action = "getParentColorTheme")
+   ```
+   - to call custom action, that changes tags scope of `@Autocomplete` depending on a color theme:
+   ```
+   @DependsOn(query = "@isDarkColorTheme", action = "namespaceFilter") 
+   ```
+ - [**AttributeTestComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/AttributeTestComponent.java) to switch visibility and disabling of a textfield with the group boolean query (using back-forward class selector):
+   ```
+   @DependsOn(query = "@@checkbox(coral-panel |> .toggle-fieldSet).every(item => item)")
+   @DependsOn(query = "@@checkbox.every(item => item)", action = DependsOnActions.DISABLED)
+   ``` 
+
+***
+
+#### `@DependsOnRef`
+
+`@DependsOnRef` annotation is used in the [**AbilitiesComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/AbilitiesComponent.java), [**WarriorDescriptionComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java) and [**AttributeTestComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/AttributeTestComponent.java)
+
+***
+
+#### `@DependsOnTab`
+
+`@DependsOnTab` annotation is used in the [**WarriorDescriptionComponent**](./toolkit-samples-bundle/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java) to switch visibility of tabs with the simple boolean queries:
+
+    ```
+    @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUITS, query = "@isLikeFruits")
+    @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FILMS, query = "@isLikeFilms")
+    ```
+Custom dependsOn actions placed in the [`abilities-component`](./toolkit-samples-package/src/main/content/jcr_root/apps/authoring-toolkit/samples/components/content/abilities-component/clientlib/authoring/altVisibility.js) and [`warrior-description-component`](./toolkit-samples-package/src/main/content/jcr_root/apps/authoring-toolkit/samples/components/content/warrior-description-component/clientlib/authoring).
 
