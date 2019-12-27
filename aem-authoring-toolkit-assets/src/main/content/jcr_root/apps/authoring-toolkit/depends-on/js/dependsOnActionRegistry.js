@@ -13,7 +13,17 @@
         /**
          * Default action name
          * */
-        static get DEFAULT () { return 'visibility'; }
+        static get DEFAULT() {
+            return 'visibility';
+        }
+
+        /**
+         * Registered DependsOn action names
+         * @returns {string[]}
+         * */
+        static get registeredActionNames() {
+            return Object.keys(actionRegistryMap);
+        }
 
         /**
          * @param {string} name - action name
@@ -22,7 +32,7 @@
         static getAction(name) {
             const action = actionRegistryMap[name];
             if (typeof action !== 'function') {
-                const knownActions = Object.keys(actionRegistryMap).map((key) => `"${key}"`).join(', ');
+                const knownActions = ActionRegistry.registeredActionNames.map((key) => `"${key}"`).join(', ');
                 throw new Error(`[DependsOn]: Action "${name}" doesn't have a valid definition in DependsOnPlugin.ActionRegistry. Known actions: ${knownActions}`);
             }
             return action;

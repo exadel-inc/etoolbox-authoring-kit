@@ -177,6 +177,20 @@ For example:
 * `@DependsOnTab` - to define DependsOn query with `tab-visibility` action for tab.
 
 
+#### Debug info
+
+DependsOn produce 3 type of debug notifications type:
+
+- Critical errors: DependsOn will throw Error on configuration mismatch (like unknown action name, illegal custom accessor registration, etc)
+- Error messages: not blocking runtime messages (query evaluation errors, unreachable references, etc)
+- Warn messages: potentially unexpected results warning
+
+A couple of useful APIs could be used in runtime to check the current DependsOnState. The next expressions can be evaluated in the browser console:
+
+- `Granite.DependsOnPlugin.ActionRegistry.registeredActionNames` - to get the list of known action names
+- `Granite.DependsOnPlugin.ElementReferenceRegistry.refs` - to get the list of registered element references
+- `Granite.DependsOnPlugin.GroupReferenceRegistry.refs` - to get the list of group references
+
 ### Examples
 
 #### 1. Simple bindings.
