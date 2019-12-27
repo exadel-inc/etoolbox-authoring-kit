@@ -181,13 +181,13 @@ For example:
 
 #### Debug info
 
-DependsOn produce 3 type of debug notifications type:
+DependsOn produce 3 types of debug notifications:
 
-- Critical errors: DependsOn will throw Error on configuration mismatch (like unknown action name, illegal custom accessor registration, etc)
+- Critical errors: DependsOn will throw an Error on configuration mismatch (like unknown action name, illegal custom accessor registration, etc)
 - Error messages: not blocking runtime messages (query evaluation errors, unreachable references, etc)
 - Warn messages: potentially unexpected results warning
 
-A couple of useful APIs could be used in runtime to check the current DependsOnState. The next expressions can be evaluated in the browser console:
+A couple of useful APIs can be used in runtime to check the current DependsOnState. The following expressions can be evaluated in the browser console:
 
 - `Granite.DependsOnPlugin.ActionRegistry.registeredActionNames` - to get the list of known action names
 - `Granite.DependsOnPlugin.ElementReferenceRegistry.refs` - to get the list of registered element references
