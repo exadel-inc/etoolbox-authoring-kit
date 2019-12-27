@@ -13,7 +13,7 @@
         /**
          * Default action name
          * */
-        static default = 'visibility';
+        static get DEFAULT () { return 'visibility'; }
 
         /**
          * @param {string} name - action name
@@ -22,7 +22,8 @@
         static getAction(name) {
             const action = actionRegistryMap[name];
             if (typeof action !== 'function') {
-                throw new Error(`[DependsOn]: Action "${name}" doesn't have a valid definition in DependsOnPlugin.ActionRegistry`);
+                const knownActions = Object.keys(actionRegistryMap).map((key) => `"${key}"`).join(', ');
+                throw new Error(`[DependsOn]: Action "${name}" doesn't have a valid definition in DependsOnPlugin.ActionRegistry. Known actions: ${knownActions}`);
             }
             return action;
         }
@@ -37,7 +38,7 @@
                 throw new Error(`[DependsOn]: Action ${actionFn} is not a valid action definition`);
             }
             if (actionRegistryMap[name]) {
-                console.log(`[DependsOn]: Action ${name} was overridden`);
+                console.warn(`[DependsOn]: Action ${name} was overridden by ${actionFn}`);
             }
             return actionRegistryMap[name] = actionFn;
         }
