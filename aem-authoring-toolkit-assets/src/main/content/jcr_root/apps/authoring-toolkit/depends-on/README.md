@@ -2,7 +2,7 @@
 
 Author _Alexey Stsefanovich (ala'n)_
 
-Version _2.1.0_
+Version _2.2.0_
  
 DependsOn Plugin is a clientlib that executes defined action on dependent fields.
  
@@ -50,8 +50,8 @@ For referenced field:
 Built-in plugin actions are:
  * `visibility` - hide the element if the query result is 'falsy'
  * `tab-visibility` - hide the tab or element's parent tab if the query result is 'falsy'
- * `set` - set the query result as field's value
- * `set-if-blank` - set the query result as field's value only if the current value is blank
+ * `set` - set the query result as field's value (undefined query result skipped)
+ * `set-if-blank` - set the query result as field's value only if the current value is blank (undefined query result skipped)
  * `readonly` - set the readonly marker of the field from the query result.
  * `required` - set the required marker of the field from the query result.
  * `validate` - set the validation state of the field from the query result.
@@ -67,7 +67,9 @@ Action should have name and function to execute.
 For example build-in `set` action is defined as follows:
 ```javascript
 Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('set', function setValue(value) {
-     Granite.DependsOnPlugin.ElementAccessors.setValue(this.$el, value);
+    if (value !== undefined) {
+        Granite.DependsOnPlugin.ElementAccessors.setValue(this.$el, value);
+    }
 });
 ```
 
