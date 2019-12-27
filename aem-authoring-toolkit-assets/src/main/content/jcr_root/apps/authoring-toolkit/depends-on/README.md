@@ -2,7 +2,7 @@
 
 Author _Alexey Stsefanovich (ala'n)_
 
-Version _2.1.0_
+Version _2.2.0_
  
 DependsOn Plugin is a clientlib that executes defined action on dependent fields.
  
@@ -50,8 +50,8 @@ For referenced field:
 Built-in plugin actions are:
  * `visibility` - hide the element if the query result is 'falsy'
  * `tab-visibility` - hide the tab or element's parent tab if the query result is 'falsy'
- * `set` - set the query result as field's value
- * `set-if-blank` - set the query result as field's value only if the current value is blank
+ * `set` - set the query result as field's value (undefined query result skipped)
+ * `set-if-blank` - set the query result as field's value only if the current value is blank (undefined query result skipped)
  * `readonly` - set the readonly marker of the field from the query result.
  * `required` - set the required marker of the field from the query result.
  * `validate` - set the validation state of the field from the query result.
@@ -67,7 +67,9 @@ Action should have name and function to execute.
 For example build-in `set` action is defined as follows:
 ```javascript
 Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('set', function setValue(value) {
-     Granite.DependsOnPlugin.ElementAccessors.setValue(this.$el, value);
+    if (value !== undefined) {
+        Granite.DependsOnPlugin.ElementAccessors.setValue(this.$el, value);
+    }
 });
 ```
 
@@ -176,6 +178,20 @@ For example:
 
 * `@DependsOnTab` - to define DependsOn query with `tab-visibility` action for tab.
 
+
+#### Debug info
+
+DependsOn produce 3 types of debug notifications:
+
+- Critical errors: DependsOn will throw an Error on configuration mismatch (like unknown action name, illegal custom accessor registration, etc)
+- Error messages: not blocking runtime messages (query evaluation errors, unreachable references, etc)
+- Warn messages: potentially unexpected results warning
+
+A couple of useful APIs can be used in runtime to check the current DependsOnState. The following expressions can be evaluated in the browser console:
+
+- `Granite.DependsOnPlugin.ActionRegistry.registeredActionNames` - to get the list of known action names
+- `Granite.DependsOnPlugin.ElementReferenceRegistry.refs` - to get the list of registered element references
+- `Granite.DependsOnPlugin.GroupReferenceRegistry.refs` - to get the list of group references
 
 ### Examples
 

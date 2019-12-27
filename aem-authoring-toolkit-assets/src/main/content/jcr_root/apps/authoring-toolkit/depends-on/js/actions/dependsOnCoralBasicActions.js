@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.1.0
+ * @version 2.2.0
  *
  * DependsOn Coral 3 Basic Actions
  *
@@ -80,20 +80,22 @@
     });
 
     /**
-     * Set field value from query result
+     * Set field value from query result, skips undefined query result
      * query type: string
      * */
     ns.ActionRegistry.register('set', function setValue(value) {
-        ns.ElementAccessors.setValue(this.$el, value);
+        if (value !== undefined) {
+            ns.ElementAccessors.setValue(this.$el, value);
+        }
     });
 
     /**
-     * Set field value from query result if field value is blank
+     * Set field value from query result if field value is blank, skips undefined query result
      * query type: string
      * */
     ns.ActionRegistry.register('set-if-blank', function setValueIfBlank(value) {
         const current = ns.ElementAccessors.getValue(this.$el);
-        if (current === '' || current === null || current === undefined) {
+        if ((current === '' || current === null || current === undefined) && value !== undefined) {
             ns.ElementAccessors.setValue(this.$el, value);
         }
     });
