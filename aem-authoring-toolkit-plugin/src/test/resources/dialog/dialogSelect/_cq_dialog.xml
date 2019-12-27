@@ -46,7 +46,20 @@
                             <item2 jcr:primaryType="nt:unstructured" text="UTC -2" value="-02:00"/>
                         </items>
                     </timezone>
-
+                    <acsListOptions
+                            disabled="{Boolean}false"
+                            fieldLabel="ACS List Options"
+                            jcr:primaryType="nt:unstructured"
+                            name="./acsListOptions"
+                            renderHidden="{Boolean}false"
+                            required="{Boolean}false"
+                            sling:resourceType="granite/ui/components/coral/foundation/form/select">
+                        <datasource
+                            jcr:primaryType="nt:unstructured"
+                            addNone="{Boolean}true"
+                            path="/path/to/acs/list"
+                            sling:resourceType="acs/list/resource/type"/>
+                    </acsListOptions>
                 </items>
             </column>
         </items>

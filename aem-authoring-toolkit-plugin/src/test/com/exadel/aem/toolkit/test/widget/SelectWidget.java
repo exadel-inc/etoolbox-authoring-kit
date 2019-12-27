@@ -42,11 +42,13 @@ public class SelectWidget {
             @Option(text = "3 stars", value = "3"),
             @Option(text = "4 stars", value = "4", disabled=true),
             @Option(text = "5 stars", value = "5", disabled=true)
-    }, emptyText = "Select rating")
+            },
+            emptyText = "Select rating"
+    )
     String rating;
 
     @DialogField(label = "Timezone")
-    @com.exadel.aem.toolkit.api.annotations.widgets.select.Select(options = {
+    @Select(options = {
             @Option(text = "UTC +2", value = "+02:00"),
             @Option(text = "UTC +1", value = "+01:00"),
             @Option(text = "UTC", value = "00:00"),
@@ -55,4 +57,7 @@ public class SelectWidget {
     }, emptyText = "Select timezone")
     String timezone;
 
+    @DialogField(label="ACS List Options")
+    @Select(acsListPath = "/path/to/acs/list", acsListResourceType = "acs/list/resource/type", addNoneOption = true)
+    String acsListOptions;
 }
