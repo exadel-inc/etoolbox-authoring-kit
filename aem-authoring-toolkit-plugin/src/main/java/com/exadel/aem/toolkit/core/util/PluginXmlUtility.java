@@ -549,7 +549,7 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public void appendDataAttributes(Element element, Data[] data){
+    public void appendDataAttributes(Element element, Data[] data) {
         if (ArrayUtils.isEmpty(data)) {
             return;
         }
@@ -557,7 +557,7 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public void appendDataAttributes(Element element, Map<String, String> data){
+    public void appendDataAttributes(Element element, Map<String, String> data) {
         if (data == null || data.isEmpty()) {
             return;
         }
@@ -569,12 +569,13 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public void appendAcsCommonsList(Element element, String path, String resourceType){
-        if(StringUtils.isNotBlank(path)){
-            Element dataSourceElement = createNodeElement(DialogConstants.NN_DATASOURCE, null,
-                    new ImmutableMap.Builder<String, String>().put(DialogConstants.PN_PATH, path).build(),
-                    resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
-            element.appendChild(dataSourceElement);
+    public Element appendAcsCommonsList(Element element, String path, String resourceType) {
+        if (StringUtils.isBlank(path)) {
+            return null;
         }
+        Element dataSourceElement = createNodeElement(DialogConstants.NN_DATASOURCE, null,
+                new ImmutableMap.Builder<String, String>().put(DialogConstants.PN_PATH, path).build(),
+                resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
+        return (Element) element.appendChild(dataSourceElement);
     }
 }

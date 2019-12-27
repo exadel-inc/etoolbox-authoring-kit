@@ -37,7 +37,7 @@ public class SelectHandler implements Handler, BiConsumer<Element, Field> {
     @Override
     public void accept(Element element, Field field) {
         Select select = field.getAnnotation(Select.class);
-        if(ArrayUtils.isNotEmpty(select.options())){
+        if (ArrayUtils.isNotEmpty(select.options())) {
             Element items = (Element) element.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
             for (Option option: select.options()) {
                 String elementName = getXmlUtil().getUniqueName(option.value(), DialogConstants.NN_ITEM, items);
@@ -45,6 +45,9 @@ public class SelectHandler implements Handler, BiConsumer<Element, Field> {
                 getXmlUtil().mapProperties(item, option);
             }
         }
-        getXmlUtil().appendAcsCommonsList(element, select.acsListPath(), select.acsListResourceType());
+        Element datasource = getXmlUtil().appendAcsCommonsList(element, select.acsListPath(), select.acsListResourceType());
+        if (datasource != null && select.addNoneOption()) {
+            getXmlUtil().setAttribute(datasource, DialogConstants.PN_ADD_NONE, true);
+        }
     }
 }
