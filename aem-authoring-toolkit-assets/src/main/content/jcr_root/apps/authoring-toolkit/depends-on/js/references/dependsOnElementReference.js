@@ -1,6 +1,6 @@
 /**
- * @author Alexey Stsefanovich (ala'n)
- * @version 2.1.0
+ * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
+ * @version 2.1.1
  *
  * DependsOn plugin Elements Reference Registry
  * Store and manage known elements references
@@ -25,6 +25,11 @@
 
             if (this.name === 'this') {
                 console.error('[DependsOn]: "this" reference name is not allowed, it can not be reached by queries');
+            }
+
+            // Initialize data-dependsonref attribute for @this reference to listen change action
+            if (!this.name) {
+                this.$el.attr('data-dependsonref', '');
             }
 
             this.$el.data('dependsonsubject', this);
