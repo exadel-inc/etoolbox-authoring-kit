@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.1.1
+ * @version 2.2.0
  *
  * QueryObserver compile query using QueryProcessor and apply defined acton to the target.
  * Target supports multiple actions and queries separated by ';'
@@ -25,7 +25,7 @@
      * Initiate references registration
      * */
     class QueryObserver {
-        static DATA_STORE = 'dependsonobserver';
+        static get DATA_STORE() { return 'dependsonobserver'; }
 
         /**
          * Initialize dependson observer instances on the target
