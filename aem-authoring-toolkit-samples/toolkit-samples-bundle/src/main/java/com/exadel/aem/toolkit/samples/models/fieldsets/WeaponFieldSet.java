@@ -1,4 +1,4 @@
-package com.exadel.aem.toolkit.samples.models;
+package com.exadel.aem.toolkit.samples.models.fieldsets;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
@@ -9,18 +9,20 @@ import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class AttributeFieldSet {
+public class WeaponFieldSet {
 
     @DependsOnRef(name = "checkbox")
     @Checkbox
-    @DialogField( label = "First checkbox")
+    @DialogField( label = "Bow")
     @ValueMapValue
-    private boolean checkbox1;
-
+    private boolean bow;
 
     @DependsOnRef(name = "checkbox")
     @Checkbox
-    @DialogField(label = "Second checkbox")
+    @DialogField(label = "Sword")
     @ValueMapValue
-    private boolean checkbox2;
+    private boolean sword;
+
+    public boolean getBow() { return bow; }
+    public boolean getSword() {return sword; }
 }

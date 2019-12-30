@@ -27,9 +27,9 @@ public class FatherSelectComponent {
                 @Option(text = "A", value = "a"),
                 @Option(text = "B", value = "b")
         })
-        @DialogField(label = "Select with overridden children")
+        @DialogField(label = "Dungeons select")
         @ValueMapValue
-        private String fatherSelect;
+        private String dungeonsSelect;
 
-        public String getFatherSelect() { return (fatherSelect == null) ? DEFAULT_SELECT_TEXT : fatherSelect; }
+        public String getFatherSelect() { return (dungeonsSelect == null) ? DEFAULT_SELECT_TEXT : dungeonsSelect; }
 }

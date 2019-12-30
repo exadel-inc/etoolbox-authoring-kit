@@ -1,9 +1,9 @@
-.attribute-test-component {
+.shopping-list-component {
     width: 100%;
     height: 100%;
 }
 
-.attribute-test-wrap {
+.shopping-list-wrap {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -15,13 +15,13 @@
     min-width: 100px;
 }
 
-.attribute-test-title {
+.shopping-list-title {
     text-align: center;
     margin-bottom: 1rem;
     font-size: 2rem;
 }
 
-.attribute-test-text {
+.shopping-list-text {
     min-height: 50px;
     width: 100%;
     padding: 0.5rem;
