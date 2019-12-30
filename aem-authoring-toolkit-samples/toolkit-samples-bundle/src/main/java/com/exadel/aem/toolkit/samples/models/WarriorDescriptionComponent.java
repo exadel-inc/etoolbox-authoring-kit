@@ -1,5 +1,6 @@
 package com.exadel.aem.toolkit.samples.models;
 
+import com.day.cq.tagging.Tag;
 import com.day.cq.tagging.TagManager;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
@@ -21,6 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.*;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ModifiableValueMap;
@@ -35,6 +37,7 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Dialog(
@@ -55,21 +58,21 @@ import java.util.stream.Collectors;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WarriorDescriptionComponent {
 
-    public static final String TAB_MAIN = "Main info";
-    public static final String TAB_TASTES = "Tastes";
-    public static final String TAB_FRUITS = "Fruits";
-    public static final String TAB_FILMS = "Films";
+    static final String TAB_MAIN = "Main info";
+    static final String TAB_TASTES = "Tastes";
+    static final String TAB_FRUITS = "Fruits";
+    static final String TAB_FILMS = "Films";
 
-    private final String DESCRIPTION_TEMPLATE = "%s was born on the cold but bright day %s. He is %s. %s, and %s";
-    private final String DEFAULT_BIRTHDAY = "29.03.2000";
-    private final String DEFAULT_CHARACTER = "always creepy smiling";
-    private final String DEFAULT_FRUITS_TEXT = "He doesn't like fruits";
-    private final String DEFAULT_FILMS_TEXT = "he doesn't like films";
+    private static final String DESCRIPTION_TEMPLATE = "%s was born on the cold but bright day %s. He is %s. %s, and %s";
+    private static final String DEFAULT_BIRTHDAY = "29.03.2000";
+    private static final String DEFAULT_CHARACTER = "always creepy smiling";
+    private static final String DEFAULT_FRUITS_TEXT = "He doesn't like fruits";
+    private static final String DEFAULT_FILMS_TEXT = "he doesn't like films";
 
 
-    private final String FRUITS_TEXT = "His favorite fruits: ";
-    private final String FILMS_TEXT = "his favorite film genres: ";
-    private final String TAGS_DELIMITER = ", ";
+    private static final String FRUITS_TEXT = "His favorite fruits: ";
+    private static final String FILMS_TEXT = "his favorite film genres: ";
+    private static final String TAGS_DELIMITER = ", ";
 
     @Inject
     private ResourceResolver resourceResolver;
@@ -193,7 +196,7 @@ public class WarriorDescriptionComponent {
 
     @Hidden
     @DependsOn(query = "@parentPath", action = "getParentColorTheme")
-    @DependsOnRef(name = "isDarkColorTheme", type = DependsOnRefTypes.BOOLEAN)
+    @DependsOnRef(name = "isDarkColorTheme", type = DependsOnRefTypes.BOOLSTRING)
     private boolean isDarkColorTheme;
 
     @PlaceOnTab(WarriorDescriptionComponent.TAB_FILMS)
@@ -213,11 +216,10 @@ public class WarriorDescriptionComponent {
     @DependsOnRef(name = "parentPath")
     @Hidden
     @DialogField
-    @ValueMapValue
     private String parentPath;
 
     @PostConstruct
-    private void getParentPath() throws PersistenceException {
+    public void init() throws PersistenceException {
         ModifiableValueMap valueMap = resource.adaptTo(ModifiableValueMap.class);
         valueMap.put("parentPath", resource.getParent().getParent().getPath());
         resource.getResourceResolver().commit();
@@ -225,26 +227,25 @@ public class WarriorDescriptionComponent {
 
     public String getWarriorName() {
         String warriorName = null;
+        Resource parentResource = resource.getParent().getParent();
 
-        Resource resource = resourceResolver.getResource(PathConstants.WARRIOR_COMPONENT_PATH);
-
-        if (resource != null) {
-            warriorName = resource.getValueMap().get("warriorName", String.class);
+        if (parentResource != null) {
+            warriorName = parentResource.getValueMap().get("warriorName", String.class);
         }
-
-        return (StringUtils.isEmpty(warriorName) ? WarriorComponent.DEFAULT_NAME : warriorName);
+        return StringUtils.defaultIfEmpty(warriorName, WarriorComponent.DEFAULT_NAME);
     }
 
     public String getDescription() { return description; }
 
-    public String getBirthday() { return StringUtils.isEmpty(birthday) ? DEFAULT_BIRTHDAY : birthday; }
+    // TODO: default for sling model
+    public String getBirthday() { return StringUtils.defaultIfBlank(birthday, DEFAULT_BIRTHDAY); }
 
     public String getFilms() {
         if (isLikeFilms && films != null) {
-            return (FILMS_TEXT +
-                    Arrays.stream(films)
-                            .map(film -> film.replaceAll("^.*/(.*)$", "$1"))
-                            .collect(Collectors.joining(TAGS_DELIMITER)));
+            String filmsString = Arrays.stream(films)
+                    .map(film -> film.replaceAll("^.*/(.*)$", "$1"))
+                    .collect(Collectors.joining(TAGS_DELIMITER));
+            return FILMS_TEXT + filmsString;
         }
         return DEFAULT_FILMS_TEXT;
     }
@@ -252,20 +253,21 @@ public class WarriorDescriptionComponent {
     public String getFruits() {
         if (isLikeFruits && fruits != null) {
             TagManager tagManager = resourceResolver.adaptTo(TagManager.class);
-            return (FRUITS_TEXT +
-                    Arrays.stream(fruits)
-                            .map(fruit -> tagManager.resolve(fruit).getTitle())
-                            .collect(Collectors.joining(TAGS_DELIMITER)));
+            if (tagManager != null) {
+                return (FRUITS_TEXT +
+                        Arrays.stream(fruits)
+                                .map(tagManager::resolve)
+                                .filter(Objects::nonNull)
+                                .map(Tag::getTitle)
+                                .collect(Collectors.joining(TAGS_DELIMITER)));
+            }
         }
         return DEFAULT_FRUITS_TEXT;
     }
 
     public String getInitDescription() {
-        return
-                String.format(DESCRIPTION_TEMPLATE,
-                        getWarriorName(), getBirthday(), getCharacter(), getFruits(), getFilms());
+        return String.format(DESCRIPTION_TEMPLATE, getWarriorName(), getBirthday(), getCharacter(), getFruits(), getFilms());
     }
 
     public String getCharacter() { return StringUtils.isEmpty(character) ? DEFAULT_CHARACTER : character; }
-
 }

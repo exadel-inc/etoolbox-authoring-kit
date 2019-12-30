@@ -30,10 +30,10 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Sling-Model-Packages>com.exadel.aem.toolkit.samples</Sling-Model-Packages>
-                        <Export-Package>com.exadel.aem.toolkit.samples.models</Export-Package>
+                        <Sling-Model-Packages>com.exadel.aem.toolkit.samples.models</Sling-Model-Packages>
+                        <Export-Package>com.exadel.aem.toolkit.samples.*</Export-Package>
                         <!-- Import any version of javax.inject, to allow running on multiple versions of AEM -->
-                        <Import-Package>javax.inject;version=0.0.0,*;resolution:=optional</Import-Package>
+                        <Import-Package>*;resolution:=optional</Import-Package>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                     </instructions>
                 </configuration>
@@ -42,6 +42,20 @@
     </build>
 
     <dependencies>
+        <!-- JavaX-->
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+        </dependency>
+        <!-- Logger -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <!-- OSGi Dependencies -->
         <dependency>
             <groupId>org.osgi</groupId>
@@ -73,18 +87,6 @@
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>aem-authoring-toolkit-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>jsr250-api</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
