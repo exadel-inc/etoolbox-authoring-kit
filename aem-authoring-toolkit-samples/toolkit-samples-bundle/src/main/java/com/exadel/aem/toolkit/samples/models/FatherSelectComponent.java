@@ -5,6 +5,7 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
@@ -31,5 +32,5 @@ public class FatherSelectComponent {
         @ValueMapValue
         private String dungeonsSelect;
 
-        public String getFatherSelect() { return (dungeonsSelect == null) ? DEFAULT_SELECT_TEXT : dungeonsSelect; }
+        public String getFatherSelect() { return StringUtils.isEmpty(dungeonsSelect) ? DEFAULT_SELECT_TEXT : dungeonsSelect; }
 }

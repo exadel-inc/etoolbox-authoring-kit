@@ -21,13 +21,14 @@ import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.*;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.Path;
 import org.apache.sling.models.annotations.injectorspecific.Self;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
@@ -231,12 +232,12 @@ public class WarriorDescriptionComponent {
             warriorName = resource.getValueMap().get("warriorName", String.class);
         }
 
-        return (warriorName != null ? warriorName : WarriorComponent.DEFAULT_NAME);
+        return (StringUtils.isEmpty(warriorName) ? WarriorComponent.DEFAULT_NAME : warriorName);
     }
 
     public String getDescription() { return description; }
 
-    public String getBirthday() { return birthday != null ? birthday : DEFAULT_BIRTHDAY; }
+    public String getBirthday() { return StringUtils.isEmpty(birthday) ? DEFAULT_BIRTHDAY : birthday; }
 
     public String getFilms() {
         if (isLikeFilms && films != null) {
@@ -265,6 +266,6 @@ public class WarriorDescriptionComponent {
                         getWarriorName(), getBirthday(), getCharacter(), getFruits(), getFilms());
     }
 
-    public String getCharacter() { return character != null ? character : DEFAULT_CHARACTER; }
+    public String getCharacter() { return StringUtils.isEmpty(character) ? DEFAULT_CHARACTER : character; }
 
 }

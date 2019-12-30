@@ -12,6 +12,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
@@ -98,15 +99,15 @@ public class WarriorComponent {
     private boolean colorTheme;
 
     public String getTitle() {
-        return (title != null && !"".equals(title))
-                ? title
-                : DEFAULT_TITLE;
+        return StringUtils.isEmpty(title)
+                ? DEFAULT_TITLE
+                : title;
     }
 
     public String getWarriorName() {
-        return (warriorName != null && !"".equals(warriorName))
-                ? warriorName
-                : DEFAULT_NAME;
+        return StringUtils.isEmpty(warriorName)
+                ? DEFAULT_NAME
+                : warriorName;
     }
 
     public String getIconPath() {

@@ -9,6 +9,7 @@ The action is intended for receiving color theme of the Warrior component
     'use strict';
 
     const COMPONENT_FORMAT = '.json';
+    const PORT = 'http://localhost:4502/';
 
     /**
      * Decide which scope of tags to use (true - dark theme, default - light theme)
@@ -26,7 +27,7 @@ The action is intended for receiving color theme of the Warrior component
      */
     DependsOn.ActionRegistry.register('getParentColorTheme', function namespaceFilter(parentPath) {
         // Receiving Warrior component structure
-        let promise = $.get(Granite.HTTP.externalize(parentPath + COMPONENT_FORMAT));
+        let promise = $.get(Granite.HTTP.externalize(PORT + parentPath + COMPONENT_FORMAT));
         promise
             .then(_success, () => false)
             .then((isDark) => DependsOn.ElementAccessors.setValue(this.$el, isDark));

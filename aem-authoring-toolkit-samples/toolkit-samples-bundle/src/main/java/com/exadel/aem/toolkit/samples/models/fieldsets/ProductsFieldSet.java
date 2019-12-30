@@ -3,6 +3,7 @@ package com.exadel.aem.toolkit.samples.models.fieldsets;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
@@ -25,4 +26,15 @@ public class ProductsFieldSet {
 
     public boolean getMilk() { return milk; }
     public boolean getCheese() { return cheese; }
+
+    private String getStringMilk() {
+        return BooleanUtils.isNotTrue(milk) ? "" : "milk, ";
+    }
+    private String getStringCheese() {
+        return BooleanUtils.isNotTrue(cheese) ? "" : "cheese, ";
+    }
+
+    public String getProducts() {
+        return (getStringMilk() + getStringCheese());
+    }
 }

@@ -9,6 +9,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
@@ -61,8 +62,8 @@ public class SecretInfoComponent {
         public String getPassword() { return password; }
 
         public String getInfo() {
-                return (info != null && !"".equals(info))
-                        ? info
-                        : DEFAULT_SECRET;
+                return StringUtils.isEmpty(info)
+                        ? DEFAULT_SECRET
+                        : info;
         }
 }

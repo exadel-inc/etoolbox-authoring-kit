@@ -5,7 +5,7 @@
 
 .shopping-list-wrap {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     flex-direction: column;
     padding: 1rem;

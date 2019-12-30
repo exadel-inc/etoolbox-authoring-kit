@@ -78,7 +78,7 @@ public class HomelandComponent {
                 warriorName = resource.getValueMap().get("warriorName", String.class);
             }
 
-            return (warriorName != null ? warriorName : WarriorComponent.DEFAULT_NAME);
+            return StringUtils.isEmpty(warriorName) ? WarriorComponent.DEFAULT_NAME : warriorName;
         }
     }
 
