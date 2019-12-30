@@ -35,7 +35,7 @@
             if ($el.data(DependsOnQueryObserver.DATA_STORE)) return $el.data(DependsOnQueryObserver.DATA_STORE);
 
             const queries = ns.splitAndTrim($el.attr('data-dependson') || '');
-            const actions = ns.splitAndTrim($el.attr('data-dependsonaction') || ns.ActionRegistry.default);
+            const actions = ns.splitAndTrim($el.attr('data-dependsonaction') || ns.ActionRegistry.DEFAULT);
             if (actions.length !== queries.length) {
                 throw new Error('[DependsOn]: The number of actions and queries does not match');
             }

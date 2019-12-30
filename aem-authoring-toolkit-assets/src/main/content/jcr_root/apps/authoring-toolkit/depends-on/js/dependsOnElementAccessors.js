@@ -54,7 +54,7 @@
         if (!accessorDescriptor)
             throw new Error('[DependsOn] Can not register ElementAccessor. No accessor descriptor specified');
         if (typeof accessorDescriptor.selector !== 'string')
-            throw new Error('[DependsOn] Can not register ElementAccessor. Descriptor.selector should be type of string');
+            throw new Error('[DependsOn] Can not register ElementAccessor. Descriptor.selector should exist and be type of string');
     }
 
     class ElementAccessors {
