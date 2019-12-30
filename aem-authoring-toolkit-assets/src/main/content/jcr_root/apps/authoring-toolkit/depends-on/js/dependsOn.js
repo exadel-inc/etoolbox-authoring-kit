@@ -4,7 +4,7 @@
  *
  * DependsOn plugin entry point
  *
- * Initialize DependsOnQueryObserver and DependsOnElementReferences
+ * Initialize QueryObserver and ElementReferences
  * */
 (function ($, ns) {
     'use strict';
@@ -27,7 +27,7 @@
             // GC for group references
             ns.GroupReferenceRegistry.actualize();
             // Observers initialization
-            $('[data-dependson]', container).each((i, el) => ns.DependsOnQueryObserver.init($(el)));
+            $('[data-dependson]', container).each((i, el) => ns.QueryObserver.init($(el)));
             // Execute callback if provided
             (typeof callback === 'function') && callback();
         }));

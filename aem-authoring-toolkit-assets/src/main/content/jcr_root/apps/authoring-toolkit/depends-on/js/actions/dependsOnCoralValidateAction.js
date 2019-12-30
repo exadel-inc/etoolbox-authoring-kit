@@ -34,7 +34,7 @@
     // Just return dependsOn validate result and set marker class accordingly
     function checkDependsOnValidator(el) {
         const $el = $(el);
-        const instances = $el.data(ns.DependsOnQueryObserver.DATA_STORE);
+        const instances = $el.data(ns.QueryObserver.DATA_STORE);
         const validateInstances = (instances || []).filter((observer) => observer.action === ACTION_NAME);
 
         let resultMsg = undefined;
