@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.1.0
+ * @version 2.1.1
  *
  * DependsOnQueryObserver compile query using QueryProcessor and apply defined acton to the target.
  * Target supports multiple actions and queries separated by ';'
