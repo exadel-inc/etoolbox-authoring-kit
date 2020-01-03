@@ -49,28 +49,27 @@ import java.util.stream.Collectors;
         tabs= {
                 @Tab(title = WarriorDescriptionComponent.TAB_MAIN),
                 @Tab(title = WarriorDescriptionComponent.TAB_TASTES),
-                @Tab(title = WarriorDescriptionComponent.TAB_FRUITS),
+                @Tab(title = WarriorDescriptionComponent.TAB_FRUIT),
                 @Tab(title = WarriorDescriptionComponent.TAB_FILMS)
         }
 )
-@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUITS, query = "@isLikeFruits")
+@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUIT, query = "@isLikeFruit")
 @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FILMS, query = "@isLikeFilms")
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WarriorDescriptionComponent {
 
     static final String TAB_MAIN = "Main info";
     static final String TAB_TASTES = "Tastes";
-    static final String TAB_FRUITS = "Fruits";
+    static final String TAB_FRUIT = "Fruit";
     static final String TAB_FILMS = "Films";
 
-    private static final String DESCRIPTION_TEMPLATE = "%s was born on the cold but bright day %s. He is %s. %s, and %s";
+    private static final String DESCRIPTION_TEMPLATE = "%s was born on the cold but bright day %s. He would %s. %s, and %s";
     private static final String DEFAULT_BIRTHDAY = "29.03.2000";
-    private static final String DEFAULT_CHARACTER = "always creepy smiling";
-    private static final String DEFAULT_FRUITS_TEXT = "He doesn't like fruits";
+    private static final String DEFAULT_CHARACTER = "always creepy smile";
+    private static final String DEFAULT_FRUIT_TEXT = "He doesn't like fruit";
     private static final String DEFAULT_FILMS_TEXT = "he doesn't like films";
 
-
-    private static final String FRUITS_TEXT = "His favorite fruits: ";
+    private static final String FRUIT_TEXT = "His favorite fruit: ";
     private static final String FILMS_TEXT = "his favorite film genres: ";
     private static final String TAGS_DELIMITER = ", ";
 
@@ -146,32 +145,32 @@ public class WarriorDescriptionComponent {
     @ValueMapValue
     private String birthday;
 
-    @DependsOnRef(name = "isLikeFruits")
+    @DependsOnRef(name = "isLikeFruit")
     @PlaceOnTab(WarriorDescriptionComponent.TAB_TASTES)
     @DialogField(
-            name = "./isLikeFruits",
-            label = "Does your warrior like fruits?"
+            name = "./isLikeFruit",
+            label = "Does your warrior like fruit?"
     )
     @Checkbox
     @ValueMapValue
-    private boolean isLikeFruits;
+    private boolean isLikeFruit;
 
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_FRUITS)
+    @PlaceOnTab(WarriorDescriptionComponent.TAB_FRUIT)
     @Autocomplete(
             multiple = true,
             forceSelection = true,
-            datasource = @AutocompleteDatasource(namespaces = {"fruits"})
+            datasource = @AutocompleteDatasource(namespaces = {"fruit"})
     )
     @DialogField(
-            name = "./fruits",
-            label = "Favorite fruits"
+            name = "./fruit",
+            label = "Favorite fruit"
     )
     @ValueMapValue
-    private String[] fruits;
+    private String[] fruit;
 
     @PlaceOnTab(WarriorDescriptionComponent.TAB_MAIN)
     @RadioGroup(buttons = {
-            @RadioButton(text = "Funny", value = "always creepy smiling", checked = true),
+            @RadioButton(text = "Funny", value = "always creepy smile", checked = true),
             @RadioButton(text ="Sad", value = "always steal your handkerchief"),
             @RadioButton(text = "Angry", value = "always ignore you")
     })
@@ -237,7 +236,6 @@ public class WarriorDescriptionComponent {
 
     public String getDescription() { return description; }
 
-    // TODO: default for sling model
     public String getBirthday() { return StringUtils.defaultIfBlank(birthday, DEFAULT_BIRTHDAY); }
 
     public String getFilms() {
@@ -250,24 +248,24 @@ public class WarriorDescriptionComponent {
         return DEFAULT_FILMS_TEXT;
     }
 
-    public String getFruits() {
-        if (isLikeFruits && fruits != null) {
+    public String getFruit() {
+        if (isLikeFruit && fruit != null) {
             TagManager tagManager = resourceResolver.adaptTo(TagManager.class);
             if (tagManager != null) {
-                return (FRUITS_TEXT +
-                        Arrays.stream(fruits)
+                return (FRUIT_TEXT +
+                        Arrays.stream(fruit)
                                 .map(tagManager::resolve)
                                 .filter(Objects::nonNull)
                                 .map(Tag::getTitle)
                                 .collect(Collectors.joining(TAGS_DELIMITER)));
             }
         }
-        return DEFAULT_FRUITS_TEXT;
+        return DEFAULT_FRUIT_TEXT;
     }
 
     public String getInitDescription() {
-        return String.format(DESCRIPTION_TEMPLATE, getWarriorName(), getBirthday(), getCharacter(), getFruits(), getFilms());
+        return String.format(DESCRIPTION_TEMPLATE, getWarriorName(), getBirthday(), getCharacter(), getFruit(), getFilms());
     }
 
-    public String getCharacter() { return StringUtils.isEmpty(character) ? DEFAULT_CHARACTER : character; }
+    public String getCharacter() { return StringUtils.defaultIfBlank(character, DEFAULT_CHARACTER); }
 }

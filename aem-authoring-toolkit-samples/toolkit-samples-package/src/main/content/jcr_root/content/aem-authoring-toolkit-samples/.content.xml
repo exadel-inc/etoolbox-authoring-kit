@@ -4,7 +4,7 @@
     <jcr:content
         cq:template="authoring-toolkit/samples/template/sample-page"
         jcr:primaryType="cq:PageContent"
-        jcr:title="AEM Dialog Plugin testing"
+        jcr:title="AEM Authoring Toolkit testing"
         sling:resourceType="authoring-toolkit/samples/components/page/sample-page">
         <content
                 jcr:primaryType="nt:unstructured"

@@ -29,9 +29,9 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ArmorColorComponent {
 
-        public static final String TAB_COLOR = "Armor color";
-        public static final String FIELDS_PREFIX = "color";
-        public static final String FIELDS_POSTFIX = "-test";
+        static final String TAB_COLOR = "Armor color";
+        static final String FIELDS_PREFIX = "color";
+        static final String FIELDS_POSTFIX = "-test";
 
         @FieldsetPostfix(postfix = ArmorColorComponent.FIELDS_POSTFIX)
         @FieldSet(

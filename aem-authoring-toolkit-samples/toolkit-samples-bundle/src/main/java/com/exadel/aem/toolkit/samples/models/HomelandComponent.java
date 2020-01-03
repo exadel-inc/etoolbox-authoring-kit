@@ -41,7 +41,7 @@ import javax.inject.Inject;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class HomelandComponent {
 
-    public static final String TAB_HOMELAND = "Homeland";
+    static final String TAB_HOMELAND = "Homeland";
 
     @Self
     private HomelandTab homelandTab;
@@ -78,7 +78,7 @@ public class HomelandComponent {
                 warriorName = resource.getValueMap().get("warriorName", String.class);
             }
 
-            return StringUtils.isEmpty(warriorName) ? WarriorComponent.DEFAULT_NAME : warriorName;
+            return StringUtils.defaultIfBlank(warriorName, WarriorComponent.DEFAULT_NAME);
         }
     }
 

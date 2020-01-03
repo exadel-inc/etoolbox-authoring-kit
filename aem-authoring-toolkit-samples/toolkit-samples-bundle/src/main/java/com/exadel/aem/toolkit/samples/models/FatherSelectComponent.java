@@ -21,8 +21,8 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class FatherSelectComponent {
 
-        public static final String TAB_MAIN = "Main";
-        private final String DEFAULT_SELECT_TEXT = "nothing is selected";
+        static final String TAB_MAIN = "Main";
+        private static final String DEFAULT_SELECT_TEXT = "nothing is selected";
 
         @Select(options = {
                 @Option(text = "A", value = "a"),
@@ -32,5 +32,5 @@ public class FatherSelectComponent {
         @ValueMapValue
         private String dungeonsSelect;
 
-        public String getFatherSelect() { return StringUtils.isEmpty(dungeonsSelect) ? DEFAULT_SELECT_TEXT : dungeonsSelect; }
+        public String getFatherSelect() { return StringUtils.defaultIfBlank(dungeonsSelect, DEFAULT_SELECT_TEXT); }
 }

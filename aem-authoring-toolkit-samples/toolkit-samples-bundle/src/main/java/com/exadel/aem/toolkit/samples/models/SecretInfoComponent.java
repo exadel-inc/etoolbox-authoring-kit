@@ -29,10 +29,10 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class SecretInfoComponent {
 
-        public static final String TAB_PASSWORD = "Password";
-        public static final String TAB_SECRET = "Secret";
+        static final String TAB_PASSWORD = "Password";
+        static final String TAB_SECRET = "Secret";
 
-        private final String DEFAULT_SECRET = "This warrior is clear";
+        private static final String DEFAULT_SECRET = "This warrior is clear";
 
         @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
         @Password(retype = "confirmPassword")
@@ -61,9 +61,5 @@ public class SecretInfoComponent {
 
         public String getPassword() { return password; }
 
-        public String getInfo() {
-                return StringUtils.isEmpty(info)
-                        ? DEFAULT_SECRET
-                        : info;
-        }
+        public String getInfo() { return StringUtils.defaultIfBlank(info, DEFAULT_SECRET); }
 }

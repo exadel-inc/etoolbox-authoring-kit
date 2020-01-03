@@ -33,8 +33,9 @@ import javax.annotation.PostConstruct;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class DungeonsComponent extends FatherSelectComponent{
 
-        private final String DEFAULT_ROTTEN_SWAMPS_TEXT = "rotten swamps, where your nose will suffer from terrible smells,";
-        private final String DEFAULT_ICE_VALLEY_TEXT = "ice valley, where you can lose your arm from strong frost,";
+        private static final String DEFAULT_ROTTEN_SWAMPS_TEXT = "rotten swamps, where your nose will suffer from terrible smells,";
+        private static final String DEFAULT_ICE_VALLEY_TEXT = "ice valley, where you can lose your arm from strong frost,";
+        private static final String DEFAULT_RULES = "no rules!";
 
         @Extends(value = WarriorDescriptionComponent.class, field = "description")
         @RichTextEditor(
@@ -57,11 +58,7 @@ public class DungeonsComponent extends FatherSelectComponent{
         @ValueMapValue
         private String dungeonsSelect;
 
-        public String getDungeonRules() {
-                return StringUtils.isEmpty(dungeonRules)
-                        ? "no rules!"
-                        : dungeonRules;
-        }
+        public String getDungeonRules() { return StringUtils.defaultIfBlank(dungeonRules, DEFAULT_RULES); }
 
         public String getDungeonDescription() {
                 if (dungeonsSelect.equals("1")) {

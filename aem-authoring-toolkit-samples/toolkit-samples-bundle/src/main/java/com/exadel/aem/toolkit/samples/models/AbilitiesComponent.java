@@ -27,7 +27,7 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class AbilitiesComponent {
 
-    public static final String TAB_ABILITIES = "Abilities";
+    static final String TAB_ABILITIES = "Abilities";
 
     @DependsOnRef(name = "ability")
     @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)

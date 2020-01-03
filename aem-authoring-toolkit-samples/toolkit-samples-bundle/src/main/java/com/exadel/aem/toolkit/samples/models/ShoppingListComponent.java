@@ -31,12 +31,12 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ShoppingListComponent {
 
-    public static final String TAB_MAIN = "Shopping list";
+    static final String TAB_MAIN = "Shopping list";
 
-    private final String DEFAULT_EMPTY_LIST_TEXT = "it's seems your warrior is happy and without shopping.";
-    private final String DEFAULT_NOT_WONDERFUL_TEXT = "and your warrior is not wonderful!";
-    private final String DEFAULT_WONDERFUL_TEXT = "and he thinks he is wonderful, because ";
-    private final String DEFAULT_ANSWER = "he was born like this.";
+    private static final String DEFAULT_EMPTY_LIST_TEXT = "it's seems your warrior is happy and without shopping.";
+    private static final String DEFAULT_NOT_WONDERFUL_TEXT = "and your warrior is not wonderful!";
+    private static final String DEFAULT_WONDERFUL_TEXT = "and he thinks he is wonderful, because ";
+    private static final String DEFAULT_ANSWER = "he was born like this.";
 
     @Attribute(clas = "weapon-fieldSet")
     @FieldSet(title = "Choose weapon to buy")
@@ -58,11 +58,7 @@ public class ShoppingListComponent {
     @ValueMapValue
     private String answer;
 
-    public String getAnswer() {
-        return StringUtils.isEmpty(answer)
-                ? DEFAULT_ANSWER
-                : answer;
-    }
+    public String getAnswer() { return StringUtils.defaultIfBlank(answer, DEFAULT_ANSWER); }
 
     public String getText() {
         String shoppingList = productsFieldSet.getProducts() + weaponFieldSet.getWeapon();

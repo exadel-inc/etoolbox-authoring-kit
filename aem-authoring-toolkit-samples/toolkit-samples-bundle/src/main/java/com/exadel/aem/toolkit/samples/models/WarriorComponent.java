@@ -50,14 +50,14 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WarriorComponent {
 
-    public static final String TAB_MAIN = "Main info";
-    public static final String TAB_ICON = "Icon";
-    public static final String TAB_THEME = "Color theme";
-    public static final String DEFAULT_NAME = "The Guy";
+    static final String TAB_MAIN = "Main info";
+    static final String TAB_ICON = "Icon";
+    static final String TAB_THEME = "Color theme";
+    static final String DEFAULT_NAME = "The Guy";
 
-    private final String DEFAULT_TITLE = "Make your warrior";
-    private final String DARK_THEME_CLASS = "dark-theme";
-    private final String LIGHT_THEME_CLASS = "light-theme";
+    private static final String DEFAULT_TITLE = "Make your warrior";
+    private static final String DARK_THEME_CLASS = "dark-theme";
+    private static final String LIGHT_THEME_CLASS = "light-theme";
 
     @Attribute(clas = "test")
     @TextField(emptyText = DEFAULT_TITLE)
@@ -98,17 +98,9 @@ public class WarriorComponent {
     @ValueMapValue
     private boolean colorTheme;
 
-    public String getTitle() {
-        return StringUtils.isEmpty(title)
-                ? DEFAULT_TITLE
-                : title;
-    }
+    public String getTitle() { return StringUtils.defaultIfBlank(title, DEFAULT_TITLE); }
 
-    public String getWarriorName() {
-        return StringUtils.isEmpty(warriorName)
-                ? DEFAULT_NAME
-                : warriorName;
-    }
+    public String getWarriorName() { return StringUtils.defaultIfBlank(warriorName, DEFAULT_NAME); }
 
     public String getIconPath() {
         return iconPath;
