@@ -30,8 +30,8 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 public class ArmorColorComponent {
 
         static final String TAB_COLOR = "Armor color";
-        static final String FIELDS_PREFIX = "color";
-        static final String FIELDS_POSTFIX = "-test";
+        public static final String FIELDS_PREFIX = "color";
+        public static final String FIELDS_POSTFIX = "-test";
 
         @FieldsetPostfix(postfix = ArmorColorComponent.FIELDS_POSTFIX)
         @FieldSet(

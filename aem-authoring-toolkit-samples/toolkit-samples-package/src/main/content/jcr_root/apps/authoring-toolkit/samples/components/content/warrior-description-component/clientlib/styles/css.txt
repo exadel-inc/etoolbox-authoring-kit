@@ -1,2 +1,1 @@
 warrior-description.css
-rte-style.css
