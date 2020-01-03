@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.1.0
+ * @version 2.2.0
  *
  * Coral 3 RTE accessor
  * */
@@ -10,6 +10,12 @@
     const RTE_INPUT_SELECTOR = 'input[type="hidden"][data-cq-richtext-input]';
     const RTE_EDITOR_SELECTOR = '.cq-RichText-editable';
 
+    ns.ElementAccessors.registerAccessor({
+        selector: `${RTE_CONTAINER} ${RTE_INPUT_SELECTOR}`,
+        findTarget: function ($el) {
+            return $el.closest(RTE_CONTAINER).find(RTE_EDITOR_SELECTOR);
+        }
+    });
     ns.ElementAccessors.registerAccessor({
         selector: `${RTE_CONTAINER} ${RTE_EDITOR_SELECTOR}, ${RTE_CONTAINER} ${RTE_INPUT_SELECTOR}`,
         preferableType: 'string',

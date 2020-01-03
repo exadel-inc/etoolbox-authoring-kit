@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.1.1
+ * @version 2.2.0
  *
  * DependsOn plugin Elements Reference Registry
  * Store and manage known elements references
@@ -85,10 +85,7 @@
          * @returns {ElementReference} (returns existing one if it is already registered)
          * */
         static registerElement($el) {
-            if ($el.length > 1) {
-                console.warn(`[DependsOn]: requested reference with multiple targets, the first target is used.`, $el);
-            }
-            const subj = new ElementReference($el.first());
+            const subj = new ElementReference(ns.ElementAccessors.findTarget($el));
             if (refs.indexOf(subj) === -1) refs.push(subj);
             return subj;
         }

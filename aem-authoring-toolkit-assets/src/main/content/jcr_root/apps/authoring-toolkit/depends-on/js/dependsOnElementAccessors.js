@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.1.0
+ * @version 2.2.0
  *
  * DependsOn ElementAccessors Registry
  * */
@@ -13,6 +13,12 @@
     const accessorsList = [];
     const DEFAULT_ACCESSOR = {
         preferableType: 'string',
+        findTarget: ($el) => {
+            if ($el.length > 1) {
+                console.warn(`[DependsOn]: requested reference with multiple targets, the first target is used.`, $el);
+            }
+            return $el.first();
+        },
         get: function ($el) {
             return $el.val() || '';
         },
@@ -111,6 +117,15 @@
          * */
         static setDisabled($el, value) {
             ElementAccessors._findAccessorHandler($el, 'disabled')($el, value);
+        }
+
+        /**
+         * Find "DependsOn controllable" target
+         * @param {JQuery} $el - target element
+         * @returns {JQuery}
+         * */
+        static findTarget($el) {
+            return ElementAccessors._findAccessorHandler($el, 'findTarget')($el);
         }
 
         /**

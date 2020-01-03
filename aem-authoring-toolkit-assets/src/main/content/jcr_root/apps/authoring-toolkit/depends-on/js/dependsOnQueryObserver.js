@@ -32,6 +32,8 @@
          * @param {JQuery} $el - target element
          * */
         static init($el) {
+            $el = ns.ElementAccessors.findTarget($el);
+
             if ($el.data(QueryObserver.DATA_STORE)) return $el.data(QueryObserver.DATA_STORE);
 
             const queries = ns.splitAndTrim($el.attr('data-dependson') || '');
