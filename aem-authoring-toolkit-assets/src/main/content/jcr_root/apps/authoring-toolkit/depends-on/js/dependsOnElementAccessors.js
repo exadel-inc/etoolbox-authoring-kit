@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.2.0
+ * @version 2.2.1
  *
  * DependsOn ElementAccessors Registry
  * */
@@ -9,6 +9,7 @@
 
     const FIELD_LABEL = '.coral-Form-fieldlabel';
     const FIELD_WRAPPER = '.coral-Form-fieldwrapper';
+    const SUBMITTABLES = ':-foundation-submittable';
 
     const accessorsList = [];
     const DEFAULT_ACCESSOR = {
@@ -156,7 +157,7 @@
          * @param {JQuery} $el - target element
          * */
         static clearValidity($el) {
-            $el.find(':-foundation-submittable').trigger('foundation-validation-valid');
+            $el.find(SUBMITTABLES).addBack(SUBMITTABLES).trigger('foundation-validation-valid');
         }
 
         /**
