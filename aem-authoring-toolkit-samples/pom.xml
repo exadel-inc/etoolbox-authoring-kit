@@ -17,8 +17,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>toolkit-samples-package</module>
-        <module>toolkit-samples-bundle</module>
+        <module>toolkit-samples-core</module>
+        <module>toolkit-samples-ui.apps</module>
+        <module>toolkit-samples-ui.content</module>
     </modules>
 
     <dependencyManagement>

@@ -14,14 +14,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <artifactId>toolkit-samples-bundle</artifactId>
-    <name>AEM Authoring Toolkit - Samples Bundle</name>
+    <artifactId>toolkit-samples-core</artifactId>
+    <name>AEM Authoring Toolkit - Samples Core</name>
     <version>1.1.0-SNAPSHOT</version>
 
     <packaging>bundle</packaging>
 
     <build>
-        <finalName>${project.parent.artifactId}-bundle-${project.version}</finalName>
+        <finalName>${project.parent.artifactId}-core-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
