@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.1.0
+ * @version 2.2.2
  *
  * DependsOn plugin Group Reference Registry
  * Store and manage known group references

@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.0
+ * @version 2.2.2
  *
  * DependsOn Coral 3 Basic Actions
  *

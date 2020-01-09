@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.2.0
+ * @version 2.2.2
  *
  * Coral 3 RTE accessor
  * */
@@ -24,14 +24,15 @@
         },
         set: function ($el, value, notify) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
-            const rteInstance = $rteContainer.find(RTE_EDITOR_SELECTOR).data(RTE_DATA_INSTANCE);
+            const $editor = $rteContainer.find(RTE_EDITOR_SELECTOR);
+            const rteInstance = $editor.data(RTE_DATA_INSTANCE);
 
             $rteContainer.find(RTE_INPUT_SELECTOR).val(value);
             if (rteInstance && typeof rteInstance.setContent === 'function') {
                 rteInstance.setContent(value);
             }
 
-            notify && $el.trigger('change');
+            notify && $editor.trigger('change');
         },
         required: function ($el, val) {
             const $rteContainer = $el.closest(RTE_CONTAINER);

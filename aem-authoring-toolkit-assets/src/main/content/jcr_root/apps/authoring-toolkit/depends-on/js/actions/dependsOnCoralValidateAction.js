@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.1
+ * @version 2.2.2
  *
  * DependsOn Coral 3 Validate Actions
  * Additional action which sets query result as validation state
