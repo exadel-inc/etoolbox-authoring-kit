@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.0
+ * @version 2.2.2
  *
  * QueryObserver compile query using QueryProcessor and apply defined acton to the target.
  * Target supports multiple actions and queries separated by ';'
@@ -32,6 +32,8 @@
          * @param {JQuery} $el - target element
          * */
         static init($el) {
+            $el = ns.ElementAccessors.findTarget($el);
+
             if ($el.data(QueryObserver.DATA_STORE)) return $el.data(QueryObserver.DATA_STORE);
 
             const queries = ns.splitAndTrim($el.attr('data-dependson') || '');
