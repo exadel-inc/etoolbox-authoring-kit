@@ -83,11 +83,7 @@
                             <packaging>zip</packaging>
                             <userId>${vault.user}</userId>
                             <password>${vault.password}</password>
-                            <filters>
-                                <filter>
-                                    <root>/apps/${project.jcrAppFolder}</root>
-                                </filter>
-                            </filters>
+                            <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
                             <embeddeds>
                                 <embedded>
                                     <groupId>${project.groupId}</groupId>
