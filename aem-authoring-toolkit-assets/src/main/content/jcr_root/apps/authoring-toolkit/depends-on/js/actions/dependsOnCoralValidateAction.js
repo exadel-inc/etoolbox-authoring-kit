@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.0
+ * @version 2.2.2
  *
  * DependsOn Coral 3 Validate Actions
  * Additional action which sets query result as validation state
@@ -34,7 +34,7 @@
     // Just return dependsOn validate result and set marker class accordingly
     function checkDependsOnValidator(el) {
         const $el = $(el);
-        const instances = $el.data(ns.DependsOnQueryObserver.DATA_STORE);
+        const instances = $el.data(ns.QueryObserver.DATA_STORE);
         const validateInstances = (instances || []).filter((observer) => observer.action === ACTION_NAME);
 
         let resultMsg = undefined;
@@ -51,7 +51,7 @@
     // Register validator in registry only if acton is used
     function register() {
         const foundationRegistry = $(window).adaptTo("foundation-registry");
-        // Make target 'validateable'
+        // Make target 'validatable'
         foundationRegistry.register("foundation.validation.selector", {
             submittable: TARGET_SEL,
             candidate: TARGET_SEL + ':not([disabled])',

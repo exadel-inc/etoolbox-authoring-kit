@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.1.0
+ * @version 2.2.2
  *
  * DependsOn ElementAccessors Registry
  * */
@@ -9,10 +9,17 @@
 
     const FIELD_LABEL = '.coral-Form-fieldlabel';
     const FIELD_WRAPPER = '.coral-Form-fieldwrapper';
+    const SUBMITTABLES = ':-foundation-submittable';
 
     const accessorsList = [];
     const DEFAULT_ACCESSOR = {
         preferableType: 'string',
+        findTarget: ($el) => {
+            if ($el.length > 1) {
+                console.warn(`[DependsOn]: requested reference with multiple targets, the first target is used.`, $el);
+            }
+            return $el.first();
+        },
         get: function ($el) {
             return $el.val() || '';
         },
@@ -114,6 +121,15 @@
         }
 
         /**
+         * Find "DependsOn controllable" target
+         * @param {JQuery} $el - target element
+         * @returns {JQuery}
+         * */
+        static findTarget($el) {
+            return ElementAccessors._findAccessorHandler($el, 'findTarget')($el);
+        }
+
+        /**
          * Register accessor.
          * Accessor descriptor should contain selector property - css selector to determine target element types.
          * @param {object} accessorDescriptor
@@ -141,7 +157,7 @@
          * @param {JQuery} $el - target element
          * */
         static clearValidity($el) {
-            $el.find(':-foundation-submittable').trigger('foundation-validation-valid');
+            $el.find(SUBMITTABLES).addBack(SUBMITTABLES).trigger('foundation-validation-valid');
         }
 
         /**

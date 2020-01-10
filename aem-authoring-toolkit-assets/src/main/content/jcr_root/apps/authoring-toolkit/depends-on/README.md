@@ -384,7 +384,7 @@ public class Component {
         // Absolutely no need to calculate simple actions like sum separately, light operations can be used as it is, heavy thing can be declared like here
         query = "@field1 + @field2",
         // Simple set action is used
-        action = "DependsOnActions.SET"
+        action = DependsOnActions.SET
     )
     @DependsOnRef(
         // Here we add a name to our expression

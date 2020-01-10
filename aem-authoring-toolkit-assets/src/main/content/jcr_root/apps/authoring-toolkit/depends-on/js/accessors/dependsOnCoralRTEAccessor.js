@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.1.0
+ * @version 2.2.2
  *
  * Coral 3 RTE accessor
  * */
@@ -11,6 +11,12 @@
     const RTE_EDITOR_SELECTOR = '.cq-RichText-editable';
 
     ns.ElementAccessors.registerAccessor({
+        selector: `${RTE_CONTAINER} ${RTE_INPUT_SELECTOR}`,
+        findTarget: function ($el) {
+            return $el.closest(RTE_CONTAINER).find(RTE_EDITOR_SELECTOR);
+        }
+    });
+    ns.ElementAccessors.registerAccessor({
         selector: `${RTE_CONTAINER} ${RTE_EDITOR_SELECTOR}, ${RTE_CONTAINER} ${RTE_INPUT_SELECTOR}`,
         preferableType: 'string',
         get: function($el) {
@@ -18,14 +24,15 @@
         },
         set: function ($el, value, notify) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
-            const rteInstance = $rteContainer.find(RTE_EDITOR_SELECTOR).data(RTE_DATA_INSTANCE);
+            const $editor = $rteContainer.find(RTE_EDITOR_SELECTOR);
+            const rteInstance = $editor.data(RTE_DATA_INSTANCE);
 
             $rteContainer.find(RTE_INPUT_SELECTOR).val(value);
             if (rteInstance && typeof rteInstance.setContent === 'function') {
                 rteInstance.setContent(value);
             }
 
-            notify && $el.trigger('change');
+            notify && $editor.trigger('change');
         },
         required: function ($el, val) {
             const $rteContainer = $el.closest(RTE_CONTAINER);

@@ -1,8 +1,8 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.1.0
+ * @version 2.2.2
  *
- * DependsOnQueryObserver compile query using QueryProcessor and apply defined acton to the target.
+ * QueryObserver compile query using QueryProcessor and apply defined acton to the target.
  * Target supports multiple actions and queries separated by ';'
  *
  * Attributes:
@@ -24,15 +24,17 @@
      * Attached to dependent element
      * Initiate references registration
      * */
-    class DependsOnQueryObserver {
-        static DATA_STORE = 'dependsonobserver';
+    class QueryObserver {
+        static get DATA_STORE() { return 'dependsonobserver'; }
 
         /**
          * Initialize dependson observer instances on the target
          * @param {JQuery} $el - target element
          * */
         static init($el) {
-            if ($el.data(DependsOnQueryObserver.DATA_STORE)) return $el.data(DependsOnQueryObserver.DATA_STORE);
+            $el = ns.ElementAccessors.findTarget($el);
+
+            if ($el.data(QueryObserver.DATA_STORE)) return $el.data(QueryObserver.DATA_STORE);
 
             const queries = ns.splitAndTrim($el.attr('data-dependson') || '');
             const actions = ns.splitAndTrim($el.attr('data-dependsonaction') || ns.ActionRegistry.DEFAULT);
@@ -41,14 +43,14 @@
             }
 
             // Initialize observers
-            const observers = DependsOnQueryObserver.initObserversList($el, queries, actions);
+            const observers = QueryObserver.initObserversList($el, queries, actions);
 
             // Initial update
             if (!$el.is('[data-dependsonskipinitial]')) {
                 observers.forEach((observer) => observer.update());
             }
 
-            $el.data(DependsOnQueryObserver.DATA_STORE, observers);
+            $el.data(QueryObserver.DATA_STORE, observers);
         }
 
         /**
@@ -63,7 +65,7 @@
                 const action = actions[i];
                 actionCounter[action] = actionCounter[action] || 0;
                 const data = ns.parseActionData($el[0], action, actionCounter[action]++);
-                return new DependsOnQueryObserver($el, query, action, data);
+                return new QueryObserver($el, query, action, data);
             });
         }
 
@@ -98,5 +100,5 @@
         }
     }
 
-    ns.DependsOnQueryObserver = DependsOnQueryObserver;
+    ns.QueryObserver = QueryObserver;
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
