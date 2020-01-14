@@ -392,11 +392,10 @@ public class MyDialogWithDropdown {
 }
 ```
 
-Apart from such a usage, `@Select` can also consume data stored in an [ACS AEM Commons lists](https://adobe-consulting-services.github.io/acs-aem-commons/features/generic-lists/index.html).
+Apart from such a usage, `@Select` can also consume data stored in an arbitrary datasource.
 For that usecase, another `@Select` setup is in effect (see below). 
 
-Mind that you can either use "default" lists
-shipped as the part of *ACS AEM Commons* package, or some other implementation of key-value pair storage that mimics such lists.
+You can for instance use lists shipped as the part of *ACS AEM Commons* package, or some other implementation of key-value pair storage that mimics such lists.
 In the latter case, provide the additional `acsListResourceType` value that will help to parse your key-value storage.
 
 ```java
