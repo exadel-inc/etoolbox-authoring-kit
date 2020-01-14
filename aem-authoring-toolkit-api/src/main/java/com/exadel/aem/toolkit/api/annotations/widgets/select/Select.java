@@ -59,4 +59,13 @@ public @interface Select {
      * @return String value
      */
     String emptyText() default "";
+    /**
+     * When this option is to true, and also {@link Select#acsListPath()} is specified, renders the {@code addNone} attribute
+     * to the {@code datasource} node of this TouchUI dialog component's node so that "none" option is added to the
+     * list of selectable options.
+     * This option has no effect unless valid {@code acsListPath} is set.
+     * @return True or false
+     */
+    @IgnorePropertyMapping
+    boolean addNoneOption() default false;
 }

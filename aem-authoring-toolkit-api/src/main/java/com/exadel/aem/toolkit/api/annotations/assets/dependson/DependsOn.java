@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to define {@code dependsOn} and {@code dependsOnActon} attributes of {@code granite:data} child node of the current
+ * Used to define {@code dependsOn},  {@code dependsOnActon} attributes and {@code dependsOn} parameters of {@code granite:data} child node of the current
  * widget node to engage DependsOn frontend routines. For this to work properly, the {@code aem-authoring-toolkit-assets}
  * package must be added to the AEM installation
  */
@@ -27,4 +27,10 @@ public @interface DependsOn {
      * @return String value, one of {@link DependsOnActions} items or a custom-defined action name
      */
     String action() default DependsOnActions.VISIBILITY;
+
+    /**
+     * Defines custom static parameters to be used by dependsOn actions
+     * @return Single {@code DependsOnParam} annotation, or an array of DependsOnParams
+     */
+    DependsOnParam[] params() default {};
 }

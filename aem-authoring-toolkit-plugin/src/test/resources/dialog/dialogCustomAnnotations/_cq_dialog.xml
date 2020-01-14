@@ -18,7 +18,7 @@
                 <items jcr:primaryType="nt:unstructured">
                     <testCustomAnnotation
                         jcr:primaryType="nt:unstructured"
-                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                        sling:resourceType="test-components/form/customfield"
                         customField="Custom!"
                         disabled="{Boolean}false"
                         name="./testCustomAnnotation"
@@ -32,24 +32,24 @@
                         name="./testCustomAnnotationDefault"
                         renderHidden="{Boolean}false"
                         required="{Boolean}false"/>
-                        <testCustomAnnotationAuto
-                                jcr:primaryType="nt:unstructured"
-                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                                disabled="{Boolean}false"
-                                name="./testCustomAnnotationAuto"
-                                renderHidden="{Boolean}false"
-                                required="{Boolean}false">
-                            <granite:data cq:custom="Custom!" jcr:primaryType="nt:unstructured"/>
-                        </testCustomAnnotationAuto>
-                        <testCustomAnnotationAutoDefault
-                                jcr:primaryType="nt:unstructured"
-                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                                disabled="{Boolean}false"
-                                name="./testCustomAnnotationAutoDefault"
-                                renderHidden="{Boolean}false"
-                                required="{Boolean}false">
-                            <granite:data cq:custom="Custom annotation's field!" jcr:primaryType="nt:unstructured"/>
-                        </testCustomAnnotationAutoDefault>
+                    <testCustomAnnotationAuto
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="test-components/form/customfield"
+                        disabled="{Boolean}false"
+                        name="./testCustomAnnotationAuto"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false">
+                        <granite:data cq:custom="Custom!" jcr:primaryType="nt:unstructured"/>
+                    </testCustomAnnotationAuto>
+                    <testCustomAnnotationAutoDefault
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                        disabled="{Boolean}false"
+                        name="./testCustomAnnotationAutoDefault"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false">
+                        <granite:data cq:custom="Custom annotation's field!" jcr:primaryType="nt:unstructured"/>
+                    </testCustomAnnotationAutoDefault>
                 </items>
             </column>
         </items>

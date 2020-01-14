@@ -22,7 +22,8 @@ import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
-import com.exadel.aem.toolkit.core.handlers.widget.DialogComponent;
+import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
+import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
@@ -63,6 +64,12 @@ public interface Handler {
         Element itemsElement = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_ITEMS);
         containerElement.appendChild(itemsElement);
 
-        fields.forEach(field -> DialogComponent.fromField(field).ifPresent(comp -> comp.append(itemsElement, field)));
+        for (Field field : fields) {
+            DialogWidget widget = DialogWidgets.fromField(field);
+            if (widget == null) {
+                continue;
+            }
+            widget.append(itemsElement, field);
+        }
     }
 }

@@ -21,8 +21,9 @@ import java.util.function.BiConsumer;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
+import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.handlers.widget.DialogComponent;
+import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
 
 /**
  * Handler for processing Granite UI widgets features "inherited" by the current component class {@code Field} from
@@ -55,7 +56,7 @@ public class InheritanceHandler implements BiConsumer<Element, Field> {
      */
     private static Deque<Field> getInheritanceTree(Field field) {
         Deque<Field> result = new LinkedList<>();
-        DialogComponent referencedComponent = DialogComponent.fromField(field).orElse(null);
+        DialogWidget referencedComponent = DialogWidgets.fromField(field);
         if (referencedComponent == null) {
             return result;
         }
@@ -67,7 +68,7 @@ public class InheritanceHandler implements BiConsumer<Element, Field> {
                 if (referencedField.equals(field) || result.contains(referencedField)) { // to avoid circular references
                     break;
                 }
-                if (referencedComponent.equals(DialogComponent.fromField(referencedField).orElse(null))) { // to avoid mixing up props of different components
+                if (referencedComponent.equals(DialogWidgets.fromField(referencedField))) { // to avoid mixing up props of different components
                     result.add(referencedField);
                 }
                 extendsAnnotation = referencedField.getDeclaredAnnotation(Extends.class);

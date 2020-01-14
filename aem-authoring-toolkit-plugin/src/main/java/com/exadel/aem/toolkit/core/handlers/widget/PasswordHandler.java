@@ -37,7 +37,7 @@ public class PasswordHandler implements Handler, BiConsumer<Element, Field> {
         Password password = field.getDeclaredAnnotation(Password.class);
         if(!password.retype().isEmpty()){
             element.setAttribute(DialogConstants.PN_RETYPE,
-                    getXmlUtil().getNamePrefix() + getXmlUtil().getValidName(password.retype(), DialogConstants.INVALID_NAME_PATTERN, DialogConstants.NN_FIELD));
+                    getXmlUtil().getNamePrefix() + getXmlUtil().getValidFieldName(password.retype()));
         }
     }
 }

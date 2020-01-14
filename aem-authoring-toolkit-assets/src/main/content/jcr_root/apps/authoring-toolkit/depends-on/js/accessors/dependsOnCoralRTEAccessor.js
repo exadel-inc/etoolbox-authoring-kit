@@ -1,6 +1,6 @@
 /**
- * @author Alexey Stsefanovich (ala'n)
- * @version 1.2.0
+ * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
+ * @version 2.2.2
  *
  * Coral 3 RTE accessor
  * */
@@ -11,19 +11,28 @@
     const RTE_EDITOR_SELECTOR = '.cq-RichText-editable';
 
     ns.ElementAccessors.registerAccessor({
+        selector: `${RTE_CONTAINER} ${RTE_INPUT_SELECTOR}`,
+        findTarget: function ($el) {
+            return $el.closest(RTE_CONTAINER).find(RTE_EDITOR_SELECTOR);
+        }
+    });
+    ns.ElementAccessors.registerAccessor({
         selector: `${RTE_CONTAINER} ${RTE_EDITOR_SELECTOR}, ${RTE_CONTAINER} ${RTE_INPUT_SELECTOR}`,
         preferableType: 'string',
         get: function($el) {
             return $el.closest(RTE_CONTAINER).find(RTE_INPUT_SELECTOR).val() || '';
         },
-        set: function ($el, value) {
+        set: function ($el, value, notify) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
-            const rteInstance = $rteContainer.find(RTE_EDITOR_SELECTOR).data(RTE_DATA_INSTANCE);
+            const $editor = $rteContainer.find(RTE_EDITOR_SELECTOR);
+            const rteInstance = $editor.data(RTE_DATA_INSTANCE);
 
             $rteContainer.find(RTE_INPUT_SELECTOR).val(value);
             if (rteInstance && typeof rteInstance.setContent === 'function') {
                 rteInstance.setContent(value);
             }
+
+            notify && $editor.trigger('change');
         },
         required: function ($el, val) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
@@ -35,6 +44,21 @@
         visibility: function ($el, val) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($rteContainer, val);
+        },
+        disabled: function ($el, val) {
+            ns.ElementAccessors.DEFAULT_ACCESSOR.disabled($el, val);
+
+            const rteInstance = $el.data(RTE_DATA_INSTANCE);
+            if (!rteInstance) return;
+
+            // disable rte editing
+            if (val) {
+                rteInstance.suspend();
+            } else {
+                // use old content as initial content to reactivate rte
+                const initContent = rteInstance.editorKernel && rteInstance.editorKernel.getProcessedHtml();
+                rteInstance.reactivate(initContent);
+            }
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

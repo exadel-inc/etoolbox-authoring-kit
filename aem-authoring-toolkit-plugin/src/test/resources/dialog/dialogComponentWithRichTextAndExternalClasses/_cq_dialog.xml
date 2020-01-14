@@ -46,7 +46,7 @@
                                 disabled="{Boolean}false"
                                 fieldDescription="Background color description"
                                 fieldLabel="Background color"
-                                name="./background_Color"
+                                name="./backgroundColor"
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}true">
                                 <items jcr:primaryType="nt:unstructured">
@@ -66,7 +66,7 @@
                                 disabled="{Boolean}false"
                                 fieldDescription="Header description"
                                 fieldLabel="Header label"
-                                name="./header_name"
+                                name="./Header_name"
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}false"/>
                             <description
@@ -164,7 +164,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="Field's description"
                                             fieldLabel="Field label"
-                                            name="fieldName"
+                                            name="FieldName"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
                                             rootPath="root/path"/>
@@ -174,15 +174,15 @@
                                             autosubmit="{Boolean}false"
                                             checked="{Boolean}false"
                                             disabled="{Boolean}false"
-                                            fieldDescription="Checkbox's description"
-                                            fieldLabel="Checkbox's label"
-                                            name="checkboxName"
+                                            fieldDescription="Checkbox description"
+                                            fieldLabel="Checkbox label"
+                                            name="CheckboxName"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}false"
-                                            text="Checkbox's label"
+                                            text="Checkbox label"
                                             uncheckedValue="{Boolean}false"
                                             value="{Boolean}true"/>
-                                        <icon
+                                        <iconName
                                             jcr:primaryType="nt:unstructured"
                                             sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
                                             attribute="attribute_value"
@@ -196,6 +196,88 @@
                                     </items>
                                 </field>
                             </links>
+                            <extendedLinks
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                    composite="{Boolean}true"
+                                    disabled="{Boolean}false"
+                                    fieldLabel="Extended Links"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false">
+                                <field
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/container"
+                                        name="./extendedLinks">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <label
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="description"
+                                                fieldLabel="Label"
+                                                name="labelsName"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}true"/>
+                                        <url
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Field's description"
+                                                fieldLabel="Field label"
+                                                name="FieldName"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}true"
+                                                rootPath="root/path"/>
+                                        <checkbox
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
+                                                autosubmit="{Boolean}false"
+                                                checked="{Boolean}false"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Checkbox description"
+                                                fieldLabel="Checkbox label"
+                                                name="CheckboxName"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}false"
+                                                text="Checkbox label"
+                                                uncheckedValue="{Boolean}false"
+                                                value="{Boolean}true"/>
+                                        <iconName
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                                attribute="attribute_value"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Icon description"
+                                                fieldLabel="Icon label"
+                                                name="iconName"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}true"
+                                                rootPath="icons/folder/path"/>
+                                        <additionalLabel
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Sample multifield - additional info"
+                                                fieldLabel="Additional info"
+                                                name="additionalLabel"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}false"/>
+                                        <additionalInfo
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
+                                                autofocus="{Boolean}false"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Sample multifield - additional info"
+                                                fieldLabel="Additional info"
+                                                maxlength="{Long}9223372036854775807"
+                                                name="additionalInfo"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}false"
+                                                resize="NONE"
+                                                rows="{Long}15"/>
+                                    </items>
+                                </field>
+                            </extendedLinks>
                         </items>
                     </links>
                     <featuredCard1
@@ -219,7 +301,7 @@
                                         disabled="{Boolean}false"
                                         fieldDescription="Title's description"
                                         fieldLabel="Label title's"
-                                        name="./first_title"
+                                        name="./firstTitle"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"/>
                                     <description
@@ -228,7 +310,7 @@
                                         disabled="{Boolean}false"
                                         fieldDescription="description"
                                         fieldLabel="Description's label"
-                                        name="./first_description"
+                                        name="./firstDescription"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"
                                         useFixedInlineToolbar="{Boolean}true">
@@ -258,7 +340,7 @@
                                         disabled="{Boolean}false"
                                         fieldDescription="Provide the text to be shown as the Caption."
                                         fieldLabel="Caption"
-                                        name="./first_caption"
+                                        name="./firstCaption"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"/>
                                     <label
@@ -267,7 +349,7 @@
                                         disabled="{Boolean}false"
                                         fieldDescription="description"
                                         fieldLabel="Label"
-                                        name="./first_labelsName"
+                                        name="./firstlabelsName"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}true"/>
                                     <url
@@ -276,7 +358,7 @@
                                         disabled="{Boolean}false"
                                         fieldDescription="Field's description"
                                         fieldLabel="Field label"
-                                        name="./first_fieldName"
+                                        name="./firstFieldName"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}true"
                                         rootPath="root/path"/>
@@ -286,7 +368,7 @@
                                         disabled="{Boolean}false"
                                         fieldDescription="Description for text on image"
                                         fieldLabel="Text on image"
-                                        name="./first_imageText"
+                                        name="./firstImageText"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"/>
                                 </items>
@@ -328,7 +410,7 @@
                                         disabled="{Boolean}false"
                                         fieldDescription="Title's description"
                                         fieldLabel="Label title's"
-                                        name="./second_title"
+                                        name="./second_Title"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"/>
                                     <description
@@ -337,7 +419,7 @@
                                         disabled="{Boolean}false"
                                         fieldDescription="description"
                                         fieldLabel="Description's label"
-                                        name="./second_description"
+                                        name="./second_Description"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"
                                         useFixedInlineToolbar="{Boolean}true">
@@ -367,7 +449,7 @@
                                         disabled="{Boolean}false"
                                         fieldDescription="Provide the text to be shown as the Caption."
                                         fieldLabel="Caption"
-                                        name="./second_caption"
+                                        name="./second_Caption"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"/>
                                     <label
@@ -385,7 +467,7 @@
                                         disabled="{Boolean}false"
                                         fieldDescription="Field's description"
                                         fieldLabel="Field label"
-                                        name="./second_fieldName"
+                                        name="./second_FieldName"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}true"
                                         rootPath="root/path"/>
@@ -395,7 +477,7 @@
                                         disabled="{Boolean}false"
                                         fieldDescription="Description for text on image"
                                         fieldLabel="Text on image"
-                                        name="./second_imageText"
+                                        name="./second_ImageText"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"/>
                                 </items>
