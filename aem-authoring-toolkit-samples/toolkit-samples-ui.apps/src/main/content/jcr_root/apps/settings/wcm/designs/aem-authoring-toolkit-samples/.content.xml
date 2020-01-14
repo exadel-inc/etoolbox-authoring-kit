@@ -2,13 +2,14 @@
 <jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0" jcr:primaryType="cq:Page">
-    <BACKUP-WITH-TEMPLATE-RESTRICTIONS-DO-NOT-DELETE.content />
-
     <jcr:content cq:template="/libs/wcm/core/templates/designpage"
                  jcr:primaryType="cq:PageContent" jcr:title="AEM Toolkit Samples Design"
                  sling:resourceType="wcm/core/components/designer">
-        <parsys jcr:primaryType="nt:unstructured" sling:resourceType="foundation/components/parsys"
-                components="[Toolkit Samples]">
-        </parsys>
+        <page jcr:primaryType="nt:unstructured">
+            <parsys jcr:primaryType="nt:unstructured" sling:resourceType="wcm/foundation/components/parsys"
+                    components="[group:Toolkit Samples]">
+                <section jcr:primaryType="nt:unstructured"/>
+            </parsys>
+        </page>
     </jcr:content>
 </jcr:root>
