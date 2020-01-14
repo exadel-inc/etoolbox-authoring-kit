@@ -6,6 +6,10 @@
     padding-bottom: 2rem;
 }
 
+.warrior-component-wrap .newpar {
+    min-width: 200px;
+}
+
 .warrior-component-wrap {
     background: white;
     color: #4a65a5;
