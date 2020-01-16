@@ -91,6 +91,13 @@
                                     <target>/apps/${project.jcrAppFolder}/install</target>
                                 </embedded>
                             </embeddeds>
+                            <subPackages>
+                                <subPackage>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>aem-authoring-toolkit-assets</artifactId>
+                                    <filter>true</filter>
+                                </subPackage>
+                            </subPackages>
                         </configuration>
                         <executions>
                             <execution>
@@ -142,6 +149,13 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>toolkit-samples-core</artifactId>
             <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>aem-authoring-toolkit-assets</artifactId>
+            <version>${project.parent.version}</version>
+            <type>content-package</type>
         </dependency>
     </dependencies>
 </project>
