@@ -24,7 +24,7 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
         title = "Warrior component",
         description = "Make your own warrior",
         resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = "Toolkit Samples",
+        componentGroup = "Toolkit Samples Container",
         tabs = {
                 @Tab(title = WarriorComponent.TAB_MAIN),
                 @Tab(title = WarriorComponent.TAB_ICON),
