@@ -367,7 +367,7 @@ public class ComplexComponent2 {
                 ranking = 3
         )
         @PathField(rootPath = "SHARED_ICONS_FOLDER_PATH")
-        @Properties(@Property(name = "property", value = "shared_icon_prop"))
+        @Properties(@Property(name = "shared-icon-property", value = "shared icon value"))
         private String iconPath;
 
     }

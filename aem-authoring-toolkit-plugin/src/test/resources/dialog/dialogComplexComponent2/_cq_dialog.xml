@@ -488,7 +488,7 @@
                                         fieldDescription="description element icon"
                                         fieldLabel="label element icon"
                                         name="./primaryfield_element_icon"
-                                        property="shared_icon_prop"
+                                        shared-icon-property="shared icon value"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"
                                         rootPath="SHARED_ICONS_FOLDER_PATH"/>
@@ -558,7 +558,7 @@
                                         fieldDescription="description element icon"
                                         fieldLabel="label element icon"
                                         name="./secondaryfield_element_icon"
-                                        property="shared_icon_prop"
+                                        shared-icon-property="shared icon value"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"
                                         rootPath="SHARED_ICONS_FOLDER_PATH"/>

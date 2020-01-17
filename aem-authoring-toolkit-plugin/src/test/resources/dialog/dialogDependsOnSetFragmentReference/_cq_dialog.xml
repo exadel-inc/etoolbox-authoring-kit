@@ -14,7 +14,10 @@
                     <fragmentPath disabled="{Boolean}false" jcr:primaryType="nt:unstructured" name="./fragmentPath"
                                   renderHidden="{Boolean}false" required="{Boolean}false" rootPath="/content"
                                   sling:resourceType="granite/ui/components/coral/foundation/form/pathfield">
-                        <granite:data dependsOn="@referenceType === 'fragment'" dependsOnAction="visibility" jcr:primaryType="nt:unstructured"/>
+                        <granite:data
+                                jcr:primaryType="nt:unstructured"
+                                dependsOn="@referenceType === 'fragment'"
+                                dependsOnAction="visibility"/>
                     </fragmentPath>
                 </items>
             </column>

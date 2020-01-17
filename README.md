@@ -366,29 +366,50 @@ public class RadioGroupDialog {
 ###### @Select
 Used to render select inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Select](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/select/index.html). `@Select` comprises set of `@Option` items. Each of them must be initialized with mandatory *value* and several optional parameters, such as *text* (represents option label), boolean flags *selected* and *disabled*, and also String values responsible for visual presentation of an option: *icon*, *statusIcon*, *statusText* and *statusVariant*.
  
-Here is a little code snippet on `@Select` usage:
+Here is a code snippet for a typical `@Select` usage:
 ```java
 
 public class MyDialogWithDropdown {
     @DialogField(label = "Rating")
-    @Select(options = {
-        @Option(
-                text = "1 star", 
-                value = "1", 
-                selected = true,
-                statusIcon = "/content/dam/samples/icons/1-star-rating.png",
-                statusText = "This is to set 1-star rating",
-                statusVariant = StatusVariantConstants.SUCCESS
-        ),
-        @Option(text = "2 stars", value = "2"),
-        @Option(text = "3 stars", value = "3"),
-        @Option(text = "4 stars", value = "4", disabled=true),
-        @Option(text = "5 stars", value = "5", disabled=true)
-    },
-    emptyText = "Select rating")
+    @Select(
+        options = {
+            @Option(
+                    text = "1 star", 
+                    value = "1", 
+                    selected = true,
+                    statusIcon = "/content/dam/samples/icons/1-star-rating.png",
+                    statusText = "This is to set 1-star rating",
+                    statusVariant = StatusVariantConstants.SUCCESS
+            ),
+            @Option(text = "2 stars", value = "2"),
+            @Option(text = "3 stars", value = "3"),
+            @Option(text = "4 stars", value = "4", disabled=true),
+            @Option(text = "5 stars", value = "5", disabled=true)
+        },
+        emptyText = "Select rating"
+)
     String dropdown;
 }
 ```
+
+Apart from such a usage, `@Select` can also consume data stored in an arbitrary datasource.
+For that usecase, another `@Select` setup is in effect (see below). 
+
+You can for instance use lists shipped as the part of *ACS AEM Commons* package, or some other implementation of key-value pair storage that mimics such lists.
+In the latter case, provide the additional `acsListResourceType` value that will help to parse your key-value storage.
+
+```java
+public class MyDialogWithDropdown {
+    @DialogField(label = "Arbitrary List")
+    @Select(
+        acsListPath = "/path/to/acs/list",
+        acsListResourceType = "my/list/resource/type", // optional
+        addNone = true // do we need the specific "none" option before other options in list?
+    )
+    String option;
+}
+```
+
 ###### @Switch
 Used to render on-off toggle switches in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Switch](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/switch/index.html).
 ###### @TextArea

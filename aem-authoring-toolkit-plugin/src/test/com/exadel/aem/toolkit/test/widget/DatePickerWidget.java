@@ -32,7 +32,7 @@ public class DatePickerWidget {
     @DialogField(name = "date")
     @DatePicker(
             type = DatePickerType.DATETIME,
-            displayedFormat = "DD.MM.YYYY HH:mm",
+            displayedFormat = "YYYY-MM-DD[T]HH:mm:ss.000",
             valueFormat = "DD.MM.YYYY HH:mm",
             minDate = @DateTimeValue(day = 1, month = 1, year = 2019),
             maxDate = @DateTimeValue(day = 30, month = 4, year = 2020, hour = 12, minute = 10, timezone = "UTC+3"),

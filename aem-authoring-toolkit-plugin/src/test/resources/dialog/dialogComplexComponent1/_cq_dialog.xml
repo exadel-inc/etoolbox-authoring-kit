@@ -673,7 +673,10 @@
                                         uncheckedValue="{Boolean}false"
                                         value="{Boolean}true"/>
                                 </items>
-                                <granite:data dependsOn="@first" dependsOnAction="visibility" jcr:primaryType="nt:unstructured"/>
+                                <granite:data
+                                        jcr:primaryType="nt:unstructured"
+                                        dependsOn="@first"
+                                        dependsOnAction="visibility"/>
                             </firstExampleDialog>
                             <secondExampleDialogEnabled
                                 jcr:primaryType="nt:unstructured"
