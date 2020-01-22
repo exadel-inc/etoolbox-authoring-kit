@@ -1,7 +1,0 @@
-#core
-js/maxItems-validator.js
-js/minItems-validator.js
-js/regex-validator.js
-
-#utils
-js/utils/validators-utils.js
