@@ -10,7 +10,8 @@
                 sling:resourceType="foundation/components/parsys">
             <warrior_component
                     jcr:primaryType="nt:unstructured"
-                    sling:resourceType="authoring-toolkit/samples/components/content/warrior-component"/>
+                    sling:resourceType="authoring-toolkit/samples/components/content/warrior-component"
+                    colorTheme="false"/>
         </content>
     </jcr:content>
 </jcr:root>
