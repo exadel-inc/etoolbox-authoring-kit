@@ -1,6 +1,6 @@
 ## DependsOn Plugin client library
 
-Author _Alexey Stsefanovich (ala'n)_
+Author _Alexey Stsefanovich (ala'n)_ and _Yana Bernatskaya (YanaBr)_
 
 Version _2.2.3_
  
