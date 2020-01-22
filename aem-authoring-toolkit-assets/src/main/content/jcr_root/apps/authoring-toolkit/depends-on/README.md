@@ -142,7 +142,7 @@ Note: multiple reference triggers query update on any group update: changing som
 So usage of multiple reference can slow down queries performance.
 
 Reference can not be named as 'this', that name is reserved and always reach current element value.
-Reference name is not necessary for referencing current element by this.
+Reference name is not necessary for referencing current element by `@this`.
 
 Area to find referenced field can be narrowed down by providing the Scope. 
 Scope is a CSS Selector of the closest container element. 
@@ -532,6 +532,54 @@ public class Component {
         private boolean firstItem;
          
         // ...
+    }
+}
+```
+
+#### 12. Multifield reference
+
+Multifield reference has two properties:
+- length - count of multifield items 
+- isEmpty - _true_ if there are no items
+
+Another way to validate min and max multifield items count
+```java
+public class Component {
+    
+    @DependsOn(action = DependsOnActions.VALIDATE, query = "@this.length >= 2 && @this.length <= 5")
+    @MultiField(field = Item.class)
+    @DialogField
+    @ValueMapValue
+    private String[] items;
+
+    public class Item {
+        @TextField
+        @DialogField
+        public String item;
+    }
+}
+```
+
+Show `multifield2` if `multifield1` is not empty and vice versa using multifield reference's property `isEmpty`
+```java
+public class Component {
+    
+    @DependsOnRef(name = "multifield1")
+    @MultiField(field = Item.class)
+    @DialogField
+    @ValueMapValue
+    private String[] multifield1;
+
+    @DependsOn(query = "!@multifield1.isEmpty")
+    @MultiField(field = Item.class)
+    @DialogField
+    @ValueMapValue
+    private String[] multifield2;
+
+    public class Item {
+        @TextField
+        @DialogField
+        public String item;
     }
 }
 ```
