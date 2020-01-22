@@ -44,8 +44,9 @@
 
     // Track collection change to update dynamic references
     $document
-        .off('coral-collection:remove.dependsOn').on('coral-collection:remove.dependsOn', 'coral-multifield', () => {
-            // We should actualize references on coral-collection:remove too.
+        .off('coral-collection:remove.dependsOn coral-collection:add.dependsOn').on('coral-collection:remove.dependsOn coral-collection:add.dependsOn', 'coral-multifield', (e) => {
+            // We should actualize references on coral-collection:remove and coral-collection:add too.
+            ns.ElementReferenceRegistry.handleChange(e);
             ns.ElementReferenceRegistry.actualize();
             ns.GroupReferenceRegistry.actualize();
         });
