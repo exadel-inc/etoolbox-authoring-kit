@@ -1,6 +1,8 @@
 package com.exadel.aem.toolkit.samples.models;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnParam;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
@@ -55,6 +57,11 @@ public class AbilitiesComponent {
     @ValueMapValue
     private String ability;
 
+    @DependsOn(
+            query = "@this.length <= 3",
+            action = DependsOnActions.VALIDATE,
+            params = { @DependsOnParam(name = "msg", value = "Too powerful!")}
+            )
     @DependsOn(query = "@ability === 'magic'")
     @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
     @MultiField(field = Element.class)
