@@ -16,11 +16,9 @@ const workingDirs = [];
     workingDirs.push(dirPath);
 });
 
-// console.log(workingDirs);
-
 const targets = [
-    'http://admin:admin@localhost:4502' // Author
-    // 'http://admin:admin@localhost:4503', // Publish
+    'http://admin:admin@localhost:4502', // Author
+    'http://admin:admin@localhost:4503' // Publish
 ];
 
 const exclude = '**/*.orig'; // Skip merge files.

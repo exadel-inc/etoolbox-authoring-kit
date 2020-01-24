@@ -3,7 +3,7 @@
 <sly data-sly-call="${clientlib.all @ categories='authoring-toolkit.samples.components'}"></sly>
 
 <div class="warrior-description">
-    <span class="warrior-description-title">${'{0} history' @format=[data.warriorName]}</span>
+    <span class="warrior-description-title">${'{0} history' @ format=[data.warriorName]}</span>
     <span class="warrior-description-text">${'{0}. {1}'
             @context='html', format=[data.initDescription, data.description]}</span>
 </div>

@@ -9,7 +9,6 @@ The action is intended for receiving color theme of the Warrior component
     'use strict';
 
     const COMPONENT_FORMAT = '.json';
-    //const PORT = 'http://localhost:4502/';
 
     /**
      * Decide which scope of tags to use (true - dark theme, default - light theme)

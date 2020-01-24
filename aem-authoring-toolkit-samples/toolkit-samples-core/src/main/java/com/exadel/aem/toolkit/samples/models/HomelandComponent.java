@@ -1,14 +1,7 @@
 package com.exadel.aem.toolkit.samples.models;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
-import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
-import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
-import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
-import com.exadel.aem.toolkit.samples.constants.PathConstants;
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -18,14 +11,22 @@ import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ChildResource;
 import org.apache.sling.models.annotations.injectorspecific.Self;
 
-import javax.inject.Inject;
+import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
+import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
+import com.exadel.aem.toolkit.samples.constants.GroupConstants;
+import com.exadel.aem.toolkit.samples.constants.PathConstants;
 
 @Dialog(
         name = "content/homeland-component",
-        title = "Homeland component",
+        title = "Homeland Component",
         description = "Homeland of your warrior",
         resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = "Toolkit Samples",
+        componentGroup = GroupConstants.COMPONENT_GROUP,
         layout = DialogLayout.TABS
 )
 @EditConfig(

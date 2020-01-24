@@ -1,7 +1,25 @@
 package com.exadel.aem.toolkit.samples.models;
 
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.ModifiableValueMap;
+import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import com.day.cq.tagging.Tag;
 import com.day.cq.tagging.TagManager;
+
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRefTypes;
@@ -21,40 +39,24 @@ import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.*;
+import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.resource.ModifiableValueMap;
-import org.apache.sling.api.resource.PersistenceException;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.Self;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Dialog(
         name = "content/warrior-description-component",
-        title = "Warrior description component",
+        title = "Warrior Description Component",
         description = "Tell us about your warrior",
         resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = "Toolkit Samples",
-        tabs= {
+        componentGroup = GroupConstants.COMPONENT_GROUP,
+        tabs = {
                 @Tab(title = WarriorDescriptionComponent.TAB_MAIN),
                 @Tab(title = WarriorDescriptionComponent.TAB_TASTES),
                 @Tab(title = WarriorDescriptionComponent.TAB_FRUIT),
                 @Tab(title = WarriorDescriptionComponent.TAB_FILMS)
         }
 )
-@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUIT, query = "@isLikeFruit")
-@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FILMS, query = "@isLikeFilms")
+@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUIT, query = "@isLikesFruit")
+@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FILMS, query = "@isLikesFilms")
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WarriorDescriptionComponent {
 
@@ -65,7 +67,7 @@ public class WarriorDescriptionComponent {
 
     private static final String DESCRIPTION_TEMPLATE = "%s was born on the cold but bright day %s. He would %s. %s, and %s";
     private static final String DEFAULT_BIRTHDAY = "29.03.2000";
-    private static final String DEFAULT_CHARACTER = "always creepy smile";
+    private static final String DEFAULT_CHARACTER = "always creepy smiles";
     private static final String DEFAULT_FRUIT_TEXT = "He doesn't like fruit";
     private static final String DEFAULT_FILMS_TEXT = "he doesn't like films";
 
@@ -125,7 +127,7 @@ public class WarriorDescriptionComponent {
                     @ParagraphFormat(tag = "h2", description = "My custom subheader")
             }
     )
-    @DialogField(name = "./description")
+    @DialogField
     @ValueMapValue
     private String description;
 
@@ -138,22 +140,18 @@ public class WarriorDescriptionComponent {
             typeHint = TypeHint.STRING
     )
     @DialogField(
-            name = "./birthday",
             label = "Birthday",
-            description = "Enter a birthday of you warrior"
+            description = "Enter birthday of you warrior"
     )
     @ValueMapValue
     private String birthday;
 
-    @DependsOnRef(name = "isLikeFruit")
+    @DependsOnRef(name = "isLikesFruit")
     @PlaceOnTab(WarriorDescriptionComponent.TAB_TASTES)
-    @DialogField(
-            name = "./isLikeFruit",
-            label = "Does your warrior like fruit?"
-    )
+    @DialogField(label = "Does your warrior like fruit?")
     @Checkbox
     @ValueMapValue
-    private boolean isLikeFruit;
+    private boolean isLikesFruit;
 
     @PlaceOnTab(WarriorDescriptionComponent.TAB_FRUIT)
     @Autocomplete(
@@ -161,21 +159,17 @@ public class WarriorDescriptionComponent {
             forceSelection = true,
             datasource = @AutocompleteDatasource(namespaces = {"fruit"})
     )
-    @DialogField(
-            name = "./fruit",
-            label = "Favorite fruit"
-    )
+    @DialogField(label = "Favorite fruit")
     @ValueMapValue
     private String[] fruit;
 
     @PlaceOnTab(WarriorDescriptionComponent.TAB_MAIN)
     @RadioGroup(buttons = {
-            @RadioButton(text = "Funny", value = "always creepy smile", checked = true),
-            @RadioButton(text ="Sad", value = "always steal your handkerchief"),
-            @RadioButton(text = "Angry", value = "always ignore you")
+            @RadioButton(text = "Funny", value = "always creepy smiles", checked = true),
+            @RadioButton(text = "Sad", value = "always steals your handkerchief"),
+            @RadioButton(text = "Angry", value = "always ignores you")
     })
     @DialogField(
-            name = "./character",
             label = "Character",
             description = "Choose character of your warrior",
             ranking = 4
@@ -183,15 +177,12 @@ public class WarriorDescriptionComponent {
     @ValueMapValue
     private String character;
 
-    @DependsOnRef(name = "isLikeFilms")
+    @DependsOnRef(name = "isLikesFilms")
     @PlaceOnTab(WarriorDescriptionComponent.TAB_TASTES)
     @Checkbox
-    @DialogField(
-            name = "./isLikeFilms",
-            label = "Does your warrior like films?"
-    )
+    @DialogField(label = "Does your warrior like films?")
     @ValueMapValue
-    private boolean isLikeFilms;
+    private boolean isLikesFilms;
 
     @Hidden
     @DependsOn(query = "@parentPath", action = "getParentColorTheme")
@@ -205,41 +196,45 @@ public class WarriorDescriptionComponent {
             forceSelection = true,
             datasource = @AutocompleteDatasource(namespaces = {"films"})
     )
-    @DialogField(
-            label = "Favorite films",
-            name = "./films"
-    )
+    @DialogField(label = "Favorite films")
     @ValueMapValue
     private String[] films;
 
     @DependsOnRef(name = "parentPath")
     @Hidden
-    @DialogField
     private String parentPath;
 
     @PostConstruct
     public void init() throws PersistenceException {
         ModifiableValueMap valueMap = resource.adaptTo(ModifiableValueMap.class);
-        valueMap.put("parentPath", resource.getParent().getParent().getPath());
+        if (valueMap == null) {
+            return;
+        }
+        String parentPath = Optional.ofNullable(resource.getParent())
+                .map(Resource::getParent)
+                .map(Resource::getPath)
+                .orElse("");
+        valueMap.put("parentPath", parentPath);
         resource.getResourceResolver().commit();
     }
 
     public String getWarriorName() {
-        String warriorName = null;
-        Resource parentResource = resource.getParent().getParent();
-
-        if (parentResource != null) {
-            warriorName = parentResource.getValueMap().get("warriorName", String.class);
-        }
+        String warriorName;
+        Resource parentResource = Optional.ofNullable(resource.getParent()).map(Resource::getParent).get();
+        warriorName = parentResource.getValueMap().get("warriorName", String.class);
         return StringUtils.defaultIfEmpty(warriorName, WarriorComponent.DEFAULT_NAME);
     }
 
-    public String getDescription() { return description; }
+    public String getDescription() {
+        return description;
+    }
 
-    public String getBirthday() { return StringUtils.defaultIfBlank(birthday, DEFAULT_BIRTHDAY); }
+    public String getBirthday() {
+        return StringUtils.defaultIfBlank(birthday, DEFAULT_BIRTHDAY);
+    }
 
     public String getFilms() {
-        if (isLikeFilms && films != null) {
+        if (isLikesFilms && films != null) {
             String filmsString = Arrays.stream(films)
                     .map(film -> film.replaceAll("^.*/(.*)$", "$1"))
                     .collect(Collectors.joining(TAGS_DELIMITER));
@@ -249,7 +244,7 @@ public class WarriorDescriptionComponent {
     }
 
     public String getFruit() {
-        if (isLikeFruit && fruit != null) {
+        if (isLikesFruit && fruit != null) {
             TagManager tagManager = resourceResolver.adaptTo(TagManager.class);
             if (tagManager != null) {
                 return (FRUIT_TEXT +
@@ -267,5 +262,7 @@ public class WarriorDescriptionComponent {
         return String.format(DESCRIPTION_TEMPLATE, getWarriorName(), getBirthday(), getCharacter(), getFruit(), getFilms());
     }
 
-    public String getCharacter() { return StringUtils.defaultIfBlank(character, DEFAULT_CHARACTER); }
+    public String getCharacter() {
+        return StringUtils.defaultIfBlank(character, DEFAULT_CHARACTER);
+    }
 }

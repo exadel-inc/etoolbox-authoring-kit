@@ -3,6 +3,6 @@
 <sly data-sly-call="${clientlib.css @ categories='authoring-toolkit.samples.components'}"></sly>
 
 <div class="warrior-homeland-wrap">
-    <span class="warrior-homeland-title">${'{0} homeland' @format=[data.warriorName]}</span>
+    <span class="warrior-homeland-title">${'{0} homeland' @ format=[data.warriorName]}</span>
     <img class="warrior-homeland-image cq-dd-homelandImage" src="${data.homelandImage @ context='uri'}" alt="Your warrior has no home">
 </div>

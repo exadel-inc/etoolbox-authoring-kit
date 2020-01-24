@@ -1,11 +1,12 @@
 package com.exadel.aem.toolkit.samples.annotations.handlers;
 
-import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
-import com.exadel.aem.toolkit.samples.annotations.FieldsetPostfix;
+import java.lang.reflect.Field;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import java.lang.reflect.Field;
+import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.samples.annotations.FieldsetPostfix;
 
 public class FieldsetPostfixAnnotationHandler implements DialogWidgetHandler {
 
@@ -17,9 +18,9 @@ public class FieldsetPostfixAnnotationHandler implements DialogWidgetHandler {
     @Override
     public void accept(Element element, Field field) {
 
-        Element currentElement = null;
-        String currentNodeName = null;
-        String newNodeName = null;
+        Element currentElement;
+        String currentNodeName;
+        String newNodeName;
         String postfix = field.getAnnotation(FieldsetPostfix.class).postfix();
         NodeList fieldsetNodes = element.getChildNodes().item(0).getChildNodes();
         int numOfNodes = fieldsetNodes.getLength();

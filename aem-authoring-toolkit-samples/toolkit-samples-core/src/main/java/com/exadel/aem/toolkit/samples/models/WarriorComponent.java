@@ -1,5 +1,12 @@
 package com.exadel.aem.toolkit.samples.models;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Default;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
@@ -11,20 +18,15 @@ import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
+import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.Default;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 @Dialog(
         name = "content/warrior-component",
-        title = "Warrior component",
+        title = "Warrior Component",
         description = "Make your own warrior",
         resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = "Toolkit Samples Container",
+        componentGroup = GroupConstants.COMPONENT_CONTAINER_GROUP,
         tabs = {
                 @Tab(title = WarriorComponent.TAB_MAIN),
                 @Tab(title = WarriorComponent.TAB_ICON),
@@ -61,18 +63,12 @@ public class WarriorComponent {
 
     @Attribute(clas = "test")
     @TextField(emptyText = DEFAULT_TITLE)
-    @DialogField(
-            label = "Container title",
-            name = "./title"
-    )
+    @DialogField(label = "Container title")
     @ValueMapValue
     private String title;
 
     @TextField(emptyText = WarriorComponent.DEFAULT_NAME)
-    @DialogField(
-            label = "Warrior name",
-            name = "./warriorName"
-    )
+    @DialogField(label = "Warrior name")
     @ValueMapValue
     private String warriorName;
 
@@ -81,30 +77,30 @@ public class WarriorComponent {
             emptyText = "Face",
             rootPath = "/content/dam"
     )
-    @DialogField(
-            label = "Photo of warrior",
-            name = "./iconPath"
-    )
+    @DialogField(label = "Photo of warrior")
     @ValueMapValue
     private String iconPath;
 
     @PlaceOnTab(WarriorComponent.TAB_THEME)
     @Switch()
-    @DialogField(
-            label = "Dark theme",
-            name = "./colorTheme"
-    )
+    @DialogField(label = "Dark theme")
     @Default(booleanValues = {false})
     @ValueMapValue
     private boolean colorTheme;
 
-    public String getTitle() { return StringUtils.defaultIfBlank(title, DEFAULT_TITLE); }
+    public String getTitle() {
+        return StringUtils.defaultIfBlank(title, DEFAULT_TITLE);
+    }
 
-    public String getWarriorName() { return StringUtils.defaultIfBlank(warriorName, DEFAULT_NAME); }
+    public String getWarriorName() {
+        return StringUtils.defaultIfBlank(warriorName, DEFAULT_NAME);
+    }
 
     public String getIconPath() {
         return iconPath;
     }
 
-    public String getColorTheme() { return colorTheme ? DARK_THEME_CLASS : LIGHT_THEME_CLASS; }
+    public String getColorTheme() {
+        return colorTheme ? DARK_THEME_CLASS : LIGHT_THEME_CLASS;
+    }
 }

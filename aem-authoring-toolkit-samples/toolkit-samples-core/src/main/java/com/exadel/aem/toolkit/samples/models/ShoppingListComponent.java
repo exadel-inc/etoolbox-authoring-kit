@@ -1,5 +1,12 @@
 package com.exadel.aem.toolkit.samples.models;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
@@ -8,23 +15,18 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
+import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 import com.exadel.aem.toolkit.samples.models.fieldsets.ProductsFieldSet;
 import com.exadel.aem.toolkit.samples.models.fieldsets.WeaponFieldSet;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.Self;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 @Dialog(
         name = "content/shopping-list-component",
-        title = "Shopping list component",
+        title = "Shopping List Component",
         description = "Choose what your warrior needs",
         resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = "Toolkit Samples",
-        tabs= {
+        componentGroup = GroupConstants.COMPONENT_GROUP,
+        tabs = {
                 @Tab(title = ShoppingListComponent.TAB_MAIN),
         }
 )
@@ -33,14 +35,14 @@ public class ShoppingListComponent {
 
     static final String TAB_MAIN = "Shopping list";
 
-    private static final String DEFAULT_EMPTY_LIST_TEXT = "it's seems your warrior is happy and without shopping.";
+    private static final String DEFAULT_EMPTY_LIST_TEXT = "it seems your warrior is happy and without shopping.";
     private static final String DEFAULT_NOT_WONDERFUL_TEXT = "and your warrior is not wonderful!";
     private static final String DEFAULT_WONDERFUL_TEXT = "and he thinks he is wonderful, because ";
     private static final String DEFAULT_ANSWER = "he was born like this.";
 
     @Attribute(clas = "weapon-fieldSet")
     @FieldSet(title = "Choose weapon to buy")
-    @DialogField()
+    @DialogField
     @Self
     private WeaponFieldSet weaponFieldSet;
 
@@ -58,7 +60,9 @@ public class ShoppingListComponent {
     @ValueMapValue
     private String answer;
 
-    public String getAnswer() { return StringUtils.defaultIfBlank(answer, DEFAULT_ANSWER); }
+    public String getAnswer() {
+        return StringUtils.defaultIfBlank(answer, DEFAULT_ANSWER);
+    }
 
     public String getText() {
         String shoppingList = productsFieldSet.getProducts() + weaponFieldSet.getWeapon();

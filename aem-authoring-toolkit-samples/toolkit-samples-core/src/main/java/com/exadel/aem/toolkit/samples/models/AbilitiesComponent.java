@@ -1,5 +1,10 @@
 package com.exadel.aem.toolkit.samples.models;
 
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnParam;
@@ -7,21 +12,21 @@ import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.*;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
+import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
+import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 @Dialog(
         name = "content/abilities-component",
         title = "Abilities",
         description = "Abilities of your warrior",
         resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = "Toolkit Samples",
+        componentGroup = GroupConstants.COMPONENT_GROUP,
         tabs = {
                 @Tab(title = AbilitiesComponent.TAB_ABILITIES)
         }
@@ -50,18 +55,15 @@ public class AbilitiesComponent {
                     )
             },
             emptyText = "Select ability")
-    @DialogField(
-            name = "./ability",
-            ranking = 2
-    )
+    @DialogField(ranking = 2)
     @ValueMapValue
     private String ability;
 
     @DependsOn(
             query = "@this.length <= 3",
             action = DependsOnActions.VALIDATE,
-            params = { @DependsOnParam(name = "msg", value = "Too powerful!")}
-            )
+            params = {@DependsOnParam(name = "msg", value = "Too powerful!")}
+    )
     @DependsOn(query = "@ability === 'magic'")
     @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
     @MultiField(field = Element.class)
@@ -83,7 +85,6 @@ public class AbilitiesComponent {
     @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
     @NumberField(min = 0, max = 100)
     @DialogField(
-            name = "./abilityLevel",
             label = "Warrior experience",
             description = "Enter your warrior ability level",
             ranking = 1
@@ -91,11 +92,15 @@ public class AbilitiesComponent {
     @ValueMapValue
     private int abilityLevel;
 
-    public String getAbility() { return ability; }
-
-    public String[] getElements() {
-        return (elements != null)? elements : new String[0];
+    public String getAbility() {
+        return ability;
     }
 
-    public String getAbilityLevel() { return String.valueOf(abilityLevel); }
+    public String[] getElements() {
+        return (elements != null) ? elements : new String[0];
+    }
+
+    public String getAbilityLevel() {
+        return String.valueOf(abilityLevel);
+    }
 }

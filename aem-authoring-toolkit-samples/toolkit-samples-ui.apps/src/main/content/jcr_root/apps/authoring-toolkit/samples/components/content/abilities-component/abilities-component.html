@@ -9,6 +9,6 @@
         <span class="warrior-ability-value">${data.ability || "intelligence" @ context='text'}</span>
     </div>
     <span class="warrior-ability-level">level ${data.abilityLevel || "0" @context='text'}</span>
-    <sly data-sly-test="${data.ability == 'magic'}" data-sly-call="${elements.elements @data=data}"></sly>
+    <sly data-sly-test="${data.ability == 'magic'}" data-sly-call="${elements.elements @ data=data}"></sly>
 </div>
 

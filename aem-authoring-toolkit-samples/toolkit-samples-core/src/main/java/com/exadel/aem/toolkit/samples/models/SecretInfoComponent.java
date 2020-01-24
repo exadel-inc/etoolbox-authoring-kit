@@ -1,27 +1,27 @@
 package com.exadel.aem.toolkit.samples.models;
 
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Password;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
-import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
-import com.exadel.aem.toolkit.samples.constants.PathConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
+import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.Password;
+import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
+import com.exadel.aem.toolkit.samples.constants.GroupConstants;
+import com.exadel.aem.toolkit.samples.constants.PathConstants;
+
 @Dialog(
         name = "content/secret-info-component",
         title = "Secret Info",
         description = "Secret info about the warrior",
         resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = "Toolkit Samples",
-        tabs= {
+        componentGroup = GroupConstants.COMPONENT_GROUP,
+        tabs = {
                 @Tab(title = SecretInfoComponent.TAB_PASSWORD),
                 @Tab(title = SecretInfoComponent.TAB_SECRET),
         }
@@ -29,37 +29,40 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class SecretInfoComponent {
 
-        static final String TAB_PASSWORD = "Password";
-        static final String TAB_SECRET = "Secret";
+    static final String TAB_PASSWORD = "Password";
+    static final String TAB_SECRET = "Secret";
 
-        private static final String DEFAULT_SECRET = "This warrior is clear";
+    private static final String DEFAULT_SECRET = "This warrior is clear";
 
-        @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
-        @Password(retype = "confirmPassword")
-        @DialogField(
-                description = "Enter a password to unlock secret information about the warrior",
-                label = "Enter secret password"
-        )
-        @ValueMapValue
-        private String password;
+    @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
+    @Password(retype = "confirmPassword")
+    @DialogField(
+            description = "Enter a password to unlock secret information about the warrior",
+            label = "Enter secret password"
+    )
+    @ValueMapValue
+    private String password;
 
-        @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
-        @Password
-        @DialogField(label = "Confirm your password")
-        @ValueMapValue
-        private String confirmPassword;
+    @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
+    @Password
+    @DialogField(label = "Confirm your password")
+    @ValueMapValue
+    private String confirmPassword;
 
-        @PlaceOnTab(SecretInfoComponent.TAB_SECRET)
-        @TextArea(autofocus = true, maxlength = 200)
-        @DialogField(
-                label = "Secret info",
-                name = "./info",
-                description = "Enter secret information about your warrior"
-        )
-        @ValueMapValue
-        private String info;
+    @PlaceOnTab(SecretInfoComponent.TAB_SECRET)
+    @TextArea(autofocus = true, maxlength = 200)
+    @DialogField(
+            label = "Secret info",
+            description = "Enter secret information about your warrior"
+    )
+    @ValueMapValue
+    private String info;
 
-        public String getPassword() { return password; }
+    public String getPassword() {
+        return password;
+    }
 
-        public String getInfo() { return StringUtils.defaultIfBlank(info, DEFAULT_SECRET); }
+    public String getInfo() {
+        return StringUtils.defaultIfBlank(info, DEFAULT_SECRET);
+    }
 }
