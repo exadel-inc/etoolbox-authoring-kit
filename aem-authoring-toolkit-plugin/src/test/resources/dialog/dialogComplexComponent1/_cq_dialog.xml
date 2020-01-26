@@ -28,7 +28,6 @@
                                 fieldLabel="First field label"
                                 name="./first_field"
                                 renderHidden="{Boolean}false"
-                                validation="[foundation.jcr.name]"
                                 required="{Boolean}true"/>
                             <secondField
                                 jcr:primaryType="nt:unstructured"
@@ -39,7 +38,6 @@
                                 name="./second_field"
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}false"
-                                validation="[foundation.jcr.name1,foundation.jcr.name2]"
                                 useFixedInlineToolbar="{Boolean}true">
                                 <uiSettings jcr:primaryType="nt:unstructured">
                                     <cui jcr:primaryType="nt:unstructured">

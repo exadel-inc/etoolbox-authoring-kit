@@ -81,9 +81,4 @@ public @interface DialogField {
      * @return True or false
      */
     boolean disabled() default false;
-    /**
-     * Maps to the 'validation' attribute of this TouchUI dialog component's node.
-     * @return String value, or an array of non-blank strings
-     */
-    String[] validation() default {};
 }
