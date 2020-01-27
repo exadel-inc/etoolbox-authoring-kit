@@ -193,7 +193,6 @@ public class ComplexComponent1 {
             name = "first_field",
             label = "First field label",
             description = "First field description",
-            validation = "foundation.jcr.name",
             required = true
     )
     @TextField
@@ -203,8 +202,7 @@ public class ComplexComponent1 {
     @DialogField(
             name = "second_field",
             label = "Second field label",
-            description = "Second field description",
-            validation = {"foundation.jcr.name1", "foundation.jcr.name2"}
+            description = "Second field description"
     )
     @RichTextEditor(
             features = {

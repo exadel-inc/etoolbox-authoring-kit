@@ -212,8 +212,7 @@ public class Dialog {
         description = "This is the first field",
         wrapperClass = "my-class",
         renderHidden = true,
-        ranking = 5,
-        validation = "foundation.jcr.name" // may as well accept array of strings
+        ranking = 5
     )
     @TextField
     String field1;
