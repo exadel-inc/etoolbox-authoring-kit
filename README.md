@@ -984,4 +984,4 @@ Examples of use AEM Authoring Toolkit API and DependsOn library are presented in
 
 Run `mvn clean install` from the root folder of [AAT Samples](./aem-authoring-toolkit-samples) to __install__ a sample project.
 
-To directly find necessary annotations or specific use of these annotations, read [AAT Readme](./aem-authoring-toolkit-samples/README.md).
+To directly find necessary annotations or specific use of these annotations, read [AAT Samples Readme](./aem-authoring-toolkit-samples/README.md).
