@@ -222,7 +222,7 @@ public class WarriorDescriptionComponent {
         return Optional.ofNullable(resource.getParent())
                 .map(Resource::getParent)
                 .map(Resource::getValueMap)
-                .map((valueMap) -> valueMap.get("warriorName", StringUtils.EMPTY))
+                .map((valueMap) -> valueMap.get("warriorName", String.class))
                 .orElse(WarriorComponent.DEFAULT_NAME);
     }
 

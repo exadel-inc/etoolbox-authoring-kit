@@ -980,8 +980,8 @@ public class DependsOnSample {
 
 ## Samples
 
-Samples of usage AEM Authoring Toolkit API and DependsOn library are provided in a separate module [AAT Samples](./aem-authoring-toolkit-samples).
+Examples of use AEM Authoring Toolkit API and DependsOn library are presented in a separate [AAT Samples](./aem-authoring-toolkit-samples) module.
 
-Run `mvn clean install` from the [AAT Samples](./aem-authoring-toolkit-samples) root folder in order to __install__ sample project.
+Run `mvn clean install` from the root folder of [AAT Samples](./aem-authoring-toolkit-samples) to __install__ a sample project.
 
-To directly find necessary annotations or that specific usage read [AAT Readme](./aem-authoring-toolkit-samples/README.md).
+To directly find necessary annotations or specific use of these annotations, read [AAT Readme](./aem-authoring-toolkit-samples/README.md).
