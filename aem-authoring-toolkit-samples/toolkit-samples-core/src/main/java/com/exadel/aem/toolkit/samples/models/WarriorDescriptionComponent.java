@@ -219,10 +219,11 @@ public class WarriorDescriptionComponent {
     }
 
     public String getWarriorName() {
-        String warriorName;
-        Resource parentResource = Optional.ofNullable(resource.getParent()).map(Resource::getParent).get();
-        warriorName = parentResource.getValueMap().get("warriorName", String.class);
-        return StringUtils.defaultIfEmpty(warriorName, WarriorComponent.DEFAULT_NAME);
+        return Optional.ofNullable(resource.getParent())
+                .map(Resource::getParent)
+                .map(Resource::getValueMap)
+                .map((valueMap) -> valueMap.get("warriorName", StringUtils.EMPTY))
+                .orElse(WarriorComponent.DEFAULT_NAME);
     }
 
     public String getDescription() {

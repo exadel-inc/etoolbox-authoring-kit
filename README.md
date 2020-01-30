@@ -22,7 +22,8 @@
     - [Custom properties](#custom-properties)
     - [Debugging custom logic](#debugging-custom-logic)
 5. [Frontend assets](#frontend-assets)
-    - [DependsOn](#dependson)    
+    - [DependsOn](#dependson)   
+6. [Samples](#samples) 
 
 ## About the Toolkit
 **AEM Authoring Toolkit** is intended to free an AEM developer of the necessity to compose and/or edit XML markup by hand. For typical use cases it provides set of reasonable defaults and feature templates. For more specific ones, it is powerful enough to create or edit arbitrary XML nodes and attributes at any level of XML tree, even if not directly supported by any predefined component. The usage of plugin helps reduce the risk of compilation extensions and misbehavior in production due to XML design errors and typos. In fact, there's virtually no necessity to edit TouchUI dialogs via XML or crx/de interface  anymore.
@@ -975,3 +976,11 @@ public class DependsOnSample {
     private SomeFieldsetDefinitionClass fieldsetDefinitionClass;
 }
 ``` 
+
+## Samples
+
+Samples of usage AEM Authoring Toolkit API and DependsOn library are provided in a separate module [AAT Samples](./aem-authoring-toolkit-samples).
+
+Run `mvn clean install` from the [AAT Samples](./aem-authoring-toolkit-samples) root folder in order to __install__ sample project.
+
+To directly find necessary annotations or that specific usage read [AAT Readme](./aem-authoring-toolkit-samples/README.md).
