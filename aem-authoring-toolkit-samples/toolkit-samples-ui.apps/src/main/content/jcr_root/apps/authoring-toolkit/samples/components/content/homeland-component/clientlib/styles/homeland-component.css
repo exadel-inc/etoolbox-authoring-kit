@@ -1,0 +1,29 @@
+.homeland-component {
+    width: 100%;
+    height: 100%;
+}
+
+.warrior-homeland-wrap {
+    position: relative;
+    padding: 1rem;
+    height: 100%;
+    min-width: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.warrior-homeland-image {
+    height: 80%;
+    width: 100%;
+    min-width: 200px;
+    min-height: 200px;
+    object-fit: cover;
+    border: 1px solid darkgray;
+}
+
+.warrior-homeland-title {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
