@@ -14,6 +14,7 @@ import com.exadel.aem.toolkit.test.widget.RadioGroupWidget;
 import com.exadel.aem.toolkit.test.widget.Tabs;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
+import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
 
 public class WidgetsTest extends ComponentTestBase {
 
@@ -80,5 +81,10 @@ public class WidgetsTest extends ComponentTestBase {
     @Test
     public void testCustom() {
         testComponent(CustomAnnotations.class);
+    }
+
+    @Test
+    public void testColorField() {
+        testComponent(ColorFieldWidget.class);
     }
 }
