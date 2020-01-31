@@ -17,6 +17,7 @@ import com.exadel.aem.toolkit.test.widget.SelectWidget;
 import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
 import com.exadel.aem.toolkit.test.widget.HiddenWidget;
 import com.exadel.aem.toolkit.test.widget.IgnoreFieldWidget;
+import com.exadel.aem.toolkit.test.widget.PasswordWidget;
 
 public class WidgetsTest extends ComponentTestBase {
 
@@ -98,5 +99,10 @@ public class WidgetsTest extends ComponentTestBase {
     @Test
     public void testIgnoreField() {
         testComponent(IgnoreFieldWidget.class);
+    }
+
+    @Test
+    public void testPassword() {
+        testComponent(PasswordWidget.class);
     }
 }
