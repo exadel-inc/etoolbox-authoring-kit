@@ -15,6 +15,7 @@ js/accessors/dependsOnCoralSwitcherAccessors.js
 js/accessors/dependsOnCoralRTEAccessor.js
 js/accessors/dependsOnCQFileUploadAccessor.js
 js/accessors/dependsOnCoralMultiFieldAccessor.js
+js/accessors/dependsOnCoralPathFieldAccessor.js
 
 # Actions
 js/actions/dependsOnCoralBasicActions.js

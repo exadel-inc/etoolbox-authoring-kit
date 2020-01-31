@@ -28,7 +28,7 @@
             notify && $el.trigger('change');
         },
         required: function ($el, val) {
-            $el.attr('aria-required', val ? 'true' : null);
+            $el.attr('required', val ? 'true' : null);
             ns.ElementAccessors.updateValidity($el, true);
         },
         visibility: function ($el, state) {
