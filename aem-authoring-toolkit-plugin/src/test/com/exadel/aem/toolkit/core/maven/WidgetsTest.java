@@ -15,6 +15,7 @@ import com.exadel.aem.toolkit.test.widget.Tabs;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
 import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
+import com.exadel.aem.toolkit.test.widget.HiddenWidget;
 
 public class WidgetsTest extends ComponentTestBase {
 
@@ -86,5 +87,10 @@ public class WidgetsTest extends ComponentTestBase {
     @Test
     public void testColorField() {
         testComponent(ColorFieldWidget.class);
+    }
+
+    @Test
+    public void testHidden() {
+        testComponent(HiddenWidget.class);
     }
 }
