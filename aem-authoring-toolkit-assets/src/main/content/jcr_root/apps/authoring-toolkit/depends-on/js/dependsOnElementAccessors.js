@@ -172,7 +172,7 @@
          * */
         static setLabelRequired($el, required) {
             const $label = $el.closest(FIELD_WRAPPER).find(FIELD_LABEL);
-            $label.text($label.text().replace(/\s?\*?$/, required ? ' *': ''));
+            ns.toggleAsterisk($label, required);
         }
 
         static _findAccessor($el, type) {

@@ -1,6 +1,6 @@
 /**
- * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.2
+ * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
+ * @version 2.2.3
  *
  * DependsOn plugin utils
  * */
@@ -105,4 +105,12 @@
             return data
         }, {});
     };
+
+    /**
+     * @param $el {JQuery}
+     * @param state {boolean}
+     */
+    ns.toggleAsterisk = function ($el, state) {
+        $el.text($el.text().replace(/\s?\*?$/, state ? ' *': ''));
+    }
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
