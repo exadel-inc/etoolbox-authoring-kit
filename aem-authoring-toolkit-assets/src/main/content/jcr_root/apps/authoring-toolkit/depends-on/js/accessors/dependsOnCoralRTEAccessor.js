@@ -36,6 +36,8 @@
         },
         required: function ($el, val) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
+            const $rteInput = $rteContainer.find(RTE_INPUT_SELECTOR);
+            $rteInput.each(function () {this.required = !!val;});
             $rteContainer.find(RTE_EDITOR_SELECTOR).attr('aria-required', !!val);
             ns.ElementAccessors.updateValidity($rteInput, true);
         },
