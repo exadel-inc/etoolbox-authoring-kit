@@ -28,7 +28,12 @@
             notify && $el.trigger('change');
         },
         required: function ($el, val) {
-            $el.attr('required', val ? 'true' : null);
+            const fieldApi = $el.adaptTo('foundation-field');
+            if (fieldApi && typeof fieldApi.setRequired === 'function') {
+                fieldApi.setRequired(val);
+            } else {
+                $el.attr('required', val ? 'true' : null);
+            }
             ns.ElementAccessors.updateValidity($el, true);
         },
         visibility: function ($el, state) {
