@@ -41,4 +41,9 @@ class PermissiveExceptionHandler extends AbstractExceptionHandler {
         }
     }
 
+    @Override
+    public boolean haltsOn(Class<? extends Exception> exceptionType) {
+        return false;
+    }
+
 }

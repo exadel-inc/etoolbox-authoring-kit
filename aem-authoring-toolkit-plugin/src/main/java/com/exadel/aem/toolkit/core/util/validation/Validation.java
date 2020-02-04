@@ -111,15 +111,15 @@ public class Validation {
      * @return Verified value, or null
      */
     public Object getFilteredValue(Object value) {
-        if (!test(value)) {
-            if (reflectedMethod == null) {
-                return null;
-            }
-            return !reflectedMethod.getReturnType().isArray()
-                    ? reflectedMethod.getDefaultValue()
-                    : null;
+        if (test(value) || !PluginRuntime.context().getExceptionHandler().haltsOn(ValidationException.class)) {
+            return testRoutine.getFilteredValue(value);
         }
-        return testRoutine.getFilteredValue(value);
+        if (reflectedMethod == null) {
+            return null;
+        }
+        return !reflectedMethod.getReturnType().isArray()
+                ? reflectedMethod.getDefaultValue()
+                : null;
     }
 
     /**
