@@ -30,7 +30,7 @@ public abstract class ComponentTestBase {
                 TestsConstants.API_MODULE_TARGET,
                 TestsConstants.PLUGIN_MODULE_TEST_TARGET
         );
-        PluginRuntime.initialize(classpathElements, StringUtils.EMPTY,"all");
+        PluginRuntime.initialize(classpathElements, StringUtils.EMPTY,"none");
     }
 
     void testComponent(Class<?> tested) {

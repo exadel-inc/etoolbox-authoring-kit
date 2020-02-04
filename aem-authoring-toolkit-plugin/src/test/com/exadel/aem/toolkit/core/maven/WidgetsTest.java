@@ -10,6 +10,7 @@ import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
 import com.exadel.aem.toolkit.test.widget.MultiFieldWidget;
 import com.exadel.aem.toolkit.test.widget.NestedCheckboxListWidget;
 import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
+import com.exadel.aem.toolkit.test.widget.NumberFieldWidget;
 import com.exadel.aem.toolkit.test.widget.RadioGroupWidget;
 import com.exadel.aem.toolkit.test.widget.Tabs;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
@@ -60,6 +61,11 @@ public class WidgetsTest extends ComponentTestBase {
     @Test
     public void testNestedCheckboxList() {
         testComponent(NestedCheckboxListWidget.class);
+    }
+
+    @Test
+    public void testNumberField() {
+        testComponent(NumberFieldWidget.class);
     }
 
     @Test
