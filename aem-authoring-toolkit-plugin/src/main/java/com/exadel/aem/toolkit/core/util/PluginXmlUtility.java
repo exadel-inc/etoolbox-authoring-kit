@@ -44,7 +44,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
@@ -64,11 +63,6 @@ import com.exadel.aem.toolkit.core.util.validation.Validation;
  * Utility methods to process, verify and store AEM TouchUI dialog-related data to XML markup
  */
 public class PluginXmlUtility implements XmlUtility {
-    private static final String INVALID_NODE_NAME_PATTERN_NAMESPACE = "^\\W*:|\\W+:$|[^\\w:]+";
-    private static final String NODE_NAME_SPACE_PATTERN = "\\s+";
-    private static final String NODE_NAME_INDEX_PATTERN = "\\d*$";
-    private static final String NODE_NAME_VERB_SEPARATOR = "_";
-
     static final Map<String, String> XML_NAMESPACES = ImmutableMap.of(
             "xmlns:jcr",  "http://www.jcp.org/jcr/1.0",
             "xmlns:nt", "http://www.jcp.org/jcr/nt/1.0",
@@ -89,6 +83,10 @@ public class PluginXmlUtility implements XmlUtility {
 
     private Document document;
     private String namePrefix = DialogConstants.RELATIVE_PATH_PREFIX;
+
+    private XmlNamingHelper fieldNameHelper = XmlNamingHelper.forFieldName(this);
+    private XmlNamingHelper simpleNameHelper = XmlNamingHelper.forSimpleName(this);
+    private XmlNamingHelper namespaceNameHelper = XmlNamingHelper.forNamespaceAndName(this);
 
     /**
      * Initializes new {@link Document} instance shipped with the root element
@@ -184,7 +182,7 @@ public class PluginXmlUtility implements XmlUtility {
     public Element createNodeElement(String name, Function<Annotation, String> childNodeNameProvider, Annotation[] sources) {
         Element newNode = createNodeElement(name);
         Arrays.stream(sources)
-                .forEach(source -> appendNonemptyChild(newNode, createNodeElement(childNodeNameProvider, source)));
+                .forEach(source -> appendNonemptyChildElement(newNode, createNodeElement(childNodeNameProvider, source)));
         return newNode;
     }
 
@@ -206,40 +204,22 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public String getValidName(String name) {
-        return getValidName(name, INVALID_NODE_NAME_PATTERN_NAMESPACE, DialogConstants.NN_ITEM);
+        return namespaceNameHelper.getValidName(name, DialogConstants.NN_ITEM);
     }
 
     @Override
-    public String getValidName(String name, String invalidNamePattern, String defaultValue) {
-        boolean convertToCamelCase = name.indexOf(' ') > -1;
-        String result = convertToCamelCase
-                ? name.trim().replaceAll(NODE_NAME_SPACE_PATTERN, NODE_NAME_VERB_SEPARATOR).replaceAll(invalidNamePattern, "")
-                : name.replaceAll(invalidNamePattern, "");
-        if (convertToCamelCase) result = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, result);
-        if (result.isEmpty() || !Character.isAlphabetic(result.codePointAt(0))) {
-            result = defaultValue +  result;
-        } else if (!result.chars().allMatch(Character::isUpperCase)){
-            result = StringUtils.uncapitalize(result);
-        }
-        return result;
+    public String getValidSimpleName(String name) {
+        return simpleNameHelper.getValidName(name, DialogConstants.NN_ITEM);
     }
 
     @Override
-    public String getUniqueName(String name, Element context) {
-        return getUniqueName(name, INVALID_NODE_NAME_PATTERN_NAMESPACE, DialogConstants.NN_ITEM, context);
+    public String getValidFieldName(String name) {
+        return fieldNameHelper.getValidName(name, DialogConstants.NN_FIELD);
     }
 
     @Override
-    public String getUniqueName(String name, String invalidNamePattern, String defaultValue, Element context) {
-        String result = getValidName(name, invalidNamePattern, defaultValue);
-        if (context == null) {
-            return result;
-        }
-        int index = 1;
-        while (getChildElement(context, result) != null) {
-            result = result.replaceFirst(NODE_NAME_INDEX_PATTERN, String.valueOf(index++));
-        }
-        return result;
+    public String getUniqueName(String name, String defaultValue, Element context) {
+        return simpleNameHelper.getUniqueName(name, defaultValue, context);
     }
 
     @Override
@@ -349,7 +329,7 @@ public class PluginXmlUtility implements XmlUtility {
         Element currentElement = StringUtils.isEmpty(nodePrefix)
                 ? element
                 : Pattern.compile(DialogConstants.PATH_SEPARATOR).splitAsStream(nodePrefix)
-                .reduce(element, this::ensureChildElement, (prev, next) -> next);
+                .reduce(element, this::getOrAddChildElement, (prev, next) -> next);
         Arrays.stream(annotation.annotationType().getDeclaredMethods())
                 .filter(m -> ArrayUtils.isEmpty(propMapping.mappings()) || ArrayUtils.contains(propMapping.mappings(), m.getName()))
                 .filter(m -> !m.isAnnotationPresent(IgnorePropertyMapping.class))
@@ -385,6 +365,13 @@ public class PluginXmlUtility implements XmlUtility {
                 .setAttribute(element);
     }
 
+    /**
+     * Gets whether this annotation method falls within the specified {@link PropertyScope}. True if no scope specified
+     * for method (that is, the method is applicable to any scope
+     * @param method {@code Method} instance representing a property of an annotation
+     * @param scope {@code PropertyScope} value
+     * @return True or false
+     */
     private static boolean fitsInScope(Method method, XmlScope scope) {
         if (!method.isAnnotationPresent(PropertyScope.class)) {
             return true;
@@ -402,19 +389,19 @@ public class PluginXmlUtility implements XmlUtility {
      * @param attributeMerger Function that manages an existing attribute value and a new one
      *                        in case when a new value is set to an existing {@code Element}
      */
-    public void appendNonemptyChild(Supplier<Element> parent, Element child, BinaryOperator<String> attributeMerger) {
+    public void appendNonemptyChildElement(Supplier<Element> parent, Element child, BinaryOperator<String> attributeMerger) {
         if (isBlankElement(child)) {
             return;
         }
-        appendNonemptyChild(parent.get(), child, attributeMerger);
+        appendNonemptyChildElement(parent.get(), child, attributeMerger);
     }
 
     @Override
-    public Element appendNonemptyChild(Element parent, Element child) {
+    public Element appendNonemptyChildElement(Element parent, Element child) {
         if (parent == null || isBlankElement(child)) {
             return null;
         }
-        return appendNonemptyChild(parent, child, DEFAULT_ATTRIBUTE_MERGER);
+        return appendNonemptyChildElement(parent, child, DEFAULT_ATTRIBUTE_MERGER);
     }
 
     /**
@@ -428,7 +415,7 @@ public class PluginXmlUtility implements XmlUtility {
      *                        in case when a new value is set to an existing {@code Element}
      * @return Appended child
      */
-    public Element appendNonemptyChild(Element parent, Element child, BinaryOperator<String> attributeMerger) {
+    public Element appendNonemptyChildElement(Element parent, Element child, BinaryOperator<String> attributeMerger) {
         if (parent == null || isBlankElement(child)) {
             return null;
         }
@@ -438,7 +425,7 @@ public class PluginXmlUtility implements XmlUtility {
         }
         Node grandchild = child.getFirstChild();
         while (grandchild != null) {
-            appendNonemptyChild(existingChild, (Element)grandchild, attributeMerger);
+            appendNonemptyChildElement(existingChild, (Element)grandchild, attributeMerger);
             grandchild = grandchild.getNextSibling();
         }
         return mergeAttributes(existingChild, child, attributeMerger);
@@ -486,7 +473,7 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public Element ensureChildElement(Element parent, String child) {
+    public Element getOrAddChildElement(Element parent, String child) {
         return getChildElementNode(parent,
                 child,
                 parentElement -> (Element) parentElement.appendChild(createNodeElement(child)));
@@ -561,7 +548,7 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public void appendDataAttributes(Element element, Data[] data){
+    public void appendDataAttributes(Element element, Data[] data) {
         if (ArrayUtils.isEmpty(data)) {
             return;
         }
@@ -569,11 +556,11 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public void appendDataAttributes(Element element, Map<String, String> data){
+    public void appendDataAttributes(Element element, Map<String, String> data) {
         if (data == null || data.isEmpty()) {
             return;
         }
-        Element graniteDataNode = ensureChildElement(element,
+        Element graniteDataNode = getOrAddChildElement(element,
                 DialogConstants.NN_DATA);
         data.entrySet().stream()
                 .filter(entry -> StringUtils.isNotBlank(entry.getKey()))
@@ -581,12 +568,13 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public void appendAcsCommonsList(Element element, String path, String resourceType){
-        if(StringUtils.isNotBlank(path)){
-            Element dataSourceElement = createNodeElement(DialogConstants.NN_DATASOURCE, null,
-                    new ImmutableMap.Builder<String, String>().put(DialogConstants.PN_PATH, path).build(),
-                    resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
-            element.appendChild(dataSourceElement);
+    public Element appendAcsCommonsList(Element element, String path, String resourceType) {
+        if (StringUtils.isBlank(path)) {
+            return null;
         }
+        Element dataSourceElement = createNodeElement(DialogConstants.NN_DATASOURCE, null,
+                new ImmutableMap.Builder<String, String>().put(DialogConstants.PN_PATH, path).build(),
+                resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
+        return (Element) element.appendChild(dataSourceElement);
     }
 }

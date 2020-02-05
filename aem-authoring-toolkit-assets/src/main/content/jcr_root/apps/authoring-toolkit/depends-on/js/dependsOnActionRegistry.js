@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 1.0.0
+ * @version 2.2.2
  *
  * DependsOn Actions Registry
  * Action defines steps to process query result
@@ -11,20 +11,36 @@
     const actionRegistryMap = {};
     class ActionRegistry {
         /**
-         * @param name {string} - action name
+         * Default action name
+         * */
+        static get DEFAULT() {
+            return 'visibility';
+        }
+
+        /**
+         * Registered DependsOn action names
+         * @returns {string[]}
+         * */
+        static get registeredActionNames() {
+            return Object.keys(actionRegistryMap);
+        }
+
+        /**
+         * @param {string} name - action name
          * @returns {function} action callback
          * */
         static getAction(name) {
             const action = actionRegistryMap[name];
             if (typeof action !== 'function') {
-                throw new Error(`[DependsOn]: Action ${action} doesn't have a valid definition in DependsOnPlugin.ActionRegistry`);
+                const knownActions = ActionRegistry.registeredActionNames.map((key) => `"${key}"`).join(', ');
+                throw new Error(`[DependsOn]: Action "${name}" doesn't have a valid definition in DependsOnPlugin.ActionRegistry. Known actions: ${knownActions}`);
             }
             return action;
         }
 
         /**
-         * @param name {string} - is action name
-         * @param actionFn {function} - function to set state (queryresult: any) => void
+         * @param {string} name - is action name
+         * @param {function} actionFn - function to set state (queryresult: any) => void
          * @returns {function} actual actionCb after register
          * */
         static register(name, actionFn) {
@@ -32,7 +48,7 @@
                 throw new Error(`[DependsOn]: Action ${actionFn} is not a valid action definition`);
             }
             if (actionRegistryMap[name]) {
-                console.log(`[DependsOn]: Action ${name} was overridden`);
+                console.warn(`[DependsOn]: Action ${name} was overridden by ${actionFn}`);
             }
             return actionRegistryMap[name] = actionFn;
         }

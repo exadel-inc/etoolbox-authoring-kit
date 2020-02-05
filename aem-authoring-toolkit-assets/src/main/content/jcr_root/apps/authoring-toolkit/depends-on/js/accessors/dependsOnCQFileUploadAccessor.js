@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 1.3.0
+ * @version 2.2.2
  *
  * CQ Coral3 based FileUpload accessor
  * */
@@ -17,10 +17,6 @@
         // set: function ($el, value) {
         //     return $el.find(FILEUPLOAD_FILE_REFERENCE).val(value);
         // },
-        required: function ($el, val) {
-            $el.attr('data-cq-fileupload-required', val ? 'true' : null);
-            ns.ElementAccessors.updateValidity($el, true);
-        },
         disabled: function ($el, val) {
             ns.ElementAccessors.DEFAULT_ACCESSOR.disabled($el, val);
 

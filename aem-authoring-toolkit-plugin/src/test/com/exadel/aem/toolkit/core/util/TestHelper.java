@@ -28,7 +28,7 @@ public class TestHelper {
     }
 
     public static boolean doTest(String testedClass, Path pathToExpectedFiles) throws ClassNotFoundException {
-        Class dialogClass = Class.forName(com.exadel.aem.toolkit.core.util.TestsConstants.TESTCASE_PACKAGE + "." + testedClass);
+        Class dialogClass = Class.forName(testedClass);
         List<PackageEntryWriter> writers = getWriters(dialogClass);
 
         Map<String, String> actualFiles = getActualFiles(dialogClass, writers);

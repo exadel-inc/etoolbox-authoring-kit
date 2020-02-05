@@ -66,8 +66,12 @@ public class DatePickerHandler implements Handler, BiConsumer<Element, Field> {
             && !StringUtils.isEmpty(datePickerAttribute.valueFormat())) {
             try {
                 // Java DateTimeFormatter interprets D as 'day of year', unlike Coral engine
-                // so a primitive replacement here to make sure 'DD' as in 'YYYY-MM-DD' is not passed to formatter
-                String patchedValueFormat = datePickerAttribute.valueFormat().replaceAll("\\bD{1,2}\\b", "dd");
+                // so a replacement made here to make sure 'DD' as in 'YYYY-MM-DD' is not passed to formatter.
+                // Another replacement is for treating timezone literals that can be surrounded by arbitrary symbols
+                // but need to be surrounded with apostrophes in Java 1.8+
+                String patchedValueFormat = datePickerAttribute.valueFormat()
+                        .replaceAll("\\bD{1,2}\\b", "dd")
+                        .replaceAll("\\W*([TZ])\\W*", "'$1'");
                 dateTimeFormatter = DateTimeFormatter.ofPattern(patchedValueFormat);
             } catch (IllegalArgumentException e) {
                 PluginRuntime.context().getExceptionHandler().handle(new ValidationException(

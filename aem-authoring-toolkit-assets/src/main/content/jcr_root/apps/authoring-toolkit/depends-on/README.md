@@ -1,8 +1,8 @@
 ## DependsOn Plugin client library
 
-Author _Alexey Stsefanovich (ala'n)_
+Author _Alexey Stsefanovich (ala'n)_ and _Yana Bernatskaya (YanaBr)_
 
-Version _1.3.0_
+Version _2.2.3_
  
 DependsOn Plugin is a clientlib that executes defined action on dependent fields.
  
@@ -12,19 +12,21 @@ AEM Authoring Toolkit provides a set of annotations to use DependsOn from Java c
 
 DependsOn workflow consists of the following steps:
 
-**Reference**  ─┐
+**ObservedReference**  ─┐
 
-**Reference**  ─── **Query***  ─── **Action*** 
+**ObservedReference**  ─── **QueryObserver[Query]***  ─── **Action*** 
 
-**Reference**  ─┘
+**ObservedReference**  ─┘
  
-Query and Action are always a part of DependsOn plugin workflow. 
+**QueryObserver** and **Action** are always a part of DependsOn plugin workflow. 
  
-Action defines what the plugin should do with the dependent field (show/hide, set value, etc).
+**Action** defines what the plugin should do with the dependent field (show/hide, set value, etc).
+
+**Query** always goes with the Action and defines an expression that should be used as Action's input.
+
+**QueryObserver** holds and process **Query** and initiates **Action** on **ObservedReferences** change.
  
-Query always goes with the Action and defines an expression that should be used as Action's input.
- 
-References are external elements whose values can be used inside of Query.
+**ObservedReferences** are external elements or group of elements whose values can be used inside of **Query**.
  
 #### Introduction  
 
@@ -32,14 +34,14 @@ References are external elements whose values can be used inside of Query.
 
 For dependent field:
 
-* **dependsOn** (`data-dependson`) - to provide Query with condition or expression for the Action.
-* **dependsOnAction** (`data-dependsonaction`) - (optional) to define Action that should be executed. 
-* **dependsOnSkipInitial** (`data-dependsonskipinitial`) - (optional) marker to disable initial execution.
+* `data-dependson` - to provide Query with condition or expression for the Action.
+* `data-dependsonaction` - (optional) to define Action that should be executed. 
+* `data-dependsonskipinitial` - (optional) marker to disable initial execution.
 
 For referenced field:
 
-* **dependsOnRef** (data-dependsonref) - to mark a field, that is referenced from the Query.
-* **dependsOnRefType** (data-dependsonreftype) - (optional) to define expected type of reference value. 
+* `data-dependsonref` - to mark a field, that is referenced from the Query.
+* `data-dependsonreftype` - (optional) to define expected type of reference value. 
 
 #### DependsOn Usage
 
@@ -48,8 +50,9 @@ For referenced field:
 Built-in plugin actions are:
  * `visibility` - hide the element if the query result is 'falsy'
  * `tab-visibility` - hide the tab or element's parent tab if the query result is 'falsy'
- * `set` - set the query result as field's value
- * `set-if-blank` - set the query result as field's value only if the current value is blank
+ * `set` - set the query result as field's value (undefined query result skipped)
+ * `set-if-blank` - set the query result as field's value only if the current value is blank (undefined query result skipped)
+ * `readonly` - set the readonly marker of the field from the query result.
  * `required` - set the required marker of the field from the query result.
  * `validate` - set the validation state of the field from the query result.
  * `disabled` - set the field's disabled state from the query result.
@@ -62,13 +65,16 @@ Custom action can be specified using `Granite.DependsOnPlugin.ActionRegistry`.
 
 Action should have name and function to execute. 
 For example build-in `set` action is defined as follows:
-```
+```javascript
 Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('set', function setValue(value) {
-     ns.ElementAccessors.setValue(this.$el, value);
+    if (value !== undefined) {
+        Granite.DependsOnPlugin.ElementAccessors.setValue(this.$el, value);
+    }
 });
 ```
 
 ##### Reference Types
+
 Allowed reference types:
 * `boolean` - cast to boolean (according to JS cast rules)
 * `boolstring` - cast as a string value to boolean (true if string cast equals "true")
@@ -81,10 +87,10 @@ If the type is not specified manually it will be chosen automatically based on e
 ##### ElementsAccessor Registry
 
 Registry `Granite.DependsOnPlugin.ElementAccessors` - can be used to define custom accessors of element. 
-Accessor provide the information how to get/set value, set a require/visibility state or returns `preferableType` for specific type of component.
+Accessor provide the information how to get/set value, set a require/visibility/disabled state or returns `preferableType` for specific type of component.
 
 For example default accessor descriptor is defined as follows:
-```
+```javascript
 Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
     selector: '*', // Selector to filter element
     preferableType: 'string',
@@ -97,20 +103,20 @@ Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
     required: function($el, val) {
         $el.attr('required', val ? 'true' : null);
         $el.attr('aria-required', val ? 'true' : null);
-        ns.ElementAccessors.updateValidity($el);
+        Granite.DependsOnPlugin.ElementAccessors.updateValidity($el);
     },
     visibility: function ($el, state) {
         $el.attr('hidden', state ? null : 'true');
         $el.closest('.coral-Form-fieldwrapper').attr('hidden', state ? null : 'true');
         if (!state) {
-            ns.ElementAccessors.clearValidity($el);
+            Granite.DependsOnPlugin.ElementAccessors.clearValidity($el);
         }
     },
     disabled: function ($el, state) {
         $el.attr('disabled', state ? 'true' : null);
         $el.closest('.coral-Form-fieldwrapper').attr('disabled', state ? 'true' : null);
         if (!state) {
-            ns.ElementAccessors.clearValidity($el);
+            Granite.DependsOnPlugin.ElementAccessors.clearValidity($el);
         }
     }
 });
@@ -120,11 +126,23 @@ Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
 
 Query is a plain JavaScript condition or expression. 
 Any global and native JavaScript object can be used inside of Query.
-We can also use dynamic references to access other fields' values.
-To define a reference we should specify referenced field name in dependsOnRef attribute on it.
-Then it's accessible in the query by this name via @ symbol. 
+You can also use dynamic references to access other fields' values.
+In order to define a reference, referenced field's name should be specified in dependsOnRef attribute.
+Then reference will be accessible in the query using @ or @@ symbol and reference name. 
 
 ##### Query Reference Syntax
+
+There are two versions of references available in the Queries:
+ - Single reference:  `@reference`. Single reference starts from the @ symbol in the query, it allows to access a defined field value.
+Single reference should reference existing field and will not be reattached on dynamic DOM change.
+ - Multiple reference: `@@reference`. Starts from double @ symbols. Allows to access a group of field values marked by the same reference name. 
+ Multiple reference always returns array in the query.
+ 
+Note: multiple reference triggers query update on any group update: changing some of group fields value, adding or removing referenced field. 
+So usage of multiple reference can slow down queries performance.
+
+Reference can not be named as 'this', that name is reserved and always reach current element value.
+Reference name is not necessary for referencing current element by `@this`.
 
 Area to find referenced field can be narrowed down by providing the Scope. 
 Scope is a CSS Selector of the closest container element. 
@@ -133,6 +151,7 @@ Scope is defined in parentheses after reference name.
 Examples:
 * `@enableCta (coral-panel)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of the closest parent Panel element.
 * `@enableCta (.my-fieldset)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of the closest parent container element with "my-fieldset" class.
+* `@@enableCta (coral-multifield)` - will references all values of the fields marked by `dependsOnRef=enableCta` in bounds of the closest multifield.
 
 "Back-forward" CSS selectors are available in the Scope syntax, i.e. we can define CSS selector to determinate parent element and then provide selector to search the target element for scope in bounds of found parent. 
 Back and forward selectors are separated by '|>' combination. 
@@ -144,7 +163,12 @@ For example:
  Multiple actions with queries could be defined.
  Single query/action should be separated by ';' and placed in the same order.
  The number of actions should match the number of queries.
-
+ 
+ Action static params could be passed though data attributes with special syntax:
+ - for a single and first action `data-dependson-{action}-{paramName}` can be easily accessed and used from action,
+ e.g. `data-dependson-validate-msg` will be used by validate action as invalid state message
+ - for multiple actions of the same type additional actions params should end with `-{index}` (1 for the second action, 2 for the third).
+ e.g. `data-dependson-validate-msg-1` will be used by second validate action as invalid state message
 
 #### Authoring Toolkit DependsOn annotations 
 
@@ -154,6 +178,20 @@ For example:
 
 * `@DependsOnTab` - to define DependsOn query with `tab-visibility` action for tab.
 
+
+#### Debug info
+
+DependsOn produce 3 types of debug notifications:
+
+- Critical errors: DependsOn will throw an Error on configuration mismatch (like unknown action name, illegal custom accessor registration, etc)
+- Error messages: not blocking runtime messages (query evaluation errors, unreachable references, etc)
+- Warn messages: potentially unexpected results warning
+
+A couple of useful APIs can be used in runtime to check the current DependsOnState. The following expressions can be evaluated in the browser console:
+
+- `Granite.DependsOnPlugin.ActionRegistry.registeredActionNames` - to get the list of known action names
+- `Granite.DependsOnPlugin.ElementReferenceRegistry.refs` - to get the list of registered element references
+- `Granite.DependsOnPlugin.GroupReferenceRegistry.refs` - to get the list of group references
 
 ### Examples
 
@@ -197,7 +235,7 @@ public class Component {
 
 Field text is shown when `selectbox` value is "Show Text"
 
-```
+```java
 public class Component {
     @DependsOnRef(name = "selectbox")
     @DialogField
@@ -219,7 +257,7 @@ public class Component {
 
 Field text is shown when `selectbox` value is "Show Text 1" or "Show Text 2"
 
-```
+```java
 public class Component {
     @DependsOnRef(name = "selectbox")
     @DialogField
@@ -298,7 +336,7 @@ public class Component {
 
 List of items (reused fragments or MultiField), each item should have `field1` if `conditionGlobal` (globally) and `conditionItem` in current item checked.
 
-```
+```java
 public class Component {
     @DialogField
     @DependsOnRef(name = "conditionGlobal")
@@ -346,7 +384,7 @@ public class Component {
         // Absolutely no need to calculate simple actions like sum separately, light operations can be used as it is, heavy thing can be declared like here
         query = "@field1 + @field2",
         // Simple set action is used
-        action = "DependsOnActions.SET"
+        action = DependsOnActions.SET
     )
     @DependsOnRef(
         // Here we add a name to our expression
@@ -364,7 +402,7 @@ public class Component {
 }
 ```
 
-#### 7. Function usages
+#### 7. Query function usage
 
 Global functions are available in the queries. (Note: only pure functions are supported, as query recalculates only on reference change)
 
@@ -404,7 +442,7 @@ public class Component {
     private String field;
 }
 ```
-```
+```javascript
 (function (Granite, $, DependsOn) {
     'use strict';
     Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('customAsyncAction', function (path) {
@@ -413,8 +451,7 @@ public class Component {
              function (data) { return data && data.result; },
              function () { return false; }
          ).then(function (res) {
-             $el.attr('value', res);
-             $el.trigger('change');
+             DependsOn.ElementAccessors.setValue($el, res);
          });
     });
 })(Granite, Granite.$, Granite.DependsOnPlugin);
@@ -441,5 +478,108 @@ public class Component {
     @DialogField
     @TextField
     private String text;
+}
+```
+
+#### 10. Custom validation
+Depends On allows you to simply validate field value.
+Here is an example of character count validation
+```java
+public class Component {
+    @DependsOn(query = "( @this || '' ).length > 5", action = DependsOnActions.VALIDATE, params = {
+       @DependsOnParam(name = "msg", value = "Limit exceeded")
+    })
+    @DialogField
+    @TextField
+    private String text;
+}
+```
+
+#### 11. Group references
+
+Allow to select 'active' only in one item in multifield
+```java
+public class MultifieldItem {
+    @DependsOnRef(name = "active")
+    @DependsOn(
+            action = DependsOnActions.DISABLED,
+            // We disable checkbox if it is not selected but some of checkboxes with reference name 'active' are selected
+            query = "!@this && @@active.some((val) => val)"
+    )
+    @DialogField
+    @Checkbox
+    private boolean active;
+     
+    // ...
+    // other fields
+}
+```
+
+
+One of the ways to validate min and max multifield items count (by 2 min and 5 max in the current example)
+```java
+public class Component {
+    
+    @DependsOn(action = DependsOnActions.VALIDATE, query = "@@item(this).length >= 2 && @@item(this).length <= 5")
+    @MultiField(field = Component.Item.class)
+    @FieldSet
+    private List<Item> items;
+ 
+    public static class Item {
+        @DialogField
+        @DependsOnRef(name = "item")
+        @Checkbox
+        private boolean firstItem;
+         
+        // ...
+    }
+}
+```
+
+#### 12. Multifield reference
+
+Multifield reference has two properties:
+- length - count of multifield items 
+- isEmpty - _true_ if there are no items
+
+Another way to validate min and max multifield items count
+```java
+public class Component {
+    
+    @DependsOn(action = DependsOnActions.VALIDATE, query = "@this.length >= 2 && @this.length <= 5")
+    @MultiField(field = Item.class)
+    @DialogField
+    @ValueMapValue
+    private String[] items;
+
+    public class Item {
+        @TextField
+        @DialogField
+        public String item;
+    }
+}
+```
+
+Show `multifield2` if `multifield1` is not empty and vice versa using multifield reference's property `isEmpty`
+```java
+public class Component {
+    
+    @DependsOnRef(name = "multifield1")
+    @MultiField(field = Item.class)
+    @DialogField
+    @ValueMapValue
+    private String[] multifield1;
+
+    @DependsOn(query = "!@multifield1.isEmpty")
+    @MultiField(field = Item.class)
+    @DialogField
+    @ValueMapValue
+    private String[] multifield2;
+
+    public class Item {
+        @TextField
+        @DialogField
+        public String item;
+    }
 }
 ```
