@@ -16,10 +16,9 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 import java.lang.reflect.Field;
 import java.time.DateTimeException;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.Temporal;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
@@ -29,6 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.core.util.ConversionUtility;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.validation.Validation;
 
@@ -96,16 +96,12 @@ public class DatePickerHandler implements Handler, BiConsumer<Element, Field> {
             DateTimeValue value,
             DateTimeFormatter formatter
     ) {
-        if (isEmptyDateTime(value)) {
-            return;
-        }
-        Object thisDateTime = Validation.forMethod(DatePicker.class, attribute).getFilteredValue(value);
-        if (thisDateTime == null || !ClassUtils.isAssignable(thisDateTime.getClass(), Temporal.class)) {
+        if (!Validation.forMethod(DatePicker.class, attribute).test(value) || isEmptyDateTime(value)) {
             return;
         }
         try {
-            getXmlUtil().setAttribute(element, attribute, formatter.format((Temporal)thisDateTime));
-        } catch (DateTimeException e) {
+            getXmlUtil().setAttribute(element, attribute, formatter.format(Objects.requireNonNull(ConversionUtility.getDateTimeInstance(value))));
+        } catch (DateTimeException | NullPointerException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(
                     INVALID_VALUE_EXCEPTION_TEMPLATE,
                     attribute));

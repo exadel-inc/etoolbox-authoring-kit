@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.w3c.dom.Element;
@@ -49,6 +50,7 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
+import com.exadel.aem.toolkit.core.util.validation.CharactersObjectValidator;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code RichTextEditor} widget functionality
@@ -282,19 +284,25 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
 
     /**
      * Called by {@link RichTextEditorHandler#accept(Element, Field)} to create if necessary and then retrieve
-     * the {@code formats} node for the RichTextEditor XML markup
+     * the {@code specialCharsConfig} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
      */
     private Element getSpecialCharactersNode() {
         Function<Annotation, String> childNodeNameProvider = c -> {
-            Characters chars = (Characters)c;
+            Characters chars = (Characters) c;
             return chars.rangeStart() > 0 ? String.valueOf(chars.rangeStart()) : chars.entity();
         };
         Element charsConfigNode = getXmlUtil().createNodeElement(DialogConstants.NN_SPECIAL_CHARS_CONFIG);
-        Element charsNode = getXmlUtil().createNodeElement(DialogConstants.NN_CHARS,
-                childNodeNameProvider,
-                rteAnnotation.specialCharacters());
-        getXmlUtil().appendNonemptyChild(charsConfigNode, charsNode);
+        CharactersObjectValidator validator = new CharactersObjectValidator();
+        Annotation[] validCharactersAnnotations = Arrays.stream(rteAnnotation.specialCharacters())
+                .map(validator::getFilteredInstance)
+                .toArray(Annotation[]::new);
+        if (ArrayUtils.isNotEmpty(validCharactersAnnotations)) {
+            Element charsNode = getXmlUtil().createNodeElement(DialogConstants.NN_CHARS,
+                    childNodeNameProvider,
+                    validCharactersAnnotations);
+            getXmlUtil().appendNonemptyChild(charsConfigNode, charsNode);
+        }
         return charsConfigNode;
     }
 
