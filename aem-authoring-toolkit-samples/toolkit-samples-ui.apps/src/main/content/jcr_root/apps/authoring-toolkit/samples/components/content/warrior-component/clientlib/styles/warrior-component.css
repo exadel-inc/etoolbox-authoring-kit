@@ -1,0 +1,67 @@
+.warrior-component {
+    min-width: 100%;
+}
+
+.warrior-component-wrap, .dark-theme {
+    padding-bottom: 2rem;
+}
+
+.warrior-component-wrap .newpar {
+    min-width: 200px;
+}
+
+.warrior-component-wrap {
+    background: white;
+    color: #4a65a5;
+}
+
+.dark-theme {
+    background: #373c6e;
+    color: white;
+}
+
+.warrior-components-wrap {
+    position: relative;
+    height: 400px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem;
+    padding: 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.warrior-components-wrap {
+    border: 1px solid black;
+}
+
+.dark-theme .warrior-components-wrap {
+    border: 1px solid white;
+}
+
+.warrior-component-title {
+    width: 100%;
+    text-align: center;
+    font-size: 2.5rem;
+}
+
+.warrior-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem;
+}
+
+.warrior-header-name {
+    font-size: 2rem;
+    margin-right: 1rem;
+}
+
+.warrior-header-icon {
+    height: 50px;
+    width: 50px;
+    border-radius: 100%;
+    object-fit: cover;
+    border: 1px solid darkgray;
+}

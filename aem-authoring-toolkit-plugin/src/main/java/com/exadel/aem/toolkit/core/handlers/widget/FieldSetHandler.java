@@ -41,7 +41,7 @@ public class FieldSetHandler implements Handler, BiConsumer<Element, Field> {
         FieldSet fieldSet = field.getDeclaredAnnotation(FieldSet.class);
         String restoredNamePrefix = getXmlUtil().getNamePrefix();
         if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
-            getXmlUtil().setNamePrefix(restoredNamePrefix + getXmlUtil().getValidName(fieldSet.namePrefix()));
+            getXmlUtil().setNamePrefix(restoredNamePrefix + getXmlUtil().getValidSimpleName(fieldSet.namePrefix()));
         }
 
         List<Field> fields = PluginReflectionUtility.getAllNonStaticFields(fieldSetClass);

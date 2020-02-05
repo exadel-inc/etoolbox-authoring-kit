@@ -14,18 +14,18 @@
 package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.core.handlers.Handler;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
@@ -44,16 +44,17 @@ public class MultiFieldHandler implements Handler, BiConsumer<Element, Field> {
         MultiField multiField = field.getDeclaredAnnotation(MultiField.class);
         String name = element.getAttribute(DialogConstants.PN_NAME);
         element.removeAttribute(DialogConstants.PN_NAME);
-        Class<?> fieldClass = multiField.field();
-        List<Field> fieldClassFields = Arrays.stream(fieldClass.getDeclaredFields())
-            .filter(DialogComponent::isPresent).collect(Collectors.toList());
-        if(fieldClassFields.isEmpty()) {
+        Class<?> multifieldClass = multiField.field();
+        List<Field> multifieldClassFields = PluginReflectionUtility.getAllFields(multifieldClass).stream()
+            .filter(DialogWidgets::isPresent)
+                .collect(Collectors.toList());
+        if(multifieldClassFields.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
-                    EMPTY_CLASS_EXCEPTION_MESSAGE + fieldClass.getName()
+                    EMPTY_CLASS_EXCEPTION_MESSAGE + multifieldClass.getName()
             ));
             return;
         }
-        if(fieldClassFields.size() > 1){
+        if(multifieldClassFields.size() > 1){
             getXmlUtil().setAttribute(element, DialogConstants.PN_COMPOSITE, true);
             Element containerElement = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_FIELD);
             containerElement.setAttribute(DialogConstants.PN_NAME, name);
@@ -63,11 +64,14 @@ public class MultiFieldHandler implements Handler, BiConsumer<Element, Field> {
             // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
             String restoredNamePrefix = getXmlUtil().getNamePrefix();
             getXmlUtil().setNamePrefix(restoredNamePrefix.startsWith(DialogConstants.RELATIVE_PATH_PREFIX) ? restoredNamePrefix.substring(2) : restoredNamePrefix);
-            Handler.appendToContainer(fieldClassFields, containerElement);
+            Handler.appendToContainer(multifieldClassFields, containerElement);
             getXmlUtil().setNamePrefix(restoredNamePrefix);
             return;
         }
-        DialogComponent.fromField(fieldClassFields.get(0))
-                .ifPresent(comp -> comp.append(element, fieldClassFields.get(0), DialogConstants.NN_FIELD));
+        DialogWidget widget = DialogWidgets.fromField(multifieldClassFields.get(0));
+        if (widget == null) {
+            return;
+        }
+        widget.append(element, multifieldClassFields.get(0), DialogConstants.NN_FIELD);
     }
 }

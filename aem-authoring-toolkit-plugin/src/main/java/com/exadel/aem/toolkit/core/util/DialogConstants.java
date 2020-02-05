@@ -81,6 +81,7 @@ public class DialogConstants {
 
     public static final String PN_ACCEPT = "accept";
     public static final String PN_ACTIVE = "active";
+    public static final String PN_ADD_NONE = "addNone";
     public static final String PN_ALLOW = "allow";
     public static final String PN_ALLOW_BLOCK_TAGS = "allowBlockTags";
     public static final String PN_AUTOGENERATE_COLORS = "autogenerateColors";
@@ -134,9 +135,6 @@ public class DialogConstants {
     public static final String PN_VALUE = "value";
     public static final String PN_VARIANT = "variant";
     public static final String PN_WIDTH = "width";
-
-    public static final String INVALID_NAME_PATTERN = "^\\W+|[^\\w-\\/]+";
-    public static final String INVALID_NODE_NAME_PATTERN = "\\W+";
 
     private DialogConstants() {}
 }
