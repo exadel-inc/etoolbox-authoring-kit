@@ -13,13 +13,14 @@
  */
 package com.exadel.aem.toolkit.core.util.validation;
 
-import com.exadel.aem.toolkit.api.annotations.meta.Validator;
-
 import java.util.regex.Pattern;
+
+import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 
 /**
  *  {@link Validator} implementation for testing that provided string is a valid JCR path
  */
+@SuppressWarnings("unused") // called indirectly via reflection
 public class JcrPathValidator extends NotBlankValidator {
     private static final Pattern JCR_PATH_PATTERN = Pattern.compile("^(/[\\w:.-]+)+/?$");
     private static final Pattern PROP_INJECT_PATTERN = Pattern.compile("^\\$\\{\\w+(?:\\.\\w+)*}$");
@@ -32,6 +33,9 @@ public class JcrPathValidator extends NotBlankValidator {
      */
     @Override
     public boolean test(Object obj) {
+        if (!super.test(obj)) {
+            return false;
+        }
         return JCR_PATH_PATTERN.matcher(obj.toString()).matches()
                 || PROP_INJECT_PATTERN.matcher(obj.toString()).matches();
     }
