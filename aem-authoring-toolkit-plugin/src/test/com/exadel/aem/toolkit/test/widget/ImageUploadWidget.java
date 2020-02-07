@@ -17,6 +17,7 @@ package com.exadel.aem.toolkit.test.widget;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ButtonVariant;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 
 @Dialog(
@@ -28,9 +29,13 @@ import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 public class ImageUploadWidget {
     @DialogField
     @ImageUpload(
-            mimeTypes="image",
-            title="Upload Image Asset",
-            sizeLimit = 100000
+            title="Valid Image Upload",
+            mimeTypes=".png",
+            sizeLimit = 100000,
+            buttonText = "Upload Image",
+            buttonVariant = ButtonVariant.QUIET,
+            fileNameParameter = "./image/fileName",
+            multiple = true
     )
-    String file;
+    String file1;
 }

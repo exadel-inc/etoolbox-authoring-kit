@@ -17,10 +17,8 @@ package com.exadel.aem.toolkit.test.widget;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
-import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
-import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
+import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextAreaResizeType;
 
 @Dialog(
         name = "test-component",
@@ -28,19 +26,15 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
         layout = DialogLayout.FIXED_COLUMNS
 )
 @SuppressWarnings("unused")
-public class NumberFieldWidget {
-    @DialogField(label = "Valid number")
-    @NumberField(
-            min = -10,
-            max = 10
+public class TextAreaWidget {
+    @DialogField(label = "Valid TextArea")
+    @TextArea(
+        value = "default value",
+        emptyText = "empty text",
+        autofocus = true,
+        rows = 10,
+        cols = 50,
+        resize = TextAreaResizeType.BOTH
     )
-    String number1;
-
-    @DialogField(label = "No value preset")
-    @NumberField(
-            value = "",
-            min = -10,
-            max = 10
-    )
-    String number2;
+    String text1;
 }

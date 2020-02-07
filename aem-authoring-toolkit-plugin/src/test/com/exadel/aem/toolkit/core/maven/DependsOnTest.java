@@ -6,7 +6,7 @@ import com.exadel.aem.toolkit.test.dependson.DependsOnRefAnnotation;
 import com.exadel.aem.toolkit.test.dependson.DependsOnRequiredAnnotation;
 import com.exadel.aem.toolkit.test.dependson.DependsOnSetFragmentReference;
 
-public class DependsOnTest extends ComponentTestBase {
+public class DependsOnTest extends DefaultTestBase {
     @Test
     public void testDependsOnRequired() {
         testComponent(DependsOnRequiredAnnotation.class);

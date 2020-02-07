@@ -32,8 +32,10 @@ public class TestHelper {
         List<PackageEntryWriter> writers = getWriters(dialogClass);
 
         Map<String, String> actualFiles = getActualFiles(dialogClass, writers);
+        if (pathToExpectedFiles == null) {
+            return true;
+        }
         Map<String, String> expectedFiles = getExpectedFiles(pathToExpectedFiles);
-
         return compare(actualFiles, expectedFiles, pathToExpectedFiles.toString());
     }
 

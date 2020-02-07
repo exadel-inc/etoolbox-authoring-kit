@@ -2,11 +2,13 @@ package com.exadel.aem.toolkit.core.maven;
 
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
 import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
 import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
+import com.exadel.aem.toolkit.test.widget.ImageUploadWidget;
 import com.exadel.aem.toolkit.test.widget.MultiFieldWidget;
 import com.exadel.aem.toolkit.test.widget.NestedCheckboxListWidget;
 import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
@@ -15,8 +17,9 @@ import com.exadel.aem.toolkit.test.widget.RadioGroupWidget;
 import com.exadel.aem.toolkit.test.widget.Tabs;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
+import com.exadel.aem.toolkit.test.widget.TextAreaWidget;
 
-public class WidgetsTest extends ComponentTestBase {
+public class WidgetsTest extends DefaultTestBase {
 
     @Test
     public void testAlert() {
@@ -50,7 +53,7 @@ public class WidgetsTest extends ComponentTestBase {
 
     @Test
     public void testImageUpload() {
-        testComponent(FileUploadWidget.class);
+        testComponent(ImageUploadWidget.class);
     }
 
     @Test
@@ -76,6 +79,11 @@ public class WidgetsTest extends ComponentTestBase {
     @Test
     public void testSelect() {
         testComponent(SelectWidget.class);
+    }
+
+    @Test
+    public void testTextArea() {
+        testComponent(TextAreaWidget.class);
     }
 
     @Test

@@ -16,12 +16,14 @@ import org.slf4j.LoggerFactory;
 import com.exadel.aem.toolkit.core.util.TestHelper;
 import com.exadel.aem.toolkit.core.util.TestsConstants;
 
-public abstract class ComponentTestBase {
-    private static final Logger LOG = LoggerFactory.getLogger(DialogsTest.class);
+public abstract class DefaultTestBase {
+    static final Logger LOG = LoggerFactory.getLogger("AEM Authoring Toolkit Unit Tests");
 
     private static final String KEYWORD_TEST = "Test";
     private static final String KEYWORD_DIALOG = "dialog";
     private static final String SUFFIX_PATTERN = "(Widget|Annotation)$";
+
+    private static final String EXCEPTION_SETTING = "none";
 
     @Before
     public void setUp() {
@@ -30,7 +32,7 @@ public abstract class ComponentTestBase {
                 TestsConstants.API_MODULE_TARGET,
                 TestsConstants.PLUGIN_MODULE_TEST_TARGET
         );
-        PluginRuntime.initialize(classpathElements, StringUtils.EMPTY,"none");
+        PluginRuntime.initialize(classpathElements, StringUtils.EMPTY, getExceptionSetting());
     }
 
     void testComponent(Class<?> tested) {
@@ -40,6 +42,10 @@ public abstract class ComponentTestBase {
         } catch (ClassNotFoundException ex) {
             LOG.error("Cannot initialize instance of class " + tested.getName(), ex);
         }
+    }
+
+    String getExceptionSetting() {
+        return EXCEPTION_SETTING;
     }
 
     private String getResourceFolder(Class<?> tested) {

@@ -23,21 +23,18 @@
                              min="{Double}-10.0"
                              max="{Double}10.0"
                              step="{Double}1.0"
-                             value="17"
-                             sling:resourceType="granite/ui/components/coral/foundation/form/numberfield">
-                    </number1>
+                             value="0"
+                             sling:resourceType="granite/ui/components/coral/foundation/form/numberfield"/>
                     <number2 jcr:primaryType="nt:unstructured"
                              disabled="{Boolean}false"
-                             fieldLabel="Invalid number"
+                             fieldLabel="No value preset"
                              name="./number2"
                              renderHidden="{Boolean}false"
                              required="{Boolean}false"
-                             min="{Double}0.0"
+                             min="{Double}-10.0"
                              max="{Double}10.0"
                              step="{Double}1.0"
-                             value="not-a-number"
-                             sling:resourceType="granite/ui/components/coral/foundation/form/numberfield">
-                    </number2>
+                             sling:resourceType="granite/ui/components/coral/foundation/form/numberfield"/>
                 </items>
             </column>
         </items>

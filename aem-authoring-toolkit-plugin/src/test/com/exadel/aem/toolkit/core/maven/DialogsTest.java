@@ -7,7 +7,7 @@ import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 
-public class DialogsTest extends ComponentTestBase {
+public class DialogsTest extends DefaultTestBase {
     @Test
     public void testComponentWithRichTextAndExternalClasses() {
         testComponent(ComponentWithRichTextAndExternalClasses.class);

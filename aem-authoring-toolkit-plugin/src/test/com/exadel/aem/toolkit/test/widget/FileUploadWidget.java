@@ -21,6 +21,9 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePickerType;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
+import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.ButtonSize;
+import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.ButtonVariant;
+import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
 
 @Dialog(
         name = "test-component",
@@ -29,14 +32,14 @@ import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
 )
 @SuppressWarnings("unused")
 public class FileUploadWidget {
-    @DialogField(name = "date")
-    @DatePicker(
-            type = DatePickerType.DATETIME,
-            displayedFormat = "DD.MM.YYYY HH:mm",
-            valueFormat = "DD.MM.YYYY HH:mm",
-            minDate = @DateTimeValue(day = 1, month = 1, year = 2019),
-            maxDate = @DateTimeValue(day = 30, month = 4, year = 2020, hour = 12, minute = 10, timezone = "UTC+3"),
-            typeHint = TypeHint.STRING
+    @DialogField
+    @FileUpload(
+            emptyText = "empty text",
+            uploadUrl = "/content/dam/acme/uploads",
+            mimeTypes = {".png", ".jpg"},
+            buttonVariant = ButtonVariant.MINIMAL,
+            buttonSize = ButtonSize.LARGE,
+            buttonText = "Upload File"
     )
-    String currentDate;
+    String file1;
 }
