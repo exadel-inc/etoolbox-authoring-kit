@@ -116,7 +116,7 @@ public class PluginReflectionUtility {
     /**
      * Used to initialize {@code PluginReflectionUtility} instance based on list of available classpath entries in the
      * scope of this Maven plugin
-     * @param elements List of classpath elements
+     * @param elements List of classpath elements to be used in reflection routines
      * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
      *                      If not specified, all available components will be processed
      * @return {@link PluginReflectionUtility} instance

@@ -34,6 +34,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.core.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.core.util.validation.Validation;
 
 /**
  * Helper class for validating and rendering typed attributes to XML nodes
@@ -57,6 +58,7 @@ class XmlAttributeSettingHelper<T> {
     private boolean isEnum;
     private EnumValue enumModifier;
 
+    private Validation validationChecker = Validation.defaultChecker();
     private BinaryOperator<String> valueMerger = PluginXmlUtility.DEFAULT_ATTRIBUTE_MERGER;
 
     /**
@@ -90,6 +92,9 @@ class XmlAttributeSettingHelper<T> {
         }
         if (method.isAnnotationPresent(IgnoreValue.class)) {
             attributeSetter.ignoredValue = method.getAnnotation(IgnoreValue.class).value();
+        }
+        if (PluginReflectionUtility.annotationPropertyIsNotDefault(annotation, method)) {
+            attributeSetter.validationChecker = Validation.forMethod(method);
         }
         return attributeSetter;
     }
@@ -214,7 +219,7 @@ class XmlAttributeSettingHelper<T> {
      * @return Type-casted value, or null
      */
     private T cast(Object value) {
-        if (value == null) {
+        if (!validationChecker.test(value)) {
             return null;
         }
         if (enumModifier != null) {
@@ -223,7 +228,7 @@ class XmlAttributeSettingHelper<T> {
         if (isEnum) {
             return valueType.cast(value.toString());
         }
-        return valueType.cast(value);
+        return value != null ? valueType.cast(value) : null;
     }
 
     /**

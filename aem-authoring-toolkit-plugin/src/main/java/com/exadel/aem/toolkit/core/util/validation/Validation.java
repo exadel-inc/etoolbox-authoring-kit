@@ -49,6 +49,22 @@ public class Validation {
     }
 
     /**
+     * Gets whether specific value is validated
+     * @param value Raw value
+     * @return True or false
+     */
+    public boolean test(Object value) {
+        if (!testRoutine.isApplicableTo(value)) {
+            return true;
+        }
+        boolean result = testRoutine.test(value);
+        if (!result) {
+            PluginRuntime.context().getExceptionHandler().handle(new ValidationException(getLogMessage(value)));
+        }
+        return result;
+    }
+
+    /**
      * Retrieves appropriate {@code Validation} for specific annotation property
      * @param type       Annotation type
      * @param methodName Annotation's property name
@@ -67,7 +83,7 @@ public class Validation {
      * @param method {@code Method} instance representing the annotation property
      * @return {@code Validation} instance
      */
-    private static Validation forMethod(Method method) {
+    public static Validation forMethod(Method method) {
         String restriction = null;
         if (method.isAnnotationPresent(ValueRestriction.class)) {
             restriction = method.getDeclaredAnnotation(ValueRestriction.class).value();
@@ -93,19 +109,11 @@ public class Validation {
     }
 
     /**
-     * Gets whether specific value is validated
-     * @param value Raw value
-     * @return True or false
+     * Returns default (fully permissive) {@code Validation}
+     * @return Default {@code Validation}
      */
-    public boolean test(Object value) {
-        if (!testRoutine.isApplicableTo(value)) {
-            return true;
-        }
-        boolean result = testRoutine.test(value);
-        if (!result) {
-            PluginRuntime.context().getExceptionHandler().handle(new ValidationException(getLogMessage(value)));
-        }
-        return result;
+    public static Validation defaultChecker() {
+        return new Validation(NO_RESTRICTION);
     }
 
     /**
@@ -135,7 +143,6 @@ public class Validation {
                 reflectedMethod.getName(),
                 reflectedMethod.getDeclaringClass().getSimpleName(),
                 value,
-                this.testRoutine.getWarningMessage());
+                testRoutine.getWarningMessage());
     }
 }
-

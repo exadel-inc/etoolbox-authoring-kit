@@ -27,14 +27,28 @@ public class PluginRuntime {
     private PluginRuntime() {
     }
 
+    /**
+     * Gets current {@link PluginRuntimeContext}
+     * @return {@code PluginRuntimeContext} instance
+     */
     public static PluginRuntimeContext context() {
         return INSTANCE.get();
     }
 
-    static void initialize(List<String> classPathElements, String packageBase, String criticalExceptions) {
-        INSTANCE.set(new LoadedRuntimeContext(classPathElements, packageBase, criticalExceptions));
+    /**
+     * Initializes a new instance of {@link LoadedRuntimeContext} with the sensitive plugin data
+     * @param classPathElements List of classpath elements to be used in reflection routines
+     * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
+     *      *                      If not specified, all available components will be processed
+     * @param terminatingExceptions Value matching the {@code terminateOn} AEM Authoring Toolkit plugin setting
+     */
+    static void initialize(List<String> classPathElements, String packageBase, String terminatingExceptions) {
+        INSTANCE.set(new LoadedRuntimeContext(classPathElements, packageBase, terminatingExceptions));
     }
 
+    /**
+     * Disposes of current {@link LoadedRuntimeContext} instance by calling the {@link ThreadLocal#remove()} method
+     */
     static void close() {
         INSTANCE.remove();
     }
