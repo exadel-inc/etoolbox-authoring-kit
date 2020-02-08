@@ -33,6 +33,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.ClassField;
+import com.exadel.aem.toolkit.api.annotations.widgets.Fields;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -271,6 +273,7 @@ public class PluginReflectionUtility {
      */
     private static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates, Comparator<Field> comparator) {
         List<Field> fields = new LinkedList<>();
+        List<ClassField> ignores = new LinkedList<>();
         Predicate<Field> predicate = TRUE_PREDICATE;
         if (predicates != null && !predicates.isEmpty()) {
             predicate = predicates.stream().filter(Objects::nonNull).reduce(TRUE_PREDICATE, Predicate::and);
@@ -280,7 +283,15 @@ public class PluginReflectionUtility {
                     .filter(predicate)
                     .collect(Collectors.toList());
             fields.addAll(classFields);
+            if (clazz.getAnnotation(Fields.class) != null)
+                ignores.addAll(Arrays.asList(clazz.getAnnotation(Fields.class).ignoreFields()));
         }
+
+        Predicate<Field> predicateByName = field -> ignores.stream().anyMatch(classField -> classField.field().equals(field.getName()));
+        Predicate<Field> predicateByClass = field -> ignores.stream().anyMatch(classField -> classField.value().equals(field.getDeclaringClass()));
+
+        fields.removeIf(predicateByName.and(predicateByClass));
+
         if (comparator != null) fields.sort(comparator);
         return fields;
     }
