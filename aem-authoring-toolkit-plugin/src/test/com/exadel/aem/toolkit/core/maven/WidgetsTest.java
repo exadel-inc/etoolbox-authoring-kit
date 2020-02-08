@@ -14,6 +14,9 @@ import com.exadel.aem.toolkit.test.widget.RadioGroupWidget;
 import com.exadel.aem.toolkit.test.widget.Tabs;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
+import com.exadel.aem.toolkit.test.widget.IgnoreWidgetColumnField;
+import com.exadel.aem.toolkit.test.widget.IgnoreTabsWidgetField;
+import com.exadel.aem.toolkit.test.widget.IgnoreFieldSuperClass;
 
 public class WidgetsTest extends ComponentTestBase {
 
@@ -80,5 +83,20 @@ public class WidgetsTest extends ComponentTestBase {
     @Test
     public void testCustom() {
         testComponent(CustomAnnotations.class);
+    }
+
+    @Test
+    public void testIgnoreFields1() {
+        testComponent(IgnoreWidgetColumnField.class);
+    }
+
+    @Test
+    public void testIgnoreFields2() {
+        testComponent(IgnoreTabsWidgetField.class);
+    }
+
+    @Test
+    public void testIgnoreFields3() {
+        testComponent(IgnoreFieldSuperClass.class);
     }
 }
