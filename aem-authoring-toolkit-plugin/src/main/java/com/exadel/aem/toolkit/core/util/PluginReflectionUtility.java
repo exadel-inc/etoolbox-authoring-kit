@@ -258,7 +258,7 @@ public class PluginReflectionUtility {
      */
     private static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates) {
         List<Field> fields = new LinkedList<>();
-        List<ClassField> ignores = new LinkedList<>();
+        List<ClassField> ignoredFields = new LinkedList<>();
         Predicate<Field> predicate = TRUE_PREDICATE;
         if (predicates != null && !predicates.isEmpty()) {
             predicate = predicates.stream().filter(Objects::nonNull).reduce(TRUE_PREDICATE, Predicate::and);
@@ -269,11 +269,11 @@ public class PluginReflectionUtility {
                     .collect(Collectors.toList());
             fields.addAll(classFields);
             if (clazz.getAnnotation(IgnoreFields.class) != null)
-                ignores.addAll(Arrays.asList(clazz.getAnnotation(IgnoreFields.class).ignoreFields()));
+                ignoredFields.addAll(Arrays.asList(clazz.getAnnotation(IgnoreFields.class).ignoreFields()));
         }
 
-        Predicate<Field> predicateByName = field -> ignores.stream().anyMatch(classField -> classField.field().equals(field.getName()));
-        Predicate<Field> predicateByClass = field -> ignores.stream().anyMatch(classField -> classField.value().equals(field.getDeclaringClass()));
+        Predicate<Field> predicateByName = field -> ignoredFields.stream().anyMatch(classField -> classField.field().equals(field.getName()));
+        Predicate<Field> predicateByClass = field -> ignoredFields.stream().anyMatch(classField -> classField.value().equals(field.getDeclaringClass()));
 
         fields.removeIf(predicateByName.and(predicateByClass));
 
