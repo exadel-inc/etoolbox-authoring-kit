@@ -3,14 +3,14 @@ package com.exadel.aem.toolkit.test.widget;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.ClassField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Fields;
+import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreFields;
 
 @Dialog(
         name = "test-component",
         title = "test-component-dialog",
         layout = DialogLayout.FIXED_COLUMNS
 )
-@Fields(ignoreFields = {
+@IgnoreFields(ignoreFields = {
         @ClassField(value = SelectWidget.class, field = "timezone"),
         @ClassField(value = SelectWidget.class, field = "rating")
 })

@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.ClassField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Ignore;
+import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreFields;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -269,8 +269,8 @@ public class PluginReflectionUtility {
                     .filter(predicate)
                     .collect(Collectors.toList());
             fields.addAll(classFields);
-            if (clazz.getAnnotation(Ignore.class) != null)
-                ignores.addAll(Arrays.asList(clazz.getAnnotation(Ignore.class).ignoreFields()));
+            if (clazz.getAnnotation(IgnoreFields.class) != null)
+                ignores.addAll(Arrays.asList(clazz.getAnnotation(IgnoreFields.class).ignoreFields()));
         }
 
         Predicate<Field> predicateByName = field -> ignores.stream().anyMatch(classField -> classField.field().equals(field.getName()));

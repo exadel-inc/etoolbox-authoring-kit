@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Ignore {
+public @interface IgnoreFields {
 
     /**
      * Used to specify subclasses fields that are ignored in the process of TouchUI XML markup rendering
