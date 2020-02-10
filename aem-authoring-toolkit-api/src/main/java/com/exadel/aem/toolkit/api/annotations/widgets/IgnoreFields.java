@@ -6,14 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to define specific fields
+ * Used to specify subclasses fields that are ignored in the process of TouchUI XML markup rendering
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IgnoreFields {
 
     /**
-     * Used to specify subclasses fields that are ignored in the process of TouchUI XML markup rendering
+     * For the child classes, enumerates the fields to be not rendered
      * @see ClassField
      * @return One or more {@code ClassField} annotations
      */
