@@ -56,9 +56,10 @@
                 fieldAPI.setDisabled(state);
             }
             // Force update validity if field disabled
-            if (!state) {
-                ns.ElementAccessors.clearValidity($el);
+            if (state) {
+                ns.ElementAccessors.updateValidity($el);
             }
+            ns.ElementAccessors.clearValidity($el);
         }
     };
 
