@@ -238,7 +238,7 @@ public class PluginReflectionUtility {
      * @return List of {@code Field} objects
      */
     public static List<Field> getAllNonStaticFields(Class<?> targetClass) {
-        return getAllFields(targetClass, Collections.singletonList(NON_STATIC_FIELD_PREDICATE), FIELD_RANKING_COMPARATOR);
+        return getAllFields(targetClass, Collections.singletonList(NON_STATIC_FIELD_PREDICATE));
     }
 
     /**
@@ -247,17 +247,16 @@ public class PluginReflectionUtility {
      * @return List of {@code Field} objects
      */
     public static List<Field> getAllFields(Class<?> targetClass) {
-        return getAllFields(targetClass, Collections.emptyList(), FIELD_RANKING_COMPARATOR);
+        return getAllFields(targetClass, Collections.emptyList());
     }
 
     /**
      * Retrieves an ordered list of all {@code Field}s of a certain {@code Class} that match specific criteria
      * @param targetClass The class to analyze
      * @param predicates List of {@code Predicate<Field>} instances to pick up appropriate fields
-     * @param comparator Comparison function to put picked fields in special order
      * @return List of {@code Field} objects
      */
-    private static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates, Comparator<Field> comparator) {
+    private static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates) {
         List<Field> fields = new LinkedList<>();
         List<ClassField> ignores = new LinkedList<>();
         Predicate<Field> predicate = TRUE_PREDICATE;
@@ -278,7 +277,7 @@ public class PluginReflectionUtility {
 
         fields.removeIf(predicateByName.and(predicateByClass));
 
-        if (comparator != null) fields.sort(comparator);
+        fields.sort(PluginReflectionUtility.FIELD_RANKING_COMPARATOR);
         return fields;
     }
 
