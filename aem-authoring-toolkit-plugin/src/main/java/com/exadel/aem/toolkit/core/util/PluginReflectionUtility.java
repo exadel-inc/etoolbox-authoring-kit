@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.ClassField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Fields;
+import com.exadel.aem.toolkit.api.annotations.widgets.Ignore;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +46,6 @@ import org.reflections.util.ConfigurationBuilder;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreField;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.runtime.Injected;
@@ -67,10 +66,6 @@ public class PluginReflectionUtility {
      * Predicate for picking out non-static {@code Field} instances
      */
     private static final Predicate<Field> NON_STATIC_FIELD_PREDICATE = field -> !Modifier.isStatic(field.getModifiers());
-    /**
-     * Predicate for picking out {@code Field} instances marked with {@code IgnoreField} annotation
-     */
-    private static final Predicate<Field> IGNORE_PROPERTY = field -> field.getAnnotation(IgnoreField.class) != null;
     /**
      * Comparison function for sorting {@code Field} based on their {@code DialogField} annotations' ranking values
      */
@@ -238,15 +233,6 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Analyzes a {@code Class} and retrieves {@code List} of its {@code Field}s marked with {@code IgnoreField} annotation
-     * @param targetClass The class to analyze
-     * @return List of {@code Field} objects
-     */
-    public static List<Field> getAllIgnoredFields(Class<?> targetClass) {
-        return getAllFields(targetClass, Collections.singletonList(IGNORE_PROPERTY), null);
-    }
-
-    /**
      * Analyzes a {@code Class} and retrieves {@code List} of its non-static {@code Field}s
      * @param targetClass The class to analyze
      * @return List of {@code Field} objects
@@ -283,8 +269,8 @@ public class PluginReflectionUtility {
                     .filter(predicate)
                     .collect(Collectors.toList());
             fields.addAll(classFields);
-            if (clazz.getAnnotation(Fields.class) != null)
-                ignores.addAll(Arrays.asList(clazz.getAnnotation(Fields.class).ignoreFields()));
+            if (clazz.getAnnotation(Ignore.class) != null)
+                ignores.addAll(Arrays.asList(clazz.getAnnotation(Ignore.class).ignoreFields()));
         }
 
         Predicate<Field> predicateByName = field -> ignores.stream().anyMatch(classField -> classField.field().equals(field.getName()));

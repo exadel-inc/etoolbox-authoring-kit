@@ -1,7 +1,5 @@
 package com.exadel.aem.toolkit.api.annotations.widgets;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -12,7 +10,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Fields {
+public @interface Ignore {
 
     /**
      * Used to specify subclasses fields that are ignored in the process of TouchUI XML markup rendering
