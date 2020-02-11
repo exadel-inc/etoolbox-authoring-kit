@@ -30,13 +30,6 @@ public interface Validator {
      */
     boolean isApplicableTo(Object obj);
     /**
-     * When implemented in a validator class, returns the very same or a transformed value as needed.
-     * May be used to sort out redundant data from an object that has passed validation
-     * @param obj Value being processed
-     * @return Same value or a transformed value of the same type
-     */
-    Object getFilteredValue(Object obj);
-    /**
      * In a validator class, returns an explanation why a tested value is invalid
      * @return Non-blank string
      */

@@ -28,7 +28,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,13 +38,13 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreField;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
@@ -98,11 +100,15 @@ public class PluginReflectionUtility {
     };
     private static final String PACKAGE_BASE_WILDCARD = ".*";
 
-    private org.reflections.Reflections reflections;
-    private List<DialogWidgetHandler> customDialogWidgetHandlers;
-    private List<DialogHandler> customDialogHandlers;
     private String packageBase;
 
+    private org.reflections.Reflections reflections;
+
+    private List<DialogWidgetHandler> customDialogWidgetHandlers;
+
+    private List<DialogHandler> customDialogHandlers;
+
+    private Map<String, Validator> validators;
 
     private PluginReflectionUtility() {
     }
@@ -110,7 +116,7 @@ public class PluginReflectionUtility {
     /**
      * Used to initialize {@code PluginReflectionUtility} instance based on list of available classpath entries in the
      * scope of this Maven plugin
-     * @param elements List of classpath elements
+     * @param elements List of classpath elements to be used in reflection routines
      * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
      *                      If not specified, all available components will be processed
      * @return {@link PluginReflectionUtility} instance
@@ -150,7 +156,7 @@ public class PluginReflectionUtility {
 
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogHandler}s defined within the Compile
-     * scope the plugin is operating in
+     * scope of the AEM Authoring Toolkit Maven plugin
      * @return {@code List<DialogHandler>} of instances
      */
     List<DialogHandler> getCustomDialogHandlers() {
@@ -159,6 +165,22 @@ public class PluginReflectionUtility {
         }
         customDialogHandlers = getHandlers(DialogHandler.class);
         return customDialogHandlers;
+    }
+
+    /**
+     * Initializes as necessary and returns collection of {@code Validator}s defined within the Compile
+     * scope of the AEM Authoring Toolkit Maven plugin
+     * @return {@code List<Validator>} of instances
+     */
+    public Map<String, Validator> getValidators() {
+        if (validators != null) {
+            return validators;
+        }
+        validators = reflections.getSubTypesOf(Validator.class).stream()
+                .map(PluginReflectionUtility::getInstance)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(validator -> validator.getClass().getName(), Function.identity()));
+        return validators;
     }
 
     /**
@@ -190,25 +212,37 @@ public class PluginReflectionUtility {
     /**
      * Creates new instance object of a handler {@code Class} and populates {@link RuntimeContext} instance to
      * every field annotated with {@link Injected}
-     * @param handlerClass The class to instantiate
+     * @param handlerClass The handler class to instantiate
      * @param <T> Instance type
-     * @return New object instance
+     * @return New handler instance
      */
     private static <T> T getHandlerInstance(Class<? extends T> handlerClass) {
-        try {
-            T instance = handlerClass.getConstructor().newInstance();
+        T instance = getInstance(handlerClass);
+        if (instance != null) {
             Arrays.stream(handlerClass.getDeclaredFields())
                     .filter(field -> field.isAnnotationPresent(Injected.class)
                             && ClassUtils.isAssignable(field.getType(), RuntimeContext.class))
                     .forEach(field -> populateRuntimeContext(instance, field));
-            return instance;
+        }
+        return instance;
+    }
+
+    /**
+     * Creates a new instance object of the specified {@code Class}
+     * @param instanceClass The class to instantiate
+     * @param <T> Instance type
+     * @return New object instance
+     */
+    private static <T> T getInstance(Class<? extends T> instanceClass) {
+        try {
+            return instanceClass.getConstructor().newInstance();
         } catch (InstantiationException
                 | IllegalAccessException
-                | NoSuchMethodException
-                | InvocationTargetException e) {
-            PluginRuntime.context().getExceptionHandler().handle(new ExtensionApiException(handlerClass, e));
-            return null;
+                | InvocationTargetException
+                | NoSuchMethodException e) {
+            PluginRuntime.context().getExceptionHandler().handle(new ExtensionApiException(instanceClass, e));
         }
+        return null;
     }
 
     /**

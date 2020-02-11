@@ -18,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
@@ -36,7 +35,10 @@ public class AllNotBlankValidator implements Validator {
      */
     @Override
     public boolean test(Object obj) {
-        Annotation annotation = (Annotation)obj;
+        if (!isApplicableTo(obj)) {
+            return false;
+        }
+        Annotation annotation = (Annotation) obj;
         return Arrays.stream(annotation.annotationType().getDeclaredMethods())
                 .filter(method -> method.getReturnType().equals(String.class))
                 .allMatch(method -> checkMethodValue(method, annotation));
@@ -63,15 +65,7 @@ public class AllNotBlankValidator implements Validator {
      */
     @Override
     public boolean isApplicableTo(Object obj) {
-        return ClassUtils.isAssignable(obj.getClass(), Annotation.class);
-    }
-
-    /**
-     * {@inheritDoc}. In {@code AllNotBlankValidator}, defines the zero-change function
-     */
-    @Override
-    public Object getFilteredValue(Object obj) {
-        return obj;
+        return obj instanceof Annotation;
     }
 
     @Override

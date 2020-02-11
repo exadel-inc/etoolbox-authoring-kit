@@ -23,6 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -33,4 +34,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 public @interface CustomAnnotationAutomapping {
     @PropertyName("custom")
     String customField() default "Custom annotation's field!";
+
+    @ValueRestriction("com.exadel.aem.toolkit.test.custom.CustomValidator")
+    String customColor() default "";
 }

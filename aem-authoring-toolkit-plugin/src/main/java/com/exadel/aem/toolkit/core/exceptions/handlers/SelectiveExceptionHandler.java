@@ -39,9 +39,14 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
      */
     @Override
     public void handle(String message, Exception cause) {
-        if (criticalExceptions.stream().anyMatch(exName -> cause.getClass().getName().equalsIgnoreCase(exName))) {
+        if (haltsOn(cause.getClass())) {
             throw new PluginException(cause);
         }
         super.handle(message, cause);
+    }
+
+    @Override
+    public boolean haltsOn(Class<? extends Exception> exceptionType) {
+        return criticalExceptions.stream().anyMatch(exName -> exceptionType.getName().equalsIgnoreCase(exName));
     }
 }

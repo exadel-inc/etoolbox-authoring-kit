@@ -13,11 +13,14 @@
  */
 package com.exadel.aem.toolkit.core.util.validation;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 
 /**
  *  {@link Validator} implementation for testing that provided number is greater than zero
  */
+@SuppressWarnings("unused") // called indirectly via reflection
 public class PositiveNumberValidator extends NonNegativeNumberValidator {
     private static final String MSG_POSITIVE_EXPECTED = "number greater than zero expected";
 
@@ -31,7 +34,7 @@ public class PositiveNumberValidator extends NonNegativeNumberValidator {
         if (!super.test(obj)) {
             return false;
         }
-        return Double.parseDouble(obj.toString()) > 0d;
+        return StringUtils.isNotEmpty(obj.toString()) && Double.parseDouble(obj.toString()) > 0d;
     }
 
     @Override

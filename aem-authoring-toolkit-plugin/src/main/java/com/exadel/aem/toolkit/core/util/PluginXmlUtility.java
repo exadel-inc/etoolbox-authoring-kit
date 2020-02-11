@@ -193,13 +193,12 @@ public class PluginXmlUtility implements XmlUtility {
      * @return {@code Element} instance
      */
     private Element createNodeElement(Function<Annotation, String> nameProvider, Annotation source) {
-        Annotation checkedSource = (Annotation) Validation.forType(source.annotationType()).getFilteredValue(source);
-        if (checkedSource == null) {
+        if (!Validation.forType(source.annotationType()).test(source)) {
             return null;
         }
-        Element newNode = createNodeElement(nameProvider.apply(checkedSource));
-        Arrays.stream(checkedSource.annotationType().getDeclaredMethods())
-                .forEach(method -> XmlAttributeSettingHelper.forMethod(checkedSource, method).setAttribute(newNode));
+        Element newNode = createNodeElement(nameProvider.apply(source));
+        Arrays.stream(source.annotationType().getDeclaredMethods())
+                .forEach(method -> XmlAttributeSettingHelper.forMethod(source, method).setAttribute(newNode));
         return newNode;
     }
 
