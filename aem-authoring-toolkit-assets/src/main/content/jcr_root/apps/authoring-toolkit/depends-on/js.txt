@@ -1,3 +1,6 @@
+# Granite fixes
+js/fixes/validation.selectors.js
+
 # Core Handlers
 js/dependsOnUtils.js
 js/dependsOnElementAccessors.js
@@ -16,6 +19,7 @@ js/accessors/dependsOnCoralRTEAccessor.js
 js/accessors/dependsOnCQFileUploadAccessor.js
 js/accessors/dependsOnCoralMultiFieldAccessor.js
 js/accessors/dependsOnCoralCheckboxAccessor.js
+js/accessors/dependsOnCoralPathFieldAccessor.js
 
 # Actions
 js/actions/dependsOnCoralBasicActions.js
