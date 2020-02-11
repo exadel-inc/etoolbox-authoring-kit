@@ -2,7 +2,6 @@ package com.exadel.aem.toolkit.core.maven;
 
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
 import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
@@ -14,6 +13,7 @@ import com.exadel.aem.toolkit.test.widget.NestedCheckboxListWidget;
 import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
 import com.exadel.aem.toolkit.test.widget.NumberFieldWidget;
 import com.exadel.aem.toolkit.test.widget.RadioGroupWidget;
+import com.exadel.aem.toolkit.test.widget.RichTextEditorWidget;
 import com.exadel.aem.toolkit.test.widget.Tabs;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
@@ -84,6 +84,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testTextArea() {
         testComponent(TextAreaWidget.class);
+    }
+
+    @Test
+    public void testRichTextEditor() {
+        testComponent(RichTextEditorWidget.class);
     }
 
     @Test

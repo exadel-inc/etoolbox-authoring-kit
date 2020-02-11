@@ -9,9 +9,11 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.ParagraphFormat;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
-import com.exadel.aem.toolkit.test.custom.CustomAnnotation;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotationAutomapping;
 
 public class ValidationsTest extends ExceptionTestBase {
@@ -26,6 +28,13 @@ public class ValidationsTest extends ExceptionTestBase {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'' provided");
         testComponent(InvalidTitleDialog.class);
+    }
+
+    @Test
+    public void testAllNotBlankValidation() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
+        exceptionRule.expectMessage("string properties must not be blank");
+        testComponent(InvalidRteParaformatDialog.class);
     }
 
     @Test
@@ -47,6 +56,14 @@ public class ValidationsTest extends ExceptionTestBase {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'0' provided");
         testComponent(InvalidTextAreaDialog.class);
+    }
+
+
+    @Test
+    public void testCharactersValidation() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
+        exceptionRule.expectMessage("a character range (start < end) or entity definition must be set");
+        testComponent(InvalidRteCharactersDialog.class);
     }
 
     @Test
@@ -90,6 +107,29 @@ public class ValidationsTest extends ExceptionTestBase {
     @SuppressWarnings("unused")
     private static class InvalidTextAreaDialog {
         @TextArea(rows = 0, cols = -99)
+        String text;
+    }
+
+    @Dialog(name = COMPONENT_NAME_REQUISITE, title = COMPONENT_TITLE_REQUISITE)
+    @SuppressWarnings("unused")
+    private static class InvalidRteCharactersDialog {
+        @RichTextEditor(
+                specialCharacters = {
+                        @Characters(rangeStart = 998, rangeEnd = 1020, name = "Range"),
+                        @Characters(rangeStart = 998, name = "invalid"),
+                }
+        )
+        String text;
+    }
+
+    @Dialog(name = COMPONENT_NAME_REQUISITE, title = COMPONENT_TITLE_REQUISITE)
+    @SuppressWarnings("unused")
+    private static class InvalidRteParaformatDialog {
+        @RichTextEditor(
+                formats = {
+                        @ParagraphFormat(tag = "tag", description = "")
+                }
+        )
         String text;
     }
 
