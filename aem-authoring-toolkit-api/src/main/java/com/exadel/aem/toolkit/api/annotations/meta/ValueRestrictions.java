@@ -19,11 +19,13 @@ package com.exadel.aem.toolkit.api.annotations.meta;
  */
 @SuppressWarnings("unused")
 public class ValueRestrictions {
-    public static final String NUMBER = "NumberValidator";
-    public static final String POSITIVE = "PositiveNumberValidator";
-    public static final String NON_NEGATIVE = "NonNegativeNumberValidator";
-    public static final String NOT_BLANK = "NotBlankValidator";
-    public static final String ALL_NOT_BLANK = "AllNotBlankValidator";
-    public static final String JCR_PATH = "JcrPathValidator";
+    private static final String BUILTIN_VALIDATORS_PACKAGE = "com.exadel.aem.toolkit.core.util.validation.";
+
+    public static final String NUMBER = BUILTIN_VALIDATORS_PACKAGE + "NumberValidator";
+    public static final String POSITIVE = BUILTIN_VALIDATORS_PACKAGE + "PositiveNumberValidator";
+    public static final String NON_NEGATIVE = BUILTIN_VALIDATORS_PACKAGE + "NonNegativeNumberValidator";
+    public static final String NOT_BLANK = BUILTIN_VALIDATORS_PACKAGE + "NotBlankValidator";
+    public static final String ALL_NOT_BLANK = BUILTIN_VALIDATORS_PACKAGE + "AllNotBlankValidator";
+    public static final String JCR_PATH = BUILTIN_VALIDATORS_PACKAGE + "JcrPathValidator";
     private ValueRestrictions() {}
 }

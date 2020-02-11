@@ -35,6 +35,6 @@ public @interface CustomAnnotationAutomapping {
     @PropertyName("custom")
     String customField() default "Custom annotation's field!";
 
-    @ValueRestriction("CustomValidator")
+    @ValueRestriction("com.exadel.aem.toolkit.test.custom.CustomValidator")
     String customColor() default "";
 }

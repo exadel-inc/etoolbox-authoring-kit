@@ -179,7 +179,7 @@ public class PluginReflectionUtility {
         validators = reflections.getSubTypesOf(Validator.class).stream()
                 .map(PluginReflectionUtility::getInstance)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toMap(validator -> validator.getClass().getSimpleName(), Function.identity()));
+                .collect(Collectors.toMap(validator -> validator.getClass().getName(), Function.identity()));
         return validators;
     }
 
