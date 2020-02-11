@@ -29,8 +29,10 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Style;
 
+import static com.exadel.aem.toolkit.core.util.TestsConstants.DEFAULT_COMPONENT_NAME;
+
 @Dialog(
-        name = "richtext-component",
+        name = DEFAULT_COMPONENT_NAME,
         title = "Rich Text Editor Dialog",
         layout = DialogLayout.FIXED_COLUMNS
 )

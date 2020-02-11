@@ -17,17 +17,15 @@ package com.exadel.aem.toolkit.test.widget;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
-import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
-import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePickerType;
-import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
 import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.ButtonSize;
 import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.ButtonVariant;
 import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
 
+import static com.exadel.aem.toolkit.core.util.TestsConstants.DEFAULT_COMPONENT_NAME;
+
 @Dialog(
-        name = "test-component",
-        title = "test-component-dialog",
+        name = DEFAULT_COMPONENT_NAME,
+        title = "FileUpload Widget Dialog",
         layout = DialogLayout.FIXED_COLUMNS
 )
 @SuppressWarnings("unused")

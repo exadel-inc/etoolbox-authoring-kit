@@ -18,13 +18,12 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
-import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
-import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+
+import static com.exadel.aem.toolkit.core.util.TestsConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
-        name = "test-component",
-        title = "test-component-dialog",
+        name = DEFAULT_COMPONENT_NAME,
+        title = "NumberField Widget Dialog",
         layout = DialogLayout.FIXED_COLUMNS
 )
 @SuppressWarnings("unused")

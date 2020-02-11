@@ -7,7 +7,7 @@
           width="{Double}560.0"
           height="{Double}480.0"
           jcr:primaryType="nt:unstructured"
-          jcr:title="test-component-dialog"
+          jcr:title="NumberField Widget Dialog"
           sling:resourceType="cq/gui/components/authoring/dialog">
     <content jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
         <layout jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
