@@ -51,7 +51,6 @@
         },
         disabled: function ($el, state) {
             $el.attr('disabled', state ? 'true' : null);
-            $el.closest(FIELD_WRAPPER).attr('disabled', state ? 'true' : null);
 
             const fieldAPI = $el.adaptTo('foundation-field');
             // Try to disable field by foundation api
