@@ -858,9 +858,64 @@ Developer can (and is encouraged to) also call `.getExceptionHandler()` method w
 #### Restricting custom annotations' values
 You can modify rendering of your custom-developed annotations by adding built-in "meta"-annotations, such as `@ValueRestriction` or `@IgnoredValue`. 
 
-`@ValueRestriction` accepts simple name of a RestrictionTester class as an argument. Predefined names are in ValueRestrictions class. 
-
 To avoid rendering attribute with a value implied by Coral engine and thus redundant, use `@IgnoredValue` annotation with argument set to String representation of unneeded value.
+
+`@ValueRestriction` accepts fully qualified name of a class implementing `Validator` interface as an argument. Predefined names are in ValueRestrictions class. 
+
+You can develop your own value restrictions. It as easy as implementing `Validator` interface yourself.
+
+Suppose you are shipping an AEM component that has its `webProtocols` property accepting an array of strings. You want to restrict user's input to only specific protocols. 
+Define your custom annotation as follows:
+```java
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@DialogComponentAnnotation(source = "helloworld")
+public @interface HelloWorld {
+    /* ... */
+    @ValueRestriction("SupportedProtocols")
+    String[] webProtocols() default {};
+}
+```
+
+Then create SupportedProtocols.java class with the following code:
+```java
+@SuppressWarnings("WeakerAccess")
+public class SupportedProtocols implements Validator {
+    private static final String[] PROTOCOLS = {"http:", "https:", "ftp:"};
+ 
+    /**
+    * Returns whether this particular test is applicable to the value specified (to sort out cases when,
+    * for instance, this validation erroneously applied to some "long value();"
+    * @param obj user-inputted value of a component annotation property
+    * @return true or false
+    */
+    @Override
+    public boolean isApplicableTo(Object obj) {
+        return obj.getClass().equals(String.class);
+    }
+ 
+    /**
+    * Probes the value against an arbitrary condition.
+    * @param obj user-inputted value of a component annotation property
+    * @return true if the value is considered valid, false otherwise
+    */
+    @Override
+    public boolean test(Object obj) {
+        return isApplicableTo(obj) && Arrays.asList(PROTOCOLS).contains(obj.toString().toLowerCase());
+    }
+ 
+    /**
+    * Called by the toolkit *in case* .test() returns false
+    * @return The exception message to log
+    */
+    @Override
+    public String getWarningMessage() {
+        return "only HTTP and HTTPS protocols supported";
+    }
+}
+```
+Now whenever your fellow developer tries to specify, for instance, `@HelloWorld(webProtocols = {"http:", "telnet:", "https:"})`, a warning will be logged and build will, optionally, erroneous value skipped from rendering.
+Note that, in this particular case, only "https:" will be stored to webProtocols attribute, because "http:" is set to be ignored, and "telnet:" is considered invalid.
 
 
 #### Custom Properties
