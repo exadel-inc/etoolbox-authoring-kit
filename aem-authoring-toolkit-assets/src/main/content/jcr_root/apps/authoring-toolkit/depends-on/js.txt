@@ -1,6 +1,3 @@
-# Granite fixes
-js/fixes/validation.selectors.js
-
 # Core Handlers
 js/dependsOnUtils.js
 js/utils/dependsOnRequestCache.js
