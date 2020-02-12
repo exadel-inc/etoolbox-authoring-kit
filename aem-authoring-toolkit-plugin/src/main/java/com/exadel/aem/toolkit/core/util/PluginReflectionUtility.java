@@ -35,6 +35,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.ClassField;
+import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreFields;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +48,6 @@ import org.reflections.util.ConfigurationBuilder;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreField;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.runtime.Injected;
@@ -67,10 +68,6 @@ public class PluginReflectionUtility {
      * Predicate for picking out non-static {@code Field} instances
      */
     private static final Predicate<Field> NON_STATIC_FIELD_PREDICATE = field -> !Modifier.isStatic(field.getModifiers());
-    /**
-     * Predicate for picking out {@code Field} instances marked with {@code IgnoreField} annotation
-     */
-    private static final Predicate<Field> IGNORE_PROPERTY = field -> field.getAnnotation(IgnoreField.class) != null;
     /**
      * Comparison function for sorting {@code Field} based on their {@code DialogField} annotations' ranking values
      */
@@ -270,21 +267,12 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Analyzes a {@code Class} and retrieves {@code List} of its {@code Field}s marked with {@code IgnoreField} annotation
-     * @param targetClass The class to analyze
-     * @return List of {@code Field} objects
-     */
-    public static List<Field> getAllIgnoredFields(Class<?> targetClass) {
-        return getAllFields(targetClass, Collections.singletonList(IGNORE_PROPERTY), null);
-    }
-
-    /**
      * Analyzes a {@code Class} and retrieves {@code List} of its non-static {@code Field}s
      * @param targetClass The class to analyze
      * @return List of {@code Field} objects
      */
     public static List<Field> getAllNonStaticFields(Class<?> targetClass) {
-        return getAllFields(targetClass, Collections.singletonList(NON_STATIC_FIELD_PREDICATE), FIELD_RANKING_COMPARATOR);
+        return getAllFields(targetClass, Collections.singletonList(NON_STATIC_FIELD_PREDICATE));
     }
 
     /**
@@ -293,18 +281,18 @@ public class PluginReflectionUtility {
      * @return List of {@code Field} objects
      */
     public static List<Field> getAllFields(Class<?> targetClass) {
-        return getAllFields(targetClass, Collections.emptyList(), FIELD_RANKING_COMPARATOR);
+        return getAllFields(targetClass, Collections.emptyList());
     }
 
     /**
      * Retrieves an ordered list of all {@code Field}s of a certain {@code Class} that match specific criteria
      * @param targetClass The class to analyze
      * @param predicates List of {@code Predicate<Field>} instances to pick up appropriate fields
-     * @param comparator Comparison function to put picked fields in special order
      * @return List of {@code Field} objects
      */
-    private static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates, Comparator<Field> comparator) {
+    private static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates) {
         List<Field> fields = new LinkedList<>();
+        List<ClassField> ignoredFields = new LinkedList<>();
         Predicate<Field> predicate = TRUE_PREDICATE;
         if (predicates != null && !predicates.isEmpty()) {
             predicate = predicates.stream().filter(Objects::nonNull).reduce(TRUE_PREDICATE, Predicate::and);
@@ -314,8 +302,16 @@ public class PluginReflectionUtility {
                     .filter(predicate)
                     .collect(Collectors.toList());
             fields.addAll(classFields);
+            if (clazz.getAnnotation(IgnoreFields.class) != null)
+                ignoredFields.addAll(Arrays.asList(clazz.getAnnotation(IgnoreFields.class).ignoreFields()));
         }
-        if (comparator != null) fields.sort(comparator);
+
+        Predicate<Field> predicateByName = field -> ignoredFields.stream().anyMatch(classField -> classField.field().equals(field.getName()));
+        Predicate<Field> predicateByClass = field -> ignoredFields.stream().anyMatch(classField -> classField.value().equals(field.getDeclaringClass()));
+
+        fields.removeIf(predicateByName.and(predicateByClass));
+
+        fields.sort(PluginReflectionUtility.FIELD_RANKING_COMPARATOR);
         return fields;
     }
 

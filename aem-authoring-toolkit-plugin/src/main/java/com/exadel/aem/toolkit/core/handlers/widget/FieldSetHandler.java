@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
@@ -45,14 +44,6 @@ public class FieldSetHandler implements Handler, BiConsumer<Element, Field> {
         }
 
         List<Field> fields = PluginReflectionUtility.getAllNonStaticFields(fieldSetClass);
-
-        List<Field> ignoreFields = PluginReflectionUtility.getAllIgnoredFields(fieldSetClass);
-        if(!ignoreFields.isEmpty()) {
-            fields = fields.stream()
-                    .filter(f -> ignoreFields.stream()
-                            .anyMatch(ignoreField -> !f.getName().equals(ignoreField.getName())))
-                    .collect(Collectors.toList());
-        }
 
         Handler.appendToContainer(fields, element, false);
         getXmlUtil().setNamePrefix(restoredNamePrefix);
