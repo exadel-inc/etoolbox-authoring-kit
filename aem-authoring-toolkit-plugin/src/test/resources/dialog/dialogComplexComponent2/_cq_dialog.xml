@@ -627,6 +627,7 @@
                                 name="./fieldImage"
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}true"
+                                sizeLimit="{Long}100"
                                 text="Upload"
                                 uploadUrl="${suffix.path}"
                                 useHTML5="{Boolean}true"
