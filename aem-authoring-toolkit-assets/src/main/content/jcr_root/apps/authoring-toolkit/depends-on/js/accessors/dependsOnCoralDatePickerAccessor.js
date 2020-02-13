@@ -1,8 +1,8 @@
 /**
  * @author Yana Bernatskaya (YanaBr)
- * @version 2.2.3
+ * @version 2.2.4
  *
- * Coral 3 ColorField accessor
+ * Coral 3 DatePicker accessor
  * */
 (function ($, ns) {
     const DATEPICKER_SELECTOR = 'coral-datepicker.coral-InputGroup';

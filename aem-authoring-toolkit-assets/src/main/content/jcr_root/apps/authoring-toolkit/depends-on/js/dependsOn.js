@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.2
+ * @version 2.2.4
  *
  * DependsOn plugin entry point
  *

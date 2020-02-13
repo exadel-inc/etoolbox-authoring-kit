@@ -1,3 +1,10 @@
+/**
+ * @author Bernatskaya Yana (YanaBr)
+ * @version 2.2.4
+ *
+ * Coral3 fixes
+ * */
+
 (function () {
     const registry = $(window).adaptTo("foundation-registry");
     const selectors = registry.get("foundation.validation.selector");
