@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.2.2
+ * @version 2.4.1
  *
  * DependsOn ElementAccessors Registry
  * */
@@ -46,8 +46,9 @@
                 .attr('data-dependson-controllable', 'true');
             // Force update validity if the field is hidden
             if (!state) {
-                ns.ElementAccessors.clearValidity($el);
+                ns.ElementAccessors.updateValidity($el);
             }
+            ns.ElementAccessors.clearValidity($el);
         },
         disabled: function ($el, state) {
             $el.attr('disabled', state ? 'true' : null);

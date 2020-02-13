@@ -21,6 +21,8 @@ js/accessors/dependsOnCoralCheckboxAccessor.js
 js/accessors/dependsOnCoralHeadingAccessor.js
 js/accessors/dependsOnCoralAlertAccessor.js
 js/accessors/dependsOnCoralPathFieldAccessor.js
+js/accessors/dependsOnCoralColorFieldAccessor.js
+js/accessors/dependsOnCoralDatePickerAccessor.js
 
 # Actions
 js/actions/dependsOnCoralBasicActions.js
