@@ -31,13 +31,24 @@
     }
 
     /**
+     * Toggle visibility of every field on the tab
+     */
+    function tabChildrenVisibility($tabPanel, state) {
+        const $tabContent = $tabPanel.find('[data-dependsonaction="tab-visibility"]');
+        if ($tabContent.length) {
+            $tabContent.find('.coral-Form-field').each((index, el) => {
+                ns.ElementAccessors.setVisibility($(el), state);
+            });
+        }
+    }
+
+    /**
      * Change visibility of field and form field wrapper
      * query type: boolean
      * */
     ns.ActionRegistry.register('visibility', function setVisibility(state) {
         ns.ElementAccessors.setVisibility(this.$el, state);
     });
-
 
     /**
      * Change visibility of tab-panel and related tab-control
@@ -57,8 +68,8 @@
             tabs.find((tab) => !tab.hidden).selected = true;
             // Last tab is automatically deselected
         }
+        tabChildrenVisibility(this.$tabPanel, state);
     });
-
 
     /**
      * Change require marker of the field

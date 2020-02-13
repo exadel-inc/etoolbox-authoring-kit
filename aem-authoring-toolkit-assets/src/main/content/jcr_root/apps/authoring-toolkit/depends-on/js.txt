@@ -17,6 +17,8 @@ js/accessors/dependsOnCQFileUploadAccessor.js
 js/accessors/dependsOnCoralMultiFieldAccessor.js
 js/accessors/dependsOnCoralCheckboxAccessor.js
 js/accessors/dependsOnCoralPathFieldAccessor.js
+js/accessors/dependsOnCoralColorFieldAccessor.js
+js/accessors/dependsOnCoralDatePickerAccessor.js
 
 # Actions
 js/actions/dependsOnCoralBasicActions.js
