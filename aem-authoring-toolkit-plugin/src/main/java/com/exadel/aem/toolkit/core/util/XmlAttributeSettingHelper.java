@@ -222,14 +222,16 @@ class XmlAttributeSettingHelper<T> {
      * @return Type-casted value, or null
      */
     private T cast(Object value) {
-        Object filteredValue = validationChecker.getFilteredValue(value);
+        if (!validationChecker.test(value)) {
+            return null;
+        }
         if (enumModifier != null) {
-            return valueType.cast(transform(filteredValue.toString(), enumModifier.transformation()));
+            return valueType.cast(transform(value.toString(), enumModifier.transformation()));
         }
         if (isEnum) {
-            return valueType.cast(filteredValue.toString());
+            return valueType.cast(value.toString());
         }
-        return filteredValue != null ? valueType.cast(filteredValue) : null;
+        return value != null ? valueType.cast(value) : null;
     }
 
     /**

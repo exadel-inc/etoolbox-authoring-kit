@@ -26,4 +26,9 @@ class StrictExceptionHandler extends AbstractExceptionHandler {
     public void handle(String message, Exception cause) {
         throw new PluginException(message, cause);
     }
+
+    @Override
+    public boolean haltsOn(Class<? extends Exception> exceptionType) {
+        return true;
+    }
 }

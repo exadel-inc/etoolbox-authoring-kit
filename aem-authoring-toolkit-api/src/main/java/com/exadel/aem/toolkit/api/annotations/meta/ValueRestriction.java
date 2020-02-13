@@ -25,5 +25,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValueRestriction {
+    /**
+     * Fully qualified name of a class implementing {@link Validator} that processes the current restriction.
+     * If a name of a non-existent class specified, no restriction will be applied to a field
+     * @return String value, non-blank
+     */
     String value();
 }

@@ -22,7 +22,8 @@
     - [Custom properties](#custom-properties)
     - [Debugging custom logic](#debugging-custom-logic)
 5. [Frontend assets](#frontend-assets)
-    - [DependsOn](#dependson)    
+    - [DependsOn](#dependson)   
+6. [Samples](#samples) 
 
 ## About the Toolkit
 **AEM Authoring Toolkit** is intended to free an AEM developer of the necessity to compose and/or edit XML markup by hand. For typical use cases it provides set of reasonable defaults and feature templates. For more specific ones, it is powerful enough to create or edit arbitrary XML nodes and attributes at any level of XML tree, even if not directly supported by any predefined component. The usage of plugin helps reduce the risk of compilation extensions and misbehavior in production due to XML design errors and typos. In fact, there's virtually no necessity to edit TouchUI dialogs via XML or crx/de interface  anymore.
@@ -212,7 +213,8 @@ public class Dialog {
         description = "This is the first field",
         wrapperClass = "my-class",
         renderHidden = true,
-        ranking = 5
+        ranking = 5,
+        validation = "foundation.jcr.name" // may as well accept array of strings
     )
     @TextField
     String field1;
@@ -856,9 +858,64 @@ Developer can (and is encouraged to) also call `.getExceptionHandler()` method w
 #### Restricting custom annotations' values
 You can modify rendering of your custom-developed annotations by adding built-in "meta"-annotations, such as `@ValueRestriction` or `@IgnoredValue`. 
 
-`@ValueRestriction` accepts simple name of a RestrictionTester class as an argument. Predefined names are in ValueRestrictions class. 
-
 To avoid rendering attribute with a value implied by Coral engine and thus redundant, use `@IgnoredValue` annotation with argument set to String representation of unneeded value.
+
+`@ValueRestriction` accepts fully qualified name of a class implementing `Validator` interface as an argument. Predefined names are in ValueRestrictions class. 
+
+You can develop your own value restrictions. It as easy as implementing `Validator` interface yourself.
+
+Suppose you are shipping an AEM component that has its `webProtocols` property accepting an array of strings. You want to restrict user's input to only specific protocols. 
+Define your custom annotation as follows:
+```java
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@DialogComponentAnnotation(source = "helloworld")
+public @interface HelloWorld {
+    /* ... */
+    @ValueRestriction("SupportedProtocols")
+    String[] webProtocols() default {};
+}
+```
+
+Then create SupportedProtocols.java class with the following code:
+```java
+@SuppressWarnings("WeakerAccess")
+public class SupportedProtocols implements Validator {
+    private static final String[] PROTOCOLS = {"http:", "https:", "ftp:"};
+ 
+    /**
+    * Returns whether this particular test is applicable to the value specified (to sort out cases when,
+    * for instance, this validation erroneously applied to some "long value();"
+    * @param obj user-inputted value of a component annotation property
+    * @return true or false
+    */
+    @Override
+    public boolean isApplicableTo(Object obj) {
+        return obj.getClass().equals(String.class);
+    }
+ 
+    /**
+    * Probes the value against an arbitrary condition.
+    * @param obj user-inputted value of a component annotation property
+    * @return true if the value is considered valid, false otherwise
+    */
+    @Override
+    public boolean test(Object obj) {
+        return isApplicableTo(obj) && Arrays.asList(PROTOCOLS).contains(obj.toString().toLowerCase());
+    }
+ 
+    /**
+    * Called by the toolkit *in case* .test() returns false
+    * @return The exception message to log
+    */
+    @Override
+    public String getWarningMessage() {
+        return "only HTTP and HTTPS protocols supported";
+    }
+}
+```
+Now whenever your fellow developer tries to specify, for instance, `@HelloWorld(webProtocols = {"http:", "telnet:", "https:"})`, a warning will be logged and build will, optionally, erroneous value skipped from rendering.
+Note that, in this particular case, only "https:" will be stored to webProtocols attribute, because "http:" is set to be ignored, and "telnet:" is considered invalid.
 
 
 #### Custom Properties
@@ -975,3 +1032,11 @@ public class DependsOnSample {
     private SomeFieldsetDefinitionClass fieldsetDefinitionClass;
 }
 ``` 
+
+## Samples
+
+Examples of use AEM Authoring Toolkit API and DependsOn library are presented in a separate [AAT Samples](./aem-authoring-toolkit-samples) module.
+
+Run `mvn clean install -P install-samples` from the root folder of [AAT Samples](./aem-authoring-toolkit-samples) to __install__ a sample project.
+
+To directly find necessary annotations or specific use of these annotations, read [AAT Samples Readme](./aem-authoring-toolkit-samples/README.md).

@@ -30,7 +30,7 @@ public class NotBlankValidator implements Validator {
      */
     @Override
     public boolean test(Object obj) {
-        return StringUtils.isNotBlank(obj.toString());
+        return isApplicableTo(obj) && StringUtils.isNotBlank(obj.toString());
     }
 
     /**
@@ -38,15 +38,7 @@ public class NotBlankValidator implements Validator {
      */
     @Override
     public boolean isApplicableTo(Object obj) {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}. In {@code NotBlankValidator}, defines the zero-change function
-     */
-    @Override
-    public Object getFilteredValue(Object obj) {
-        return obj.toString();
+        return obj != null;
     }
 
     @Override
