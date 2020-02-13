@@ -4,6 +4,13 @@
 
     const OVERRIDES = [
         {
+            condition: (selector) => selector.submittable,
+            rewrite: (selector) => selector.candidate = selector.candidate
+                .split(',')
+                .map((candidate) => candidate.trim() + ':not([hidden])')
+                .join(',')
+        },
+        {
             condition: (selector) => selector.submittable === '.coral-RadioGroup',
             rewrite: (selector) => selector.candidate = '.coral-RadioGroup:not([disabled])'
         },
