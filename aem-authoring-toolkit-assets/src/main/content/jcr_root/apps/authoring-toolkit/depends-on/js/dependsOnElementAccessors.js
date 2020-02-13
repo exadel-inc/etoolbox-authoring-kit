@@ -28,7 +28,12 @@
             notify && $el.trigger('change');
         },
         required: function ($el, val) {
-            $el.attr('aria-required', val ? 'true' : null);
+            const fieldApi = $el.adaptTo('foundation-field');
+            if (fieldApi && typeof fieldApi.setRequired === 'function') {
+                fieldApi.setRequired(val);
+            } else {
+                $el.attr('required', val ? 'true' : null);
+            }
             ns.ElementAccessors.updateValidity($el, true);
         },
         visibility: function ($el, state) {
@@ -167,7 +172,7 @@
          * */
         static setLabelRequired($el, required) {
             const $label = $el.closest(FIELD_WRAPPER).find(FIELD_LABEL);
-            $label.text($label.text().replace(/\s?\*?$/, required ? ' *': ''));
+            ns.toggleAsterisk($label, required);
         }
 
         static _findAccessor($el, type) {

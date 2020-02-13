@@ -50,6 +50,13 @@
         this.$el.attr('hidden', state ? null : 'true'); // If current target is tab
         this.$tabPanel.attr('hidden', state ? null : 'true');
         this.$tabControl.attr('hidden', state ? null : 'true');
+
+        const targetTab = this.$tabControl[0];
+        if (targetTab && targetTab.selected && !state) {
+            let tabs = targetTab.parentNode.items.getAll();
+            tabs.find((tab) => !tab.hidden).selected = true;
+            // Last tab is automatically deselected
+        }
     });
 
 

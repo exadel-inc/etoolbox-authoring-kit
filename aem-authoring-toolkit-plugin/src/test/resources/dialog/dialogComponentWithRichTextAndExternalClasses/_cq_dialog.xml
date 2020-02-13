@@ -269,11 +269,10 @@
                                                 disabled="{Boolean}false"
                                                 fieldDescription="Sample multifield - additional info"
                                                 fieldLabel="Additional info"
-                                                maxlength="{Long}9223372036854775807"
                                                 name="additionalInfo"
                                                 renderHidden="{Boolean}false"
                                                 required="{Boolean}false"
-                                                resize="NONE"
+                                                resize="none"
                                                 rows="{Long}15"/>
                                     </items>
                                 </field>

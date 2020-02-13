@@ -62,7 +62,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
         }
         List<Field> allFields = PluginReflectionUtility.getAllNonStaticFields(componentClass);
         Element firstTabElement = null;
-        for (int i = 0; i < dialogTabs.length; i++){
+        for (int i = 0; i < dialogTabs.length; i++) {
             Tab tab = dialogTabs[i];
             String nodeName = getXmlUtil().getUniqueName(tab.title(), DEFAULT_TAB_NAME, tabItems);
             Element tabElement = (Element) tabItems.appendChild(getXmlUtil().createNodeElement(nodeName));

@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.core.util.validation;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 
 /**
@@ -30,6 +32,9 @@ public class NonNegativeNumberValidator extends NumberValidator {
     public boolean test(Object obj) {
         if (!super.test(obj)) {
             return false;
+        }
+        if (StringUtils.EMPTY.equals(obj)) {
+            return true;
         }
         return Double.parseDouble(obj.toString()) >= 0d;
     }

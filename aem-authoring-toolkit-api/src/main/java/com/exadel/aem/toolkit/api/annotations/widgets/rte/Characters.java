@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ValueRestriction("CharactersObjectValidator")
+@ValueRestriction("com.exadel.aem.toolkit.core.util.validation.CharactersObjectValidator")
 @SuppressWarnings("unused")
 public @interface Characters {
     /**
