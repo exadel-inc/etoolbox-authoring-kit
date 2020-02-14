@@ -13,14 +13,10 @@
                 <items jcr:primaryType="nt:unstructured">
                     <password sling:resourceType="granite/ui/components/coral/foundation/form/password"
                               jcr:primaryType="nt:unstructured"
-                              name="./password"
                               emptyText="test-password"
-                              disabled="{Boolean}false"
-                              required="{Boolean}false"
                               autocomplete="on"
                               autofocus="{Boolean}true"
                               retype="./test-password"
-                              renderHidden="{Boolean}false"
                               validation="[foundation.jcr.name]"/>
                 </items>
             </column>

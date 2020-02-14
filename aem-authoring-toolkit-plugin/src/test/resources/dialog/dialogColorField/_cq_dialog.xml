@@ -13,18 +13,14 @@
                 <items jcr:primaryType="nt:unstructured">
                     <color sling:resourceType="granite/ui/components/coral/foundation/form/colorfield"
                             jcr:primaryType="nt:unstructured"
-                            name="./color"
                             value="HEX"
                             emptyText="test-string"
-                            disabled="{Boolean}false"
-                            required="{Boolean}false"
                             variant="swatch"
                             autogenerateColors="shades"
                             showSwatches="{Boolean}false"
                             showProperties="{Boolean}true"
                             showDefaultColors="{Boolean}false"
-                            validation="[foundation.jcr.name]"
-                            renderHidden="{Boolean}false"/>
+                            validation="[foundation.jcr.name]"/>
                 </items>
             </column>
         </items>

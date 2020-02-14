@@ -13,11 +13,7 @@
                 <items jcr:primaryType="nt:unstructured">
                     <field sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
                             jcr:primaryType="nt:unstructured"
-                            name="./field"
-                            disabled="{Boolean}false"
-                            value="test-hidden"
-                            required="{Boolean}false"
-                            renderHidden="{Boolean}false"/>
+                            value="test-hidden"/>
                 </items>
             </column>
         </items>
