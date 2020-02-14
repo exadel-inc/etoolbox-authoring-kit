@@ -172,9 +172,7 @@ class XmlAttributeSettingHelper<T> {
         }
         String stringifiedValue = value != null ? value.toString() : null;
         if (StringUtils.isBlank(stringifiedValue) || stringifiedValue.equals(ignoredValue)) {
-            if (element.hasAttribute(name)){
-                element.removeAttribute(name);
-            }
+            element.removeAttribute(name);
             return;
         }
         setAttribute(element, valueType.equals(String.class)
