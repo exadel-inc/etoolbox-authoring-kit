@@ -34,12 +34,9 @@
      * Toggle visibility of every field on the tab
      */
     function tabChildrenVisibility($tabPanel, state) {
-        const $tabContent = $tabPanel.find('[data-dependsonaction="tab-visibility"]');
-        if ($tabContent.length) {
-            $tabContent.find('.coral-Form-field').each((index, el) => {
-                ns.ElementAccessors.setVisibility($(el), state);
-            });
-        }
+        $tabPanel.find('.coral-Form-field').each((index, el) => {
+            ns.ElementAccessors.setVisibility($(el), state);
+        });
     }
 
     /**
