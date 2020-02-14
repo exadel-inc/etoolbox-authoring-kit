@@ -59,15 +59,4 @@
     $window.adaptTo('foundation-registry').register('foundation.validation.selector', {
         exclusion: '[data-dependson][hidden] *, [data-dependson-controllable][hidden] *'
     });
-
-    // Validation control: exclude element (RTE, Pathfield, Multifield, Autocomplete, RadioGroup)
-    // and its child from validation in disabled state.
-    $window.adaptTo('foundation-registry').register('foundation.validation.selector', {
-        exclusion: '.cq-RichText-editable[disabled], foundation-autocomplete[disabled], ' +
-            '.coral-Autocomplete[disabled], coral-multifield[disabled], .coral-RadioGroup[disabled]'
-    });
-    $window.adaptTo('foundation-registry').register('foundation.validation.selector', {
-        exclusion: '.cq-RichText-editable[disabled] *, foundation-autocomplete[disabled] *, ' +
-            '.coral-Autocomplete[disabled] *, coral-multifield[disabled] *, .coral-RadioGroup[disabled] *'
-    });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
