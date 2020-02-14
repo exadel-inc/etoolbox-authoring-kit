@@ -30,7 +30,7 @@ public class PasswordWidget {
             emptyText = "test-password",
             autocomplete = "on",
             autofocus = true,
-            retype = "test-password",
+            retype = "retype-password",
             validation = "foundation.jcr.name"
     )
     String password;

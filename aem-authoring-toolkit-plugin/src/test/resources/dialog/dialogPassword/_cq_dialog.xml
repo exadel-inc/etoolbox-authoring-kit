@@ -16,7 +16,7 @@
                               emptyText="test-password"
                               autocomplete="on"
                               autofocus="{Boolean}true"
-                              retype="./test-password"
+                              retype="./retype-password"
                               validation="[foundation.jcr.name]"/>
                 </items>
             </column>
