@@ -31,6 +31,9 @@ import com.exadel.aem.toolkit.test.widget.RichTextEditorWidget;
 import com.exadel.aem.toolkit.test.widget.Tabs;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
+import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
+import com.exadel.aem.toolkit.test.widget.HiddenWidget;
+import com.exadel.aem.toolkit.test.widget.PasswordWidget;
 import com.exadel.aem.toolkit.test.widget.TextAreaWidget;
 
 public class WidgetsTest extends DefaultTestBase {
@@ -113,5 +116,20 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testCustom() {
         testComponent(CustomAnnotations.class);
+    }
+
+    @Test
+    public void testColorField() {
+        testComponent(ColorFieldWidget.class);
+    }
+
+    @Test
+    public void testHidden() {
+        testComponent(HiddenWidget.class);
+    }
+
+    @Test
+    public void testPassword() {
+        testComponent(PasswordWidget.class);
     }
 }
