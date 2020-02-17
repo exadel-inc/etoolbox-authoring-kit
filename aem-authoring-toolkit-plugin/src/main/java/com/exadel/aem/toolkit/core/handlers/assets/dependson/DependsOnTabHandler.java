@@ -71,10 +71,15 @@ public class DependsOnTabHandler implements Handler, BiConsumer<Element, Class<?
             return;
         }
         Element targetTab = getXmlUtil().getChildElement(tabItemsNode, getXmlUtil().getValidName(value.tabTitle()));
-        getXmlUtil().appendDataAttributes(targetTab, ImmutableMap.of(
-                DialogConstants.PN_DEPENDS_ON, value.query(),
-                DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
-        ));
+        if (targetTab != null) {
+            getXmlUtil().appendDataAttributes(targetTab, ImmutableMap.of(
+                    DialogConstants.PN_DEPENDS_ON, value.query(),
+                    DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
+            ));
+        } else {
+            PluginRuntime.context().getExceptionHandler()
+                    .handle(new InvalidSettingException(String.format("Does not exist tab \"%s\"", value.tabTitle())));
+        }
     }
 
     /**
