@@ -18,6 +18,7 @@ import com.exadel.aem.toolkit.core.exceptions.PluginException;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
 import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
+import com.exadel.aem.toolkit.test.dependson.DependsOnTabAnnotation;
 import org.junit.Test;
 
 public class ExceptionTest extends ExceptionTestBase {
@@ -35,5 +36,10 @@ public class ExceptionTest extends ExceptionTestBase {
     @Test(expected = PluginException.class)
     public void testComplexComponent2(){
         testComponent(ComplexComponent2.class);
+    }
+
+    @Test(expected = PluginException.class)
+    public void testDependsOnTabAnnotation(){
+        testComponent(DependsOnTabAnnotation.class);
     }
 }

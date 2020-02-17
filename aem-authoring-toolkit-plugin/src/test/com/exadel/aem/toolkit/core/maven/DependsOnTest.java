@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.core.maven;
 
+import com.exadel.aem.toolkit.test.dependson.DependsOnTabAnnotation;
 import org.junit.Test;
 
 import com.exadel.aem.toolkit.test.dependson.DependsOnRefAnnotation;
@@ -34,5 +35,10 @@ public class DependsOnTest extends DefaultTestBase {
     @Test
     public void testDependsOnRef() {
         testComponent(DependsOnRefAnnotation.class);
+    }
+
+    @Test
+    public void testDependsOnTabAnnotation(){
+        testComponent(DependsOnTabAnnotation.class);
     }
 }
