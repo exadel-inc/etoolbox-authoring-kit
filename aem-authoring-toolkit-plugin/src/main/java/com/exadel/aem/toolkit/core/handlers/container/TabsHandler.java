@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import org.apache.commons.lang3.ArrayUtils;
 import org.w3c.dom.Element;
 
@@ -81,6 +83,12 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
             Handler.appendToContainer(thisTabFields, tabElement);
             allFields.removeAll(thisTabFields);
         }
+
+        allFields.stream().filter(field -> field.getAnnotation(PlaceOnTab.class) != null &&
+                field.getAnnotation(PlaceOnTab.class).value().compareToIgnoreCase(dialogTabs[0].title()) != 0).findFirst()
+                .ifPresent(invalidField -> PluginRuntime.context().getExceptionHandler()
+                .handle(new InvalidSettingException(String.format("%s, does not have tab for \"%s\"", invalidField.getDeclaringClass(), invalidField.getName()))));
+
         if (!allFields.isEmpty()) {
             Handler.appendToContainer(allFields, firstTabElement);
         }
