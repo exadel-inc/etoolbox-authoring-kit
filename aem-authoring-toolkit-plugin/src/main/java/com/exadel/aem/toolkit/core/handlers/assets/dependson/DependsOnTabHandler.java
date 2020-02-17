@@ -37,6 +37,8 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 public class DependsOnTabHandler implements Handler, BiConsumer<Element, Class<?>> {
     private static final String NO_TABS_EXCEPTION_MESSAGE = "This dialog has no tabs defined";
 
+    private static final String TAB_IS_NOT_DEFINED_MESSAGE = "Tab \"%s\" is not defined";
+
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
@@ -78,7 +80,7 @@ public class DependsOnTabHandler implements Handler, BiConsumer<Element, Class<?
             ));
         } else {
             PluginRuntime.context().getExceptionHandler()
-                    .handle(new InvalidSettingException(String.format("Does not exist tab \"%s\"", value.tabTitle())));
+                    .handle(new InvalidSettingException(String.format(TAB_IS_NOT_DEFINED_MESSAGE, value.tabTitle())));
         }
     }
 

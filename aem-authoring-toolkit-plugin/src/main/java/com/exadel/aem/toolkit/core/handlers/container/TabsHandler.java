@@ -41,6 +41,8 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
     private static final String DEFAULT_TAB_NAME = "tab1";
 
+    private static final String TAB_IS_NOT_DEFINED_MESSAGE = "Tab \"%s\" is not defined";
+
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
      * to process component-backing Java class and append the results to the XML root node
@@ -87,7 +89,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
         allFields.stream().filter(field -> field.getAnnotation(PlaceOnTab.class) != null &&
                 field.getAnnotation(PlaceOnTab.class).value().compareToIgnoreCase(dialogTabs[0].title()) != 0).findFirst()
                 .ifPresent(invalidField -> PluginRuntime.context().getExceptionHandler()
-                .handle(new InvalidSettingException(String.format("%s, does not have tab for \"%s\"", invalidField.getDeclaringClass(), invalidField.getName()))));
+                .handle(new InvalidSettingException(String.format(TAB_IS_NOT_DEFINED_MESSAGE, invalidField.getAnnotation(PlaceOnTab.class).value()))));
 
         if (!allFields.isEmpty()) {
             Handler.appendToContainer(allFields, firstTabElement);
