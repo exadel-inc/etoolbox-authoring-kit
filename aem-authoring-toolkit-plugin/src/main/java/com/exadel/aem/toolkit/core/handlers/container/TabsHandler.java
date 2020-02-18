@@ -21,7 +21,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import org.apache.commons.lang3.ArrayUtils;
 import org.w3c.dom.Element;
@@ -41,8 +41,6 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
  */
 public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
     private static final String DEFAULT_TAB_NAME = "tab1";
-
-    private static final String TAB_IS_NOT_DEFINED_MESSAGE = "Tab \"%s\" is not defined";
 
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
@@ -91,10 +89,11 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
                 field.getAnnotation(PlaceOnTab.class).value().compareToIgnoreCase(dialogTabs[0].title()) != 0;
 
         allFields.stream().filter(notDefinedTabs).findFirst()
-                .ifPresent(field -> PluginRuntime.context().getExceptionHandler()
-                .handle(new InvalidSettingException(String.format(TAB_IS_NOT_DEFINED_MESSAGE, field.getAnnotation(PlaceOnTab.class).value()))));
-
-        allFields.removeIf(notDefinedTabs);
+                .ifPresent(field -> {
+                    PluginRuntime.context().getExceptionHandler()
+                            .handle(new InvalidTabException(field.getAnnotation(PlaceOnTab.class).value()));
+                    allFields.removeIf(notDefinedTabs);
+                });
 
         if (!allFields.isEmpty()) {
             Handler.appendToContainer(allFields, firstTabElement);

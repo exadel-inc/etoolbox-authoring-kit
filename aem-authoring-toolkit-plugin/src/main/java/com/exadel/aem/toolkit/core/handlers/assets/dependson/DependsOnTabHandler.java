@@ -17,6 +17,7 @@ package com.exadel.aem.toolkit.core.handlers.assets.dependson;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
@@ -36,8 +37,6 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  */
 public class DependsOnTabHandler implements Handler, BiConsumer<Element, Class<?>> {
     private static final String NO_TABS_EXCEPTION_MESSAGE = "This dialog has no tabs defined";
-
-    private static final String TAB_IS_NOT_DEFINED_MESSAGE = "Tab \"%s\" is not defined";
 
     /**
      * Processes the user-defined data and writes it to XML entity
@@ -80,7 +79,7 @@ public class DependsOnTabHandler implements Handler, BiConsumer<Element, Class<?
             ));
         } else {
             PluginRuntime.context().getExceptionHandler()
-                    .handle(new InvalidSettingException(String.format(TAB_IS_NOT_DEFINED_MESSAGE, value.tabTitle())));
+                    .handle(new InvalidTabException(value.tabTitle()));
         }
     }
 
