@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
@@ -64,40 +63,22 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
             return;
         }
         List<Field> allFields = PluginReflectionUtility.getAllNonStaticFields(componentClass);
-        Element firstTabElement = null;
         for (int i = 0; i < dialogTabs.length; i++) {
             Tab tab = dialogTabs[i];
             String nodeName = getXmlUtil().getUniqueName(tab.title(), DEFAULT_TAB_NAME, tabItems);
             Element tabElement = (Element) tabItems.appendChild(getXmlUtil().createNodeElement(nodeName));
             tabElement.setAttribute(JcrConstants.PN_TITLE, tab.title());
             appendAttributes(tabElement, tab);
-            // the first tab will contain the elements explicitly assigned to it
-            // and also all the elements with no tab or erroneous tab specified
-            // so we render the first tab after all the rest
-            if (i == 0) {
-                firstTabElement = tabElement;
-                continue;
-            }
+            int finalI = i;
             List<Field> thisTabFields = allFields.stream()
-                    .filter(f -> isFieldForTab(f, tab))
+                    .filter(f -> isFieldForTab(f, tab, finalI == 0))
                     .collect(Collectors.toList());
             Handler.appendToContainer(thisTabFields, tabElement);
             allFields.removeAll(thisTabFields);
         }
 
-        Predicate<Field> notDefinedTabs = field -> field.getAnnotation(PlaceOnTab.class) != null &&
-                field.getAnnotation(PlaceOnTab.class).value().compareToIgnoreCase(dialogTabs[0].title()) != 0;
-
-        allFields.stream().filter(notDefinedTabs).findFirst()
-                .ifPresent(field -> {
-                    PluginRuntime.context().getExceptionHandler()
-                            .handle(new InvalidTabException(field.getAnnotation(PlaceOnTab.class).value()));
-                    allFields.removeIf(notDefinedTabs);
-                });
-
-        if (!allFields.isEmpty()) {
-            Handler.appendToContainer(allFields, firstTabElement);
-        }
+        allFields.forEach(field -> PluginRuntime.context().getExceptionHandler()
+                .handle(new InvalidTabException(field.getAnnotation(PlaceOnTab.class).value())));
     }
 
     /**
@@ -131,9 +112,9 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
      * @param tab {@link Tab} annotation to analyze
      * @return True or false
      */
-    private static boolean isFieldForTab(Field field, Tab tab) {
+    private static boolean isFieldForTab(Field field, Tab tab, boolean firstTab) {
         if (!field.isAnnotationPresent(PlaceOnTab.class)) {
-            return false;
+            return firstTab;
         }
         return tab.title().equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
     }
