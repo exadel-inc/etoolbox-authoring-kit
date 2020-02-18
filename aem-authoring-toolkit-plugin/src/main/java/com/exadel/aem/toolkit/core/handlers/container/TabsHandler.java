@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
@@ -86,10 +87,14 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
             allFields.removeAll(thisTabFields);
         }
 
-        allFields.stream().filter(field -> field.getAnnotation(PlaceOnTab.class) != null &&
-                field.getAnnotation(PlaceOnTab.class).value().compareToIgnoreCase(dialogTabs[0].title()) != 0).findFirst()
-                .ifPresent(invalidField -> PluginRuntime.context().getExceptionHandler()
-                .handle(new InvalidSettingException(String.format(TAB_IS_NOT_DEFINED_MESSAGE, invalidField.getAnnotation(PlaceOnTab.class).value()))));
+        Predicate<Field> notDefinedTabs = field -> field.getAnnotation(PlaceOnTab.class) != null &&
+                field.getAnnotation(PlaceOnTab.class).value().compareToIgnoreCase(dialogTabs[0].title()) != 0;
+
+        allFields.stream().filter(notDefinedTabs).findFirst()
+                .ifPresent(field -> PluginRuntime.context().getExceptionHandler()
+                .handle(new InvalidSettingException(String.format(TAB_IS_NOT_DEFINED_MESSAGE, field.getAnnotation(PlaceOnTab.class).value()))));
+
+        allFields.removeIf(notDefinedTabs);
 
         if (!allFields.isEmpty()) {
             Handler.appendToContainer(allFields, firstTabElement);
