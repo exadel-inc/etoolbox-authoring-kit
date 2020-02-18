@@ -18,6 +18,7 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
@@ -292,7 +293,7 @@ public class ComplexComponent2 {
             label = "label image",
             required = true
     )
-    @ImageUpload
+    @ImageUpload(sizeLimit = 100L)
     @PlaceOnTab("Tab title image")
     private String imagePath;
 
@@ -302,7 +303,8 @@ public class ComplexComponent2 {
             label = "label product image",
             required = true
     )
-    @ImageUpload
+    @ImageUpload(sizeLimit = 0L)
+    @Extends(value = ComplexComponent2.class, field = "imagePath")
     @PlaceOnTab("Tab title product image")
     private String productImagePath;
 
