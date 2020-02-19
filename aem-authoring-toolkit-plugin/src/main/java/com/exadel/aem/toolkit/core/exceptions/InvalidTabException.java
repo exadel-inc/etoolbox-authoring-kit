@@ -15,7 +15,10 @@
 package com.exadel.aem.toolkit.core.exceptions;
 
 public class InvalidTabException extends InvalidSettingException {
-    public InvalidTabException(String tabName){
-        super(String.format("Tab \"%s\" is not defined", tabName));
+
+    private static final String TAB_NOT_DEFINED_MESSAGE_TEMPLATE = "Tab \"%s\" is not defined";
+
+    public InvalidTabException(String tabTitle) {
+        super(String.format(TAB_NOT_DEFINED_MESSAGE_TEMPLATE, tabTitle));
     }
 }
