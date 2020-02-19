@@ -69,9 +69,9 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
             Element tabElement = (Element) tabItems.appendChild(getXmlUtil().createNodeElement(nodeName));
             tabElement.setAttribute(JcrConstants.PN_TITLE, tab.title());
             appendAttributes(tabElement, tab);
-            int finalI = i;
+            final boolean isDefaultTab = i == 0;
             List<Field> thisTabFields = allFields.stream()
-                    .filter(f -> isFieldForTab(f, tab, finalI == 0))
+                    .filter(f -> isFieldForTab(f, tab, isDefaultTab))
                     .collect(Collectors.toList());
             Handler.appendToContainer(thisTabFields, tabElement);
             allFields.removeAll(thisTabFields);
@@ -110,11 +110,12 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
      * The predicate to match a {@code Field} against particular {@code Tab}
      * @param field  {@link Field} instance to analyze
      * @param tab {@link Tab} annotation to analyze
+     * @param isDefaultTab true if the current tab must accept fields for which no tab was specified; otherwise, false
      * @return True or false
      */
-    private static boolean isFieldForTab(Field field, Tab tab, boolean firstTab) {
+    private static boolean isFieldForTab(Field field, Tab tab, boolean isDefaultTab) {
         if (!field.isAnnotationPresent(PlaceOnTab.class)) {
-            return firstTab;
+            return isDefaultTab;
         }
         return tab.title().equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
     }
