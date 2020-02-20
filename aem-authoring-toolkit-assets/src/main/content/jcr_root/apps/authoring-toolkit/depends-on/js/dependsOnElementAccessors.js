@@ -49,6 +49,7 @@
                 ns.ElementAccessors.updateValidity($el);
             }
             ns.ElementAccessors.clearValidity($el);
+            ns.ElementAccessors.updateSubmittables($el.parent());
         },
         disabled: function ($el, state) {
             $el.attr('disabled', state ? 'true' : null);
@@ -87,6 +88,7 @@
         static getValue($el) {
             return ElementAccessors._findAccessorHandler($el, 'get')($el);
         }
+
         /**
          * Get preferable type to cast for $el
          * @param {JQuery} $el - target element
@@ -95,6 +97,7 @@
         static getPreferableType($el) {
             return ElementAccessors._findAccessorHandler($el, 'preferableType');
         }
+
         /**
          * Set $el value
          * @param {JQuery} $el - target element
@@ -104,6 +107,7 @@
         static setValue($el, value, notify = true) {
             ElementAccessors._findAccessorHandler($el, 'set')($el, value, notify);
         }
+
         /**
          * Set required state of the $el
          * @param {JQuery} $el - target element
@@ -112,6 +116,7 @@
         static setRequired($el, value) {
             ElementAccessors._findAccessorHandler($el, 'required')($el, value);
         }
+
         /**
          * Set required state of the $el
          * @param {JQuery} $el - target element
@@ -120,6 +125,7 @@
         static setVisibility($el, value) {
             ElementAccessors._findAccessorHandler($el, 'visibility')($el, value);
         }
+
         /**
          * Set disabled state of the $el
          * @param {JQuery} $el - target element
@@ -160,6 +166,15 @@
                 api.updateUI();
             }
         }
+
+        /**
+         * Update child submittables
+         * @param {JQuery} $el - target element
+         * */
+        static updateSubmittables($el) {
+            $el.adaptTo('foundation-validation-helper').getSubmittables();
+        }
+
         /**
          * Clear validity
          * Exclude all child submittables from validation cache.
@@ -188,6 +203,7 @@
             }
             return ElementAccessors.DEFAULT_ACCESSOR;
         }
+
         static _findAccessorHandler($el, type) {
             const accessor = ElementAccessors._findAccessor($el, type);
             return (typeof accessor[type] === 'function') ? accessor[type].bind(accessor) : accessor[type];
