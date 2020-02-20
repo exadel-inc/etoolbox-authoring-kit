@@ -17,6 +17,7 @@ package com.exadel.aem.toolkit.core.handlers.assets.dependson;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
@@ -71,10 +72,15 @@ public class DependsOnTabHandler implements Handler, BiConsumer<Element, Class<?
             return;
         }
         Element targetTab = getXmlUtil().getChildElement(tabItemsNode, getXmlUtil().getValidName(value.tabTitle()));
-        getXmlUtil().appendDataAttributes(targetTab, ImmutableMap.of(
-                DialogConstants.PN_DEPENDS_ON, value.query(),
-                DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
-        ));
+        if (targetTab != null) {
+            getXmlUtil().appendDataAttributes(targetTab, ImmutableMap.of(
+                    DialogConstants.PN_DEPENDS_ON, value.query(),
+                    DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
+            ));
+        } else {
+            PluginRuntime.context().getExceptionHandler()
+                    .handle(new InvalidTabException(value.tabTitle()));
+        }
     }
 
     /**

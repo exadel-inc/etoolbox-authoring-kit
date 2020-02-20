@@ -14,30 +14,31 @@
 
 package com.exadel.aem.toolkit.core.maven;
 
+import com.exadel.aem.toolkit.core.exceptions.PluginException;
+import com.exadel.aem.toolkit.test.component.ComplexComponent1;
+import com.exadel.aem.toolkit.test.component.ComplexComponent2;
+import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.dependson.DependsOnTabAnnotation;
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.test.dependson.DependsOnRefAnnotation;
-import com.exadel.aem.toolkit.test.dependson.DependsOnRequiredAnnotation;
-import com.exadel.aem.toolkit.test.dependson.DependsOnSetFragmentReference;
+public class ExceptionTest extends ExceptionTestBase {
 
-public class DependsOnTest extends DefaultTestBase {
-    @Test
-    public void testDependsOnRequired() {
-        testComponent(DependsOnRequiredAnnotation.class);
+    @Test(expected = PluginException.class)
+    public void testComponentWithTabsAndInnerClass() {
+        testComponent(ComponentWithTabsAndInnerClass.class);
     }
 
-    @Test
-    public void testDependsOnSetFragmentReference() {
-        testComponent(DependsOnSetFragmentReference.class);
+    @Test(expected = PluginException.class)
+    public void testComplexComponent1(){
+        testComponent(ComplexComponent1.class);
     }
 
-    @Test
-    public void testDependsOnRef() {
-        testComponent(DependsOnRefAnnotation.class);
+    @Test(expected = PluginException.class)
+    public void testComplexComponent2(){
+        testComponent(ComplexComponent2.class);
     }
 
-    @Test
+    @Test(expected = PluginException.class)
     public void testDependsOnTabAnnotation(){
         testComponent(DependsOnTabAnnotation.class);
     }

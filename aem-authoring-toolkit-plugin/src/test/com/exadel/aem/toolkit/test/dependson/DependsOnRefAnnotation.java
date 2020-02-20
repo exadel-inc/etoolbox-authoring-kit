@@ -14,9 +14,9 @@
 
 package com.exadel.aem.toolkit.test.dependson;
 
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
-import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 
@@ -29,6 +29,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 public class DependsOnRefAnnotation {
     @DialogField
     @ImageUpload
-    @com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef(name = "referenceType")
+    @DependsOnRef(name = "referenceType")
     private String referenceType;
 }
