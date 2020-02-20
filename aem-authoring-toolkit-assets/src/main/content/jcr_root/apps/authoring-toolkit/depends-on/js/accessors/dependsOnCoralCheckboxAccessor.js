@@ -12,7 +12,7 @@
     ns.ElementAccessors.registerAccessor({
         selector: `${CHECKBOX_SELECTOR}`,
         visibility: function ($el, state) {
-            $el.find(CHECKBOX_INPUT_SELECTOR).attr('type', state ? 'text' : 'hidden');
+            $el.find(CHECKBOX_INPUT_SELECTOR).attr('type', state ? 'checkbox' : 'hidden');
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($el, state);
         },
         required: function ($el, state) {
