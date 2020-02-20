@@ -77,6 +77,9 @@
         <sonar.java.binaries>target/classes</sonar.java.binaries>
         <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
         <sonar.jacoco.reportPath>target/jacoco.exec</sonar.jacoco.reportPath>
+
+        <aem.host>localhost</aem.host>
+        <aem.port>4502</aem.port>
     </properties>
 
     <build>
@@ -146,6 +149,7 @@
                             <packagePath>${project.artifactId}-${project.version}.zip</packagePath>
                         </properties>
                         <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
+                        <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
                     </configuration>
                 </plugin>
                 <plugin>
