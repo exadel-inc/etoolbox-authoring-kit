@@ -21,7 +21,7 @@
             notify && $el.trigger('change');
         },
         visibility: function ($el, state) {
-            $el.find(SWITCH_INPUT_SELECTOR).attr('type', state ? 'text' : 'hidden');
+            $el.find(SWITCH_INPUT_SELECTOR).attr('type', state ? 'checkbox' : 'hidden');
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($el, state);
         }
     });
