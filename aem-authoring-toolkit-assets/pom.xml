@@ -63,5 +63,36 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>install-assets</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <aem.host>localhost</aem.host>
+                <aem.port>4502</aem.port>
+            </properties>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.day.jcr.vault</groupId>
+                            <artifactId>content-package-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>install-package</id>
+                                    <goals>
+                                        <goal>install</goal>
+                                    </goals>
+                                    <configuration>
+                                        <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
     </profiles>
 </project>
