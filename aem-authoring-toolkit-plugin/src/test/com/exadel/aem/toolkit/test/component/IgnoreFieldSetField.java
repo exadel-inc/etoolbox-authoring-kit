@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.ClassField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
-import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreFields;
+import com.exadel.aem.toolkit.api.annotations.widgets.Ignore;
 
 @Dialog(
         name = "test-component",
@@ -65,7 +65,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreFields;
         }
 )
 
-@IgnoreFields(ignoreFields = {
+@Ignore(fields = {
         @ClassField(value = ComponentWithRichTextAndExternalClasses.class, field = "secondCard"),
         @ClassField(value = ComponentWithRichTextAndExternalClasses.class, field = "extendedLinks")
 })

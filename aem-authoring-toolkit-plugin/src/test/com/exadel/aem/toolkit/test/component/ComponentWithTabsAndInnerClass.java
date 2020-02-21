@@ -29,9 +29,10 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.core.util.TestConstants;
 
-@Dialog(name = "helloworld",
-        title = "Hello world 1 properties",
+@Dialog(name = TestConstants.DEFAULT_COMPONENT_NAME,
+        title = TestConstants.DEFAULT_COMPONENT_TITLE,
         layout = DialogLayout.TABS,
         tabs = {
                 @Tab(title = "First tab"),
@@ -42,10 +43,14 @@ import com.exadel.aem.toolkit.api.annotations.container.Tab;
 @SuppressWarnings("unused")
 public class ComponentWithTabsAndInnerClass {
 
-    @DialogField(label = "Field 1", description = "This is the first field.",wrapperClass = "my-class",
+    @DialogField(
+            label = "Field 1",
+            description = "This is the first field.",
+            wrapperClass = "my-class",
             renderHidden = true)
     @TextField
-    @Attribute(id = "field1-id",
+    @Attribute(
+            id = "field1-id",
             clas = "field1-attribute-class",
             data = {
                     @Data(name = "field1-data1", value = "value-data1"),
@@ -100,9 +105,4 @@ public class ComponentWithTabsAndInnerClass {
     }, emptyText = "Select rating" )
     @PlaceOnTab("Third tab")
     String dropdown;
-
-    @DialogField(label="hidden field", renderHidden = true)
-    @TextField
-    @PlaceOnTab("Forth tab")
-    String field5;
 }

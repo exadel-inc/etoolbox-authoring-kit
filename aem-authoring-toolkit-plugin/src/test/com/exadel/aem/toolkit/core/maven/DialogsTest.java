@@ -20,6 +20,7 @@ import com.exadel.aem.toolkit.test.component.ComplexComponent1;
 import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
+import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
 import com.exadel.aem.toolkit.test.component.IgnoreWidgetColumnField;
 import com.exadel.aem.toolkit.test.component.IgnoreTabsWidgetField;
 import com.exadel.aem.toolkit.test.component.IgnoreFieldSuperClass;
@@ -34,6 +35,11 @@ public class DialogsTest extends DefaultTestBase {
     @Test
     public void testDialogWithTabsAndInnerClass() {
         testComponent(ComponentWithTabsAndInnerClass.class);
+    }
+
+    @Test
+    public void testDialogWithTabsAsNestedClasses() {
+        testComponent(ComponentWithTabsAsNestedClasses.class);
     }
 
     @Test

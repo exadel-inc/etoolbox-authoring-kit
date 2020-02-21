@@ -30,10 +30,10 @@ import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotationAutomapping;
 
-public class ValidationsTest extends ExceptionTestBase {
-    private static final String COMPONENT_NAME_REQUISITE = "component-name";
-    private static final String COMPONENT_TITLE_REQUISITE = "component-title";
+import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_TITLE;
 
+public class ValidationsTest extends ExceptionTestBase {
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
@@ -96,18 +96,18 @@ public class ValidationsTest extends ExceptionTestBase {
     }
 
 
-    @Dialog(name = COMPONENT_NAME_REQUISITE, title = "")
+    @Dialog(name = DEFAULT_COMPONENT_NAME, title = "")
     private static class InvalidTitleDialog {}
 
 
-    @Dialog(name = COMPONENT_NAME_REQUISITE, title = COMPONENT_TITLE_REQUISITE)
+    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     @SuppressWarnings("unused")
     private static class InvalidNumberFieldDialog {
         @NumberField(value = "not-a-number", min = 0, max = 10)
         String number;
     }
 
-    @Dialog(name = COMPONENT_NAME_REQUISITE, title = COMPONENT_TITLE_REQUISITE)
+    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     @SuppressWarnings("unused")
     private static class InvalidImageUploadDialog {
         @ImageUpload(
@@ -117,14 +117,14 @@ public class ValidationsTest extends ExceptionTestBase {
         String image;
     }
 
-    @Dialog(name = COMPONENT_NAME_REQUISITE, title = COMPONENT_TITLE_REQUISITE)
+    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     @SuppressWarnings("unused")
     private static class InvalidTextAreaDialog {
         @TextArea(rows = 0, cols = -99)
         String text;
     }
 
-    @Dialog(name = COMPONENT_NAME_REQUISITE, title = COMPONENT_TITLE_REQUISITE)
+    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     @SuppressWarnings("unused")
     private static class InvalidRteCharactersDialog {
         @RichTextEditor(
@@ -136,7 +136,7 @@ public class ValidationsTest extends ExceptionTestBase {
         String text;
     }
 
-    @Dialog(name = COMPONENT_NAME_REQUISITE, title = COMPONENT_TITLE_REQUISITE)
+    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     @SuppressWarnings("unused")
     private static class InvalidRteParaformatDialog {
         @RichTextEditor(
@@ -147,14 +147,14 @@ public class ValidationsTest extends ExceptionTestBase {
         String text;
     }
 
-    @Dialog(name = COMPONENT_NAME_REQUISITE, title = COMPONENT_TITLE_REQUISITE)
+    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     @SuppressWarnings("unused")
     private static class InvalidPathDialog {
         @FileUpload(uploadUrl = "wrong path")
         String file;
     }
 
-    @Dialog(name = COMPONENT_NAME_REQUISITE, title = COMPONENT_TITLE_REQUISITE)
+    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     @SuppressWarnings("unused")
     private static class InvalidCustomAnnotationDialog {
         @CustomAnnotationAutomapping(customColor = "yellow")

@@ -16,8 +16,8 @@ package com.exadel.aem.toolkit.core.util;
 
 import java.nio.file.Paths;
 
-public class TestsConstants {
-    private TestsConstants() {
+public class TestConstants {
+    private TestConstants() {
     }
     public static final String PATH_TO_EXPECTED_FILES = "src\\test\\resources\\dialog";
 
@@ -29,4 +29,7 @@ public class TestsConstants {
     public static final String API_MODULE_TARGET = PLUGIN_MODULE_TARGET.replace(PLUGIN_MODULE_NAME, API_MODULE_NAME);
 
     public static final String DEFAULT_COMPONENT_NAME = "test-component";
+    public static final String DEFAULT_COMPONENT_TITLE = "Test Component";
+    public static final String DEFAULT_COMPONENT_DESCRIPTION = "Test component description";
+    public static final String DEFAULT_COMPONENT_GROUP = "Test Component Group";
 }

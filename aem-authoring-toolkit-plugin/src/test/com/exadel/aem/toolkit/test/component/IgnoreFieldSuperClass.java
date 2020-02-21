@@ -18,7 +18,7 @@ import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.ClassField;
-import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreFields;
+import com.exadel.aem.toolkit.api.annotations.widgets.Ignore;
 import com.exadel.aem.toolkit.test.widget.Tabs;
 
 @Dialog(
@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.test.widget.Tabs;
                 @Tab(title = "First tab"),
         }
 )
-@IgnoreFields(ignoreFields = {
+@Ignore(fields = {
         @ClassField(value = Tabs.class, field = "field2")
 })
 @SuppressWarnings("unused")

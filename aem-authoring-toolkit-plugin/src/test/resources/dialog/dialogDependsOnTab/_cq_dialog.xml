@@ -15,9 +15,9 @@
                                     required="{Boolean}false"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
                         </items>
-                        <granite:data dependsOn="test-query"
-                                      dependsOnAction="tab-visibility"
-                                      jcr:primaryType="nt:unstructured"/>
+                        <granite:data jcr:primaryType="nt:unstructured"
+                                      dependsOn="test-query"
+                                      dependsOnAction="tab-visibility"/>
                     </firstTab>
                     <secondTab granite:hidden="{Boolean}false" jcr:primaryType="nt:unstructured" jcr:title="Second tab"
                                sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -27,6 +27,9 @@
                                     required="{Boolean}false"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
                         </items>
+                        <granite:data jcr:primaryType="nt:unstructured"
+                                      dependsOn="test-query"
+                                      dependsOnAction="tab-visibility"/>
                     </secondTab>
                 </items>
             </tabs>

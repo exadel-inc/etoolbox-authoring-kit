@@ -4,5 +4,5 @@
     jcr:primaryType="cq:Component"
     jcr:title="Component with external classes"
     sling:resourceSuperType="/resource/super/type"
-    componentGroup="componentsGroup"
+    componentGroup="Test Component Group"
     disableTargeting="{Boolean}true"/>

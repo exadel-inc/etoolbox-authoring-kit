@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.util.TestHelper;
-import com.exadel.aem.toolkit.core.util.TestsConstants;
+import com.exadel.aem.toolkit.core.util.TestConstants;
 
 public abstract class DefaultTestBase {
     static final Logger LOG = LoggerFactory.getLogger("AEM Authoring Toolkit Unit Tests");
@@ -42,9 +42,9 @@ public abstract class DefaultTestBase {
     @Before
     public void setUp() {
         List<String> classpathElements = Arrays.asList(
-                TestsConstants.PLUGIN_MODULE_TARGET,
-                TestsConstants.API_MODULE_TARGET,
-                TestsConstants.PLUGIN_MODULE_TEST_TARGET
+                TestConstants.PLUGIN_MODULE_TARGET,
+                TestConstants.API_MODULE_TARGET,
+                TestConstants.PLUGIN_MODULE_TEST_TARGET
         );
         PluginRuntime.initialize(classpathElements, StringUtils.EMPTY, getExceptionSetting());
     }
@@ -66,6 +66,6 @@ public abstract class DefaultTestBase {
         String folderName = tested.getSimpleName().contains(KEYWORD_TEST)
                 ?  tested.getSimpleName().replace(KEYWORD_TEST, KEYWORD_DIALOG)
                 : KEYWORD_DIALOG + tested.getSimpleName();
-        return TestsConstants.PATH_TO_EXPECTED_FILES + "\\" + RegExUtils.removePattern(folderName, SUFFIX_PATTERN);
+        return TestConstants.PATH_TO_EXPECTED_FILES + "\\" + RegExUtils.removePattern(folderName, SUFFIX_PATTERN);
     }
 }
