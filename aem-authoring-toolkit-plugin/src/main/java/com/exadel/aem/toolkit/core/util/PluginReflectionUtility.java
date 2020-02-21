@@ -36,10 +36,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.ClassField;
-import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreFields;
+import com.exadel.aem.toolkit.api.annotations.widgets.Ignore;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -63,7 +64,7 @@ public class PluginReflectionUtility {
     /**
      * Default all-allowed predicate for {@code Field} instances
      */
-    private static final Predicate<Field> TRUE_PREDICATE = field -> true;
+    private static final Predicate<Field> DEFAULT_PREDICATE = field -> true;
     /**
      * Predicate for picking out non-static {@code Field} instances
      */
@@ -276,7 +277,7 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Retrieves a complete {@code Field} list of a {@code Class}
+     * Retrieves a complete list of {@code Field}s of a {@code Class}
      * @param targetClass The class to analyze
      * @return List of {@code Field} objects
      */
@@ -293,25 +294,19 @@ public class PluginReflectionUtility {
     private static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates) {
         List<Field> fields = new LinkedList<>();
         List<ClassField> ignoredFields = new LinkedList<>();
-        Predicate<Field> predicate = TRUE_PREDICATE;
-        if (predicates != null && !predicates.isEmpty()) {
-            predicate = predicates.stream().filter(Objects::nonNull).reduce(TRUE_PREDICATE, Predicate::and);
-        }
+
         for (Class<?> clazz : getAllSuperClasses(targetClass)) {
             List<Field> classFields = Arrays.stream(clazz.getDeclaredFields())
-                    .filter(predicate)
+                    .filter(getFieldsFilter(predicates))
                     .collect(Collectors.toList());
             fields.addAll(classFields);
-            if (clazz.getAnnotation(IgnoreFields.class) != null)
-                ignoredFields.addAll(Arrays.asList(clazz.getAnnotation(IgnoreFields.class).ignoreFields()));
+            if (clazz.getAnnotation(Ignore.class) != null)
+                ignoredFields.addAll(Arrays.asList(clazz.getAnnotation(Ignore.class).fields()));
         }
 
-        Predicate<Field> predicateByName = field -> ignoredFields.stream().anyMatch(classField -> classField.field().equals(field.getName()));
-        Predicate<Field> predicateByClass = field -> ignoredFields.stream().anyMatch(classField -> classField.value().equals(field.getDeclaringClass()));
-
-        fields.removeIf(predicateByName.and(predicateByClass));
-
+        fields.removeIf(getIgnoredFieldsFilter(ignoredFields));
         fields.sort(PluginReflectionUtility.FIELD_RANKING_COMPARATOR);
+
         return fields;
     }
 
@@ -386,6 +381,33 @@ public class PluginReflectionUtility {
     public static boolean annotationIsNotDefault(Annotation annotation) {
         return Arrays.stream(annotation.annotationType().getDeclaredMethods())
                 .anyMatch(method -> annotationPropertyIsNotDefault(annotation, method));
+    }
+
+    /**
+     * Generates an combined {@code Predicate<Field>} from the list of partial predicates given
+     * @param predicates List of {@code Predicate<Field>} instances
+     * @return An {@code AND}-joined combined predicate, or a default all-allowed predicate if no partial predicates provided
+     */
+    private static Predicate<Field> getFieldsFilter(List<Predicate<Field>> predicates) {
+        if (predicates == null || predicates.isEmpty()) {
+            return DEFAULT_PREDICATE;
+        }
+        return predicates.stream().filter(Objects::nonNull).reduce(DEFAULT_PREDICATE, Predicate::and);
+    }
+
+    /**
+     * Gets a predicate for sorting out of joined fields list the fields set to be ignored
+     * @param ignoredFields List of {@link ClassField} representing the fields set to be ignored
+     * @return A {@code Predicate<Field> instance}, or a default all-allowed predicate if no ignored fields provided
+     */
+    private static Predicate<Field> getIgnoredFieldsFilter(List<ClassField> ignoredFields) {
+        if (ignoredFields == null || ignoredFields.isEmpty()) {
+            return DEFAULT_PREDICATE.negate();
+        }
+        return field -> ignoredFields.stream().anyMatch(
+                ignoredField -> ignoredField.value().equals(field.getDeclaringClass())
+                        && ignoredField.field().equals(field.getName())
+        );
     }
 
     /**

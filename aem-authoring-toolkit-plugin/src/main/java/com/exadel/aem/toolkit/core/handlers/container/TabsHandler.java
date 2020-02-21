@@ -49,24 +49,25 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
      */
     @Override
     public void accept(Class<?> componentClass, Element parentElement) {
-        Element tabItems = (Element) parentElement.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER))
+        Element tabItemsElement = (Element) parentElement.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_TABS, ResourceTypes.TABS))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
+
         Dialog dialog = componentClass.getDeclaredAnnotation(Dialog.class);
         Tab[] dialogTabs = dialog.tabs();
         if(dialogTabs.length == 0){
             Class[] innerClasses = componentClass.getDeclaredClasses();
             ArrayUtils.reverse(innerClasses);
             Arrays.stream(innerClasses).filter(c -> c.isAnnotationPresent(Tab.class))
-                    .forEach(tabClass->addTab(tabClass, tabItems));
+                    .forEach(tabClass -> addTab(tabClass, tabItemsElement));
             return;
         }
         List<Field> allFields = PluginReflectionUtility.getAllNonStaticFields(componentClass);
         for (int i = 0; i < dialogTabs.length; i++) {
             Tab tab = dialogTabs[i];
-            String nodeName = getXmlUtil().getUniqueName(tab.title(), DEFAULT_TAB_NAME, tabItems);
-            Element tabElement = (Element) tabItems.appendChild(getXmlUtil().createNodeElement(nodeName));
+            String nodeName = getXmlUtil().getUniqueName(tab.title(), DEFAULT_TAB_NAME, tabItemsElement);
+            Element tabElement = (Element) tabItemsElement.appendChild(getXmlUtil().createNodeElement(nodeName));
             tabElement.setAttribute(JcrConstants.PN_TITLE, tab.title());
             appendAttributes(tabElement, tab);
             final boolean isDefaultTab = i == 0;
@@ -110,7 +111,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
      * The predicate to match a {@code Field} against particular {@code Tab}
      * @param field  {@link Field} instance to analyze
      * @param tab {@link Tab} annotation to analyze
-     * @param isDefaultTab true if the current tab must accept fields for which no tab was specified; otherwise, false
+     * @param isDefaultTab True if the current tab accepts fields for which no tab was specified; otherwise, false
      * @return True or false
      */
     private static boolean isFieldForTab(Field field, Tab tab, boolean isDefaultTab) {
