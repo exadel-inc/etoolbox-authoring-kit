@@ -17,10 +17,8 @@ package com.exadel.aem.toolkit.core.handlers;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
@@ -43,26 +41,12 @@ public interface Handler {
 
     /**
      * Processes the specified {@link Field}s and appends the generated XML markup to the specified container element
+     * @param container XML definition of a pre-defined widget container
      * @param fields List of {@code Field}s of a component's Java class
-     * @param containerElement XML definition of a pre-defined widget container
      */
-    static void appendToContainer(List<Field> fields, Element containerElement) {
-        appendToContainer(fields, containerElement, true);
-    }
-
-    /**
-     * Processes the specified {@link Field}s and appends the generated XML markup to the specified container element
-     * @param fields List of {@code Field}s of a component's Java class
-     * @param containerElement XML definition of a pre-defined widget container
-     * @param setResourceType True if particular {@code sling:resourceType} value must be set to the container element;
-     *                        otherwise, false
-     */
-    static void appendToContainer(List<Field> fields, Element containerElement, boolean setResourceType){
-        if (setResourceType) {
-            containerElement.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER);
-        }
+    static void appendToContainer(Element container, List<Field> fields) {
         Element itemsElement = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_ITEMS);
-        containerElement.appendChild(itemsElement);
+        container.appendChild(itemsElement);
 
         for (Field field : fields) {
             DialogWidget widget = DialogWidgets.fromField(field);
