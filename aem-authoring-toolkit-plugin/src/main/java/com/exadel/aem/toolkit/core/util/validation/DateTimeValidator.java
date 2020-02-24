@@ -15,7 +15,7 @@ package com.exadel.aem.toolkit.core.util.validation;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
-import com.exadel.aem.toolkit.core.util.ConversionUtility;
+import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 
 /**
  * {@link Validator} implementation for testing that provided DateTimeValue is valid
@@ -33,7 +33,7 @@ public class DateTimeValidator implements Validator {
         if (!isApplicableTo(obj)) {
             return false;
         }
-        return ConversionUtility.getDateTimeInstance(obj) != null;
+        return PluginObjectUtility.getDateTimeInstance(obj) != null;
     }
 
     /**

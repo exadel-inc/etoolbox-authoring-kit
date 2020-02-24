@@ -46,14 +46,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import com.google.common.collect.ImmutableMap;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
 import com.exadel.aem.toolkit.core.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
@@ -91,10 +91,12 @@ public class PluginXmlUtility implements XmlUtility {
     /**
      * Initializes new {@link Document} instance shipped with the root element
      * @param builder {@link DocumentBuilder} to create new XML document
+     * @param componentClass {@code Class} instance representing source object for this document
      * @return Root {@link Element}
      */
-    Element newDocumentRoot(DocumentBuilder builder) {
+    Element newDocumentRoot(DocumentBuilder builder, Class<?> componentClass) {
         document = builder.newDocument();
+        document.setUserData(DialogConstants.PN_COMPONENT_CLASS, componentClass, null);
         Element rootElement = createNodeElement(DialogConstants.NN_ROOT, XML_NAMESPACES);
         document.appendChild(rootElement);
         return rootElement;
@@ -527,7 +529,9 @@ public class PluginXmlUtility implements XmlUtility {
                     result.add((Element)node);
                 }
             }
-            if (result.isEmpty()) throw new XPathExpressionException("Resolves to null or node of non-element type");
+            if (result.isEmpty()) {
+                throw new XPathExpressionException("Resolves to null or node of non-element type");
+            }
         } catch (XPathExpressionException e) {
             PluginRuntime.context().getExceptionHandler().handle(String.format("Wrong XPath argument '%s'", xPath), e);
         }

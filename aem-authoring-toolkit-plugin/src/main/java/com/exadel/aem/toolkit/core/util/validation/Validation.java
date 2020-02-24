@@ -66,7 +66,7 @@ public class Validation {
 
     /**
      * Retrieves appropriate {@code Validation} for specific annotation property
-     * @param type       Annotation type
+     * @param type Annotation type
      * @param methodName Annotation's property name
      * @return {@code Validation} instance
      */

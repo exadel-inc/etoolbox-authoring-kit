@@ -115,7 +115,7 @@ abstract class PackageEntryWriter {
      * @return {@link Document} created
      */
     private Document createDomDocument(Class<?> componentClass) {
-        Element rootElement = PluginRuntime.context().getXmlUtility().newDocumentRoot(this.documentBuilder);
+        Element rootElement = PluginRuntime.context().getXmlUtility().newDocumentRoot(this.documentBuilder, componentClass);
         populateDomDocument(componentClass, rootElement);
         return PluginRuntime.context().getXmlUtility().getCurrentDocument();
     }

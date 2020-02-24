@@ -25,7 +25,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +34,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.ClassField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Ignore;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -48,7 +44,9 @@ import org.reflections.util.ConfigurationBuilder;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
+import com.exadel.aem.toolkit.api.annotations.widgets.ClassField;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.runtime.Injected;
@@ -61,41 +59,6 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
  * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields are marked with
  */
 public class PluginReflectionUtility {
-    /**
-     * Default all-allowed predicate for {@code Field} instances
-     */
-    private static final Predicate<Field> DEFAULT_PREDICATE = field -> true;
-    /**
-     * Predicate for picking out non-static {@code Field} instances
-     */
-    private static final Predicate<Field> NON_STATIC_FIELD_PREDICATE = field -> !Modifier.isStatic(field.getModifiers());
-    /**
-     * Comparison function for sorting {@code Field} based on their {@code DialogField} annotations' ranking values
-     */
-    private static final Comparator<Field> FIELD_RANKING_COMPARATOR = (f1, f2) -> {
-        int rank1 = 0;
-        int rank2 = 0;
-        if (f1.isAnnotationPresent(DialogField.class)) {
-            DialogField dialogField1 = f1.getAnnotationsByType(DialogField.class)[0];
-            rank1 = dialogField1.ranking();
-        }
-        if (f2.isAnnotationPresent(DialogField.class)) {
-            DialogField dialogField2 = f2.getAnnotationsByType(DialogField.class)[0];
-            rank2 = dialogField2.ranking();
-        }
-        if (rank1 != rank2) {
-            return Integer.compare(rank1, rank2);
-        }
-        if (f1.getDeclaringClass() != f2.getDeclaringClass()) {
-            if (ClassUtils.isAssignable(f1.getDeclaringClass(), f2.getDeclaringClass())) {
-                return 1;
-            }
-            if (ClassUtils.isAssignable(f2.getDeclaringClass(), f1.getDeclaringClass())) {
-                return -1;
-            }
-        }
-        return 0;
-    };
     private static final String PACKAGE_BASE_WILDCARD = ".*";
 
     private String packageBase;
@@ -268,15 +231,6 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Analyzes a {@code Class} and retrieves {@code List} of its non-static {@code Field}s
-     * @param targetClass The class to analyze
-     * @return List of {@code Field} objects
-     */
-    public static List<Field> getAllNonStaticFields(Class<?> targetClass) {
-        return getAllFields(targetClass, Collections.singletonList(NON_STATIC_FIELD_PREDICATE));
-    }
-
-    /**
      * Retrieves a complete list of {@code Field}s of a {@code Class}
      * @param targetClass The class to analyze
      * @return List of {@code Field} objects
@@ -286,28 +240,34 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Retrieves an ordered list of all {@code Field}s of a certain {@code Class} that match specific criteria
+     * Retrieves a sequential list of all {@code Field}s of a certain {@code Class} that match specific criteria
      * @param targetClass The class to analyze
      * @param predicates List of {@code Predicate<Field>} instances to pick up appropriate fields
      * @return List of {@code Field} objects
      */
-    private static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates) {
+    public static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates) {
         List<Field> fields = new LinkedList<>();
         List<ClassField> ignoredFields = new LinkedList<>();
 
-        for (Class<?> clazz : getAllSuperClasses(targetClass)) {
-            List<Field> classFields = Arrays.stream(clazz.getDeclaredFields())
-                    .filter(getFieldsFilter(predicates))
+        for (Class<?> classEntry : getAllSuperClasses(targetClass)) {
+            List<Field> classFields = Arrays.stream(classEntry.getDeclaredFields())
+                    .filter(Predicates.getFieldsPredicate(predicates))
                     .collect(Collectors.toList());
             fields.addAll(classFields);
-            if (clazz.getAnnotation(Ignore.class) != null)
-                ignoredFields.addAll(Arrays.asList(clazz.getAnnotation(Ignore.class).fields()));
+            if (classEntry.getAnnotation(IgnoreFields.class) != null) {
+                List<ClassField> processedClassFields = Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
+                        .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
+                                ClassField.class,
+                                DialogConstants.PN_SOURCE_CLASS,
+                                targetClass))
+                        .collect(Collectors.toList());
+                ignoredFields.addAll(processedClassFields);
+            }
         }
-
-        fields.removeIf(getIgnoredFieldsFilter(ignoredFields));
-        fields.sort(PluginReflectionUtility.FIELD_RANKING_COMPARATOR);
-
-        return fields;
+        return fields.stream()
+                .filter(Predicates.getNotIgnoredFieldsPredicate(ignoredFields))
+                .sorted(Predicates::compareDialogFields)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -323,20 +283,18 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Retrieves the sequential list of superclasses of a specific {@code Class}, including this class itself.
-     * Closer ancestors are enumerated first
+     * Retrieves the sequential list of superclasses of a specific {@code Class}, started from the "top" of the inheritance
+     * tree. {@code Object} class excluded, target class included
      * @param targetClass The class to analyze
      * @return List of {@code Class} objects
      */
-    private static List<Class<?>> getAllSuperClasses(Class<?> targetClass) {
+    public static List<Class<?>> getAllSuperClasses(Class<?> targetClass) {
         List<Class<?>> superClasses = new LinkedList<>();
-        if (targetClass != null && !targetClass.isInterface() && !targetClass.equals(Object.class)) {
+        while (targetClass != null && !targetClass.isInterface() && !targetClass.equals(Object.class)) {
             superClasses.add(targetClass);
-            Class<?> superClass = targetClass.getSuperclass();
-            if (superClass != null) {
-                superClasses.addAll(getAllSuperClasses(superClass));
-            }
+            targetClass = targetClass.getSuperclass();
         }
+        Collections.reverse(superClasses);
         return superClasses;
     }
 
@@ -349,6 +307,16 @@ public class PluginReflectionUtility {
         return Arrays.stream(annotation.annotationType().getDeclaredMethods())
                 .filter(method -> annotationPropertyIsNotDefault(annotation, method))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets whether any of the {@code Annotation}'s properties has a value which is not default
+     * @param annotation The annotation to analyze
+     * @return True or false
+     */
+    public static boolean annotationIsNotDefault(Annotation annotation) {
+        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
+                .anyMatch(method -> annotationPropertyIsNotDefault(annotation, method));
     }
 
     /**
@@ -374,43 +342,6 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Gets whether any of the {@code Annotation}'s properties has a value which is not default
-     * @param annotation The annotation to analyze
-     * @return True or false
-     */
-    public static boolean annotationIsNotDefault(Annotation annotation) {
-        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .anyMatch(method -> annotationPropertyIsNotDefault(annotation, method));
-    }
-
-    /**
-     * Generates an combined {@code Predicate<Field>} from the list of partial predicates given
-     * @param predicates List of {@code Predicate<Field>} instances
-     * @return An {@code AND}-joined combined predicate, or a default all-allowed predicate if no partial predicates provided
-     */
-    private static Predicate<Field> getFieldsFilter(List<Predicate<Field>> predicates) {
-        if (predicates == null || predicates.isEmpty()) {
-            return DEFAULT_PREDICATE;
-        }
-        return predicates.stream().filter(Objects::nonNull).reduce(DEFAULT_PREDICATE, Predicate::and);
-    }
-
-    /**
-     * Gets a predicate for sorting out of joined fields list the fields set to be ignored
-     * @param ignoredFields List of {@link ClassField} representing the fields set to be ignored
-     * @return A {@code Predicate<Field> instance}, or a default all-allowed predicate if no ignored fields provided
-     */
-    private static Predicate<Field> getIgnoredFieldsFilter(List<ClassField> ignoredFields) {
-        if (ignoredFields == null || ignoredFields.isEmpty()) {
-            return DEFAULT_PREDICATE.negate();
-        }
-        return field -> ignoredFields.stream().anyMatch(
-                ignoredField -> ignoredField.value().equals(field.getDeclaringClass())
-                        && ignoredField.field().equals(field.getName())
-        );
-    }
-
-    /**
      * Converts {@link URI} parameter, such as of a classpath element, to an {@link URL} instance used by {@link Reflections}
      * @param uri {@code URI} value
      * @return {@code URL} value
@@ -422,5 +353,76 @@ public class PluginReflectionUtility {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
         return null;
+    }
+
+    /**
+     * Contains utility methods for manipulating field streams and collections
+     */
+    public static class Predicates {
+        private Predicates() {
+        }
+
+        /**
+         * A predicate for picking out non-static {@code Field} instances which is by default
+         * in {@link PluginReflectionUtility#getAllFields(Class)} routines
+         */
+        private static final java.util.function.Predicate<Field> NON_STATIC_FIELD_PREDICATE = field -> !Modifier.isStatic(field.getModifiers());
+
+        /**
+         * Generates an combined {@code Predicate<Field>} from the list of partial predicates given
+         * @param predicates List of {@code Predicate<Field>} instances
+         * @return An {@code AND}-joined combined predicate, or a default all-allowed predicate if no partial predicates provided
+         */
+        private static Predicate<Field> getFieldsPredicate(List<Predicate<Field>> predicates) {
+            if (predicates == null || predicates.isEmpty()) {
+                return NON_STATIC_FIELD_PREDICATE;
+            }
+            return predicates.stream().filter(Objects::nonNull).reduce(NON_STATIC_FIELD_PREDICATE, Predicate::and);
+        }
+
+        /**
+         * Gets a predicate for sorting out the fields set to be ignored
+         * @param ignoredFields List of {@link ClassField} representing the fields set to be ignored
+         * @return A {@code Predicate<Field>} which is affirmative by default, that is, returns *tru* if the field is not
+         * ignored, and *false* if the field is set to be ignored
+         */
+        public static Predicate<Field> getNotIgnoredFieldsPredicate(List<ClassField> ignoredFields) {
+            if (ignoredFields == null || ignoredFields.isEmpty()) {
+                return field -> true;
+            }
+            return field -> ignoredFields.stream().noneMatch(
+                    ignoredField -> ignoredField.source().equals(field.getDeclaringClass())
+                            && ignoredField.field().equals(field.getName())
+            );
+        }
+
+        /**
+         * Called by XML rendering routines to order {@code Dialog} fields based on their class affiliation and their
+         * optional {@link @DialogField} annotations' ranking values
+         */
+        public static int compareDialogFields(Field f1, Field f2)  {
+            int rank1 = 0;
+            int rank2 = 0;
+            if (f1.isAnnotationPresent(DialogField.class)) {
+                DialogField dialogField1 = f1.getAnnotationsByType(DialogField.class)[0];
+                rank1 = dialogField1.ranking();
+            }
+            if (f2.isAnnotationPresent(DialogField.class)) {
+                DialogField dialogField2 = f2.getAnnotationsByType(DialogField.class)[0];
+                rank2 = dialogField2.ranking();
+            }
+            if (rank1 != rank2) {
+                return Integer.compare(rank1, rank2);
+            }
+            if (f1.getDeclaringClass() != f2.getDeclaringClass()) {
+                if (ClassUtils.isAssignable(f1.getDeclaringClass(), f2.getDeclaringClass())) {
+                    return 1;
+                }
+                if (ClassUtils.isAssignable(f2.getDeclaringClass(), f1.getDeclaringClass())) {
+                    return -1;
+                }
+            }
+            return 0;
+        }
     }
 }

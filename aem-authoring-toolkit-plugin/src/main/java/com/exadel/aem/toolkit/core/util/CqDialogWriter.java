@@ -67,8 +67,10 @@ class CqDialogWriter extends ContentXmlWriter {
         Dialog dialog = componentClass.getDeclaredAnnotation(Dialog.class);
         PluginRuntime.context().getXmlUtility().mapProperties(root, dialog, XmlScope.CQ_DIALOG);
         root.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.DIALOG);
+
         DialogLayout dialogLayout = ArrayUtils.isEmpty(dialog.tabs()) ? dialog.layout() : DialogLayout.TABS;
         DialogContainer.getContainer(dialogLayout).build(componentClass, root);
+
         writeCommonProperties(componentClass, XmlScope.CQ_DIALOG);
         new DependsOnTabHandler().accept(root, componentClass);
         if (!classHasCustomDialogAnnotation(componentClass)) {
