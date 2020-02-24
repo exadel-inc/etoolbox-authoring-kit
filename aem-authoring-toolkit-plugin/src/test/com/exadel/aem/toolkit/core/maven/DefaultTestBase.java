@@ -50,7 +50,11 @@ public abstract class DefaultTestBase {
     }
 
     void testComponent(Class<?> tested) {
-        Path componentPathExpected = Paths.get(getResourceFolder(tested));
+        testComponent(tested, null);
+    }
+
+    void testComponent(Class<?> tested, String resourceAlias) {
+        Path componentPathExpected = Paths.get(getResourceFolderPath(tested, resourceAlias));
         try {
             Assert.assertTrue(TestHelper.doTest(tested.getName(), componentPathExpected));
         } catch (ClassNotFoundException ex) {
@@ -62,10 +66,13 @@ public abstract class DefaultTestBase {
         return EXCEPTION_SETTING;
     }
 
-    private String getResourceFolder(Class<?> tested) {
-        String folderName = tested.getSimpleName().contains(KEYWORD_TEST)
-                ?  tested.getSimpleName().replace(KEYWORD_TEST, KEYWORD_DIALOG)
-                : KEYWORD_DIALOG + tested.getSimpleName();
+    private static String getResourceFolderPath(Class<?> tested, String resourceAlias) {
+        String folderName = resourceAlias;
+        if (StringUtils.isEmpty(folderName)) {
+            folderName = tested.getSimpleName().contains(KEYWORD_TEST)
+                    ?  tested.getSimpleName().replace(KEYWORD_TEST, KEYWORD_DIALOG)
+                    : KEYWORD_DIALOG + tested.getSimpleName();
+        }
         return TestConstants.PATH_TO_EXPECTED_FILES + "\\" + RegExUtils.removePattern(folderName, SUFFIX_PATTERN);
     }
 }

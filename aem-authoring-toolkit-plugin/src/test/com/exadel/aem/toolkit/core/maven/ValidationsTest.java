@@ -28,6 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.ParagraphFormat;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
+import com.exadel.aem.toolkit.test.component.ValidationTestCases;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotationAutomapping;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
@@ -41,35 +42,35 @@ public class ValidationsTest extends ExceptionTestBase {
     public void testNonBlankValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'' provided");
-        testComponent(InvalidTitleDialog.class);
+        testComponent(ValidationTestCases.InvalidTitleDialog.class);
     }
 
     @Test
     public void testAllNotBlankValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("string properties must not be blank");
-        testComponent(InvalidRteParaformatDialog.class);
+        testComponent(ValidationTestCases.InvalidRteParaformatDialog.class);
     }
 
     @Test
     public void testNumberValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'not-a-number' provided");
-        testComponent(InvalidNumberFieldDialog.class);
+        testComponent(ValidationTestCases.InvalidNumberFieldDialog.class);
     }
 
     @Test
     public void testNonNegativeNumberValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'-99' provided");
-        testComponent(InvalidImageUploadDialog.class);
+        testComponent(ValidationTestCases.InvalidImageUploadDialog.class);
     }
 
     @Test
     public void testPositiveNumberValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'0' provided");
-        testComponent(InvalidTextAreaDialog.class);
+        testComponent(ValidationTestCases.InvalidTextAreaDialog.class);
     }
 
 
@@ -77,14 +78,14 @@ public class ValidationsTest extends ExceptionTestBase {
     public void testCharactersValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("a character range (start < end) or entity definition must be set");
-        testComponent(InvalidRteCharactersDialog.class);
+        testComponent(ValidationTestCases.InvalidRteCharactersDialog.class);
     }
 
     @Test
     public void testJcrPathValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'wrong path' provided");
-        testComponent(InvalidPathDialog.class);
+        testComponent(ValidationTestCases.InvalidPathDialog.class);
     }
 
 
@@ -92,72 +93,6 @@ public class ValidationsTest extends ExceptionTestBase {
     public void testCustomValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("one of 'red', 'green', or 'blue' must be provided");
-        testComponent(InvalidCustomAnnotationDialog.class);
-    }
-
-
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = "")
-    private static class InvalidTitleDialog {}
-
-
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
-    private static class InvalidNumberFieldDialog {
-        @NumberField(value = "not-a-number", min = 0, max = 10)
-        String number;
-    }
-
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
-    private static class InvalidImageUploadDialog {
-        @ImageUpload(
-                title="Invalid Image Upload",
-                sizeLimit = -99
-        )
-        String image;
-    }
-
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
-    private static class InvalidTextAreaDialog {
-        @TextArea(rows = 0, cols = -99)
-        String text;
-    }
-
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
-    private static class InvalidRteCharactersDialog {
-        @RichTextEditor(
-                specialCharacters = {
-                        @Characters(rangeStart = 998, rangeEnd = 1020, name = "Range"),
-                        @Characters(rangeStart = 998, name = "invalid"),
-                }
-        )
-        String text;
-    }
-
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
-    private static class InvalidRteParaformatDialog {
-        @RichTextEditor(
-                formats = {
-                        @ParagraphFormat(tag = "tag", description = "")
-                }
-        )
-        String text;
-    }
-
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
-    private static class InvalidPathDialog {
-        @FileUpload(uploadUrl = "wrong path")
-        String file;
-    }
-
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
-    private static class InvalidCustomAnnotationDialog {
-        @CustomAnnotationAutomapping(customColor = "yellow")
-        String custom;
+        testComponent(ValidationTestCases.InvalidCustomAnnotationDialog.class);
     }
 }

@@ -30,19 +30,20 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.core.util.TestConstants;
 
-import static com.exadel.aem.toolkit.test.component.ComplexComponent1.TAB_1;
-import static com.exadel.aem.toolkit.test.component.ComplexComponent1.TAB_2;
-import static com.exadel.aem.toolkit.test.component.ComplexComponent1.TAB_3;
-import static com.exadel.aem.toolkit.test.component.ComplexComponent1.TAB_4;
-import static com.exadel.aem.toolkit.test.component.ComplexComponent1.TAB_5;
-import static com.exadel.aem.toolkit.test.component.ComplexComponent1.TAB_6;
-import static com.exadel.aem.toolkit.test.component.ComplexComponent1.TAB_7;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_1;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_2;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_3;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_4;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_5;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_6;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_7;
 
 @Dialog(
         name = TestConstants.DEFAULT_COMPONENT_NAME,
@@ -59,13 +60,12 @@ import static com.exadel.aem.toolkit.test.component.ComplexComponent1.TAB_7;
                 "cq.wcm.msm.properties"
         },
         tabs = {
-                @Tab(title = TAB_1),
-                @Tab(title = TAB_2),
-                @Tab(title = TAB_3),
-                @Tab(title = TAB_4),
-                @Tab(title = TAB_5),
-                @Tab(title = TAB_6),
-                @Tab(title = TAB_7)
+                @Tab(title = LABEL_TAB_1),
+                @Tab(title = LABEL_TAB_2),
+                @Tab(title = LABEL_TAB_3),
+                @Tab(title = LABEL_TAB_4, attribute = @Attribute(hidden = true, rel = "me")),
+                @Tab(title = LABEL_TAB_5),
+                @Tab(title = LABEL_TAB_6)
         }
 )
 @EditConfig(
@@ -178,14 +178,6 @@ import static com.exadel.aem.toolkit.test.component.ComplexComponent1.TAB_7;
 )
 @SuppressWarnings("unused")
 public class ComplexComponent1 {
-    static final String TAB_1 = "Tab_1";
-    static final String TAB_2 = "Tab_2";
-    static final String TAB_3 = "Tab_3";
-    static final String TAB_4 = "Tab_4";
-    static final String TAB_5 = "Tab_5";
-    static final String TAB_6 = "Tab_6";
-    static final String TAB_7 = "Tab_7";
-
     private static final String PREFIX_FIRST_PRIMARY_DIALOG = "primary1";
     private static final String PREFIX_SECOND_PRIMARY_DIALOG = "primary2";
     private static final String PREFIX_THIRD_PRIMARY_DIALOG = "primary3";
@@ -210,7 +202,7 @@ public class ComplexComponent1 {
             required = true
     )
     @TextField
-    @PlaceOnTab(TAB_1)
+    @PlaceOnTab(LABEL_TAB_1)
     private String firstField;
 
     @DialogField(
@@ -227,7 +219,7 @@ public class ComplexComponent1 {
                     RteFeatures.SUBSUPERSCRIPT_SUPERSCRIPT
             }
     )
-    @PlaceOnTab(TAB_1)
+    @PlaceOnTab(LABEL_TAB_1)
     private String secondField;
 
     @DialogField(
@@ -243,19 +235,22 @@ public class ComplexComponent1 {
                     @Option(text = "Third", value = "3"),
                     @Option(text = "Fourth", value = "4")
             })
-    @PlaceOnTab(TAB_1)
+    @PlaceOnTab(LABEL_TAB_1)
     private String thirdField;
 
     @DialogField
     @FieldSet(namePrefix = PREFIX_FIRST_PRIMARY_DIALOG)
+    @PlaceOnTab(LABEL_TAB_2)
     private SampleFieldsetBase2 firstPrimaryDialog;
 
     @DialogField
     @FieldSet(namePrefix = PREFIX_SECOND_PRIMARY_DIALOG)
+    @PlaceOnTab(LABEL_TAB_2)
     private SampleFieldsetBase2 secondPrimaryDialog;
 
     @DialogField
     @FieldSet(namePrefix = PREFIX_THIRD_PRIMARY_DIALOG)
+    @PlaceOnTab(LABEL_TAB_2)
     private SampleFieldsetBase2 thirdPrimaryDialog;
 
     @DialogField(
@@ -264,6 +259,7 @@ public class ComplexComponent1 {
     )
     @Switch
     @DependsOnRef(name = "first")
+    @PlaceOnTab(LABEL_TAB_3)
     private boolean firstSecondaryDialogEnabled;
 
     @DialogField
@@ -272,6 +268,7 @@ public class ComplexComponent1 {
             namePrefix = PREFIX_FIRST_SECONDARY_DIALOG
     )
     @DependsOn(query = "@first")
+    @PlaceOnTab(LABEL_TAB_3)
     private SampleFieldsetAncestor firstSecondaryDialog;
 
     @DialogField(
@@ -279,6 +276,7 @@ public class ComplexComponent1 {
             label = LABEL_SECONDARY_DIALOG_ENABLED
     )
     @Switch
+    @PlaceOnTab(LABEL_TAB_3)
     private boolean secondSecondaryDialogEnabled;
 
     @DialogField
@@ -286,6 +284,7 @@ public class ComplexComponent1 {
             title = TITLE_SECOND_SECONDARY_DIALOG,
             namePrefix = PREFIX_SECOND_SECONDARY_DIALOG
     )
+    @PlaceOnTab(LABEL_TAB_3)
     private SampleFieldsetAncestor secondSecondaryDialog;
 
     @DialogField(
@@ -295,7 +294,7 @@ public class ComplexComponent1 {
     )
     @TextField
     @NumberField(min = 0)
-    @PlaceOnTab("Tab_6")
+    @PlaceOnTab(LABEL_TAB_5)
     private Integer sampleFirstNumberField;
 
     @DialogField(
@@ -305,11 +304,11 @@ public class ComplexComponent1 {
     )
     @TextField
     @NumberField(min = 0)
-    @PlaceOnTab("Tab_6")
+    @PlaceOnTab(LABEL_TAB_5)
     private Integer sampleSecondNumberField;
 
     @DialogField
     @FieldSet
-    @PlaceOnTab("Tab_7")
+    @PlaceOnTab(LABEL_TAB_6)
     private SampleFieldsetBase3 sampleFieldSet;
 }

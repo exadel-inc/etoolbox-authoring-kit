@@ -14,21 +14,19 @@
 
 package com.exadel.aem.toolkit.test.component;
 
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
-import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.ListenerConstants;
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
@@ -38,6 +36,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.AutocompleteDatasource;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
@@ -46,13 +46,13 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.core.util.TestConstants;
 
-import static com.exadel.aem.toolkit.test.component.ComplexComponent2.TAB_1;
-import static com.exadel.aem.toolkit.test.component.ComplexComponent2.TAB_2;
-import static com.exadel.aem.toolkit.test.component.ComplexComponent2.TAB_3;
-import static com.exadel.aem.toolkit.test.component.ComplexComponent2.TAB_4;
-import static com.exadel.aem.toolkit.test.component.ComplexComponent2.TAB_5;
-import static com.exadel.aem.toolkit.test.component.ComplexComponent2.TAB_6;
-import static com.exadel.aem.toolkit.test.component.ComplexComponent2.TAB_7;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_1;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_2;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_3;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_4;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_5;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_6;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_7;
 
 @Dialog(name = TestConstants.DEFAULT_COMPONENT_NAME,
         title = TestConstants.DEFAULT_COMPONENT_TITLE,
@@ -63,13 +63,13 @@ import static com.exadel.aem.toolkit.test.component.ComplexComponent2.TAB_7;
         resourceSuperType = "TestComponentSuperType",
         extraClientlibs = "cq.common.wcm",
         tabs = {
-                @Tab(title = TAB_1),
-                @Tab(title = TAB_2),
-                @Tab(title = TAB_3),
-                @Tab(title = TAB_4),
-                @Tab(title = TAB_5),
-                @Tab(title = TAB_6),
-                @Tab(title = TAB_7)
+                @Tab(title = LABEL_TAB_1),
+                @Tab(title = LABEL_TAB_2),
+                @Tab(title = LABEL_TAB_3),
+                @Tab(title = LABEL_TAB_4),
+                @Tab(title = LABEL_TAB_5),
+                @Tab(title = LABEL_TAB_6),
+                @Tab(title = LABEL_TAB_7)
         })
 @EditConfig(
         listeners = {
@@ -107,14 +107,6 @@ import static com.exadel.aem.toolkit.test.component.ComplexComponent2.TAB_7;
 )
 @SuppressWarnings("unused")
 public class ComplexComponent2 {
-    static final String TAB_1 = "First tab";
-    static final String TAB_2 = "Second tab";
-    static final String TAB_3 = "Third tab";
-    static final String TAB_4 = "Fourth tab";
-    static final String TAB_5 = "Fifth tab";
-    static final String TAB_6 = "Sixth tab";
-    static final String TAB_7 = "Seventh tab";
-
     private static final String PRIMARY_ELEMENT_LABEL = "Primary Element";
     private static final String SECONDARY_ELEMENT_LABEL = "Secondary Element";
     private static final String VIDEO_ELEMENT_LABEL = "Video Element";
@@ -200,7 +192,7 @@ public class ComplexComponent2 {
             description = "description enable gradient"
     )
     @Checkbox(checked = true)
-    @PlaceOnTab(TAB_2)
+    @PlaceOnTab(LABEL_TAB_2)
     private Boolean gradient;
 
     @DialogField(
@@ -210,7 +202,7 @@ public class ComplexComponent2 {
             required = true
     )
     @TextField
-    @PlaceOnTab(TAB_3)
+    @PlaceOnTab(LABEL_TAB_3)
     private String mediaText;
 
     @DialogField(
@@ -220,7 +212,7 @@ public class ComplexComponent2 {
             required = true
     )
     @TextField
-    @PlaceOnTab(TAB_3)
+    @PlaceOnTab(LABEL_TAB_3)
     private String textContent;
 
     @DialogField
@@ -228,12 +220,12 @@ public class ComplexComponent2 {
             @Data(name = "feed-dialog", value = "1")
     })
     @FieldSet(namePrefix = FEED_1, title = "Feed first")
-    @PlaceOnTab(TAB_4)
+    @PlaceOnTab(LABEL_TAB_4)
     private FeedFieldSet feedFirst;
 
     @DialogField
     @FieldSet(namePrefix = FEED_1, title = "Feed first element")
-    @PlaceOnTab(TAB_4)
+    @PlaceOnTab(LABEL_TAB_4)
     private ElementFieldSet feedFirstElement;
 
     @DialogField(
@@ -242,18 +234,18 @@ public class ComplexComponent2 {
             description = "description enable feed 1"
     )
     @Switch
-    @PlaceOnTab(TAB_4)
+    @PlaceOnTab(LABEL_TAB_4)
     private boolean enableFeedFirst;
 
     @DialogField()
     @Attribute(data = {@Data(name = "feed-dialog", value = "2")})
     @FieldSet(namePrefix = FEED_2, title = "Feed")
-    @PlaceOnTab(TAB_4)
+    @PlaceOnTab(LABEL_TAB_4)
     private FeedFieldSet feed;
 
     @DialogField
     @FieldSet(namePrefix = FEED_2, title = "Feed Second Element")
-    @PlaceOnTab(TAB_4)
+    @PlaceOnTab(LABEL_TAB_4)
     private ElementFieldSet feedSecondElement;
 
     @DialogField(
@@ -262,12 +254,12 @@ public class ComplexComponent2 {
             description = "description enable primary element"
     )
     @Switch
-    @PlaceOnTab(TAB_5)
+    @PlaceOnTab(LABEL_TAB_5)
     private boolean primaryElementEnable;
 
     @DialogField
     @FieldSet(namePrefix = PRIMARY, title = PRIMARY_ELEMENT_LABEL)
-    @PlaceOnTab(TAB_5)
+    @PlaceOnTab(LABEL_TAB_5)
     private ElementIconFieldSet primaryElement;
 
     @DialogField(
@@ -276,12 +268,12 @@ public class ComplexComponent2 {
             description = "description enable secondary element"
     )
     @Switch
-    @PlaceOnTab(TAB_5)
+    @PlaceOnTab(LABEL_TAB_5)
     private boolean secondaryElementEnable;
 
     @DialogField()
     @FieldSet(namePrefix = SECONDARY, title = SECONDARY_ELEMENT_LABEL)
-    @PlaceOnTab(TAB_5)
+    @PlaceOnTab(LABEL_TAB_5)
     private ElementIconFieldSet secondaryElement;
 
     @DialogField(
@@ -290,12 +282,12 @@ public class ComplexComponent2 {
             description = "description enable video element"
     )
     @Switch
-    @PlaceOnTab(TAB_5)
+    @PlaceOnTab(LABEL_TAB_5)
     private boolean videoElementEnable;
 
     @DialogField
     @FieldSet(title = VIDEO_ELEMENT_LABEL)
-    @PlaceOnTab(TAB_5)
+    @PlaceOnTab(LABEL_TAB_5)
     private VideoElementFieldSet videoElement;
 
     @DialogField(
@@ -304,7 +296,7 @@ public class ComplexComponent2 {
             required = true
     )
     @ImageUpload(sizeLimit = 100L)
-    @PlaceOnTab(TAB_6)
+    @PlaceOnTab(LABEL_TAB_6)
     private String imagePath;
 
     @DialogField(
@@ -314,7 +306,7 @@ public class ComplexComponent2 {
     )
     @ImageUpload(sizeLimit = 0L)
     @Extends(value = ComplexComponent2.class, field = "imagePath")
-    @PlaceOnTab(TAB_6)
+    @PlaceOnTab(LABEL_TAB_6)
     private String productImagePath;
 
     @DialogField(
@@ -323,7 +315,7 @@ public class ComplexComponent2 {
             description = "descriptionEnableWidget"
     )
     @Checkbox
-    @PlaceOnTab(TAB_7)
+    @PlaceOnTab(LABEL_TAB_7)
     private boolean enableWidget;
 
     @DialogField(
@@ -332,7 +324,7 @@ public class ComplexComponent2 {
             description = "description widget"
     )
     @PathField
-    @PlaceOnTab(TAB_7)
+    @PlaceOnTab(LABEL_TAB_7)
     private String widget;
 
 

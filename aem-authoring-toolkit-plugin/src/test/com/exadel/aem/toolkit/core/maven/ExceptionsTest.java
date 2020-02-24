@@ -14,17 +14,13 @@
 
 package com.exadel.aem.toolkit.core.maven;
 
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
-import com.exadel.aem.toolkit.test.component.ComplexComponent1;
-
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_TITLE;
+import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
+import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
 
 public class ExceptionsTest extends ExceptionTestBase {
 
@@ -32,15 +28,17 @@ public class ExceptionsTest extends ExceptionTestBase {
     public ExpectedException exceptionRule = ExpectedException.none();
 
     @Test
-    public void testComponentWithInexistentTabSpecified() {
-        testComponent(ComponentWithInexistentTab.class);
+    public void testComponentWithInexistentTab() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidTabException.class));
+        exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
+        testComponent(ExceptionsTestCases.ComponentWithInexistentTab.class);
     }
 
-    @Dialog(name = DEFAULT_COMPONENT_NAME,
-            title = DEFAULT_COMPONENT_TITLE,
-            layout = DialogLayout.TABS,
-            tabs = @Tab(title = "First tab")
-    )
-    private static class ComponentWithInexistentTab extends ComplexComponent1 {
+
+    @Test
+    public void testComponentWithWrongDependsOnTab() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidTabException.class));
+        exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
+        testComponent(ExceptionsTestCases.ComponentWithInexistentDependsOnTab.class);
     }
 }

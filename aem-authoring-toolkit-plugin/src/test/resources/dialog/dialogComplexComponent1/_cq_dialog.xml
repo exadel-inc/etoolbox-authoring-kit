@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           jcr:primaryType="nt:unstructured"
           jcr:title="Test Component"
           sling:resourceType="cq/gui/components/authoring/dialog"
@@ -14,11 +18,10 @@
                     jcr:primaryType="nt:unstructured"
                     sling:resourceType="granite/ui/components/coral/foundation/tabs">
                 <items jcr:primaryType="nt:unstructured">
-                    <tab_1
-                            granite:hidden="{Boolean}false"
-                            jcr:primaryType="nt:unstructured"
-                            jcr:title="Tab_1"
-                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                    <firstTab jcr:primaryType="nt:unstructured"
+                              sling:resourceType="granite/ui/components/coral/foundation/container"
+                              jcr:title="First tab"
+                              granite:hidden="{Boolean}false">
                         <items jcr:primaryType="nt:unstructured">
                             <firstField
                                     jcr:primaryType="nt:unstructured"
@@ -93,6 +96,13 @@
                                             value="4"/>
                                 </items>
                             </thirdField>
+                        </items>
+                    </firstTab>
+                    <secondTab jcr:primaryType="nt:unstructured"
+                               sling:resourceType="granite/ui/components/coral/foundation/container"
+                               jcr:title="Second tab"
+                               granite:hidden="{Boolean}false">
+                        <items jcr:primaryType="nt:unstructured">
                             <firstPrimaryDialog
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
@@ -537,6 +547,13 @@
                                             value="{Boolean}true"/>
                                 </items>
                             </thirdPrimaryDialog>
+                        </items>
+                    </secondTab>
+                    <thirdTab jcr:primaryType="nt:unstructured"
+                              sling:resourceType="granite/ui/components/coral/foundation/container"
+                              jcr:title="Third tab"
+                              granite:hidden="{Boolean}false">
+                        <items jcr:primaryType="nt:unstructured">
                             <firstSecondaryDialogEnabled
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/switch"
@@ -818,40 +835,18 @@
                                 </items>
                             </secondSecondaryDialog>
                         </items>
-                    </tab_1>
-                    <tab_2
-                            granite:hidden="{Boolean}false"
-                            jcr:primaryType="nt:unstructured"
-                            jcr:title="Tab_2"
-                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                    </thirdTab>
+                    <fourthTab jcr:primaryType="nt:unstructured"
+                               sling:resourceType="granite/ui/components/coral/foundation/container"
+                               jcr:title="Fourth tab"
+                               granite:hidden="{Boolean}true"
+                               granite:rel="me">
                         <items jcr:primaryType="nt:unstructured"/>
-                    </tab_2>
-                    <tab_3
-                            granite:hidden="{Boolean}false"
-                            jcr:primaryType="nt:unstructured"
-                            jcr:title="Tab_3"
-                            sling:resourceType="granite/ui/components/coral/foundation/container">
-                        <items jcr:primaryType="nt:unstructured"/>
-                    </tab_3>
-                    <tab_4
-                            granite:hidden="{Boolean}false"
-                            jcr:primaryType="nt:unstructured"
-                            jcr:title="Tab_4"
-                            sling:resourceType="granite/ui/components/coral/foundation/container">
-                        <items jcr:primaryType="nt:unstructured"/>
-                    </tab_4>
-                    <tab_5
-                            granite:hidden="{Boolean}false"
-                            jcr:primaryType="nt:unstructured"
-                            jcr:title="Tab_5"
-                            sling:resourceType="granite/ui/components/coral/foundation/container">
-                        <items jcr:primaryType="nt:unstructured"/>
-                    </tab_5>
-                    <tab_6
-                            granite:hidden="{Boolean}false"
-                            jcr:primaryType="nt:unstructured"
-                            jcr:title="Tab_6"
-                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                    </fourthTab>
+                    <fifthTab jcr:primaryType="nt:unstructured"
+                              sling:resourceType="granite/ui/components/coral/foundation/container"
+                              jcr:title="Fifth tab"
+                              granite:hidden="{Boolean}false">
                         <items jcr:primaryType="nt:unstructured">
                             <sampleFirstNumberField
                                     jcr:primaryType="nt:unstructured"
@@ -880,12 +875,11 @@
                                     step="{Double}1.0"
                                     value="0"/>
                         </items>
-                    </tab_6>
-                    <tab_7
-                            granite:hidden="{Boolean}false"
-                            jcr:primaryType="nt:unstructured"
-                            jcr:title="Tab_7"
-                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                    </fifthTab>
+                    <sixthTab jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/container"
+                                jcr:title="Sixth tab"
+                                granite:hidden="{Boolean}false">
                         <items jcr:primaryType="nt:unstructured">
                             <sampleFieldSet
                                     jcr:primaryType="nt:unstructured"
@@ -907,7 +901,7 @@
                                 </items>
                             </sampleFieldSet>
                         </items>
-                    </tab_7>
+                    </sixthTab>
                 </items>
             </tabs>
         </items>
