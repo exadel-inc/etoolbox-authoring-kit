@@ -16,7 +16,7 @@ public @interface ClassField {
      * The Java class possessing the field
      * @return {@code Class<?>} instance
      */
-    Class<?> value();
+    Class<?> source() default Object.class;
 
     /**
      * The name of the field
