@@ -198,7 +198,7 @@ public class TestTabs {
 }
 ```
 #### Tabs inheritance
-In *AEM Authoring Toolkit*, if a Java class annotated with `@Dialog` extends another class where potential dialog fields exists, these fields also become the part of the dialog. This may sound inobvious, because Java itself doesn't have the notion of field inheritance while AEM entities have (see _overlaying_).
+In *AEM Authoring Toolkit*, if a Java class annotated with `@Dialog` extends another class where potential dialog fields exist, these fields also become the part of the dialog. This may sound inobvious, because Java itself doesn't have the notion of field inheritance while AEM entities have (see _overlaying_).
 
 Same way, tabs defined in a superclass are "inherited" by the subclass, and the `PlaceOnTab` instructions are in effect.
 
