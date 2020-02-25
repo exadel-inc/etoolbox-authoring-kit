@@ -44,6 +44,7 @@ public class ResourceTypes {
     public static final String SELECT = "granite/ui/components/coral/foundation/form/select";
     public static final String SWITCH = "granite/ui/components/coral/foundation/form/switch";
     public static final String TABS = "granite/ui/components/coral/foundation/tabs";
+    public static final String TAG = "cq/gui/components/coral/common/form/tagfield";
     public static final String TAGS = "cq/gui/components/common/datasources/tags";
     public static final String TEXTAREA = "granite/ui/components/coral/foundation/form/textarea";
     public static final String TEXTFIELD = "granite/ui/components/coral/foundation/form/textfield";

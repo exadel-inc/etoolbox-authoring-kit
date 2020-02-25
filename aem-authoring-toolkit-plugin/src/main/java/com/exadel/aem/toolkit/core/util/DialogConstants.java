@@ -85,6 +85,7 @@ public class DialogConstants {
     public static final String PN_ALLOW = "allow";
     public static final String PN_ALLOW_BLOCK_TAGS = "allowBlockTags";
     public static final String PN_AUTOGENERATE_COLORS = "autogenerateColors";
+    public static final String PN_AUTOCREATE_TAG = "autocreateTag";
     public static final String PN_CHECKED = "checked";
     public static final String PN_COMPONENT_GROUP = "componentGroup";
     public static final String PN_COMPOSITE = "composite";

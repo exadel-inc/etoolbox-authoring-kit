@@ -30,6 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
+import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
@@ -52,6 +53,7 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
  */
 public enum DialogWidgets implements DialogWidget {
     TEXT_FIELD(TextField.class),
+    TAG_FIELD(TagField.class, new TagFieldHandler()),
     CHECKBOX(Checkbox.class, new CheckboxHandler()),
     SELECT(Select.class, new SelectHandler()),
     PATH_FIELD(PathField.class),
