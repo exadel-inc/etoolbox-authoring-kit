@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.util.TestHelper;
-import com.exadel.aem.toolkit.core.util.TestsConstants;
+import com.exadel.aem.toolkit.core.util.TestConstants;
 
 public abstract class DefaultTestBase {
     static final Logger LOG = LoggerFactory.getLogger("AEM Authoring Toolkit Unit Tests");
@@ -42,15 +42,19 @@ public abstract class DefaultTestBase {
     @Before
     public void setUp() {
         List<String> classpathElements = Arrays.asList(
-                TestsConstants.PLUGIN_MODULE_TARGET,
-                TestsConstants.API_MODULE_TARGET,
-                TestsConstants.PLUGIN_MODULE_TEST_TARGET
+                TestConstants.PLUGIN_MODULE_TARGET,
+                TestConstants.API_MODULE_TARGET,
+                TestConstants.PLUGIN_MODULE_TEST_TARGET
         );
         PluginRuntime.initialize(classpathElements, StringUtils.EMPTY, getExceptionSetting());
     }
 
     void testComponent(Class<?> tested) {
-        Path componentPathExpected = Paths.get(getResourceFolder(tested));
+        testComponent(tested, null);
+    }
+
+    void testComponent(Class<?> tested, String resourceAlias) {
+        Path componentPathExpected = Paths.get(getResourceFolderPath(tested, resourceAlias));
         try {
             Assert.assertTrue(TestHelper.doTest(tested.getName(), componentPathExpected));
         } catch (ClassNotFoundException ex) {
@@ -62,10 +66,13 @@ public abstract class DefaultTestBase {
         return EXCEPTION_SETTING;
     }
 
-    private String getResourceFolder(Class<?> tested) {
-        String folderName = tested.getSimpleName().contains(KEYWORD_TEST)
-                ?  tested.getSimpleName().replace(KEYWORD_TEST, KEYWORD_DIALOG)
-                : KEYWORD_DIALOG + tested.getSimpleName();
-        return TestsConstants.PATH_TO_EXPECTED_FILES + "\\" + RegExUtils.removePattern(folderName, SUFFIX_PATTERN);
+    private static String getResourceFolderPath(Class<?> tested, String resourceAlias) {
+        String folderName = resourceAlias;
+        if (StringUtils.isEmpty(folderName)) {
+            folderName = tested.getSimpleName().contains(KEYWORD_TEST)
+                    ?  tested.getSimpleName().replace(KEYWORD_TEST, KEYWORD_DIALOG)
+                    : KEYWORD_DIALOG + tested.getSimpleName();
+        }
+        return TestConstants.PATH_TO_EXPECTED_FILES + "\\" + RegExUtils.removePattern(folderName, SUFFIX_PATTERN);
     }
 }

@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 
-import static com.exadel.aem.toolkit.core.util.TestsConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
@@ -34,7 +34,7 @@ import static com.exadel.aem.toolkit.core.util.TestsConstants.DEFAULT_COMPONENT_
         }
 )
 @DependsOnTab(query = "test-query", tabTitle = "First tab")
-@DependsOnTab(query = "test-query", tabTitle = "Third tab")
+@DependsOnTab(query = "test-query", tabTitle = "Second tab")
 @SuppressWarnings("unused")
 public class DependsOnTabAnnotation {
     @DialogField(label = "Field on the first tab")

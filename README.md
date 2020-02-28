@@ -14,6 +14,7 @@
         - [Widget annotations A-Z](#widget-annotations-a-z)
         - [Field grouping and multiplying](#field-grouping-and-multiplying)
         - [Implementing RichTextEditor](#implementing-richtexteditor)
+   - [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it)
    - [@Extends-ing fields annotations](#extends-ing-fields-annotations)
    - [EditConfig settings](#editconfig-settings)
    - [Value restrictions](#value-restrictions)
@@ -63,7 +64,7 @@ Feel free to clone the project sources and run ```mvn clean install``` from the 
 <plugin>
     <groupId>com.exadel.aem</groupId>
     <artifactId>aem-authoring-toolkit-plugin</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <executions>
         <execution>
             <goals>
@@ -72,13 +73,12 @@ Feel free to clone the project sources and run ```mvn clean install``` from the 
         </execution>
     </executions>
     <configuration>
-        <!-- Place here the path to the node under which your component nodes are stored -->
+        <!-- MANDATORY: Place here the path to the node under which your component nodes are stored -->
         <componentsPathBase>jcr_root/apps/projectName/components</componentsPathBase>
         <!-- OPTIONAL: specify root package for component classes --> 
         <componentsReferenceBase>com.acme.project.samples</componentsReferenceBase>
         <!-- OPTIONAL: specify list of exceptions, comma-separated, that would cause this plugin to terminate
-            the build process. 'ALL' and 'NONE' may be specified as well. 
-            Default is java.io.IOException -->
+            the build process. 'ALL' and 'NONE' may be specified as well. -->
         <terminateOn>ALL</terminateOn>
     </configuration>
 </plugin>
@@ -99,7 +99,7 @@ Add the following dependency to your content package's _POM_ file.
     <type>content-package</type>
 </dependency>
 ```
- And then specify the subpackage in your _Vault_ plugin.
+ And then for instance specify the subpackage in your _Vault_ plugin (refer to your content plugin documentation for particulars).
  ```xml
     <plugin>
         <groupId>com.day.jcr.vault</groupId>
@@ -166,7 +166,7 @@ public class Dialog {
     }
 }
 ```
-(Note the `layout = DialogLayout.TABS` assignment. This is to specify that the dialog *must* display fields encapsulated in nested classes per corresponding tabs. If this property is skipped, or set to its default `FIXED_COLUMNS` value, tabs will not show and only "immediate" fields of the basic class will be displayed).
+(Note the `layout = DialogLayout.TABS` assignment. This is to specify that the dialog *must* display fields encapsulated in nested classes per corresponding tabs. If `layout` is skipped, or set to its default `FIXED_COLUMNS` value, tabs will not show and only "immediate" fields of the basic class will be displayed).
 
 The other way of laying out tabs is to define array of `@Tab` within `@Dialog` annotation. Then, to settle a field to a certain tab you will need  to add `@PlaceOnTab` annotation to this particular field.  The values of `@PlaceOnTab` must correspond to the *title* value of the desired tab. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that tab title is specified everywhere in the very same format, no extra spaces, etc.
 ```java
@@ -197,6 +197,31 @@ public class TestTabs {
     String field3;
 }
 ```
+#### Tabs inheritance
+In *AEM Authoring Toolkit*, if a Java class annotated with `@Dialog` extends another class where potential dialog fields exist, these fields also become the part of the dialog. This may sound inobvious, because Java itself doesn't have the notion of field inheritance while AEM entities have (see _overlaying_).
+
+Same way, tabs defined in a superclass are "inherited" by the subclass, and the `PlaceOnTab` instructions are in effect.
+
+If you do not want to have some "inherited" tabs in yor dialog, add the `@IgnoreTabs` annotation as follows:
+```java
+@Dialog(
+    name = "test-component",
+    title = "test-component-dialog",
+    tabs = {
+        @Tab(title = "Fourth tab"),
+        @Tab(title = "Fifth tab")
+    }
+)
+// In AEM Authoring Toolkit, tabs are manipulated by their title strings
+@IgnoreTabs({"First tab", "Second tab"})
+public class TestTabsExtension { /* ... */}
+```
+
+Note that `@IgnoreTabs` setting is *not* inherited, unlike fields themselves, and works only for the class where it was specified. 
+
+See also: [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it) 
+
+ 
 ### Fields annotations
 The plugin makes use of `@DialogField`  annotation and the set of specific annotations, such as `@TextField`, `@Checkbox`, `@DatePicker`, etc., discussed further. The latter are referred as field-specific annotations.
 
@@ -662,6 +687,30 @@ RichTextEditor allows to define text visual features by [CSS rules](https://help
 ###### Miscellaneous tweaks
 Additionally, a user can specify amount of edit operations stored for undo/redo logic (via [maxUndoSteps](https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/configure-rich-text-editor-plug-ins.html#undohistory) property), the width of tabulation (in spaces, via [tabSize](https://helpx.adobe.com/experience-manager/6-3/sites/administering/using/configure-rich-text-editor-plug-ins.html#tabsize) property) and the indentation margin of lists (in spaces, via [indentMargin](https://helpx.adobe.com/experience-manager/6-3/sites/administering/using/configure-rich-text-editor-plug-ins.html#indentmargin) property).
 
+#### Fields inheritance and ways to cancel it
+
+Same as dialog tabs, dialog fields are "inherited" across the Java classes. However, there is the possibility to "cancel" a superclass-bound field from rendering in a current dialog or a narrower container. Add `@IgnoreFields` annotation to the current class:
+```java
+    @Dialog(
+            name = "component-dialog",
+            title = "Dialog Title",
+            layout = DialogLayout.TABS
+    )
+    @IgnoreFields({
+            // The "field" parameter is mandatory while "source" may be skipped
+            // In such case, current class is implied  
+            @ClassField(source = ComponentWithTabsAndInnerClass.class, field = "field1"),
+            @ClassField(field = "field2")
+    })
+    public static class ComponentDialog extends MultipleFieldsDialog { /* ... */ }
+```   
+This setting works similarly for dialog classes, and also _FieldSets_ and _Multifields_. Yet there is the possibility to control secondary containers (FieldSets and Multifields) in an even more flexible manner.
+
+If we add an `@IgnoreFields(@ClassField(...))` instruction with its _source_ pointing to a FieldSet or Multifield class to the current dialog, the field will be ignored in all fieldsets / multifields of the given type that are declared within the dialog.
+
+But if we need to ignore a field in one particular FieldSet of Multifield within the dialog, we may add `@IgnoreFields(@ClassField(...))` to that very field, below `@FieldSet` or `@Multifield` annotation accordingly. The _source_ parameter is naturally skipped in this case. The setting will take effect for the field and will not affect others. 
+
+Same as for tabs ignoring, the `@IgnoreFields` setting is *not* inherited, unlike fields themselves, and works only for the class where it was specified. 
 
 #### @Extends-ing fields annotations 
 Several dialog fields, such as RichTextEditor field, may require vast and sophisticated annotation code. If there are multiple such fields in your Java files, they may become overgrown and difficult to maintain. Moreover, you will probably face the need to copy the lengthy annotation listings between fields, e.g. if you plan to use several RTE boxes with virtually the same set of toolbar buttons, plugins, etc.

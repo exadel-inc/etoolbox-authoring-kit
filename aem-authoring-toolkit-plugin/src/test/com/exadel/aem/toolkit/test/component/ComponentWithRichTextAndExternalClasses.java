@@ -38,13 +38,14 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.core.util.TestConstants;
 
 @SuppressWarnings("unused")
 @Dialog(
-        name = "test-component",
+        name = TestConstants.DEFAULT_COMPONENT_NAME,
         title = "Component with external classes",
         description = "Component with external classes",
-        componentGroup = "componentsGroup",
+        componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
         layout = DialogLayout.TABS,
         resourceSuperType = "/resource/super/type",
         tabs = {

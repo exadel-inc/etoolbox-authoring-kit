@@ -14,21 +14,19 @@
 
 package com.exadel.aem.toolkit.test.component;
 
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
-import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.ListenerConstants;
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
@@ -38,29 +36,40 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.AutocompleteDatasource;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.core.util.TestConstants;
 
-@Dialog(name = "test-component",
-        title = "First dialog title",
-        description = "First dialog description",
-        componentGroup = "TestComponentGroup",
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_1;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_2;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_3;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_4;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_5;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_6;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_7;
+
+@Dialog(name = TestConstants.DEFAULT_COMPONENT_NAME,
+        title = TestConstants.DEFAULT_COMPONENT_TITLE,
+        description = TestConstants.DEFAULT_COMPONENT_DESCRIPTION,
+        componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
         layout = DialogLayout.TABS,
         disableTargeting = true,
         resourceSuperType = "TestComponentSuperType",
         extraClientlibs = "cq.common.wcm",
         tabs = {
-                @Tab(title = "First tab"),
-                @Tab(title = "Second tab"),
-                @Tab(title = "Third tab"),
-                @Tab(title = "Fourth tab"),
-                @Tab(title = "Fifth tab"),
-                @Tab(title = "Sixth tab"),
-                @Tab(title = "Seventh tab")
+                @Tab(title = LABEL_TAB_1),
+                @Tab(title = LABEL_TAB_2),
+                @Tab(title = LABEL_TAB_3),
+                @Tab(title = LABEL_TAB_4),
+                @Tab(title = LABEL_TAB_5),
+                @Tab(title = LABEL_TAB_6),
+                @Tab(title = LABEL_TAB_7)
         })
 @EditConfig(
         listeners = {
@@ -98,8 +107,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 )
 @SuppressWarnings("unused")
 public class ComplexComponent2 {
-    private static final String TAB_TITLE_FEED = "Feed";
-
     private static final String PRIMARY_ELEMENT_LABEL = "Primary Element";
     private static final String SECONDARY_ELEMENT_LABEL = "Secondary Element";
     private static final String VIDEO_ELEMENT_LABEL = "Video Element";
@@ -137,7 +144,7 @@ public class ComplexComponent2 {
                     @Option(text = "First option", value = LEFT_LAYOUT, selected = true),
                     @Option(text = "Second option", value = RIGHT_LAYOUT),
                     @Option(text = "Third option", value = STACKED_LAYOUT),
-                    @Option(text = "Forth option", value = FIELD_LAYOUT)
+                    @Option(text = "Fourth option", value = FIELD_LAYOUT)
             })
     private String layout;
 
@@ -153,7 +160,6 @@ public class ComplexComponent2 {
                     @RadioButton(text = "Light", value = LIGHT_TEXT_THEME)
             }
     )
-    @PlaceOnTab("Tab title general")
     private String text;
 
     @DialogField(
@@ -163,7 +169,6 @@ public class ComplexComponent2 {
             required = true
     )
     @TextField
-    @PlaceOnTab("Tab title general")
     private String header;
 
     @DialogField(
@@ -179,7 +184,6 @@ public class ComplexComponent2 {
                     RteFeatures.SUBSUPERSCRIPT_SUPERSCRIPT
             }
     )
-    @PlaceOnTab("Tab title general")
     private String description;
 
     @DialogField(
@@ -188,6 +192,7 @@ public class ComplexComponent2 {
             description = "description enable gradient"
     )
     @Checkbox(checked = true)
+    @PlaceOnTab(LABEL_TAB_2)
     private Boolean gradient;
 
     @DialogField(
@@ -197,7 +202,7 @@ public class ComplexComponent2 {
             required = true
     )
     @TextField
-    @PlaceOnTab("Tab title general")
+    @PlaceOnTab(LABEL_TAB_3)
     private String mediaText;
 
     @DialogField(
@@ -207,21 +212,20 @@ public class ComplexComponent2 {
             required = true
     )
     @TextField
-    @PlaceOnTab("Tab title general")
+    @PlaceOnTab(LABEL_TAB_3)
     private String textContent;
 
-    //2
     @DialogField
     @Attribute(data = {
             @Data(name = "feed-dialog", value = "1")
     })
     @FieldSet(namePrefix = FEED_1, title = "Feed first")
-    @PlaceOnTab(TAB_TITLE_FEED)
+    @PlaceOnTab(LABEL_TAB_4)
     private FeedFieldSet feedFirst;
 
     @DialogField
     @FieldSet(namePrefix = FEED_1, title = "Feed first element")
-    @PlaceOnTab(TAB_TITLE_FEED)
+    @PlaceOnTab(LABEL_TAB_4)
     private ElementFieldSet feedFirstElement;
 
     @DialogField(
@@ -230,33 +234,32 @@ public class ComplexComponent2 {
             description = "description enable feed 1"
     )
     @Switch
-    @PlaceOnTab(TAB_TITLE_FEED)
+    @PlaceOnTab(LABEL_TAB_4)
     private boolean enableFeedFirst;
 
     @DialogField()
     @Attribute(data = {@Data(name = "feed-dialog", value = "2")})
     @FieldSet(namePrefix = FEED_2, title = "Feed")
-    @PlaceOnTab(TAB_TITLE_FEED)
+    @PlaceOnTab(LABEL_TAB_4)
     private FeedFieldSet feed;
 
     @DialogField
     @FieldSet(namePrefix = FEED_2, title = "Feed Second Element")
-    @PlaceOnTab(TAB_TITLE_FEED)
+    @PlaceOnTab(LABEL_TAB_4)
     private ElementFieldSet feedSecondElement;
 
-    //3
     @DialogField(
             name = "field enable primary element",
             label = "label enable primary element",
             description = "description enable primary element"
     )
     @Switch
-    @PlaceOnTab("Tab title element")
+    @PlaceOnTab(LABEL_TAB_5)
     private boolean primaryElementEnable;
 
     @DialogField
     @FieldSet(namePrefix = PRIMARY, title = PRIMARY_ELEMENT_LABEL)
-    @PlaceOnTab("Tab title element")
+    @PlaceOnTab(LABEL_TAB_5)
     private ElementIconFieldSet primaryElement;
 
     @DialogField(
@@ -265,12 +268,12 @@ public class ComplexComponent2 {
             description = "description enable secondary element"
     )
     @Switch
-    @PlaceOnTab("Tab title element")
+    @PlaceOnTab(LABEL_TAB_5)
     private boolean secondaryElementEnable;
 
     @DialogField()
     @FieldSet(namePrefix = SECONDARY, title = SECONDARY_ELEMENT_LABEL)
-    @PlaceOnTab("Tab title element")
+    @PlaceOnTab(LABEL_TAB_5)
     private ElementIconFieldSet secondaryElement;
 
     @DialogField(
@@ -279,25 +282,23 @@ public class ComplexComponent2 {
             description = "description enable video element"
     )
     @Switch
-    @PlaceOnTab("Tab title element")
+    @PlaceOnTab(LABEL_TAB_5)
     private boolean videoElementEnable;
 
     @DialogField
     @FieldSet(title = VIDEO_ELEMENT_LABEL)
-    @PlaceOnTab("Tab title element")
+    @PlaceOnTab(LABEL_TAB_5)
     private VideoElementFieldSet videoElement;
 
-    //4
     @DialogField(
             name = "fieldImage",
             label = "label image",
             required = true
     )
     @ImageUpload(sizeLimit = 100L)
-    @PlaceOnTab("Tab title image")
+    @PlaceOnTab(LABEL_TAB_6)
     private String imagePath;
 
-    //5
     @DialogField(
             name = "fieldProductImage",
             label = "label product image",
@@ -305,27 +306,26 @@ public class ComplexComponent2 {
     )
     @ImageUpload(sizeLimit = 0L)
     @Extends(value = ComplexComponent2.class, field = "imagePath")
-    @PlaceOnTab("Tab title product image")
+    @PlaceOnTab(LABEL_TAB_6)
     private String productImagePath;
 
-    //6
+    @DialogField(
+            name = "field enable widget",
+            label = "labelEnableWidget",
+            description = "descriptionEnableWidget"
+    )
+    @Checkbox
+    @PlaceOnTab(LABEL_TAB_7)
+    private boolean enableWidget;
+
     @DialogField(
             name = "field_widget",
             label = "label widget",
             description = "description widget"
     )
     @PathField
-    @PlaceOnTab("tab widget")
+    @PlaceOnTab(LABEL_TAB_7)
     private String widget;
-
-    @DialogField(
-            name = "field enable widget",
-            label = "labelEnableWidget",
-            description = "descriptionwidget"
-    )
-    @Checkbox
-    @PlaceOnTab("tab widget")
-    private boolean enableWidget;
 
 
     private static class ElementFieldSet {
