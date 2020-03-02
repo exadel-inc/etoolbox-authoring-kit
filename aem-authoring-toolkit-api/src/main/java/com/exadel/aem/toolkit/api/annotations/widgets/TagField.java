@@ -53,13 +53,6 @@ public @interface TagField {
     boolean forceSelection() default false;
 
     /**
-     * Maps to the 'root' attribute of this TouchUI dialog component's node.
-     * Used to define the root path of the tags
-     * @return String value representing valid JCR path
-     */
-    String rootPath() default "/";
-
-    /**
      * Maps to the 'autocreateTag' attribute of this TouchUI dialog component's node.
      * When set to true, create the user defined tag during form submission
      * @return True or false
@@ -74,4 +67,10 @@ public @interface TagField {
      */
     boolean deleteHint () default true;
 
+    /**
+     * Maps to the 'root' attribute of this TouchUI dialog component's node.
+     * Used to define the root path of the tags
+     * @return String value representing valid JCR path
+     */
+    String rootPath() default "/";
 }

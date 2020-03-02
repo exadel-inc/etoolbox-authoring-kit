@@ -53,7 +53,7 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
  */
 public enum DialogWidgets implements DialogWidget {
     TEXT_FIELD(TextField.class),
-    TAG_FIELD(TagField.class, new TagFieldHandler()),
+    TAG_FIELD(TagField.class),
     CHECKBOX(Checkbox.class, new CheckboxHandler()),
     SELECT(Select.class, new SelectHandler()),
     PATH_FIELD(PathField.class),
