@@ -46,12 +46,6 @@ public @interface TagField {
     boolean multiple() default false;
 
     /**
-     * Maps to the 'validation' attribute of this TouchUI dialog component's node.
-     * @return String value, or an array of non-blank strings
-     */
-    String[] validation() default {};
-
-    /**
      * Maps to the 'forceSelection' attribute of this TouchUI dialog component's node.
      * If set to true, forces the user to select only from the available choices
      * @return True or false
@@ -64,4 +58,20 @@ public @interface TagField {
      * @return String value representing valid JCR path
      */
     String rootPath() default "/";
+
+    /**
+     * Maps to the 'autocreateTag' attribute of this TouchUI dialog component's node.
+     * When set to true, create the user defined tag during form submission
+     * @return True or false
+     */
+    boolean autocreateTag() default true;
+
+    /**
+     * Maps to the 'deleteHint' attribute of this TouchUI dialog component's node.
+     * If set to true, generate the `SlingPostServlet @Delete
+     * <http://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#delete>`
+     * @return True or false
+     */
+    boolean deleteHint () default true;
+
 }
