@@ -87,6 +87,7 @@ public class DialogConstants {
     public static final String PN_AUTOGENERATE_COLORS = "autogenerateColors";
     public static final String PN_AUTOCREATE_TAG = "autocreateTag";
     public static final String PN_CHECKED = "checked";
+    public static final String PN_COMPONENT_CLASS = "componentClass";
     public static final String PN_COMPONENT_GROUP = "componentGroup";
     public static final String PN_COMPOSITE = "composite";
     public static final String PN_CSS_EXTERNAL = "cssExternal";
@@ -123,6 +124,7 @@ public class DialogConstants {
     public static final String PN_REF = "ref";
     public static final String PN_RETYPE = "retype";
     public static final String PN_SELECTED = "selected";
+    public static final String PN_SOURCE_CLASS = "source";
     public static final String PN_TAB_SIZE = "tabSize";
     public static final String PN_TARGET_EXTERNAL = "targetExternal";
     public static final String PN_TARGET_INTERNAL = "targetInternal";

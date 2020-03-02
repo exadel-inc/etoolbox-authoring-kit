@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.ConversionUtility;
+import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.validation.Validation;
 
@@ -104,7 +104,7 @@ public class DatePickerHandler implements Handler, BiConsumer<Element, Field> {
             return;
         }
         try {
-            getXmlUtil().setAttribute(element, attribute, formatter.format(Objects.requireNonNull(ConversionUtility.getDateTimeInstance(value))));
+            getXmlUtil().setAttribute(element, attribute, formatter.format(Objects.requireNonNull(PluginObjectUtility.getDateTimeInstance(value))));
         } catch (DateTimeException | NullPointerException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(
                     INVALID_VALUE_EXCEPTION_TEMPLATE,

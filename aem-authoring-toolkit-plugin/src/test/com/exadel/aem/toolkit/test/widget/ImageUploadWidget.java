@@ -20,7 +20,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ButtonVariant;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 
-import static com.exadel.aem.toolkit.core.util.TestsConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,

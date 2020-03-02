@@ -46,7 +46,7 @@ public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Elemen
         );
         Element contentItems = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
 
-        Element column = getXmlUtil().createNodeElement(
+        Element contentItemsColumn = getXmlUtil().createNodeElement(
                 DialogConstants.NN_COLUMN,
                 Collections.singletonMap(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER)
         );
@@ -56,9 +56,9 @@ public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Elemen
         content.appendChild(layout);
         content.appendChild(contentItems);
 
-        contentItems.appendChild(column);
+        contentItems.appendChild(contentItemsColumn);
 
-        List<Field> allFields = PluginReflectionUtility.getAllNonStaticFields(componentClass);
-        Handler.appendToContainer(allFields, column);
+        List<Field> allFields = PluginReflectionUtility.getAllFields(componentClass);
+        Handler.appendToContainer(contentItemsColumn, allFields);
     }
 }

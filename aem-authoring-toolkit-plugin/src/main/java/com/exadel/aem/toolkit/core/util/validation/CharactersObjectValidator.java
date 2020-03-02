@@ -13,9 +13,11 @@
  */
 package com.exadel.aem.toolkit.core.util.validation;
 
+import java.util.Arrays;
+
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
-import com.exadel.aem.toolkit.core.util.ConversionUtility;
+import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 
 /**
  *  {@link Validator} implementation for testing that provided character range is valid
@@ -58,13 +60,15 @@ public class CharactersObjectValidator extends AllNotBlankValidator {
      * Gets a {@code Characters} annotation instance with redundant data filtered out based on the result
      * of {@link AllNotBlankValidator#test(Object)} and {@link CharactersObjectValidator#test(Object)}
      * @param source Source {@code Characters} annotation
-     * @return Filtered {@code Characters} value
+     * @return Filtered {@code Characters} value:
+     * either with the two of "name" and "entity" String fields set, while the numeric fields are nilled,
+     * or with the two "rangeStart" and "rangeEnd" numeric fields set, while String fields are voided
      */
     public Characters getFilteredInstance(Characters source) {
         if (super.test(source)) {
-            return ConversionUtility.getFilteredAnnotation(source, Characters.class, new String[] {METHOD_NAME, METHOD_ENTITY});
+            return PluginObjectUtility.filter(source, Characters.class, Arrays.asList(METHOD_RANGE_START, METHOD_RANGE_END));
         }
-        return ConversionUtility.getFilteredAnnotation(source, Characters.class, new String[] {METHOD_RANGE_START, METHOD_RANGE_END});
+        return PluginObjectUtility.filter(source, Characters.class, Arrays.asList(METHOD_NAME, METHOD_ENTITY));
     }
 
     @Override

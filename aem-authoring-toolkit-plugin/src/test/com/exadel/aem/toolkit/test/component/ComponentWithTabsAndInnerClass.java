@@ -29,49 +29,59 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.core.util.TestConstants;
 
-@Dialog(name = "helloworld",
-        title = "Hello world 1 properties",
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_1;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_2;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_3;
+
+@Dialog(name = TestConstants.DEFAULT_COMPONENT_NAME,
+        title = TestConstants.DEFAULT_COMPONENT_TITLE,
         layout = DialogLayout.TABS,
         tabs = {
-                @Tab(title = "First tab"),
-                @Tab(title = "Second tab"),
-                @Tab(title = "Third tab")
+                @Tab(title = LABEL_TAB_1),
+                @Tab(title = LABEL_TAB_2),
+                @Tab(title = LABEL_TAB_3)
         }
 )
 @SuppressWarnings("unused")
 public class ComponentWithTabsAndInnerClass {
 
-    @DialogField(label = "Field 1", description = "This is the first field.",wrapperClass = "my-class",
+    @DialogField(
+            label = "Field 1",
+            description = "This is the first field.",
+            wrapperClass = "my-class",
             renderHidden = true)
     @TextField
-    @Attribute(id = "field1-id",
+    @Attribute(
+            id = "field1-id",
             clas = "field1-attribute-class",
             data = {
                     @Data(name = "field1-data1", value = "value-data1"),
                     @Data(name = "field1-data2", value = "value-data2")
             })
-    @PlaceOnTab("First tab")
+    @PlaceOnTab(LABEL_TAB_1)
     String field1;
 
     @DialogField(label="Field 2")
     @PathField(rootPath = "/content")
-    @PlaceOnTab("Second tab")
+    @PlaceOnTab(LABEL_TAB_2)
     String field2;
 
     @DialogField(label="Field 2.1", wrapperClass = "my-wrapper-class")
     @TextField
-    @PlaceOnTab("Third tab")
+    @PlaceOnTab(LABEL_TAB_3)
     String field3;
 
     @DialogField(description = "This is the second second field")
     @Checkbox(text = "Checkbox 2")
-    @PlaceOnTab("First tab")
+    @PlaceOnTab(LABEL_TAB_1)
     String field4;
 
     @FieldSet(title = "Field set example")
-    @PlaceOnTab("Second tab")
+    @PlaceOnTab(LABEL_TAB_2)
     FieldSetExample fieldSet;
+
     static class FieldSetExample{
         @DialogField
         @TextField
@@ -98,11 +108,6 @@ public class ComponentWithTabsAndInnerClass {
             @Option(text = "4 star", value = "4"),
             @Option(text = "5 star", value = "5")
     }, emptyText = "Select rating" )
-    @PlaceOnTab("Third tab")
+    @PlaceOnTab(LABEL_TAB_3)
     String dropdown;
-
-    @DialogField(label="hidden field", renderHidden = true)
-    @TextField
-    @PlaceOnTab("Forth tab")
-    String field5;
 }

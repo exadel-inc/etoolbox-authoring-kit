@@ -15,20 +15,22 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
-import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite {@code FieldSet} widget functionality
  * within the {@code cq:dialog} XML node
  */
-public class FieldSetHandler implements Handler, BiConsumer<Element, Field> {
+public class FieldSetHandler implements WidgetSetHandler {
+    private static final String EMPTY_FIELDSET_EXCEPTION_MESSAGE = "No valid fields found in fieldset class ";
+
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
@@ -36,16 +38,29 @@ public class FieldSetHandler implements Handler, BiConsumer<Element, Field> {
      */
     @Override
     public void accept(Element element, Field field) {
-        Class<?> fieldSetClass = field.getType();
+        // Define the working @FieldSet annotation instance and the fieldset type
         FieldSet fieldSet = field.getDeclaredAnnotation(FieldSet.class);
-        String restoredNamePrefix = getXmlUtil().getNamePrefix();
-        if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
-            getXmlUtil().setNamePrefix(restoredNamePrefix + getXmlUtil().getValidSimpleName(fieldSet.namePrefix()));
+        Class<?> fieldSetType = field.getType();
+
+        // Get the filtered fields collection for the current container; early return if collection is empty
+        List<Field> fields = getContainerFields(element, field, fieldSetType);
+        if(fields.isEmpty()) {
+            PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
+                    EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName()
+            ));
+            return;
         }
 
-        List<Field> fields = PluginReflectionUtility.getAllNonStaticFields(fieldSetClass);
+        // Cache existing name prefix and set updated name prefix with the parameter of the FieldSet annotation as needed
+        String previousNamePrefix = getXmlUtil().getNamePrefix();
+        if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
+            getXmlUtil().setNamePrefix(previousNamePrefix + getXmlUtil().getValidSimpleName(fieldSet.namePrefix()));
+        }
 
-        Handler.appendToContainer(fields, element, false);
-        getXmlUtil().setNamePrefix(restoredNamePrefix);
+        // append the valid fields to the container
+        Handler.appendToContainer(element, fields);
+
+        // Restore the name prefix
+        getXmlUtil().setNamePrefix(previousNamePrefix);
     }
 }
