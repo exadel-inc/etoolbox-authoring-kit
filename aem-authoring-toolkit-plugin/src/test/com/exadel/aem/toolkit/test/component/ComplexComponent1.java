@@ -223,7 +223,7 @@ public class ComplexComponent1 {
     private String secondField;
 
     @DialogField(
-            name = "third_Field",
+            name = "field_with:namespace",
             label = "Third field label",
             description = "Third field description",
             required = true

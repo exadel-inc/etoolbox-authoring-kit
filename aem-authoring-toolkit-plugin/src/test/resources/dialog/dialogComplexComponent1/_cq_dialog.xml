@@ -73,7 +73,7 @@
                                     disabled="{Boolean}false"
                                     fieldDescription="Third field description"
                                     fieldLabel="Third field label"
-                                    name="./third_Field"
+                                    name="./field_with:namespace"
                                     renderHidden="{Boolean}false"
                                     required="{Boolean}true">
                                 <items jcr:primaryType="nt:unstructured">
