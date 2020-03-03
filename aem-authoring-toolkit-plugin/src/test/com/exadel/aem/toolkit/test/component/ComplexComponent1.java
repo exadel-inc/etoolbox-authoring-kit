@@ -195,7 +195,7 @@ public class ComplexComponent1 {
     private static final String LABEL_SECONDARY_DIALOG_ENABLED = "Enable Additional Topic?";
 
     @DialogField(
-            name = "first_field",
+            name = "field_with_colon_at_the_end:",
             label = "First field label",
             description = "First field description",
             validation = "foundation.jcr.name",
@@ -206,7 +206,7 @@ public class ComplexComponent1 {
     private String firstField;
 
     @DialogField(
-            name = "second_field",
+            name = "field_with_slash_at_the_end/",
             label = "Second field label",
             description = "Second field description",
             validation = {"foundation.jcr.name1", "foundation.jcr.name2"}

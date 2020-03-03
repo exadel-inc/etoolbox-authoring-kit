@@ -29,7 +29,7 @@
                                     disabled="{Boolean}false"
                                     fieldDescription="First field description"
                                     fieldLabel="First field label"
-                                    name="./first_field"
+                                    name="./field_with_colon_at_the_end"
                                     renderHidden="{Boolean}false"
                                     validation="[foundation.jcr.name]"
                                     required="{Boolean}true"/>
@@ -39,7 +39,7 @@
                                     disabled="{Boolean}false"
                                     fieldDescription="Second field description"
                                     fieldLabel="Second field label"
-                                    name="./second_field"
+                                    name="./field_with_slash_at_the_end/"
                                     renderHidden="{Boolean}false"
                                     required="{Boolean}false"
                                     validation="[foundation.jcr.name1,foundation.jcr.name2]"
