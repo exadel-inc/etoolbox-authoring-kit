@@ -36,5 +36,11 @@ public enum XmlScope {
         public String toString() {
             return "_cq_dialog.xml";
         }
+    },
+    CQ_CHILD_EDIT_CONFIG {
+        @Override
+        public String toString() {
+            return "_cq_childEditConfig.xml";
+        }
     }
 }
