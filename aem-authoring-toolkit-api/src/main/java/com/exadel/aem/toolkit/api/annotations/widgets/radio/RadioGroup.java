@@ -17,6 +17,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -47,17 +48,10 @@ public @interface RadioGroup {
     @IgnorePropertyMapping
     RadioButton[] buttons() default {};
     /**
-     * When set to a non-blank string, a {@code datasource} node is appended to the JCR buildup of this component
-     * pointing to a ACS Commons list
-     * @return Valid JCR path, or an empty string
+     * When set, the {@code datasource} node is appended to the JCR buildup of this component
+     * and populated with values of provided {@link DataSource} annotation
+     * @return {@code @DataSource} instance
      */
     @IgnorePropertyMapping
-    String acsListPath() default "";
-    /**
-     * When set to a non-blank string, allows to override {@code sling:resourceType} attribute of a {@code datasource node}
-     * pointing to a ACS Commons list
-     * @return String value
-     */
-    @IgnorePropertyMapping
-    String acsListResourceType() default "";
+    DataSource datasource() default @DataSource(resourceType = "");
 }

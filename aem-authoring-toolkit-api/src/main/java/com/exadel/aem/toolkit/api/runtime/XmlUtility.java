@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BinaryOperator;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
@@ -166,6 +167,22 @@ public interface XmlUtility {
      * @param skippedFields List of field names to skip
      */
     void mapProperties(Element element, Annotation annotation, List<String> skippedFields);
+
+    /**
+     * Appends {@link DataSource} values to an {@code Element} node
+     * @param element Element to store data in
+     * @param dataSource Provided values as a {@code DataSource} annotation
+     */
+    void appendDataSource(Element element, DataSource dataSource);
+
+    /**
+     * Appends to the current {@code Element} node and returns a child {@code datasource} node
+     * @param element Element to store data in
+     * @param path Path to element
+     * @param resourceType Use this to set {@code sling:resourceType} of data source
+     * @return Appended {@code datasource} node
+     */
+    Element appendDataSource(Element element,  String path, String resourceType, Map<String, String> properties);
 
     /**
      * Appends to the current {@code Element} node and returns a child {@code datasource} node bearing link to an ACS Commons list
