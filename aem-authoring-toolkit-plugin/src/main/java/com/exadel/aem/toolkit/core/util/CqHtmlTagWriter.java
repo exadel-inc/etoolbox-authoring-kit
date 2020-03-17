@@ -16,6 +16,8 @@ package com.exadel.aem.toolkit.core.util;
 
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.core.util.validation.Validation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -58,10 +60,13 @@ public class CqHtmlTagWriter extends PackageEntryWriter {
      * @param root The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateDomDocument(Class<?> componentClass, Element root) {
+    void populateDomDocument(Class<?> componentClass, Element root)  {
         HtmlTag htmlTag = componentClass.getDeclaredAnnotation(HtmlTag.class);
-        root.setAttribute(DialogConstants.PN_CLASS, htmlTag.className());
-        root.setAttribute(DialogConstants.PN_TAG_NAME, htmlTag.tagName());
+        root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
+        if (Validation.forType(HtmlTag.class).test(htmlTag)) {
+            PluginRuntime.context().getXmlUtility().setAttribute(root, "class", htmlTag.className());
+            PluginRuntime.context().getXmlUtility().setAttribute(root, "cq:tagName", htmlTag.tagName());
+        }
         writeCommonProperties(componentClass, XmlScope.CQ_HTML_TAG);
     }
 }
