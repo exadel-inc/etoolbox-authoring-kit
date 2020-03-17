@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.core.maven;
 
+import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,5 +41,12 @@ public class ExceptionsTest extends ExceptionTestBase {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidTabException.class));
         exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
         testComponent(ExceptionsTestCases.ComponentWithInexistentDependsOnTab.class);
+    }
+
+    @Test
+    public void testComponentWithWrongHtmlTag() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
+        exceptionRule.expectMessage("valid characters are latin symbols and numbers");
+        testComponent(ExceptionsTestCases.ComponentWithWrongHtmlTag.class);
     }
 }

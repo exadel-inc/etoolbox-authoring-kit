@@ -14,9 +14,8 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
-import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
+import com.exadel.aem.toolkit.api.annotations.main.*;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 
 @Dialog(
         name = "test-component",
@@ -27,7 +26,13 @@ import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
         className = "wrapper",
         tagName = "span"
 )
+@CommonProperties(
+        value = {
+                @CommonProperty(name = "id", value = "id", scope = XmlScope.CQ_HTML_TAG),
+                @CommonProperty(name = "test", value = "test", scope = XmlScope.CQ_HTML_TAG)
+        }
+)
 @SuppressWarnings("unused")
-public class ColorFieldWidgetWithHtmlTag extends ColorFieldWidget{
+public class ColorFieldWidgetWithHtmlTag extends ColorFieldWidget {
 
 }

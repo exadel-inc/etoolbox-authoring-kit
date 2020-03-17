@@ -18,6 +18,7 @@ import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
+import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
@@ -51,4 +52,15 @@ public class ExceptionsTestCases {
     @DependsOnTab(tabTitle = LABEL_TAB_1, query = "true")
     @DependsOnTab(tabTitle = LABEL_TAB_0, query = "true")
     public static class ComponentWithInexistentDependsOnTab extends ComplexComponent1 {}
+
+    @Dialog(
+            name = DEFAULT_COMPONENT_NAME,
+            title = DEFAULT_COMPONENT_TITLE,
+            layout = DialogLayout.TABS
+    )
+    @HtmlTag(
+            className = "@#$1",
+            tagName = ""
+    )
+    public static class ComponentWithWrongHtmlTag {}
 }
