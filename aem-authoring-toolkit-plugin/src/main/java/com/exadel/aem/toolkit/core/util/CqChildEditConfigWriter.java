@@ -63,5 +63,6 @@ public class CqChildEditConfigWriter extends PackageEntryWriter {
         ChildEditConfig actions = componentClass.getDeclaredAnnotation(ChildEditConfig.class);
         root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
         root.setAttribute(DialogConstants.PN_ACTIONS, Arrays.toString(actions.actions()));
+        writeCommonProperties(componentClass, getXmlScope());
     }
 }
