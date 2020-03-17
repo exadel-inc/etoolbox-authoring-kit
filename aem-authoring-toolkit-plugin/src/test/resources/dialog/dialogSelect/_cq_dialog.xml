@@ -55,7 +55,6 @@
                                     required="{Boolean}false">
                         <datasource jcr:primaryType="nt:unstructured"
                                     sling:resourceType="acs/list/resource/type"
-                                    addNone="{Boolean}true"
                                     path="/path/to/acs/list"/>
                     </acsListOptions>
                 </items>

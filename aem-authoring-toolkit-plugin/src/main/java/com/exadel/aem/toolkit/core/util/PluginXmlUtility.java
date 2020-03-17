@@ -592,12 +592,8 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public void appendDataSource(Element element, DataSource dataSource) {
-        Element datasource = appendDataSource(element, dataSource.path(), dataSource.resourceType(), Arrays.stream(dataSource.properties()).collect(Collectors.toMap(Property::name, Property::value)));
-        if (datasource == null) {
-            datasource = appendAcsCommonsList(element, dataSource.acsListPath(), dataSource.acsListResourceType());
-            if (datasource != null && dataSource.addNoneOption()) {
-                setAttribute(datasource, DialogConstants.PN_ADD_NONE, true);
-            }
+        if (appendDataSource(element, dataSource.path(), dataSource.resourceType(), Arrays.stream(dataSource.properties()).collect(Collectors.toMap(Property::name, Property::value))) == null) {
+            appendAcsCommonsList(element, dataSource.acsListPath(), dataSource.acsListResourceType());
         }
     }
 
