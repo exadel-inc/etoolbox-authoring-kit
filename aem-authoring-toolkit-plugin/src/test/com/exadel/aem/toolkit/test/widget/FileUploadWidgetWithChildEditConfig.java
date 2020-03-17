@@ -15,11 +15,11 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
-import com.exadel.aem.toolkit.api.annotations.editconfig.Action;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.*;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
@@ -28,10 +28,11 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
 )
 @ChildEditConfig(
         actions = {
-                Action.DELETE,
-                Action.COPY_MOVE,
-                Action.EDIT,
-                Action.INSERT
+                DELETE,
+                COPYMOVE,
+                EDIT,
+                INSERT,
+                "custom-action"
         }
 )
 @SuppressWarnings("unused")
