@@ -8,10 +8,18 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+/**
+ * {@link Validator} implementation for testing that all String-typed annotation properties have only
+ * latins symbols and numbers
+ */
 public class InvalidStringValidator implements Validator {
-
     private static final String MSG_VALID_CHARACTERS = "valid characters are latin symbols and numbers";
 
+    /**
+     * Tests that all String-typed properties of the provided annotation don't have invalid characters
+     * @param obj Annotation instance
+     * @return True or false
+     */
     @Override
     public boolean test(Object obj) {
         if (!isApplicableTo(obj)) {
@@ -24,9 +32,8 @@ public class InvalidStringValidator implements Validator {
     }
 
     /**
-     * Tests single String-typed propertiy value for being not blank
-     *
-     * @param method     {@code Method} instance representing annotation property
+     * Tests single String-typed property value have only latin symbols and numbers
+     * @param method {@code Method} instance representing annotation property
      * @param annotation Target annotation
      * @return True or false
      */
@@ -38,6 +45,11 @@ public class InvalidStringValidator implements Validator {
         }
     }
 
+    /**
+     * Returns whether this object is of {@code Annotation} type
+     * @param obj Tested value
+     * @return True or false
+     */
     @Override
     public boolean isApplicableTo(Object obj) {
         return obj instanceof Annotation;
