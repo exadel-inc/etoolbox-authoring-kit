@@ -29,7 +29,7 @@ public @interface DataSource {
      */
     Property[] properties() default {};
     /**
-     * @deprecated Use something instead
+     * @deprecated Use {@code resourceType} instead
      * When set to a non-blank string, allows to override {@code sling:resourceType} attribute of a {@code datasource node}
      * pointing to a ACS Commons list
      * @return String value
@@ -38,7 +38,7 @@ public @interface DataSource {
     @IgnorePropertyMapping
     String acsListResourceType() default "";
     /**
-     * @deprecated Use something instead
+     * @deprecated Use {@code path} instead
      * When set to a non-blank string, a {@code datasource} node is appended to the JCR buildup of this component
      * pointing to a ACS Commons list
      * @return Valid JCR path, or an empty string
