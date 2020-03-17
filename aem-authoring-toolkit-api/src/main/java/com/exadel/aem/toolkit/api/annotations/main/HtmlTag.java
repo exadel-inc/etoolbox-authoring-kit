@@ -14,6 +14,9 @@
 
 package com.exadel.aem.toolkit.api.annotations.main;
 
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -25,6 +28,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@ValueRestriction(value = ValueRestrictions.INVALID_STRING)
 @SuppressWarnings("unused")
 public @interface HtmlTag {
 
@@ -32,7 +36,7 @@ public @interface HtmlTag {
      * Maps to the 'class' attribute of the cq:htmlTag node
      * @return String value
      */
-    String className();
+    String className() default "";
 
     /**
      * Maps to the 'cq:tagName' attribute of the cq:htmlTag node
