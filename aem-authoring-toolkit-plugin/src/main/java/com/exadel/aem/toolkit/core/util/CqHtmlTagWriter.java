@@ -62,5 +62,6 @@ public class CqHtmlTagWriter extends PackageEntryWriter {
         HtmlTag htmlTag = componentClass.getDeclaredAnnotation(HtmlTag.class);
         root.setAttribute(DialogConstants.PN_CLASS, htmlTag.className());
         root.setAttribute(DialogConstants.PN_TAG_NAME, htmlTag.tagName());
+        writeCommonProperties(componentClass, XmlScope.CQ_HTML_TAG);
     }
 }
