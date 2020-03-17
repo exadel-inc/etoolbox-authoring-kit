@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines configuration for component's toolbar.
+ * Defines configuration for child component's toolbar.
  * See <a href="https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/components-basics.html#component-basics">Adobe documentation</a>
  */
 @Target(ElementType.TYPE)
@@ -30,5 +30,11 @@ import java.lang.annotation.Target;
 @PropertyMapping
 @SuppressWarnings("unused")
 public @interface ChildEditConfig {
-    Action[] actions() default {};
+
+    /**
+     * When set to a non-blank string, or an array of strings, maps to the 'cq:actions' property of {@code cq:childEditConfig} node.
+     * Expected {@link com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants} values, or some other arbitrary value
+     * @return String / array value
+     */
+    String[] actions() default {};
 }
