@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
+import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
@@ -60,6 +61,9 @@ public class SelectWidget {
     String timezone;
 
     @DialogField(label="ACS List Options")
-    @Select(acsListPath = "/path/to/acs/list", acsListResourceType = "acs/list/resource/type", addNoneOption = true)
+    @Select(datasource = @DataSource(
+            resourceType = "", acsListPath = "/path/to/acs/list",
+            acsListResourceType = "acs/list/resource/type", addNoneOption = true)
+    )
     String acsListOptions;
 }
