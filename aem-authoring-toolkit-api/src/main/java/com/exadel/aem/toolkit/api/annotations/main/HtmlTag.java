@@ -36,7 +36,7 @@ public @interface HtmlTag {
      * Maps to the 'class' attribute of the cq:htmlTag node
      * @return String value, non-blank
      */
-    String className() default "wrapper";
+    String className();
 
     /**
      * Maps to the 'cq:tagName' attribute of the cq:htmlTag node
