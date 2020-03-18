@@ -9,6 +9,7 @@
 3. [Usage: API](#usage-api)
    - [@Dialog annotation](#dialog-annotation)
    - [@Tab annotation](#tab-annotation)
+   - [@HtmlTag annotation](#htmltag-annotation)
    - [Fields annotations](#fields-annotations)
         - [@DialogField](#dialogfield) 
         - [Widget annotations A-Z](#widget-annotations-a-z)
@@ -221,6 +222,16 @@ Note that `@IgnoreTabs` setting is *not* inherited, unlike fields themselves, an
 
 See also: [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it) 
 
+
+### @HtmlTag annotation
+To create a decoration tag for your component you need mark your Java class with `@HtmlTag` annotation. The required node cq:htmlTag will be added.
+```java
+@HtmlTag(
+    className = "my-class",
+    tagName = "span"
+)
+public class MyComponentDialog { /* ... */ }
+```
  
 ### Fields annotations
 The plugin makes use of `@DialogField`  annotation and the set of specific annotations, such as `@TextField`, `@Checkbox`, `@DatePicker`, etc., discussed further. The latter are referred as field-specific annotations.
