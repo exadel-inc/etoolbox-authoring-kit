@@ -34,13 +34,13 @@ public @interface HtmlTag {
 
     /**
      * Maps to the 'class' attribute of the cq:htmlTag node
-     * @return String value
+     * @return String value, non-blank
      */
-    String className() default "";
+    String className() default "wrapper";
 
     /**
      * Maps to the 'cq:tagName' attribute of the cq:htmlTag node
-     * @return String value
+     * @return String value, non-blank
      */
     String tagName() default "div";
 }
