@@ -61,8 +61,8 @@ public class SelectWidget {
     String timezone;
 
     @DialogField(label="ACS List Options")
-    @Select(datasource = @DataSource(resourceType = "", acsListPath = "/path/to/acs/list",
+    @Select(datasource = @DataSource(resourceType = ""),
+            acsListPath = "/path/to/acs/list",
             acsListResourceType = "acs/list/resource/type")
-    )
     String acsListOptions;
 }

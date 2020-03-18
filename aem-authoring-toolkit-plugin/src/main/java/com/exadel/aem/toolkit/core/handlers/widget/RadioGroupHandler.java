@@ -42,6 +42,7 @@ public class RadioGroupHandler implements Handler, BiConsumer<Element, Field> {
             Element items = (Element) element.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
             Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));
         }
+        getXmlUtil().appendAcsCommonsList(element, radioGroup.acsListPath(), radioGroup.acsListResourceType());
         getXmlUtil().appendDataSource(element, radioGroup.datasource());
     }
 
