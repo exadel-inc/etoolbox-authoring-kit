@@ -45,7 +45,6 @@ public class SelectHandler implements Handler, BiConsumer<Element, Field> {
                 getXmlUtil().mapProperties(item, option);
             }
         }
-        getXmlUtil().appendAcsCommonsList(element, select.acsListPath(), select.acsListResourceType());
-        getXmlUtil().appendDataSource(element, select.datasource());
+        getXmlUtil().appendDataSource(element, select.datasource(), select.acsListPath(), select.acsListResourceType());
     }
 }

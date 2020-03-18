@@ -171,9 +171,11 @@ public interface XmlUtility {
     /**
      * Appends {@link DataSource} values to an {@code Element} node
      * @param element Element to store data in
+     * @param acsListPath Path to ACS Commons List in JCR repository
+     * @param acsListResourceType Use this to set {@code sling:resourceType} of data source, other than standard
      * @param dataSource Provided values as a {@code DataSource} annotation
      */
-    void appendDataSource(Element element, DataSource dataSource);
+    void appendDataSource(Element element, DataSource dataSource, String acsListPath, String acsListResourceType);
 
     /**
      * Appends to the current {@code Element} node and returns a child {@code datasource} node
