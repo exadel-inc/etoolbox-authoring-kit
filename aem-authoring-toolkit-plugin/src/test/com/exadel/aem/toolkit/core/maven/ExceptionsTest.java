@@ -29,10 +29,10 @@ public class ExceptionsTest extends ExceptionTestBase {
     public ExpectedException exceptionRule = ExpectedException.none();
 
     @Test
-    public void testComponentWithInexistentTab() {
+    public void testComponentWithNonexistentTab() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidTabException.class));
         exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
-        testComponent(ExceptionsTestCases.ComponentWithInexistentTab.class);
+        testComponent(ExceptionsTestCases.ComponentWithNonExistentTab.class);
     }
 
 
@@ -40,13 +40,20 @@ public class ExceptionsTest extends ExceptionTestBase {
     public void testComponentWithWrongDependsOnTab() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidTabException.class));
         exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
-        testComponent(ExceptionsTestCases.ComponentWithInexistentDependsOnTab.class);
+        testComponent(ExceptionsTestCases.ComponentWithNonExistentDependsOnTab.class);
     }
 
     @Test
-    public void testComponentWithWrongHtmlTag() {
+    public void testComponentWithWrongHtmlTag1() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
-        exceptionRule.expectMessage("valid characters are latin symbols and numbers");
-        testComponent(ExceptionsTestCases.ComponentWithWrongHtmlTag.class);
+        exceptionRule.expectMessage("valid characters are: latin symbols, numbers, '.', '-'");
+        testComponent(ExceptionsTestCases.ComponentWithWrongHtmlTag1.class);
+    }
+
+    @Test
+    public void testComponentWithWrongHtmlTag2() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
+        exceptionRule.expectMessage("valid characters are: latin symbols, numbers, '.', '-'");
+        testComponent(ExceptionsTestCases.ComponentWithWrongHtmlTag2.class);
     }
 }

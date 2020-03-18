@@ -34,7 +34,7 @@ public class ExceptionsTestCases {
             title = DEFAULT_COMPONENT_TITLE,
             layout = DialogLayout.TABS
     )
-    public static class ComponentWithInexistentTab extends ComplexComponent1 {
+    public static class ComponentWithNonExistentTab extends ComplexComponent1 {
         @TextField
         @PlaceOnTab(LABEL_TAB_1)
         String validField;
@@ -51,7 +51,7 @@ public class ExceptionsTestCases {
     )
     @DependsOnTab(tabTitle = LABEL_TAB_1, query = "true")
     @DependsOnTab(tabTitle = LABEL_TAB_0, query = "true")
-    public static class ComponentWithInexistentDependsOnTab extends ComplexComponent1 {}
+    public static class ComponentWithNonExistentDependsOnTab extends ComplexComponent1 {}
 
     @Dialog(
             name = DEFAULT_COMPONENT_NAME,
@@ -59,8 +59,18 @@ public class ExceptionsTestCases {
             layout = DialogLayout.TABS
     )
     @HtmlTag(
-            className = "@#$1",
+            className = "wr@pper!",
             tagName = ""
     )
-    public static class ComponentWithWrongHtmlTag {}
+    public static class ComponentWithWrongHtmlTag1 {}
+
+    @Dialog(
+            name = DEFAULT_COMPONENT_NAME,
+            title = DEFAULT_COMPONENT_TITLE,
+            layout = DialogLayout.TABS
+    )
+    @HtmlTag(
+            tagName = "..--"
+    )
+    public static class ComponentWithWrongHtmlTag2 {}
 }
