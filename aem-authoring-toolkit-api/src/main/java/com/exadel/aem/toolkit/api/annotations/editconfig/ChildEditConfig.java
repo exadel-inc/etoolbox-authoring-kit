@@ -36,5 +36,5 @@ public @interface ChildEditConfig {
      * Expected {@link com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants} values, or some other arbitrary value
      * @return String / array value
      */
-    String[] actions() default {};
+    String[] actions();
 }
