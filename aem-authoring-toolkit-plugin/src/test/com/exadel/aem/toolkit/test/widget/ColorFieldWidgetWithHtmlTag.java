@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
         layout = DialogLayout.FIXED_COLUMNS
 )
 @HtmlTag(
-        className = "wrapper.1.2-3",
+        className = "wrapper",
         tagName = "span"
 )
 @CommonProperties(

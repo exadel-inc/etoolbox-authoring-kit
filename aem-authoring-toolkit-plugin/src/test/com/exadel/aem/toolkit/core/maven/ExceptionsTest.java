@@ -46,14 +46,14 @@ public class ExceptionsTest extends ExceptionTestBase {
     @Test
     public void testComponentWithWrongHtmlTag1() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
-        exceptionRule.expectMessage("valid characters are: latin symbols, numbers, '.', '-'");
+        exceptionRule.expectMessage("string properties must not be blank");
         testComponent(ExceptionsTestCases.ComponentWithWrongHtmlTag1.class);
     }
 
     @Test
     public void testComponentWithWrongHtmlTag2() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
-        exceptionRule.expectMessage("valid characters are: latin symbols, numbers, '.', '-'");
+        exceptionRule.expectMessage("string properties must not be blank");
         testComponent(ExceptionsTestCases.ComponentWithWrongHtmlTag2.class);
     }
 }

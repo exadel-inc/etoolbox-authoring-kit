@@ -70,8 +70,7 @@ public class ExceptionsTestCases {
             layout = DialogLayout.TABS
     )
     @HtmlTag(
-            className = "!@#$",
-            tagName = "..--"
+            className = ""
     )
     public static class ComponentWithWrongHtmlTag2 {}
 }
