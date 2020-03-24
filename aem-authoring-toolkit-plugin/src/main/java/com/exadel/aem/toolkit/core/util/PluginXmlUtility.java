@@ -573,15 +573,27 @@ public class PluginXmlUtility implements XmlUtility {
                 .forEach(entry -> graniteDataNode.setAttribute(entry.getKey(), entry.getValue()));
     }
 
-    @Override
+    /**
+     * Appends {@link DataSource} values to an {@code Element} node
+     * @param element Element to store data in
+     * @param acsListPath Path to ACS Commons List in JCR repository
+     * @param acsListResourceType Use this to set {@code sling:resourceType} of data source, other than standard
+     * @param dataSource Provided values as a {@code DataSource} annotation
+     */
     public void appendDataSource(Element element, DataSource dataSource, String acsListPath, String acsListResourceType) {
         if (appendDataSource(element, dataSource.path(), dataSource.resourceType(), Arrays.stream(dataSource.properties()).collect(Collectors.toMap(Property::name, Property::value))) == null) {
             appendAcsCommonsList(element, acsListPath, acsListResourceType);
         }
     }
 
-    @Override
-    public Element appendDataSource(Element element, String path, String resourceType, Map<String, String> properties) {
+    /**
+     * Appends to the current {@code Element} node and returns a child {@code datasource} node
+     * @param element Element to store data in
+     * @param path Path to element
+     * @param resourceType Use this to set {@code sling:resourceType} of data source
+     * @return Appended {@code datasource} node
+     */
+    private Element appendDataSource(Element element, String path, String resourceType, Map<String, String> properties) {
         if (StringUtils.isBlank(resourceType)) {
             return null;
         }
@@ -591,8 +603,13 @@ public class PluginXmlUtility implements XmlUtility {
         return (Element) element.appendChild(dataSourceElement);
     }
 
-    @Override
-    public Element appendAcsCommonsList(Element element, String path, String resourceType) {
+    /**
+     * Appends to the current {@code Element} node and returns a child {@code datasource} node bearing link to an ACS Commons list
+     * @param element Element to store data in
+     * @param path Path to ACS Commons List in JCR repository
+     * @param resourceType Use this to set {@code sling:resourceType} of data source, other than standard
+     */
+    private Element appendAcsCommonsList(Element element, String path, String resourceType) {
         if (StringUtils.isBlank(path)) {
             return null;
         }

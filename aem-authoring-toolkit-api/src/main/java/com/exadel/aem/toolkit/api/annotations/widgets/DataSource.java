@@ -1,13 +1,18 @@
 package com.exadel.aem.toolkit.api.annotations.widgets;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
+import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
+
+/**
+ * Used to set up {@link Select#datasource()} or {@link RadioGroup#datasource()} property
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping
