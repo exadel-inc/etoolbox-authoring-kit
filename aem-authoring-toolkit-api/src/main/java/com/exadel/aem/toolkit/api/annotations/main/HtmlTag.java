@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ValueRestriction(value = ValueRestrictions.INVALID_STRING)
+@ValueRestriction(value = ValueRestrictions.ALL_NOT_BLANK)
 @SuppressWarnings("unused")
 public @interface HtmlTag {
 
