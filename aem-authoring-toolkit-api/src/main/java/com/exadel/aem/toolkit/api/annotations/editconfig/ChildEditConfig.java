@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines configuration for child component's toolbar.
+ * Defines editing configuration for a TouchUI-ready child components.
  * See <a href="https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/components-basics.html#component-basics">Adobe documentation</a>
  */
 @Target(ElementType.TYPE)
@@ -32,9 +32,8 @@ import java.lang.annotation.Target;
 public @interface ChildEditConfig {
 
     /**
-     * When set to a non-blank string, or an array of strings, maps to the 'cq:actions' property of {@code cq:childEditConfig} node.
-     * Expected {@link com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants} values, or some other arbitrary value
-     * @return String / array value
+     * Expected {@link com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig} value
+     * @return Single {@code EditConfig}
      */
-    String[] actions();
+    EditConfig value() default @EditConfig;
 }
