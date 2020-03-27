@@ -14,7 +14,9 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
-import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
+import com.exadel.aem.toolkit.api.annotations.editconfig.*;
+import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
+import com.exadel.aem.toolkit.api.annotations.editconfig.listener.ListenerConstants;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 
@@ -27,13 +29,36 @@ import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.
         layout = DialogLayout.FIXED_COLUMNS
 )
 @ChildEditConfig(
-        actions = {
-                DELETE,
-                COPYMOVE,
-                EDIT,
-                INSERT,
-                "custom-action"
-        }
+        @EditConfig(
+                actions = {
+                        DELETE,
+                        COPYMOVE,
+                        EDIT,
+                        INSERT,
+                        "custom-action"
+                },
+                listeners = @Listener(event = ListenerConstants.EVENT_AFTER_DELETE, action = ListenerConstants.ACTION_REFRESH_PAGE),
+                dropTargets = @DropTargetConfig(
+                                nodeName = "image",
+                                accept = {"image/.*"},
+                                groups = {"media"},
+                                propertyName = "file_image" + "file-reference"
+                        ),
+                inplaceEditing = {
+                        @InplaceEditingConfig(
+                                title = "label_header",
+                                propertyName = "header",
+                                type = "in_place_text_editor",
+                                editElementQuery = ".header"
+                        ),
+                        @InplaceEditingConfig(
+                                title = "label_description",
+                                propertyName = "description",
+                                type = EditorType.TEXT,
+                                editElementQuery = ".editable-description"
+                        )
+                }
+        )
 )
 @SuppressWarnings("unused")
 public class FileUploadWidgetWithChildEditConfig extends FileUploadWidget {
