@@ -16,12 +16,12 @@ package com.exadel.aem.toolkit.core.util;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.core.handlers.editconfig.EditingConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
-import java.util.Arrays;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing author UI aspects for child components that do not define
@@ -62,7 +62,7 @@ public class CqChildEditConfigWriter extends PackageEntryWriter {
     void populateDomDocument(Class<?> componentClass, Element root) {
         ChildEditConfig childEditConfig = componentClass.getDeclaredAnnotation(ChildEditConfig.class);
         root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
-        root.setAttribute(DialogConstants.PN_ACTIONS, Arrays.toString(childEditConfig.actions()));
-        writeCommonProperties(componentClass, getXmlScope());
+        EditingConfiguration.append(root, childEditConfig.value());
+        writeCommonProperties(componentClass, XmlScope.CQ_CHILD_EDIT_CONFIG);
     }
 }
