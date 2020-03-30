@@ -14,7 +14,11 @@
 
 package com.exadel.aem.toolkit.api.annotations.editconfig;
 
+import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
+import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
+import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,13 +31,25 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@PropertyMapping
+@PropertyMapping(prefix = "cq:")
 @SuppressWarnings("unused")
 public @interface ChildEditConfig {
-
     /**
-     * Expected {@link com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig} value
-     * @return Single {@code EditConfig}
+     * When set to a non-blank string or an array of strings, maps to the 'cq:actions' property of {@code cq:childEditConfig} node
+     * @return String / array value
      */
-    EditConfig value() default @EditConfig;
+    @EnumValue(transformation = StringTransformation.LOWERCASE)
+    String[] actions() default {};
+    /**
+     * Used to specify a collection of {@link DropTargetConfig} values for this editing configuration
+     * @return Single {@code DropTargetConfig} or an array of configs
+     */
+    @IgnorePropertyMapping
+    DropTargetConfig[] dropTargets() default {};
+    /**
+     * Used to specify a collection of {@link Listener} configs for this editing configuration
+     * @return Single {@code Listener} or an array of Listeners
+     */
+    @IgnorePropertyMapping
+    Listener[] listeners() default {};
 }
