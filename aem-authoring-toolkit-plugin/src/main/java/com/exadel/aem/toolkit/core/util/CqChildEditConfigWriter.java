@@ -15,13 +15,17 @@
 package com.exadel.aem.toolkit.core.util;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
+import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
-import com.exadel.aem.toolkit.core.handlers.editconfig.EditingConfiguration;
+import com.exadel.aem.toolkit.core.handlers.editconfig.ChildEditingConfiguration;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing author UI aspects for child components that do not define
@@ -62,7 +66,16 @@ public class CqChildEditConfigWriter extends PackageEntryWriter {
     void populateDomDocument(Class<?> componentClass, Element root) {
         ChildEditConfig childEditConfig = componentClass.getDeclaredAnnotation(ChildEditConfig.class);
         root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
-        EditingConfiguration.append(root, childEditConfig.value());
+        PluginRuntime.context().getXmlUtility().mapProperties(root, childEditConfig);
+        EditConfig editConfig = PluginObjectUtility.create(EditConfig.class, createMap(childEditConfig));
+        ChildEditingConfiguration.append(root, editConfig);
         writeCommonProperties(componentClass, XmlScope.CQ_CHILD_EDIT_CONFIG);
+    }
+
+    private Map<String, Object> createMap(ChildEditConfig childEditConfig) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("dropTargets", childEditConfig.dropTargets());
+        map.put("listeners", childEditConfig.listeners());
+        return map;
     }
 }
