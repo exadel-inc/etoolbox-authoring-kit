@@ -80,7 +80,6 @@ public class DialogConstants {
     public static final String NT_WIDGET_COLLECTION = "cq:WidgetCollection";
 
     public static final String PN_ACCEPT = "accept";
-    public static final String PN_ACTIONS = "cq:actions";
     public static final String PN_ACTIVE = "active";
     public static final String PN_ADD_NONE = "addNone";
     public static final String PN_ALLOW = "allow";
