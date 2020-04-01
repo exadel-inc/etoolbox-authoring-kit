@@ -32,6 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
 import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
 import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
@@ -71,6 +72,7 @@ public enum DialogWidgets implements DialogWidget {
     HIDDEN(Hidden.class),
     AUTOCOMPLETE(Autocomplete.class, new AutocompleteHandler()),
     PASSWORD(Password.class, new PasswordHandler()),
+    HEADING(Heading.class),
     ALERT(Alert.class);
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";
