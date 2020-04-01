@@ -34,18 +34,15 @@ import java.lang.annotation.Target;
 public @interface Heading {
     /**
      * Maps to the 'level' attribute of this TouchUI dialog component's node.
-     * Used to define level for 'h' tag.
-     * Expected '1', '2', '3', '4', '5', '6'.
-     * If provided less than 1 or blank string, then text will be rendered with <h1>.
-     * If provided more than 6, then text will be rendered with <h6>.
-     * @return String value, castable to number
+     * Number that corresponds to the header tag level (<h1> to <h6>)
+     * @return Long value
      */
-    @ValueRestriction(value = ValueRestrictions.NUMBER)
-    String level() default "1";
+    @ValueRestriction(value = ValueRestrictions.POSITIVE)
+    long level() default 1;
 
     /**
      *  When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
-     *  Used to define text within 'h' tag.
+     *  Used to define text within header tag.
      *  @return String value, non-blank
      */
     @ValueRestriction(value = ValueRestrictions.NOT_BLANK)
