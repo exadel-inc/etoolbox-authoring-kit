@@ -16,6 +16,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
@@ -35,6 +36,9 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
 public class AbilitiesComponent {
 
     static final String TAB_ABILITIES = "Abilities";
+
+    @Heading(text = "Here you can choose abilities", level = 2)
+    String heading;
 
     @DependsOnRef(name = "ability")
     @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
