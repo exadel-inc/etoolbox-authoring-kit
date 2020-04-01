@@ -36,7 +36,7 @@ public @interface Heading {
      * Maps to the 'level' attribute of this TouchUI dialog component's node.
      * Used to define level for 'h' tag.
      * Expected '1', '2', '3', '4', '5', '6'.
-     * If provided less than 1, then text will be rendered with <h1>.
+     * If provided less than 1 or blank string, then text will be rendered with <h1>.
      * If provided more than 6, then text will be rendered with <h6>.
      * @return String value, castable to number
      */
