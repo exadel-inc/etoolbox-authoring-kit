@@ -358,6 +358,15 @@ public class ImageFieldDialog {
     String file;
 }
 ```
+###### @Heading
+Used to render heading element in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Heading](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/heading/index.html).
+```java
+public class HeadingDialog {
+    @DialogField
+    @Heading(text = "Heading text", level = 2)
+    String heading;
+    }
+```
 ###### @Hidden
 Used to render hidden inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hidden](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/hidden/index.html).
 ###### @NumberField
