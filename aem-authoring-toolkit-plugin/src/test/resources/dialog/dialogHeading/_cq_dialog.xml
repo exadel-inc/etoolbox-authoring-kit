@@ -14,11 +14,11 @@
                     <heading1 sling:resourceType="granite/ui/components/coral/foundation/heading"
                               jcr:primaryType="nt:unstructured"
                               text="test-text"
-                              level="1"/>
+                              level="{Long}1"/>
                     <heading2 sling:resourceType="granite/ui/components/coral/foundation/heading"
                               jcr:primaryType="nt:unstructured"
                               text="test-text"
-                              level="6"/>
+                              level="{Long}6"/>
                 </items>
             </column>
         </items>

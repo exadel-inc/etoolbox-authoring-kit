@@ -29,6 +29,6 @@ public class HeadingWidget {
     @Heading(text = "test-text")
     String heading1;
 
-    @Heading(text = "test-text", level = "6")
+    @Heading(text = "test-text", level = 6)
     String heading2;
 }
