@@ -1,5 +1,6 @@
 package com.exadel.aem.toolkit.samples.models;
 
+import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
@@ -23,6 +24,7 @@ import com.exadel.aem.toolkit.samples.models.fieldsets.ArmorColorFields;
                 @Tab(title = ArmorColorComponent.TAB_COLOR),
         }
 )
+@HtmlTag(className = "component-wrap")
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ArmorColorComponent {
 
