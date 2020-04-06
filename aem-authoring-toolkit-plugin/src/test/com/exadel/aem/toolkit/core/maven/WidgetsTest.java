@@ -36,6 +36,7 @@ import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
 import com.exadel.aem.toolkit.test.widget.HiddenWidget;
 import com.exadel.aem.toolkit.test.widget.PasswordWidget;
 import com.exadel.aem.toolkit.test.widget.TextAreaWidget;
+import com.exadel.aem.toolkit.test.widget.ColorFieldWidgetWithHtmlTag;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidgetWithChildEditConfig;
 
 public class WidgetsTest extends DefaultTestBase {
@@ -138,6 +139,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testPassword() {
         testComponent(PasswordWidget.class);
+    }
+
+    @Test
+    public void testHtmlTag() {
+        testComponent(ColorFieldWidgetWithHtmlTag.class);
     }
 
     @Test

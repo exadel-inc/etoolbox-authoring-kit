@@ -18,6 +18,7 @@ import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
+import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
@@ -33,7 +34,7 @@ public class ExceptionsTestCases {
             title = DEFAULT_COMPONENT_TITLE,
             layout = DialogLayout.TABS
     )
-    public static class ComponentWithInexistentTab extends ComplexComponent1 {
+    public static class ComponentWithNonExistentTab extends ComplexComponent1 {
         @TextField
         @PlaceOnTab(LABEL_TAB_1)
         String validField;
@@ -50,5 +51,26 @@ public class ExceptionsTestCases {
     )
     @DependsOnTab(tabTitle = LABEL_TAB_1, query = "true")
     @DependsOnTab(tabTitle = LABEL_TAB_0, query = "true")
-    public static class ComponentWithInexistentDependsOnTab extends ComplexComponent1 {}
+    public static class ComponentWithNonExistentDependsOnTab extends ComplexComponent1 {}
+
+    @Dialog(
+            name = DEFAULT_COMPONENT_NAME,
+            title = DEFAULT_COMPONENT_TITLE,
+            layout = DialogLayout.TABS
+    )
+    @HtmlTag(
+            className = "wr@pper!",
+            tagName = ""
+    )
+    public static class ComponentWithWrongHtmlTag1 {}
+
+    @Dialog(
+            name = DEFAULT_COMPONENT_NAME,
+            title = DEFAULT_COMPONENT_TITLE,
+            layout = DialogLayout.TABS
+    )
+    @HtmlTag(
+            className = ""
+    )
+    public static class ComponentWithWrongHtmlTag2 {}
 }
