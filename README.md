@@ -386,7 +386,9 @@ public class RadioGroupDialog {
         @RadioButton(text = "Button 1", value = "1", checked=true),
         @RadioButton(text = "Button 2", value = "2"),
         @RadioButton(text = "Button 3", value = "3", disabled=true)
-    })
+        },
+        datasource = @DataSource(path = "new/path", resourceType = "new/res/type")
+)
     String field8;
 }
 ```
@@ -410,30 +412,13 @@ public class MyDialogWithDropdown {
             ),
             @Option(text = "2 stars", value = "2"),
             @Option(text = "3 stars", value = "3"),
-            @Option(text = "4 stars", value = "4", disabled=true),
-            @Option(text = "5 stars", value = "5", disabled=true)
+            @Option(text = "4 stars", value = "4", disabled = true),
+            @Option(text = "5 stars", value = "5", disabled = true)
         },
-        emptyText = "Select rating"
+        emptyText = "Select rating",
+        datasource = @DataSource(path = "my/path", resourceType = "my/res/type")
 )
     String dropdown;
-}
-```
-
-Apart from such a usage, `@Select` can also consume data stored in an arbitrary datasource.
-For that usecase, another `@Select` setup is in effect (see below). 
-
-You can for instance use lists shipped as the part of *ACS AEM Commons* package, or some other implementation of key-value pair storage that mimics such lists.
-In the latter case, provide the additional `acsListResourceType` value that will help to parse your key-value storage.
-
-```java
-public class MyDialogWithDropdown {
-    @DialogField(label = "Arbitrary List")
-    @Select(
-        acsListPath = "/path/to/acs/list",
-        acsListResourceType = "my/list/resource/type", // optional
-        addNone = true // do we need the specific "none" option before other options in list?
-    )
-    String option;
 }
 ```
 

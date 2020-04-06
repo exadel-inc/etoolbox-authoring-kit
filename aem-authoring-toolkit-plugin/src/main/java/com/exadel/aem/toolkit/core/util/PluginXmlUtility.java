@@ -36,6 +36,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
@@ -64,7 +66,7 @@ import com.exadel.aem.toolkit.core.util.validation.Validation;
  */
 public class PluginXmlUtility implements XmlUtility {
     static final Map<String, String> XML_NAMESPACES = ImmutableMap.of(
-            "xmlns:jcr",  "http://www.jcp.org/jcr/1.0",
+            "xmlns:jcr", "http://www.jcp.org/jcr/1.0",
             "xmlns:nt", "http://www.jcp.org/jcr/nt/1.0",
             "xmlns:sling", JcrResourceConstants.SLING_NAMESPACE_URI,
             "xmlns:cq", "http://www.day.com/jcr/cq/1.0",
@@ -127,16 +129,16 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public Element createNodeElement(String name, String nodeType, Map<String,String> properties, String resourceType) {
+    public Element createNodeElement(String name, String nodeType, Map<String, String> properties, String resourceType) {
         Element element = document.createElement(getValidName(name));
-        if(nodeType == null){
+        if (nodeType == null) {
             nodeType = DialogConstants.NT_UNSTRUCTURED;
         }
         element.setAttribute(DialogConstants.PN_PRIMARY_TYPE, nodeType);
-        if(resourceType != null){
+        if (resourceType != null) {
             element.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, resourceType);
         }
-        if(properties != null){
+        if (properties != null) {
             properties.forEach((key, value) -> {
                 if (StringUtils.isNoneBlank(key, value)) element.setAttribute(key, value);
             });
@@ -145,12 +147,12 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public Element createNodeElement(String name, String nodeType, Map<String,String> properties) {
+    public Element createNodeElement(String name, String nodeType, Map<String, String> properties) {
         return createNodeElement(name, nodeType, properties, null);
     }
 
     @Override
-    public Element createNodeElement(String name, Map<String,String> properties, String resourceType) {
+    public Element createNodeElement(String name, Map<String, String> properties, String resourceType) {
         return createNodeElement(name, null, properties, resourceType);
     }
 
@@ -160,7 +162,7 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public Element createNodeElement(String name, Map<String,String> properties){
+    public Element createNodeElement(String name, Map<String, String> properties) {
         return createNodeElement(name, null, properties);
     }
 
@@ -225,22 +227,22 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public void setAttribute(Element element, String name, Double value){
+    public void setAttribute(Element element, String name, Double value) {
         XmlAttributeSettingHelper.forNamedValue(name, Double.class).setAttribute(element, value);
     }
 
     @Override
-    public void setAttribute(Element element, String name, Long value){
+    public void setAttribute(Element element, String name, Long value) {
         XmlAttributeSettingHelper.forNamedValue(name, Long.class).setAttribute(element, value);
     }
 
     @Override
-    public void setAttribute(Element element, String name, Boolean value){
+    public void setAttribute(Element element, String name, Boolean value) {
         XmlAttributeSettingHelper.forNamedValue(name, Boolean.class).setAttribute(element, value);
     }
 
     @Override
-    public void setAttribute(Element element, String name, String value){
+    public void setAttribute(Element element, String name, String value) {
         XmlAttributeSettingHelper.forNamedValue(name, String.class).setAttribute(element, value);
     }
 
@@ -304,12 +306,12 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public void mapProperties(Element element, Annotation annotation){
+    public void mapProperties(Element element, Annotation annotation) {
         mapProperties(element, annotation, Collections.emptyList());
     }
 
     @Override
-    public void mapProperties(Element element, Annotation annotation, XmlScope scope){
+    public void mapProperties(Element element, Annotation annotation, XmlScope scope) {
         List<String> skippedFields = Arrays.stream(annotation.annotationType().getDeclaredMethods())
                 .filter(m -> !fitsInScope(m, scope))
                 .map(Method::getName)
@@ -427,7 +429,7 @@ public class PluginXmlUtility implements XmlUtility {
         }
         Node grandchild = child.getFirstChild();
         while (grandchild != null) {
-            appendNonemptyChildElement(existingChild, (Element)grandchild, attributeMerger);
+            appendNonemptyChildElement(existingChild, (Element) grandchild, attributeMerger);
             grandchild = grandchild.getNextSibling();
         }
         return mergeAttributes(existingChild, child, attributeMerger);
@@ -504,7 +506,7 @@ public class PluginXmlUtility implements XmlUtility {
         Node child = parent.getFirstChild();
         while (child != null) {
             if (child instanceof Element && child.getNodeName().equals(childName)) {
-                return (Element)child;
+                return (Element) child;
             }
             child = child.getNextSibling();
         }
@@ -520,13 +522,13 @@ public class PluginXmlUtility implements XmlUtility {
         XPath xPathInstance = XPathFactory.newInstance().newXPath();
         List<Element> result = new ArrayList<>();
         try {
-            NodeList nodes = (NodeList)xPathInstance.evaluate(xPath, document, XPathConstants.NODESET);
+            NodeList nodes = (NodeList) xPathInstance.evaluate(xPath, document, XPathConstants.NODESET);
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
                 if (node instanceof Document) {
-                    result.add(((Document)node).getDocumentElement());
+                    result.add(((Document) node).getDocumentElement());
                 } else if (node instanceof Element) {
-                    result.add((Element)node);
+                    result.add((Element) node);
                 }
             }
             if (result.isEmpty()) {
@@ -571,8 +573,43 @@ public class PluginXmlUtility implements XmlUtility {
                 .forEach(entry -> graniteDataNode.setAttribute(entry.getKey(), entry.getValue()));
     }
 
-    @Override
-    public Element appendAcsCommonsList(Element element, String path, String resourceType) {
+    /**
+     * Appends {@link DataSource} values to an {@code Element} node
+     * @param element Element to store data in
+     * @param acsListPath Path to ACS Commons List in JCR repository
+     * @param acsListResourceType Use this to set {@code sling:resourceType} of data source, other than standard
+     * @param dataSource Provided values as a {@code DataSource} annotation
+     */
+    public void appendDataSource(Element element, DataSource dataSource, String acsListPath, String acsListResourceType) {
+        if (appendDataSource(element, dataSource.path(), dataSource.resourceType(), Arrays.stream(dataSource.properties()).collect(Collectors.toMap(Property::name, Property::value))) == null) {
+            appendAcsCommonsList(element, acsListPath, acsListResourceType);
+        }
+    }
+
+    /**
+     * Appends to the current {@code Element} node and returns a child {@code datasource} node
+     * @param element Element to store data in
+     * @param path Path to element
+     * @param resourceType Use this to set {@code sling:resourceType} of data source
+     * @return Appended {@code datasource} node
+     */
+    private Element appendDataSource(Element element, String path, String resourceType, Map<String, String> properties) {
+        if (StringUtils.isBlank(resourceType)) {
+            return null;
+        }
+        properties.put(DialogConstants.PN_PATH, path);
+        Element dataSourceElement = createNodeElement(DialogConstants.NN_DATASOURCE, null,
+                properties, resourceType);
+        return (Element) element.appendChild(dataSourceElement);
+    }
+
+    /**
+     * Appends to the current {@code Element} node and returns a child {@code datasource} node bearing link to an ACS Commons list
+     * @param element Element to store data in
+     * @param path Path to ACS Commons List in JCR repository
+     * @param resourceType Use this to set {@code sling:resourceType} of data source, other than standard
+     */
+    private Element appendAcsCommonsList(Element element, String path, String resourceType) {
         if (StringUtils.isBlank(path)) {
             return null;
         }
