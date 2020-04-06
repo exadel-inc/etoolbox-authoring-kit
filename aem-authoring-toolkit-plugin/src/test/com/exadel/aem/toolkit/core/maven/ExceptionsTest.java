@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.core.maven;
 
+import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,10 +29,10 @@ public class ExceptionsTest extends ExceptionTestBase {
     public ExpectedException exceptionRule = ExpectedException.none();
 
     @Test
-    public void testComponentWithInexistentTab() {
+    public void testComponentWithNonexistentTab() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidTabException.class));
         exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
-        testComponent(ExceptionsTestCases.ComponentWithInexistentTab.class);
+        testComponent(ExceptionsTestCases.ComponentWithNonExistentTab.class);
     }
 
 
@@ -39,6 +40,20 @@ public class ExceptionsTest extends ExceptionTestBase {
     public void testComponentWithWrongDependsOnTab() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidTabException.class));
         exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
-        testComponent(ExceptionsTestCases.ComponentWithInexistentDependsOnTab.class);
+        testComponent(ExceptionsTestCases.ComponentWithNonExistentDependsOnTab.class);
+    }
+
+    @Test
+    public void testComponentWithWrongHtmlTag1() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
+        exceptionRule.expectMessage("string properties must not be blank");
+        testComponent(ExceptionsTestCases.ComponentWithWrongHtmlTag1.class);
+    }
+
+    @Test
+    public void testComponentWithWrongHtmlTag2() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
+        exceptionRule.expectMessage("string properties must not be blank");
+        testComponent(ExceptionsTestCases.ComponentWithWrongHtmlTag2.class);
     }
 }
