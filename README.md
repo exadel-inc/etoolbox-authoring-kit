@@ -9,12 +9,12 @@
 3. [Usage: API](#usage-api)
    - [@Dialog annotation](#dialog-annotation)
    - [@Tab annotation](#tab-annotation)
-   - [@HtmlTag annotation](#htmltag-annotation)
    - [Fields annotations](#fields-annotations)
-        - [@DialogField](#dialogfield) 
-        - [Widget annotations A-Z](#widget-annotations-a-z)
-        - [Field grouping and multiplying](#field-grouping-and-multiplying)
-        - [Implementing RichTextEditor](#implementing-richtexteditor)
+       - [@DialogField](#dialogfield) 
+       - [Widget annotations A-Z](#widget-annotations-a-z)
+       - [Field grouping and multiplying](#field-grouping-and-multiplying)
+       - [Implementing RichTextEditor](#implementing-richtexteditor)
+   - [Altering field's decoration tag with @HtmlTag](#altering-fields-decoration-tag-with-htmltag)
    - [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it)
    - [@Extends-ing fields annotations](#extends-ing-fields-annotations)
    - [EditConfig settings](#editconfig-settings)
@@ -222,17 +222,6 @@ Note that `@IgnoreTabs` setting is *not* inherited, unlike fields themselves, an
 
 See also: [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it) 
 
-
-### @HtmlTag annotation
-To create a decoration tag for your component you need mark your Java class with `@HtmlTag` annotation. The required node cq:htmlTag will be added.
-```java
-@HtmlTag(
-    className = "my-class",
-    tagName = "span"
-)
-public class MyComponentDialog { /* ... */ }
-```
- 
 ### Fields annotations
 The plugin makes use of `@DialogField`  annotation and the set of specific annotations, such as `@TextField`, `@Checkbox`, `@DatePicker`, etc., discussed further. The latter are referred as field-specific annotations.
 
@@ -697,6 +686,16 @@ RichTextEditor allows to define text visual features by [CSS rules](https://help
 (Unlike *formats* above, these are not HTML tag definitions but rather *\<span style='...'>...\</span>* blocks that will be added to selected text.)
 ###### Miscellaneous tweaks
 Additionally, a user can specify amount of edit operations stored for undo/redo logic (via [maxUndoSteps](https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/configure-rich-text-editor-plug-ins.html#undohistory) property), the width of tabulation (in spaces, via [tabSize](https://helpx.adobe.com/experience-manager/6-3/sites/administering/using/configure-rich-text-editor-plug-ins.html#tabsize) property) and the indentation margin of lists (in spaces, via [indentMargin](https://helpx.adobe.com/experience-manager/6-3/sites/administering/using/configure-rich-text-editor-plug-ins.html#indentmargin) property).
+
+#### Altering field's decoration tag with @HtmlTag
+To create a specific [decoration tag](https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/decoration-tag.html) for your widget, you need to mark your Java class with `@HtmlTag`. Then the `cq:htmlTag` node will be added to your component's nodeset.
+```java
+@HtmlTag(
+    className = "my-class",
+    tagName = "span"
+)
+public class MyComponentDialog { /* ... */ }
+```
 
 #### Fields inheritance and ways to cancel it
 
