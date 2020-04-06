@@ -14,21 +14,23 @@
 
 package com.exadel.aem.toolkit.api.annotations.main;
 
-import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
-import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
+
 /**
- * Used to define decoration tag of AEM component according to the
- * <a href="https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/decoration-tag.html"> Adobe specification</a>
+ * Used to define decoration tag of an AEM widget according to the
+ * <a href="https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/decoration-tag.html">Adobe specification</a>
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ValueRestriction(value = ValueRestrictions.ALL_NOT_BLANK)
+@PropertyMapping
 @SuppressWarnings("unused")
 public @interface HtmlTag {
 
@@ -36,11 +38,15 @@ public @interface HtmlTag {
      * Maps to the 'class' attribute of the cq:htmlTag node
      * @return String value, non-blank
      */
+    @PropertyName("class")
+    @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String className();
 
     /**
      * Maps to the 'cq:tagName' attribute of the cq:htmlTag node
      * @return String value, non-blank
      */
+    @PropertyName("cq:tagName")
+    @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String tagName() default "div";
 }
