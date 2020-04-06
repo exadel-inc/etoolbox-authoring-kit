@@ -33,6 +33,6 @@ public class TagFieldWidget {
     String tag1;
 
     @DialogField
-    @TagField(multiple = true, forceSelection = true, emptyText = "empty text")
+    @TagField(multiple = true, forceSelection = true, autocreateTag = false, emptyText = "empty text")
     String tag2;
 }
