@@ -13,7 +13,7 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.radio;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnoreValue;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 
 /**
@@ -33,19 +33,20 @@ public @interface RadioButton {
      * Used to define value to be stored when this option is checked
      * @return String value
      */
+    @PropertyRendering(allowBlank = true)
     String value();
     /**
      * When set to true, maps to the 'checked' attribute of this TouchUI dialog component's node.
      * Defines the the current option is selected by default
      * @return True or false
      */
-    @IgnoreValue("false")
+    @PropertyRendering(ignoreValues = "false")
     boolean checked() default false;
     /**
      * When set to true, maps to the 'disabled' attribute of this TouchUI dialog component's node.
      * Defines the the current option is shown in disabled state
      * @return True or false
      */
-    @IgnoreValue("false")
+    @PropertyRendering(ignoreValues = "false")
     boolean disabled() default false;
 }

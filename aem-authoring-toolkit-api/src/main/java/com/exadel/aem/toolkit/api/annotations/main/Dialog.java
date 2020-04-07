@@ -20,9 +20,8 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.IgnoreValue;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
@@ -41,7 +40,7 @@ public @interface Dialog {
      * Maps to the 'jcr:title' attributes of both the component root node node and its {@code cq:dialog} node
      * @return String value, non-blank
      */
-    @PropertyName(JcrConstants.PN_TITLE)
+    @PropertyRendering(name = JcrConstants.PN_TITLE)
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String title();
 
@@ -49,7 +48,7 @@ public @interface Dialog {
      * When set to non-blank, maps to the 'jcr:description' attribute of the component's root node
      * @return String value
      */
-    @PropertyName(JcrConstants.PN_DESCRIPTION)
+    @PropertyRendering(name = JcrConstants.PN_DESCRIPTION)
     @PropertyScope(XmlScope.COMPONENT)
     String description() default "";
 
@@ -57,7 +56,7 @@ public @interface Dialog {
      * When set to non-blank, maps to the 'cq:cellName' attribute of the component's root node
      * @return String value
      */
-    @PropertyName(JcrConstants.PN_CELL_NAME)
+    @PropertyRendering(name = JcrConstants.PN_CELL_NAME)
     @PropertyScope(XmlScope.COMPONENT)
     String cellName() default "";
 
@@ -80,16 +79,15 @@ public @interface Dialog {
      * When set to true, renders as the 'cq:noDecoration' attribute of the component root node with `true` value
      * @return True or false
      */
-    @PropertyName(JcrConstants.PN_NO_DECORATION)
+    @PropertyRendering(name = JcrConstants.PN_NO_DECORATION, ignoreValues = "false")
     @PropertyScope(XmlScope.COMPONENT)
-    @IgnoreValue("false")
     boolean noDecoration() default false;
 
     /**
      * When set to non-blank, renders as the 'sling:resourceSuperType' attribute of the component root node
      * @return String value
      */
-    @PropertyName(JcrConstants.PN_RESOURCE_SUPER_TYPE)
+    @PropertyRendering(name = JcrConstants.PN_RESOURCE_SUPER_TYPE)
     @PropertyScope(XmlScope.COMPONENT)
     String resourceSuperType() default "";
 
@@ -97,7 +95,7 @@ public @interface Dialog {
      * Maps to the 'cq:templatePath' attribute of the component root node. Must represent a valid JCR path
      * @return String value
      */
-    @PropertyName(JcrConstants.PN_TEMPLATE_PATH)
+    @PropertyRendering(name = JcrConstants.PN_TEMPLATE_PATH)
     @PropertyScope(XmlScope.COMPONENT)
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     String templatePath() default "";
@@ -130,7 +128,7 @@ public @interface Dialog {
      * @return True or false
      */
     @PropertyScope(XmlScope.COMPONENT)
-    @IgnoreValue("false")
+    @PropertyRendering(ignoreValues = "false")
     boolean disableTargeting() default false;
 
     /**

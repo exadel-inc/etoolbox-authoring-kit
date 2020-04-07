@@ -64,6 +64,6 @@ public @interface Alert {
      *
      * @return String value
      */
-    @PropertyName(JcrConstants.PN_TITLE)
+    @PropertyRendering(name = JcrConstants.PN_TITLE)
     String title() default "";
 }

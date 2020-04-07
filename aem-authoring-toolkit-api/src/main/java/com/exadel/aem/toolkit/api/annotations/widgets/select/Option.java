@@ -18,7 +18,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnoreValue;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
 
@@ -43,6 +43,7 @@ public @interface Option {
      * Used to define value to be stored when this option is checked
      * @return String value
      */
+    @PropertyRendering(allowBlank = true)
     String value();
     /**
      * When set to a non-blank string value, maps to the 'icon' attribute of this TouchUI dialog component's node.
@@ -70,13 +71,13 @@ public @interface Option {
      * Defines the the current option is selected by default
      * @return True or false
      */
-    @IgnoreValue("false")
+    @PropertyRendering(ignoreValues = "false")
     boolean selected() default false;
     /**
      * When set to true, maps to the 'disabled' attribute of this TouchUI dialog component's node.
      * Defines the the current option is shown in disabled state
      * @return True or false
      */
-    @IgnoreValue("false")
+    @PropertyRendering(ignoreValues = "false")
     boolean disabled() default false;
 }
