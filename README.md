@@ -90,10 +90,11 @@ For some of the **Toolkit**'s features to work properly, namely the `DependsOn` 
 If you compile the **Toolkit** from the source code, you'll find the zip file under _./aem-authoring-toolkit/aem-authoring-toolkit-assets/target_ directory. 
 
 If you are using ready artifacts, the easiest way is to append the `DependsOn` package to one of your content packages. Since `DependsOn` is small in size, this will not hamper your deployment process.
-Also, you can run ```mvn clean install -Pinstall-assets``` and assets will be deployed to your AEM author instance. For remote deploying, define these parameters:
-```xml
-<aem.host>localhost</aem.host>
-<aem.port>4502</aem.port>
+
+If you choose to import the source code and build the project by hand, run Maven with *install-assets* profile like `mvn clean install -Pinstall-assets`. You may need to change the following values in the *properties* part of the project's main _POM_ file:
+```
+<aem.host>10.0.0.1</aem.host> <!-- your AEM instance address or hostname -->
+<aem.port>4502</aem.port> <!-- your AEM instance port -->
 ```
 
 Add the following dependency to your content package's _POM_ file.
@@ -387,13 +388,21 @@ Used to render groups of RadioButtons in TouchUI dialogs. Exposes properties as 
 ```java
 public class RadioGroupDialog {
     @DialogField
-    @RadioGroup(buttons = {
-        @RadioButton(text = "Button 1", value = "1", checked=true),
-        @RadioButton(text = "Button 2", value = "2"),
-        @RadioButton(text = "Button 3", value = "3", disabled=true)
-        },
-        datasource = @DataSource(path = "new/path", resourceType = "new/res/type")
-)
+    @RadioGroup(
+        buttons = {
+            @RadioButton(text = "Button 1", value = "1", checked=true),
+            @RadioButton(text = "Button 2", value = "2"),
+            @RadioButton(text = "Button 3", value = "3", disabled=true)
+        }
+    )
+    String field8;
+}
+```
+Mind you can set up to use a *datasource* instead of list of options. This way your `@Select` would look as follows:
+```java
+public class RadioGroupDialog {
+    @DialogField
+    @RadioGroup(datasource = @DataSource(path = "my/path", resourceType = "my/res/type"))
     String field8;
 }
 ```
@@ -420,9 +429,19 @@ public class MyDialogWithDropdown {
             @Option(text = "4 stars", value = "4", disabled = true),
             @Option(text = "5 stars", value = "5", disabled = true)
         },
-        emptyText = "Select rating",
-        datasource = @DataSource(path = "my/path", resourceType = "my/res/type")
-)
+        emptyText = "Select rating"
+    )
+    String dropdown;
+}
+```
+Mind you can set up to use a *datasource* instead of list of options. This way your `@Select` would look as follows:
+```java
+public class MyDialogWithDropdown {
+    @DialogField(label = "Rating")
+    @Select(
+        datasource = @DataSource(path = "my/path", resourceType = "my/res/type"),
+        emptyText = "Select rating"
+    )
     String dropdown;
 }
 ```
