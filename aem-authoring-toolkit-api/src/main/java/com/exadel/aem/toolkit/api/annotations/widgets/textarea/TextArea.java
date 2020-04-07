@@ -74,11 +74,6 @@ public @interface TextArea {
     @ValueRestriction(ValueRestrictions.POSITIVE)
     long rows() default 5;
     /**
-     * Maps to the 'validation' attribute of this TouchUI dialog component's node.
-     * @return String value or an array of strings
-     */
-    String[] validation() default "";
-    /**
      * Maps to the 'resize' attribute of this TouchUI dialog component's node.
      * Sets the resizing type of this TextArea
      * @see TextAreaResizeType
