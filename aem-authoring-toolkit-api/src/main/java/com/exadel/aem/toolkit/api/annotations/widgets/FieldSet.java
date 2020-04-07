@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 
@@ -41,7 +41,7 @@ public @interface FieldSet {
      * Used to define title displayed above the FieldSet in TouchUI dialog
      * @return String value
      */
-    @PropertyName(JcrConstants.PN_TITLE)
+    @PropertyRendering(name = JcrConstants.PN_TITLE)
     String title() default "";
     /**
      * Used to define string prefix for names of all fields in the FieldSet

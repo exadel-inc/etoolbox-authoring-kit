@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
  * Used to set up <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/docs/server/commonattrs.html">
@@ -46,8 +46,8 @@ public @interface Attribute {
      * The HTML 'class' attribute
      * @return String value
      */
-    @PropertyName("class")
-    String clas() default "";
+    @PropertyRendering(name = "class")
+    String className() default "";
     /**
      * The HTML 'title' attribute
      * @return String value

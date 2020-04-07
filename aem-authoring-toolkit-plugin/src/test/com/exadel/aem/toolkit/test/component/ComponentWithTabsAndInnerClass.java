@@ -55,7 +55,7 @@ public class ComponentWithTabsAndInnerClass {
     @TextField
     @Attribute(
             id = "field1-id",
-            clas = "field1-attribute-class",
+            className = "field1-attribute-class",
             data = {
                     @Data(name = "field1-data1", value = "value-data1"),
                     @Data(name = "field1-data2", value = "value-data2")

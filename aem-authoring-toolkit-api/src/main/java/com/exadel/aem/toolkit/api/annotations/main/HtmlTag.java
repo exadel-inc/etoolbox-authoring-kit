@@ -20,7 +20,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
@@ -38,7 +38,7 @@ public @interface HtmlTag {
      * Maps to the 'class' attribute of the cq:htmlTag node
      * @return String value, non-blank
      */
-    @PropertyName("class")
+    @PropertyRendering(name = "class")
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String className();
 
@@ -46,7 +46,7 @@ public @interface HtmlTag {
      * Maps to the 'cq:tagName' attribute of the cq:htmlTag node
      * @return String value, non-blank
      */
-    @PropertyName("cq:tagName")
+    @PropertyRendering(name = "cq:tagName")
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String tagName() default "div";
 }

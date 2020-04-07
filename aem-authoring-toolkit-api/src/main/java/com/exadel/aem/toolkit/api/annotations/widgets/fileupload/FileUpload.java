@@ -14,14 +14,13 @@
 package com.exadel.aem.toolkit.api.annotations.widgets.fileupload;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
-import com.exadel.aem.toolkit.api.annotations.meta.IgnoreValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
@@ -81,7 +80,7 @@ public @interface FileUpload {
      * @return Long value
      */
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
-    @IgnoreValue("0")
+    @PropertyRendering(ignoreValues = "0")
     long sizeLimit() default 0;
     /**
      * Maps to the 'mimeTypes' attribute of this TouchUI dialog component's node.
@@ -95,7 +94,7 @@ public @interface FileUpload {
      * @see ButtonVariant
      * @return One of {@code ButtonVariant} values
      */
-    @PropertyName("variant")
+    @PropertyRendering(name = "variant")
     @EnumValue(transformation = StringTransformation.CAMELCASE)
     ButtonVariant buttonVariant() default ButtonVariant.PRIMARY;
     /**
@@ -103,14 +102,14 @@ public @interface FileUpload {
      * Used to define the text of the button
      * @return String value
      */
-    @PropertyName("text")
+    @PropertyRendering(name = "text")
     String buttonText() default "Upload";
     /**
      * Maps to the 'hideText' attribute of this TouchUI dialog component's node.
      * Used to define whether text is hidden
      * @return True or false
      */
-    @PropertyName("hideText")
+    @PropertyRendering(name = "hideText")
     boolean hideButtonText() default false;
     /**
      * Maps to the 'buttonSize' attribute of this TouchUI dialog component's node.
@@ -118,7 +117,7 @@ public @interface FileUpload {
      * @see ButtonSize
      * @return One of {@code ButtonSize} values
      */
-    @PropertyName("size")
+    @PropertyRendering(name = "size")
     @EnumValue()
     ButtonSize buttonSize() default ButtonSize.MEDIUM;
     /**

@@ -93,8 +93,8 @@ If you are using ready artifacts, the easiest way is to append the `DependsOn` p
 
 If you choose to import the source code and build the project by hand, run Maven with *install-assets* profile like `mvn clean install -Pinstall-assets`. You may need to change the following values in the *properties* part of the project's main _POM_ file:
 ```
-<aem.host>10.0.0.1</aem.host> <!-- your AEM instance address or hostname -->
-<aem.port>4502</aem.port> <!-- your AEM instance port -->
+<aem.host>10.0.0.1</aem.host> <!-- Your AEM instance address or hostname -->
+<aem.port>4502</aem.port> <!-- Your AEM instance port -->
 ```
 
 Add the following dependency to your content package's _POM_ file.
@@ -371,7 +371,7 @@ public class HeadingDialog {
     @DialogField
     @Heading(text = "Heading text", level = 2)
     String heading;
-    }
+}
 ```
 ###### @Hidden
 Used to render hidden inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hidden](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/hidden/index.html).
@@ -542,7 +542,7 @@ public class DialogWithHtmlAttributes {
     @TextField
     @Attribute(
         id = "field1-id",
-        clas = "field1-attribute-class",
+        className = "field1-attribute-class",
         data = {
             @Data(name = "field1-data1", value = "value-data1"),
             @Data(name = "field1-data2", value = "value-data2")
@@ -933,9 +933,13 @@ If you define in your handler class a field of type `RuntimeContext` marked with
 Developer can (and is encouraged to) also call `.getExceptionHandler()` method whenever his or her logic is ought to throw or manage an exception. This way, all the exceptions from either built-in or custom routines are managed uniformly.
 
 #### Restricting custom annotations' values
-You can modify rendering of your custom-developed annotations by adding built-in "meta"-annotations, such as `@ValueRestriction` or `@IgnoredValue`. 
+You can modify rendering of your custom-developed annotations by adding built-in "meta"-annotations, such as `@PropertyRendering` or `@ValueRestriction`. 
 
-To avoid rendering attribute with a value implied by Coral engine and thus redundant, use `@IgnoredValue` annotation with argument set to String representation of unneeded value.
+If you need to store a value with a name other that the corresponding annotation field's name (this may be the case if a namespaced name - one with a colon - required), prepend `@PropertyRendering(name = "some:specific-name")` to your method.
+
+To avoid writing down an attribute with a value implied by Coral/Granite engine and thus redundant, use `@PropertyRendering(ignoreValues = "this-default")`. A single string or an array of strings may be provided.
+
+There are also specific flags in `@PropertyRendering` "meta"-annotation, namely `allowBlank` to render attributes with values resulting in an empty or blank string (turned off by default), and `ignorePrefix` - to not use prefix defined at FieldSet level with this attribute name.
 
 `@ValueRestriction` accepts fully qualified name of a class implementing `Validator` interface as an argument. Predefined names are in ValueRestrictions class. 
 

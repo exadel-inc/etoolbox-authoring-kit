@@ -29,15 +29,12 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
@@ -50,11 +47,13 @@ import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
 import com.exadel.aem.toolkit.core.exceptions.ReflectionException;
@@ -293,8 +292,9 @@ public class PluginXmlUtility implements XmlUtility {
             if (!PluginReflectionUtility.annotationPropertyIsNotDefault(source, sourceMethod)) {
                 return;
             }
-            String effectiveName = sourceMethod.isAnnotationPresent(PropertyName.class) && StringUtils.isNotBlank(sourceMethod.getAnnotation(PropertyName.class).value())
-                    ? sourceMethod.getAnnotation(PropertyName.class).value()
+            PropertyRendering propertyRendering = sourceMethod.getAnnotation(PropertyRendering.class);
+            String effectiveName = propertyRendering != null
+                    ? StringUtils.defaultIfBlank(propertyRendering.name(), name)
                     : name;
             XmlAttributeSettingHelper.forMethod(source, sourceMethod)
                     .withName(effectiveName)
@@ -330,15 +330,19 @@ public class PluginXmlUtility implements XmlUtility {
                 ? StringUtils.substringBeforeLast(prefix, DialogConstants.PATH_SEPARATOR)
                 : StringUtils.EMPTY;
 
-        Element currentElement = StringUtils.isEmpty(nodePrefix)
-                ? element
-                : Pattern.compile(DialogConstants.PATH_SEPARATOR).splitAsStream(nodePrefix)
-                .reduce(element, this::getOrAddChildElement, (prev, next) -> next);
+        Element effectiveElement;
+        if (StringUtils.isEmpty(nodePrefix)) {
+            effectiveElement = element;
+        } else {
+            effectiveElement = Pattern.compile(DialogConstants.PATH_SEPARATOR)
+                    .splitAsStream(nodePrefix)
+                    .reduce(element, this::getOrAddChildElement, (prev, next) -> next);
+        }
         Arrays.stream(annotation.annotationType().getDeclaredMethods())
                 .filter(m -> ArrayUtils.isEmpty(propMapping.mappings()) || ArrayUtils.contains(propMapping.mappings(), m.getName()))
                 .filter(m -> !m.isAnnotationPresent(IgnorePropertyMapping.class))
                 .filter(m -> !skipped.contains(m.getName()))
-                .forEach(m -> populateProperty(m, currentElement, annotation));
+                .forEach(m -> populateProperty(m, effectiveElement, annotation));
     }
 
     /**
@@ -350,10 +354,10 @@ public class PluginXmlUtility implements XmlUtility {
     private static void populateProperty(Method method, Element element, Annotation annotation) {
         String name = method.getName();
         boolean ignorePrefix = false;
-        if (method.isAnnotationPresent(PropertyName.class)) {
-            PropertyName propertyName = method.getAnnotation(PropertyName.class);
-            name = propertyName.value();
-            ignorePrefix = propertyName.ignorePrefix();
+        if (method.isAnnotationPresent(PropertyRendering.class)) {
+            PropertyRendering propertyRendering = method.getAnnotation(PropertyRendering.class);
+            name = StringUtils.defaultIfBlank(propertyRendering.name(), name);
+            ignorePrefix = propertyRendering.ignorePrefix();
         }
         String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
         String namePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
@@ -574,11 +578,12 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     /**
-     * Appends {@link DataSource} values to an {@code Element} node
+     * Appends {@link DataSource} value and, for compatibility reasons, deprecated {@code acsListPath}
+     * and {@code acsListResourceType} values to an {@code Element} node
      * @param element Element to store data in
+     * @param dataSource Provided values as a {@code DataSource} annotation
      * @param acsListPath Path to ACS Commons List in JCR repository
      * @param acsListResourceType Use this to set {@code sling:resourceType} of data source, other than standard
-     * @param dataSource Provided values as a {@code DataSource} annotation
      */
     public void appendDataSource(Element element, DataSource dataSource, String acsListPath, String acsListResourceType) {
         if (appendDataSource(element, dataSource.path(), dataSource.resourceType(), Arrays.stream(dataSource.properties()).collect(Collectors.toMap(Property::name, Property::value))) == null) {
@@ -609,13 +614,13 @@ public class PluginXmlUtility implements XmlUtility {
      * @param path Path to ACS Commons List in JCR repository
      * @param resourceType Use this to set {@code sling:resourceType} of data source, other than standard
      */
-    private Element appendAcsCommonsList(Element element, String path, String resourceType) {
+    private void appendAcsCommonsList(Element element, String path, String resourceType) {
         if (StringUtils.isBlank(path)) {
-            return null;
+            return;
         }
         Element dataSourceElement = createNodeElement(DialogConstants.NN_DATASOURCE, null,
                 new ImmutableMap.Builder<String, String>().put(DialogConstants.PN_PATH, path).build(),
                 resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
-        return (Element) element.appendChild(dataSourceElement);
+        element.appendChild(dataSourceElement);
     }
 }

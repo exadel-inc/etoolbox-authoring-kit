@@ -195,7 +195,7 @@ public class ComponentWithRichTextAndExternalClasses {
 
     @FieldSet(namePrefix = PREFIX_FIRST)
     @PlaceOnTab(TAB_FEATURED_CARD_1)
-    @Attribute(clas = "first-card", data = {@Data(name = "data-name", value = "data-value")})
+    @Attribute(className = "first-card", data = {@Data(name = "data-name", value = "data-value")})
     private SampleFieldsetBase1 firstCard;
 
     @DialogField(

@@ -23,11 +23,19 @@
                             renderHidden="{Boolean}false"
                             required="{Boolean}false">
                         <items jcr:primaryType="nt:unstructured">
-                            <item1 jcr:primaryType="nt:unstructured" selected="{Boolean}true" statusIcon="/content/dam/samples/icons/1-star-rating.png" statusText="This is to set 1-star rating" statusVariant="success" text="1 star" value="1"/>
-                            <item2 jcr:primaryType="nt:unstructured" text="2 stars" value="2"/>
-                            <item3 jcr:primaryType="nt:unstructured" text="3 stars" value="3"/>
-                            <item4 jcr:primaryType="nt:unstructured" disabled="{Boolean}true" text="4 stars" value="4"/>
-                            <item5 jcr:primaryType="nt:unstructured" disabled="{Boolean}true" text="5 stars" value="5"/>
+                            <item jcr:primaryType="nt:unstructured" text="Empty" value=""/>
+                            <item1 jcr:primaryType="nt:unstructured" text="Blank" value=" "/>
+                            <item2 jcr:primaryType="nt:unstructured"
+                                   text="1 star"
+                                   value="1"
+                                   selected="{Boolean}true"
+                                   statusIcon="/content/dam/samples/icons/1-star-rating.png"
+                                   statusText="This is to set 1-star rating"
+                                   statusVariant="success"/>
+                            <item3 jcr:primaryType="nt:unstructured" text="2 stars" value="2"/>
+                            <item4 jcr:primaryType="nt:unstructured" text="3 stars" value="3"/>
+                            <item5 jcr:primaryType="nt:unstructured" text="4 stars" value="4" disabled="{Boolean}true"/>
+                            <item6 jcr:primaryType="nt:unstructured" text="5 stars" value="5" disabled="{Boolean}true"/>
                         </items>
                     </rating>
                     <timezone jcr:primaryType="nt:unstructured"
