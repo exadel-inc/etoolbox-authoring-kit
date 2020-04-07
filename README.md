@@ -90,6 +90,11 @@ For some of the **Toolkit**'s features to work properly, namely the `DependsOn` 
 If you compile the **Toolkit** from the source code, you'll find the zip file under _./aem-authoring-toolkit/aem-authoring-toolkit-assets/target_ directory. 
 
 If you are using ready artifacts, the easiest way is to append the `DependsOn` package to one of your content packages. Since `DependsOn` is small in size, this will not hamper your deployment process.
+Also, you can run ```mvn clean install -Pinstall-assets``` and assets will be deployed to your AEM author instance. For remote deploying, define these parameters:
+```xml
+<aem.host>localhost</aem.host>
+<aem.port>4502</aem.port>
+```
 
 Add the following dependency to your content package's _POM_ file.
 ```xml
