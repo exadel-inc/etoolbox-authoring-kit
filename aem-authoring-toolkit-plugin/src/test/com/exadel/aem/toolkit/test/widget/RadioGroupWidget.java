@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
+import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
@@ -31,9 +32,10 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
 public class RadioGroupWidget {
     @DialogField
     @RadioGroup(buttons = {
-            @RadioButton(text = "Button 1", value = "1", checked=true),
+            @RadioButton(text = "Button 1", value = "1", checked = true),
             @RadioButton(text = "Button 2", value = "2"),
-            @RadioButton(text = "Button 3", value = "3", disabled=true)
-    })
+            @RadioButton(text = "Button 3", value = "3", disabled = true)
+    },
+    datasource = @DataSource(path = "new/path", resourceType = "my/res/type"))
     String field;
 }

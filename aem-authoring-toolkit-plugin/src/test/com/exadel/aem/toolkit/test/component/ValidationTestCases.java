@@ -15,6 +15,7 @@
 package com.exadel.aem.toolkit.test.component;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
@@ -91,4 +92,12 @@ public class ValidationTestCases {
         @CustomAnnotationAutomapping(customColor = "yellow")
         String custom;
     }
+
+    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @HtmlTag(tagName = "", className = "wrapper")
+    public static class ComponentWithWrongHtmlTag1 {}
+
+    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @HtmlTag(className = " ")
+    public static class ComponentWithWrongHtmlTag2 {}
 }

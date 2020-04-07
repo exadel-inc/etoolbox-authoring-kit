@@ -25,7 +25,6 @@
                             sling:resourceType="granite/ui/components/coral/foundation/form/select">
                         <datasource
                             jcr:primaryType="nt:unstructured"
-                            addNone="{Boolean}true"
                             path="/path/to/acs/list"
                             sling:resourceType="acs/list/resource/type"/>
                     </acsListOptions>

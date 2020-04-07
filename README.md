@@ -10,10 +10,11 @@
    - [@Dialog annotation](#dialog-annotation)
    - [@Tab annotation](#tab-annotation)
    - [Fields annotations](#fields-annotations)
-        - [@DialogField](#dialogfield) 
-        - [Widget annotations A-Z](#widget-annotations-a-z)
-        - [Field grouping and multiplying](#field-grouping-and-multiplying)
-        - [Implementing RichTextEditor](#implementing-richtexteditor)
+       - [@DialogField](#dialogfield) 
+       - [Widget annotations A-Z](#widget-annotations-a-z)
+       - [Field grouping and multiplying](#field-grouping-and-multiplying)
+       - [Implementing RichTextEditor](#implementing-richtexteditor)
+   - [Altering field's decoration tag with @HtmlTag](#altering-fields-decoration-tag-with-htmltag)
    - [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it)
    - [@Extends-ing fields annotations](#extends-ing-fields-annotations)
    - [EditConfig settings](#editconfig-settings)
@@ -89,6 +90,12 @@ For some of the **Toolkit**'s features to work properly, namely the `DependsOn` 
 If you compile the **Toolkit** from the source code, you'll find the zip file under _./aem-authoring-toolkit/aem-authoring-toolkit-assets/target_ directory. 
 
 If you are using ready artifacts, the easiest way is to append the `DependsOn` package to one of your content packages. Since `DependsOn` is small in size, this will not hamper your deployment process.
+
+If you choose to import the source code and build the project by hand, run Maven with *install-assets* profile like `mvn clean install -Pinstall-assets`. You may need to change the following values in the *properties* part of the project's main _POM_ file:
+```
+<aem.host>10.0.0.1</aem.host> <!-- your AEM instance address or hostname -->
+<aem.port>4502</aem.port> <!-- your AEM instance port -->
+```
 
 Add the following dependency to your content package's _POM_ file.
 ```xml
@@ -221,7 +228,6 @@ Note that `@IgnoreTabs` setting is *not* inherited, unlike fields themselves, an
 
 See also: [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it) 
 
- 
 ### Fields annotations
 The plugin makes use of `@DialogField`  annotation and the set of specific annotations, such as `@TextField`, `@Checkbox`, `@DatePicker`, etc., discussed further. The latter are referred as field-specific annotations.
 
@@ -272,7 +278,7 @@ Mind that alert variants available as of Coral 3 are enumerated in `StatusVarian
 ##### @Autocomplete
 Used to render the component in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Autocomplete](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/autocomplete/index.html). Options becoming available as user enters text depend on the value of "namespaces" property of `@AutocompleteDataSource`. If unset, all tags under the *content/cq:Tags* JCR directory will be available. Otherwise you specify one or more particular *cq:Tag* nodes as in the snippet below:
 ```java
-public class AutocompleteDialog{
+public class AutocompleteDialog {
     @DialogField
     @Autocomplete(multiple = true, datasource = @AutocompleteDatasource(namespaces = {"workflow", "we-retail"}))
     String field;
@@ -391,11 +397,21 @@ Used to render groups of RadioButtons in TouchUI dialogs. Exposes properties as 
 ```java
 public class RadioGroupDialog {
     @DialogField
-    @RadioGroup(buttons = {
-        @RadioButton(text = "Button 1", value = "1", checked=true),
-        @RadioButton(text = "Button 2", value = "2"),
-        @RadioButton(text = "Button 3", value = "3", disabled=true)
-    })
+    @RadioGroup(
+        buttons = {
+            @RadioButton(text = "Button 1", value = "1", checked=true),
+            @RadioButton(text = "Button 2", value = "2"),
+            @RadioButton(text = "Button 3", value = "3", disabled=true)
+        }
+    )
+    String field8;
+}
+```
+Mind you can set up to use a *datasource* instead of list of options. This way your `@Select` would look as follows:
+```java
+public class RadioGroupDialog {
+    @DialogField
+    @RadioGroup(datasource = @DataSource(path = "my/path", resourceType = "my/res/type"))
     String field8;
 }
 ```
@@ -419,30 +435,23 @@ public class MyDialogWithDropdown {
             ),
             @Option(text = "2 stars", value = "2"),
             @Option(text = "3 stars", value = "3"),
-            @Option(text = "4 stars", value = "4", disabled=true),
-            @Option(text = "5 stars", value = "5", disabled=true)
+            @Option(text = "4 stars", value = "4", disabled = true),
+            @Option(text = "5 stars", value = "5", disabled = true)
         },
         emptyText = "Select rating"
-)
+    )
     String dropdown;
 }
 ```
-
-Apart from such a usage, `@Select` can also consume data stored in an arbitrary datasource.
-For that usecase, another `@Select` setup is in effect (see below). 
-
-You can for instance use lists shipped as the part of *ACS AEM Commons* package, or some other implementation of key-value pair storage that mimics such lists.
-In the latter case, provide the additional `acsListResourceType` value that will help to parse your key-value storage.
-
+Mind you can set up to use a *datasource* instead of list of options. This way your `@Select` would look as follows:
 ```java
 public class MyDialogWithDropdown {
-    @DialogField(label = "Arbitrary List")
+    @DialogField(label = "Rating")
     @Select(
-        acsListPath = "/path/to/acs/list",
-        acsListResourceType = "my/list/resource/type", // optional
-        addNone = true // do we need the specific "none" option before other options in list?
+        datasource = @DataSource(path = "my/path", resourceType = "my/res/type"),
+        emptyText = "Select rating"
     )
-    String option;
+    String dropdown;
 }
 ```
 
@@ -695,6 +704,16 @@ RichTextEditor allows to define text visual features by [CSS rules](https://help
 (Unlike *formats* above, these are not HTML tag definitions but rather *\<span style='...'>...\</span>* blocks that will be added to selected text.)
 ###### Miscellaneous tweaks
 Additionally, a user can specify amount of edit operations stored for undo/redo logic (via [maxUndoSteps](https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/configure-rich-text-editor-plug-ins.html#undohistory) property), the width of tabulation (in spaces, via [tabSize](https://helpx.adobe.com/experience-manager/6-3/sites/administering/using/configure-rich-text-editor-plug-ins.html#tabsize) property) and the indentation margin of lists (in spaces, via [indentMargin](https://helpx.adobe.com/experience-manager/6-3/sites/administering/using/configure-rich-text-editor-plug-ins.html#indentmargin) property).
+
+#### Altering field's decoration tag with @HtmlTag
+To create a specific [decoration tag](https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/decoration-tag.html) for your widget, you need to mark your Java class with `@HtmlTag`. Then the `cq:htmlTag` node will be added to your component's nodeset.
+```java
+@HtmlTag(
+    className = "my-class",
+    tagName = "span"
+)
+public class MyComponentDialog { /* ... */ }
+```
 
 #### Fields inheritance and ways to cancel it
 

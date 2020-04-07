@@ -33,7 +33,7 @@ public class ExceptionsTestCases {
             title = DEFAULT_COMPONENT_TITLE,
             layout = DialogLayout.TABS
     )
-    public static class ComponentWithInexistentTab extends ComplexComponent1 {
+    public static class ComponentWithNonexistentTab extends ComplexComponent1 {
         @TextField
         @PlaceOnTab(LABEL_TAB_1)
         String validField;
@@ -50,5 +50,5 @@ public class ExceptionsTestCases {
     )
     @DependsOnTab(tabTitle = LABEL_TAB_1, query = "true")
     @DependsOnTab(tabTitle = LABEL_TAB_0, query = "true")
-    public static class ComponentWithInexistentDependsOnTab extends ComplexComponent1 {}
+    public static class ComponentWithNonexistentDependsOnTab extends ComplexComponent1 {}
 }

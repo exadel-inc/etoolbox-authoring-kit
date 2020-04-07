@@ -51,6 +51,16 @@ public class WidgetsTest extends DefaultTestBase {
     }
 
     @Test
+    public void testColorFieldAndHtmlTag() {
+        testComponent(ColorFieldWidget.class);
+    }
+
+    @Test
+    public void testCustom() {
+        testComponent(CustomAnnotations.class);
+    }
+
+    @Test
     public void testDatePicker() {
         testComponent(DatePickerWidget.class);
     }
@@ -71,6 +81,16 @@ public class WidgetsTest extends DefaultTestBase {
     }
 
     @Test
+    public void testHeading() {
+        testComponent(HeadingWidget.class);
+    }
+
+    @Test
+    public void testHidden() {
+        testComponent(HiddenWidget.class);
+    }
+
+    @Test
     public void testImageUpload() {
         testComponent(ImageUploadWidget.class);
     }
@@ -88,6 +108,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testNumberField() {
         testComponent(NumberFieldWidget.class);
+    }
+
+    @Test
+    public void testPassword() {
+        testComponent(PasswordWidget.class);
     }
 
     @Test
@@ -118,30 +143,5 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testTagField() {
         testComponent(TagFieldWidget.class);
-    }
-
-    @Test
-    public void testCustom() {
-        testComponent(CustomAnnotations.class);
-    }
-
-    @Test
-    public void testColorField() {
-        testComponent(ColorFieldWidget.class);
-    }
-
-    @Test
-    public void testHidden() {
-        testComponent(HiddenWidget.class);
-    }
-
-    @Test
-    public void testPassword() {
-        testComponent(PasswordWidget.class);
-    }
-
-    @Test
-    public void testHeading() {
-        testComponent(HeadingWidget.class);
     }
 }
