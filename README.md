@@ -272,7 +272,7 @@ Mind that alert variants available as of Coral 3 are enumerated in `StatusVarian
 ##### @Autocomplete
 Used to render the component in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Autocomplete](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/autocomplete/index.html). Options becoming available as user enters text depend on the value of "namespaces" property of `@AutocompleteDataSource`. If unset, all tags under the *content/cq:Tags* JCR directory will be available. Otherwise you specify one or more particular *cq:Tag* nodes as in the snippet below:
 ```java
-public class AutocompleteDialog{
+public class AutocompleteDialog {
     @DialogField
     @Autocomplete(multiple = true, datasource = @AutocompleteDatasource(namespaces = {"workflow", "we-retail"}))
     String field;

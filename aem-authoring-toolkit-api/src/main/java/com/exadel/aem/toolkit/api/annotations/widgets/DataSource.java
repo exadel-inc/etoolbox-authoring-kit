@@ -17,12 +17,14 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 @PropertyMapping
 public @interface DataSource {
     /**
-     * When set to a non-blank string, allows to override {@code sling:resourceType} attribute of a {@code datasource node}
+     * When set to a non-blank string, stores as the {@code sling:resourceType} attribute of a {@code datasource node}
+     * of the current widget
      * @return String value
      */
-    String resourceType();
+    String resourceType() default "";
     /**
-     * When set to a non-blank string, a {@code datasource} node is appended to the JCR buildup of this component
+     * When set to a non-blank string, stores as the {@code path} attribute of a {@code datasource node}
+     * of the current widget
      * @return Valid JCR path, or an empty string
      */
     String path() default "";

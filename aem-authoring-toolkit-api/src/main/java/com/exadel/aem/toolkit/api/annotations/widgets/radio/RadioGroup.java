@@ -53,7 +53,7 @@ public @interface RadioGroup {
      * @return {@code @DataSource} instance
      */
     @IgnorePropertyMapping
-    DataSource datasource() default @DataSource(resourceType = "");
+    DataSource datasource() default @DataSource;
     /**
      * @deprecated Use {@code datasource:resourceType} instead
      * When set to a non-blank string, allows to override {@code sling:resourceType} attribute of a {@code datasource node}

@@ -36,6 +36,6 @@ public class RadioGroupWidget {
             @RadioButton(text = "Button 2", value = "2"),
             @RadioButton(text = "Button 3", value = "3", disabled = true)
     },
-            datasource = @DataSource(path = "new/path", resourceType = "my/res/type"))
+    datasource = @DataSource(path = "new/path", resourceType = "my/res/type"))
     String field;
 }
