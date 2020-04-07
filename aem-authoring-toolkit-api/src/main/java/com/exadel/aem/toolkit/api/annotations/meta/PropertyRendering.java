@@ -21,17 +21,20 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 
 /**
- * Used to override name of annotation property which is equal to {@code Field} name by default, and/or name prefix
+ * Defines settings for rendering a specific value of an annotation to an XML attribute, such as, the name of the attribute,
+ * and whether to render attribute with a particular value or not (typically, blank strings and values whcih are default
+ * according to Adobe specifications don't need to be explicitly set and therefore rendered)
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@SuppressWarnings("unused")
-public @interface PropertyName {
+public @interface PropertyRendering {
+
     /**
-     * Maps to the 'name' attribute of a field node
-     * @return String value, non-blank
+     * When set, maps to the 'name' attribute of a field node
+     * @return String value
      */
-    String value();
+    String name() default "";
+
 
     /**
      * When set to true, allows to override prefix set for this field name
@@ -39,4 +42,18 @@ public @interface PropertyName {
      * @return True or false
      */
     boolean ignorePrefix() default false;
+
+    /**
+     * When set, indicates that if a user-provided value matches one of the defined strings, the attribute will not
+     * be rendered (used to omit meaningless defauls from XML markup)
+     * @return String value, or an array of strings
+     */
+    String[] ignoreValues() default {};
+
+    /**
+     * When set to true, indicates that a user-defined value will be necessarily rendered into an XML attribute
+     * even if results in an empty or a blank strong
+     * @return True or false
+     */
+    boolean allowBlank() default false;
 }
