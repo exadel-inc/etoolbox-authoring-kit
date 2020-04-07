@@ -39,11 +39,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @SuppressWarnings("unused")
 public @interface FileUpload {
     /**
-     * Maps to the 'validation' attribute of this TouchUI dialog component's node.
-     * @return String value or an array of strings
-     */
-    String[] validation() default {};
-    /**
      * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
      * Used to define text hint for an empty FileUpload
      * @return String value

@@ -81,9 +81,4 @@ public @interface ColorField {
      * @return True or false
      */
     boolean showDefaultColors() default true;
-    /**
-     * Maps to the 'validation' attribute of this TouchUI dialog component's node.
-     * @return String value or an array of strings
-     */
-    String[] validation() default {};
 }

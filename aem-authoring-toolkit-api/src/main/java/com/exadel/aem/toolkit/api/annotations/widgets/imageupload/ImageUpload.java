@@ -70,11 +70,6 @@ public @interface ImageUpload {
      */
     String emptyText() default "";
     /**
-     * Maps to the 'validation' attribute of this TouchUI dialog component's node.
-     * @return String value or an array of strings
-     */
-    String[] validation() default {};
-    /**
      * Maps to the 'text' attribute of this TouchUI dialog component's node.
      * Used to define default button text
      * @return String value
