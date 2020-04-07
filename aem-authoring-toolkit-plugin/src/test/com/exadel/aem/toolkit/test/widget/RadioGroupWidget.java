@@ -20,6 +20,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
+import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
@@ -32,10 +33,15 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
 public class RadioGroupWidget {
     @DialogField
     @RadioGroup(buttons = {
+            @RadioButton(text = "Empty", value = ""),
+            @RadioButton(text = "Blank", value = " "),
             @RadioButton(text = "Button 1", value = "1", checked = true),
             @RadioButton(text = "Button 2", value = "2"),
             @RadioButton(text = "Button 3", value = "3", disabled = true)
-    },
-    datasource = @DataSource(path = "new/path", resourceType = "my/res/type"))
-    String field;
+    })
+    String group1;
+
+    @DialogField
+    @RadioGroup(datasource = @DataSource(path = "new/path", resourceType = "my/res/type"))
+    String group2;
 }

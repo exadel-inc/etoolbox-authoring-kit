@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 
@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 @PropertyMapping(prefix = "granite:data/cq:")
 @SuppressWarnings("unused")
 public @interface CustomAnnotationAutomapping {
-    @PropertyName("custom")
+    @PropertyRendering(name = "custom")
     String customField() default "Custom annotation's field!";
 
     @ValueRestriction("com.exadel.aem.toolkit.test.custom.CustomValidator")

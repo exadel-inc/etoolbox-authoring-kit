@@ -32,6 +32,8 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
 public class SelectWidget {
     @DialogField(label = "Rating")
     @Select(options = {
+            @Option(text = "Empty", value = ""),
+            @Option(text = "Blank", value = " "),
             @Option(
                     text = "1 star",
                     value = "1",
