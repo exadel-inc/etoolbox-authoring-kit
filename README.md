@@ -468,14 +468,16 @@ Used to logically group a number of different fields as described in [Adobe's Gr
 
 Hierarchy of classes is honored (so that a *FieldSet*-producing class may extend another class from same or even foreign scope. Proper field order within a fieldset can be guaranteed by use of *ranking* values (see chapter on `@DialogField` above). 
 
-Names of fields added to a FieldSet may share common prefix. This is specified in *namePrefix* property. 
+Names of fields added to a FieldSet may share common prefix specified in *namePrefix* property. This can be a simple word, or a string trailed with slash. In the latter case, values assigned to the FieldSet's fields will directed to a a subnode of the resource being edited.
 ```java
 public class DialogWithFieldSet {
     @FieldSet(title = "Field set example", namePrefix="fs-")
     private FieldSetExample fieldSet;
  
     class FieldSetExample extends ParentFieldSetExample {
-        //Constructors are omitted
+        // Constructors are omitted
+        // Rankings are not necessary, put here to show the way a parent's field can be
+        // rendered after the fields of a subclass, and not before
         @DialogField(ranking = 1)
         @TextField
         String field6;
