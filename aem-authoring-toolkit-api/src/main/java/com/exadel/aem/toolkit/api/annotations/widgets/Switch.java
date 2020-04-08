@@ -46,11 +46,6 @@ public @interface Switch {
      */
     String uncheckedValue() default "{Boolean}false";
     /**
-     * Maps to the 'validation' attribute of this TouchUI dialog component's node.
-     * @return String value or an array
-     */
-    String[] validation() default "";
-    /**
      * Maps to the 'checked' attribute of this TouchUI dialog component's node.
      * Used to define state for a Switch
      * @return True or false
