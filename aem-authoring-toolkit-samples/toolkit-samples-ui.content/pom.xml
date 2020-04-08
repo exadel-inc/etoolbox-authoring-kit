@@ -14,8 +14,6 @@
         <host>localhost</host>
         <port>4502</port>
         <serviceUrl>http://${host}:${port}/crx/packmgr/service.jsp</serviceUrl>
-        <vault.user>admin</vault.user>
-        <vault.password>admin</vault.password>
         <project.jcrAppFolder>authoring-toolkit/samples</project.jcrAppFolder>
     </properties>
 
@@ -72,8 +70,6 @@
                         <configuration>
                             <targetURL>${serviceUrl}</targetURL>
                             <packaging>zip</packaging>
-                            <userId>${vault.user}</userId>
-                            <password>${vault.password}</password>
                         </configuration>
                         <executions>
                             <execution>
@@ -91,7 +87,6 @@
     </profiles>
 
     <dependencies>
-        <!-- Foreign -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
