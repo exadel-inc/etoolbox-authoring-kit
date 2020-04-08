@@ -54,7 +54,7 @@ public class FieldSetHandler implements WidgetSetHandler {
         // Cache existing name prefix and set updated name prefix with the parameter of the FieldSet annotation as needed
         String previousNamePrefix = getXmlUtil().getNamePrefix();
         if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
-            getXmlUtil().setNamePrefix(previousNamePrefix + getXmlUtil().getValidSimpleName(fieldSet.namePrefix()));
+            getXmlUtil().setNamePrefix(previousNamePrefix + getXmlUtil().getValidFieldName(fieldSet.namePrefix()));
         }
 
         // append the valid fields to the container
