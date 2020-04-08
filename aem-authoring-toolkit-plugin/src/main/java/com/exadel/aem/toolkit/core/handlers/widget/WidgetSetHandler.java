@@ -34,10 +34,9 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import static com.exadel.aem.toolkit.core.util.DialogConstants.PN_COMPONENT_CLASS;
 
 /**
- * Represents the base logic for {@link Handler}s dealing with widget collections,
- * such as {@link com.exadel.aem.toolkit.api.annotations.widgets.FieldSet}
- * or {@link com.exadel.aem.toolkit.api.annotations.widgets.MultiField}. Encapsulates logic for dealing with fields
- * collections
+ * Mix-in utility class for widget handlers that contains the base logic for {@link Handler}s dealing with widget
+ * collections, such as {@link com.exadel.aem.toolkit.api.annotations.widgets.FieldSet}
+ * or {@link com.exadel.aem.toolkit.api.annotations.widgets.MultiField}
  */
 interface WidgetSetHandler extends Handler, BiConsumer<Element, Field> {
 
@@ -53,7 +52,7 @@ interface WidgetSetHandler extends Handler, BiConsumer<Element, Field> {
     default List<Field> getContainerFields(Element element, Field field, Class<?> containerType) {
         // Extract type of the Java class being the current rendering source
         Class<?> componentType = (Class<?>) element.getOwnerDocument().getUserData(PN_COMPONENT_CLASS);
-        // Build the collection of ignored fields that may be defined at field declaration level and at nesting class level
+        // Build the collection of ignored fields that may be defined at field level and at nesting class level
         // (apart from those defined for the container class itself)
         Stream<ClassField> classLevelIgnoredFields = componentType != null && componentType.isAnnotationPresent(IgnoreFields.class)
                 ? Arrays.stream(componentType.getAnnotation(IgnoreFields.class).value())
@@ -70,7 +69,8 @@ interface WidgetSetHandler extends Handler, BiConsumer<Element, Field> {
                         containerType))
                 : Stream.empty();
         List<ClassField> allIgnoredFields = Stream.concat(classLevelIgnoredFields, fieldLevelIgnoredFields)
-                .filter(classField -> classField.source().equals(containerType))
+                .filter(classField -> PluginReflectionUtility.getAllSuperClasses(containerType).stream()
+                        .anyMatch(superclass -> superclass.equals(classField.source())))
                 .collect(Collectors.toList());
 
         // Create filters to sort out ignored fields (apart from those defined for the container class)
