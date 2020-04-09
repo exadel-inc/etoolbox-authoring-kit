@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
@@ -52,6 +53,10 @@ public class CustomHandler implements Handler, BiConsumer<Element, Field> {
         if (field.isAnnotationPresent(Properties.class)) {
             Arrays.stream(field.getAnnotation(Properties.class).value())
                     .forEach(p -> element.setAttribute(getXmlUtil().getValidFieldName(p.name()), p.value()));
+        }
+        if (field.isAnnotationPresent(Property.class)) {
+            Property property = field.getAnnotation(Property.class);
+            element.setAttribute(getXmlUtil().getValidFieldName(property.name()), property.value());
         }
     }
 
