@@ -127,16 +127,9 @@ abstract class PackageEntryWriter {
      * @param scope Current {@code XmlScope}
      */
     static void writeCommonProperties(Class<?> componentClass, XmlScope scope) {
-        if (componentClass.isAnnotationPresent(CommonProperties.class)) {
-            CommonProperties commonProperties = componentClass.getAnnotation(CommonProperties.class);
-            Arrays.stream(commonProperties.value())
-                    .filter(prop -> prop.scope().equals(scope))
-                    .forEach(prop -> writeCommonProperty(prop, PluginRuntime.context().getXmlUtility().getElementNodes(prop.path())));
-        }
-        if (componentClass.isAnnotationPresent(CommonProperty.class)) {
-            CommonProperty commonProperty = componentClass.getAnnotation(CommonProperty.class);
-            writeCommonProperty(commonProperty, PluginRuntime.context().getXmlUtility().getElementNodes(commonProperty.path()));
-        }
+        Arrays.stream(componentClass.getAnnotationsByType(CommonProperty.class))
+                .filter(p -> p.scope().equals(scope))
+                .forEach(p -> writeCommonProperty(p, PluginRuntime.context().getXmlUtility().getElementNodes(p.path())));
     }
 
     /**

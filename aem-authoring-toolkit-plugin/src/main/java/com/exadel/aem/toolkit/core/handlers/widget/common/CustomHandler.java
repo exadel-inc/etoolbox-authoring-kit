@@ -22,7 +22,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
 import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
@@ -50,14 +49,7 @@ public class CustomHandler implements Handler, BiConsumer<Element, Field> {
                 .filter(c -> c.getClass().isAnnotationPresent(HandlesWidgets.class))
                 .filter(c -> PluginReflectionUtility.getFieldAnnotations(field).anyMatch(a -> this.matchesDialogComponentsAnnotations(a, c.getClass())))
                 .forEach(handler -> handler.accept(element, field));
-        if (field.isAnnotationPresent(Properties.class)) {
-            Arrays.stream(field.getAnnotation(Properties.class).value())
-                    .forEach(p -> element.setAttribute(getXmlUtil().getValidFieldName(p.name()), p.value()));
-        }
-        if (field.isAnnotationPresent(Property.class)) {
-            Property property = field.getAnnotation(Property.class);
-            element.setAttribute(getXmlUtil().getValidFieldName(property.name()), property.value());
-        }
+        Arrays.stream(field.getAnnotationsByType(Property.class)).forEach(p -> element.setAttribute(getXmlUtil().getValidFieldName(p.name()), p.value()));
     }
 
     /**
