@@ -370,7 +370,7 @@ public class ComplexComponent2 {
                 ranking = 3
         )
         @PathField(rootPath = "SHARED_ICONS_FOLDER_PATH")
-        @Properties(@Property(name = "shared-icon-property", value = "shared icon value"))
+        @Property(name = "shared-icon-property", value = "shared icon value")
         private String iconPath;
 
     }
@@ -384,7 +384,8 @@ public class ComplexComponent2 {
                 required = true
         )
         @PathField(rootPath = "/root/path")
-        @Properties(@Property(name = "property", value = "video_resource_prop"))
+        @Property(name = "property", value = "video_resource_prop")
+        @Property(name = "property1", value = "video_resource_prop1")
         private String videoResource;
     }
 
@@ -415,7 +416,8 @@ public class ComplexComponent2 {
         )
         @PathField(rootPath = "/root/path")
         @Properties({
-                @Property(name = "filter", value = "custom_filter")
+                @Property(name = "filter", value = "custom_filter"),
+                @Property(name = "filter_1", value = "custom_filter_1")
         })
         private String feedChannel;
 

@@ -25,6 +25,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorValue;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorVariant;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.GenerateColorsState;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 
 @Dialog(
         name = "test-component",
@@ -35,9 +37,9 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
         className = "wrapper",
         tagName = "span"
 )
-@CommonProperties(value = {
-        @CommonProperty(name = "test", value = "test", scope = XmlScope.CQ_HTML_TAG)
-})
+@CommonProperty(name = "test", value = "test")
+@CommonProperty(name = "test", value = "test", scope = XmlScope.CQ_HTML_TAG)
+@CommonProperty(name = "test", value = "test", scope = XmlScope.CQ_DIALOG)
 @SuppressWarnings("unused")
 public class ColorFieldWidget {
 
