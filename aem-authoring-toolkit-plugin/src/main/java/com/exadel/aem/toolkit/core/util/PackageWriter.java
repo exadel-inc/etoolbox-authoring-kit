@@ -151,7 +151,8 @@ public class PackageWriter implements AutoCloseable {
                     new ContentXmlWriter(documentBuilder, transformer),
                     new CqEditConfigWriter(documentBuilder, transformer),
                     new CqDialogWriter(documentBuilder, transformer),
-                    new CqHtmlTagWriter(documentBuilder, transformer)
+                    new CqHtmlTagWriter(documentBuilder, transformer),
+                    new CqChildEditConfigWriter(documentBuilder, transformer)
             );
         } catch (ParserConfigurationException | TransformerConfigurationException e) {
             // exceptions caught here are due to possible XXE security vulnerabilities, so no further handling

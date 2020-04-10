@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
+import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 
 public class TestHelper {
     private static final Logger LOG = LoggerFactory.getLogger(TestHelper.class);
@@ -66,6 +67,9 @@ public class TestHelper {
             }
             if (dialogClass.isAnnotationPresent(HtmlTag.class)) {
                 writers.add(new CqHtmlTagWriter(documentBuilder, transformer));
+            }
+            if (dialogClass.isAnnotationPresent(ChildEditConfig.class)) {
+                writers.add(new CqChildEditConfigWriter(documentBuilder, transformer));
             }
         } catch (ParserConfigurationException | TransformerConfigurationException e) {
             LOG.error(e.getMessage());

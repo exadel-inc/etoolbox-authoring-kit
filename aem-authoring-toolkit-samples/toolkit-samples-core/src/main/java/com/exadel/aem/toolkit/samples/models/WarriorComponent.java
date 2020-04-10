@@ -1,5 +1,6 @@
 package com.exadel.aem.toolkit.samples.models;
 
+import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
@@ -48,6 +49,9 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
                         editElementQuery = ".warrior-name-span"
                 )
         }
+)
+@ChildEditConfig(
+        actions = "copymove"
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WarriorComponent {

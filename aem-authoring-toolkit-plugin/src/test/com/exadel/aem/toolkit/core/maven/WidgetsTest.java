@@ -24,6 +24,7 @@ import com.exadel.aem.toolkit.test.widget.AlertWidget;
 import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
 import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
+import com.exadel.aem.toolkit.test.widget.FileUploadWidgetWithChildEditConfig;
 import com.exadel.aem.toolkit.test.widget.HeadingWidget;
 import com.exadel.aem.toolkit.test.widget.HiddenWidget;
 import com.exadel.aem.toolkit.test.widget.ImageUploadWidget;
@@ -48,6 +49,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testAttributes() {
         testComponent(AttributesAnnotation.class);
+    }
+
+    @Test
+    public void testChildEditConfig() {
+        testComponent(FileUploadWidgetWithChildEditConfig.class);
     }
 
     @Test

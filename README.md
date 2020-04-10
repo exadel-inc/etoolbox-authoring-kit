@@ -879,6 +879,30 @@ Ever simpler, you can specify the richText field to "extend" RTE configuration s
 ``` 
 From the above snippet you can see that *richText* and *richTextConfig* work together fine. Configuration inherited via *richText* can be altered by whatever properties specified in *richTextConfig*. If you use both in the same `@InplaceEditingConfig`, plain values, such as strings and numbers, specified for the `@Extends`-ed field are overwritten by their correlates from *richTextConfig*. But array-typed values (such as *features*, *specialCharacters*, *formats*, etc.) are actually merged. So you can design a fairly basic set of features, styles, formats to store in a field somewhere in your project and then implement several *richTextConfig*-s with more comprehensive and different feature sets.
 
+### ChildEditConfig settings
+If you want to add *\<cq:childEditConfig>*, that living in *_cq_childEditConfig.xml* file, add `@ChildEditConfig` annotation to your Java class.
+
+It facilitates setting of the following properties and features:
+
+- Actions
+- Drop targets
+- Listeners
+
+```
+@Dialog(name = "parentComponent")
+@ChildEditConfig(
+    actions = {
+        "edit",
+        "copymove"
+    }
+)
+public class Dialog {
+    @DialogField
+    @TextField
+    String field1;
+}
+```
+
 ### Value restrictions
 Value restrictions can be imposed on some of the annotations' fields. For instance, if you set a negative integer to a field that requires a positive one (say, *tabIndent* or *undoSteps* field of `@RichTextEditor`), or you set some string that is not a complete JCR path to a field requiring such (e.g *uploadUrl* field), a warning will be issued. You may change this behavior by altering `terminateOn` in plugin's `<configuration>` section in POM file. Put `com.exadel.aem.toolkit.core.exceptions.ValidationException` there to see Maven build terminated in case a restriction is broken (unless the value is already set to _ALL_). Same approach applies to any other particular kind of exception you want the plugin to terminate on.
 
