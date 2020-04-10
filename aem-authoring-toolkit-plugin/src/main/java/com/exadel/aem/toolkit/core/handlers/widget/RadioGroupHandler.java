@@ -38,11 +38,11 @@ public class RadioGroupHandler implements Handler, BiConsumer<Element, Field> {
     @Override
     public void accept(Element element, Field field) {
         RadioGroup radioGroup = field.getDeclaredAnnotation(RadioGroup.class);
-        if(ArrayUtils.isNotEmpty(radioGroup.buttons())){
+        if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {
             Element items = (Element) element.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
             Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));
         }
-        getXmlUtil().appendAcsCommonsList(element, radioGroup.acsListPath(), radioGroup.acsListResourceType());
+        getXmlUtil().appendDataSource(element, radioGroup.datasource(), radioGroup.acsListPath(), radioGroup.acsListResourceType());
     }
 
     private void renderButton(RadioButton buttonInstance, Element parentElement) {

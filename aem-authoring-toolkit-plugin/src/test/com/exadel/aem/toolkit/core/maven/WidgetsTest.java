@@ -17,27 +17,27 @@ package com.exadel.aem.toolkit.core.maven;
 import org.junit.Test;
 
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
-import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
-import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
 import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
+import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
+import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
+import com.exadel.aem.toolkit.test.widget.AlertWidget;
+import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
+import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
+import com.exadel.aem.toolkit.test.widget.FileUploadWidgetWithChildEditConfig;
+import com.exadel.aem.toolkit.test.widget.HeadingWidget;
+import com.exadel.aem.toolkit.test.widget.HiddenWidget;
 import com.exadel.aem.toolkit.test.widget.ImageUploadWidget;
 import com.exadel.aem.toolkit.test.widget.MultiFieldWidget;
 import com.exadel.aem.toolkit.test.widget.NestedCheckboxListWidget;
-import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
 import com.exadel.aem.toolkit.test.widget.NumberFieldWidget;
+import com.exadel.aem.toolkit.test.widget.PasswordWidget;
 import com.exadel.aem.toolkit.test.widget.RadioGroupWidget;
 import com.exadel.aem.toolkit.test.widget.RichTextEditorWidget;
-import com.exadel.aem.toolkit.test.widget.Tabs;
-import com.exadel.aem.toolkit.test.widget.AlertWidget;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
+import com.exadel.aem.toolkit.test.widget.Tabs;
 import com.exadel.aem.toolkit.test.widget.TagFieldWidget;
-import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
-import com.exadel.aem.toolkit.test.widget.HiddenWidget;
-import com.exadel.aem.toolkit.test.widget.PasswordWidget;
 import com.exadel.aem.toolkit.test.widget.TextAreaWidget;
-import com.exadel.aem.toolkit.test.widget.ColorFieldWidgetWithHtmlTag;
-import com.exadel.aem.toolkit.test.widget.FileUploadWidgetWithChildEditConfig;
 
 public class WidgetsTest extends DefaultTestBase {
 
@@ -49,6 +49,21 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testAttributes() {
         testComponent(AttributesAnnotation.class);
+    }
+
+    @Test
+    public void testChildEditConfig() {
+        testComponent(FileUploadWidgetWithChildEditConfig.class);
+    }
+
+    @Test
+    public void testColorFieldAndHtmlTag() {
+        testComponent(ColorFieldWidget.class);
+    }
+
+    @Test
+    public void testCustom() {
+        testComponent(CustomAnnotations.class);
     }
 
     @Test
@@ -72,6 +87,16 @@ public class WidgetsTest extends DefaultTestBase {
     }
 
     @Test
+    public void testHeading() {
+        testComponent(HeadingWidget.class);
+    }
+
+    @Test
+    public void testHidden() {
+        testComponent(HiddenWidget.class);
+    }
+
+    @Test
     public void testImageUpload() {
         testComponent(ImageUploadWidget.class);
     }
@@ -89,6 +114,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testNumberField() {
         testComponent(NumberFieldWidget.class);
+    }
+
+    @Test
+    public void testPassword() {
+        testComponent(PasswordWidget.class);
     }
 
     @Test
@@ -119,35 +149,5 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testTagField() {
         testComponent(TagFieldWidget.class);
-    }
-
-    @Test
-    public void testCustom() {
-        testComponent(CustomAnnotations.class);
-    }
-
-    @Test
-    public void testColorField() {
-        testComponent(ColorFieldWidget.class);
-    }
-
-    @Test
-    public void testHidden() {
-        testComponent(HiddenWidget.class);
-    }
-
-    @Test
-    public void testPassword() {
-        testComponent(PasswordWidget.class);
-    }
-
-    @Test
-    public void testHtmlTag() {
-        testComponent(ColorFieldWidgetWithHtmlTag.class);
-    }
-
-    @Test
-    public void testChildEditConfig() {
-        testComponent(FileUploadWidgetWithChildEditConfig.class);
     }
 }

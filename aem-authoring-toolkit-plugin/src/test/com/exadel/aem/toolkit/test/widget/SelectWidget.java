@@ -17,8 +17,8 @@ package com.exadel.aem.toolkit.test.widget;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
@@ -32,6 +32,8 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
 public class SelectWidget {
     @DialogField(label = "Rating")
     @Select(options = {
+            @Option(text = "Empty", value = ""),
+            @Option(text = "Blank", value = " "),
             @Option(
                     text = "1 star",
                     value = "1",
@@ -60,6 +62,9 @@ public class SelectWidget {
     String timezone;
 
     @DialogField(label="ACS List Options")
-    @Select(acsListPath = "/path/to/acs/list", acsListResourceType = "acs/list/resource/type", addNoneOption = true)
+    @Select(
+            acsListPath = "/path/to/acs/list",
+            acsListResourceType = "acs/list/resource/type")
+    @SuppressWarnings("deprecation")
     String acsListOptions;
 }

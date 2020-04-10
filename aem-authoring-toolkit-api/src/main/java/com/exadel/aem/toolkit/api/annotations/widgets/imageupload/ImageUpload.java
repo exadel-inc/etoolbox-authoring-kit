@@ -19,9 +19,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
-import com.exadel.aem.toolkit.api.annotations.meta.IgnoreValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
@@ -56,8 +55,8 @@ public @interface ImageUpload {
      * Renders as the HTML 'class' attribute
      * @return String value
      */
-    @PropertyName("class")
-    String clas() default "";
+    @PropertyRendering(name = "class")
+    String clasName() default "";
     /**
      * When set to a non-blank string, maps to the 'title' attribute of this TouchUI dialog component's node.
      * Renders as the HTML 'title' attribute
@@ -71,16 +70,11 @@ public @interface ImageUpload {
      */
     String emptyText() default "";
     /**
-     * Maps to the 'validation' attribute of this TouchUI dialog component's node.
-     * @return String value or an array of strings
-     */
-    String[] validation() default {};
-    /**
      * Maps to the 'text' attribute of this TouchUI dialog component's node.
      * Used to define default button text
      * @return String value
      */
-    @PropertyName("text")
+    @PropertyRendering(name = "text")
     String buttonText() default ImageUploadConstants.DEFAULT_BUTTON_TEXT;
     /**
      * When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
@@ -94,7 +88,7 @@ public @interface ImageUpload {
      * @see ButtonVariant
      * @return One of {@code ButtonVariant} values
      */
-    @PropertyName("variant")
+    @PropertyRendering(name = "variant")
     @EnumValue(transformation = StringTransformation.LOWERCASE)
     ButtonVariant buttonVariant() default ButtonVariant.SECONDARY;
     /**
@@ -134,7 +128,7 @@ public @interface ImageUpload {
      * @return Long value
      */
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
-    @IgnoreValue("0")
+    @PropertyRendering(ignoreValues = "0")
     long sizeLimit() default 0;
     /**
      * When set to a non-blank string, maps to the 'autoStart' attribute of this TouchUI dialog component's node.
@@ -172,7 +166,7 @@ public @interface ImageUpload {
      * @return Long value
      */
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
-    @IgnoreValue("0")
+    @PropertyRendering(ignoreValues = "0")
     long chunkSize() default 0;
     /**
      * When set to a positive number, maps to the 'chunkUploadMinFileSize' attribute of this TouchUI dialog component's node.
@@ -180,7 +174,7 @@ public @interface ImageUpload {
      * @return Long value
      */
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
-    @IgnoreValue("0")
+    @PropertyRendering(ignoreValues = "0")
     long chunkUploadMinFileSize() default 0;
     /**
      * Maps to the 'allowUpload' attribute of this TouchUI dialog component's node.

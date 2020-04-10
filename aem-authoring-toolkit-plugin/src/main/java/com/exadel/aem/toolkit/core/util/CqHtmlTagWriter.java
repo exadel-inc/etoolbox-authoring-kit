@@ -14,22 +14,22 @@
 
 package com.exadel.aem.toolkit.core.util;
 
-import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.validation.Validation;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.transform.Transformer;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.transform.Transformer;
+import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing decoration tag properties,
  * such as class and tagName. Writes data to the {@code _cq_htmlTag.xml} file within the
  * current component folder before package is uploaded
  */
-public class CqHtmlTagWriter extends PackageEntryWriter {
+class CqHtmlTagWriter extends PackageEntryWriter {
     CqHtmlTagWriter(DocumentBuilder documentBuilder, Transformer transformer) {
         super(documentBuilder, transformer);
     }
@@ -63,10 +63,7 @@ public class CqHtmlTagWriter extends PackageEntryWriter {
     void populateDomDocument(Class<?> componentClass, Element root)  {
         HtmlTag htmlTag = componentClass.getDeclaredAnnotation(HtmlTag.class);
         root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
-        if (Validation.forType(HtmlTag.class).test(htmlTag)) {
-            PluginRuntime.context().getXmlUtility().setAttribute(root, "class", htmlTag.className());
-            PluginRuntime.context().getXmlUtility().setAttribute(root, "cq:tagName", htmlTag.tagName());
-        }
+        PluginRuntime.context().getXmlUtility().mapProperties(root, htmlTag);
         writeCommonProperties(componentClass, XmlScope.CQ_HTML_TAG);
     }
 }

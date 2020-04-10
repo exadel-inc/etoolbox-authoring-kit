@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
  * Used to define common properties of TouchUI <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html">
@@ -36,14 +36,14 @@ public @interface DialogField {
      * Used to define a label displayed beside this TouchUI dialog component
      * @return String value
      */
-    @PropertyName("fieldLabel")
+    @PropertyRendering(name = "fieldLabel")
     String label() default "";
     /**
      * When set to a non-blank string, maps to the 'fieldDescription' attribute of this TouchUI dialog component's node.
      * Used to define helper text for this TouchUI dialog component
      * @return String value
      */
-    @PropertyName("fieldDescription")
+    @PropertyRendering(name = "fieldDescription")
     String description() default "";
     /**
      * Maps to the 'renderHidden' attribute of this TouchUI dialog component's node.

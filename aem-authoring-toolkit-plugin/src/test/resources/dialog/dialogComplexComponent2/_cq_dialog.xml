@@ -342,7 +342,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="description header"
                                             fieldLabel="label header"
-                                            name="./feedSecondfieldHeader"
+                                            name="./feed/second/fieldHeader"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"/>
                                     <headerXS
@@ -351,7 +351,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="description header_XS"
                                             fieldLabel="label header_XS"
-                                            name="./feedSecondfieldHeaderXs"
+                                            name="./feed/second/fieldHeaderXs"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}false"/>
                                     <feedChannel
@@ -361,7 +361,7 @@
                                             fieldDescription="description feed chanel"
                                             fieldLabel="label feed chanel"
                                             filter="custom_filter"
-                                            name="./feedSecondfield_feed_channel"
+                                            name="./feed/second/field_feed_channel"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
                                             rootPath="/root/path"/>
@@ -374,7 +374,7 @@
                                             forceSelection="{Boolean}false"
                                             mode="contains"
                                             multiple="{Boolean}true"
-                                            name="./feedSecondfieldFeedFilter"
+                                            name="./feed/second/fieldFeedFilter"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}false">
                                         <datasource
@@ -396,7 +396,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="description checkbox"
                                             fieldLabel="label checkbox"
-                                            name="./feedSecondcheckbox_field"
+                                            name="./feed/second/checkbox_field"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}false"
                                             text="label checkbox"
@@ -409,7 +409,7 @@
                                             disabled="{Boolean}false"
                                             fieldLabel="switch label name"
                                             ignoreData="{Boolean}false"
-                                            name="./feedSecondswitch_field"
+                                            name="./feed/second/switch_field"
                                             offText="Off"
                                             onText="On"
                                             renderHidden="{Boolean}false"
@@ -433,7 +433,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="description element text"
                                             fieldLabel="label element text"
-                                            name="./feedSecondfield_element_text"
+                                            name="./feed/second/field_element_text"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"/>
                                     <elementPath
@@ -442,7 +442,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="description element path"
                                             fieldLabel="label element path"
-                                            name="./feedSecondfieldElementPath"
+                                            name="./feed/second/fieldElementPath"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
                                             rootPath="/base/path"/>
@@ -454,7 +454,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="description element checkbox"
                                             fieldLabel="label element checkbox"
-                                            name="./feedSecondfieldElementCheckbox"
+                                            name="./feed/second/fieldElementCheckbox"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}false"
                                             text="label element checkbox"

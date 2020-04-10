@@ -19,20 +19,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
-import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
-import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.ParagraphFormat;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
-import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import com.exadel.aem.toolkit.test.component.ValidationTestCases;
-import com.exadel.aem.toolkit.test.custom.CustomAnnotationAutomapping;
-
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_TITLE;
 
 public class ValidationsTest extends ExceptionTestBase {
     @Rule
@@ -73,7 +61,6 @@ public class ValidationsTest extends ExceptionTestBase {
         testComponent(ValidationTestCases.InvalidTextAreaDialog.class);
     }
 
-
     @Test
     public void testCharactersValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
@@ -88,11 +75,26 @@ public class ValidationsTest extends ExceptionTestBase {
         testComponent(ValidationTestCases.InvalidPathDialog.class);
     }
 
-
     @Test
     public void testCustomValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("one of 'red', 'green', or 'blue' must be provided");
         testComponent(ValidationTestCases.InvalidCustomAnnotationDialog.class);
     }
+
+
+    @Test
+    public void testComponentWithWrongHtmlTag1() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
+        exceptionRule.expectMessage("'' provided, non-blank string expected");
+        testComponent(ValidationTestCases.ComponentWithWrongHtmlTag1.class);
+    }
+
+    @Test
+    public void testComponentWithWrongHtmlTag2() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
+        exceptionRule.expectMessage("' ' provided, non-blank string expected");
+        testComponent(ValidationTestCases.ComponentWithWrongHtmlTag2.class);
+    }
+
 }

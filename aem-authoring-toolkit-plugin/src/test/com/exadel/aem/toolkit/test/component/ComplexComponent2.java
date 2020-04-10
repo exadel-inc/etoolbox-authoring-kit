@@ -115,7 +115,8 @@ public class ComplexComponent2 {
     private static final String SECONDARY = "secondary";
 
     private static final String FEED_1 = "feedFirst";
-    private static final String FEED_2 = "feedSecond";
+    private static final String FEED_2_1 = " /feed/second/ ";
+    private static final String FEED_2_2 = "/feed@/second@/";
 
     private static final String LEFT_LAYOUT = "left";
     private static final String RIGHT_LAYOUT = "right";
@@ -239,12 +240,12 @@ public class ComplexComponent2 {
 
     @DialogField()
     @Attribute(data = {@Data(name = "feed-dialog", value = "2")})
-    @FieldSet(namePrefix = FEED_2, title = "Feed")
+    @FieldSet(namePrefix = FEED_2_1, title = "Feed")
     @PlaceOnTab(LABEL_TAB_4)
     private FeedFieldSet feed;
 
     @DialogField
-    @FieldSet(namePrefix = FEED_2, title = "Feed Second Element")
+    @FieldSet(namePrefix = FEED_2_2, title = "Feed Second Element")
     @PlaceOnTab(LABEL_TAB_4)
     private ElementFieldSet feedSecondElement;
 

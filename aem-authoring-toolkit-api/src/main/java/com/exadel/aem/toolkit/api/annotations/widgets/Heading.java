@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.api.annotations.widgets;
 
 import java.lang.annotation.ElementType;
@@ -18,35 +19,36 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
 /**
  * Used to set up
- * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html">
- * FieldSet element</a> in TouchUI dialog
+ * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/heading/index.html">
+ * Heading element</a> in TouchUI dialog
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@ResourceType(ResourceTypes.FIELDSET)
+@ResourceType(ResourceTypes.HEADING)
 @PropertyMapping
 @SuppressWarnings("unused")
-public @interface FieldSet {
+public @interface Heading {
     /**
-     * When set to a non-blank string, maps to the 'title' attribute of the current TouchUI dialog component.
-     * Used to define title displayed above the FieldSet in TouchUI dialog
-     * @return String value
+     * Maps to the 'level' attribute of this TouchUI dialog component's node.
+     * Number that corresponds to the header tag level (<h1> to <h6>)
+     * @return Long value
      */
-    @PropertyRendering(name = JcrConstants.PN_TITLE)
-    String title() default "";
+    @ValueRestriction(value = ValueRestrictions.POSITIVE)
+    long level() default 1;
+
     /**
-     * Used to define string prefix for names of all fields in the FieldSet
-     * @return String value
+     *  When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
+     *  Used to define text within header tag.
+     *  @return String value, non-blank
      */
-    @IgnorePropertyMapping
-    String namePrefix() default "";
+    @ValueRestriction(value = ValueRestrictions.NOT_BLANK)
+    String text();
 }
