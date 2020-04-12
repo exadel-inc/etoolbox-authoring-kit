@@ -120,7 +120,7 @@ public class PluginReflectionUtility {
      * scope of the AEM Authoring Toolkit Maven plugin
      * @return {@code List<DialogHandler>} of instances
      */
-    List<DialogHandler> getCustomDialogHandlers() {
+    public List<DialogHandler> getCustomDialogHandlers() {
         if (customDialogHandlers != null) {
             return customDialogHandlers;
         }

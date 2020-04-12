@@ -64,7 +64,7 @@ import com.exadel.aem.toolkit.core.util.validation.Validation;
  * Utility methods to process, verify and store AEM TouchUI dialog-related data to XML markup
  */
 public class PluginXmlUtility implements XmlUtility {
-    static final Map<String, String> XML_NAMESPACES = ImmutableMap.of(
+    public static final Map<String, String> XML_NAMESPACES = ImmutableMap.of(
             "xmlns:jcr", "http://www.jcp.org/jcr/1.0",
             "xmlns:nt", "http://www.jcp.org/jcr/nt/1.0",
             "xmlns:sling", JcrResourceConstants.SLING_NAMESPACE_URI,
@@ -95,7 +95,7 @@ public class PluginXmlUtility implements XmlUtility {
      * @param componentClass {@code Class} instance representing source object for this document
      * @return Root {@link Element}
      */
-    Element newDocumentRoot(DocumentBuilder builder, Class<?> componentClass) {
+    public Element newDocumentRoot(DocumentBuilder builder, Class<?> componentClass) {
         document = builder.newDocument();
         document.setUserData(DialogConstants.PN_COMPONENT_CLASS, componentClass, null);
         Element rootElement = createNodeElement(DialogConstants.NN_ROOT, XML_NAMESPACES);
@@ -107,7 +107,7 @@ public class PluginXmlUtility implements XmlUtility {
      * Retrieves current {@link Document} that is involved in {@code createNodeElement} routines
      * @return {@code Document} instance
      */
-    Document getCurrentDocument() {
+    public Document getCurrentDocument() {
         return document;
     }
 
@@ -522,7 +522,7 @@ public class PluginXmlUtility implements XmlUtility {
      * @param xPath String xPath representation
      * @return List of {@code Element}s, or an empty list
      */
-    List<Element> getElementNodes(String xPath) {
+    public List<Element> getElementNodes(String xPath) {
         XPath xPathInstance = XPathFactory.newInstance().newXPath();
         List<Element> result = new ArrayList<>();
         try {

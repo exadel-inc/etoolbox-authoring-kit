@@ -26,7 +26,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
 import com.exadel.aem.toolkit.core.exceptions.PluginException;
-import com.exadel.aem.toolkit.core.util.PackageWriter;
+import com.exadel.aem.toolkit.core.util.writer.PackageWriter;
 
 /**
  * Represents the entry-point of AEM Authoring Toolkit execution
