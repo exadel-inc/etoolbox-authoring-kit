@@ -14,20 +14,18 @@
 
 package com.exadel.aem.toolkit.api.annotations.editconfig;
 
-import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+
 /**
- * Defines editing configuration for a TouchUI-ready child components.
+ * Defines editing configuration for a TouchUI-ready child components of the current component.
  * See <a href="https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/components-basics.html#component-basics">Adobe documentation</a>
+ * for details
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -38,18 +36,15 @@ public @interface ChildEditConfig {
      * When set to a non-blank string or an array of strings, maps to the 'cq:actions' property of {@code cq:childEditConfig} node
      * @return String / array value
      */
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
     String[] actions() default {};
     /**
-     * Used to specify a collection of {@link DropTargetConfig} values for this editing configuration
+     * Used to specify a collection of {@link DropTargetConfig} values for this child editing configuration
      * @return Single {@code DropTargetConfig} or an array of configs
      */
-    @IgnorePropertyMapping
     DropTargetConfig[] dropTargets() default {};
     /**
-     * Used to specify a collection of {@link Listener} configs for this editing configuration
+     * Used to specify a collection of {@link Listener} configs for this child editing configuration
      * @return Single {@code Listener} or an array of Listeners
      */
-    @IgnorePropertyMapping
     Listener[] listeners() default {};
 }
