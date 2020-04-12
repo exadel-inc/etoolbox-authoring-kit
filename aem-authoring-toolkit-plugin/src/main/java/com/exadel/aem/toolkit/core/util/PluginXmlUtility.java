@@ -440,6 +440,28 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     /**
+     * Migrates attributes and child nodes between {@code source} and {@code target}. Attributesm save for {@code jcr:primaryType},
+     * are copied, while child nodes are moved
+     * @param source Element to serve as the source of migration
+     * @param target Element to serve as the target of migration
+     */
+    public void migrateElementContent(Element source, Element target) {
+        if (isBlankElement(source) || target == null) {
+            return;
+        }
+        for (int i = 0; i < source.getAttributes().getLength(); i++) {
+            Node attribute = source.getAttributes().item(i);
+            if (attribute.getNodeName().equals(DialogConstants.PN_PRIMARY_TYPE)) {
+                continue;
+            }
+            target.setAttribute(attribute.getNodeName(), attribute.getNodeValue());
+        }
+        while (source.hasChildNodes()) {
+            target.appendChild(source.getFirstChild());
+        }
+    }
+
+    /**
      * Merges attributes of two {@code Element} nodes, e.g. when a child node is appended to a parent node that already
      * has another child with same name, the existing child is updated with values from the newcomer. Way of merging
      * is defined by {@param attributeMerger} routine
