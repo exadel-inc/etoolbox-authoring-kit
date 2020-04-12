@@ -10,7 +10,7 @@ Resulting dialogs and editors are compliant with the newest facilities of AEM 6.
 As the Toolkit was developed, thorough comparative investigation of Coral v.2 and Coral v.3 has been carried out, their features and drawbacks tested, so that backward compatibility is preserved to a highest degree.
 
 ***
-> Train to use AEM Authoring Toolkit with our sandbox project under [_aem-authoring-toolkit-samples_](/aem-authoring-toolkit-samples/README.md)  
+> Practice to use AEM Authoring Toolkit with our sandbox project under [_aem-authoring-toolkit-samples_](/aem-authoring-toolkit-samples/README.md)  
 >
 ***
 
