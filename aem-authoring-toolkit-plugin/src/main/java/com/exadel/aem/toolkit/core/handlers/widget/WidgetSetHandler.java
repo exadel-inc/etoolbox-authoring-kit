@@ -24,8 +24,8 @@ import java.util.stream.Stream;
 
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.ClassField;
-import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreFields;
+import com.exadel.aem.toolkit.api.annotations.main.ClassField;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
