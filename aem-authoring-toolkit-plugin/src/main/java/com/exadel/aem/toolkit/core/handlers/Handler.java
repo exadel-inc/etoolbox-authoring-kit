@@ -53,7 +53,7 @@ public interface Handler {
             if (widget == null) {
                 continue;
             }
-            widget.append(itemsElement, field);
+            widget.appendTo(itemsElement, field);
         }
     }
 }

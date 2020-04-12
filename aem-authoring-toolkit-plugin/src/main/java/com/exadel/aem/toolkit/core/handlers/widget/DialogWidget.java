@@ -53,19 +53,20 @@ public interface DialogWidget {
      * @param element {@code Element} instance
      * @param field Current {@code Field}
      */
-    default void append(Element element, Field field) {
-        append(element, field, field.getName());
+    default void appendTo(Element element, Field field) {
+        appendTo(element, field, field.getName());
     }
+
     /**
      * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified name
      * @param element {@code Element} instance
      * @param field Current {@code Field}
      * @param name The node name to store
      */
-    default void append(Element element,  Field field, String name) {
-        Element componentElement = PluginRuntime.context().getXmlUtility().createNodeElement(name);
-        element.appendChild(componentElement);
-        getHandlerChain().accept(componentElement, field);
+    default void appendTo(Element element, Field field, String name) {
+        Element widgetChildElement = PluginRuntime.context().getXmlUtility().createNodeElement(name);
+        element.appendChild(widgetChildElement);
+        getHandlerChain().accept(widgetChildElement, field);
     }
 
     /**

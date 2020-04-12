@@ -203,7 +203,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
         if (parent == null) {
             return;
         }
-        Element child = getXmlUtil().getChildElementNode(parent, existingChildName,
+        Element child = getXmlUtil().getChildElement(parent, existingChildName,
                 p -> PluginRuntime.context().getXmlUtility().createNodeElement(existingChildName));
         elementConsumer.accept(() -> {
             if (child.getParentNode() != null) {

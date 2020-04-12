@@ -481,15 +481,15 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public Element getOrAddChildElement(Element parent, String child) {
-        return getChildElementNode(parent,
-                child,
-                parentElement -> (Element) parentElement.appendChild(createNodeElement(child)));
+    public Element getOrAddChildElement(Element parent, String childName) {
+        return getChildElement(parent,
+                childName,
+                parentElement -> (Element) parentElement.appendChild(createNodeElement(childName)));
     }
 
     @Override
-    public Element getChildElement(Element parent, String child) {
-        return getChildElementNode(parent, child, p -> null);
+    public Element getChildElement(Element parent, String childName) {
+        return getChildElement(parent, childName, p -> null);
     }
 
     /**
@@ -499,13 +499,13 @@ public class PluginXmlUtility implements XmlUtility {
      * @param fallbackSupplier Routine that returns a fallback Element instance if parent node does not exist or child not found
      * @return Element instance
      */
-    public Element getChildElementNode(Element parent, String childName, UnaryOperator<Element> fallbackSupplier) {
+    public Element getChildElement(Element parent, String childName, UnaryOperator<Element> fallbackSupplier) {
         if (parent == null) {
             return fallbackSupplier.apply(null);
         }
         if (childName.contains(DialogConstants.PATH_SEPARATOR)) {
             return Arrays.stream(StringUtils.split(childName, DialogConstants.PATH_SEPARATOR))
-                    .reduce(parent, (p, c) -> getChildElementNode(p, c, fallbackSupplier), (c1, c2) -> c2);
+                    .reduce(parent, (p, c) -> getChildElement(p, c, fallbackSupplier), (c1, c2) -> c2);
         }
         Node child = parent.getFirstChild();
         while (child != null) {
