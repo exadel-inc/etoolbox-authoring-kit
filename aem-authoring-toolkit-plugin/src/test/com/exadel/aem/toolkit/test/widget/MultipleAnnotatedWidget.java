@@ -17,28 +17,20 @@ package com.exadel.aem.toolkit.test.widget;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "MultiField Widget Dialog",
+        title = "Dialog with Multiple-Annotated Fields",
         layout = DialogLayout.FIXED_COLUMNS
 )
 @SuppressWarnings("unused")
-public class MultiFieldWidget {
-    @DialogField(
-            label="Multifield Label",
-            description = "Multifield Description"
-    )
-    @MultiField(field = MultiFieldContainer.class)
-    String multiField;
-
-    private static class MultiFieldContainer {
-        @DialogField
-        @TextField
-        String dialogItem;
-    }
+public class MultipleAnnotatedWidget {
+    @DialogField(label = "Multiple TextFields")
+    @TextField(emptyText = "empty text")
+    @Multiple
+    String text1;
 }
