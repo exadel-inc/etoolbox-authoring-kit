@@ -78,6 +78,7 @@ public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedC
     String field5;
 }
 
+@SuppressWarnings("unused")
 class ComponentWithTabsAsNestedClassesBase {
     @Tab(title = LABEL_TAB_0)
     private static class Tab0 {

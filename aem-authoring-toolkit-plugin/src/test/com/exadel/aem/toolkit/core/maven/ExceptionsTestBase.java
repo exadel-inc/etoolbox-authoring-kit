@@ -14,9 +14,9 @@
 
 package com.exadel.aem.toolkit.core.maven;
 
-import com.exadel.aem.toolkit.core.util.TestHelper;
+import com.exadel.aem.toolkit.core.util.writer.TestXmlWriterHelper;
 
-class ExceptionTestBase extends DefaultTestBase {
+class ExceptionsTestBase extends DefaultTestBase {
     private static final String EXCEPTION_SETTING = "all";
 
     @Override
@@ -25,9 +25,9 @@ class ExceptionTestBase extends DefaultTestBase {
     }
 
     @Override
-    void testComponent(Class<?> tested) {
+    void test(Class<?> tested) {
         try {
-            TestHelper.doTest(tested.getName(), null);
+            TestXmlWriterHelper.doTest(tested.getName(), null);
         } catch (ClassNotFoundException ex) {
             LOG.error("Cannot initialize instance of class " + tested.getName(), ex);
         }

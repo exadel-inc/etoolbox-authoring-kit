@@ -22,7 +22,7 @@ import org.junit.rules.ExpectedException;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import com.exadel.aem.toolkit.test.component.ValidationTestCases;
 
-public class ValidationsTest extends ExceptionTestBase {
+public class ValidationsTest extends ExceptionsTestBase {
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
@@ -30,56 +30,56 @@ public class ValidationsTest extends ExceptionTestBase {
     public void testNonBlankValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'' provided");
-        testComponent(ValidationTestCases.InvalidTitleDialog.class);
+        test(ValidationTestCases.InvalidTitleDialog.class);
     }
 
     @Test
     public void testAllNotBlankValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("string properties must not be blank");
-        testComponent(ValidationTestCases.InvalidRteParaformatDialog.class);
+        test(ValidationTestCases.InvalidRteParaformatDialog.class);
     }
 
     @Test
     public void testNumberValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'not-a-number' provided");
-        testComponent(ValidationTestCases.InvalidNumberFieldDialog.class);
+        test(ValidationTestCases.InvalidNumberFieldDialog.class);
     }
 
     @Test
     public void testNonNegativeNumberValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'-99' provided");
-        testComponent(ValidationTestCases.InvalidImageUploadDialog.class);
+        test(ValidationTestCases.InvalidImageUploadDialog.class);
     }
 
     @Test
     public void testPositiveNumberValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'0' provided");
-        testComponent(ValidationTestCases.InvalidTextAreaDialog.class);
+        test(ValidationTestCases.InvalidTextAreaDialog.class);
     }
 
     @Test
     public void testCharactersValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("a character range (start < end) or entity definition must be set");
-        testComponent(ValidationTestCases.InvalidRteCharactersDialog.class);
+        test(ValidationTestCases.InvalidRteCharactersDialog.class);
     }
 
     @Test
     public void testJcrPathValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'wrong path' provided");
-        testComponent(ValidationTestCases.InvalidPathDialog.class);
+        test(ValidationTestCases.InvalidPathDialog.class);
     }
 
     @Test
     public void testCustomValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("one of 'red', 'green', or 'blue' must be provided");
-        testComponent(ValidationTestCases.InvalidCustomAnnotationDialog.class);
+        test(ValidationTestCases.InvalidCustomAnnotationDialog.class);
     }
 
 
@@ -87,14 +87,14 @@ public class ValidationsTest extends ExceptionTestBase {
     public void testComponentWithWrongHtmlTag1() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'' provided, non-blank string expected");
-        testComponent(ValidationTestCases.ComponentWithWrongHtmlTag1.class);
+        test(ValidationTestCases.ComponentWithWrongHtmlTag1.class);
     }
 
     @Test
     public void testComponentWithWrongHtmlTag2() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("' ' provided, non-blank string expected");
-        testComponent(ValidationTestCases.ComponentWithWrongHtmlTag2.class);
+        test(ValidationTestCases.ComponentWithWrongHtmlTag2.class);
     }
 
 }

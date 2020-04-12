@@ -17,6 +17,8 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 
 @Dialog(
         name = "myComponent",
@@ -36,5 +38,10 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 public class PropertiesAnnotation {
     @DialogField
     @TextField
+    @Properties({
+            @Property(name = "simpleProperty", value = "value"),
+            @Property(name = "emptyValueProperty", value = ""),
+            @Property(name = "wrong f@ield! NamE", value = "non-latin символы"),
+    })
     String field;
 }
