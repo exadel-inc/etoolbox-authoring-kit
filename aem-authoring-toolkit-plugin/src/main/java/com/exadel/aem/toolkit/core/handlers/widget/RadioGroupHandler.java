@@ -36,6 +36,7 @@ public class RadioGroupHandler implements Handler, BiConsumer<Element, Field> {
      * @param field Current {@code Field} instance
      */
     @Override
+    @SuppressWarnings({"deprecation", "squid:S1874"}) // .acsListPath() and .acsListResourceType() for backward compatibility
     public void accept(Element element, Field field) {
         RadioGroup radioGroup = field.getDeclaredAnnotation(RadioGroup.class);
         if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {

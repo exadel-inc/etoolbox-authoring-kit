@@ -35,6 +35,7 @@ public class SelectHandler implements Handler, BiConsumer<Element, Field> {
      * @param field Current {@code Field} instance
      */
     @Override
+    @SuppressWarnings({"deprecation", "squid:S1874"}) // .acsListPath() and .acsListResourceType() for backward compatibility
     public void accept(Element element, Field field) {
         Select select = field.getAnnotation(Select.class);
         if (ArrayUtils.isNotEmpty(select.options())) {

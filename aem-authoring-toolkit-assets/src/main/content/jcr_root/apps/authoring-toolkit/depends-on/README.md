@@ -552,7 +552,7 @@ public class Component {
     @ValueMapValue
     private String[] items;
 
-    public class Item {
+    public static class Item {
         @TextField
         @DialogField
         public String item;
@@ -576,7 +576,7 @@ public class Component {
     @ValueMapValue
     private String[] multifield2;
 
-    public class Item {
+    public static class Item {
         @TextField
         @DialogField
         public String item;
