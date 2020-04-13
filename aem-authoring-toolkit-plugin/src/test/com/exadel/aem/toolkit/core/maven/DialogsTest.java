@@ -16,35 +16,47 @@ package com.exadel.aem.toolkit.core.maven;
 
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
 import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
+import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
 
 public class DialogsTest extends DefaultTestBase {
     @Test
     public void testComponentWithRichTextAndExternalClasses() {
-        testComponent(ComponentWithRichTextAndExternalClasses.class);
+        test(ComponentWithRichTextAndExternalClasses.class);
     }
 
     @Test
     public void testDialogWithTabsAndInnerClass() {
-        testComponent(ComponentWithTabsAndInnerClass.class);
+        test(ComponentWithTabsAndInnerClass.class);
     }
 
     @Test
     public void testDialogWithTabsAsNestedClasses() {
-        testComponent(ComponentWithTabsAsNestedClasses.class);
+        test(ComponentWithTabsAsNestedClasses.class);
     }
 
     @Test
     public void testComplexComponent1() {
-        testComponent(ComplexComponent1.class);
+        test(ComplexComponent1.class);
     }
 
     @Test
     public void testComplexComponent2() {
-        testComponent(ComplexComponent2.class);
+        test(ComplexComponent2.class);
+    }
+
+    @Test
+    public void testEditConfig() {
+        test(EditConfigAnnotation.class);
+    }
+
+    @Test
+    public void testChildEditConfig() {
+        test(ChildEditConfigAnnotation.class);
     }
 }

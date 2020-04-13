@@ -16,50 +16,63 @@ package com.exadel.aem.toolkit.core.maven;
 
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.core.util.TestConstants;
 import com.exadel.aem.toolkit.test.component.IgnoreTestCases;
 
 public class IgnoreTest extends DefaultTestBase {
     @Test
     public void testFixedColumnsLayout() {
-        testComponent(IgnoreTestCases.IgnoreFieldsFixedColumnsLayout.class);
+        test(IgnoreTestCases.IgnoreFieldsFixedColumnsLayout.class,
+                TestConstants.RESOURCE_FOLDER_COMMON,
+                IgnoreTestCases.IgnoreFieldsFixedColumnsLayout.class.getSimpleName());
     }
 
     @Test
     public void testTabsLayout() {
-        testComponent(IgnoreTestCases.IgnoreFieldsTabsLayout.class);
+        test(IgnoreTestCases.IgnoreFieldsTabsLayout.class,
+                TestConstants.RESOURCE_FOLDER_COMMON,
+                IgnoreTestCases.IgnoreFieldsTabsLayout.class.getSimpleName());
     }
 
     @Test
     public void testFieldSet1() {
-        testComponent(IgnoreTestCases.IgnoreFieldsInFieldSet.class);
+        test(IgnoreTestCases.IgnoreFieldsInFieldSet.class,
+                TestConstants.RESOURCE_FOLDER_COMMON,
+                IgnoreTestCases.IgnoreFieldsInFieldSet.class.getSimpleName());
     }
 
     @Test
     public void testFieldSet2() {
-        testComponent(IgnoreTestCases.IgnoreFieldsImposedOnFieldSet.class,
-                "dialogIgnoreFieldsInFieldSet");
+        test(IgnoreTestCases.IgnoreFieldsImposedOnFieldSet.class,
+                TestConstants.RESOURCE_FOLDER_COMMON,
+                IgnoreTestCases.IgnoreFieldsInFieldSet.class.getSimpleName());
     }
 
     @Test
     public void testFieldSet3() {
-        testComponent(IgnoreTestCases.IgnoreFieldsImposedOnFieldSetClassLevel.class,
-                "dialogIgnoreFieldsInFieldSet");
+        test(IgnoreTestCases.IgnoreFieldsImposedOnFieldSetClassLevel.class,
+                TestConstants.RESOURCE_FOLDER_COMMON,
+                IgnoreTestCases.IgnoreFieldsInFieldSet.class.getSimpleName());
     }
 
     @Test
     public void testMutlifield1() {
-        testComponent(IgnoreTestCases.IgnoreFieldsInMultifield.class);
+        test(IgnoreTestCases.IgnoreFieldsInMultifield.class,
+                TestConstants.RESOURCE_FOLDER_COMMON,
+                IgnoreTestCases.IgnoreFieldsInMultifield.class.getSimpleName());
     }
 
     @Test
     public void testMutlifield2() {
-        testComponent(IgnoreTestCases.IgnoreFieldsImposedOnMultifield.class,
-                "dialogIgnoreFieldsInMultifield");
+        test(IgnoreTestCases.IgnoreFieldsImposedOnMultifield.class,
+                TestConstants.RESOURCE_FOLDER_COMMON,
+                IgnoreTestCases.IgnoreFieldsInMultifield.class.getSimpleName());
     }
 
     @Test
     public void testMutlifield3() {
-        testComponent(IgnoreTestCases.IgnoreFieldsImposedOnMultifieldClassLevel.class,
-                "dialogIgnoreFieldsInMultifield");
+        test(IgnoreTestCases.IgnoreFieldsImposedOnMultifieldClassLevel.class,
+                TestConstants.RESOURCE_FOLDER_COMMON,
+                IgnoreTestCases.IgnoreFieldsInMultifield.class.getSimpleName());
     }
 }

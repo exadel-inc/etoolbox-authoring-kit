@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code Checkbox} widget functionality
  * within the {@code cq:dialog} XML node
  */
-public class CheckboxHandler implements Handler, BiConsumer<Element, Field> {
+class CheckboxHandler implements Handler, BiConsumer<Element, Field> {
     private static final String POSTFIX_FOR_ROOT_CHECKBOX = "Checkbox";
 
     /**

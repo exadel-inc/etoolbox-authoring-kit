@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.util;
+package com.exadel.aem.toolkit.core.util.writer;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -43,6 +43,8 @@ import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.Difference;
+
+import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 
 class FilesComparator {
     private static final Logger LOG = LoggerFactory.getLogger(FilesComparator.class);

@@ -12,35 +12,41 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.util;
+package com.exadel.aem.toolkit.core.util.writer;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.transform.Transformer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.transform.Transformer;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.core.handlers.assets.dependson.DependsOnTabHandler;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.handlers.container.DialogContainer;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing AEM TouchUI dialog definition (writes data to the
  * {@code _cq_dialog.xml} file within the current component folder before package is uploaded
  */
 class CqDialogWriter extends ContentXmlWriter {
+    /**
+     * Basic constructor
+     * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
+     *                                               of this writer
+     * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
+     */
     CqDialogWriter(DocumentBuilder documentBuilder, Transformer transformer) {
         super(documentBuilder, transformer);
     }

@@ -15,7 +15,8 @@
                             granite:hidden="{Boolean}false" granite:id="field1-id" jcr:primaryType="nt:unstructured"
                             name="./field1" renderHidden="{Boolean}false" required="{Boolean}false"
                             sling:resourceType="granite/ui/components/coral/foundation/form/textfield">
-                        <granite:data field1-data1="value-data1" field1-data2="value-data2"
+                        <granite:data field1-data1="value-data1"
+                                      field1-data2="value-data2"
                                       jcr:primaryType="nt:unstructured"/>
                     </field1>
                 </items>

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.util;
+package com.exadel.aem.toolkit.core.util.writer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
@@ -20,9 +20,10 @@ import javax.xml.transform.Transformer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing decoration tag properties,
@@ -30,6 +31,12 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
  * current component folder before package is uploaded
  */
 class CqHtmlTagWriter extends PackageEntryWriter {
+    /**
+     * Basic constructor
+     * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
+     *                                               of this writer
+     * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
+     */
     CqHtmlTagWriter(DocumentBuilder documentBuilder, Transformer transformer) {
         super(documentBuilder, transformer);
     }
