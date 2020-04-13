@@ -7,7 +7,7 @@
     <parent>
         <artifactId>aem-authoring-toolkit-samples</artifactId>
         <groupId>com.exadel.aem</groupId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.1.1</version>
     </parent>
 
     <properties>
@@ -19,7 +19,7 @@
 
     <artifactId>toolkit-samples-ui.content</artifactId>
     <name>AEM Authoring Toolkit - Samples Content</name>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.1</version>
 
     <build>
         <finalName>aem-dialog-plugin-sandbox-content-${project.version}</finalName>
