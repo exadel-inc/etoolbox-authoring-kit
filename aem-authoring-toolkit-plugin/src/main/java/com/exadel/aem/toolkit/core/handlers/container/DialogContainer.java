@@ -19,6 +19,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
+import com.exadel.aem.toolkit.core.util.writer.PackageWriter;
 
 /**
  * Represents dialog XML markup builder for either fixed-columns or tabbed TouchUI dialog. Typically applied to by
@@ -36,7 +37,7 @@ public enum DialogContainer {
     }
 
     /**
-     * Called via {@link com.exadel.aem.toolkit.core.util.PackageWriter} to build dialog markup based on the set
+     * Called via {@link PackageWriter} to build dialog markup based on the set
      * of component class fields
      * @param componentClass {@code Class<?>} instance used as the source of markup
      * @param parentElement XML document root element

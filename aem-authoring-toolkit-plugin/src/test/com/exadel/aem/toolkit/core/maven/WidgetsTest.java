@@ -17,14 +17,12 @@ package com.exadel.aem.toolkit.core.maven;
 import org.junit.Test;
 
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
-import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
 import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
 import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
 import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
-import com.exadel.aem.toolkit.test.widget.FileUploadWidgetWithChildEditConfig;
 import com.exadel.aem.toolkit.test.widget.HeadingWidget;
 import com.exadel.aem.toolkit.test.widget.HiddenWidget;
 import com.exadel.aem.toolkit.test.widget.ImageUploadWidget;
@@ -39,115 +37,107 @@ import com.exadel.aem.toolkit.test.widget.Tabs;
 import com.exadel.aem.toolkit.test.widget.TagFieldWidget;
 import com.exadel.aem.toolkit.test.widget.TextAreaWidget;
 
+import static com.exadel.aem.toolkit.core.util.TestConstants.RESOURCE_FOLDER_WIDGET;
+
 public class WidgetsTest extends DefaultTestBase {
 
     @Test
     public void testAlert() {
-        testComponent(AlertWidget.class);
+        test(AlertWidget.class);
     }
 
     @Test
     public void testAttributes() {
-        testComponent(AttributesAnnotation.class);
-    }
-
-    @Test
-    public void testChildEditConfig() {
-        testComponent(FileUploadWidgetWithChildEditConfig.class);
+        test(AttributesAnnotation.class, RESOURCE_FOLDER_WIDGET, "graniteAttributes");
     }
 
     @Test
     public void testColorFieldAndHtmlTag() {
-        testComponent(ColorFieldWidget.class);
+        test(ColorFieldWidget.class);
     }
 
     @Test
     public void testCustom() {
-        testComponent(CustomAnnotations.class);
+        test(CustomAnnotations.class, RESOURCE_FOLDER_WIDGET, "custom");
+    }
+
+    @Test
+    public void testCustomProperties() {
+        test(PropertiesAnnotation.class, RESOURCE_FOLDER_WIDGET, "customProperties");
     }
 
     @Test
     public void testDatePicker() {
-        testComponent(DatePickerWidget.class);
-    }
-
-    @Test
-    public void testDialogProperties() {
-        testComponent(PropertiesAnnotation.class);
-    }
-
-    @Test
-    public void testEditConfig() {
-        testComponent(EditConfigAnnotation.class);
+        test(DatePickerWidget.class);
     }
 
     @Test
     public void testFileUpload() {
-        testComponent(FileUploadWidget.class);
+        test(FileUploadWidget.class);
     }
 
     @Test
     public void testHeading() {
-        testComponent(HeadingWidget.class);
+        test(HeadingWidget.class);
     }
 
     @Test
     public void testHidden() {
-        testComponent(HiddenWidget.class);
+        test(HiddenWidget.class);
     }
 
     @Test
     public void testImageUpload() {
-        testComponent(ImageUploadWidget.class);
+        test(ImageUploadWidget.class);
     }
 
     @Test
     public void testMultiField() {
-        testComponent(MultiFieldWidget.class);
+        test(MultiFieldWidget.class);
     }
 
     @Test
     public void testNestedCheckboxList() {
-        testComponent(NestedCheckboxListWidget.class);
+        test(NestedCheckboxListWidget.class);
     }
 
     @Test
     public void testNumberField() {
-        testComponent(NumberFieldWidget.class);
+        test(NumberFieldWidget.class);
     }
 
     @Test
     public void testPassword() {
-        testComponent(PasswordWidget.class);
+        test(PasswordWidget.class);
     }
 
     @Test
     public void testRadioGroup() {
-        testComponent(RadioGroupWidget.class);
+        test(RadioGroupWidget.class);
     }
 
     @Test
     public void testSelect() {
-        testComponent(SelectWidget.class);
+        test(SelectWidget.class);
     }
 
     @Test
     public void testTextArea() {
-        testComponent(TextAreaWidget.class);
+        test(TextAreaWidget.class);
     }
 
     @Test
     public void testRichTextEditor() {
-        testComponent(RichTextEditorWidget.class);
+        test(RichTextEditorWidget.class);
     }
 
     @Test
     public void testTabs() {
-        testComponent(Tabs.class);
+        test(Tabs.class, RESOURCE_FOLDER_WIDGET, "tabs");
     }
 
     @Test
     public void testTagField() {
-        testComponent(TagFieldWidget.class);
+        test(TagFieldWidget.class);
     }
 }

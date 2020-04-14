@@ -12,27 +12,32 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.util;
-
-import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
-import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
-import com.exadel.aem.toolkit.core.handlers.editconfig.ChildEditingConfiguration;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+package com.exadel.aem.toolkit.core.util.writer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.core.handlers.editconfig.EditConfigHandlingHelper;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing author UI aspects for child components that do not define
  * their own cq:editConfig. Writes data to the {@code _cq_childEditConfig.xml} file within the
  * current component folder before package is uploaded
  */
-public class CqChildEditConfigWriter extends PackageEntryWriter {
+class CqChildEditConfigWriter extends PackageEntryWriter {
+    /**
+     * Basic constructor
+     * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
+     *                                               of this writer
+     * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
+     */
     CqChildEditConfigWriter(DocumentBuilder documentBuilder, Transformer transformer) {
         super(documentBuilder, transformer);
     }
@@ -67,15 +72,7 @@ public class CqChildEditConfigWriter extends PackageEntryWriter {
         ChildEditConfig childEditConfig = componentClass.getDeclaredAnnotation(ChildEditConfig.class);
         root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
         PluginRuntime.context().getXmlUtility().mapProperties(root, childEditConfig);
-        EditConfig editConfig = PluginObjectUtility.create(EditConfig.class, createMap(childEditConfig));
-        ChildEditingConfiguration.append(root, editConfig);
+        EditConfigHandlingHelper.append(root, childEditConfig);
         writeCommonProperties(componentClass, XmlScope.CQ_CHILD_EDIT_CONFIG);
-    }
-
-    private Map<String, Object> createMap(ChildEditConfig childEditConfig) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("dropTargets", childEditConfig.dropTargets());
-        map.put("listeners", childEditConfig.listeners());
-        return map;
     }
 }

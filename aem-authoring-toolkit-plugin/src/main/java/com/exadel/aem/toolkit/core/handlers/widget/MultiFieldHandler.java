@@ -107,6 +107,6 @@ public class MultiFieldHandler implements WidgetSetHandler {
         if (widget == null) {
             return;
         }
-        widget.append(element, field, DialogConstants.NN_FIELD);
+        widget.appendTo(element, field, DialogConstants.NN_FIELD);
     }
 }

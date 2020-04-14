@@ -21,20 +21,26 @@ import java.util.List;
 
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exadel.aem.toolkit.core.util.TestHelper;
 import com.exadel.aem.toolkit.core.util.TestConstants;
+import com.exadel.aem.toolkit.core.util.writer.TestXmlWriterHelper;
+
+import static com.exadel.aem.toolkit.core.util.TestConstants.RESOURCE_FOLDER_COMMON;
+import static com.exadel.aem.toolkit.core.util.TestConstants.RESOURCE_FOLDER_COMPONENT;
+import static com.exadel.aem.toolkit.core.util.TestConstants.RESOURCE_FOLDER_DEPENDSON;
+import static com.exadel.aem.toolkit.core.util.TestConstants.RESOURCE_FOLDER_WIDGET;
 
 public abstract class DefaultTestBase {
     static final Logger LOG = LoggerFactory.getLogger("AEM Authoring Toolkit Unit Tests");
 
-    private static final String KEYWORD_TEST = "Test";
-    private static final String KEYWORD_DIALOG = "dialog";
+    private static final String KEYWORD_ANNOTATION = "Annotation";
+    private static final String KEYWORD_DEPENDSON = "DependsOn";
+    private static final String KEYWORD_WIDGET = "Widget";
+
     private static final String SUFFIX_PATTERN = "(Widget|Annotation)$";
 
     private static final String EXCEPTION_SETTING = "none";
@@ -49,30 +55,30 @@ public abstract class DefaultTestBase {
         PluginRuntime.initialize(classpathElements, StringUtils.EMPTY, getExceptionSetting());
     }
 
-    void testComponent(Class<?> tested) {
-        testComponent(tested, null);
+    void test(Class<?> testable) {
+        String subfolderName = RESOURCE_FOLDER_COMPONENT;
+        if (testable.getSimpleName().endsWith(KEYWORD_WIDGET)) {
+            subfolderName = RESOURCE_FOLDER_WIDGET;
+        } else if (testable.getSimpleName().startsWith(KEYWORD_DEPENDSON)) {
+            subfolderName = RESOURCE_FOLDER_DEPENDSON;
+        } else if (testable.getSimpleName().endsWith(KEYWORD_ANNOTATION)) {
+            subfolderName = RESOURCE_FOLDER_COMMON;
+        }
+        test(testable,
+                subfolderName,
+                StringUtils.uncapitalize(RegExUtils.removePattern(testable.getSimpleName(), SUFFIX_PATTERN)));
     }
 
-    void testComponent(Class<?> tested, String resourceAlias) {
-        Path componentPathExpected = Paths.get(getResourceFolderPath(tested, resourceAlias));
+    void test(Class<?> testable, String... pathElements) {
+        Path pathToExpectedContent = Paths.get(TestConstants.EXPECTED_CONTENT_ROOT_PATH, pathElements);
         try {
-            Assert.assertTrue(TestHelper.doTest(tested.getName(), componentPathExpected));
+            Assert.assertTrue(TestXmlWriterHelper.doTest(testable.getName(), pathToExpectedContent));
         } catch (ClassNotFoundException ex) {
-            LOG.error("Cannot initialize instance of class " + tested.getName(), ex);
+            LOG.error("Cannot initialize instance of class " + testable.getName(), ex);
         }
     }
 
     String getExceptionSetting() {
         return EXCEPTION_SETTING;
-    }
-
-    private static String getResourceFolderPath(Class<?> tested, String resourceAlias) {
-        String folderName = resourceAlias;
-        if (StringUtils.isEmpty(folderName)) {
-            folderName = tested.getSimpleName().contains(KEYWORD_TEST)
-                    ?  tested.getSimpleName().replace(KEYWORD_TEST, KEYWORD_DIALOG)
-                    : KEYWORD_DIALOG + tested.getSimpleName();
-        }
-        return TestConstants.PATH_TO_EXPECTED_FILES + "\\" + RegExUtils.removePattern(folderName, SUFFIX_PATTERN);
     }
 }

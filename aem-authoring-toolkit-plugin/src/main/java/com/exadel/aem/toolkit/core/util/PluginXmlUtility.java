@@ -64,7 +64,7 @@ import com.exadel.aem.toolkit.core.util.validation.Validation;
  * Utility methods to process, verify and store AEM TouchUI dialog-related data to XML markup
  */
 public class PluginXmlUtility implements XmlUtility {
-    static final Map<String, String> XML_NAMESPACES = ImmutableMap.of(
+    public static final Map<String, String> XML_NAMESPACES = ImmutableMap.of(
             "xmlns:jcr", "http://www.jcp.org/jcr/1.0",
             "xmlns:nt", "http://www.jcp.org/jcr/nt/1.0",
             "xmlns:sling", JcrResourceConstants.SLING_NAMESPACE_URI,
@@ -95,7 +95,7 @@ public class PluginXmlUtility implements XmlUtility {
      * @param componentClass {@code Class} instance representing source object for this document
      * @return Root {@link Element}
      */
-    Element newDocumentRoot(DocumentBuilder builder, Class<?> componentClass) {
+    public Element newDocumentRoot(DocumentBuilder builder, Class<?> componentClass) {
         document = builder.newDocument();
         document.setUserData(DialogConstants.PN_COMPONENT_CLASS, componentClass, null);
         Element rootElement = createNodeElement(DialogConstants.NN_ROOT, XML_NAMESPACES);
@@ -107,7 +107,7 @@ public class PluginXmlUtility implements XmlUtility {
      * Retrieves current {@link Document} that is involved in {@code createNodeElement} routines
      * @return {@code Document} instance
      */
-    Document getCurrentDocument() {
+    public Document getCurrentDocument() {
         return document;
     }
 
@@ -481,15 +481,15 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public Element getOrAddChildElement(Element parent, String child) {
-        return getChildElementNode(parent,
-                child,
-                parentElement -> (Element) parentElement.appendChild(createNodeElement(child)));
+    public Element getOrAddChildElement(Element parent, String childName) {
+        return getChildElement(parent,
+                childName,
+                parentElement -> (Element) parentElement.appendChild(createNodeElement(childName)));
     }
 
     @Override
-    public Element getChildElement(Element parent, String child) {
-        return getChildElementNode(parent, child, p -> null);
+    public Element getChildElement(Element parent, String childName) {
+        return getChildElement(parent, childName, p -> null);
     }
 
     /**
@@ -499,13 +499,13 @@ public class PluginXmlUtility implements XmlUtility {
      * @param fallbackSupplier Routine that returns a fallback Element instance if parent node does not exist or child not found
      * @return Element instance
      */
-    public Element getChildElementNode(Element parent, String childName, UnaryOperator<Element> fallbackSupplier) {
+    public Element getChildElement(Element parent, String childName, UnaryOperator<Element> fallbackSupplier) {
         if (parent == null) {
             return fallbackSupplier.apply(null);
         }
         if (childName.contains(DialogConstants.PATH_SEPARATOR)) {
             return Arrays.stream(StringUtils.split(childName, DialogConstants.PATH_SEPARATOR))
-                    .reduce(parent, (p, c) -> getChildElementNode(p, c, fallbackSupplier), (c1, c2) -> c2);
+                    .reduce(parent, (p, c) -> getChildElement(p, c, fallbackSupplier), (c1, c2) -> c2);
         }
         Node child = parent.getFirstChild();
         while (child != null) {
@@ -522,7 +522,7 @@ public class PluginXmlUtility implements XmlUtility {
      * @param xPath String xPath representation
      * @return List of {@code Element}s, or an empty list
      */
-    List<Element> getElementNodes(String xPath) {
+    public List<Element> getElementNodes(String xPath) {
         XPath xPathInstance = XPathFactory.newInstance().newXPath();
         List<Element> result = new ArrayList<>();
         try {
@@ -586,7 +586,9 @@ public class PluginXmlUtility implements XmlUtility {
      * @param acsListResourceType Use this to set {@code sling:resourceType} of data source, other than standard
      */
     public void appendDataSource(Element element, DataSource dataSource, String acsListPath, String acsListResourceType) {
-        if (appendDataSource(element, dataSource.path(), dataSource.resourceType(), Arrays.stream(dataSource.properties()).collect(Collectors.toMap(Property::name, Property::value))) == null) {
+        Map<String, String> arbitraryProperties = Arrays.stream(dataSource.properties())
+                .collect(Collectors.toMap(Property::name, Property::value));
+        if (appendDataSource(element, dataSource.path(), dataSource.resourceType(), arbitraryProperties) == null) {
             appendAcsCommonsList(element, acsListPath, acsListResourceType);
         }
     }

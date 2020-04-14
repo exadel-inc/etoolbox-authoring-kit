@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.util;
+package com.exadel.aem.toolkit.core.util.writer;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -21,7 +21,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -29,7 +28,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang3.StringUtils;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -37,6 +35,7 @@ import com.exadel.aem.toolkit.api.annotations.main.CommonProperties;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
  * Base class for creating XML representation of AEM component's stored attributes and authoring features
@@ -45,6 +44,12 @@ abstract class PackageEntryWriter {
     private DocumentBuilder documentBuilder;
     private Transformer transformer;
 
+    /**
+     * Basic constructor
+     * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
+     *                                               of this writer
+     * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
+     */
     PackageEntryWriter(DocumentBuilder documentBuilder, Transformer transformer) {
         this.documentBuilder = documentBuilder;
         this.transformer = transformer;

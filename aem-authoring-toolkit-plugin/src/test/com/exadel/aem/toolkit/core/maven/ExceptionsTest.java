@@ -22,7 +22,7 @@ import org.junit.rules.ExpectedException;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
 
-public class ExceptionsTest extends ExceptionTestBase {
+public class ExceptionsTest extends ExceptionsTestBase {
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
@@ -31,13 +31,13 @@ public class ExceptionsTest extends ExceptionTestBase {
     public void testComponentWithNonexistentTab() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidTabException.class));
         exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
-        testComponent(ExceptionsTestCases.ComponentWithNonexistentTab.class);
+        test(ExceptionsTestCases.ComponentWithNonexistentTab.class);
     }
 
     @Test
     public void testComponentWithWrongDependsOnTab() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidTabException.class));
         exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
-        testComponent(ExceptionsTestCases.ComponentWithNonexistentDependsOnTab.class);
+        test(ExceptionsTestCases.ComponentWithNonexistentDependsOnTab.class);
     }
 }
