@@ -9,9 +9,12 @@
     </parent>
 
     <name>${project.prettyName} Assets (Client Libraries)</name>
-
     <artifactId>aem-authoring-toolkit-assets</artifactId>
     <packaging>content-package</packaging>
+
+    <properties>
+        <sonar.skip>true</sonar.skip>
+    </properties>
 
     <build>
         <sourceDirectory>src/main/content/jcr_root/apps/authoring-toolkit/depends-on/js</sourceDirectory>
@@ -46,25 +49,19 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>deploy</id>
+
+        <profile><id>deploy</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution><id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals><goal>sign</goal></goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>install-assets</id>
+
+        <profile><id>install-assets</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -74,17 +71,15 @@
                         <groupId>com.day.jcr.vault</groupId>
                         <artifactId>content-package-maven-plugin</artifactId>
                         <executions>
-                            <execution>
-                                <id>install-assets</id>
+                            <execution><id>build-assets</id>
                                 <phase>install</phase>
-                                <goals>
-                                    <goal>install</goal>
-                                </goals>
+                                <goals><goal>install</goal></goals>
                             </execution>
                         </executions>
                     </plugin>
                 </plugins>
             </build>
         </profile>
+
     </profiles>
 </project>

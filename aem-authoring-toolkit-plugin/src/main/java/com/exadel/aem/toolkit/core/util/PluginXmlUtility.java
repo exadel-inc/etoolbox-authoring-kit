@@ -608,7 +608,9 @@ public class PluginXmlUtility implements XmlUtility {
      * @param acsListResourceType Use this to set {@code sling:resourceType} of data source, other than standard
      */
     public void appendDataSource(Element element, DataSource dataSource, String acsListPath, String acsListResourceType) {
-        if (appendDataSource(element, dataSource.path(), dataSource.resourceType(), Arrays.stream(dataSource.properties()).collect(Collectors.toMap(Property::name, Property::value))) == null) {
+        Map<String, String> arbitraryProperties = Arrays.stream(dataSource.properties())
+                .collect(Collectors.toMap(Property::name, Property::value));
+        if (appendDataSource(element, dataSource.path(), dataSource.resourceType(), arbitraryProperties) == null) {
             appendAcsCommonsList(element, acsListPath, acsListResourceType);
         }
     }
