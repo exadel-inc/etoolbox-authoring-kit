@@ -166,6 +166,9 @@
     <profiles>
 
         <profile><id>test</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
             <build>
                 <pluginManagement>
                     <plugins>
@@ -188,6 +191,9 @@
         </profile>
 
         <profile><id>deploy</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
             <build>
                 <pluginManagement>
                     <plugins>
@@ -238,6 +244,11 @@
             </build>
         </profile>
 
+        <profile><id>install-assets</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+        </profile>
     </profiles>
 
     <pluginRepositories>

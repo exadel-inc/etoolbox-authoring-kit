@@ -40,13 +40,13 @@ public class ShoppingListComponent {
     private static final String DEFAULT_WONDERFUL_TEXT = "and he thinks he is wonderful, because ";
     private static final String DEFAULT_ANSWER = "he was born like this.";
 
-    @Attribute(clas = "weapon-fieldSet")
+    @Attribute(className = "weapon-fieldSet")
     @FieldSet(title = "Choose weapon to buy")
     @DialogField
     @Self
     private WeaponFieldSet weaponFieldSet;
 
-    @Attribute(clas = "products-fieldSet")
+    @Attribute(className = "products-fieldSet")
     @FieldSet(title = "Choose products to buy")
     @DialogField(description = "Check all checkboxes from this group to show text field")
     @Self

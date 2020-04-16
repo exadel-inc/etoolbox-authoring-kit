@@ -144,6 +144,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
         // if ./cui node has been added any children, append it to ./uiSettings and then append ./uiSettings to root element
         appendElement(uiSettings, cui);
         appendElement(element, uiSettings, RichTextEditorHandler::mergeFeatureAttributes);
+        getXmlUtil().setAttribute(element, DialogConstants.PN_EXTERNAL_STYLESHEETS, rteAnnotation, PluginXmlUtility::mergeStringAttributes);
         // build rtePlugins node, merge it to existing element structure (to pick up child nodes that may have already been populated)
         // then populate rtePlugins node with the context rteAnnotation fields, then merge again
         Element rtePlugins = appendElement(element, pluginsBuilder.build());
@@ -313,7 +314,6 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
      */
     private void populateStylesNode(Supplier<Element> elementSupplier){
         Element stylesElement = elementSupplier.get();
-        getXmlUtil().setAttribute(stylesElement, DialogConstants.PN_EXTERNAL_STYLESHEETS, rteAnnotation, PluginXmlUtility::mergeStringAttributes);
         if (!featureExists(RteFeatures.Popovers.STYLES::equals)) {
             return;
         }

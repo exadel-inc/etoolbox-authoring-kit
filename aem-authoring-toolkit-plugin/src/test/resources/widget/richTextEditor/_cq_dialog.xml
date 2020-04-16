@@ -24,7 +24,8 @@
                           disabled="{Boolean}false"
                           renderHidden="{Boolean}false"
                           required="{Boolean}false"
-                          useFixedInlineToolbar="{Boolean}false">
+                          useFixedInlineToolbar="{Boolean}false"
+                          externalStyleSheets="[/etc/clientlibs/myLib/style1.css,/etc/clientlibs/myLib/style2.css]">
                         <uiSettings jcr:primaryType="nt:unstructured">
                             <cui jcr:primaryType="nt:unstructured">
                                 <inline jcr:primaryType="nt:unstructured"
@@ -202,7 +203,7 @@
                             <lists jcr:primaryType="nt:unstructured" features="[unordered,ordered,indent,outdent]" indentSize="{Long}4"/>
                             <justify jcr:primaryType="nt:unstructured" features="[justifyright,justifyleft,justifycenter]"/>
                             <links jcr:primaryType="nt:unstructured" features="[unlink,modifylink]"/>
-                            <styles jcr:primaryType="cq:WidgetCollection" externalStyleSheets="[/etc/clientlibs/myLib/style1.css,/etc/clientlibs/myLib/style2.css]" features="*">
+                            <styles jcr:primaryType="cq:WidgetCollection" features="*">
                                 <styles jcr:primaryType="cq:WidgetCollection">
                                     <italic jcr:primaryType="nt:unstructured" cssName="italic" text="Italic"/>
                                 </styles>
