@@ -65,7 +65,7 @@ public class WarriorComponent {
     private static final String DARK_THEME_CLASS = "dark-theme";
     private static final String LIGHT_THEME_CLASS = "light-theme";
 
-    @Attribute(clas = "test")
+    @Attribute(className = "test")
     @TextField(emptyText = DEFAULT_TITLE)
     @DialogField(label = "Container title")
     @ValueMapValue

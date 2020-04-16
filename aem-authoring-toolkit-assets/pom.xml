@@ -62,9 +62,6 @@
         </profile>
 
         <profile><id>install-assets</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
