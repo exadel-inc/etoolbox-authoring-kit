@@ -14,7 +14,6 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
-import com.exadel.aem.toolkit.api.annotations.main.CommonProperties;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
@@ -25,8 +24,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorValue;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorVariant;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.GenerateColorsState;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 
 @Dialog(
         name = "test-component",
