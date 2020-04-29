@@ -27,7 +27,7 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
  * within the {@code cq:dialog} XML node
  */
-public class AutocompleteHandler implements Handler, BiConsumer<Element, Field> {
+class AutocompleteHandler implements Handler, BiConsumer<Element, Field> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element

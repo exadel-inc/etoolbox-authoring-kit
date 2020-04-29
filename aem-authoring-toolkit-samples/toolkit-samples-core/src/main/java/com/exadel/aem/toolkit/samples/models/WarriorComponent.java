@@ -1,5 +1,6 @@
 package com.exadel.aem.toolkit.samples.models;
 
+import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
@@ -49,6 +50,9 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
                 )
         }
 )
+@ChildEditConfig(
+        actions = "copymove"
+)
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WarriorComponent {
 
@@ -61,7 +65,7 @@ public class WarriorComponent {
     private static final String DARK_THEME_CLASS = "dark-theme";
     private static final String LIGHT_THEME_CLASS = "light-theme";
 
-    @Attribute(clas = "test")
+    @Attribute(className = "test")
     @TextField(emptyText = DEFAULT_TITLE)
     @DialogField(label = "Container title")
     @ValueMapValue

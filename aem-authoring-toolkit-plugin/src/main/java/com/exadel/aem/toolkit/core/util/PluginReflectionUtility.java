@@ -42,11 +42,11 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
+import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
-import com.exadel.aem.toolkit.api.annotations.widgets.ClassField;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreFields;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.runtime.Injected;
@@ -120,7 +120,7 @@ public class PluginReflectionUtility {
      * scope of the AEM Authoring Toolkit Maven plugin
      * @return {@code List<DialogHandler>} of instances
      */
-    List<DialogHandler> getCustomDialogHandlers() {
+    public List<DialogHandler> getCustomDialogHandlers() {
         if (customDialogHandlers != null) {
             return customDialogHandlers;
         }

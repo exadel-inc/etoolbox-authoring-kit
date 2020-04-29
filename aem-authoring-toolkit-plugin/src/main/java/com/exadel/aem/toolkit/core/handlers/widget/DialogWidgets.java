@@ -24,6 +24,7 @@ import org.w3c.dom.Element;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
 import com.exadel.aem.toolkit.api.annotations.widgets.Hidden;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
@@ -32,7 +33,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
 import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
 import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
@@ -123,7 +123,7 @@ public enum DialogWidgets implements DialogWidget {
             return new CustomDialogWidget(fieldAnnotationClass);
         }
         DialogWidgets result = Arrays.stream(values())
-                .filter(dialogComponent -> fieldAnnotationClass.equals(dialogComponent.getAnnotationClass()))
+                .filter(dialogWidget -> fieldAnnotationClass.equals(dialogWidget.getAnnotationClass()))
                 .findFirst()
                 .orElse(null);
         if (result == null) {

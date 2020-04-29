@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.util;
+package com.exadel.aem.toolkit.core.util.writer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
@@ -20,9 +20,10 @@ import javax.xml.transform.Transformer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
-import com.exadel.aem.toolkit.core.handlers.editconfig.EditingConfiguration;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.core.handlers.editconfig.EditConfigHandlingHelper;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing subsidiary authoring process parameters for an AEM component,
@@ -30,6 +31,12 @@ import com.exadel.aem.toolkit.core.handlers.editconfig.EditingConfiguration;
  * current component folder before package is uploaded
  */
 class CqEditConfigWriter extends PackageEntryWriter {
+    /**
+     * Basic constructor
+     * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
+     *                                               of this writer
+     * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
+     */
     CqEditConfigWriter(DocumentBuilder documentBuilder, Transformer transformer) {
         super(documentBuilder, transformer);
     }
@@ -63,7 +70,7 @@ class CqEditConfigWriter extends PackageEntryWriter {
     void populateDomDocument(Class<?> componentClass, Element root) {
         EditConfig editConfig = componentClass.getDeclaredAnnotation(EditConfig.class);
         root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
-        EditingConfiguration.append(root, editConfig);
+        EditConfigHandlingHelper.append(root, editConfig);
         writeCommonProperties(componentClass, XmlScope.CQ_EDIT_CONFIG);
     }
 }

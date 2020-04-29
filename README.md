@@ -10,7 +10,7 @@ Resulting dialogs and editors are compliant with the newest facilities of AEM 6.
 As the Toolkit was developed, thorough comparative investigation of Coral v.2 and Coral v.3 has been carried out, their features and drawbacks tested, so that backward compatibility is preserved to a highest degree.
 
 ***
-> Learn how to use AEM Authoring Toolkit usage with our sandbox project under [_aem-authoring-toolkit-samples_](/aem-authoring-toolkit-samples/README.md)  
+> Practice to use AEM Authoring Toolkit with our sandbox project under [_aem-authoring-toolkit-samples_](/aem-authoring-toolkit-samples/README.md)  
 >
 ***
 
@@ -29,6 +29,7 @@ As the Toolkit was developed, thorough comparative investigation of Coral v.2 an
    - [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it)
    - [@Extends-ing fields annotations](#extends-ing-fields-annotations)
    - [EditConfig settings](#editconfig-settings)
+   - [ChildEditConfig settings](#childeditconfig-settings)
    - [Value restrictions](#value-restrictions)
 4. [Customization](#customization)
     - [Custom annotations and handlers](#custom-annotations-and-handlers)
@@ -163,8 +164,6 @@ Besides, `@Dialog` possesses properties that are translated into common attribut
     extraClientlibs = "cq.common.wcm",
     layout = DialogLayout.TABS
 )
-@CommonProperty(name = "customString", value = "custom"),
-@CommonProperty(name = "customLongValue", value = "{Long}21")
 public class MyComponentDialog { /* ... */ }
 ```
 ### @Tab annotation
@@ -173,13 +172,13 @@ There are several ways to create tabbed dialogs. First, you may need to mark a n
 @Dialog(layout = Layout.TABS)
 public class Dialog {
     @Tab(title = "First tab")
-    class Tab1 {
+    static class Tab1 {
         @DialogField(label="Field on the first tab")
         @TextField
         String field1;
     }
     @Tab(title = "Second tab")
-    class Tab2 {
+    static class Tab2 {
         @DialogField(label="Field on the first tab")
         @TextField
         String field2;
@@ -306,9 +305,9 @@ Sometimes there is a need to supply a list of sub-level checkboxes to a parent c
 @Dialog
 public class NestedCheckboxListDialog {
     @Checkbox(text = "Level 1 Checkbox", sublist = Sublist.class)
-    boolean option1L1;
+    private boolean option1L1;
  
-    class Sublist {
+    private static class Sublist {
         @Checkbox(text = "Level 2 Checkbox 1")
         boolean option2L1;
  
@@ -316,7 +315,7 @@ public class NestedCheckboxListDialog {
         boolean option2L2;
     }
  
-    class Sublist2 {
+    private static class Sublist2 {
         @Checkbox(text = "Level 3 Checkbox 1")
         boolean option3L1;
  
@@ -488,7 +487,7 @@ public class DialogWithFieldSet {
     @FieldSet(title = "Field set example", namePrefix="fs-")
     private FieldSetExample fieldSet;
  
-    class FieldSetExample extends ParentFieldSetExample {
+    static class FieldSetExample extends ParentFieldSetExample {
         // Constructors are omitted
         // Rankings are not necessary, put here to show the way a parent's field can be
         // rendered after the fields of a subclass, and not before
@@ -505,7 +504,7 @@ public class DialogWithFieldSet {
         String field8;
     }
  
-    class ParentFieldSetExample {
+    private static class ParentFieldSetExample {
         //Constructors are omitted for simplicity
         @DialogField(ranking = 4)
         @TextField
@@ -523,7 +522,7 @@ public class SimpleMultiFieldDialog {
     @MultiField(field = MultiFieldContainer.class)
     String multiField;
  
-    class MultiFieldContainer {
+    static class MultiFieldContainer {
         @DialogField
         @TextField
         String dialogItem;
@@ -538,7 +537,7 @@ public class CompositeMultiFieldDialog {
     @MultiField(field = MultiCompositeField.class)
     String multiComposite;
  
-    class MultiCompositeField {
+    private static class MultiCompositeField {
         @DialogField
         @TextField(description = "Multi Text")
         String multiText;
@@ -876,6 +875,30 @@ Ever simpler, you can specify the richText field to "extend" RTE configuration s
 )
 ``` 
 From the above snippet you can see that *richText* and *richTextConfig* work together fine. Configuration inherited via *richText* can be altered by whatever properties specified in *richTextConfig*. If you use both in the same `@InplaceEditingConfig`, plain values, such as strings and numbers, specified for the `@Extends`-ed field are overwritten by their correlates from *richTextConfig*. But array-typed values (such as *features*, *specialCharacters*, *formats*, etc.) are actually merged. So you can design a fairly basic set of features, styles, formats to store in a field somewhere in your project and then implement several *richTextConfig*-s with more comprehensive and different feature sets.
+
+### ChildEditConfig settings
+Apart from *cq:editConfig* itself, the Adobe Granite gives you possibility to define some im-place editing features for the children of the current component. This is done via the *cq:childEditConfig* node having generally the same structure as cq:editConfig. 
+
+This one can be pipolated with use of `@ChildEditConfig` annotation.
+
+It facilitates setting of the following properties and features:
+
+- Actions
+- Drop targets
+- Listeners
+
+Usage is as follows:
+```
+@Dialog(name = "parentComponent")
+@ChildEditConfig(
+    actions = {"edit", "copymove"}
+)
+public class Dialog {
+    @DialogField
+    @TextField
+    String field1;
+}
+```
 
 ### Value restrictions
 Value restrictions can be imposed on some of the annotations' fields. For instance, if you set a negative integer to a field that requires a positive one (say, *tabIndent* or *undoSteps* field of `@RichTextEditor`), or you set some string that is not a complete JCR path to a field requiring such (e.g *uploadUrl* field), a warning will be issued. You may change this behavior by altering `terminateOn` in plugin's `<configuration>` section in POM file. Put `com.exadel.aem.toolkit.core.exceptions.ValidationException` there to see Maven build terminated in case a restriction is broken (unless the value is already set to _ALL_). Same approach applies to any other particular kind of exception you want the plugin to terminate on.

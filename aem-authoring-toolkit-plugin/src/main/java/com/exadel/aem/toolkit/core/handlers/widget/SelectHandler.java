@@ -28,13 +28,14 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * {@link Handler} implementation used to create markup responsible for Granite {@code Select} widget functionality
  * within the {@code cq:dialog} XML node
  */
-public class SelectHandler implements Handler, BiConsumer<Element, Field> {
+class SelectHandler implements Handler, BiConsumer<Element, Field> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
      * @param field Current {@code Field} instance
      */
     @Override
+    @SuppressWarnings({"deprecation", "squid:S1874"}) // .acsListPath() and .acsListResourceType() method calls left for backward compatibility
     public void accept(Element element, Field field) {
         Select select = field.getAnnotation(Select.class);
         if (ArrayUtils.isNotEmpty(select.options())) {

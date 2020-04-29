@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.util;
+package com.exadel.aem.toolkit.core.util.writer;
 
 import java.io.IOException;
 import java.net.URI;
@@ -149,8 +149,9 @@ public class PackageWriter implements AutoCloseable {
             Transformer transformer = createTransformer();
             writers = Arrays.asList(
                     new ContentXmlWriter(documentBuilder, transformer),
-                    new CqEditConfigWriter(documentBuilder, transformer),
                     new CqDialogWriter(documentBuilder, transformer),
+                    new CqEditConfigWriter(documentBuilder, transformer),
+                    new CqChildEditConfigWriter(documentBuilder, transformer),
                     new CqHtmlTagWriter(documentBuilder, transformer)
             );
         } catch (ParserConfigurationException | TransformerConfigurationException e) {

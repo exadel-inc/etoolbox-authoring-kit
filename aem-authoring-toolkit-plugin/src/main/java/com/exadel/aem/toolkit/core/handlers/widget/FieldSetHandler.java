@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
  * {@link Handler} implementation used to create markup responsible for Granite {@code FieldSet} widget functionality
  * within the {@code cq:dialog} XML node
  */
-public class FieldSetHandler implements WidgetSetHandler {
+class FieldSetHandler implements WidgetSetHandler {
     private static final String EMPTY_FIELDSET_EXCEPTION_MESSAGE = "No valid fields found in fieldset class ";
 
     /**

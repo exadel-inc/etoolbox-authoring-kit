@@ -24,21 +24,21 @@ import com.exadel.aem.toolkit.test.dependson.DependsOnSetFragmentReference;
 public class DependsOnTest extends DefaultTestBase {
     @Test
     public void testDependsOnRequired() {
-        testComponent(DependsOnRequiredAnnotation.class);
+        test(DependsOnRequiredAnnotation.class);
     }
 
     @Test
     public void testDependsOnSetFragmentReference() {
-        testComponent(DependsOnSetFragmentReference.class);
+        test(DependsOnSetFragmentReference.class);
     }
 
     @Test
     public void testDependsOnRef() {
-        testComponent(DependsOnRefAnnotation.class);
+        test(DependsOnRefAnnotation.class);
     }
 
     @Test
     public void testDependsOnTabAnnotation(){
-        testComponent(DependsOnTabAnnotation.class);
+        test(DependsOnTabAnnotation.class);
     }
 }

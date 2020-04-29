@@ -43,7 +43,6 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_3;
 import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_4;
 import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_5;
 import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_6;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_7;
 
 @Dialog(
         name = TestConstants.DEFAULT_COMPONENT_NAME,

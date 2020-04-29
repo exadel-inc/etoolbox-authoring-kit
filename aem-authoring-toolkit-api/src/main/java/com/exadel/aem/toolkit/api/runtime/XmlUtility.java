@@ -13,6 +13,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 /**
  * An abstraction of class encapsulating routines for XML generation and handling
  */
+@SuppressWarnings("unused")
 public interface XmlUtility {
     /**
      * Creates named XML {@code Element} node with default JCR type

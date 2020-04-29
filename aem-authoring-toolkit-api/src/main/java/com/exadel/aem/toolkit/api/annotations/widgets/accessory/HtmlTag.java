@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.api.annotations.main;
+package com.exadel.aem.toolkit.api.annotations.widgets.accessory;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
