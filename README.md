@@ -277,7 +277,7 @@ The fields are sorted in order of their *ranking*. If several fields have the sa
 ##### @Alert
 Used to render components responsible for showing conditional alerts to the users in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Alert](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html?highlight=alert). Usage is similar to the following:
 ```java
-public class DialogWithAlers{
+public class DialogWithAlert{
     @Alert(
             size = AlertSize.LARGE,
             text = "Alert content",
@@ -294,6 +294,21 @@ Used to render the component in TouchUI dialogs. Exposes properties as described
 public class AutocompleteDialog {
     @DialogField
     @Autocomplete(multiple = true, datasource = @AutocompleteDatasource(namespaces = {"workflow", "we-retail"}))
+    String field;
+}
+```
+##### @Button
+Used to produce button in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Button](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/button/index.html).
+```java
+public class DialogWithButton {
+    @Button(
+        buttonType = ButtonType.SUBMIT,
+        buttonText = "save",
+        icon = "edit",
+        command = "shift+s",
+        buttonVariant = ButtonVariant.PRIMARY,
+        block = true
+    )
     String field;
 }
 ```
