@@ -1,5 +1,8 @@
 package com.exadel.aem.toolkit.samples.models;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
+import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonType;
+import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonVariant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
@@ -57,6 +60,17 @@ public class SecretInfoComponent {
     )
     @ValueMapValue
     private String info;
+
+    @PlaceOnTab(SecretInfoComponent.TAB_SECRET)
+    @Button(
+            buttonType = ButtonType.SUBMIT,
+            buttonText = "save",
+            icon = "edit",
+            command = "shift+s",
+            buttonVariant = ButtonVariant.PRIMARY,
+            block = true
+    )
+    private String button1;
 
     public String getPassword() {
         return password;
