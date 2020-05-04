@@ -15,8 +15,7 @@
 package com.exadel.aem.toolkit.api.annotations.widgets.button;
 
 import com.exadel.aem.toolkit.api.annotations.meta.*;
-import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.ButtonSize;
-import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.IconSize;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizesConstants;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -41,9 +40,8 @@ public @interface Button {
      * @see ButtonType
      * @return One of {@code ButtonType} values
      */
-    @PropertyRendering(name = "type")
     @EnumValue(transformation = StringTransformation.CAMELCASE)
-    ButtonType buttonType() default ButtonType.BUTTON;
+    ButtonType type() default ButtonType.BUTTON;
 
     /**
      * When set to true, maps to the 'disabled' attribute of this TouchUI dialog component's node.
@@ -67,13 +65,12 @@ public @interface Button {
     String formId() default "";
 
     /**
-     * Maps to the 'text' attribute of this TouchUI dialog component's node.
+     *  When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
      * Used to define the text of the button.
      * When set, override actionConfigName.
-     * @return String value
+     * @return String value, non-blank
      */
-    @PropertyRendering(name = "text")
-    String buttonText() default "";
+    String text() default "";
 
     /**
      *  When set to a non-blank string, maps to the 'text_commentI18n' attribute of this TouchUI dialog component's node.
@@ -88,8 +85,7 @@ public @interface Button {
      * Used to define whether text is hidden
      * @return True or false
      */
-    @PropertyRendering(name = "hideText")
-    boolean hideButtonText() default false;
+    boolean hideText() default false;
 
     /**
      * Maps to the 'active' attribute of this TouchUI dialog component's node.
@@ -107,23 +103,20 @@ public @interface Button {
     String icon() default "";
 
     /**
-     * Maps to the 'iconSize' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the 'iconSize' attribute of this TouchUI dialog component's node.
      * Used to specify icon size
-     * @see IconSize
-     * @return One of {@code IconSize} values
+     * @see ElementSizesConstants
+     * @return String value, non-blank
      */
-    @EnumValue()
-    IconSize iconSize() default IconSize.SMALL;
+    String iconSize() default ElementSizesConstants.SMALL;
 
     /**
-     * Maps to the 'size' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the 'size' attribute of this TouchUI dialog component's node.
      * Used to define button size
-     * @see ButtonSize
-     * @return One of {@code ButtonSize} values
+     * @see ElementSizesConstants
+     * @return String value, non-blank
      */
-    @PropertyRendering(name = "size")
-    @EnumValue()
-    ButtonSize buttonSize() default ButtonSize.MEDIUM;
+    String size() default ElementSizesConstants.MEDIUM;
 
     /**
      * Maps to the 'block' attribute of this TouchUI dialog component's node.
@@ -138,9 +131,8 @@ public @interface Button {
      * @see ButtonVariant
      * @return One of {@code ButtonVariant} values
      */
-    @PropertyRendering(name = "variant")
     @EnumValue(transformation = StringTransformation.CAMELCASE)
-    ButtonVariant buttonVariant() default ButtonVariant.SECONDARY;
+    ButtonVariant variant() default ButtonVariant.SECONDARY;
 
     /**
      *  When set to a non-blank string, maps to the 'command' attribute of this TouchUI dialog component's node.
