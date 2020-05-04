@@ -19,8 +19,7 @@ import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonType;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonVariant;
-import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.ButtonSize;
-import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.IconSize;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizesConstants;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
@@ -33,16 +32,16 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
 public class ButtonWidget {
 
     @Button(
-            buttonType = ButtonType.SUBMIT,
+            type = ButtonType.SUBMIT,
             autocomplete = "on",
             formId = "test-form",
-            buttonText = "test-text",
+            text = "test-text",
             textComment = "test-comment",
-            hideButtonText = true,
+            hideText = true,
             active = true,
             icon = "search",
-            iconSize = IconSize.LARGE,
-            buttonSize = ButtonSize.LARGE,
+            iconSize = ElementSizesConstants.LARGE,
+            size = ElementSizesConstants.LARGE,
             block = true,
             command = "shift+s",
             trackingElement = "test-element",
@@ -51,10 +50,10 @@ public class ButtonWidget {
     String buttonField1;
 
     @Button(
-            buttonType = ButtonType.RESET,
-            buttonText = "test-text",
+            type = ButtonType.RESET,
+            text = "test-text",
             icon = "delete",
-            buttonVariant = ButtonVariant.PRIMARY,
+            variant = ButtonVariant.PRIMARY,
             command = "backspace"
     )
     String buttonField2;
