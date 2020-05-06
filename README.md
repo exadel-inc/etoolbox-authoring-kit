@@ -1055,6 +1055,13 @@ public class CustomPropertiesDialog {
         @Property(name = "numericAttr", value = "{Long}42")
     })
     String field1;
+
+    //another way to define properties
+    @DialogField(label = "Field 2")
+    @TextField
+    @Property(name = "stringAttr", value = "Hello World")
+    @Property(name = "numericAttr", value = "{Long}42")
+    String field1;
 }
 ```
 ##### Custom properties for in-place editing configurations
@@ -1095,8 +1102,14 @@ For these goals, `@CommonProperties` annotation is designed. It accepts similar 
         path = "//*[@size='L']",
         name = "size",
         value = "S"
-    ),
+    )
 })
+public class CustomPropertiesDialog { /* ... */ }
+
+//another way to define properties
+@CommonProperty(name = "stringAttr", value = "Hello World")
+@CommonProperty(scope = XmlScope.CQ_DIALOG, name = "numericAttr", value = "{Long}-1000")
+@CommonProperty(scope = XmlScope.CQ_EDIT_CONFIG, name = "arrayAttr", value = "[any,many,minny,moe]")
 public class CustomPropertiesDialog { /* ... */ }
 ```
 Pay attention to the third and forth `@CommonProperty`-s. Specifying the *path* value gives the ability to traverse to any child node of the prepared XML with use of an XPath-formatted string.

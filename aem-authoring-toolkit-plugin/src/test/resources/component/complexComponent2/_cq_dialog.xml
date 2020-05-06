@@ -207,6 +207,7 @@
                                             fieldDescription="description feed chanel"
                                             fieldLabel="label feed chanel"
                                             filter="custom_filter"
+                                            filter_1="custom_filter_1"
                                             name="./feedFirstfield_feed_channel"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
@@ -361,6 +362,7 @@
                                             fieldDescription="description feed chanel"
                                             fieldLabel="label feed chanel"
                                             filter="custom_filter"
+                                            filter_1="custom_filter_1"
                                             name="./feed/second/field_feed_channel"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
@@ -642,6 +644,7 @@
                                             fieldLabel="label video resource"
                                             name="./fieldVideoResource"
                                             property="video_resource_prop"
+                                            property1="video_resource_prop1"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
                                             rootPath="/root/path"/>
