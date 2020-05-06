@@ -298,15 +298,18 @@ public class AutocompleteDialog {
 }
 ```
 ##### @Button
-Used to produce button in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Button](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/button/index.html).
+Used to produce buttons in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Button](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/button/index.html).
+
+*Note:* this widget annotation does not need to be accompanied with `@DialogWidget`
+
 ```java
 public class DialogWithButton {
     @Button(
-        buttonType = ButtonType.SUBMIT,
-        buttonText = "save",
+        type = ButtonType.SUBMIT,
+        text = "save",
         icon = "edit",
         command = "shift+s",
-        buttonVariant = ButtonVariant.PRIMARY,
+        variant = ElementVariantConstants.PRIMARY,
         block = true
     )
     String field;
@@ -394,9 +397,10 @@ public class ImageFieldDialog {
 ```
 ###### @Heading
 Used to render heading element in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Heading](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/heading/index.html).
+
+*Note:* this widget annotation does not need to be accompanied with `@DialogWidget`
 ```java
-public class HeadingDialog {
-    @DialogField
+public class DialogWithHeading {
     @Heading(text = "Heading text", level = 2)
     String heading;
 }
