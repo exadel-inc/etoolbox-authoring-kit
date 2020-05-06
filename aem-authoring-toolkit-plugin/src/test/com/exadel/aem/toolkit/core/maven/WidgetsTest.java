@@ -20,6 +20,7 @@ import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
 import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
+import com.exadel.aem.toolkit.test.widget.ButtonWidget;
 import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
 import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
@@ -49,6 +50,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testAttributes() {
         test(AttributesAnnotation.class, RESOURCE_FOLDER_WIDGET, "graniteAttributes");
+    }
+
+    @Test
+    public void testButton() {
+        test(ButtonWidget.class);
     }
 
     @Test

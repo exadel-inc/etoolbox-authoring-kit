@@ -11,26 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets.fileupload;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizesConstants;
+package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 /**
- * Contains possible values of {@link FileUpload#buttonSize()} property
+ * Contains common string constants used for size setup
  */
-@SuppressWarnings("unused")
-public enum ButtonSize {
-    MEDIUM(ElementSizesConstants.MEDIUM),
-    LARGE(ElementSizesConstants.LARGE);
+public class ElementSizesConstants {
+    public static final String EXTRA_SMALL = "XS";
+    public static final String SMALL = "S";
+    public static final String MEDIUM = "M";
+    public static final String LARGE = "L";
 
-    private final String token;
-
-    ButtonSize(String token) {
-        this.token = token;
-    }
-
-    @Override
-    public String toString() {
-        return token;
+    private ElementSizesConstants() {
     }
 }
