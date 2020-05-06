@@ -11,16 +11,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.api.annotations.widgets.fileupload;
+
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariantConstants;
 
 /**
  * Contains possible values of {@link FileUpload#buttonVariant()} property
  */
 @SuppressWarnings("unused")
 public enum ButtonVariant {
-    PRIMARY,
-    WARNING,
-    QUIET,
-    MINIMAL,
-    ACTION_BAR
+    PRIMARY(ElementVariantConstants.PRIMARY),
+    WARNING(ElementVariantConstants.WARNING),
+    QUIET(ElementVariantConstants.QUIET),
+    MINIMAL(ElementVariantConstants.MINIMAL),
+    ACTION_BAR(ElementVariantConstants.ACTION_BAR);
+
+    private final String token;
+
+    ButtonVariant(String token) {
+        this.token = token;
+    }
+
+    @Override
+    public String toString() {
+        return token;
+    }
 }

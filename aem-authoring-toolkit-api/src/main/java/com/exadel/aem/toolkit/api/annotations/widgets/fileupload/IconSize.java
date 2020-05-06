@@ -13,17 +13,17 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.fileupload;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizesConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizeConstants;
 
 /**
  * Contains possible values of {@link FileUpload#iconSize()} property and similarly formatted properties of other TouchUI dialog components
  */
 @SuppressWarnings("unused")
 public enum IconSize {
-    EXTRA_SMALL(ElementSizesConstants.EXTRA_SMALL),
-    SMALL(ElementSizesConstants.SMALL),
-    MEDIUM(ElementSizesConstants.MEDIUM),
-    LARGE(ElementSizesConstants.LARGE);
+    EXTRA_SMALL(ElementSizeConstants.EXTRA_SMALL),
+    SMALL(ElementSizeConstants.SMALL),
+    MEDIUM(ElementSizeConstants.MEDIUM),
+    LARGE(ElementSizeConstants.LARGE);
 
     private final String token;
 

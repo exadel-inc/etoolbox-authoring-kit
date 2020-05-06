@@ -14,13 +14,19 @@
 
 package com.exadel.aem.toolkit.api.annotations.widgets.button;
 
-import com.exadel.aem.toolkit.api.annotations.meta.*;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizesConstants;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizeConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariantConstants;
 
 /**
  * Used to set up
@@ -51,30 +57,28 @@ public @interface Button {
     boolean disabled() default false;
 
     /**
-     * When set to a non-blank string, maps to the 'autocomplete' attribute of this TouchUI dialog component's node.
-     * Used to indicate if the value can be automatically completed by the browser
+     * When set to a non-blank string, maps to the 'autocomplete' attribute of this TouchUI dialog component's node
      * @return String value
      */
     String autocomplete() default "off";
 
     /**
      * When set to a non-blank string, maps to the 'formId' attribute of this TouchUI dialog component's node.
-     * Used to define formId for the button.
+     * Used to identify the {@code form} this button is bound to
      * @return String value
      */
     String formId() default "";
 
     /**
-     *  When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
-     * Used to define the text of the button.
-     * When set, override actionConfigName.
+     * When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
+     * Used to define the text of the button
      * @return String value, non-blank
      */
     String text() default "";
 
     /**
      *  When set to a non-blank string, maps to the 'text_commentI18n' attribute of this TouchUI dialog component's node.
-     *  Used to define I18n comment for the body text.
+     *  Used to define I18n comment for the body text
      *  @return String value, non-blank
      */
     @PropertyRendering(name = "text_commentI18n")
@@ -105,22 +109,22 @@ public @interface Button {
     /**
      * When set to a non-blank string, maps to the 'iconSize' attribute of this TouchUI dialog component's node.
      * Used to specify icon size
-     * @see ElementSizesConstants
+     * @see ElementSizeConstants
      * @return String value, non-blank
      */
-    String iconSize() default ElementSizesConstants.SMALL;
+    String iconSize() default ElementSizeConstants.SMALL;
 
     /**
      * When set to a non-blank string, maps to the 'size' attribute of this TouchUI dialog component's node.
      * Used to define button size
-     * @see ElementSizesConstants
+     * @see ElementSizeConstants
      * @return String value, non-blank
      */
-    String size() default ElementSizesConstants.MEDIUM;
+    String size() default ElementSizeConstants.MEDIUM;
 
     /**
      * Maps to the 'block' attribute of this TouchUI dialog component's node.
-     * Used to render the button as a block element.
+     * Used to ensure the button is rendered as a block element
      * @return True or false
      */
     boolean block() default false;
@@ -128,23 +132,21 @@ public @interface Button {
     /**
      * Maps to the 'variant' attribute of this TouchUI dialog component's node.
      * Used to define button variant
-     * @see ButtonVariant
+     * @see com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariantConstants
      * @return One of {@code ButtonVariant} values
      */
-    @EnumValue(transformation = StringTransformation.CAMELCASE)
-    ButtonVariant variant() default ButtonVariant.SECONDARY;
+    String variant() default ElementVariantConstants.PRIMARY;
 
     /**
      *  When set to a non-blank string, maps to the 'command' attribute of this TouchUI dialog component's node.
-     *  Used to define keyboard shortcut for the action.
-     *  When set, override actionConfigName.
+     *  Used to define keyboard shortcut for the action. Overrides 'actionConfigName' value
      *  @return String value, non-blank
      */
     String command() default "";
 
     /**
      *  When set to a non-blank string, maps to the 'actionConfigName' attribute of this TouchUI dialog component's node.
-     *  Used to define standard definitions of command, icon and text.
+     *  Used to define standard definitions of command, icon and text
      *  @return String value, non-blank
      */
     String actionConfigName() default "";

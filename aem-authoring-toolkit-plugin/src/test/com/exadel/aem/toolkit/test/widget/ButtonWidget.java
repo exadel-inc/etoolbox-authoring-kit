@@ -18,8 +18,8 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonType;
-import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonVariant;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizesConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizeConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariantConstants;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
@@ -40,8 +40,8 @@ public class ButtonWidget {
             hideText = true,
             active = true,
             icon = "search",
-            iconSize = ElementSizesConstants.LARGE,
-            size = ElementSizesConstants.LARGE,
+            iconSize = ElementSizeConstants.LARGE,
+            size = ElementSizeConstants.LARGE,
             block = true,
             command = "shift+s",
             trackingElement = "test-element",
@@ -53,7 +53,7 @@ public class ButtonWidget {
             type = ButtonType.RESET,
             text = "test-text",
             icon = "delete",
-            variant = ButtonVariant.PRIMARY,
+            variant = ElementVariantConstants.ACTION_BAR,
             command = "backspace"
     )
     String buttonField2;

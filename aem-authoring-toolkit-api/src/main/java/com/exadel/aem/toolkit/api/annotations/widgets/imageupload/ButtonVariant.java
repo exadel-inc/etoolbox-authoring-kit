@@ -11,13 +11,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.api.annotations.widgets.imageupload;
+
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariantConstants;
 
 /**
  * Contains possible values of {@link ImageUpload#buttonVariant()} property
  */
 @SuppressWarnings("unused")
 public enum ButtonVariant {
-    SECONDARY,
-    QUIET,
+    SECONDARY (ElementVariantConstants.SECONDARY),
+    QUIET(ElementVariantConstants.QUIET);
+
+    private final String token;
+
+    ButtonVariant(String token) {
+        this.token = token;
+    }
+
+    @Override
+    public String toString() {
+        return token;
+    }
 }

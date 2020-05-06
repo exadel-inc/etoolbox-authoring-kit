@@ -15,17 +15,17 @@
 package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 /**
- * Contains common strings used to define {@code variant/statusVariant} property of a dialog widget when referring
- * status of an option or a message
+ * Contains common strings used to define {@code variant} property of a dialog widget when referring
+ * display/design variant of an interactive element
  */
-@SuppressWarnings("unused")
-public class StatusVariantConstants {
-    public static final String ERROR = "error";
+public class ElementVariantConstants {
+    public static final String PRIMARY = "primary";
+    public static final String SECONDARY = "secondary";
     public static final String WARNING = "warning";
-    public static final String SUCCESS = "success";
-    public static final String HELP = "help";
-    public static final String INFO = "info";
+    public static final String QUIET = "quiet";
+    public static final String MINIMAL = "minimal";
+    public static final String ACTION_BAR = "actionBar";
 
-    private StatusVariantConstants() {
+    private ElementVariantConstants() {
     }
 }

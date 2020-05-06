@@ -12,17 +12,17 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.api.annotations.widgets.button;
+package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 /**
- * Contains possible values of {@link Button#buttonVariant()} property
+ * Contains common string constants used for size setup
  */
-@SuppressWarnings("unused")
-public enum ButtonVariant {
-    PRIMARY,
-    WARNING,
-    QUIET,
-    MINIMAL,
-    ACTION_BAR,
-    SECONDARY
+public class ElementSizeConstants {
+    public static final String EXTRA_SMALL = "XS";
+    public static final String SMALL = "S";
+    public static final String MEDIUM = "M";
+    public static final String LARGE = "L";
+
+    private ElementSizeConstants() {
+    }
 }
