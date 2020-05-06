@@ -22,8 +22,10 @@ import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 
+@SuppressWarnings("unused")
 public class CustomHandler implements DialogWidgetHandler {
     @Injected
+    @SuppressWarnings("UnusedDeclaration")
     private RuntimeContext runtimeContext;
 
     @Override
@@ -34,6 +36,6 @@ public class CustomHandler implements DialogWidgetHandler {
     @Override
     public void accept(Element element, Field field) {
         CustomAnnotation testCustomAnnotation = field.getDeclaredAnnotation(CustomAnnotation.class);
-        element.setAttribute("customField", testCustomAnnotation.customField());
+        runtimeContext.getXmlUtility().setAttribute(element, "customField", testCustomAnnotation.customField());
     }
 }
