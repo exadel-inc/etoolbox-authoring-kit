@@ -30,6 +30,7 @@ import org.w3c.dom.Element;
 import com.google.common.base.CaseFormat;
 
 import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
+import com.exadel.aem.toolkit.api.annotations.meta.IgnoreValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
@@ -77,6 +78,7 @@ class XmlAttributeSettingHelper<T> {
      * @param method Method representing target annotation's property
      * @return New {@code XmlAttributeSettingHelper} instance
      */
+    @SuppressWarnings({"deprecation", "squid:S1874"}) // IgnoreValue processing remains for compatibility reasons until v.2.0.0
     static XmlAttributeSettingHelper forMethod(Annotation annotation, Method method) {
         XmlAttributeSettingHelper attributeSetter = new XmlAttributeSettingHelper<>(getMethodWrappedType(method));
         if (!fits(method)) {
@@ -96,7 +98,10 @@ class XmlAttributeSettingHelper<T> {
             PropertyRendering propertyRendering = method.getAnnotation(PropertyRendering.class);
             attributeSetter.ignoredValues = propertyRendering.ignoreValues();
             attributeSetter.blankValuesAllowed = propertyRendering.allowBlank();
+        } else if (method.isAnnotationPresent(IgnoreValue.class)) {
+            attributeSetter.ignoredValues = new String[] {method.getAnnotation(IgnoreValue.class).value()};
         }
+
         if (PluginReflectionUtility.annotationPropertyIsNotDefault(annotation, method)) {
             attributeSetter.validationChecker = Validation.forMethod(method);
         }
