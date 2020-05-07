@@ -19,6 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
+import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
@@ -44,31 +45,49 @@ public @interface ImageUpload {
      * @return String value
      */
     String id() default "";
+
     /**
      * When set to a non-blank string, maps to the 'rel' attribute of this TouchUI dialog component's node.
      * Renders as the HTML 'rel' attribute
      * @return String value
      */
     String rel() default "";
+
+    /**
+     * When set to a non-blank string, maps to the 'class' attribute of this TouchUI dialog component's node.
+     * Renders as the HTML 'class' attribute
+     * @return String value
+     *
+     * @deprecated This will be removed starting from version 2.0.0. Please use {@link ImageUpload#className()} instead
+     */
+    @PropertyRendering(name = "class")
+    @IgnorePropertyMapping
+    @Deprecated
+    @SuppressWarnings("squid:S1133")
+    String clas() default "";
+
     /**
      * When set to a non-blank string, maps to the 'class' attribute of this TouchUI dialog component's node.
      * Renders as the HTML 'class' attribute
      * @return String value
      */
     @PropertyRendering(name = "class")
-    String clasName() default "";
+    String className() default "";
+
     /**
      * When set to a non-blank string, maps to the 'title' attribute of this TouchUI dialog component's node.
      * Renders as the HTML 'title' attribute
      * @return String value
      */
     String title() default "";
+
     /**
      * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
      * Used to define text hint for an empty ImageUpload
      * @return String value
      */
     String emptyText() default "";
+
     /**
      * Maps to the 'text' attribute of this TouchUI dialog component's node.
      * Used to define default button text
@@ -82,6 +101,7 @@ public @interface ImageUpload {
      * @return String value
      */
     String icon() default "";
+
     /**
      * Maps to the 'variant' attribute of this TouchUI dialog component's node.
      * Used to define button variant
@@ -97,18 +117,21 @@ public @interface ImageUpload {
      * @return True or false
      */
     boolean multiple() default false;
+
     /**
      * When set to a non-blank string, maps to the 'fileNameParameter' attribute of this TouchUI dialog component's node.
      * Used to determine the (relative) location where to store the name of the file
      * @return String value
      */
     String fileNameParameter() default "";
+
     /**
      * When set to a non-blank string, maps to the 'fileReferenceParameter' attribute of this TouchUI dialog component's node.
      * Used to determine where to store the reference of the file (when a file already uploaded on the server)
      * @return String value
      */
     String fileReferenceParameter() default "";
+
     /**
      * Maps to the 'uploadUrl' attribute of this TouchUI dialog component's node.
      * Used to determine the URL where to upload the file
@@ -116,12 +139,14 @@ public @interface ImageUpload {
      */
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     String uploadUrl() default ImageUploadConstants.DEFAULT_UPLOAD_URL;
+
     /**
      * When set to a non-blank string, maps to the 'uploadUrlBuilder' attribute of this TouchUI dialog component's node.
      * Used to determine the upload URL builder
      * @return String value
      */
     String uploadUrlBuilder() default "";
+
     /**
      * When set to a positive number, maps to the 'sizeLimit' attribute of this TouchUI dialog component's node.
      * Used to determine the file size limit
@@ -130,36 +155,42 @@ public @interface ImageUpload {
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
     @PropertyRendering(ignoreValues = "0")
     long sizeLimit() default 0;
+
     /**
      * When set to a non-blank string, maps to the 'autoStart' attribute of this TouchUI dialog component's node.
      * If 'true' assigned, the upload starts automatically once the file is selected
      * @return String value
      */
     String autoStart() default "";
+
     /**
      * Maps to the 'useHTML5' attribute of this TouchUI dialog component's node.
      * Defines whether HTML5 is preferred for uploading files if browser allows it
      * @return True or false
      */
     boolean useHTML5() default true;
+
     /**
      * When set to a non-blank string, maps to the 'dropZone' attribute of this TouchUI dialog component's node.
      * Defines the drop zone selector to upload files from file system directly (if browser allows it)
      * @return String value
      */
     String dropZone() default "";
+
     /**
      * Maps to the 'mimeTypes' attribute of this TouchUI dialog component's node.
      * Defines the browse and selection filter for file selection
      * @return String value, or an array of strings
      */
     String[] mimeTypes() default {ImageUploadConstants.DEFAULT_MIME_TYPE};
+
     /**
      * Maps to the 'chunkUploadSupported' attribute of this TouchUI dialog component's node.
      * Defines whether chunked uploading is supported
      * @return True or false
      */
     boolean chunkUploadSupported() default false;
+
     /**
      * When set to a positive number, maps to the 'chunkSize' attribute of this TouchUI dialog component's node.
      * Used to determine the chunk size of an uploaded file
@@ -168,6 +199,7 @@ public @interface ImageUpload {
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
     @PropertyRendering(ignoreValues = "0")
     long chunkSize() default 0;
+
     /**
      * When set to a positive number, maps to the 'chunkUploadMinFileSize' attribute of this TouchUI dialog component's node.
      * Used to determine the minimal size of an uploaded file to be split in chunks
@@ -176,6 +208,7 @@ public @interface ImageUpload {
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
     @PropertyRendering(ignoreValues = "0")
     long chunkUploadMinFileSize() default 0;
+
     /**
      * Maps to the 'allowUpload' attribute of this TouchUI dialog component's node.
      * Defines whether file uploading (otherwise only file picking) is allowed

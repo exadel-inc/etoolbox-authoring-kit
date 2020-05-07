@@ -22,7 +22,6 @@ import java.util.function.BiConsumer;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
@@ -36,6 +35,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
+import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
@@ -67,7 +67,7 @@ public enum DialogWidgets implements DialogWidget {
     SWITCH(Switch.class),
     DATE_PICKER(DatePicker.class, new DatePickerHandler()),
     FILE_UPLOAD(FileUpload.class),
-    IMAGE_UPLOAD(ImageUpload.class),
+    IMAGE_UPLOAD(ImageUpload.class, new ImageUploadHandler()),
     TEXT_AREA(TextArea.class),
     RICH_TEXT_EDITOR(RichTextEditor.class, new RichTextEditorHandler()),
     HIDDEN(Hidden.class),

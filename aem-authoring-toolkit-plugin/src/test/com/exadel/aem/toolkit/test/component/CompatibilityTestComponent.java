@@ -31,6 +31,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
+import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
@@ -53,6 +54,9 @@ public class CompatibilityTestComponent {
     @Attribute(clas = "deprecated-class-assignment")
     private String acsListOption;
 
+    @DialogField(label="Coral 2 Image Upload")
+    @ImageUpload(clas = "css-class-name")
+    private String imageUpload;
 
     @DialogField(label="Custom Widget")
     @CustomCompatibilityAnnotation(ignorableValue = "ignore this")
