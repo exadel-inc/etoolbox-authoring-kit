@@ -249,7 +249,7 @@ public class PluginReflectionUtility {
         List<Field> fields = new LinkedList<>();
         List<ClassField> ignoredFields = new LinkedList<>();
 
-        for (Class<?> classEntry : getAllSuperClasses(targetClass)) {
+        for (Class<?> classEntry : getClassHierarchy(targetClass)) {
             List<Field> classFields = Arrays.stream(classEntry.getDeclaredFields())
                     .filter(Predicates.getFieldsPredicate(predicates))
                     .collect(Collectors.toList());
@@ -283,20 +283,35 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Retrieves the sequential list of superclasses of a specific {@code Class}, started from the "top" of the inheritance
-     * tree. {@code Object} class excluded, target class included
-     * @param targetClass The class to analyze
+     * Retrieves the sequential list of ancestral of a specific {@code Class}, target class itself included,
+     * starting from the "top" of the inheritance tree. {@code Object} class is not added to the hierarchy
+     * @param targetClass The class to build the tree upon
      * @return List of {@code Class} objects
      */
-    public static List<Class<?>> getAllSuperClasses(Class<?> targetClass) {
-        List<Class<?>> superClasses = new LinkedList<>();
-        while (targetClass != null && !targetClass.isInterface() && !targetClass.equals(Object.class)) {
-            superClasses.add(targetClass);
-            targetClass = targetClass.getSuperclass();
-        }
-        Collections.reverse(superClasses);
-        return superClasses;
+    public static List<Class<?>> getClassHierarchy(Class<?> targetClass) {
+        return getClassHierarchy(targetClass, true);
     }
+
+    /**
+     * Retrieves the sequential list of ancestral classes of a specific {@code Class}, started from the "top" of the inheritance
+     * tree. {@code Object} class is not added to the hierarchy
+     * @param targetClass The class to analyze
+     * @param includeTarget Whether to include the {@code targetClass} itself to the hierarchy
+     * @return List of {@code Class} objects
+     */
+    public static List<Class<?>> getClassHierarchy(Class<?> targetClass, boolean includeTarget) {
+        List<Class<?>> result = new LinkedList<>();
+        Class<?> current = targetClass;
+        while (current != null && !current.isInterface() && !current.equals(Object.class)) {
+            if (!current.equals(targetClass) || includeTarget) {
+                result.add(current);
+            }
+            current = current.getSuperclass();
+        }
+        Collections.reverse(result);
+        return result;
+    }
+
 
     /**
      * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
