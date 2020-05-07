@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.fileupload;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizeConstants;
 
 /**
- * Contains possible values of {@link FileUpload#iconSize()} property and similarly formatted properties of other TouchUI dialog components
+ * Contains possible values of {@link com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload#iconSize()} property and similarly formatted properties of other TouchUI dialog components
  */
 @SuppressWarnings("unused")
 public enum IconSize {

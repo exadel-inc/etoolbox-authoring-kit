@@ -27,6 +27,9 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreField;
+import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 
@@ -55,6 +58,9 @@ public class CompatibilityTestComponent {
     @CustomCompatibilityAnnotation(ignorableValue = "ignore this")
     private int customWidget;
 
+    @FieldSet
+    private CompatibilityFieldSetChild fieldSet;
+
     @Target(ElementType.FIELD)
     @Retention(RetentionPolicy.RUNTIME)
     @DialogWidgetAnnotation(source = "customCompatibilityAnnotation")
@@ -70,4 +76,20 @@ public class CompatibilityTestComponent {
     }
 }
 
+@SuppressWarnings("unused")
+class CompatibilityFieldSetAncestor {
+    @DialogField(label = "Used field")
+    @TextField
+    String usedField;
+
+    @DialogField(label = "Used field")
+    @TextField
+    String ignoredField;
+}
+
+@SuppressWarnings({"unused", "deprecation"})
+class CompatibilityFieldSetChild extends CompatibilityFieldSetAncestor {
+    @IgnoreField
+    String ignoredField;
+}
 
