@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.core.handlers.container;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -24,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -67,51 +67,53 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_TABS, ResourceTypes.TABS))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
 
-        // Initialize tab instances registry to collect tabs from the current class and all superclasses, distinct by tab title
-        Map<String, Tab> tabInstances = new LinkedHashMap<>();
-
-        // Initialize fields registry to collect fields applicable to a certain tab from whatever class
-        Map<String, List<Field>> tabFields = new HashMap<>();
-
         // Initialize ignored tabs list for the current class if IgnoreTabs annotation is present.
         // Note that "ignored tabs" setting is not inherited and is for current class only, unlike tabs collection
         String[] ignoredTabs = componentClass.isAnnotationPresent(IgnoreTabs.class)
                 ? componentClass.getAnnotation(IgnoreTabs.class).value()
                 : new String[] {};
 
-        // Enumerate superclasses of the current class, itself included, from top to bottom, populate tab registry and
-        // store fields that are withing @Tab-marked nested classes (as we will not have access to them later)
-        for (Class<?> cls : PluginReflectionUtility.getAllSuperClasses(componentClass)) {
-            List<Class<?>> tabClasses = Arrays.stream(cls.getDeclaredClasses())
-                    .filter(nestedCls -> nestedCls.isAnnotationPresent(Tab.class))
-                    .collect(Collectors.toList());
-            Collections.reverse(tabClasses);
-            tabClasses.forEach(nestedCls -> {
-                        String tabTitle = nestedCls.getAnnotation(Tab.class).title();
-                        tabInstances.put(tabTitle, nestedCls.getAnnotation(Tab.class));
-                        tabFields.putIfAbsent(tabTitle, new LinkedList<>());
-                        tabFields.get(tabTitle).addAll(Arrays.asList(nestedCls.getDeclaredFields()));
-                    });
-            if (cls.isAnnotationPresent(Dialog.class)) {
-                Arrays.stream(cls.getAnnotation(Dialog.class).tabs())
-                        .forEach(tab -> {
-                            tabInstances.put(tab.title(), tab);
-                            tabFields.putIfAbsent(tab.title(), new LinkedList<>());
-                        });
-            }
+        // Retrieve superclasses of the current class, from top of the hierarchy to the most immediate ancestor,
+        // populate tab registry and store fields that are within @Tab-marked nested classes
+        // (because we will not have access to them later)
+        Map<String, TabInstance> tabInstancesFromSuperClasses = getTabInstances(PluginReflectionUtility.getClassHierarchy(componentClass, false));
+
+        // Retrieve tabs of the current class same way
+        Map<String, TabInstance> tabInstancesFromCurrentClass = getTabInstances(Collections.singletonList(componentClass));
+
+        // Compose the "overall" registry of tabs.
+        // Whether the current class has any tabs that match tabs from superclasses,we consider that the "right" order
+        // of tabs is defined herewith, and place tabs from the current class first, then rest of the tabs.
+        // Otherwise, we consider the tabs of the current class to be an "addendum" of tabs from superclasses, and put
+        // them in the end
+        Map<String, TabInstance> allTabInstances;
+        if (tabInstancesFromCurrentClass.keySet().stream().anyMatch(tabInstancesFromSuperClasses::containsKey)) {
+            allTabInstances = Stream.concat(tabInstancesFromCurrentClass.entrySet().stream(), tabInstancesFromSuperClasses.entrySet().stream())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (child, parent) -> parent.merge(child),
+                            LinkedHashMap::new));
+        } else {
+            allTabInstances = Stream.concat(tabInstancesFromSuperClasses.entrySet().stream(), tabInstancesFromCurrentClass.entrySet().stream())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            TabInstance::merge,
+                            LinkedHashMap::new));
         }
 
         // Get all *non-nested* fields from superclasses and the current class
         List<Field> allFields = PluginReflectionUtility.getAllFields(componentClass);
 
         // If tabs collection is empty and yet there are fields to be placed, fire an exception and create a default tab
-        if (tabInstances.isEmpty() && !allFields.isEmpty()) {
+        if (allTabInstances.isEmpty() && !allFields.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
                     NO_TABS_DEFINED_EXCEPTION_MESSAGE + componentClass.getSimpleName()
             ));
-            tabInstances.put(StringUtils.EMPTY, PluginObjectUtility.create(Tab.class,
-                    Collections.singletonMap(DialogConstants.PN_TITLE, StringUtils.EMPTY)));
-            tabFields.putIfAbsent(StringUtils.EMPTY, new LinkedList<>());
+            Tab newTab = PluginObjectUtility.create(Tab.class,
+                    Collections.singletonMap(DialogConstants.PN_TITLE, StringUtils.EMPTY));
+            allTabInstances.put(StringUtils.EMPTY, new TabInstance(newTab));
         }
 
         // Iterate tab registry, from the first ever defined tab to the last
@@ -120,31 +122,31 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
         // 2) re-sort the current tab's fields collection with the field ranking comparator
         // 3) remove managed fields from the "all fields" collection
         // 4) render XML markup for the current tab
-        Iterator<Map.Entry<String, Tab>> tabIterator = tabInstances.entrySet().iterator();
+        Iterator<Map.Entry<String, TabInstance>> tabInstanceIterator = allTabInstances.entrySet().iterator();
         int iterationStep = 0;
 
-        while (tabIterator.hasNext()) {
+        while (tabInstanceIterator.hasNext()) {
             final boolean isFirstTab = iterationStep++ == 0;
-            Tab currentTab = tabIterator.next().getValue();
-            List<Field> storedCurrentTabFields = tabFields.get(currentTab.title());
+            TabInstance currentTabInstance = tabInstanceIterator.next().getValue();
+            List<Field> storedCurrentTabFields = currentTabInstance.getFields();
             List<Field> moreCurrentTabFields = allFields.stream()
-                    .filter(field -> isFieldForTab(field, currentTab, isFirstTab))
+                    .filter(field -> isFieldForTab(field, currentTabInstance.getTab(), isFirstTab))
                     .collect(Collectors.toList());
-            boolean needResort = !storedCurrentTabFields.isEmpty() && ! moreCurrentTabFields.isEmpty();
+            boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
             storedCurrentTabFields.addAll(moreCurrentTabFields);
             if (needResort) {
                 storedCurrentTabFields.sort(PluginReflectionUtility.Predicates::compareDialogFields);
             }
             allFields.removeAll(moreCurrentTabFields);
 
-            if (ArrayUtils.contains(ignoredTabs, currentTab.title())) {
+            if (ArrayUtils.contains(ignoredTabs, currentTabInstance.getTab().title())) {
                 continue;
             }
-            addTab(tabItemsElement, currentTab, storedCurrentTabFields);
+            appendTab(tabItemsElement, currentTabInstance.getTab(), storedCurrentTabFields);
         }
 
         // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
-        // for which an non-existent tab was specified. Handle an InvalidTabException for each of them
+        // for which a non-existent tab was specified. Handle an InvalidTabException for each of them
         allFields.forEach(field -> PluginRuntime.context().getExceptionHandler()
                 .handle(new InvalidTabException(
                         field.isAnnotationPresent(PlaceOnTab.class)
@@ -154,12 +156,41 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
     }
 
     /**
+     * Retrieves a collection of tabs derived from the specified hierarchical collection of classes. Calls to this
+     * method are used to compile a "tab registry" consisting of all tabs from the current class and/or its superclasses
+     * @param classes The {@code Class<?>}-es to search for defined tabs
+     * @return Map of entries, each specified by a tab title and containing a {@link TabInstance} aggregate object
+     */
+    private Map<String, TabInstance> getTabInstances(List<Class<?>> classes) {
+        Map<String, TabInstance> result = new LinkedHashMap<>();
+        for (Class<?> cls : classes) {
+            List<Class<?>> tabClasses = Arrays.stream(cls.getDeclaredClasses())
+                    .filter(nestedCls -> nestedCls.isAnnotationPresent(Tab.class))
+                    .collect(Collectors.toList());
+            Collections.reverse(tabClasses);
+            tabClasses.forEach(nestedCls -> {
+                String tabTitle = nestedCls.getAnnotation(Tab.class).title();
+                result.put(
+                        tabTitle,
+                        new TabInstance(
+                                nestedCls.getAnnotation(Tab.class),
+                                Arrays.asList(nestedCls.getDeclaredFields())));
+            });
+            if (cls.isAnnotationPresent(Dialog.class)) {
+                Arrays.stream(cls.getAnnotation(Dialog.class).tabs())
+                        .forEach(tab -> result.put(tab.title(), new TabInstance(tab)));
+            }
+        }
+        return result;
+    }
+
+    /**
      * Adds a tab definition to the XML markup
      * @param tabCollectionElement The {@link Element} instance to append particular fields' markup
      * @param tab The {@link Tab} instance to render as a dialog tab
      * @param fields The list of {@link Field} instances to render as dialog fields
      */
-    private void addTab(Element tabCollectionElement, Tab tab, List<Field> fields){
+    private void appendTab(Element tabCollectionElement, Tab tab, List<Field> fields){
         String nodeName = getXmlUtil().getUniqueName(tab.title(), DEFAULT_TAB_NAME, tabCollectionElement);
         Element tabElement = getXmlUtil().createNodeElement(
                 nodeName,
@@ -196,5 +227,64 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
             return isDefaultTab;
         }
         return tab.title().equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
+    }
+
+
+    /**
+     * Represents an aggregate of {@link Tab} instance and a list of fields designed to be rendered within this tab.
+     * Used to compose a sorted "tab registry" for a component class
+     * @see TabsHandler#getTabInstances(List)
+     */
+    private static class TabInstance {
+        private Tab tab;
+
+        private List<Field> fields;
+
+        /**
+         * Creates a new {@code TabInstance} wrapped around a specified {@link Tab} with an empty list of associated fields
+         * @param tab {@code Tab} object
+         */
+        private TabInstance(Tab tab) {
+            this.tab = tab;
+            this.fields = new LinkedList<>();
+        }
+
+        /**
+         * Creates a new {@code TabInstance} wrapped around a specified {@link Tab} with a particular list of associated
+         * fields
+         * @param tab {@code Tab} object
+         * @param fields List of {@code Field} objects to associate with the current tab
+         */
+        private TabInstance(Tab tab, List<Field> fields) {
+            this.tab = tab;
+            this.fields = new LinkedList<>(fields);
+        }
+
+        /**
+         * Gets the stored {@link Tab}
+         * @return {@code Tab} object
+         */
+        private Tab getTab() {
+            return tab;
+        }
+
+        /**
+         * Gets the stored list of {@link Field}s
+         * @return {@code List<Field>} object
+         */
+        private List<Field> getFields() {
+            return fields;
+        }
+
+        /**
+         * Merges a foreign {@code TabInstance} to the current instance, basically by adding other instance's {@code Field}s
+         * while preserving the same {@code Tab} reference
+         * @param other Foreign {@code TabInstance} object
+         * @return This instance
+         */
+        private TabInstance merge(TabInstance other) {
+            this.fields.addAll(other.getFields());
+            return this;
+        }
     }
 }
