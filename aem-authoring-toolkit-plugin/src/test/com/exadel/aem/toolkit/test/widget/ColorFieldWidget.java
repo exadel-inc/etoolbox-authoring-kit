@@ -20,7 +20,6 @@ import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
-import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorValue;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorVariant;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.GenerateColorsState;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
@@ -42,12 +41,13 @@ public class ColorFieldWidget {
 
     @DialogField(validation = "foundation.jcr.name")
     @ColorField(
-            value = ColorValue.HEX,
+            value = "#4488CC",
             emptyText = "test-string",
             variant = ColorVariant.SWATCH,
             autogenerateColors = GenerateColorsState.SHADES,
             showSwatches = false,
-            showDefaultColors = false
+            showDefaultColors = false,
+            customColors = {"#FF0000", "#00FF00", "#0000FF"}
     )
     String color;
 }

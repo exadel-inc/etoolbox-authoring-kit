@@ -11,11 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
@@ -27,6 +34,9 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * within the {@code cq:dialog} XML node
  */
 class ColorFieldHandler implements Handler, BiConsumer<Element, Field> {
+    private static final String NODE_NAME_COLOR = "color";
+    private static final String SKIPPED_COLOR_NODE_NAME_SYMBOLS = "^\\w+";
+
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
@@ -35,8 +45,20 @@ class ColorFieldHandler implements Handler, BiConsumer<Element, Field> {
     @Override
     public void accept(Element element, Field field) {
         ColorField colorField = field.getDeclaredAnnotation(ColorField.class);
-        element.setAttribute(DialogConstants.PN_VALUE, colorField.value().name());
-        element.setAttribute(DialogConstants.PN_VARIANT, colorField.variant().name().toLowerCase());
-        element.setAttribute(DialogConstants.PN_AUTOGENERATE_COLORS, colorField.autogenerateColors().name().toLowerCase());
+        List<String> validCustomColors = ArrayUtils.isNotEmpty(colorField.customColors())
+                ? Arrays.stream(colorField.customColors()).filter(StringUtils::isNotBlank).collect(Collectors.toList())
+                : Collections.emptyList();
+        if (validCustomColors.isEmpty()) {
+            return;
+        }
+        Element itemsNode = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
+        for (String customColor: validCustomColors) {
+            Element colorNode = getXmlUtil().createNodeElement(
+                    NODE_NAME_COLOR + customColor.toLowerCase().replaceAll(SKIPPED_COLOR_NODE_NAME_SYMBOLS, StringUtils.EMPTY),
+                    DialogConstants.NT_UNSTRUCTURED,
+                    Collections.singletonMap(DialogConstants.PN_VALUE, customColor));
+            itemsNode.appendChild(colorNode);
+        }
+        element.appendChild(itemsNode);
     }
 }
