@@ -1,8 +1,5 @@
 package com.exadel.aem.toolkit.samples.models;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
-import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonType;
-import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonVariant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
@@ -14,6 +11,8 @@ import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
+import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
+import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonType;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
@@ -63,11 +62,10 @@ public class SecretInfoComponent {
 
     @PlaceOnTab(SecretInfoComponent.TAB_SECRET)
     @Button(
-            buttonType = ButtonType.SUBMIT,
-            buttonText = "save",
+            type = ButtonType.SUBMIT,
+            text = "save",
             icon = "edit",
             command = "shift+s",
-            buttonVariant = ButtonVariant.PRIMARY,
             block = true
     )
     private String button1;
