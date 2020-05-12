@@ -7,7 +7,7 @@
     <parent>
         <artifactId>aem-authoring-toolkit-samples</artifactId>
         <groupId>com.exadel.aem</groupId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.1.2-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -16,7 +16,7 @@
 
     <artifactId>toolkit-samples-core</artifactId>
     <name>AEM Authoring Toolkit - Samples Core</name>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.2-SNAPSHOT</version>
 
     <packaging>bundle</packaging>
 
