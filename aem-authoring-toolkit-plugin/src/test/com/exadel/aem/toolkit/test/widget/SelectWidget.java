@@ -21,6 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.api.annotations.widgets.select.SelectVariant;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
@@ -49,7 +50,7 @@ public class SelectWidget {
     },
             emptyText = "Select rating",
             multiple = true,
-            variant = "default"
+            variant = SelectVariant.DEFAULT
     )
     String rating;
 
@@ -61,7 +62,7 @@ public class SelectWidget {
             @Option(text = "UTC -1", value = "-01:00"),
             @Option(text = "UTC -2", value = "-02:00")},
             emptyText = "Select timezone",
-            variant = "default")
+            variant = SelectVariant.DEFAULT)
     String timezone;
 
     @DialogField(label="ACS List Options")
