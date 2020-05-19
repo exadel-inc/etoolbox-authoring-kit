@@ -40,14 +40,15 @@ public class SelectWidget {
                     selected = true,
                     statusIcon = "/content/dam/samples/icons/1-star-rating.png",
                     statusText = "This is to set 1-star rating",
-                    statusVariant = StatusVariantConstants.SUCCESS
-            ),
+                    statusVariant = StatusVariantConstants.SUCCESS),
             @Option(text = "2 stars", value = "2"),
             @Option(text = "3 stars", value = "3"),
-            @Option(text = "4 stars", value = "4", disabled=true),
-            @Option(text = "5 stars", value = "5", disabled=true)
-            },
-            emptyText = "Select rating"
+            @Option(text = "4 stars", value = "4", disabled = true),
+            @Option(text = "5 stars", value = "5", disabled = true)
+    },
+            emptyText = "Select rating",
+            multiple = true,
+            variant = "default"
     )
     String rating;
 
@@ -57,11 +58,12 @@ public class SelectWidget {
             @Option(text = "UTC +1", value = "+01:00"),
             @Option(text = "UTC", value = "00:00"),
             @Option(text = "UTC -1", value = "-01:00"),
-            @Option(text = "UTC -2", value = "-02:00")
-    }, emptyText = "Select timezone")
+            @Option(text = "UTC -2", value = "-02:00")},
+            emptyText = "Select timezone",
+            variant = "default")
     String timezone;
 
-    @DialogField(label="ACS List Options")
+    @DialogField(label = "ACS List Options")
     @Select(
             acsListPath = "/path/to/acs/list",
             acsListResourceType = "acs/list/resource/type")

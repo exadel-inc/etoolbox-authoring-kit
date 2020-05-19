@@ -18,6 +18,12 @@
                     <acsListOptions
                             disabled="{Boolean}false"
                             fieldLabel="ACS List Options"
+                            multiple="{Boolean}false"
+                            translateOptions="{Boolean}false"
+                            ordered="{Boolean}false"
+                            emptyOption="{Boolean}false"
+                            deleteHint="{Boolean}false"
+                            forceIgnoreFreshness="{Boolean}false"
                             jcr:primaryType="nt:unstructured"
                             name="./acsListOptions"
                             renderHidden="{Boolean}false"
