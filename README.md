@@ -475,7 +475,7 @@ public class MyDialogWithDropdown {
         translateOptions = false,
         ordered = false,
         emptyOption = false,
-        variant = "default",
+        variant = SelectVariant.DEFAULT,
         deleteHint = false,
         forceIgnoreFreshness = false
     )
