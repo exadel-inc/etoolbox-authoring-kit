@@ -13,10 +13,7 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.select;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.*;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 
 import java.lang.annotation.ElementType;
@@ -91,7 +88,7 @@ public @interface Select {
      *
      * @return true or false
      */
-    boolean translateOptions() default false;
+    boolean translateOptions() default true;
 
     /**
      * Returns true to sort the options based on the text, false otherwise.
@@ -112,11 +109,13 @@ public @interface Select {
     boolean emptyOption() default false;
 
     /**
-     * Return default or quite value.
+     * @see SelectVariant
+     * @return One of {@code SelectVariant} values
      *
      * @return String value
      */
-    String variant() default "";
+    @EnumValue(transformation = StringTransformation.LOWERCASE)
+    SelectVariant variant() default SelectVariant.DEFAULT;
 
     /**
      * Return true to generate the SlingPostServlet @Delete hidden input based on the
@@ -124,7 +123,7 @@ public @interface Select {
      *
      * @return true or false
      */
-    boolean deleteHint() default false;
+    boolean deleteHint() default true;
 
     /**
      * Return true to generate the SlingPostServlet @Delete hidden input based on the
