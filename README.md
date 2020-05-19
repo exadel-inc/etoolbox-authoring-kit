@@ -470,7 +470,14 @@ public class MyDialogWithDropdown {
             @Option(text = "4 stars", value = "4", disabled = true),
             @Option(text = "5 stars", value = "5", disabled = true)
         },
-        emptyText = "Select rating"
+        emptyText = "Select rating",
+        multiple = false,
+        translateOptions = false,
+        ordered = false,
+        emptyOption = false,
+        variant = "default",
+        deleteHint = false,
+        forceIgnoreFreshness = false
     )
     String dropdown;
 }
