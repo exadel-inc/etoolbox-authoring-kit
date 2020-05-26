@@ -8,7 +8,6 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
-import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorValue;
 import com.exadel.aem.toolkit.samples.models.ArmorColorComponent;
 
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
@@ -17,7 +16,7 @@ public class ArmorColorFields {
     private static final String DEFAULT_COLOR = "#A9A9A9";
 
     @ColorField(
-            value = ColorValue.HEX,
+            value = "HEX",
             emptyText = "Choose color for armor"
     )
     @DialogField(ranking = 2)
@@ -26,7 +25,7 @@ public class ArmorColorFields {
     private String armor;
 
     @ColorField(
-            value = ColorValue.HEX,
+            value = "HEX",
             emptyText = "Choose color for shoes"
     )
     @DialogField(ranking = 3)
@@ -35,7 +34,7 @@ public class ArmorColorFields {
     private String shoes;
 
     @ColorField(
-            value = ColorValue.HEX,
+            value = "HEX",
             emptyText = "Choose color for helmet"
     )
     @DialogField(ranking = 1)
