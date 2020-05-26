@@ -23,6 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
+import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
@@ -45,7 +46,6 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_5;
 import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_6;
 
 @Dialog(
-        name = TestConstants.DEFAULT_COMPONENT_NAME,
         title = TestConstants.DEFAULT_COMPONENT_TITLE,
         description = "test component",
         componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
@@ -174,6 +174,10 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_6;
                         richText = @Extends(value = SampleFieldsetAncestor.class, field = "description")
                 ),
         }
+)
+@Component(
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
+        views = DesignDialogView.class
 )
 @SuppressWarnings("unused")
 public class ComplexComponent1 {
