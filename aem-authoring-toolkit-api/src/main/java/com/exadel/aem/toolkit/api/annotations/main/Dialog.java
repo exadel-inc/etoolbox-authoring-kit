@@ -144,8 +144,7 @@ public @interface Dialog {
      * @return String value
      */
     @IgnorePropertyMapping
-    @ValueRestriction(ValueRestrictions.NOT_BLANK)
-    String name();
+    String name() default "";
 
     /**
      * Used to specify TouchUI dialog layout
