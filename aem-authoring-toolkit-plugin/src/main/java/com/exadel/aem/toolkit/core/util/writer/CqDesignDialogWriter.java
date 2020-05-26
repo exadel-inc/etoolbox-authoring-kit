@@ -14,7 +14,7 @@
 
 package com.exadel.aem.toolkit.core.util.writer;
 
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
@@ -32,16 +32,16 @@ import javax.xml.transform.Transformer;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing AEM TouchUI dialog definition (writes data to the
- * {@code _cq_dialog.xml} file within the current component folder before package is uploaded
+ * {@code _cq_design_dialog.xml} file within the current component folder before package is uploaded
  */
-class CqDialogWriter extends ContentXmlWriter {
+class CqDesignDialogWriter extends PackageEntryWriter {
     /**
      * Basic constructor
      * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
      *                                               of this writer
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
      */
-    CqDialogWriter(DocumentBuilder documentBuilder, Transformer transformer) {
+    CqDesignDialogWriter(DocumentBuilder documentBuilder, Transformer transformer) {
         super(documentBuilder, transformer);
     }
 
@@ -51,12 +51,22 @@ class CqDialogWriter extends ContentXmlWriter {
      */
     @Override
     XmlScope getXmlScope() {
-        return XmlScope.CQ_DIALOG;
+        return XmlScope.CQ_DESIGN_DIALOG;
+    }
+
+    /**
+     * Gets whether current {@code Class} is eligible for populating {@code _cq_design_dialog.xml} structure
+     * @param componentClass The {@code Class} under consideration
+     * @return True if current {@code Class} is annotated with {@link DesignDialog}; otherwise, false
+     */
+    @Override
+    boolean isProcessed(Class<?> componentClass) {
+        return componentClass.isAnnotationPresent(DesignDialog.class);
     }
 
     /**
      * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Element)} abstract method to write down contents
-     * of {@code _cq_dialog.xml} file. To the root node, several XML building routines are applied in sequence: the predefined
+     * of {@code _cq_design_dialog.xml} file. To the root node, several XML building routines are applied in sequence: the predefined
      * dialog container builder, the common properties writer, {@code DependsOn} handlers and any {@code CustomHandler}s defined for
      * this component class
      * @param componentClass The {@code Class} being processed
@@ -64,11 +74,11 @@ class CqDialogWriter extends ContentXmlWriter {
      */
     @Override
     void populateDomDocument(Class<?> componentClass, Element root) {
-        Dialog dialog = componentClass.getDeclaredAnnotation(Dialog.class);
-        PluginRuntime.context().getXmlUtility().mapProperties(root, dialog, XmlScope.CQ_DIALOG);
+        DesignDialog designDialog = componentClass.getDeclaredAnnotation(DesignDialog.class);
+        PluginRuntime.context().getXmlUtility().mapProperties(root, designDialog);
         root.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.DIALOG);
 
-        DialogLayout dialogLayout = ArrayUtils.isEmpty(dialog.tabs()) ? dialog.layout() : DialogLayout.TABS;
+        DialogLayout dialogLayout = ArrayUtils.isEmpty(designDialog.tabs()) ? designDialog.layout() : DialogLayout.TABS;
         DialogContainer.getContainer(dialogLayout).build(componentClass, root);
 
         writeCommonProperties(componentClass, XmlScope.CQ_DIALOG);

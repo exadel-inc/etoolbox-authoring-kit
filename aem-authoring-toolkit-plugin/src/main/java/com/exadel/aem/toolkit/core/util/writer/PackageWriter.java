@@ -21,10 +21,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -34,6 +31,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 
+import com.exadel.aem.toolkit.api.annotations.main.Component;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.project.MavenProject;
 import com.google.common.collect.ImmutableMap;
@@ -93,18 +91,18 @@ public class PackageWriter implements AutoCloseable {
      * @param componentClass Current {@code Class} instance
      */
     public void write(Class<?> componentClass) {
-        Dialog dialog = componentClass.getDeclaredAnnotation(Dialog.class);
-        if (StringUtils.isBlank(dialog.name())) {
+        String path = getComponentPath(componentClass);
+        if (StringUtils.isBlank(path)) {
             ValidationException validationException = new ValidationException(COMPONENT_NAME_MISSING_EXCEPTION_MESSAGE + componentClass.getSimpleName());
             PluginRuntime.context().getExceptionHandler().handle(validationException);
             return;
         }
-        Path componentPath = fileSystem.getPath(componentsBasePath, dialog.name());
+        Path componentPath = fileSystem.getPath(componentsBasePath, path);
         if (!Files.isWritable(componentPath)) {
             PluginRuntime.context().getExceptionHandler().handle(new UnknownComponentException(componentPath));
             return;
         }
-        writers.forEach(writer -> writer.writeXml(componentClass, componentPath));
+        new ComponentFacade(writers, componentClass).write(componentPath);
     }
 
     /**
@@ -150,6 +148,7 @@ public class PackageWriter implements AutoCloseable {
             writers = Arrays.asList(
                     new ContentXmlWriter(documentBuilder, transformer),
                     new CqDialogWriter(documentBuilder, transformer),
+                    new CqDesignDialogWriter(documentBuilder, transformer),
                     new CqEditConfigWriter(documentBuilder, transformer),
                     new CqChildEditConfigWriter(documentBuilder, transformer),
                     new CqHtmlTagWriter(documentBuilder, transformer)
@@ -189,5 +188,16 @@ public class PackageWriter implements AutoCloseable {
         transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
         transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         return transformerFactory.newTransformer();
+    }
+
+
+    private static String getComponentPath(Class<?> componentClass) {
+        String pathByComponent = Optional.ofNullable(componentClass.getAnnotation(Component.class))
+                .map(Component::path)
+                .orElse(null);
+        String pathByDialog = Optional.ofNullable(componentClass.getAnnotation(Dialog.class))
+                .map(Dialog::name)
+                .orElse(null);
+        return StringUtils.firstNonBlank(pathByComponent, pathByDialog);
     }
 }
