@@ -14,27 +14,20 @@
 
 package com.exadel.aem.toolkit.core.util.writer;
 
+import com.exadel.aem.toolkit.api.annotations.main.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
-import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.HtmlTag;
+import java.util.*;
 
 public class TestXmlWriterHelper {
     private static final Logger LOG = LoggerFactory.getLogger(TestXmlWriterHelper.class);
@@ -44,7 +37,7 @@ public class TestXmlWriterHelper {
 
     public static boolean doTest(String testedClass, Path pathToExpectedFiles) throws ClassNotFoundException {
         Class dialogClass = Class.forName(testedClass);
-        List<PackageEntryWriter> writers = getWriters(dialogClass);
+        List<PackageEntryWriter> writers = getWriters();
 
         Map<String, String> actualFiles = getActualFiles(dialogClass, writers);
         if (pathToExpectedFiles == null) {
@@ -54,22 +47,17 @@ public class TestXmlWriterHelper {
         return compare(actualFiles, expectedFiles, pathToExpectedFiles.toString());
     }
 
-    private static List<PackageEntryWriter> getWriters(Class dialogClass) {
+    private static List<PackageEntryWriter> getWriters() {
         List<PackageEntryWriter> writers = new ArrayList<>();
         try {
             DocumentBuilder documentBuilder = PackageWriter.createDocumentBuilder();
             Transformer transformer = PackageWriter.createTransformer();
             writers.add(new ContentXmlWriter(documentBuilder, transformer));
             writers.add(new CqDialogWriter(documentBuilder, transformer));
-            if (dialogClass.isAnnotationPresent(EditConfig.class)) {
-                writers.add(new CqEditConfigWriter(documentBuilder, transformer));
-            }
-            if (dialogClass.isAnnotationPresent(ChildEditConfig.class)) {
-                writers.add(new CqChildEditConfigWriter(documentBuilder, transformer));
-            }
-            if (dialogClass.isAnnotationPresent(HtmlTag.class)) {
-                writers.add(new CqHtmlTagWriter(documentBuilder, transformer));
-            }
+            writers.add(new CqDesignDialogWriter(documentBuilder, transformer));
+            writers.add(new CqEditConfigWriter(documentBuilder, transformer));
+            writers.add(new CqChildEditConfigWriter(documentBuilder, transformer));
+            writers.add(new CqHtmlTagWriter(documentBuilder, transformer));
         } catch (ParserConfigurationException | TransformerConfigurationException e) {
             LOG.error(e.getMessage());
         }
@@ -77,11 +65,17 @@ public class TestXmlWriterHelper {
         return writers;
     }
 
-    private static Map<String, String> getActualFiles(Class dialogClass, List<PackageEntryWriter> writers) {
+    private static Map<String, String> getActualFiles(Class<?> dialogClass, List<PackageEntryWriter> writers) {
         Map<String, String> actualFiles = new HashMap<>();
+        List<Class<?>> views = new LinkedList<>(Collections.singletonList(dialogClass));
+        Optional.ofNullable(dialogClass.getAnnotation(Component.class)).ifPresent(component -> Collections.addAll(views, component.views()));
         writers.forEach(packageEntryWriter -> {
-            try (StringWriter stringWriter = new StringWriter()){
-                packageEntryWriter.writeXml(dialogClass, stringWriter);
+            try (StringWriter stringWriter = new StringWriter()) {
+                Class<?> processedClass = views.stream().filter(packageEntryWriter::isProcessed).findFirst().orElse(null);
+                if (processedClass == null) {
+                    return;
+                }
+                packageEntryWriter.writeXml(processedClass, stringWriter);
                 actualFiles.put(packageEntryWriter.getXmlScope().toString(), stringWriter.toString());
             } catch (IOException ex) {
                 LOG.error("Could not implement test writer", ex);
