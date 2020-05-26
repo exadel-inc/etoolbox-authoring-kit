@@ -35,6 +35,7 @@ import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
@@ -94,6 +95,13 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
                     });
             if (cls.isAnnotationPresent(Dialog.class)) {
                 Arrays.stream(cls.getAnnotation(Dialog.class).tabs())
+                        .forEach(tab -> {
+                            tabInstances.put(tab.title(), tab);
+                            tabFields.putIfAbsent(tab.title(), new LinkedList<>());
+                        });
+            }
+            if (cls.isAnnotationPresent(DesignDialog.class)) {
+                Arrays.stream(cls.getAnnotation(DesignDialog.class).tabs())
                         .forEach(tab -> {
                             tabInstances.put(tab.title(), tab);
                             tabFields.putIfAbsent(tab.title(), new LinkedList<>());
