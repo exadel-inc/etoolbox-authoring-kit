@@ -46,7 +46,8 @@ public class DialogFieldHandler implements BiConsumer<Element, Field> {
         }
         String namePrefix = PluginRuntime.context().getXmlUtility().getNamePrefix();
         if(StringUtils.isNotBlank(namePrefix)
-                && !(namePrefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.equals(DialogConstants.RELATIVE_PATH_PREFIX))){
+                && !(namePrefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.equals(DialogConstants.RELATIVE_PATH_PREFIX))
+                && !(namePrefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.startsWith(DialogConstants.PARENT_PATH_PREFIX))) {
             name = namePrefix + name;
         }
         element.setAttribute(DialogConstants.PN_NAME, name);

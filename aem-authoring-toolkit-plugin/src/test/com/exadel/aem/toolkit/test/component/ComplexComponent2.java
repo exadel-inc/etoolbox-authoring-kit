@@ -188,8 +188,8 @@ public class ComplexComponent2 {
     private String description;
 
     @DialogField(
-            name = "field enable gradient",
-            label = "label enable gradient",
+            name = "../enable gradient to parent node",
+            label = "Label enable gradient",
             description = "description enable gradient"
     )
     @Checkbox(checked = true)
@@ -197,8 +197,8 @@ public class ComplexComponent2 {
     private Boolean gradient;
 
     @DialogField(
-            name = "field_media_text",
-            label = "label media text",
+            name = " ../.././media text/to sibling node",
+            label = "Label media text",
             description = "description media text",
             required = true
     )
