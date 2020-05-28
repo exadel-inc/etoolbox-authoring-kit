@@ -38,7 +38,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 public @interface Heading {
     /**
      * Maps to the 'level' attribute of this TouchUI dialog component's node.
-     * Number that corresponds to the header tag level (<h1> to <h6>)
+     * Number that corresponds to the header tag level {@code <h1>} to {@code <h6>}
      * @return Long value
      */
     @ValueRestriction(value = ValueRestrictions.POSITIVE)

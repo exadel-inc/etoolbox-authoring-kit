@@ -413,7 +413,10 @@ public class PluginReflectionUtility {
 
         /**
          * Called by XML rendering routines to order {@code Dialog} fields based on their class affiliation and their
-         * optional {@link @DialogField} annotations' ranking values
+         * optional {@link DialogField} annotations' ranking values
+         * @param f1 First comparison member
+         * @param f2 Second comparison member
+         * @return Integer value per {@code Comparator#compare(Object, Object)} convention
          */
         public static int compareDialogFields(Field f1, Field f2)  {
             int rank1 = 0;
