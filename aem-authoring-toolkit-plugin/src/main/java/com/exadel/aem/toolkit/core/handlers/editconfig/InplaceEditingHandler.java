@@ -117,10 +117,10 @@ public class InplaceEditingHandler implements Handler, BiConsumer<Element, EditC
      * @param config {@link InplaceEditingConfig} annotation instance
      */
     private void populateConfigNode(Element element, InplaceEditingConfig config) {
-        String propertyName = DialogConstants.RELATIVE_PATH_PREFIX + getXmlUtil().getValidName(config.propertyName());
+        String propertyName = getValidPropertyName(config.propertyName());
         String textPropertyName = config.textPropertyName().isEmpty()
                 ? propertyName
-                : DialogConstants.RELATIVE_PATH_PREFIX + getXmlUtil().getValidName(config.textPropertyName());
+                : getValidPropertyName(config.textPropertyName());
         element.setAttribute(DialogConstants.PN_EDIT_ELEMENT_QUERY, config.editElementQuery());
         element.setAttribute(DialogConstants.PN_PROPERTY_NAME, propertyName);
         element.setAttribute(DialogConstants.PN_TEXT_PROPERTY_NAME, textPropertyName);
@@ -128,7 +128,20 @@ public class InplaceEditingHandler implements Handler, BiConsumer<Element, EditC
     }
 
     /**
-     * Plans necessary attributes and subnodes related to in-place rich text editor to {@code cq:InplaceEditingConfig} XML node
+     * Gets a standard-compliant value for a {@code propertyName} or {@code textPropertyName} attribute of {@link InplaceEditingConfig}
+     * @param rawName Attribute value as passed by user
+     * @return Converted standard-compliant name
+     */
+    private String getValidPropertyName(String rawName) {
+        String propertyName = getXmlUtil().getValidFieldName(rawName);
+        if (propertyName.startsWith(DialogConstants.PARENT_PATH_PREFIX)) {
+            return propertyName;
+        }
+        return DialogConstants.RELATIVE_PATH_PREFIX + propertyName;
+    }
+
+    /**
+     * Plants necessary attributes and subnodes related to in-place rich text editor to {@code cq:InplaceEditingConfig} XML node
      * @param element {@code Element} representing config node
      * @param config {@link InplaceEditingConfig} annotation instance
      */
