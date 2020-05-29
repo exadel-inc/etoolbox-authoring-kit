@@ -49,4 +49,10 @@ public @interface FieldSet {
      */
     @IgnorePropertyMapping
     String namePrefix() default "";
+    /**
+     * Used to including fields into a component without the intermediate fieldset node
+     * @return boolean value
+     */
+    @IgnorePropertyMapping
+    boolean unwrap() default false;
 }
