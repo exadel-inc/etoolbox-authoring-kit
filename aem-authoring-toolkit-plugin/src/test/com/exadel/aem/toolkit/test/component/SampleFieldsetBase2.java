@@ -19,7 +19,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 
 @SuppressWarnings("unused")
-class SampleFieldsetBase2 extends SampleFieldsetAncestor {
+public class SampleFieldsetBase2 extends SampleFieldsetAncestor {
     @DialogField(
             name = "First_Field_Primary_Field",
             label = "Label to first primary field",

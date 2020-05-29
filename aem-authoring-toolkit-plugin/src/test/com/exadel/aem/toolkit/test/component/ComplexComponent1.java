@@ -281,7 +281,8 @@ public class ComplexComponent1 {
     @DialogField
     @FieldSet(
             title = TITLE_SECOND_SECONDARY_DIALOG,
-            namePrefix = PREFIX_SECOND_SECONDARY_DIALOG
+            namePrefix = PREFIX_SECOND_SECONDARY_DIALOG,
+            unwrap = true
     )
     @PlaceOnTab(LABEL_TAB_3)
     private SampleFieldsetAncestor secondSecondaryDialog;
@@ -307,7 +308,7 @@ public class ComplexComponent1 {
     private Integer sampleSecondNumberField;
 
     @DialogField
-    @FieldSet
+    @FieldSet(unwrap = true)
     @PlaceOnTab(LABEL_TAB_6)
     private SampleFieldsetBase3 sampleFieldSet;
 }
