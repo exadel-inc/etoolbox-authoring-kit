@@ -58,7 +58,12 @@ class FieldSetHandler implements WidgetSetHandler {
         }
 
         // append the valid fields to the container
-        Handler.appendToContainer(element, fields);
+        if (fieldSet.unwrap()) {
+            Element items = PluginRuntime.context().getXmlUtility().removeElement(element);
+            Handler.appendToContainerUnwrap(items, fields);
+        } else {
+            Handler.appendToContainer(element, fields);
+        }
 
         // Restore the name prefix
         getXmlUtil().setNamePrefix(previousNamePrefix);

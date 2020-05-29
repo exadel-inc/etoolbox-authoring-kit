@@ -40,20 +40,29 @@ public interface Handler {
     }
 
     /**
-     * Processes the specified {@link Field}s and appends the generated XML markup to the specified container element
+     * Processes the specified {@link Field}s and appends the generated XML markup to the created items node
+     * under specified container element
      * @param container XML definition of a pre-defined widget container
      * @param fields List of {@code Field}s of a component's Java class
      */
     static void appendToContainer(Element container, List<Field> fields) {
         Element itemsElement = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_ITEMS);
         container.appendChild(itemsElement);
+        appendToContainerUnwrap(itemsElement, fields);
+    }
 
+    /**
+     * Processes the specified {@link Field}s and appends the generated XML markup to the specified container element
+     * @param container XML definition of a pre-defined widget container
+     * @param fields List of {@code Field}s of a component's Java class
+     */
+    static void appendToContainerUnwrap(Element container, List<Field> fields) {
         for (Field field : fields) {
             DialogWidget widget = DialogWidgets.fromField(field);
             if (widget == null) {
                 continue;
             }
-            widget.appendTo(itemsElement, field);
+            widget.appendTo(container, field);
         }
     }
 }
