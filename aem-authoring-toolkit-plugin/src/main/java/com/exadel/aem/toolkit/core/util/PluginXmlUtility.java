@@ -625,4 +625,15 @@ public class PluginXmlUtility implements XmlUtility {
                 resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
         element.appendChild(dataSourceElement);
     }
+
+    /**
+     * Delete the current {@code Element} node and returns a parent {@code Element} node
+     * @param element Element to be deleted
+     * @return Parent element
+     */
+    public Element removeElement(Element element) {
+        Element parentNode = (Element) element.getParentNode();
+        parentNode.removeChild(element);
+        return parentNode;
+    }
 }
