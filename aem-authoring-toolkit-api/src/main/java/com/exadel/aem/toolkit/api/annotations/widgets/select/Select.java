@@ -128,8 +128,10 @@ public @interface Select {
     boolean deleteHint() default true;
 
     /**
-     * Return true to generate the SlingPostServlet @Delete hidden input based on the
-     * field name.
+     * Return true to force to be ignore-freshness specifically just for this field.
+     *
+     * This property is useful when you have a newly introduced field in the form, and there is a need to specifically
+     * set the default selected item. To set the default selected item, set the selected property of the item as usual.
      *
      * @return True or false
      */
