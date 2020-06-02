@@ -77,25 +77,25 @@ public @interface Select {
     String acsListPath() default "";
 
     /**
-     * Indicates if the user is able to select multiple selections.
+     * Indicates if the user is able to select multiple options.
      *
-     * @return true or false
+     * @return True or false
      */
     boolean multiple() default false;
 
     /**
-     * Returns true to translate the options, false otherwise.
+     * If set to true, the options' labels are translated by AEM.
      *
-     * @return true or false
+     * @return True or false
      */
     boolean translateOptions() default true;
 
     /**
-     * Returns true to sort the options based on the text, false otherwise.
-     * <p>
+     * If set to true, the options are sorted according to their labels' alphabetical order".
+     *
      * It is assumed that the options don’t contain option group.
      *
-     * @return true or false
+     * @return True or false
      */
     boolean ordered() default false;
 
@@ -104,11 +104,13 @@ public @interface Select {
      * <p>
      * Empty option is an option having both value and text equal to empty string.
      *
-     * @return true or false
+     * @return True or false
      */
     boolean emptyOption() default false;
 
     /**
+     * Maps to the 'variant' attribute of this TouchUI dialog component's node.
+     * Used to define select variant
      * @see SelectVariant
      * @return One of {@code SelectVariant} values
      *
@@ -121,7 +123,7 @@ public @interface Select {
      * Return true to generate the SlingPostServlet @Delete hidden input based on the
      * field name.
      *
-     * @return true or false
+     * @return True or false
      */
     boolean deleteHint() default true;
 
@@ -129,7 +131,7 @@ public @interface Select {
      * Return true to generate the SlingPostServlet @Delete hidden input based on the
      * field name.
      *
-     * @return true or false
+     * @return True or false
      */
     boolean forceIgnoreFreshness() default false;
 }
