@@ -23,5 +23,8 @@ js/accessors/dependsOnCoralAlertAccessor.js
 js/actions/dependsOnCoralBasicActions.js
 js/actions/dependsOnCoralValidateAction.js
 
+# Additional actions
+js/additional-actions/getPropertyDependsOnAction.js
+
 # Init
 js/dependsOn.js

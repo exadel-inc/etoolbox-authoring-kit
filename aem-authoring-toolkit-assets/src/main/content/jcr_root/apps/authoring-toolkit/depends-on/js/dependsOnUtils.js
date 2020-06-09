@@ -120,6 +120,41 @@
      */
     ns.toggleAsterisk = function ($el, state) {
         $el.text($el.text().replace(/\s?\*?$/, state ? ' *': ''));
+    };
+
+    /**
+     * Get n-th parent of the current resource
+     * @param path string - resource path
+     * @param n number - the ordinal number of parent
+     * @returns string
+     * */
+    ns.getNthParent = function (path, n) {
+        let parts = path.split('/');
+        return parts.slice(0, parts.length - n).join('/');
+    };
+
+    /**
+     * Gets object property given its string path
+     *
+     * @param {object} data - object
+     * @param {string} path - string with name of property
+     * @param {string} separator - path separator
+     */
+    ns.get = function (data, path, separator) {
+        if (!data) return undefined;
+        let parts = (path || '').split(separator);
+        return parts.reduce(function (partialData, key) {
+            return (partialData || {})[key];
+        }, data);
+    };
+
+    /**
+     * Get current component path
+     * @param item JQueryElement - dialog form element, could be just "this" in dependsOn (query)
+     * @returns string
+     * */
+    ns.getDialogPath = function (item) {
+        return item.closest('form.cq-dialog').attr('action');
     }
 
     /**
@@ -144,4 +179,5 @@
             return {};
         }
     }
+
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
