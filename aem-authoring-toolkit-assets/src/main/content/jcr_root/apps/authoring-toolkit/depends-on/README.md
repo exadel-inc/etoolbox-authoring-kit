@@ -2,7 +2,7 @@
 
 Author _Alexey Stsefanovich (ala'n)_ and _Yana Bernatskaya (YanaBr)_
 
-Version _2.2.3_
+Version _2.2.4_
  
 DependsOn Plugin is a clientlib that executes defined action on dependent fields.
  
@@ -58,6 +58,12 @@ Built-in plugin actions are:
  * `disabled` - set the field's disabled state from the query result.
 
 If the action is not specified then `visibility` is used by default.
+
+##### Additional actions
+
+Custom dependsOn actions that are not basic.
+ * `get-property` - get component property at a current node path from the query. 
+ Parameters: `path` - path to property relative to current node (e.g. 'node/nestedProperty' or '../../parentCompProperty')
 
 ##### Action Registry
 
