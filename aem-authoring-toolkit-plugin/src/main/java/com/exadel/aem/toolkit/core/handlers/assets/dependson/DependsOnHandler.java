@@ -56,7 +56,7 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
         } else if (field.isAnnotationPresent(DependsOnConfig.class)) {
             handleDependsOnConfig(element, field.getDeclaredAnnotation(DependsOnConfig.class));
         }
-        handleDependsOnRefValue(element, field.getDeclaredAnnotation(DependsOnRef.class));
+        handleDependsOnRefValue(element, field);
     }
 
     /**
@@ -135,19 +135,21 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
     /**
      * Called by {@link DependsOnHandler#accept(Element, Field)} to store particular {@code DependsOnRef} value in XML markup
      * @param element Current XML element
-     * @param value Current {@link DependsOnRef} value
+     * @param field Current {@code Field} instance
      */
-    private void handleDependsOnRefValue(Element element, DependsOnRef value) {
+    private void handleDependsOnRefValue(Element element, Field field) {
+        DependsOnRef value = field.getDeclaredAnnotation(DependsOnRef.class);
         if (value == null) {
             return;
         }
-        if (StringUtils.isBlank(value.name())) {
-            PluginRuntime.context().getExceptionHandler().handle(new ValidationException(EMPTY_VALUES_EXCEPTION_MESSAGE));
-            return;
+
+        String dependsOnRefName = value.name();
+        if (StringUtils.isBlank(dependsOnRefName)) {
+            dependsOnRefName = field.getName();
         }
 
         Map<String, String> valueMap = Maps.newHashMap();
-        valueMap.put(DialogConstants.PN_DEPENDS_ON_REF, value.name());
+        valueMap.put(DialogConstants.PN_DEPENDS_ON_REF, dependsOnRefName);
         if (!value.type().toString().equals(DependsOnRefTypes.AUTO.toString())) {
             valueMap.put(DialogConstants.PN_DEPENDS_ON_REFTYPE, value.type().toString().toLowerCase());
         }
