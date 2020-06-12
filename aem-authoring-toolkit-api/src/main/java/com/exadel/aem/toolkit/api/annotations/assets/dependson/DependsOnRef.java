@@ -16,9 +16,10 @@ import java.lang.annotation.Target;
 public @interface DependsOnRef {
     /**
      * Defines the 'dependsOnRef' attribute
+     * If not set, 'name' will be equal to the annotated field name
      * @return String value representing tag that would be specified in foreign {@link DependsOn} annotations, non-null
      */
-    String name();
+    String name() default "";
 
     /**
      * Defines the 'dependsOnRefType' attribute
