@@ -23,12 +23,12 @@
                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield">
                         <granite:data jcr:primaryType="nt:unstructured" dependsOnRef="nameOnly"/>
                     </referenceName>
-                    <referenceType jcr:primaryType="nt:unstructured" disabled="{Boolean}false" name="./referenceType"
+                    <referenceNameAndType jcr:primaryType="nt:unstructured" disabled="{Boolean}false" name="./referenceNameAndType"
                                    renderHidden="{Boolean}false" required="{Boolean}false" rootPath="/"
                                    sling:resourceType="granite/ui/components/coral/foundation/form/pathfield">
                         <granite:data jcr:primaryType="nt:unstructured" dependsOnRef="nameAndType"
                                       dependsOnRefType="boolstring"/>
-                    </referenceType>
+                    </referenceNameAndType>
                     <typeAuto jcr:primaryType="nt:unstructured" disabled="{Boolean}false" name="./typeAuto"
                              renderHidden="{Boolean}false"
                              required="{Boolean}false" sling:resourceType="cq/gui/components/authoring/dialog/richtext"
