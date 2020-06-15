@@ -182,7 +182,12 @@ public class WarriorDescriptionComponent {
     private boolean isLikesFilms;
 
     @Hidden
-    @DependsOn(query = "@parentPath", action = "getParentColorTheme")
+    @DependsOn(
+            query = "Granite.DependsOnPlugin.getDialogPath(this)",
+            action = "get-property",
+            params = {
+                    @DependsOnParam(name = "path", value = "../../colorTheme")
+            })
     @DependsOnRef(name = "isDarkColorTheme", type = DependsOnRefTypes.BOOLSTRING)
     private boolean isDarkColorTheme;
 
@@ -196,24 +201,6 @@ public class WarriorDescriptionComponent {
     @DialogField(label = "Favorite films")
     @ValueMapValue
     private String[] films;
-
-    @DependsOnRef(name = "parentPath")
-    @Hidden
-    private String parentPath;
-
-    @PostConstruct
-    public void init() throws PersistenceException {
-        ModifiableValueMap valueMap = resource.adaptTo(ModifiableValueMap.class);
-        if (valueMap == null) {
-            return;
-        }
-        String parentPath = Optional.ofNullable(resource.getParent())
-                .map(Resource::getParent)
-                .map(Resource::getPath)
-                .orElse("");
-        valueMap.put("parentPath", parentPath);
-        resource.getResourceResolver().commit();
-    }
 
     public String getWarriorName() {
         return Optional.ofNullable(resource.getParent())
