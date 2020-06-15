@@ -44,7 +44,7 @@ public class DependsOnRefAnnotation {
     @DialogField
     @PathField
     @DependsOnRef(name = "nameAndType", type = DependsOnRefTypes.BOOLSTRING)
-    private String referenceType;
+    private String referenceNameAndType;
 
     @DialogField
     @RichTextEditor
