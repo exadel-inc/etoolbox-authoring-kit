@@ -62,7 +62,7 @@ If the action is not specified then `visibility` is used by default.
 ##### Additional actions
 
 Custom dependsOn actions that are not basic.
- * `get-property` - get component property at a current node path from the query. 
+ * `get-property` - get component property (path from the parameter _path_). Query - current node (__this__). 
  Parameters: `path` - path to property relative to current node (e.g. 'node/nestedProperty' or '../../parentCompProperty')
 
 ##### Action Registry
