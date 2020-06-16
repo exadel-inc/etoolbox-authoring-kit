@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ClassField {
+public @interface ClassMember {
 
     /**
      * The Java class possessing the field
