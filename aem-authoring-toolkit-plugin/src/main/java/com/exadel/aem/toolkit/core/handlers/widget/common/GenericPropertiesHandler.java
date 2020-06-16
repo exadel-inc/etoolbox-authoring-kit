@@ -13,32 +13,31 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
-import java.lang.reflect.Field;
-import java.util.function.BiConsumer;
-
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
+import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
+import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
-import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
-import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
+import java.util.function.BiConsumer;
 
 /**
  * Handler for storing {@link ResourceType} and like properties to a Granite UI widget XML node
  */
-public class GenericPropertiesHandler implements BiConsumer<Element, Field> {
+public class GenericPropertiesHandler implements BiConsumer<Element, MemberWrapper> {
     private static final String RESTYPE_MISSING_EXCEPTION_MESSAGE = "@ResourceType is not present in ";
 
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element XML element
-     * @param field Current {@code Field} instance
+     * @param memberWrapper Current {@code MemberWrapper} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        DialogWidget dialogWidget = DialogWidgets.fromField(field);
+    public void accept(Element element, MemberWrapper memberWrapper) {
+        DialogWidget dialogWidget = DialogWidgets.fromMember(memberWrapper.getMember());
         if (dialogWidget == null || dialogWidget.getAnnotationClass() == null) {
             return;
         }

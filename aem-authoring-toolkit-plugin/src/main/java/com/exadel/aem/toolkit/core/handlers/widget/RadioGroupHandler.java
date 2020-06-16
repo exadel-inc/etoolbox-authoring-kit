@@ -13,32 +13,35 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.function.BiConsumer;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.w3c.dom.Element;
-
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import org.apache.commons.lang3.ArrayUtils;
+import org.w3c.dom.Element;
+
+import java.util.Arrays;
+import java.util.function.BiConsumer;
 
 /**
  * {@link Handler} implementation used to create markup responsible for {@code RadioGroup} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class RadioGroupHandler implements Handler, BiConsumer<Element, Field> {
+class RadioGroupHandler implements Handler, BiConsumer<Element, MemberWrapper> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * @param memberWrapper Current {@code MemberWrapper} instance
      */
     @Override
     @SuppressWarnings({"deprecation", "squid:S1874"}) // .acsListPath() and .acsListResourceType() method calls left for backward compatibility
-    public void accept(Element element, Field field) {
-        RadioGroup radioGroup = field.getDeclaredAnnotation(RadioGroup.class);
+    public void accept(Element element, MemberWrapper memberWrapper) {
+        RadioGroup radioGroup = PluginReflectionUtility.getMemberAnnotation(memberWrapper.getMember(), RadioGroup.class);
+        if (radioGroup == null) {
+            return;
+        }
         if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {
             Element items = (Element) element.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
             Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));

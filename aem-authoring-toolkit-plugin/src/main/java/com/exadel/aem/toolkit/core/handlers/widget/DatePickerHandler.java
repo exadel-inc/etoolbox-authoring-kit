@@ -13,12 +13,13 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
 import java.time.DateTimeException;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
+import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
@@ -36,40 +37,43 @@ import com.exadel.aem.toolkit.core.util.validation.Validation;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code DatePicker} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class DatePickerHandler implements Handler, BiConsumer<Element, Field> {
+class DatePickerHandler implements Handler, BiConsumer<Element, MemberWrapper> {
     private static final String INVALID_FORMAT_EXCEPTION_TEMPLATE = "Invalid %s '%s' for @DatePicker field '%s'";
     private static final String INVALID_VALUE_EXCEPTION_TEMPLATE = "Property '%s' of @DatePicker does not correspond to specified valueFormat";
 
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * @param memberWrapper Current {@code MemberWrapper} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        DatePicker datePickerAttribute = field.getAnnotationsByType(DatePicker.class)[0];
+    public void accept(Element element, MemberWrapper memberWrapper) {
+        DatePicker datePicker = PluginReflectionUtility.getMemberAnnotation(memberWrapper.getMember(), DatePicker.class);
+        if (datePicker == null) {
+            return;
+        }
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
 
         // check specified typeHint, report if invalid
-        if (datePickerAttribute.typeHint() == TypeHint.STRING) {
-            element.setAttribute(DialogConstants.PN_TYPE_HINT, datePickerAttribute.typeHint().toString());
-        } else if (datePickerAttribute.typeHint() != TypeHint.NONE) {
+        if (datePicker.typeHint() == TypeHint.STRING) {
+            element.setAttribute(DialogConstants.PN_TYPE_HINT, datePicker.typeHint().toString());
+        } else if (datePicker.typeHint() != TypeHint.NONE) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(
                     INVALID_FORMAT_EXCEPTION_TEMPLATE,
                     "typeHint",
-                    datePickerAttribute.typeHint(),
+                    datePicker.typeHint(),
                     element.getTagName()));
             return;
         }
         // for a String-storing field, check and process specified valueFormat, report if invalid
-        if (datePickerAttribute.typeHint() == TypeHint.STRING
-            && !StringUtils.isEmpty(datePickerAttribute.valueFormat())) {
+        if (datePicker.typeHint() == TypeHint.STRING
+            && !StringUtils.isEmpty(datePicker.valueFormat())) {
             try {
                 // Java DateTimeFormatter interprets D as 'day of year', unlike Coral engine
                 // so a replacement made here to make sure 'DD' as in 'YYYY-MM-DD' is not passed to formatter.
                 // Another replacement is for treating timezone literals that can be surrounded by arbitrary symbols
                 // but need to be surrounded with apostrophes in Java 1.8+
-                String patchedValueFormat = datePickerAttribute.valueFormat()
+                String patchedValueFormat = datePicker.valueFormat()
                         .replaceAll("\\bD{1,2}\\b", "dd")
                         .replaceAll("\\W*([TZ])\\W*", "'$1'");
                 dateTimeFormatter = DateTimeFormatter.ofPattern(patchedValueFormat);
@@ -77,14 +81,14 @@ class DatePickerHandler implements Handler, BiConsumer<Element, Field> {
                 PluginRuntime.context().getExceptionHandler().handle(new ValidationException(
                         INVALID_FORMAT_EXCEPTION_TEMPLATE,
                         "valueFormat",
-                        datePickerAttribute.valueFormat(),
+                        datePicker.valueFormat(),
                         element.getTagName()));
                 return;
             }
         }
         // store values with specified or default formatting
-        storeDateValue(element, DialogConstants.PN_MIN_DATE, datePickerAttribute.minDate(), dateTimeFormatter);
-        storeDateValue(element, DialogConstants.PN_MAX_DATE, datePickerAttribute.maxDate(), dateTimeFormatter);
+        storeDateValue(element, DialogConstants.PN_MIN_DATE, datePicker.minDate(), dateTimeFormatter);
+        storeDateValue(element, DialogConstants.PN_MAX_DATE, datePicker.maxDate(), dateTimeFormatter);
     }
 
     /**

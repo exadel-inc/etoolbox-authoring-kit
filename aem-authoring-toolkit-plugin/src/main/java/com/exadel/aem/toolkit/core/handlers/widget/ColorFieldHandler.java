@@ -14,13 +14,14 @@
 
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
+import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
@@ -33,18 +34,21 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class ColorFieldHandler implements Handler, BiConsumer<Element, Field> {
+class ColorFieldHandler implements Handler, BiConsumer<Element, MemberWrapper> {
     private static final String NODE_NAME_COLOR = "color";
     private static final String SKIPPED_COLOR_NODE_NAME_SYMBOLS = "^\\w+";
 
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * @param memberWrapper Current {@code MemberWrapper} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        ColorField colorField = field.getDeclaredAnnotation(ColorField.class);
+    public void accept(Element element, MemberWrapper memberWrapper) {
+        ColorField colorField = PluginReflectionUtility.getMemberAnnotation(memberWrapper.getMember(), ColorField.class);
+        if (colorField == null) {
+            return;
+        }
         List<String> validCustomColors = ArrayUtils.isNotEmpty(colorField.customColors())
                 ? Arrays.stream(colorField.customColors()).filter(StringUtils::isNotBlank).collect(Collectors.toList())
                 : Collections.emptyList();

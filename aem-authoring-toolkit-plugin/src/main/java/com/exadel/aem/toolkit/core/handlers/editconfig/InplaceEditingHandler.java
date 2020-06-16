@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
@@ -148,8 +149,8 @@ public class InplaceEditingHandler implements Handler, BiConsumer<Element, EditC
     private void populateRteConfig(Element element, InplaceEditingConfig config) {
         Field referencedRteField = getReferencedRteField(config);
         if (referencedRteField != null && referencedRteField.getAnnotation(RichTextEditor.class) != null) {
-            BiConsumer<Element, Field> rteHandler = new RichTextEditorHandler(false);
-            new InheritanceHandler(rteHandler).andThen(rteHandler).accept(element, referencedRteField);
+            BiConsumer<Element, MemberWrapper> rteHandler = new RichTextEditorHandler(false);
+            new InheritanceHandler(rteHandler).andThen(rteHandler).accept(element, new MemberWrapper(referencedRteField));
             getXmlUtil().mapProperties(element,
                     referencedRteField.getAnnotation(RichTextEditor.class),
                     Collections.singletonList(DialogConstants.PN_USE_FIXED_INLINE_TOOLBAR));

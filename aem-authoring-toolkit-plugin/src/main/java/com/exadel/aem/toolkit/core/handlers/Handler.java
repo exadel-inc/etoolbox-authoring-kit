@@ -14,9 +14,10 @@
 
 package com.exadel.aem.toolkit.core.handlers;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.util.List;
 
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
@@ -40,20 +41,20 @@ public interface Handler {
     }
 
     /**
-     * Processes the specified {@link Field}s and appends the generated XML markup to the specified container element
+     * Processes the specified {@link Member}s and appends the generated XML markup to the specified container element
      * @param container XML definition of a pre-defined widget container
-     * @param fields List of {@code Field}s of a component's Java class
+     * @param members List of {@code MemberWrapper}s of a component's Java class
      */
-    static void appendToContainer(Element container, List<Field> fields) {
+    static void appendToContainer(Element container, List<MemberWrapper> members) {
         Element itemsElement = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_ITEMS);
         container.appendChild(itemsElement);
 
-        for (Field field : fields) {
-            DialogWidget widget = DialogWidgets.fromField(field);
+        for (MemberWrapper member : members) {
+            DialogWidget widget = DialogWidgets.fromMember(member.getMember());
             if (widget == null) {
                 continue;
             }
-            widget.appendTo(itemsElement, field);
+            widget.appendTo(itemsElement, member);
         }
     }
 }

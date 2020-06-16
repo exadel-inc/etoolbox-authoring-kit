@@ -13,9 +13,10 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
+import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
 import com.google.common.collect.ImmutableMap;
@@ -37,12 +38,15 @@ public class MultiFieldHandler implements WidgetSetHandler {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * @param memberWrapper Current {@code MemberWrapper} instance
      */
     @Override
-    public void accept(Element element, Field field) {
+    public void accept(Element element, MemberWrapper memberWrapper) {
         // Define the working @Multifield annotation instance and the multifield type
-        MultiField multiField = field.getDeclaredAnnotation(MultiField.class);
+        MultiField multiField = PluginReflectionUtility.getMemberAnnotation(memberWrapper.getMember(), MultiField.class);
+        if (multiField == null) {
+            return;
+        }
         Class<?> multifieldType = multiField.field();
 
         // Modify the element's attributes for multifield mode
@@ -50,8 +54,8 @@ public class MultiFieldHandler implements WidgetSetHandler {
         element.removeAttribute(DialogConstants.PN_NAME);
 
         // Get the filtered fields collection for the current container; early return if collection is empty
-        List<Field> fields = getContainerFields(element, field, multifieldType);
-        if (fields.isEmpty()) {
+        List<MemberWrapper> containerMembers = getContainerMembers(element, memberWrapper.getMember(), multifieldType);
+        if (containerMembers.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + multifieldType.getName()
             ));
@@ -59,10 +63,10 @@ public class MultiFieldHandler implements WidgetSetHandler {
         }
 
         // Render separately the multiple-field and the single-field modes of multifield
-        if (fields.size() > 1){
-            render(element, name, fields);
+        if (containerMembers.size() > 1) {
+            render(element, name, containerMembers);
         } else {
-            render(element, fields.get(0));
+            render(element, containerMembers.get(0));
         }
     }
 
@@ -70,9 +74,9 @@ public class MultiFieldHandler implements WidgetSetHandler {
      * Renders multiple widgets as XML nodes within the current multifield container
      * @param element Current XML element
      * @param name The element's {@code name} attribute
-     * @param fields The collection of {@code Field} instances to render TouchUI widgets from
+     * @param memberWrappers The collection of {@code MemberWrapper} instances to render TouchUI widgets from
      */
-    private void render(Element element, String name, List<Field> fields) {
+    private void render(Element element, String name, List<MemberWrapper> memberWrappers) {
         getXmlUtil().setAttribute(element, DialogConstants.PN_COMPOSITE, true);
         Element multifieldContainerElement = PluginRuntime.context().getXmlUtility().createNodeElement(
                 DialogConstants.NN_FIELD,
@@ -81,32 +85,25 @@ public class MultiFieldHandler implements WidgetSetHandler {
                         JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
                 ));
         element.appendChild(multifieldContainerElement);
-
-        // In case there are multiple fields in multifield container, their "name" values must not be preceded
-        // with "./" which is by default
-        // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
-        // That is why we must alter the default name prefix for the ongoing set of fields
-        String previousNamePrefix = getXmlUtil().getNamePrefix();
-        getXmlUtil().setNamePrefix(previousNamePrefix.startsWith(DialogConstants.RELATIVE_PATH_PREFIX)
-                ? previousNamePrefix.substring(2)
-                : previousNamePrefix);
-
-        Handler.appendToContainer(multifieldContainerElement, fields);
-
-        // Restore the name prefix
-        getXmlUtil().setNamePrefix(previousNamePrefix);
+        memberWrappers.forEach(member -> {
+            String prefix = (String) member.getValue(DialogConstants.PN_PREFIX);
+            if (prefix.startsWith(DialogConstants.RELATIVE_PATH_PREFIX)) {
+                member.addValue(DialogConstants.PN_PREFIX, prefix.substring(2));
+            }
+        });
+        Handler.appendToContainer(multifieldContainerElement, memberWrappers);
     }
 
     /**
      * Renders a single widget within the current multifield container
      * @param element Current XML element
-     * @param field The {@code Field} instance to render TouchUI widget from
+     * @param memberWrapper The {@code MemberWrapper} instance to render TouchUI widget from
      */
-    private void render(Element element, Field field) {
-        DialogWidget widget = DialogWidgets.fromField(field);
+    private void render(Element element, MemberWrapper memberWrapper) {
+        DialogWidget widget = DialogWidgets.fromMember(memberWrapper.getMember());
         if (widget == null) {
             return;
         }
-        widget.appendTo(element, field, DialogConstants.NN_FIELD);
+        widget.appendTo(element, memberWrapper, DialogConstants.NN_FIELD);
     }
 }

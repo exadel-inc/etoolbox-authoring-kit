@@ -13,18 +13,18 @@
  */
 package com.exadel.aem.toolkit.core.handlers.container;
 
-import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.BiConsumer;
-
-import org.w3c.dom.Element;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
-
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
+import org.w3c.dom.Element;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 /**
  * The {@link Handler} for a fixed-columns TouchUI dialog.
@@ -58,7 +58,8 @@ public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Elemen
 
         contentItems.appendChild(contentItemsColumn);
 
-        List<Field> allFields = PluginReflectionUtility.getAllFields(componentClass);
+        List<MemberWrapper> allFields = PluginReflectionUtility.getAllMembers(componentClass)
+                .stream().map(MemberWrapper::new).collect(Collectors.toList());
         Handler.appendToContainer(contentItemsColumn, allFields);
     }
 }

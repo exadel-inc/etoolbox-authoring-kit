@@ -14,11 +14,11 @@
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
@@ -31,25 +31,25 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
  * Handler for storing properties coming from custom annotations and, optionally, processed by custom handlers
  * to a Granite UI widget XML node
  */
-public class CustomHandler implements Handler, BiConsumer<Element, Field> {
+public class CustomHandler implements Handler, BiConsumer<Element, MemberWrapper> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element XML element
-     * @param field Current {@code Field} instance
+     * @param memberWrapper Current {@code MemberWrapper} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        PluginReflectionUtility.getFieldAnnotations(field).filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
+    public void accept(Element element, MemberWrapper memberWrapper) {
+        PluginReflectionUtility.getMemberAnnotationClasses(memberWrapper.getMember()).filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
                 .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
                 .flatMap(source -> PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers().stream()
                         .filter(handler -> source.equals(handler.getName())))
-                .forEach(handler -> handler.accept(element, field));
+                .forEach(handler -> handler.accept(element, memberWrapper));
 
         PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers().stream()
                 .filter(c -> c.getClass().isAnnotationPresent(HandlesWidgets.class))
-                .filter(c -> PluginReflectionUtility.getFieldAnnotations(field).anyMatch(a -> this.matchesDialogComponentsAnnotations(a, c.getClass())))
-                .forEach(handler -> handler.accept(element, field));
-        Arrays.stream(field.getAnnotationsByType(Property.class)).forEach(p -> element.setAttribute(getXmlUtil().getValidFieldName(p.name()), p.value()));
+                .filter(c -> PluginReflectionUtility.getMemberAnnotationClasses(memberWrapper.getMember()).anyMatch(a -> this.matchesDialogComponentsAnnotations(a, c.getClass())))
+                .forEach(handler -> handler.accept(element, memberWrapper));
+        PluginReflectionUtility.getMemberAnnotations(memberWrapper.getMember(), Property.class).forEach(p -> element.setAttribute(getXmlUtil().getValidFieldName(p.name()), p.value()));
     }
 
     /**

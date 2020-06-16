@@ -13,90 +13,98 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
-import org.w3c.dom.Element;
-
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
+import org.w3c.dom.Element;
+
+import java.lang.reflect.Member;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code Checkbox} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class CheckboxHandler implements Handler, BiConsumer<Element, Field> {
+class CheckboxHandler implements Handler, BiConsumer<Element, MemberWrapper> {
     private static final String POSTFIX_FOR_ROOT_CHECKBOX = "Checkbox";
 
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * @param memberWrapper Current {@code MemberWrapper} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        Checkbox checkbox = field.getDeclaredAnnotation(Checkbox.class);
-
+    public void accept(Element element, MemberWrapper memberWrapper) {
+        Checkbox checkbox = PluginReflectionUtility.getMemberAnnotation(memberWrapper.getMember(), Checkbox.class);
+        assert checkbox != null;
         if (checkbox.sublist()[0] == Object.class) {
             getXmlUtil().mapProperties(element, checkbox);
-            setTextAttribute(element, field);
+            setTextAttribute(element, memberWrapper.getMember());
         } else {
             element.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.NESTED_CHECKBOX_LIST);
             Element itemsElement = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
             element.appendChild(itemsElement);
 
-            Element checkboxElement = getXmlUtil().createNodeElement(field.getName() + POSTFIX_FOR_ROOT_CHECKBOX, ResourceTypes.CHECKBOX);
+            Element checkboxElement = getXmlUtil().createNodeElement(memberWrapper.getMember().getName() + POSTFIX_FOR_ROOT_CHECKBOX, ResourceTypes.CHECKBOX);
             getXmlUtil().mapProperties(checkboxElement, checkbox);
             itemsElement.appendChild(checkboxElement);
 
-            appendNestedCheckBoxList(checkboxElement, field);
+            appendNestedCheckBoxList(checkboxElement, memberWrapper.getMember());
         }
     }
 
     /**
      * Creates and appends markup correspondent to a Granite UI nested {@code Checkbox} structure
      * @param element {@code Element} instance representing current XML node
-     * @param field Current {@code Field} of a component class
+     * @param member Current {@code Member} of a component class
      */
-    private void appendNestedCheckBoxList(Element element, Field field) {
+    private void appendNestedCheckBoxList(Element element, Member member) {
         Element sublist = getXmlUtil().createNodeElement(DialogConstants.NN_SUBLIST, ResourceTypes.NESTED_CHECKBOX_LIST);
-        getXmlUtil().setAttribute(sublist, DialogConstants.PN_DISCONNECTED, field.getAnnotation(Checkbox.class).disconnectedSublist());
+        Checkbox checkbox = PluginReflectionUtility.getMemberAnnotation(member, Checkbox.class);
+        assert checkbox != null;
+        getXmlUtil().setAttribute(sublist, DialogConstants.PN_DISCONNECTED, checkbox.disconnectedSublist());
         element.appendChild(sublist);
 
         Element itemsElement = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
         sublist.appendChild(itemsElement);
 
-        appendCheckbox(itemsElement, field);
+        appendCheckbox(itemsElement, member);
     }
 
     /**
      * Creates and appends single Granite UI {@code Checkbox} markup to the current XML node
      * @param element {@code Element} instance representing current XML node
-     * @param field Current {@code Field} of a component class
+     * @param member Current {@code Member} of a component class
      */
-    private void appendCheckbox(Element element, Field field) {
-        Checkbox checkbox = field.getAnnotation(Checkbox.class);
-
+    private void appendCheckbox(Element element, Member member) {
+        Checkbox checkbox = PluginReflectionUtility.getMemberAnnotation(member, Checkbox.class);
+        if (checkbox == null) {
+            return;
+        }
         for (Class<?> sublistClass : checkbox.sublist()) {
-            List<Field> fields = PluginReflectionUtility.getAllFields(sublistClass);
-            fields = fields.stream().filter(f -> f.getAnnotation(Checkbox.class) != null).collect(Collectors.toList());
+            List<Member> members = PluginReflectionUtility.getAllMembers(sublistClass);
+            members = members.stream().filter(f -> PluginReflectionUtility.getMemberAnnotation(f, Checkbox.class) != null).collect(Collectors.toList());
 
-            for (Field innerField : fields) {
-                Element checkboxElement = getXmlUtil().createNodeElement(innerField.getName(), ResourceTypes.CHECKBOX);
-                getXmlUtil().mapProperties(checkboxElement, innerField.getAnnotation(Checkbox.class));
-                setTextAttribute(checkboxElement, innerField);
+            for (Member inner : members) {
+                Element checkboxElement = getXmlUtil().createNodeElement(inner.getName(), ResourceTypes.CHECKBOX);
+                Checkbox innerCheckbox = PluginReflectionUtility.getMemberAnnotation(inner, Checkbox.class);
+                if (innerCheckbox == null) {
+                    continue;
+                }
+                getXmlUtil().mapProperties(checkboxElement, innerCheckbox);
+                setTextAttribute(checkboxElement, inner);
 
                 element.appendChild(checkboxElement);
 
-                if (innerField.getAnnotation(Checkbox.class).sublist()[0] != Object.class) {
-                    appendNestedCheckBoxList(checkboxElement, innerField);
+                if (innerCheckbox.sublist()[0] != Object.class) {
+                    appendNestedCheckBoxList(checkboxElement, inner);
                 }
             }
         }
@@ -105,14 +113,16 @@ class CheckboxHandler implements Handler, BiConsumer<Element, Field> {
     /**
      * Decides which property of the current field to use as the {@code text} attribute of checkbox node and populates it
      * @param element {@code Element} instance representing current XML node
-     * @param field Current {@code Field} of a component class
+     * @param member Current {@code Member} of a component class
      */
-    private void setTextAttribute(Element element, Field field) {
-        Checkbox checkbox = field.getAnnotation(Checkbox.class);
-        if (checkbox.text().isEmpty() && field.getAnnotation(DialogField.class) != null) {
-            element.setAttribute(DialogConstants.PN_TEXT, field.getAnnotation(DialogField.class).label());
+    private void setTextAttribute(Element element, Member member) {
+        Checkbox checkbox = PluginReflectionUtility.getMemberAnnotation(member, Checkbox.class);
+        DialogField dialogField = PluginReflectionUtility.getMemberAnnotation(member, DialogField.class);
+        assert checkbox != null;
+        if (checkbox.text().isEmpty() && dialogField != null) {
+            element.setAttribute(DialogConstants.PN_TEXT, dialogField.label());
         } else if (checkbox.text().isEmpty()) {
-            element.setAttribute(DialogConstants.PN_TEXT, field.getName());
+            element.setAttribute(DialogConstants.PN_TEXT, member.getName());
         }
     }
 }

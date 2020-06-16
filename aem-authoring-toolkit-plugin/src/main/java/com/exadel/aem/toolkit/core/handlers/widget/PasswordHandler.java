@@ -13,31 +13,34 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
-import java.util.function.BiConsumer;
-
-import org.w3c.dom.Element;
-
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
 import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import org.w3c.dom.Element;
+
+import java.util.function.BiConsumer;
 
 /**
  * {@link Handler} implementation used to create markup responsible for {@code Password} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class PasswordHandler implements Handler, BiConsumer<Element, Field> {
+class PasswordHandler implements Handler, BiConsumer<Element, MemberWrapper> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * @param memberWrapper Current {@code MemberWrapper} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        Password password = field.getDeclaredAnnotation(Password.class);
+    public void accept(Element element, MemberWrapper memberWrapper) {
+        Password password = PluginReflectionUtility.getMemberAnnotation(memberWrapper.getMember(), Password.class);
+        if (password == null) {
+            return;
+        }
         if(!password.retype().isEmpty()){
             element.setAttribute(DialogConstants.PN_RETYPE,
-                    getXmlUtil().getNamePrefix() + getXmlUtil().getValidFieldName(password.retype()));
+                    memberWrapper.getValue(DialogConstants.PN_PREFIX) + getXmlUtil().getValidFieldName(password.retype()) + memberWrapper.getValue(DialogConstants.PN_POSTFIX));
         }
     }
 }

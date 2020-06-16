@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.core.handlers.widget.rte;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +28,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -56,7 +56,7 @@ import com.exadel.aem.toolkit.core.util.validation.CharactersObjectValidator;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code RichTextEditor} widget functionality
  * within the {@code cq:dialog} and {@code cq:editConfig} XML nodes
  */
-public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field> {
+public class RichTextEditorHandler implements Handler, BiConsumer<Element, MemberWrapper> {
     private static final String KEYWORD_AUTO = "auto";
 
     private static final String FEATURE_ALL = "*";
@@ -81,11 +81,15 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * @param memberWrapper Current {@code MemberWrapper} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        accept(element, field.getAnnotation(RichTextEditor.class));
+    public void accept(Element element, MemberWrapper memberWrapper) {
+        RichTextEditor richTextEditor = PluginReflectionUtility.getMemberAnnotation(memberWrapper.getMember(), RichTextEditor.class);
+        if (richTextEditor == null) {
+            return;
+        }
+        accept(element, richTextEditor);
     }
 
     /**
@@ -215,7 +219,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Element, Field)} to facilitate single feature token from the
+     * Called by {@link RichTextEditorHandler#accept(Element, MemberWrapper)} to facilitate single feature token from the
      * {@link RichTextEditor#features()} or {@link RichTextEditor#fullscreenFeatures()} collection to one or more appropriate
      * {@code XmlNodeBuilder}-s
      * @param featureItem A mutually linked pair consisting of a {@code XmlNodeBuilder} for either {@code features()}
@@ -260,7 +264,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Element, Field)} to create if necessary and then retrieve
+     * Called by {@link RichTextEditorHandler#accept(Element, MemberWrapper)} to create if necessary and then retrieve
      * the {@code icons} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
      */
@@ -271,7 +275,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Element, Field)} to create if necessary and then retrieve
+     * Called by {@link RichTextEditorHandler#accept(Element, MemberWrapper)} to create if necessary and then retrieve
      * the {@code formats} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
      */
@@ -284,7 +288,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Element, Field)} to create if necessary and then retrieve
+     * Called by {@link RichTextEditorHandler#accept(Element, MemberWrapper)} to create if necessary and then retrieve
      * the {@code specialCharsConfig} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
      */
@@ -372,7 +376,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Element, Field)} to create and append an XML node representing
+     * Called by {@link RichTextEditorHandler#accept(Element, MemberWrapper)} to create and append an XML node representing
      * {@code htmlRules} to the RichTextEditor XML markup
      * @param element {@code Element} instance representing the RichTextEditor node
      */

@@ -13,9 +13,10 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
+import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
@@ -27,15 +28,18 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class AutocompleteHandler implements Handler, BiConsumer<Element, Field> {
+class AutocompleteHandler implements Handler, BiConsumer<Element, MemberWrapper> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * @param memberWrapper Current {@code MemberWrapper} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        Autocomplete autocomplete = field.getDeclaredAnnotation(Autocomplete.class);
+    public void accept(Element element, MemberWrapper memberWrapper) {
+        Autocomplete autocomplete = PluginReflectionUtility.getMemberAnnotation(memberWrapper.getMember(), Autocomplete.class);
+        if (autocomplete == null) {
+            return;
+        }
         Element datasource = getXmlUtil().createNodeElement(DialogConstants.NN_DATASOURCE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value());
         getXmlUtil().mapProperties(datasource, autocomplete.datasource());
         element.appendChild(datasource);

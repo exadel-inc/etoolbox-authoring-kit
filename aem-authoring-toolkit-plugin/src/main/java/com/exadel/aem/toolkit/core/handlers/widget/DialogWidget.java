@@ -15,9 +15,9 @@
 package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.core.handlers.assets.dependson.DependsOnHandler;
@@ -44,37 +44,37 @@ public interface DialogWidget {
     /**
      * Gets a "built-in" handler routine specific this widget. Not to me mixed up with a "custom" handler that can be
      * applied to several widgets, either built-in or user-defined
-     * @return {@code BiConsumer<Element, Field>} instance
+     * @return {@code BiConsumer<Element, MemberWrapper>} instance
      */
-    BiConsumer<Element, Field> getHandler();
+    BiConsumer<Element, MemberWrapper> getHandler();
 
     /**
      * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified name
      * @param element {@code Element} instance
-     * @param field Current {@code Field}
+     * @param memberWrapper Current {@code MemberWrapper}
      */
-    default void appendTo(Element element, Field field) {
-        appendTo(element, field, field.getName());
+    default void appendTo(Element element, MemberWrapper memberWrapper) {
+        appendTo(element, memberWrapper, memberWrapper.getMember().getName());
     }
 
     /**
-     * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified name
+     * Appends Granite UI markup based on the current {@code Member} to the parent XML node with the specified name
      * @param element {@code Element} instance
-     * @param field Current {@code Field}
+     * @param memberWrapper Current {@code MemberWrapper}
      * @param name The node name to store
      */
-    default void appendTo(Element element, Field field, String name) {
+    default void appendTo(Element element, MemberWrapper memberWrapper, String name) {
         Element widgetChildElement = PluginRuntime.context().getXmlUtility().createNodeElement(name);
         element.appendChild(widgetChildElement);
-        getHandlerChain().accept(widgetChildElement, field);
+        getHandlerChain().accept(widgetChildElement, memberWrapper);
     }
 
     /**
      * Generates the chain of handlers to store {@code cq:editConfig} XML markup
-     * @return {@code BiConsumer<Element, Field>} instance
+     * @return {@code BiConsumer<Element, MemberWrapper>} instance
      */
-    default BiConsumer<Element, Field> getHandlerChain() {
-        BiConsumer<Element, Field> mainChain = new GenericPropertiesHandler()
+    default BiConsumer<Element, MemberWrapper> getHandlerChain() {
+        BiConsumer<Element, MemberWrapper> mainChain = new GenericPropertiesHandler()
                 .andThen(new PropertyMappingHandler())
                 .andThen(new AttributesHandler())
                 .andThen(new DialogFieldHandler())
