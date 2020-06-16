@@ -27,7 +27,6 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
         title = "Accordion Test Dialog",
-        layout = DialogLayout.TABS,
         accordionTabs = {
                 @Accordion(title = "Basic"),
                 @Accordion(title = "Basic2")
