@@ -240,7 +240,7 @@ public class ComplexComponent2 {
 
     @DialogField()
     @Attribute(data = {@Data(name = "feed-dialog", value = "2")})
-    @FieldSet(namePrefix = FEED_2_1, title = "Feed")
+    @FieldSet(namePrefix = FEED_2_1, title = "Feed", namePostfix = "/postfix")
     @PlaceOnTab(LABEL_TAB_4)
     private FeedFieldSet feed;
 

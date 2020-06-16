@@ -344,7 +344,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="description header"
                                             fieldLabel="label header"
-                                            name="./feed/second/fieldHeader"
+                                            name="./feed/second/fieldHeader/postfix"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"/>
                                     <headerXS
@@ -353,7 +353,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="description header_XS"
                                             fieldLabel="label header_XS"
-                                            name="./feed/second/fieldHeaderXs"
+                                            name="./feed/second/fieldHeaderXs/postfix"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}false"/>
                                     <feedChannel
@@ -364,7 +364,7 @@
                                             fieldLabel="label feed chanel"
                                             filter="custom_filter"
                                             filter_1="custom_filter_1"
-                                            name="./feed/second/field_feed_channel"
+                                            name="./feed/second/field_feed_channel/postfix"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
                                             rootPath="/root/path"/>
@@ -377,7 +377,7 @@
                                             forceSelection="{Boolean}false"
                                             mode="contains"
                                             multiple="{Boolean}true"
-                                            name="./feed/second/fieldFeedFilter"
+                                            name="./feed/second/fieldFeedFilter/postfix"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}false">
                                         <datasource
@@ -399,7 +399,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="description checkbox"
                                             fieldLabel="label checkbox"
-                                            name="./feed/second/checkbox_field"
+                                            name="./feed/second/checkbox_field/postfix"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}false"
                                             text="label checkbox"
@@ -412,7 +412,7 @@
                                             disabled="{Boolean}false"
                                             fieldLabel="switch label name"
                                             ignoreData="{Boolean}false"
-                                            name="./feed/second/switch_field"
+                                            name="./feed/second/switch_field/postfix"
                                             offText="Off"
                                             onText="On"
                                             renderHidden="{Boolean}false"

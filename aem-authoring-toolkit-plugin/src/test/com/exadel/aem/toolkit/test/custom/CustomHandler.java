@@ -14,13 +14,12 @@
 
 package com.exadel.aem.toolkit.test.custom;
 
-import java.lang.reflect.Field;
-
-import org.w3c.dom.Element;
-
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
+import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import org.w3c.dom.Element;
 
 @SuppressWarnings("unused")
 public class CustomHandler implements DialogWidgetHandler {
@@ -34,8 +33,11 @@ public class CustomHandler implements DialogWidgetHandler {
     }
 
     @Override
-    public void accept(Element element, Field field) {
-        CustomAnnotation testCustomAnnotation = field.getDeclaredAnnotation(CustomAnnotation.class);
+    public void accept(Element element, MemberWrapper memberWrapper) {
+        CustomAnnotation testCustomAnnotation = PluginReflectionUtility.getMemberAnnotation(memberWrapper.getMember(), CustomAnnotation.class);
+        if (testCustomAnnotation == null) {
+            return;
+        }
         runtimeContext.getXmlUtility().setAttribute(element, "customField", testCustomAnnotation.customField());
     }
 }
