@@ -4,7 +4,7 @@
  * Custom action to get component property
  * property path can be relative (e.g. 'node/nestedProperty' or '../../parentCompProperty')
  *
- * query {Sting} - current node path
+ * query - current node (this)
  * */
 
 (function (Granite, $, DependsOn) {
