@@ -1,18 +1,16 @@
 package com.exadel.aem.toolkit.samples.models;
 
+import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.HtmlTag;
+import com.exadel.aem.toolkit.samples.constants.GroupConstants;
+import com.exadel.aem.toolkit.samples.constants.PathConstants;
+import com.exadel.aem.toolkit.samples.models.fieldsets.ArmorColorFields;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
-
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
-import com.exadel.aem.toolkit.samples.annotations.FieldsetPostfix;
-import com.exadel.aem.toolkit.samples.constants.GroupConstants;
-import com.exadel.aem.toolkit.samples.constants.PathConstants;
-import com.exadel.aem.toolkit.samples.models.fieldsets.ArmorColorFields;
 
 @Dialog(
         name = "content/armor-color-component",
@@ -32,10 +30,10 @@ public class ArmorColorComponent {
     public static final String FIELDS_PREFIX = "color";
     public static final String FIELDS_POSTFIX = "-test";
 
-    @FieldsetPostfix(postfix = ArmorColorComponent.FIELDS_POSTFIX)
     @FieldSet(
             title = "Color of warrior's armor",
-            namePrefix = ArmorColorComponent.FIELDS_PREFIX
+            namePrefix = ArmorColorComponent.FIELDS_PREFIX,
+            namePostfix = ArmorColorComponent.FIELDS_POSTFIX
     )
     @Self
     private ArmorColorFields armorColor;
