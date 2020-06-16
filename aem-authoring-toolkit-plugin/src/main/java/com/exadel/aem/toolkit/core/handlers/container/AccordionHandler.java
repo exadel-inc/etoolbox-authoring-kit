@@ -61,7 +61,7 @@ public class AccordionHandler implements Handler, BiConsumer<Class<?>, Element> 
 
         Map<String, List<Field>> tabFields = new HashMap<>();
 
-        for (Class<?> cls : PluginReflectionUtility.getAllSuperClasses(componentClass)) {
+        for (Class<?> cls : PluginReflectionUtility.getClassHierarchy(componentClass)) {
             List<Class<?>> tabClasses = Arrays.stream(cls.getDeclaredClasses())
                     .filter(nestedCls -> nestedCls.isAnnotationPresent(Accordion.class))
                     .collect(Collectors.toList());
