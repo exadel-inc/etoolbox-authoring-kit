@@ -13,29 +13,11 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.function.BiConsumer;
-
-import org.w3c.dom.Element;
-
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
-import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
-import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
-import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
-import com.exadel.aem.toolkit.api.annotations.widgets.Hidden;
-import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
-import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Password;
-import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
-import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
-import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.*;
 import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
+import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
@@ -48,6 +30,13 @@ import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.handlers.widget.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import org.w3c.dom.Element;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.function.BiConsumer;
 
 /**
  * Enumerates built-in {@link DialogWidget} entities and exposes utility methods to detect whether a {@code DialogWidget}
@@ -78,7 +67,8 @@ public enum DialogWidgets implements DialogWidget {
     BUTTON(Button.class);
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";
-    private static final BiConsumer<Element, Field> EMPTY_HANDLER = (componentNode, field) -> {};
+    private static final BiConsumer<Element, Field> EMPTY_HANDLER = (componentNode, field) -> {
+    };
 
     private Class<? extends Annotation> annotation;
     private BiConsumer<Element, Field> handler;
@@ -104,6 +94,7 @@ public enum DialogWidgets implements DialogWidget {
 
     /**
      * Gets whether the specified {@code Field} has any particular Granite UI widget-defining annotation
+     *
      * @param field {@code Field} of a component class
      * @return True or false
      */
@@ -113,6 +104,7 @@ public enum DialogWidgets implements DialogWidget {
 
     /**
      * Gets a {@link DialogWidgets} bound to this {@code Field} of a component class, if any
+     *
      * @param field {@code Field} of a component class
      * @return {@code DialogWidget} value, or null
      */
@@ -139,6 +131,7 @@ public enum DialogWidgets implements DialogWidget {
 
     /**
      * Gets {@code Class} definition of a {@code DialogComponent}-defining annotation of the current {@code Field}
+     *
      * @param field {@code Field} of a component class
      * @return {@code Class} object
      */
@@ -161,7 +154,8 @@ public enum DialogWidgets implements DialogWidget {
 
     /**
      * Gets whether this {@code Field} has the particular {@code DialogComponent}-defining annotation
-     * @param field {@code Field} of a component class
+     *
+     * @param field  {@code Field} of a component class
      * @param widget {@code DialogComponent} instance
      * @return True or false
      */
@@ -172,6 +166,7 @@ public enum DialogWidgets implements DialogWidget {
 
     /**
      * Gets whether this {@code Annotation} is a custom dialog annotation
+     *
      * @param value {@code Class} definition of the annotation
      * @return True or false
      */

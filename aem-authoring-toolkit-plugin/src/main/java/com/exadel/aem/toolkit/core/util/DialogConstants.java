@@ -64,6 +64,7 @@ public class DialogConstants {
     public static final String NN_STYLES = "styles";
     public static final String NN_SUBLIST = "sublist";
     public static final String NN_TABS = "tabs";
+    public static final String NN_ACCORDION = "accordion";
     public static final String NN_TABLE = "table";
     public static final String NN_TABLE_EDIT_OPTIONS = "tableEditOptions";
     public static final String NN_TARGET_CONFIG = "targetConfig";

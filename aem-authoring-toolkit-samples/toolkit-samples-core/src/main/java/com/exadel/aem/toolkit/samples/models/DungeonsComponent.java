@@ -1,13 +1,7 @@
 package com.exadel.aem.toolkit.samples.models;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.Default;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
-
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.container.Accordion;
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOnAccordion;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
@@ -18,6 +12,12 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Default;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 @Dialog(
         name = "content/dungeons-component",
@@ -25,8 +25,8 @@ import com.exadel.aem.toolkit.samples.constants.GroupConstants;
         description = "Choose a dungeon for your warrior",
         resourceSuperType = "authoring-toolkit/samples/components/content/father-select-component",
         componentGroup = GroupConstants.COMPONENT_GROUP,
-        tabs = {
-                @Tab(title = ParentSelectComponent.TAB_MAIN),
+        accordionTabs = {
+                @Accordion(title = "Main")
         }
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
@@ -45,6 +45,7 @@ public class DungeonsComponent extends ParentSelectComponent {
             })
     @DialogField(label = "Make your own dungeons rules")
     @ValueMapValue
+    @PlaceOnAccordion("Main")
     private String dungeonRules;
 
     @Select(options = {
@@ -55,6 +56,7 @@ public class DungeonsComponent extends ParentSelectComponent {
     @Default(values = "1")
     @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
     @ValueMapValue
+    @PlaceOnAccordion("Main")
     private String dungeonsSelect;
 
     public String getDungeonRules() {

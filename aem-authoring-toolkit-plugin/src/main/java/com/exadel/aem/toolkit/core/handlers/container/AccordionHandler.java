@@ -13,13 +13,11 @@
  */
 package com.exadel.aem.toolkit.core.handlers.container;
 
-import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.container.Accordion;
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOnAccordion;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
@@ -28,7 +26,6 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
@@ -41,9 +38,9 @@ import java.util.stream.Collectors;
 /**
  * The {@link Handler} for a tabbed TouchUI dialog
  */
-public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
-    private static final String DEFAULT_TAB_NAME = "tab";
-    private static final String NO_TABS_DEFINED_EXCEPTION_MESSAGE = "No tabs defined for the dialog at ";
+public class AccordionHandler implements Handler, BiConsumer<Class<?>, Element> {
+    private static final String DEFAULT_TAB_NAME = "accordion";
+    private static final String NO_TABS_DEFINED_EXCEPTION_MESSAGE = "No accordions defined for the dialog at ";
 
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
@@ -52,76 +49,59 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
      * @param componentClass {@code Class<?>} instance used as the source of markup
      * @param parentElement  XML document root element
      */
+    //works like TabsHandler without some features like IgnoreTabs
     @Override
     public void accept(Class<?> componentClass, Element parentElement) {
-        // Render the generic XML markup for tabs setting
         Element tabItemsElement = (Element) parentElement.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS))
-                .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_TABS, ResourceTypes.TABS))
+                .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ACCORDION, ResourceTypes.ACCORDION))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
 
-        // Initialize tab instances registry to collect tabs from the current class and all superclasses, distinct by tab title
-        Map<String, Tab> tabInstances = new LinkedHashMap<>();
+        Map<String, Accordion> tabInstances = new LinkedHashMap<>();
 
-        // Initialize fields registry to collect fields applicable to a certain tab from whatever class
         Map<String, List<Field>> tabFields = new HashMap<>();
 
-        // Initialize ignored tabs list for the current class if IgnoreTabs annotation is present.
-        // Note that "ignored tabs" setting is not inherited and is for current class only, unlike tabs collection
-        String[] ignoredTabs = componentClass.isAnnotationPresent(IgnoreTabs.class)
-                ? componentClass.getAnnotation(IgnoreTabs.class).value()
-                : new String[]{};
-
-        // Enumerate superclasses of the current class, itself included, from top to bottom, populate tab registry and
-        // store fields that are withing @Tab-marked nested classes (as we will not have access to them later)
         for (Class<?> cls : PluginReflectionUtility.getAllSuperClasses(componentClass)) {
             List<Class<?>> tabClasses = Arrays.stream(cls.getDeclaredClasses())
-                    .filter(nestedCls -> nestedCls.isAnnotationPresent(Tab.class))
+                    .filter(nestedCls -> nestedCls.isAnnotationPresent(Accordion.class))
                     .collect(Collectors.toList());
             Collections.reverse(tabClasses);
             tabClasses.forEach(nestedCls -> {
-                String tabTitle = nestedCls.getAnnotation(Tab.class).title();
-                tabInstances.put(tabTitle, nestedCls.getAnnotation(Tab.class));
+                String tabTitle = nestedCls.getAnnotation(Accordion.class).title();
+                tabInstances.put(tabTitle, nestedCls.getAnnotation(Accordion.class));
                 tabFields.putIfAbsent(tabTitle, new LinkedList<>());
                 tabFields.get(tabTitle).addAll(Arrays.asList(nestedCls.getDeclaredFields()));
             });
             if (cls.isAnnotationPresent(Dialog.class)) {
-                Arrays.stream(cls.getAnnotation(Dialog.class).tabs())
-                        .forEach(tab -> {
-                            tabInstances.put(tab.title(), tab);
-                            tabFields.putIfAbsent(tab.title(), new LinkedList<>());
+                Arrays.stream(cls.getAnnotation(Dialog.class).accordionTabs())
+                        .forEach(accordionTab -> {
+                            tabInstances.put(accordionTab.title(), accordionTab);
+                            tabFields.putIfAbsent(accordionTab.title(), new LinkedList<>());
                         });
             }
         }
 
-        // Get all *non-nested* fields from superclasses and the current class
         List<Field> allFields = PluginReflectionUtility.getAllFields(componentClass);
 
-        // If tabs collection is empty and yet there are fields to be placed, fire an exception and create a default tab
         if (tabInstances.isEmpty() && !allFields.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
                     NO_TABS_DEFINED_EXCEPTION_MESSAGE + componentClass.getSimpleName()
             ));
-            tabInstances.put(StringUtils.EMPTY, PluginObjectUtility.create(Tab.class,
+            tabInstances.put(StringUtils.EMPTY, PluginObjectUtility.create(Accordion.class,
                     Collections.singletonMap(DialogConstants.PN_TITLE, StringUtils.EMPTY)));
             tabFields.putIfAbsent(StringUtils.EMPTY, new LinkedList<>());
         }
 
-        // Iterate tab registry, from the first ever defined tab to the last
-        // Within the iteration loop, we
-        // 1) add fields from the "all fields" collection that are applicable to the current tab, to the tab's field collection
-        // 2) re-sort the current tab's fields collection with the field ranking comparator
-        // 3) remove managed fields from the "all fields" collection
-        // 4) render XML markup for the current tab
-        Iterator<Map.Entry<String, Tab>> tabIterator = tabInstances.entrySet().iterator();
+
+        Iterator<Map.Entry<String, Accordion>> tabIterator = tabInstances.entrySet().iterator();
         int iterationStep = 0;
 
         while (tabIterator.hasNext()) {
             final boolean isFirstTab = iterationStep++ == 0;
-            Tab currentTab = tabIterator.next().getValue();
+            Accordion currentTab = tabIterator.next().getValue();
             List<Field> storedCurrentTabFields = tabFields.get(currentTab.title());
             List<Field> moreCurrentTabFields = allFields.stream()
-                    .filter(field -> isFieldForTab(field, currentTab, isFirstTab))
+                    .filter(field -> isFieldForAccordion(field, currentTab, isFirstTab))
                     .collect(Collectors.toList());
             boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
             storedCurrentTabFields.addAll(moreCurrentTabFields);
@@ -130,67 +110,48 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
             }
             allFields.removeAll(moreCurrentTabFields);
 
-            if (ArrayUtils.contains(ignoredTabs, currentTab.title())) {
-                continue;
-            }
-            addTab(tabItemsElement, currentTab, storedCurrentTabFields);
+            addAccordion(tabItemsElement, currentTab, storedCurrentTabFields);
         }
 
-        // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
-        // for which an non-existent tab was specified. Handle an InvalidTabException for each of them
         allFields.forEach(field -> PluginRuntime.context().getExceptionHandler()
                 .handle(new InvalidTabException(
-                        field.isAnnotationPresent(PlaceOnTab.class)
-                                ? field.getAnnotation(PlaceOnTab.class).value()
+                        field.isAnnotationPresent(PlaceOnAccordion.class)
+                                ? field.getAnnotation(PlaceOnAccordion.class).value()
                                 : StringUtils.EMPTY
                 )));
     }
 
     /**
-     * Adds a tab definition to the XML markup
+     * Adds a accordion definition to the XML markup
      *
      * @param tabCollectionElement The {@link Element} instance to append particular fields' markup
-     * @param tab                  The {@link Tab} instance to render as a dialog tab
+     * @param accordion            The {@link Accordion} instance to render as a dialog accordion
      * @param fields               The list of {@link Field} instances to render as dialog fields
      */
-    private void addTab(Element tabCollectionElement, Tab tab, List<Field> fields) {
-        String nodeName = getXmlUtil().getUniqueName(tab.title(), DEFAULT_TAB_NAME, tabCollectionElement);
+    private void addAccordion(Element tabCollectionElement, Accordion accordion, List<Field> fields) {
+        String nodeName = getXmlUtil().getUniqueName(accordion.title(), DEFAULT_TAB_NAME, tabCollectionElement);
         Element tabElement = getXmlUtil().createNodeElement(
                 nodeName,
                 ImmutableMap.of(
-                        JcrConstants.PN_TITLE, tab.title(),
+                        JcrConstants.PN_TITLE, accordion.title(),
                         JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
                 ));
         tabCollectionElement.appendChild(tabElement);
-        appendTabAttributes(tabElement, tab);
         Handler.appendToContainer(tabElement, fields);
     }
 
     /**
-     * Appends tab attributes to a pre-built tab-defining XML element
-     *
-     * @param tabElement {@link Element} instance representing a TouchUI dialog tab
-     * @param tab        {@link Tab} annotation that contains settings
-     */
-    private void appendTabAttributes(Element tabElement, Tab tab) {
-        tabElement.setAttribute(JcrConstants.PN_TITLE, tab.title());
-        Attribute attribute = tab.attribute();
-        getXmlUtil().mapProperties(tabElement, attribute);
-        getXmlUtil().appendDataAttributes(tabElement, attribute.data());
-    }
-
-    /**
-     * The predicate to match a {@code Field} against particular {@code Tab}
+     * The predicate to match a {@code Field} against particular {@code Accordion}
      *
      * @param field        {@link Field} instance to analyze
-     * @param tab          {@link Tab} annotation to analyze
-     * @param isDefaultTab True if the current tab accepts fields for which no tab was specified; otherwise, false
+     * @param accordion    {@link Accordion} annotation to analyze
+     * @param isDefaultTab True if the current accordion accepts fields for which no accordion was specified; otherwise, false
      * @return True or false
      */
-    private static boolean isFieldForTab(Field field, Tab tab, boolean isDefaultTab) {
-        if (!field.isAnnotationPresent(PlaceOnTab.class)) {
+    private static boolean isFieldForAccordion(Field field, Accordion accordion, boolean isDefaultTab) {
+        if (!field.isAnnotationPresent(PlaceOnAccordion.class)) {
             return isDefaultTab;
         }
-        return tab.title().equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
+        return accordion.title().equalsIgnoreCase(field.getAnnotation(PlaceOnAccordion.class).value());
     }
 }
