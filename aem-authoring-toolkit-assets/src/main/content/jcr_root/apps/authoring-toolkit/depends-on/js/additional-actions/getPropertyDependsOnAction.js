@@ -37,7 +37,8 @@
         return {get: get, clear: clearCache};
     })(2000);
 
-    function getParentProperty(resourcePath, options) {
+    function getParentProperty(currentResource, options) {
+        const resourcePath = DependsOn.getDialogPath(currentResource);
         const $el = this.$el;
         const level = getLevel(options.path);
         const name = options.path.replace(PARENT_DIR_REGEX, '');

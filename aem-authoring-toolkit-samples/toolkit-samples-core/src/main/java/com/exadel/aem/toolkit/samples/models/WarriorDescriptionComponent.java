@@ -183,7 +183,7 @@ public class WarriorDescriptionComponent {
 
     @Hidden
     @DependsOn(
-            query = "Granite.DependsOnPlugin.getDialogPath(this)",
+            query = "this",
             action = "get-property",
             params = {
                     @DependsOnParam(name = "path", value = "../../colorTheme")
