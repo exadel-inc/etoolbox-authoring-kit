@@ -14,14 +14,8 @@
 
 package com.exadel.aem.toolkit.samples.models;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.Default;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
-
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.container.Accordion;
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOnAccordion;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
@@ -32,6 +26,12 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Default;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 @Dialog(
         name = "content/dungeons-component",
@@ -39,8 +39,8 @@ import com.exadel.aem.toolkit.samples.constants.GroupConstants;
         description = "Choose a dungeon for your warrior",
         resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
         componentGroup = GroupConstants.COMPONENT_GROUP,
-        tabs = {
-                @Tab(title = ParentSelectComponent.TAB_MAIN)
+        accordionTabs = {
+                @Accordion(title = "Main")
         }
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
@@ -62,6 +62,7 @@ public class DungeonsComponent extends ParentSelectComponent {
                     RteFeatures.LISTS_UNORDERED
             })
     @ValueMapValue
+    @PlaceOnAccordion("Main")
     private String dungeonRules;
 
     @DialogField(label = LABEL_DUNGEON_SELECT)
@@ -72,6 +73,7 @@ public class DungeonsComponent extends ParentSelectComponent {
     @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
     @Default(values = "1")
     @ValueMapValue
+    @PlaceOnAccordion("Main")
     private String dungeon;
 
     public String getDungeonRules() {

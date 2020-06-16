@@ -13,15 +13,8 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.function.BiConsumer;
-
-import org.w3c.dom.Element;
-
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
+import com.exadel.aem.toolkit.api.annotations.widgets.*;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
@@ -48,6 +41,13 @@ import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.handlers.widget.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import org.w3c.dom.Element;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.function.BiConsumer;
 
 /**
  * Enumerates built-in {@link DialogWidget} entities and exposes utility methods to detect whether a {@code DialogWidget}

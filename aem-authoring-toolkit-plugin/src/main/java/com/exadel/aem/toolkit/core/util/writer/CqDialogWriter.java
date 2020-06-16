@@ -74,7 +74,14 @@ class CqDialogWriter extends ContentXmlWriter {
         PluginRuntime.context().getXmlUtility().mapProperties(root, dialog, XmlScope.CQ_DIALOG);
         root.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.DIALOG);
 
-        DialogLayout dialogLayout = ArrayUtils.isEmpty(dialog.tabs()) ? dialog.layout() : DialogLayout.TABS;
+        DialogLayout dialogLayout;
+        if (!ArrayUtils.isEmpty(dialog.accordionTabs())) {
+            dialogLayout = DialogLayout.ACCORDION;
+        } else if (!ArrayUtils.isEmpty(dialog.tabs())) {
+            dialogLayout = DialogLayout.TABS;
+        } else {
+            dialogLayout = dialog.layout();
+        }
         DialogContainer.getContainer(dialogLayout).build(componentClass, root);
 
         writeCommonProperties(componentClass, XmlScope.CQ_DIALOG);

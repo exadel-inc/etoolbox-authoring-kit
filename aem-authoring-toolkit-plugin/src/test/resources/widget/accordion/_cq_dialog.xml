@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          jcr:title="Accordion Test Dialog"
+          width="{Double}560.0"
+          height="{Double}480.0">
+    <content jcr:primaryType="nt:unstructured"
+             sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <accordion
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/accordion">
+                <items jcr:primaryType="nt:unstructured">
+                    <basic
+                            jcr:primaryType="nt:unstructured"
+                            jcr:title="Basic"
+                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <buttonField1 jcr:primaryType="nt:unstructured"
+                                          sling:resourceType="granite/ui/components/coral/foundation/button"
+                                          type="submit"
+                                          disabled="{Boolean}false"
+                                          autocomplete="on"
+                                          formId="test-form"
+                                          text="test-text"
+                                          text_commentI18n="test-comment"
+                                          hideText="{Boolean}true"
+                                          active="{Boolean}true"
+                                          icon="search"
+                                          iconSize="L"
+                                          size="L"
+                                          block="{Boolean}true"
+                                          variant="primary"
+                                          command="shift+s"
+                                          trackingElement="test-element"
+                                          trackingFeature="test-feature"
+                            />
+                        </items>
+                    </basic>
+                    <basic2
+                            jcr:primaryType="nt:unstructured"
+                            jcr:title="Basic2"
+                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <buttonField jcr:primaryType="nt:unstructured"
+                                         sling:resourceType="granite/ui/components/coral/foundation/button"
+                                         type="submit"
+                                         disabled="{Boolean}false"
+                                         autocomplete="on"
+                                         formId="test-form"
+                                         text="test-text"
+                                         text_commentI18n="test-comment"
+                                         hideText="{Boolean}true"
+                                         active="{Boolean}true"
+                                         icon="search"
+                                         iconSize="L"
+                                         size="L"
+                                         block="{Boolean}true"
+                                         variant="primary"
+                                         command="shift+s"
+                                         trackingElement="test-element"
+                                         trackingFeature="test-feature"
+                            />
+                        </items>
+                    </basic2>
+                </items>
+            </accordion>
+        </items>
+    </content>
+</jcr:root>

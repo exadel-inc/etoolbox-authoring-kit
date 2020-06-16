@@ -28,6 +28,7 @@ import com.exadel.aem.toolkit.core.util.writer.PackageWriter;
  */
 public enum DialogContainer {
     FIXED_COLUMNS(new FixedColumnsHandler()),
+    ACCORDION(new AccordionHandler()),
     TABS(new TabsHandler());
 
     private BiConsumer<Class<?>, Element> handler;
