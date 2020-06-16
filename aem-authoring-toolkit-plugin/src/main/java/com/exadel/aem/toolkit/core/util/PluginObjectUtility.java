@@ -15,10 +15,7 @@
 package com.exadel.aem.toolkit.core.util;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -43,6 +40,9 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
  * value conversions for the sake of proper dialog markup rendering
  */
 public class PluginObjectUtility {
+
+    private static final String MEMBER_VALUES = "memberValues";
+
     private PluginObjectUtility() {}
 
     /**
@@ -243,6 +243,18 @@ public class PluginObjectUtility {
                         e));
             }
             return null;
+        }
+    }
+
+    public static void changeAnnotationValue(Annotation annotation, String key, Object newValue) {
+        try {
+            Object handler = Proxy.getInvocationHandler(annotation);
+            Field f = handler.getClass().getDeclaredField(MEMBER_VALUES);
+            f.setAccessible(true);
+            Map<String, Object> memberValues = (Map<String, Object>) f.get(handler);
+            memberValues.put(key, newValue);
+        } catch (Exception ignored) {
+            //ignored
         }
     }
 }

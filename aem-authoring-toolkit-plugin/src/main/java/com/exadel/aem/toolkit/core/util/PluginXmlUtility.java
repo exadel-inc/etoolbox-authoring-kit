@@ -83,7 +83,6 @@ public class PluginXmlUtility implements XmlUtility {
     public static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
     private Document document;
-    private String namePrefix = DialogConstants.RELATIVE_PATH_PREFIX;
 
     private XmlNamingHelper fieldNameHelper = XmlNamingHelper.forFieldName(this);
     private XmlNamingHelper simpleNameHelper = XmlNamingHelper.forSimpleName(this);
@@ -109,22 +108,6 @@ public class PluginXmlUtility implements XmlUtility {
      */
     public Document getCurrentDocument() {
         return document;
-    }
-
-    /**
-     * Retrieves name prefix added to all {@code Element}s' tag names in current context
-     * @return Prefix as a string, default is "./"
-     */
-    public String getNamePrefix() {
-        return this.namePrefix;
-    }
-
-    /**
-     * Sets name prefix added to all Elements' tag names in current context
-     * @param namePrefix String value
-     */
-    public void setNamePrefix(String namePrefix) {
-        this.namePrefix = namePrefix;
     }
 
     @Override
