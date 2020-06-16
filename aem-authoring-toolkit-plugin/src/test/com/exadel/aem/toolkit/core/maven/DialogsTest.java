@@ -16,13 +16,14 @@ package com.exadel.aem.toolkit.core.maven;
 
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
 import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
+import com.exadel.aem.toolkit.test.component.CompatibilityTestComponent;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
 import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
-import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
 
 public class DialogsTest extends DefaultTestBase {
     @Test
@@ -58,5 +59,10 @@ public class DialogsTest extends DefaultTestBase {
     @Test
     public void testChildEditConfig() {
         test(ChildEditConfigAnnotation.class);
+    }
+
+    @Test
+    public void testBackwardCompatibilityFeatures() {
+        test(CompatibilityTestComponent.class);
     }
 }

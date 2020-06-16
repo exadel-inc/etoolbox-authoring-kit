@@ -69,7 +69,7 @@ interface WidgetSetHandler extends Handler, BiConsumer<Element, Field> {
                         containerType))
                 : Stream.empty();
         List<ClassField> allIgnoredFields = Stream.concat(classLevelIgnoredFields, fieldLevelIgnoredFields)
-                .filter(classField -> PluginReflectionUtility.getAllSuperClasses(containerType).stream()
+                .filter(classField -> PluginReflectionUtility.getClassHierarchy(containerType).stream()
                         .anyMatch(superclass -> superclass.equals(classField.source())))
                 .collect(Collectors.toList());
 

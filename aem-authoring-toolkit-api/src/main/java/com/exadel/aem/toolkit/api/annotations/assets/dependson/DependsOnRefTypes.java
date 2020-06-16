@@ -3,6 +3,7 @@ package com.exadel.aem.toolkit.api.annotations.assets.dependson;
 /**
  * Represents acceptable {@code dependsOnRef} values for use with {@link DependsOnRef} annotation
  */
+@SuppressWarnings("unused")
 public enum DependsOnRefTypes {
     AUTO {
         @Override

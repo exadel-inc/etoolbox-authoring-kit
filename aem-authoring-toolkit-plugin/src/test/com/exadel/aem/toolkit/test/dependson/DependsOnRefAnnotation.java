@@ -15,10 +15,14 @@
 package com.exadel.aem.toolkit.test.dependson;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRefTypes;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
+import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 
 @Dialog(
         name = "test-component",
@@ -29,6 +33,21 @@ import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 public class DependsOnRefAnnotation {
     @DialogField
     @ImageUpload
-    @DependsOnRef(name = "referenceType")
-    private String referenceType;
+    @DependsOnRef
+    private String defaultReferenceName;
+
+    @DialogField
+    @TextField
+    @DependsOnRef(name = "nameOnly")
+    private String referenceName;
+
+    @DialogField
+    @PathField
+    @DependsOnRef(name = "nameAndType", type = DependsOnRefTypes.BOOLSTRING)
+    private String referenceNameAndType;
+
+    @DialogField
+    @RichTextEditor
+    @DependsOnRef(type = DependsOnRefTypes.AUTO)
+    private String typeAuto;
 }
