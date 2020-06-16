@@ -49,4 +49,11 @@ public @interface FieldSet {
      */
     @IgnorePropertyMapping
     String namePrefix() default "";
+
+    /**
+     * Used to define string postfix for names of all fields in the FieldSet
+     * @return String value
+     */
+    @IgnorePropertyMapping
+    String namePostfix() default "";
 }
