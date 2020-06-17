@@ -32,7 +32,8 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
                 @Tab(title = WarriorComponent.TAB_MAIN),
                 @Tab(title = WarriorComponent.TAB_ICON),
                 @Tab(title = WarriorComponent.TAB_THEME)
-        }
+        },
+        isContainer = true
 )
 @EditConfig(
         inplaceEditing = {
