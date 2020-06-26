@@ -4,7 +4,7 @@
  * Custom action to get component property
  * property path can be relative (e.g. 'node/nestedProperty' or '../../parentCompProperty')
  *
- * query - current node (this)
+ * query - property path
  * */
 
 (function (Granite, $, DependsOn) {
@@ -37,11 +37,11 @@
         return {get: get, clear: clearCache};
     })(2000);
 
-    function getParentProperty(currentResource, options) {
-        const resourcePath = DependsOn.getDialogPath(currentResource);
+    function getParentProperty(path) {
         const $el = this.$el;
-        const level = getLevel(options.path);
-        const name = options.path.replace(PARENT_DIR_REGEX, '');
+        const resourcePath = DependsOn.getDialogPath($el);
+        const level = getLevel(path);
+        const name = path.replace(PARENT_DIR_REGEX, '');
         RequestCache.get(DependsOn.getNthParent(resourcePath, level) + '.infinity.json').then(
             function (data) {
                 return DependsOn.get(data, name, '/');
