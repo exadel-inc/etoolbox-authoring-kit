@@ -46,11 +46,11 @@
          * */
         static _replaceForbiddenSymbols(target, pattern) {
            return target.replace(new RegExp(pattern + '|.', 'g'),
-               (match) => (match === pattern ? match : ''));
+               (match) => (match.search(pattern) !== -1  ? match : ''));
         }
 
         /**
-         * Function to develop action's name (includes a-z, 0-9, -)
+         * Function to develop action's name (allowed symbols a-z, 0-9, -)
          * @param {string} name - action name
          * @returns {string} correct action name (according to nameRegex)
          * */
@@ -60,7 +60,7 @@
             if (name.trim().search(nameRegex) === -1) {
                 resultName = resultName.toLocaleLowerCase();
                 resultName = this._replaceForbiddenSymbols(resultName, nameRegex);
-                console.warn(`[DependsOn]: Action's name ${name} was overridden by ${resultName} (name includes a-z, 0-9, -)`);
+                console.warn(`[DependsOn]: Action's name ${name} was overridden by ${resultName} (allowed symbols: a-z, 0-9, -)`);
             }
             return resultName;
         }
