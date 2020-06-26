@@ -182,17 +182,12 @@ public class WarriorDescriptionComponent {
     private boolean isLikesFilms;
 
     @Hidden
-    @DependsOn(
-            query = "this",
-            action = "get-property",
-            params = {
-                    @DependsOnParam(name = "path", value = "../../colorTheme")
-            })
+    @DependsOn(query = "'../../colorTheme'", action = "get-property")
     @DependsOnRef(name = "isDarkColorTheme", type = DependsOnRefTypes.BOOLSTRING)
-    private boolean isDarkColorTheme;
+    private String isDarkColorTheme;
 
     @PlaceOnTab(WarriorDescriptionComponent.TAB_FILMS)
-    @DependsOn(query = "@isDarkColorTheme", action = "namespaceFilter")
+    @DependsOn(query = "@isDarkColorTheme === 'true'", action = "namespaceFilter")
     @Autocomplete(
             multiple = true,
             forceSelection = true,
