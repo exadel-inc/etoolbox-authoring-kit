@@ -10,7 +10,7 @@ Resulting dialogs and editors are compliant with the newest facilities of AEM 6.
 As the Toolkit was developed, thorough comparative investigation of Coral v.2 and Coral v.3 has been carried out, their features and drawbacks tested, so that backward compatibility is preserved to a highest degree.
 
 ***
-> Practice to use AEM Authoring Toolkit with our sandbox project under [_aem-authoring-toolkit-samples_](/aem-authoring-toolkit-samples/README.md)  
+> Practice to use AEM Authoring Toolkit with our sandbox project under [_samples_](/samples/README.md)  
 >
 ***
 
@@ -1189,8 +1189,8 @@ public class DependsOnSample {
 
 ## Samples
 
-Examples of use AEM Authoring Toolkit API and DependsOn library are presented in a separate [AAT Samples](./aem-authoring-toolkit-samples) module.
+Examples of use AEM Authoring Toolkit API and DependsOn library are presented in a separate [AAT Samples](samples) module.
 
-Run `mvn clean install -P install-samples` from the root folder of [AAT Samples](./aem-authoring-toolkit-samples) to __install__ a sample project.
+Run `mvn clean install -P install-samples` from the root folder of [AAT Samples](samples) to __install__ a sample project.
 
-To directly find necessary annotations or specific use of these annotations, read [AAT Samples Readme](./aem-authoring-toolkit-samples/README.md).
+To directly find necessary annotations or specific use of these annotations, read [AAT Samples Readme](samples/README.md).

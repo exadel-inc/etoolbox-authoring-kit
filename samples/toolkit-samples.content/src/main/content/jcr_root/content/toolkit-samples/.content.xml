@@ -6,7 +6,7 @@
             jcr:title="AEM Authoring Toolkit Samples"
             sling:resourceType="authoring-toolkit/samples/components/page/sample-page"
             cq:template="authoring-toolkit/samples/template/sample-page"
-            cq:designPath="/apps/settings/wcm/designs/aem-authoring-toolkit-samples">
+            cq:designPath="/apps/settings/wcm/designs/toolkit-samples">
     </jcr:content>
 </jcr:root>
 

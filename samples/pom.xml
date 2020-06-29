@@ -10,16 +10,16 @@
         <version>1.2.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>aem-authoring-toolkit-samples</artifactId>
+    <artifactId>samples</artifactId>
     <name>AEM Authoring Toolkit - Samples</name>
     <version>1.2.1-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
     <modules>
-        <module>toolkit-samples-core</module>
-        <module>toolkit-samples-ui.apps</module>
-        <module>toolkit-samples-ui.content</module>
+        <module>toolkit-samples.core</module>
+        <module>toolkit-samples.apps</module>
+        <module>toolkit-samples.content</module>
     </modules>
 
     <dependencyManagement>
