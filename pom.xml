@@ -64,6 +64,7 @@
         <module>aem-authoring-toolkit-api</module>
         <module>aem-authoring-toolkit-plugin</module>
         <module>aem-authoring-toolkit-assets</module>
+        <module>samples</module>
     </modules>
 
     <properties>
