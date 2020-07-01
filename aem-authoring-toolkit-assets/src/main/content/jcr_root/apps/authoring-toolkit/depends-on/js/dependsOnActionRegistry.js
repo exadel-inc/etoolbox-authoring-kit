@@ -45,8 +45,10 @@
          * @param {RegExp} pattern -  pattern for correct symbols
          * */
         static _replaceForbiddenSymbols(target, pattern) {
-           return target.replace(new RegExp(pattern + '|.', 'g'),
-               (match) => (match.search(pattern) !== -1  ? match : ''));
+           return target
+               .split('')
+               .map((symbol) => (symbol.search(pattern) !== -1  ? symbol : ''))
+               .join('');
         }
 
         /**
@@ -55,7 +57,7 @@
          * @returns {string} correct action name (according to nameRegex)
          * */
         static _refactorName(name) {
-            const nameRegex = /^[a-z0-1-]+$/;
+            const nameRegex = /^[a-z0-9-]+$/;
             let resultName = name;
             if (name.trim().search(nameRegex) === -1) {
                 resultName = resultName.toLocaleLowerCase();
