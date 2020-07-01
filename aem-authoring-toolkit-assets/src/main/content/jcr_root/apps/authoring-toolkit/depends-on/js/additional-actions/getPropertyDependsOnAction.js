@@ -23,16 +23,16 @@
         static _map = new Map();
 
         static clear() {
-            this._map.clear();
+            RequestCache._map.clear();
             console.debug('[DependsOn] Custom action "get-property" cache cleared.');
         }
 
         static get(url) {
             url = Granite.HTTP.externalize(url);
-            if (!this._map.has(url)) this._map.set(url, $.get(url));
-            if (this._clearTm) clearTimeout(this._clearTm);
-            this._clearTm = setTimeout(this.clear, this.timeout);
-            return this._map.get(url);
+            if (!RequestCache._map.has(url)) RequestCache._map.set(url, $.get(url));
+            if (RequestCache._clearTm) clearTimeout(RequestCache._clearTm);
+            RequestCache._clearTm = setTimeout(RequestCache.clear, RequestCache.timeout);
+            return RequestCache._map.get(url);
         }
     }
 
