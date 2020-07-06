@@ -1,6 +1,6 @@
 /**
- * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.2
+ * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
+ * @version 2.2.4
  *
  * DependsOn Actions Registry
  * Action defines steps to process query result
@@ -10,6 +10,7 @@
 
     const actionRegistryMap = {};
     class ActionRegistry {
+
         /**
          * Default action name
          * */
@@ -39,11 +40,40 @@
         }
 
         /**
+         * Function to remove symbols that don't match the pattern
+         * @param {string} target - target string
+         * @param {RegExp} pattern -  pattern for correct symbols
+         * */
+        static _replaceForbiddenSymbols(target, pattern) {
+           return target
+               .split('')
+               .map((symbol) => (symbol.search(pattern) !== -1  ? symbol : ''))
+               .join('');
+        }
+
+        /**
+         * Function to develop action's name (allowed symbols a-z, 0-9, -)
+         * @param {string} name - action name
+         * @returns {string} correct action name (according to nameRegex)
+         * */
+        static _getValidName(name) {
+            const nameRegex = /^[a-z0-9-]+$/;
+            let resultName = name;
+            if (name.trim().search(nameRegex) === -1) {
+                resultName = resultName.toLocaleLowerCase();
+                resultName = this._replaceForbiddenSymbols(resultName, nameRegex);
+                console.warn(`[DependsOn]: Action's name ${name} was overridden by ${resultName} (allowed symbols: a-z, 0-9, -)`);
+            }
+            return resultName;
+        }
+
+        /**
          * @param {string} name - is action name
-         * @param {function} actionFn - function to set state (queryresult: any) => void
+         * @param {function} actionFn - function to set state (queryResult: any) => void
          * @returns {function} actual actionCb after register
          * */
         static register(name, actionFn) {
+            name = this._getValidName(name);
             if (typeof actionFn !== 'function') {
                 throw new Error(`[DependsOn]: Action ${actionFn} is not a valid action definition`);
             }
