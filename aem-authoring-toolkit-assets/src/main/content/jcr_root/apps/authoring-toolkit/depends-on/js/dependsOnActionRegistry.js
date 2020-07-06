@@ -40,7 +40,7 @@
         }
 
         /**
-         * Function to remove symbols that don't match to the pattern
+         * Function to remove symbols that don't match the pattern
          * @param {string} target - target string
          * @param {RegExp} pattern -  pattern for correct symbols
          * */
@@ -56,7 +56,7 @@
          * @param {string} name - action name
          * @returns {string} correct action name (according to nameRegex)
          * */
-        static _refactorName(name) {
+        static _getValidName(name) {
             const nameRegex = /^[a-z0-9-]+$/;
             let resultName = name;
             if (name.trim().search(nameRegex) === -1) {
@@ -73,7 +73,7 @@
          * @returns {function} actual actionCb after register
          * */
         static register(name, actionFn) {
-            name = this._refactorName(name);
+            name = this._getValidName(name);
             if (typeof actionFn !== 'function') {
                 throw new Error(`[DependsOn]: Action ${actionFn} is not a valid action definition`);
             }
