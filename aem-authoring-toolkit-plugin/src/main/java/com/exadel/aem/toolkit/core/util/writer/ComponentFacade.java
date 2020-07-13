@@ -15,14 +15,20 @@
 package com.exadel.aem.toolkit.core.util.writer;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
+import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ComponentFacade {
+
+    private static final String EXCEPTION_MESSAGE_TEMPLATE = "Can't choose view for %s";
+
     private final List<PackageEntryWriter> writers;
     private final List<Class<?>> views;
 
@@ -35,11 +41,14 @@ public class ComponentFacade {
 
     public void write(Path path) {
         writers.forEach(writer -> {
-            Class<?> processedClass = views.stream().filter(writer::isProcessed).findFirst().orElse(null);
-            if (processedClass == null) {
+            List<Class<?>> processedClasses = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
+            if (processedClasses.size() > 1) {
+                PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(EXCEPTION_MESSAGE_TEMPLATE, writer.getXmlScope())));
+            }
+            if (processedClasses.isEmpty()) {
                 return;
             }
-            writer.writeXml(processedClass, path);
+            writer.writeXml(processedClasses.get(0), path);
         });
     }
 }
