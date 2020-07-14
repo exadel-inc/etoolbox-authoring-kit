@@ -11,7 +11,8 @@ public class DependsOnActions {
      */
     public static final String VISIBILITY = "visibility";
     /**
-     * Hides the tab or element's parent tab if the query result is 'falsy'
+     * Hides the tab (if applied to the tab) or element's parent tab (if applied to the element)
+     * if the query result is 'falsy'
      */
     public static final String TAB_VISIBILITY = "tab-visibility";
     /**
