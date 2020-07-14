@@ -44,6 +44,7 @@ public class ComponentFacade {
             List<Class<?>> processedClasses = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
             if (processedClasses.size() > 1) {
                 PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(EXCEPTION_MESSAGE_TEMPLATE, writer.getXmlScope())));
+                return;
             }
             if (processedClasses.isEmpty()) {
                 return;
