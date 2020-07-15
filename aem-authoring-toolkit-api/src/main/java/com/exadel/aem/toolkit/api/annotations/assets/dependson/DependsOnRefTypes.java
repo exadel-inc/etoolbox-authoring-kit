@@ -15,5 +15,6 @@ public enum DependsOnRefTypes {
     BOOLEAN,
     BOOLSTRING,
     NUMBER,
-    STRING
+    STRING,
+    JSON
 }

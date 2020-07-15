@@ -41,7 +41,7 @@
             $el.closest(FIELD_WRAPPER)
                 .attr('hidden', state ? null : 'true')
                 .attr('data-dependson-controllable', 'true');
-            // Force update validity if field hidden
+            // Force update validity if the field is hidden
             if (!state) {
                 ns.ElementAccessors.clearValidity($el);
             }
