@@ -1,5 +1,7 @@
 # Core Handlers
 js/dependsOnUtils.js
+js/utils/dependsOnRequestCache.js
+
 js/dependsOnElementAccessors.js
 js/references/dependsOnObservedReference.js
 js/references/dependsOnElementReference.js
