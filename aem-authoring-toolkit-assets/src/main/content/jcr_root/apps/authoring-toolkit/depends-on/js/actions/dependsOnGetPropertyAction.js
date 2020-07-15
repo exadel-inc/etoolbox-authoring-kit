@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Liubou Masiuk (liubou-masiuk), Yana Bernatskaya (YanaBr)
- * @version 2.2.4
+ * @version 2.3.0
  *
  * Custom action to get component property
  * property path can be relative (e.g. 'node/nestedProperty' or '../../parentCompProperty')
