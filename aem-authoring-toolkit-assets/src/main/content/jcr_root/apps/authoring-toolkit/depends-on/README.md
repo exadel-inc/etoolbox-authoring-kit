@@ -143,7 +143,7 @@ Single reference should reference existing field and will not be reattached on d
 Note: multiple reference triggers query update on any group update: changing some of group fields value, adding or removing referenced field. 
 So usage of multiple reference can slow down queries performance.
 
-Reference cannot be named 'this', this name is reserved and always accesses current element value.
+Reference cannot be named 'this', because 'this' is reserved to refer to the value of the current element
 Reference name is not necessary for referencing current element by `@this`.
 
 Area to find referenced field can be narrowed down by providing the Scope. 
