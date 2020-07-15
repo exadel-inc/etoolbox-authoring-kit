@@ -1,26 +1,11 @@
 package com.exadel.aem.toolkit.samples.models;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.ModifiableValueMap;
-import org.apache.sling.api.resource.PersistenceException;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.Self;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import com.day.cq.tagging.Tag;
 import com.day.cq.tagging.TagManager;
-
-import com.exadel.aem.toolkit.api.annotations.assets.dependson.*;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRefTypes;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
@@ -38,6 +23,19 @@ import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.*;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Dialog(
         name = "content/warrior-description-component",
@@ -187,7 +185,7 @@ public class WarriorDescriptionComponent {
     private String isDarkColorTheme;
 
     @PlaceOnTab(WarriorDescriptionComponent.TAB_FILMS)
-    @DependsOn(query = "@isDarkColorTheme === 'true'", action = "namespaceFilter")
+    @DependsOn(query = "@isDarkColorTheme", action = "namespaceFilter")
     @Autocomplete(
             multiple = true,
             forceSelection = true,
