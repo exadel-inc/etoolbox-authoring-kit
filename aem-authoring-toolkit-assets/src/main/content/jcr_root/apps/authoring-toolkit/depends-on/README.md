@@ -80,6 +80,7 @@ Allowed reference types:
 * `boolstring` - cast as a string value to boolean (true if string cast equals "true")
 * `number` - cast to number value
 * `string` - cast to string
+* `json` - parse JSON string
 
 If the type is not specified manually it will be chosen automatically based on element widget type 
 (see _preferableType_ in ElementsAccessor definition).
@@ -583,5 +584,46 @@ public class Component {
         @DialogField
         public String item;
     }
+}
+```
+#### 13. Alert accessors
+
+DependsOn provides the ability to conditionally change any property of Alert widget:
+- text;
+- title;
+- size;
+- variant.
+
+Setting Alert's text is done the same way as setting the value of other widgets.
+If you want to set multiple properties at once, use a JSON object (see the example below).
+
+Also, you can reference alert widgets. Alert reference is an object that provides alert's title and text.
+```java
+public class Component {
+    
+    @DialogField(label = "Set alert text")
+        @TextField
+        @DependsOnRef
+        private String textSetter;
+    
+        @DialogField(label = "Set alert size")
+        @Select(options = {
+                @Option(text = "Small", value = "S"),
+                @Option(text = "Large", value = "L")
+        })
+        @DependsOnRef
+        private String sizeSetter;
+    
+        @DialogField
+        @Alert(text = "2", variant = StatusVariantConstants.WARNING)
+        @DependsOnRef
+        @DependsOn(query = "\\{'text': @textSetter, 'size': @sizeSetter\\}", action = DependsOnActions.SET)
+        // @DependsOn(query = "@textSetter", action = DependsOnActions.SET) //works as well
+        private String alert;
+    
+        @DialogField(label = "Get alert text")
+        @TextField
+        @DependsOn(query = "@alert.text", action = DependsOnActions.SET)
+        private String alertGetter;
 }
 ```

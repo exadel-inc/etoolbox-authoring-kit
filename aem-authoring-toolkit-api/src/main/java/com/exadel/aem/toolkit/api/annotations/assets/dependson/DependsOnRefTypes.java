@@ -32,5 +32,9 @@ public enum DependsOnRefTypes {
     /**
      * Cast to string
      */
-    STRING
+    STRING,
+    /**
+     * Parse as JSON
+     */
+    JSON
 }
