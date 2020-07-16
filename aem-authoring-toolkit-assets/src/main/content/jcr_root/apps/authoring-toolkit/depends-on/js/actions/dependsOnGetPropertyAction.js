@@ -1,17 +1,20 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Liubou Masiuk (liubou-masiuk), Yana Bernatskaya (YanaBr)
- * @version 2.3.0
+ * @version 2.4.0
  *
  * Custom action to get component property
  * property path can be relative (e.g. 'node/nestedProperty' or '../../parentCompProperty')
  *
  * {string} query - property path
+ *
+ * {string} config.map - function to process result before set (can be used for mapping)
  * */
 
 (function (Granite, $, DependsOn) {
     'use strict';
 
     const PARENT_DIR_REGEX = /\.\.\//g;
+    const DEFAULT_MAP_FN = (res) => res;
 
     function getParentLevel(path) {
         const dirMatches = path.match(PARENT_DIR_REGEX);
@@ -25,11 +28,24 @@
         return targetPath + '.infinity.json';
     }
 
+    function evalMapFunction(fn, defaultFn) {
+        try {
+            return (new Function(fn))() || defaultFn;
+        } catch (e) {
+            console.error(`[DependsOn]: can not process map function '${fn}'`);
+        }
+        return defaultFn;
+    }
+
     /**
      * Action definition
      * @param {string} path - query
+     * @param {GetPropertyCfg} config
+     *
+     * @typedef GetPropertyCfg
+     * @property {string} map
      * */
-    function getParentProperty(path) {
+    function getParentProperty(path, config) {
         if (typeof path !== 'string') {
             console.warn('[DependsOn]: can not execute \'get-property\', query should be a string');
             return;
@@ -48,6 +64,7 @@
                     return '';
                 }
             )
+            .then(config.map ? evalMapFunction(config.map, DEFAULT_MAP_FN) : DEFAULT_MAP_FN)
             .then((res) => DependsOn.ElementAccessors.setValue($el, res));
     }
 

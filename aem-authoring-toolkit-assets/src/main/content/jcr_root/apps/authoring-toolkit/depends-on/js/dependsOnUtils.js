@@ -10,9 +10,9 @@
     /**
      * Create sequence generator
      * */
-    ns.createSequence = function() {
+    ns.createSequence = function () {
         let index = 1;
-        return { next: () => index++ };
+        return {next: () => index++};
     };
 
     /**
@@ -98,7 +98,7 @@
      * */
     ns.parseActionData = function (el, actionName = '', index = 0) {
         const prefix = `data-dependson-${actionName}-`;
-        const suffix = index ? `-${index}`: '';
+        const suffix = index ? `-${index}` : '';
 
         let attrs = [].slice.call(el.attributes);
         attrs = attrs.filter((attr) => attr.name.slice(0, prefix.length) === prefix);
@@ -119,7 +119,7 @@
      * @param state {boolean}
      */
     ns.toggleAsterisk = function ($el, state) {
-        $el.text($el.text().replace(/\s?\*?$/, state ? ' *': ''));
+        $el.text($el.text().replace(/\s?\*?$/, state ? ' *' : ''));
     };
 
     /**
