@@ -63,7 +63,7 @@ If the action is not specified then `visibility` is used by default.
 
 Custom action can be specified using `Granite.DependsOnPlugin.ActionRegistry`.
 
-Action should have name and function to execute. 
+Action should have name (allowed symbols: a-z, 0-9, -) and function to execute. 
 For example build-in `set` action is defined as follows:
 ```javascript
 Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('set', function setValue(value) {
@@ -586,6 +586,8 @@ public class Component {
     }
 }
 ```
+
+=======
 #### 13. Alert accessors
 
 DependsOn provides the ability to conditionally change any property of Alert widget:
