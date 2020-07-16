@@ -44,7 +44,7 @@
                 type = ns.ElementAccessors.getPreferableType(this.$el);
             }
             return ns.castToType(ns.ElementAccessors.getValue(this.$el), type);
-        };
+        }
 
         /**
          * Check is the Element Reference accepts passed referenced definition
