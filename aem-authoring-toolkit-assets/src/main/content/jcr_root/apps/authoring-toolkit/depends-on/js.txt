@@ -18,7 +18,6 @@ js/accessors/dependsOnCoralMultiFieldAccessor.js
 js/accessors/dependsOnCoralCheckboxAccessor.js
 js/accessors/dependsOnCoralHeadingAccessor.js
 js/accessors/dependsOnCoralAlertAccessor.js
-js/accessors/dependsOnJsonSetAccessor.js
 
 # Actions
 js/actions/dependsOnCoralBasicActions.js
