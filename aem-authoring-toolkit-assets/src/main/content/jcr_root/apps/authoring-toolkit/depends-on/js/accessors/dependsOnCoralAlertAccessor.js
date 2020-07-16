@@ -12,7 +12,7 @@
         preferableType: 'object',
         get: function ($el) {
             const element = $el[0];
-            let result = {}
+            const result = {}
             if (element.header) result.title = element.header.innerText;
             if (element.content) result.text = element.content.innerText;
             return result;

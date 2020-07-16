@@ -61,11 +61,7 @@
             case 'string':
                 return String(value);
             case 'json':
-                try {
-                    return JSON.parse(value);
-                } catch (e) {
-                    return {};
-                }
+                return ns.parseSafe(value);
             default:
                 return value;
         }
@@ -133,5 +129,19 @@
      * */
     ns.isObject = function (value) {
         return value !== null && typeof value === 'object';
+    }
+
+
+    /**
+     * Attempts to parse a string value into JSON object
+     * @param {string} value to parse
+     * @return {Object} parsed value or an empty object in case of any exceptions
+     */
+    ns.parseSafe = function (value) {
+        try {
+            return JSON.parse(value);
+        } catch (e) {
+            return {};
+        }
     }
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
