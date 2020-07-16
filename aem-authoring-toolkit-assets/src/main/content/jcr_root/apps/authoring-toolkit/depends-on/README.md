@@ -42,6 +42,7 @@ For referenced field:
 
 * `data-dependsonref` - to mark a field, that is referenced from the Query.
 * `data-dependsonreftype` - (optional) to define expected type of reference value. 
+* `data-dependsonreflazy` - (marker) attribute to mark reference as lazy. DependsOn doesn't observe rapid events like `input`.
 
 #### DependsOn Usage
 
