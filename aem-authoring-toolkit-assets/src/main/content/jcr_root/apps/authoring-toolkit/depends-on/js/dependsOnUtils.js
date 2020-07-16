@@ -121,7 +121,7 @@
      * @returns string
      * */
     ns.getNthParent = function (path, n) {
-        let parts = path.split('/');
+        const parts = path.split('/');
         return parts.slice(0, parts.length - n).join('/');
     };
 
@@ -134,7 +134,7 @@
      */
     ns.get = function (data, path, separator) {
         if (!data) return undefined;
-        let parts = (path || '').split(separator);
+        const parts = (path || '').split(separator);
         return parts.reduce(function (partialData, key) {
             return (partialData || {})[key];
         }, data);
@@ -142,7 +142,7 @@
 
     /**
      * Get current component path
-     * @param item JQueryElement - dialog form element, could be just "this" in dependsOn (query)
+     * @param {JQuery} item - dialog form element, could be just "this" in dependsOn (query)
      * @returns string
      * */
     ns.getDialogPath = function (item) {
