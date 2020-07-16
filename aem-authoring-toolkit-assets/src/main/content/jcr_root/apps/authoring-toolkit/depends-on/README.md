@@ -85,6 +85,8 @@ Allowed reference types:
 If the type is not specified manually it will be chosen automatically based on element widget type 
 (see _preferableType_ in ElementsAccessor definition).
 
+In any other case (e.g. if type is `any`) no cast will be performed.
+
 ##### ElementsAccessor Registry
 
 Registry `Granite.DependsOnPlugin.ElementAccessors` - can be used to define custom accessors of element. 
@@ -142,7 +144,7 @@ Single reference should reference existing field and will not be reattached on d
 Note: multiple reference triggers query update on any group update: changing some of group fields value, adding or removing referenced field. 
 So usage of multiple reference can slow down queries performance.
 
-Reference can not be named as 'this', that name is reserved and always reach current element value.
+Reference cannot be named 'this', because 'this' is reserved to refer to the value of the current element
 Reference name is not necessary for referencing current element by `@this`.
 
 Area to find referenced field can be narrowed down by providing the Scope. 
@@ -152,7 +154,7 @@ Scope is defined in parentheses after reference name.
 Examples:
 * `@enableCta (coral-panel)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of the closest parent Panel element.
 * `@enableCta (.my-fieldset)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of the closest parent container element with "my-fieldset" class.
-* `@@enableCta (coral-multifield)` - will references all values of the fields marked by `dependsOnRef=enableCta` in bounds of the closest multifield.
+* `@@enableCta (coral-multifield)` - will reference all values of the fields marked by `dependsOnRef=enableCta` in bounds of the closest multifield.
 
 "Back-forward" CSS selectors are available in the Scope syntax, i.e. we can define CSS selector to determinate parent element and then provide selector to search the target element for scope in bounds of found parent. 
 Back and forward selectors are separated by '|>' combination. 
