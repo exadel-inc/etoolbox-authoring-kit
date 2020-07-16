@@ -140,7 +140,7 @@
      * @param {string} path - string with name of property
      * @param {string} separator - path separator
      */
-    ns.get = function (data, path, separator) {
+    ns.get = function (data, path, separator= '.') {
         if (!data) return undefined;
         const parts = (path || '').split(separator);
         return parts.reduce(function (partialData, key) {
