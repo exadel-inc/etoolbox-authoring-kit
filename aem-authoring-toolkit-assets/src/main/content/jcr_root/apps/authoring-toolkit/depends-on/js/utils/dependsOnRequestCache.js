@@ -9,7 +9,16 @@
 
     let instance;
     class RequestCache {
-        constructor(timeout = 2000) {
+        static get DEFAULT_TIMEOUT() { return 2000; }
+
+        /**
+         * @return {RequestCache} global RequestCache instance
+         */
+        static get instance() {
+            return instance || (instance = new RequestCache());
+        }
+
+        constructor(timeout = RequestCache.DEFAULT_TIMEOUT) {
             this.timeout = timeout;
 
             this._clearTimeout = null;
@@ -39,10 +48,6 @@
         clear() {
             this._cacheMap.clear();
             console.debug('[DependsOn] Custom action "get-property" cache cleared.');
-        }
-
-        static get instance() {
-            return instance || (instance = new RequestCache());
         }
     }
 

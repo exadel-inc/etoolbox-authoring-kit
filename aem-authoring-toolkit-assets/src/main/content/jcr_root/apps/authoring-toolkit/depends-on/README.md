@@ -2,7 +2,7 @@
 
 Author _Alexey Stsefanovich (ala'n)_ and _Yana Bernatskaya (YanaBr)_
 
-Version _2.3.0_
+Version _2.4.0_
  
 DependsOn Plugin is a clientlib that executes defined action on dependent fields.
  
@@ -59,11 +59,12 @@ Built-in plugin actions are:
 
 If the action is not specified then `visibility` is used by default.
 
-##### Additional actions
+##### Async actions
 
-Custom dependsOn actions that are not basic.
- * `get-property` - get component property (path from the parameter _path_). Query - current node (__this__). 
- Parameters: `path` - path to property relative to current node (e.g. 'node/nestedProperty' or '../../parentCompProperty')
+Build-in plugin async actions:
+ * `get-property` - get component property. 
+ Use query as a target path to node or property (relative to current node e.g. 'node/nestedProperty' or '../../parentCompProperty'). 
+ Parameters: `map` (optional) - function to process result. Can be used as mapping / keys-filtering or can provide more complicated action. 
 
 ##### Action Registry
 
@@ -593,7 +594,57 @@ public class Component {
 }
 ```
 
-#### 13. Alert accessors
+#### 13. Get-property action
+Via 'get-property' DependsOn plugin can easily access parent component property
+
+Allow set 'opaque' option only if 'bg' option of parent component is not blank.
+```java
+public class Component {
+        @Hidden
+        @DependsOn(action = "get-property", query = "'../../bg'")
+        @DependsOnRef(name = "parentBg")
+        private String parentBg;
+
+        @DialogField
+        @TextField
+        @DependsOn(query = "!!@parentBg")
+        private String opaque;
+}
+```
+
+'get-property' have a short term caching, so multiple properties will be requested once without loss of performance
+ ```java
+ public class Component {
+         @Hidden
+         @DependsOn(action = "get-property", query = "'../../field1'")
+         @DependsOnRef(name = "parentProperty1")
+         private String parentProperty1;
+ 
+         @Hidden
+         @DependsOn(action = "get-property", query = "'../../field2'")
+         @DependsOnRef(name = "parentProperty2")
+         private String parentProperty2;
+ }
+ ```
+
+`map` acton param can be used to process result. 
+Example below retrieve parent component title and type in a speciall format 
+ ```java
+ public class Component {
+         @Hidden
+         @DependsOn(action = "get-property", query = "'../../'", params = {
+            @DependsOnParam(name = "map", value = "(resource) => resource.name + ' (' + resource.type + ')'")
+         })
+         @DependsOnRef(name = "parentHeading")
+         private String parentHeading;
+ 
+         @Heading
+         @DependsOn(action = "set", query = "@parentHeading")
+         private String parentComponentHeading;
+ }
+ ```
+
+#### 14. Alert accessors
 
 DependsOn provides the ability to conditionally change any property of Alert widget:
 - text;
