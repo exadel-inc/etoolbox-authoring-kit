@@ -24,6 +24,9 @@
             return $el.val() || '';
         },
         set: function ($el, value, notify) {
+            if (ns.isObject(value)) {
+                value = JSON.stringify(value);
+            }
             $el.val(value);
             notify && $el.trigger('change');
         },
