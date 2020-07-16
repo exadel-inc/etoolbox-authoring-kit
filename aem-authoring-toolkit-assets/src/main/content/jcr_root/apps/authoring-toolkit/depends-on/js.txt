@@ -1,5 +1,7 @@
 # Core Handlers
 js/dependsOnUtils.js
+js/utils/dependsOnRequestCache.js
+
 js/dependsOnElementAccessors.js
 js/references/dependsOnObservedReference.js
 js/references/dependsOnElementReference.js
@@ -22,6 +24,7 @@ js/accessors/dependsOnCoralAlertAccessor.js
 # Actions
 js/actions/dependsOnCoralBasicActions.js
 js/actions/dependsOnCoralValidateAction.js
+js/actions/dependsOnGetPropertyAction.js
 
 # Init
 js/dependsOn.js

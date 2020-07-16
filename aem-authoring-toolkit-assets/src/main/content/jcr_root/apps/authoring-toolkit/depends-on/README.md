@@ -2,7 +2,7 @@
 
 Author _Alexey Stsefanovich (ala'n)_ and _Yana Bernatskaya (YanaBr)_
 
-Version _2.2.3_
+Version _2.3.0_
  
 DependsOn Plugin is a clientlib that executes defined action on dependent fields.
  
@@ -58,6 +58,12 @@ Built-in plugin actions are:
  * `disabled` - set the field's disabled state from the query result.
 
 If the action is not specified then `visibility` is used by default.
+
+##### Additional actions
+
+Custom dependsOn actions that are not basic.
+ * `get-property` - get component property (path from the parameter _path_). Query - current node (__this__). 
+ Parameters: `path` - path to property relative to current node (e.g. 'node/nestedProperty' or '../../parentCompProperty')
 
 ##### Action Registry
 
@@ -586,6 +592,7 @@ public class Component {
     }
 }
 ```
+
 #### 13. Alert accessors
 
 DependsOn provides the ability to conditionally change any property of Alert widget:
