@@ -25,6 +25,7 @@ public @interface DependsOn {
     /**
      * Defines the 'dependsOnAction' attribute
      * @return String value, one of {@link DependsOnActions} items or a custom-defined action name
+     * @see DependsOnActions
      */
     String action() default DependsOnActions.VISIBILITY;
 

@@ -18,6 +18,8 @@ js/accessors/dependsOnCoralRTEAccessor.js
 js/accessors/dependsOnCQFileUploadAccessor.js
 js/accessors/dependsOnCoralMultiFieldAccessor.js
 js/accessors/dependsOnCoralCheckboxAccessor.js
+js/accessors/dependsOnCoralHeadingAccessor.js
+js/accessors/dependsOnCoralAlertAccessor.js
 
 # Actions
 js/actions/dependsOnCoralBasicActions.js
