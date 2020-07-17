@@ -72,6 +72,13 @@
                             <dropdown disabled="{Boolean}false" emptyText="Select rating" fieldLabel="Rating"
                                       jcr:primaryType="nt:unstructured" name="./dropdown" renderHidden="{Boolean}false"
                                       required="{Boolean}false"
+                                      multiple="{Boolean}false"
+                                      translateOptions="{Boolean}true"
+                                      ordered="{Boolean}false"
+                                      emptyOption="{Boolean}false"
+                                      deleteHint="{Boolean}true"
+                                      variant="default"
+                                      forceIgnoreFreshness="{Boolean}false"
                                       sling:resourceType="granite/ui/components/coral/foundation/form/select">
                                 <items jcr:primaryType="nt:unstructured">
                                     <item1 jcr:primaryType="nt:unstructured" text="1 star" value="1"/>

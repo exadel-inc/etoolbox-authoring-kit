@@ -470,7 +470,14 @@ public class MyDialogWithDropdown {
             @Option(text = "4 stars", value = "4", disabled = true),
             @Option(text = "5 stars", value = "5", disabled = true)
         },
-        emptyText = "Select rating"
+        emptyText = "Select rating",
+        multiple = false,
+        translateOptions = false,
+        ordered = false,
+        emptyOption = false,
+        variant = SelectVariant.DEFAULT,
+        deleteHint = false,
+        forceIgnoreFreshness = false
     )
     String dropdown;
 }
@@ -500,7 +507,9 @@ Used to logically group a number of different fields as described in [Adobe's Gr
 
 Hierarchy of classes is honored (so that a *FieldSet*-producing class may extend another class from same or even foreign scope. Proper field order within a fieldset can be guaranteed by use of *ranking* values (see chapter on `@DialogField` above). 
 
-Names of fields added to a FieldSet may share common prefix specified in *namePrefix* property. This can be a simple word, or a string trailed with slash. In the latter case, values assigned to the FieldSet's fields will directed to a a subnode of the resource being edited.
+Names of fields added to a FieldSet may share a common prefix specified in *namePrefix* property. This can be a simple word, or a string trailed with slash. In the latter case, values assigned to the FieldSet's fields will directed to a subnode of the resource being edited.
+
+If you do not need a margin around the fieldset added by default, add `@Attribute(className="u-coral-noMargin")`
 ```java
 public class DialogWithFieldSet {
     @FieldSet(title = "Field set example", namePrefix="fs-")

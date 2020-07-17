@@ -16,7 +16,6 @@ public class ArmorColorFields {
     private static final String DEFAULT_COLOR = "#A9A9A9";
 
     @ColorField(
-            value = "HEX",
             emptyText = "Choose color for armor"
     )
     @DialogField(ranking = 2)
@@ -25,7 +24,6 @@ public class ArmorColorFields {
     private String armor;
 
     @ColorField(
-            value = "HEX",
             emptyText = "Choose color for shoes"
     )
     @DialogField(ranking = 3)
@@ -34,7 +32,6 @@ public class ArmorColorFields {
     private String shoes;
 
     @ColorField(
-            value = "HEX",
             emptyText = "Choose color for helmet"
     )
     @DialogField(ranking = 1)

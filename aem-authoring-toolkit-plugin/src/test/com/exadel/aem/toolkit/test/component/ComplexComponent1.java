@@ -110,7 +110,7 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_6;
                 ),
                 @InplaceEditingConfig(
                         title = "Primary Topic 1 Title",
-                        propertyName = "primary1_topicTitle",
+                        propertyName = "../primary1_topicTitle",
                         type = "Primary_type",
                         editElementQuery = ".editable-prtopic1title"
                 ),
