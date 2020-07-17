@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
- * @version 2.2.3
+ * @version 2.2.4
  *
  * DependsOn plugin utils
  * */
@@ -26,7 +26,7 @@
     };
 
     /**
-     * Extended comparison that supports NaN and Arrays
+     * Extended comparison that supports NaN, Arrays and Objects
      * @returns {boolean}
      * */
     ns.isEqual = function isEqual(a, b) {
@@ -36,13 +36,19 @@
         if (Array.isArray(a) && Array.isArray(b)) {
             return a.length === b.length && a.every((val, i) => isEqual(val, b[i]));
         }
+        if (ns.isObject(a) && ns.isObject(b)) {
+            const keysA = Object.keys(a);
+            const keysB = Object.keys(b);
+            if (keysA.length !== keysB.length) return false;
+            return keysA.every(key => isEqual(a[key], b[key]));
+        }
         return false;
     };
 
     /**
      * Cast field value to passed type
      * @param value
-     * @param {'boolean'|'boolstring'|'number'|'string'|'any'} type
+     * @param {'boolean'|'boolstring'|'number'|'string'|'json'|'any'} type
      * */
     ns.castToType = function (value, type) {
         switch (type.toLowerCase()) {
@@ -54,6 +60,8 @@
                 return Number(value);
             case 'string':
                 return String(value);
+            case 'json':
+                return ns.parseSafe(value);
             default:
                 return value;
         }
@@ -112,5 +120,63 @@
      */
     ns.toggleAsterisk = function ($el, state) {
         $el.text($el.text().replace(/\s?\*?$/, state ? ' *': ''));
+    };
+
+    /**
+     * Get n-th parent of the current resource
+     * @param path string - resource path
+     * @param n number - the ordinal number of parent
+     * @returns string
+     * */
+    ns.getNthParent = function (path, n) {
+        const parts = path.split('/');
+        return parts.slice(0, parts.length - n).join('/');
+    };
+
+    /**
+     * Gets object property given its string path
+     *
+     * @param {object} data - object
+     * @param {string} path - string with name of property
+     * @param {string} separator - path separator
+     */
+    ns.get = function (data, path, separator) {
+        if (!data) return undefined;
+        const parts = (path || '').split(separator);
+        return parts.reduce(function (partialData, key) {
+            return (partialData || {})[key];
+        }, data);
+    };
+
+    /**
+     * Get current component path
+     * @param {JQuery} item - dialog form element, could be just "this" in dependsOn (query)
+     * @returns string
+     * */
+    ns.getDialogPath = function (item) {
+        return item.closest('form.cq-dialog').attr('action');
+    }
+
+    /**
+     * Check if the passed value is an object
+     * @param value - value to check
+     * @returns {boolean} true if the value is an object, false otherwise
+     * */
+    ns.isObject = function (value) {
+        return value !== null && typeof value === 'object';
+    }
+
+
+    /**
+     * Attempts to parse a string value into JSON object
+     * @param {string} value to parse
+     * @return {Object} parsed value or an empty object in case of any exceptions
+     */
+    ns.parseSafe = function (value) {
+        try {
+            return JSON.parse(value);
+        } catch (e) {
+            return {};
+        }
     }
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

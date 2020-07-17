@@ -19,12 +19,10 @@ import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnConfig;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnParam;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRefTypes;
-import com.exadel.aem.toolkit.api.handlers.MemberWrapper;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
-import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
@@ -40,7 +38,7 @@ import java.util.stream.Collectors;
 /**
  * {@link Handler} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
  */
-public class DependsOnHandler implements Handler, BiConsumer<Element, MemberWrapper> {
+public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
 
     static final String EMPTY_VALUES_EXCEPTION_MESSAGE = "Non-empty string values required for DependsOn params";
 
@@ -49,22 +47,20 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, MemberWrap
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
-     * @param memberWrapper Current {@code MemberWrapper} instance
+     * @param field Current {@code Field} instance
      */
     @Override
-    public void accept(Element element, MemberWrapper memberWrapper) {
-        DependsOn dependsOn;
-        DependsOnConfig dependsOnConfig;
-        if ((dependsOn = PluginReflectionUtility.getMemberAnnotation(memberWrapper.getMember(), DependsOn.class)) != null) {
-            handleDependsOn(element, dependsOn);
-        } else if ((dependsOnConfig = PluginReflectionUtility.getMemberAnnotation(memberWrapper.getMember(), DependsOnConfig.class)) != null) {
-            handleDependsOnConfig(element, dependsOnConfig);
+    public void accept(Element element, Field field) {
+        if (field.isAnnotationPresent(DependsOn.class)) {
+            handleDependsOn(element, field.getDeclaredAnnotation(DependsOn.class));
+        } else if (field.isAnnotationPresent(DependsOnConfig.class)) {
+            handleDependsOnConfig(element, field.getDeclaredAnnotation(DependsOnConfig.class));
         }
-        handleDependsOnRefValue(element, PluginReflectionUtility.getMemberAnnotation(memberWrapper.getMember(), DependsOnRef.class));
+        handleDependsOnRefValue(element, field);
     }
 
     /**
-     * Called by {@link DependsOnHandler#accept(Element, MemberWrapper)} to store particular {@code DependsOn} value in XML markup
+     * Called by {@link DependsOnHandler#accept(Element, Field)} to store particular {@code DependsOn} value in XML markup
      * @param element Current XML element
      * @param value Current {@link DependsOn} value
      */
@@ -81,7 +77,7 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, MemberWrap
     }
 
     /**
-     * Called by {@link DependsOnHandler#accept(Element, MemberWrapper)} to store {@code DependsOnConfig} value in XML markup
+     * Called by {@link DependsOnHandler#accept(Element, Field)} to store {@code DependsOnConfig} value in XML markup
      * @param element Current XML element
      * @param value Current {@link DependsOnConfig} value
      */
@@ -137,21 +133,23 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, MemberWrap
     }
 
     /**
-     * Called by {@link DependsOnHandler#accept(Element, MemberWrapper)} to store particular {@code DependsOnRef} value in XML markup
+     * Called by {@link DependsOnHandler#accept(Element, Field)} to store particular {@code DependsOnRef} value in XML markup
      * @param element Current XML element
-     * @param value Current {@link DependsOnRef} value
+     * @param field Current {@code Field} instance
      */
-    private void handleDependsOnRefValue(Element element, DependsOnRef value) {
+    private void handleDependsOnRefValue(Element element, Field field) {
+        DependsOnRef value = field.getDeclaredAnnotation(DependsOnRef.class);
         if (value == null) {
             return;
         }
-        if (StringUtils.isBlank(value.name())) {
-            PluginRuntime.context().getExceptionHandler().handle(new ValidationException(EMPTY_VALUES_EXCEPTION_MESSAGE));
-            return;
+
+        String dependsOnRefName = value.name();
+        if (StringUtils.isBlank(dependsOnRefName)) {
+            dependsOnRefName = field.getName();
         }
 
         Map<String, String> valueMap = Maps.newHashMap();
-        valueMap.put(DialogConstants.PN_DEPENDS_ON_REF, value.name());
+        valueMap.put(DialogConstants.PN_DEPENDS_ON_REF, dependsOnRefName);
         if (!value.type().toString().equals(DependsOnRefTypes.AUTO.toString())) {
             valueMap.put(DialogConstants.PN_DEPENDS_ON_REFTYPE, value.type().toString().toLowerCase());
         }
