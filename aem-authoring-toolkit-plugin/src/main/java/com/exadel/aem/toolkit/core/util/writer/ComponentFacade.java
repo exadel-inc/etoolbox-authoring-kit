@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Class that encapsulates steps taken by MVC pattern
+ */
 public class ComponentFacade {
 
     private static final String EXCEPTION_MESSAGE_TEMPLATE = "Can't choose view for %s";
@@ -39,6 +42,10 @@ public class ComponentFacade {
                 .ifPresent(component -> Collections.addAll(views, component.views()));
     }
 
+    /**
+     * Method that define each view for all scopes
+     * @param path Current {@code Path} instance
+     */
     public void write(Path path) {
         writers.forEach(writer -> {
             List<Class<?>> processedClasses = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
