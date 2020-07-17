@@ -21,22 +21,22 @@
         return dirMatches && dirMatches.length || 0;
     }
 
-    function resolveResourcePath(path, $el) {
-        if (path[0] !== '.') return path;
+    function parsePathString(path) {
+        path = path.trim();
+        const nameStart = path.lastIndexOf('/');
+        return {
+            name: path.substr(nameStart + 1),
+            path: path.substr(0, nameStart)
+        };
+    }
+
+    function resolveResourcePath(path, $el, postfix) {
+        if (!path.startsWith('.')) return path;
         const parentLevel = countParentLevel(path);
         const currentPath = DependsOn.getDialogPath($el);
         const targetPath = DependsOn.getNthParent(currentPath, parentLevel);
-        const extension = targetPath.substr(-5) === '.json' ? '' : '.infinity.json'
+        const extension = targetPath.endsWith(postfix) ? '' : postfix;
         return targetPath + extension;
-    }
-
-    function evalMapFunction(fn, defaultFn) {
-        try {
-            return (new Function(fn))() || defaultFn;
-        } catch (e) {
-            console.error(`[DependsOn]: can not process map function '${fn}'`);
-        }
-        return defaultFn;
     }
 
     /**
@@ -46,28 +46,31 @@
      *
      * @typedef GetPropertyCfg
      * @property {string} map
-     * */
+     * @property {string} postfix
+     */
     function getParentProperty(query, config) {
         if (typeof query !== 'string') {
             console.warn('[DependsOn]: can not execute \'get-property\', query should be a string');
             return;
         }
 
+        config = Object.assign({
+            postfix: '.json'
+        }, config);
+
         const $el = this.$el;
-        const nameStart = query.lastIndexOf('/') + 1;
-        const name = query.substr(nameStart);
-        const path = query.substr(0, nameStart);
-        const resourcePath = resolveResourcePath(path, $el);
+        const {name, path} = parsePathString(query);
+        const resourcePath = resolveResourcePath(path, $el, config.postfix);
 
         DependsOn.RequestCache.instance.get(resourcePath)
             .then(
-                (data) => DependsOn.get(data, name),
+                (data) => name ? data[name] : data,
                 (e) => {
                     console.warn('Can not get data from node ' + resourcePath, e);
                     return '';
                 }
             )
-            .then(config.map ? evalMapFunction(config.map, DEFAULT_MAP_FN) : DEFAULT_MAP_FN)
+            .then(DependsOn.evalFn(config.map, DEFAULT_MAP_FN))
             .then((res) => DependsOn.ElementAccessors.setValue($el, res));
     }
 
