@@ -28,6 +28,9 @@ DependsOn workflow consists of the following steps:
  
 **ObservedReferences** are external elements or group of elements whose values can be used inside of **Query**.
  
+More detailed DependsOn structure is presented below. 
+![DependsOn Structure](./docs/structure.jpg)
+
 #### Introduction  
 
 "DependsOn" plugin is based on the following data attributes.
@@ -62,9 +65,14 @@ If the action is not specified then `visibility` is used by default.
 ##### Async actions
 
 Build-in plugin async actions:
- * `get-property` - get component property. 
- Use query as a target path to node or property (relative to current node e.g. 'node/nestedProperty' or '../../parentCompProperty'). 
- Parameters: `map` (optional) - function to process result. Can be used as mapping / keys-filtering or can provide more complicated action. 
+ * `get-property` - get resource property. 
+ Uses query as a target path to node or property.
+ Path should end with the property name or '/' to retrieve the whole node.
+ Can process paths relative to current node e.g. './nestedProperty' or '../../parentCompProperty'.
+ Also, supports absolute paths e.g. 'full/path/of/node/someProperty').  
+ Parameters: 
+    * `map` (optional) - function to process result. Can be used as mapping / keys-filtering or can provide more complicated action. 
+    * `postfix` (optional, `.json` by default) - postfix to add to the node path
 
 ##### Action Registry
 
@@ -595,7 +603,7 @@ public class Component {
 ```
 
 #### 13. Get-property action
-Via 'get-property' DependsOn plugin can easily access parent component property
+'get-property' action provides easy access to parent nodes' properties.
 
 Allow set 'opaque' option only if 'bg' option of parent component is not blank.
 ```java
@@ -612,7 +620,7 @@ public class Component {
 }
 ```
 
-'get-property' have a short term caching, so multiple properties will be requested once without loss of performance
+'get-property' action has a short term caching, so multiple properties will be requested once without loss of performance
  ```java
  public class Component {
          @Hidden
@@ -628,7 +636,7 @@ public class Component {
  ```
 
 `map` acton param can be used to process result. 
-Example below retrieve parent component title and type in a speciall format 
+The example below retrieves parent component's title and type in a special format.
  ```java
  public class Component {
          @Hidden

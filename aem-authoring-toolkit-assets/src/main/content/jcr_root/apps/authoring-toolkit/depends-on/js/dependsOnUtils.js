@@ -166,7 +166,6 @@
         return value !== null && typeof value === 'object';
     }
 
-
     /**
      * Attempts to parse a string value into JSON object
      * @param {string} value to parse
@@ -178,6 +177,27 @@
         } catch (e) {
             return {};
         }
+    }
+
+    /**
+     * Parse function string to a real function.
+     * @param {string|function} exp
+     * @param {function} defaultFn
+     */
+    ns.evalFn = function evalFunction(exp, defaultFn) {
+        if (!exp) return defaultFn;
+        if (typeof exp === 'function') return exp;
+        let fn = defaultFn;
+        try {
+            fn = (new Function(`return ${exp}`))(); //NOSONAR: not a javascript:S3523 case, real evaluation should be done
+        } catch (e) {
+            console.error(`[DependsOn]: can not process function '${exp}'`, e);
+        }
+        if (typeof fn !== 'function') {
+            console.error(`[DependsOn]: evaluation '${exp}' result is not a function `);
+            return defaultFn;
+        }
+        return fn;
     }
 
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
