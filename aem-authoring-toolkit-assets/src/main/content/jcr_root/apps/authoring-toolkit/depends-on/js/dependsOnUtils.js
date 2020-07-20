@@ -123,32 +123,6 @@
     };
 
     /**
-     * Get n-th parent of the current resource
-     * @param path string - resource path
-     * @param n number - the ordinal number of parent
-     * @returns string
-     * */
-    ns.getNthParent = function (path, n) {
-        const parts = path.split('/');
-        return parts.slice(0, parts.length - n).join('/');
-    };
-
-    /**
-     * Gets object property given its string path
-     *
-     * @param {object} data - object
-     * @param {string} path - string with name of property
-     * @param {string} separator - path separator
-     */
-    ns.get = function (data, path, separator= '.') {
-        if (!data) return undefined;
-        const parts = (path || '').split(separator);
-        return parts.reduce(function (partialData, key) {
-            return (partialData || {})[key];
-        }, data);
-    };
-
-    /**
      * Get current component path
      * @param {JQuery} item - dialog form element, could be just "this" in dependsOn (query)
      * @returns string
