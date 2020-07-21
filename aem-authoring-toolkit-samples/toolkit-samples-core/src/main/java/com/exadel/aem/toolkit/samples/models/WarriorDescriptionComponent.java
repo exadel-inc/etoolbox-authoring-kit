@@ -2,10 +2,7 @@ package com.exadel.aem.toolkit.samples.models;
 
 import com.day.cq.tagging.Tag;
 import com.day.cq.tagging.TagManager;
-import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
-import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
-import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRefTypes;
-import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.*;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
@@ -180,7 +177,7 @@ public class WarriorDescriptionComponent {
     private boolean isLikesFilms;
 
     @Hidden
-    @DependsOn(query = "'../../colorTheme'", action = "get-property")
+    @DependsOn(query = "'../../colorTheme'", action = DependsOnActions.FETCH)
     @DependsOnRef(name = "isDarkColorTheme", type = DependsOnRefTypes.BOOLSTRING)
     private String isDarkColorTheme;
 

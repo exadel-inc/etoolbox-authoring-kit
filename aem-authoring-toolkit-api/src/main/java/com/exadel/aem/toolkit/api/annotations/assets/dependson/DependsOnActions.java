@@ -39,5 +39,10 @@ public class DependsOnActions {
      * Sets the query result as field's value only if the current value is blank (undefined query result is skipped)
      */
     public static final String SET_IF_BLANK = "set-if-blank";
+    /**
+     * Asynchronous action to set value from request result
+     */
+    public static final String FETCH = "fetch";
+
     private DependsOnActions() {}
 }

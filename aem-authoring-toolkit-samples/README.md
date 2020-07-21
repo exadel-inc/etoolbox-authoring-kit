@@ -260,11 +260,9 @@ Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.anno
    - to get property 'colorTheme' from the following path:
    ```
    @DependsOn(
-       query = "this",
-       action = "get-property",
-       params = {
-               @DependsOnParam(name = "path", value = "../../colorTheme")
-   })
+       query = "'../../colorTheme'",
+       action = DependsOnActions.FETCH
+   )
    ```
    - to call custom action, that changes tags scope of `@Autocomplete` depending on a color theme:
    ```

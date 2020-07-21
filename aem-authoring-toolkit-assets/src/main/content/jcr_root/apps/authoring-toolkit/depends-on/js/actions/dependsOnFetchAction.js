@@ -2,12 +2,16 @@
  * @author Alexey Stsefanovich (ala'n), Liubou Masiuk (liubou-masiuk), Yana Bernatskaya (YanaBr)
  * @version 2.4.0
  *
- * Custom action to get component property
- * property path can be relative (e.g. 'node/nestedProperty' or '../../parentCompProperty')
+ * Action to set the result of fetching an arbitrary resource.
+ * Uses query as a target path to node or property.
+ * Path should end with the property name or '/' to retrieve the whole node.
+ * Path can be relative (e.g. 'node/property' or '../../property') or absolute ('whole/path/to/the/node/property').
  *
  * {string} query - property path
  *
- * {string} config.map - function to process result before set (can be used for mapping)
+ * {string} config.map - function to process fetched value before setting the result
+ * {string} config.err - function to process error before setting the result
+ * {string} config.postfix - string to append to the path if it is not presented already
  * */
 
 (function (Granite, $, DependsOn) {
@@ -19,50 +23,66 @@
     const PARENT_PATH_GROUP_REGEX = /[^/]+\/\.\.\//g;
     const REDUNDANT_PATH_TERM_REGEX = /(^|\/)\.\//g;
 
+    const DEFAULT_ERROR_CB = (e, path, name) => {
+        console.warn(`[Depends On]: \'fetch\' can not get '${name}' from path '${path}'`, e);
+        return '';
+    }
+    const DEFAULT_SUCCESS_CB = (res) => res;
+
     /**
      * Action definition
      * @param {string} query
-     * @param {GetPropertyCfg} config
+     * @param {FetchCfg} config
      *
-     * @typedef GetPropertyCfg
+     * @typedef FetchCfg
      * @property {string} map
+     * @property {string} err
      * @property {string} postfix
      */
-    function getParentProperty(query, config) {
+    function fetchAction(query, config) {
+        // If not a string -> incorrect input
         if (typeof query !== 'string') {
-            console.warn('[DependsOn]: can not execute \'get-property\', query should be a string');
+            query && console.warn('[DependsOn]: can not execute \'fetch\', query should be a string');
+            return;
+        }
+        // If empty string then just set empty string
+        if (query === '') {
+            DependsOn.ElementAccessors.setValue($el, '');
             return;
         }
 
+        // Apply default config
         config = Object.assign({
             postfix: '.json'
         }, config);
 
         const $el = this.$el;
+        // Processing and resolving path and property
         const {name, path} = parsePathString(query);
         const basePath = DependsOn.getDialogPath($el);
         const resourcePath = resolvePath(path, basePath, config.postfix);
 
+        // Request data from cache or AEM
         DependsOn.RequestCache.instance.get(resourcePath)
+            .then((data) => name ? data[name] : data)
             .then(
-                (data) => name ? data[name] : data,
-                (e) => {
-                    console.warn('Can not get data from node ' + resourcePath, e);
-                    return '';
-                }
+                (res) => DependsOn.evalFn(config.map, DEFAULT_SUCCESS_CB)(res, path, name),
+                (err) => DependsOn.evalFn(config.err, DEFAULT_ERROR_CB)(err, path, name)
             )
-            .then(DependsOn.evalFn(config.map, (res) => res))
-            .then((res) => DependsOn.ElementAccessors.setValue($el, res));
+            .then(
+                (res) => (res !== undefined) && DependsOn.ElementAccessors.setValue($el, res),
+                (e) => console.warn('[DependsOn]: \'fetch\' failed while executing post-request mappers', e)
+            );
     }
 
-    DependsOn.ActionRegistry.register('get-property', getParentProperty);
+    DependsOn.ActionRegistry.register('fetch', fetchAction);
 
     /**
      * Split path coming from query into separate path and property name parts
      * @param {string} path
-     * @return {GetPropertyPathParams}
+     * @return {FetchPathParams}
      *
-     * @typedef GetPropertyPathParams
+     * @typedef FetchPathParams
      * @property {string} path
      * @property {string} name
      */

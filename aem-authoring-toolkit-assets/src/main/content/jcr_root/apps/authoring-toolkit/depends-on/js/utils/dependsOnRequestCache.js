@@ -47,7 +47,7 @@
          */
         clear() {
             this._cacheMap.clear();
-            console.debug('[DependsOn] Custom action "get-property" cache cleared.');
+            console.debug('[DependsOn] Requests cache was cleared.');
         }
     }
 

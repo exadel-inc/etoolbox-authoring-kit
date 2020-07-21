@@ -65,14 +65,16 @@ If the action is not specified then `visibility` is used by default.
 ##### Async actions
 
 Build-in plugin async actions:
- * `get-property` - get resource property. 
- Uses query as a target path to node or property.
- Path should end with the property name or '/' to retrieve the whole node.
- Can process paths relative to current node e.g. './nestedProperty' or '../../parentCompProperty'.
- Also, supports absolute paths e.g. 'full/path/of/node/someProperty').  
- Parameters: 
-    * `map` (optional) - function to process result. Can be used as mapping / keys-filtering or can provide more complicated action. 
-    * `postfix` (optional, `.json` by default) - postfix to add to the node path
+ * `fetch` - action to set the result of fetching an arbitrary resource.  
+Action to set the result of fetching an arbitrary resource.  
+Uses query as a target path to node or property.  
+Path should end with the property name or '/' to retrieve the whole node.  
+Path can be relative (e.g. 'node/property' or '../../property') or absolute ('whole/path/to/the/node/property').  
+_Additional parameters:_ 
+   * `map` (optional) - function to process result. Can be used as mapping / keys-filtering or can provide more complicated action.
+   * `err` (optional, map to empty string and log error to console by default) - function to process error. Can be used to map or ignore error result.  
+   Note: If the mapping result is `undefined` then the action will not change the current value.
+   * `postfix` (optional, `.json` by default) - string to append to the path if it is not presented already
 
 ##### Action Registry
 
@@ -602,14 +604,14 @@ public class Component {
 }
 ```
 
-#### 13. Get-property action
-'get-property' action provides easy access to parent nodes' properties.
+#### 13. Fetch action
+'fetch' action provides easy access to parent nodes' properties.
 
 Allow set 'opaque' option only if 'bg' option of parent component is not blank.
 ```java
 public class Component {
         @Hidden
-        @DependsOn(action = "get-property", query = "'../../bg'")
+        @DependsOn(action = DependsOnActions.FETCH, query = "'../../bg'")
         @DependsOnRef(name = "parentBg")
         private String parentBg;
 
@@ -620,16 +622,16 @@ public class Component {
 }
 ```
 
-'get-property' action has a short term caching, so multiple properties will be requested once without loss of performance
+'fetch' action has a short term caching, so multiple properties will be requested once without loss of performance
  ```java
  public class Component {
          @Hidden
-         @DependsOn(action = "get-property", query = "'../../field1'")
+         @DependsOn(action = DependsOnActions.FETCH, query = "'../../field1'")
          @DependsOnRef(name = "parentProperty1")
          private String parentProperty1;
  
          @Hidden
-         @DependsOn(action = "get-property", query = "'../../field2'")
+         @DependsOn(action = DependsOnActions.FETCH, query = "'../../field2'")
          @DependsOnRef(name = "parentProperty2")
          private String parentProperty2;
  }
@@ -640,7 +642,7 @@ The example below retrieves parent component's title and type in a special forma
  ```java
  public class Component {
          @Hidden
-         @DependsOn(action = "get-property", query = "'../../'", params = {
+         @DependsOn(action = DependsOnActions.FETCH, query = "'../../'", params = {
             @DependsOnParam(name = "map", value = "(resource) => resource.name + ' (' + resource.type + ')'")
          })
          @DependsOnRef(name = "parentHeading")
