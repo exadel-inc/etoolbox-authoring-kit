@@ -165,10 +165,10 @@
         try {
             fn = (new Function(`return ${exp}`))(); //NOSONAR: not a javascript:S3523 case, real evaluation should be done
         } catch (e) {
-            console.error(`[DependsOn]: can not process function '${exp}'`, e);
+            console.error(`[DependsOn]: can not process function '${exp}': `, e);
         }
         if (typeof fn !== 'function') {
-            console.error(`[DependsOn]: evaluation '${exp}' result is not a function `);
+            console.error(`[DependsOn]: evaluation '${exp}' result is not a function`);
             return defaultFn;
         }
         return fn;

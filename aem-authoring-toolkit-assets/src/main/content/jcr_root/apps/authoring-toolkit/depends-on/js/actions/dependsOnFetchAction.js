@@ -29,7 +29,7 @@
         return val;
     };
     const DEFAULT_FALLBACK = (e, name, path) => {
-        console.warn(`[Depends On]: \'fetch\' can not get '${name}' from path '${path}'`, e);
+        console.warn(`[Depends On]: \'fetch\' can not get '${name}' from path '${path}': `, e);
         return '';
     };
 
@@ -73,7 +73,7 @@
                 (err) => DependsOn.evalFn(config.err, DEFAULT_FALLBACK)(err, name, path)
             )
             .then((res) => (res !== undefined) && DependsOn.ElementAccessors.setValue($el, res))
-            .catch((e) => console.warn('[DependsOn]: \'fetch\' failed while executing post-request mappers', e));
+            .catch((e) => console.warn('[DependsOn]: \'fetch\' failed while executing post-request mappers: ', e));
     }
 
     DependsOn.ActionRegistry.register('fetch', fetchAction);
