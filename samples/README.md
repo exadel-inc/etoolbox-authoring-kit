@@ -36,7 +36,7 @@
 
 ## Annotations map
 
-Sling models with the examples are placed in the module `toolkit-samples-bundle` package `com.exadel.aem.toolkit.samples.models`.
+Sling models with the examples are placed in the module `toolkit-samples.core` package `com.exadel.aem.toolkit.samples.models`.
     
 #### `@Dialog`, `@DialogField`, `@Tab`, `@PlaceOnTab`
 
@@ -58,7 +58,7 @@ These annotations are used in every model (just there is no `@PlaceOnTab` in the
     }
   ```
     
-  * Tabs in the form of an array of `@Tab` within `@Dialog` are used in the **every** model _except_ HomelandComponent.
+  * Tabs in the form of an array of `@Tab` within `@Dialog` are used in the **all** models _except_ HomelandComponent.
     
   ```
     @Dialog(
@@ -174,7 +174,7 @@ public class FileUploadDialog {
 
 #### `@Properties`, `@Property`
 
-`@Properties` and `@Property` annotation is used in the [**DungeonsComponent**](./toolkit-samples.core/src/main/java/com/exadel/aem/toolkit/samples/models/DungeonsComponent.java) to override children of extended `@Select`.
+`@Properties` and `@Property` annotations are used in the [**DungeonsComponent**](./toolkit-samples.core/src/main/java/com/exadel/aem/toolkit/samples/models/DungeonsComponent.java) to override children of extended `@Select`.
 
 ***
 
@@ -235,7 +235,7 @@ These annotations are used in the [**WarriorDescriptionComponent**](./toolkit-sa
 ## Custom annotations and handlers
 
 Let's look at custom annotation as an example of a postfix for `@FieldSet`. 
-The example is placed in the the module `toolkit-camples-bundle` package `com.exadel.aem.toolkit.samples.annotations`.
+The example is placed in the the module `toolkit-samples.core` package `com.exadel.aem.toolkit.samples.annotations`.
 Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.annotations.handlers`
 
 ## DependsOn Plugin
@@ -268,7 +268,7 @@ Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.anno
    ```
    @DependsOn(query = "@isDarkColorTheme", action = "namespaceFilter") 
    ```
- - [**ShoppingListComponent**](./toolkit-samples.core/src/main/java/com/exadel/aem/toolkit/samples/models/ShoppingListComponent.java) to switch visibility and disabling of a textfield with the group boolean query (using back-forward class selector); 
+ - [**ShoppingListComponent**](./toolkit-samples.core/src/main/java/com/exadel/aem/toolkit/samples/models/ShoppingListComponent.java) to switch visibility and disable a textfield with the group boolean query (using back-forward class selector); 
  and to set default text for a textfield depending on a textfield's state:
    ```
    @DependsOn(query = "@@checkbox(coral-panel |> .products-fieldSet).every(item => item)")
@@ -286,16 +286,16 @@ Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.anno
 
 #### `@DependsOnTab`
 
-`@DependsOnTab` annotation is used in the [**WarriorDescriptionComponent**](./toolkit-samples.core/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java) to switch visibility of tabs with the simple boolean queries:
+`@DependsOnTab` annotation is used in the [**WarriorDescriptionComponent**](./toolkit-samples.core/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java) to switch visibility of tabs with simple boolean queries:
 
     ```
-    @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUIT, query = "@likesFruits")
-    @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FILMS, query = "@likesFilms")
+    @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUITS, query = "@likesFruits")
+    @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_MOVIES, query = "@likesMovies")
     ```
 
 #### `@DependsOnParam`
 
-`@DependsOnParam` annotation is used in the [**AbilitiesComponent**](./toolkit-samples.core/src/main/java/com/exadel/aem/toolkit/samples/models/AbilitiesComponent.java) to show custom validating message:
+`@DependsOnParam` annotation is used in the [**AbilitiesComponent**](./toolkit-samples.core/src/main/java/com/exadel/aem/toolkit/samples/models/AbilitiesComponent.java) to show custom validation message:
    ```
    @DependsOn(
        query = "@this.length <= 3",
@@ -303,5 +303,5 @@ Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.anno
        params = { @DependsOnParam(name = "msg", value = "Too powerful!")}
    )
    ```
-Custom dependsOn actions placed in the [`abilities-component`](./toolkit-samples.apps/src/main/content/jcr_root/apps/authoring-toolkit/samples/components/content/abilities-component/clientlib/authoring/altVisibility.js) and [`warrior-description-component`](./toolkit-samples.apps/src/main/content/jcr_root/apps/authoring-toolkit/samples/components/content/warrior-description-component/clientlib/authoring).
+Custom dependsOn actions are placed in the [`abilities-component`](./toolkit-samples.apps/src/main/content/jcr_root/apps/authoring-toolkit/samples/components/content/abilities-component/clientlib/authoring/altVisibility.js) and [`warrior-description-component`](./toolkit-samples.apps/src/main/content/jcr_root/apps/authoring-toolkit/samples/components/content/warrior-description-component/clientlib/authoring).
 
