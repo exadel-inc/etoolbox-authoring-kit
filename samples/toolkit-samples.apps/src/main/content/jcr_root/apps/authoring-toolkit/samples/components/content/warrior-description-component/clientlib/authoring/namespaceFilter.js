@@ -1,6 +1,6 @@
 /*
 Custom dependsOn action for @Autocomplete.
-The action is intended for dynamic changing tags scope depending on the Warrior component
+The action is intended for dynamic changing of tags scope depending on the Warrior component
 (that is the main container for other components in the samples module) color theme
 */
 

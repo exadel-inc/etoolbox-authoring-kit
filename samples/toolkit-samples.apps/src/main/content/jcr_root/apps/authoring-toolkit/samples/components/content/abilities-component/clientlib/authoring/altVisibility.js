@@ -1,6 +1,6 @@
 /*
 Custom dependsOn action.
-The action is intended for deleting hidden by dependsOn fields from content in JCR and not sending them with the form submitting.
+The action is intended for deleting hidden fields from content in JCR and not sending them with the form submitting.
  */
 
 (function (Granite, $, DependsOn) {
@@ -8,7 +8,7 @@ The action is intended for deleting hidden by dependsOn fields from content in J
     'use strict';
 
     /**
-     * Remove custom input with a name field_name@Delete when a field need to be shown
+     * Remove custom input with a name field_name@Delete when a field needs to be shown
      * @param element {HTMLElement}
      * @private
      */
@@ -18,7 +18,7 @@ The action is intended for deleting hidden by dependsOn fields from content in J
     }
 
     /**
-     * Insert custom input with a name field_name@Delete when a field need to be hidden
+     * Insert custom input with a name field_name@Delete when a field needs to be hidden
      * @param element {HTMLElement}
      * @private
      */
@@ -35,7 +35,7 @@ The action is intended for deleting hidden by dependsOn fields from content in J
 
 
     /**
-     * Registry altVisibility custom action
+     * Register 'altVisibility' custom action
      */
     DependsOn.ActionRegistry.register('alt-visibility', function altVisibility(state) {
 
