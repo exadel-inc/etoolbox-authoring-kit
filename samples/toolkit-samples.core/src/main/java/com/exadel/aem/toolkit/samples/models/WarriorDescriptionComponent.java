@@ -43,28 +43,28 @@ import java.util.stream.Collectors;
         tabs = {
                 @Tab(title = WarriorDescriptionComponent.TAB_MAIN),
                 @Tab(title = WarriorDescriptionComponent.TAB_TASTES),
-                @Tab(title = WarriorDescriptionComponent.TAB_FRUIT),
-                @Tab(title = WarriorDescriptionComponent.TAB_FILMS)
+                @Tab(title = WarriorDescriptionComponent.TAB_FRUITS),
+                @Tab(title = WarriorDescriptionComponent.TAB_MOVIES)
         }
 )
-@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUIT, query = "@isLikesFruit")
-@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FILMS, query = "@isLikesFilms")
+@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUITS, query = "@likesFruits")
+@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_MOVIES, query = "@likesMovies")
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WarriorDescriptionComponent {
 
     static final String TAB_MAIN = "Main info";
     static final String TAB_TASTES = "Tastes";
-    static final String TAB_FRUIT = "Fruit";
-    static final String TAB_FILMS = "Films";
+    static final String TAB_FRUITS = "Fruits";
+    static final String TAB_MOVIES = "Movies";
 
-    private static final String DESCRIPTION_TEMPLATE = "%s was born on the cold but bright day %s. He would %s. %s, and %s";
+    private static final String DESCRIPTION_TEMPLATE = "%s was born on a cold but bright day %s. He would %s. %s, and %s";
     private static final String DEFAULT_BIRTHDAY = "29.03.2000";
-    private static final String DEFAULT_CHARACTER = "always creepy smiles";
+    private static final String DEFAULT_CHARACTER = "always smiles creepily";
     private static final String DEFAULT_FRUIT_TEXT = "He doesn't like fruit";
-    private static final String DEFAULT_FILMS_TEXT = "he doesn't like films";
+    private static final String DEFAULT_MOVIES_TEXT = "He doesn't like movies";
 
     private static final String FRUIT_TEXT = "His favorite fruit: ";
-    private static final String FILMS_TEXT = "his favorite film genres: ";
+    private static final String MOVIES_TEXT = "his favorite movie genres: ";
     private static final String TAGS_DELIMITER = ", ";
 
     @Inject
@@ -133,19 +133,19 @@ public class WarriorDescriptionComponent {
     )
     @DialogField(
             label = "Birthday",
-            description = "Enter birthday of you warrior"
+            description = "Enter the birthday of your warrior"
     )
     @ValueMapValue
     private String birthday;
 
-    @DependsOnRef(name = "isLikesFruit")
+    @DependsOnRef(name = "likesFruits")
     @PlaceOnTab(WarriorDescriptionComponent.TAB_TASTES)
-    @DialogField(label = "Does your warrior like fruit?")
+    @DialogField(label = "Does your warrior like fruits?")
     @Checkbox
     @ValueMapValue
-    private boolean isLikesFruit;
+    private boolean likesFruits;
 
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_FRUIT)
+    @PlaceOnTab(WarriorDescriptionComponent.TAB_FRUITS)
     @Autocomplete(
             multiple = true,
             forceSelection = true,
@@ -157,7 +157,7 @@ public class WarriorDescriptionComponent {
 
     @PlaceOnTab(WarriorDescriptionComponent.TAB_MAIN)
     @RadioGroup(buttons = {
-            @RadioButton(text = "Funny", value = "always creepy smiles", checked = true),
+            @RadioButton(text = "Funny", value = "always smiles creepily", checked = true),
             @RadioButton(text = "Sad", value = "always steals your handkerchief"),
             @RadioButton(text = "Angry", value = "always ignores you")
     })
@@ -169,28 +169,28 @@ public class WarriorDescriptionComponent {
     @ValueMapValue
     private String character;
 
-    @DependsOnRef(name = "isLikesFilms")
+    @DependsOnRef(name = "likesMovies")
     @PlaceOnTab(WarriorDescriptionComponent.TAB_TASTES)
     @Checkbox
-    @DialogField(label = "Does your warrior like films?")
+    @DialogField(label = "Does your warrior like movies?")
     @ValueMapValue
-    private boolean isLikesFilms;
+    private boolean likesMovies;
 
     @Hidden
     @DependsOn(query = "'../../colorTheme'", action = DependsOnActions.FETCH)
     @DependsOnRef(name = "isDarkColorTheme", type = DependsOnRefTypes.BOOLSTRING)
     private String isDarkColorTheme;
 
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_FILMS)
+    @PlaceOnTab(WarriorDescriptionComponent.TAB_MOVIES)
     @DependsOn(query = "@isDarkColorTheme", action = "namespaceFilter")
     @Autocomplete(
             multiple = true,
             forceSelection = true,
-            datasource = @AutocompleteDatasource(namespaces = {"films"})
+            datasource = @AutocompleteDatasource(namespaces = {"movies"})
     )
-    @DialogField(label = "Favorite films")
+    @DialogField(label = "Favorite movies")
     @ValueMapValue
-    private String[] films;
+    private String[] movies;
 
     public String getWarriorName() {
         return Optional.ofNullable(resource.getParent())
@@ -208,18 +208,18 @@ public class WarriorDescriptionComponent {
         return StringUtils.defaultIfBlank(birthday, DEFAULT_BIRTHDAY);
     }
 
-    public String getFilms() {
-        if (isLikesFilms && films != null) {
-            String filmsString = Arrays.stream(films)
-                    .map(film -> film.replaceAll("^.*/(.*)$", "$1"))
+    public String getMovies() {
+        if (likesMovies && movies != null) {
+            String moviesString = Arrays.stream(movies)
+                    .map(movie -> movie.replaceAll("^.*/(.*)$", "$1"))
                     .collect(Collectors.joining(TAGS_DELIMITER));
-            return FILMS_TEXT + filmsString;
+            return MOVIES_TEXT + moviesString;
         }
-        return DEFAULT_FILMS_TEXT;
+        return DEFAULT_MOVIES_TEXT;
     }
 
     public String getFruit() {
-        if (isLikesFruit && fruit != null) {
+        if (likesFruits && fruit != null) {
             TagManager tagManager = resourceResolver.adaptTo(TagManager.class);
             if (tagManager != null) {
                 return (FRUIT_TEXT +
@@ -234,7 +234,7 @@ public class WarriorDescriptionComponent {
     }
 
     public String getInitDescription() {
-        return String.format(DESCRIPTION_TEMPLATE, getWarriorName(), getBirthday(), getCharacter(), getFruit(), getFilms());
+        return String.format(DESCRIPTION_TEMPLATE, getWarriorName(), getBirthday(), getCharacter(), getFruit(), getMovies());
     }
 
     public String getCharacter() {

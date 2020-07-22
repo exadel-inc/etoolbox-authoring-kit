@@ -16,7 +16,7 @@ public class ArmorColorFields {
     private static final String DEFAULT_COLOR = "#A9A9A9";
 
     @ColorField(
-            emptyText = "Choose color for armor"
+            emptyText = "Choose armor color"
     )
     @DialogField(ranking = 2)
     @Default(values = {DEFAULT_COLOR})
@@ -24,7 +24,7 @@ public class ArmorColorFields {
     private String armor;
 
     @ColorField(
-            emptyText = "Choose color for shoes"
+            emptyText = "Choose shoes color"
     )
     @DialogField(ranking = 3)
     @Default(values = {DEFAULT_COLOR})
@@ -32,7 +32,7 @@ public class ArmorColorFields {
     private String shoes;
 
     @ColorField(
-            emptyText = "Choose color for helmet"
+            emptyText = "Choose helmet color"
     )
     @DialogField(ranking = 1)
     @Default(values = {DEFAULT_COLOR})

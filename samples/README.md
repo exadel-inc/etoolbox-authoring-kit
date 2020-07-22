@@ -66,18 +66,18 @@ These annotations are used in every model (just there is no `@PlaceOnTab` in the
         tabs= {
             @Tab(title = "Main info"),
             @Tab(title = "Tastes"),
-            @Tab(title = "Fruit"),
-            @Tab(title = "Films")
+            @Tab(title = "Fruits"),
+            @Tab(title = "Movies")
         }
     )
     @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
     public class WarriorDescriptionComponent {
         ...
         @PlaceOnTab("Tastes")
-        @DialogField( label = "Does your warrior like fruit?")
+        @DialogField( label = "Does your warrior like fruits?")
         @Checkbox
         @ValueMapValue
-        private boolean isLikeFruit;
+        private boolean likesFruits;
         ...
     }
   ```
@@ -289,8 +289,8 @@ Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.anno
 `@DependsOnTab` annotation is used in the [**WarriorDescriptionComponent**](./toolkit-samples.core/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java) to switch visibility of tabs with the simple boolean queries:
 
     ```
-    @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUIT, query = "@isLikeFruit")
-    @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FILMS, query = "@isLikeFilms")
+    @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUIT, query = "@likesFruits")
+    @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FILMS, query = "@likesFilms")
     ```
 
 #### `@DependsOnParam`

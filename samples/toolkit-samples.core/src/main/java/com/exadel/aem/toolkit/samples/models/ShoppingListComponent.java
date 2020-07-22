@@ -35,7 +35,7 @@ public class ShoppingListComponent {
 
     static final String TAB_MAIN = "Shopping list";
 
-    private static final String DEFAULT_EMPTY_LIST_TEXT = "it seems your warrior is happy and without shopping.";
+    private static final String DEFAULT_EMPTY_LIST_TEXT = "it seems like your warrior is happy and without any purchases.";
     private static final String DEFAULT_NOT_WONDERFUL_TEXT = "and your warrior is not wonderful!";
     private static final String DEFAULT_WONDERFUL_TEXT = "and he thinks he is wonderful, because ";
     private static final String DEFAULT_ANSWER = "he was born like this.";
@@ -56,7 +56,7 @@ public class ShoppingListComponent {
     @DependsOn(query = "@@checkbox(coral-panel |> .products-fieldSet).every(item => item)")
     @DependsOn(query = "@@checkbox.every(item => item)", action = DependsOnActions.DISABLED)
     @TextField(emptyText = "Check all checkboxes to disable this text field")
-    @DialogField(label = "Why you're such a wonderful warrior?")
+    @DialogField(label = "Why are you such a wonderful warrior?")
     @ValueMapValue
     private String answer;
 
