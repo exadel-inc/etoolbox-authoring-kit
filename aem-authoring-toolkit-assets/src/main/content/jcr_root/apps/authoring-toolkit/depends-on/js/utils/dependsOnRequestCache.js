@@ -7,6 +7,13 @@
 (function (Granite, $, DependsOn) {
     'use strict';
 
+    /**
+     * @return {Promise}
+     */
+    function promisify(jqPromise) {
+        return new Promise((resolve, reject) => jqPromise.then(resolve, reject));
+    }
+
     let instance;
     class RequestCache {
         static get DEFAULT_TIMEOUT() { return 2000; }
@@ -28,12 +35,13 @@
         /**
          * Requesting resource by url
          * @param {string} url
+         * @return {Promise}
          */
         get(url) {
             url = Granite.HTTP.externalize(url);
 
             if (!this._cacheMap.has(url)) {
-                this._cacheMap.set(url, $.get(url));
+                this._cacheMap.set(url, promisify($.get(url)));
             }
 
             this._clearTimeout && clearTimeout(this._clearTimeout);

@@ -23,11 +23,15 @@
     const PARENT_PATH_GROUP_REGEX = /[^/]+\/\.\.\//g;
     const REDUNDANT_PATH_TERM_REGEX = /(^|\/)\.\//g;
 
-    const DEFAULT_ERROR_CB = (e, path, name) => {
+    const DEFAULT_RESOLVE = (res, path, name) => {
+        const val = res && name ? res[name] : res;
+        if (typeof val === 'undefined' || val === null) return '';
+        return val;
+    };
+    const DEFAULT_FALLBACK = (e, path, name) => {
         console.warn(`[Depends On]: \'fetch\' can not get '${name}' from path '${path}'`, e);
         return '';
-    }
-    const DEFAULT_SUCCESS_CB = (res) => res;
+    };
 
     /**
      * Action definition
@@ -64,15 +68,12 @@
 
         // Request data from cache or AEM
         DependsOn.RequestCache.instance.get(resourcePath)
-            .then((data) => name ? data[name] : data)
             .then(
-                (res) => DependsOn.evalFn(config.map, DEFAULT_SUCCESS_CB)(res, path, name),
-                (err) => DependsOn.evalFn(config.err, DEFAULT_ERROR_CB)(err, path, name)
+                (res) => DependsOn.evalFn(config.map, DEFAULT_RESOLVE)(res, path, name),
+                (err) => DependsOn.evalFn(config.err, DEFAULT_FALLBACK)(err, path, name)
             )
-            .then(
-                (res) => (res !== undefined) && DependsOn.ElementAccessors.setValue($el, res),
-                (e) => console.warn('[DependsOn]: \'fetch\' failed while executing post-request mappers', e)
-            );
+            .then((res) => (res !== undefined) && DependsOn.ElementAccessors.setValue($el, res))
+            .catch((e) => console.warn('[DependsOn]: \'fetch\' failed while executing post-request mappers', e));
     }
 
     DependsOn.ActionRegistry.register('fetch', fetchAction);
