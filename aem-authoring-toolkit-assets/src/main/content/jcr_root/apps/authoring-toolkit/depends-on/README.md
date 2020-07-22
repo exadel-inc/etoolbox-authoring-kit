@@ -71,8 +71,8 @@ Uses query as a target path to node or property.
 Path should end with the property name or '/' to retrieve the whole node.  
 Path can be relative (e.g. 'node/property' or '../../property') or absolute ('whole/path/to/the/node/property').  
 _Additional parameters:_ 
-   * `map` (optional) - function to process result. Can be used as mapping / keys-filtering or can provide more complicated action.
-   * `err` (optional, map to empty string and log error to console by default) - function to process error. Can be used to map or ignore error result.  
+   * `map` (optional) - function `(result: any, name: string, path: string) => any` to process result. Can be used as mapping / keys-filtering or can provide more complicated action.
+   * `err` (optional, map to empty string and log error to console by default) - function `(error: Error, name: string, path: string) => any` to process error. Can be used to map or ignore error result.  
    Note: If the mapping result is `undefined` then the action will not change the current value.
    * `postfix` (optional, `.json` by default) - string to append to the path if it is not presented already
 

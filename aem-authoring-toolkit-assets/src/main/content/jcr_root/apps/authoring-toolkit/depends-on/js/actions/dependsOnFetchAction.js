@@ -23,12 +23,12 @@
     const PARENT_PATH_GROUP_REGEX = /[^/]+\/\.\.\//g;
     const REDUNDANT_PATH_TERM_REGEX = /(^|\/)\.\//g;
 
-    const DEFAULT_RESOLVE = (res, path, name) => {
+    const DEFAULT_RESOLVE = (res, name) => {
         const val = res && name ? res[name] : res;
         if (typeof val === 'undefined' || val === null) return '';
         return val;
     };
-    const DEFAULT_FALLBACK = (e, path, name) => {
+    const DEFAULT_FALLBACK = (e, name, path) => {
         console.warn(`[Depends On]: \'fetch\' can not get '${name}' from path '${path}'`, e);
         return '';
     };
@@ -69,8 +69,8 @@
         // Request data from cache or AEM
         DependsOn.RequestCache.instance.get(resourcePath)
             .then(
-                (res) => DependsOn.evalFn(config.map, DEFAULT_RESOLVE)(res, path, name),
-                (err) => DependsOn.evalFn(config.err, DEFAULT_FALLBACK)(err, path, name)
+                (res) => DependsOn.evalFn(config.map, DEFAULT_RESOLVE)(res, name, path),
+                (err) => DependsOn.evalFn(config.err, DEFAULT_FALLBACK)(err, name, path)
             )
             .then((res) => (res !== undefined) && DependsOn.ElementAccessors.setValue($el, res))
             .catch((e) => console.warn('[DependsOn]: \'fetch\' failed while executing post-request mappers', e));
