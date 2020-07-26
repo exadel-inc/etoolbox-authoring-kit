@@ -26,15 +26,15 @@ public enum DependsOnRefTypes {
      */
     BOOLSTRING,
     /**
+     * Parse as JSON value
+     */
+    JSON,
+    /**
      * Cast to number value
      */
     NUMBER,
     /**
      * Cast to string
      */
-    STRING,
-    /**
-     * Parse as JSON
-     */
-    JSON
+    STRING
 }

@@ -607,7 +607,7 @@ public class Component {
 #### 13. Fetch action
 'fetch' action provides easy access to parent nodes' properties.
 
-Allow set 'opaque' option only if 'bg' option of parent component is not blank.
+Allows to set 'opaque' option only if 'bg' option of parent component is not blank.
 ```java
 public class Component {
         @Hidden
