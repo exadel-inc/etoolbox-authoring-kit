@@ -45,7 +45,8 @@ import java.util.stream.Collectors;
                 @Tab(title = WarriorDescriptionComponent.TAB_TASTES),
                 @Tab(title = WarriorDescriptionComponent.TAB_FRUITS),
                 @Tab(title = WarriorDescriptionComponent.TAB_MOVIES)
-        }
+        },
+        extraClientlibs = "authoring-toolkit.samples.authoring"
 )
 @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUITS, query = "@likesFruits")
 @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_MOVIES, query = "@likesMovies")

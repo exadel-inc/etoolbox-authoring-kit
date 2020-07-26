@@ -1,8 +1,7 @@
-/*
-Custom dependsOn action.
-The action is intended for deleting hidden fields from content in JCR and not sending them with the form submitting.
+/**
+ * Custom dependsOn action.
+ * The action is intended for deleting hidden fields from content in JCR and not sending them with the form submitting.
  */
-
 (function (Granite, $, DependsOn) {
 
     'use strict';
@@ -19,7 +18,7 @@ The action is intended for deleting hidden fields from content in JCR and not se
 
     /**
      * Insert custom input with a name field_name@Delete when a field needs to be hidden
-     * @param element {HTMLElement}
+     * @param element {HTMLFormElement}
      * @private
      */
     function _onHide(element) {
@@ -38,14 +37,12 @@ The action is intended for deleting hidden fields from content in JCR and not se
      * Register 'altVisibility' custom action
      */
     DependsOn.ActionRegistry.register('alt-visibility', function altVisibility(state) {
-
         DependsOn.ElementAccessors.setVisibility(this.$el, state);
         DependsOn.ElementAccessors.setDisabled(this.$el, !state);
         const element = this.$el.context;
 
-        if (element) {
-            if (state) { _onShow(element); }
-            else { _onHide(element); }
-        }
+        if (!element) return;
+        if (state) _onShow(element);
+        else _onHide(element);
     });
 })(Granite, Granite.$, Granite.DependsOnPlugin);

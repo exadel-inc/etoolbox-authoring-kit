@@ -30,7 +30,8 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
         componentGroup = GroupConstants.COMPONENT_GROUP,
         tabs = {
                 @Tab(title = AbilitiesComponent.TAB_ABILITIES)
-        }
+        },
+        extraClientlibs = "authoring-toolkit.samples.authoring"
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class AbilitiesComponent {

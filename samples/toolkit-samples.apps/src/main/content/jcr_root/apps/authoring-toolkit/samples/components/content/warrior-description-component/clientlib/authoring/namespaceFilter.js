@@ -1,8 +1,8 @@
-/*
-Custom dependsOn action for @Autocomplete.
-The action is intended for dynamic changing of tags scope depending on the Warrior component
-(that is the main container for other components in the samples module) color theme
-*/
+/**
+ * Custom dependsOn action for @Autocomplete.
+ * The action is intended for dynamic changing of tags scope depending on the Warrior component
+ * (that is the main container for other components in the samples module) color theme
+ */
 
 (function (Granite, $, DependsOn) {
 
@@ -24,7 +24,7 @@ The action is intended for dynamic changing of tags scope depending on the Warri
 
     /**
      * Replace displaying full tag path with a tag name
-     * @param activeTags {Array<HTMLElement>}
+     * @param activeTags {HTMLElement[]}
      * @private
      */
     function _changeActiveTagsTitle(activeTags) {
@@ -47,8 +47,8 @@ The action is intended for dynamic changing of tags scope depending on the Warri
 
     /**
      * Choosing tags depending on the color theme
-     * @param tagList {Array<HTMLElement>}
-     * @param colorTheme {'light' / 'dark'}
+     * @param tagList {HTMLElement[]}
+     * @param colorTheme {'light' | 'dark'}
      * @private
      */
     function _filterTags(tagList, colorTheme) {

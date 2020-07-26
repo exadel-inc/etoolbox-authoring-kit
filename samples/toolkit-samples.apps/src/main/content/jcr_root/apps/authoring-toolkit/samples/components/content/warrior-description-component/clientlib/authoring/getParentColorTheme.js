@@ -1,9 +1,8 @@
-/*
-Custom dependsOn action.
-The action is intended for receiving color theme of the Warrior component
-(that is the main container for other components in the samples module).
-*/
-
+/**
+ * Custom dependsOn action.
+ * The action is intended for receiving color theme of the Warrior component
+ * (that is the main container for other components in the samples module).
+ */
 (function (Granite, $, DependsOn) {
 
     'use strict';

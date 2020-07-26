@@ -28,7 +28,8 @@ import com.exadel.aem.toolkit.samples.models.fieldsets.WeaponFieldSet;
         componentGroup = GroupConstants.COMPONENT_GROUP,
         tabs = {
                 @Tab(title = ShoppingListComponent.TAB_MAIN),
-        }
+        },
+        extraClientlibs = "authoring-toolkit.samples.authoring"
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ShoppingListComponent {
