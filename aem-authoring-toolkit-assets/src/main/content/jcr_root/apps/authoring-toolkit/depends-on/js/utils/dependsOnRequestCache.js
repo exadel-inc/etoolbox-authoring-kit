@@ -7,9 +7,25 @@
 (function (Granite, $, DependsOn) {
     'use strict';
 
+    /**
+     * @return {Promise}
+     */
+    function promisify(jqPromise) {
+        return new Promise((resolve, reject) => jqPromise.then(resolve, reject));
+    }
+
     let instance;
     class RequestCache {
-        constructor(timeout = 2000) {
+        static get DEFAULT_TIMEOUT() { return 2000; }
+
+        /**
+         * @return {RequestCache} global RequestCache instance
+         */
+        static get instance() {
+            return instance || (instance = new RequestCache());
+        }
+
+        constructor(timeout = RequestCache.DEFAULT_TIMEOUT) {
             this.timeout = timeout;
 
             this._clearTimeout = null;
@@ -19,12 +35,13 @@
         /**
          * Requesting resource by url
          * @param {string} url
+         * @return {Promise}
          */
         get(url) {
             url = Granite.HTTP.externalize(url);
 
             if (!this._cacheMap.has(url)) {
-                this._cacheMap.set(url, $.get(url));
+                this._cacheMap.set(url, promisify($.get(url)));
             }
 
             this._clearTimeout && clearTimeout(this._clearTimeout);
@@ -38,11 +55,7 @@
          */
         clear() {
             this._cacheMap.clear();
-            console.debug('[DependsOn] Custom action "get-property" cache cleared.');
-        }
-
-        static get instance() {
-            return instance || (instance = new RequestCache());
+            console.debug('[DependsOn] Requests cache was cleared.');
         }
     }
 

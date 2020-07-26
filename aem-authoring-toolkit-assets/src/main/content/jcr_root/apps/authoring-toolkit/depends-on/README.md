@@ -2,7 +2,7 @@
 
 Author _Alexey Stsefanovich (ala'n)_ and _Yana Bernatskaya (YanaBr)_
 
-Version _2.3.0_
+Version _2.4.0_
  
 DependsOn Plugin is a clientlib that executes defined action on dependent fields.
  
@@ -28,6 +28,9 @@ DependsOn workflow consists of the following steps:
  
 **ObservedReferences** are external elements or group of elements whose values can be used inside of **Query**.
  
+More detailed DependsOn structure is presented below. 
+![DependsOn Structure](./docs/structure.jpg)
+
 #### Introduction  
 
 "DependsOn" plugin is based on the following data attributes.
@@ -59,11 +62,19 @@ Built-in plugin actions are:
 
 If the action is not specified then `visibility` is used by default.
 
-##### Additional actions
+##### Async actions
 
-Custom dependsOn actions that are not basic.
- * `get-property` - get component property (path from the parameter _path_). Query - current node (__this__). 
- Parameters: `path` - path to property relative to current node (e.g. 'node/nestedProperty' or '../../parentCompProperty')
+Build-in plugin async actions:
+ * `fetch` - action to set the result of fetching an arbitrary resource.  
+Action to set the result of fetching an arbitrary resource.  
+Uses query as a target path to node or property.  
+Path should end with the property name or '/' to retrieve the whole node.  
+Path can be relative (e.g. 'node/property' or '../../property') or absolute ('whole/path/to/the/node/property').  
+_Additional parameters:_ 
+   * `map` (optional) - function `(result: any, name: string, path: string) => any` to process result. Can be used as mapping / keys-filtering or can provide more complicated action.
+   * `err` (optional, map to empty string and log error to console by default) - function `(error: Error, name: string, path: string) => any` to process error. Can be used to map or ignore error result.  
+   Note: If the mapping result is `undefined` then the action will not change the current value.
+   * `postfix` (optional, `.json` by default) - string to append to the path if it is not presented already
 
 ##### Action Registry
 
@@ -593,8 +604,57 @@ public class Component {
 }
 ```
 
-=======
-#### 13. Alert accessors
+#### 13. Fetch action
+'fetch' action provides easy access to parent nodes' properties.
+
+Allows to set 'opaque' option only if 'bg' option of parent component is not blank.
+```java
+public class Component {
+        @Hidden
+        @DependsOn(action = DependsOnActions.FETCH, query = "'../../bg'")
+        @DependsOnRef(name = "parentBg")
+        private String parentBg;
+
+        @DialogField
+        @TextField
+        @DependsOn(query = "!!@parentBg")
+        private String opaque;
+}
+```
+
+'fetch' action has a short term caching, so multiple properties will be requested once without loss of performance
+ ```java
+ public class Component {
+         @Hidden
+         @DependsOn(action = DependsOnActions.FETCH, query = "'../../field1'")
+         @DependsOnRef(name = "parentProperty1")
+         private String parentProperty1;
+ 
+         @Hidden
+         @DependsOn(action = DependsOnActions.FETCH, query = "'../../field2'")
+         @DependsOnRef(name = "parentProperty2")
+         private String parentProperty2;
+ }
+ ```
+
+`map` acton param can be used to process result. 
+The example below retrieves parent component's title and type in a special format.
+ ```java
+ public class Component {
+         @Hidden
+         @DependsOn(action = DependsOnActions.FETCH, query = "'../../'", params = {
+            @DependsOnParam(name = "map", value = "(resource) => resource.name + ' (' + resource.type + ')'")
+         })
+         @DependsOnRef(name = "parentHeading")
+         private String parentHeading;
+ 
+         @Heading
+         @DependsOn(action = "set", query = "@parentHeading")
+         private String parentComponentHeading;
+ }
+ ```
+
+#### 14. Alert accessors
 
 DependsOn provides the ability to conditionally change any property of Alert widget:
 - text;

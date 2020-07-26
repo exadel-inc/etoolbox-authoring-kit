@@ -10,9 +10,9 @@
     /**
      * Create sequence generator
      * */
-    ns.createSequence = function() {
+    ns.createSequence = function () {
         let index = 1;
-        return { next: () => index++ };
+        return {next: () => index++};
     };
 
     /**
@@ -98,7 +98,7 @@
      * */
     ns.parseActionData = function (el, actionName = '', index = 0) {
         const prefix = `data-dependson-${actionName}-`;
-        const suffix = index ? `-${index}`: '';
+        const suffix = index ? `-${index}` : '';
 
         let attrs = [].slice.call(el.attributes);
         attrs = attrs.filter((attr) => attr.name.slice(0, prefix.length) === prefix);
@@ -119,33 +119,7 @@
      * @param state {boolean}
      */
     ns.toggleAsterisk = function ($el, state) {
-        $el.text($el.text().replace(/\s?\*?$/, state ? ' *': ''));
-    };
-
-    /**
-     * Get n-th parent of the current resource
-     * @param path string - resource path
-     * @param n number - the ordinal number of parent
-     * @returns string
-     * */
-    ns.getNthParent = function (path, n) {
-        const parts = path.split('/');
-        return parts.slice(0, parts.length - n).join('/');
-    };
-
-    /**
-     * Gets object property given its string path
-     *
-     * @param {object} data - object
-     * @param {string} path - string with name of property
-     * @param {string} separator - path separator
-     */
-    ns.get = function (data, path, separator) {
-        if (!data) return undefined;
-        const parts = (path || '').split(separator);
-        return parts.reduce(function (partialData, key) {
-            return (partialData || {})[key];
-        }, data);
+        $el.text($el.text().replace(/\s?\*?$/, state ? ' *' : ''));
     };
 
     /**
@@ -166,7 +140,6 @@
         return value !== null && typeof value === 'object';
     }
 
-
     /**
      * Attempts to parse a string value into JSON object
      * @param {string} value to parse
@@ -178,6 +151,27 @@
         } catch (e) {
             return {};
         }
+    }
+
+    /**
+     * Parse function string to a real function.
+     * @param {string|function} exp
+     * @param {function} defaultFn
+     */
+    ns.evalFn = function evalFunction(exp, defaultFn) {
+        if (!exp) return defaultFn;
+        if (typeof exp === 'function') return exp;
+        let fn = defaultFn;
+        try {
+            fn = (new Function(`return ${exp}`))(); //NOSONAR: not a javascript:S3523 case, real evaluation should be done
+        } catch (e) {
+            console.error(`[DependsOn]: can not process function '${exp}': `, e);
+        }
+        if (typeof fn !== 'function') {
+            console.error(`[DependsOn]: evaluation '${exp}' result is not a function`);
+            return defaultFn;
+        }
+        return fn;
     }
 
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
