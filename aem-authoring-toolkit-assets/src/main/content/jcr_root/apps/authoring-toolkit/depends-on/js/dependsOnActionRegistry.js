@@ -29,25 +29,29 @@
         }
 
         /**
+         * Function to remove symbols that don't match the pattern
+         * @param {string} target - target string
+         * */
+        static sanitizeName(target) {
+            return target.toLowerCase().replace(NAME_REGEX, '');
+        }
+
+        /**
          * @param {string} name - action name
          * @returns {function} action callback
          * */
         static getAction(name) {
-            const action = actionRegistryMap[name];
+            const sanitizedName = ActionRegistry.sanitizeName(name);
+            if (name !== sanitizedName) {
+                console.warn(`[DependsOn]: Action "${sanitizedName}" accessed via incorrect name "${name}" (allowed symbols: a-z, 0-9, -)`);
+            }
+            const action = actionRegistryMap[sanitizedName];
             if (typeof action !== 'function') {
                 const knownActions = ActionRegistry.registeredActionNames.map((key) => `"${key}"`).join(', ');
                 throw new Error(`[DependsOn]: Action "${name}" doesn't have a valid definition in DependsOnPlugin.ActionRegistry. Known actions: ${knownActions}`);
             }
             return action;
         }
-
-        /**
-         * Function to remove symbols that don't match the pattern
-         * @param {string} target - target string
-         * */
-        static sanitizeName(target) {
-           return target.toLowerCase().replace(NAME_REGEX, '');
-        }p
 
         /**
          * @param {string} name - is action name
@@ -58,7 +62,7 @@
             name = name.trim();
             const sanitizedName = ActionRegistry.sanitizeName(name);
             if (name !== sanitizedName) {
-                console.warn(`[DependsOn]: Action's name ${name} was overridden by ${sanitizedName} (allowed symbols: a-z, 0-9, -)`);
+                console.warn(`[DependsOn]: Action's name "${name}" was sanitized to "${sanitizedName}" (allowed symbols: a-z, 0-9, -)`);
             }
             if (typeof actionFn !== 'function') {
                 throw new Error(`[DependsOn]: Action ${actionFn} is not a valid action definition`);
