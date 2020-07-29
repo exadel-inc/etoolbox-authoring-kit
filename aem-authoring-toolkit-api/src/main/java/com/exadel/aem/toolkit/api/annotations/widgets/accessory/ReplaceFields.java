@@ -22,15 +22,18 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 
 /**
- * Used to specify fields that are ignored while rendering XML markup for the current dialog. Typically used
- * for the case when current dialog class extends another class  exposing one or more {@code DialogField}s that are
- * not needed
+ * Used to specify field(-s) from the current class or any of the superclasses this field will replace when rendered
+ * to a Coral UI widget. The field(-s) specified by this annotation will be ignored; and the current field will take place
+ * of the first of the specified field (will be assigned the same ranking).
+ * This annotation is useful for "altering" a field from a superclass, e.g. when we have
+ * a {@code @DialogField @TextField private String text;} field in a superclass and need to have the virtually same field
+ * in a descendant class, but a property of {@code @DialogField} or {@code @TextField} should be changed
  */
-@Target({ElementType.TYPE, ElementType.FIELD})
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface IgnoreFields {
+public @interface ReplaceFields {
     /**
-     * For the child classes, enumerates the fields to be skipped from rendered XML for the current dialog.
+     * Enumerates the fields to be replaced by the current field in the rendered XML for the dialog.
      * Each field is specified by a reference to a {@code Class} and a field name
      * @see ClassField
      * @return One or more {@code ClassField} annotations
