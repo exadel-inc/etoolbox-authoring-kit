@@ -38,6 +38,7 @@ public class TestConstants {
     public static final String DEFAULT_COMPONENT_TITLE = "Test Component";
     public static final String DEFAULT_COMPONENT_DESCRIPTION = "Test component description";
     public static final String DEFAULT_COMPONENT_GROUP = "Test Component Group";
+    public static final String DEFAULT_COMPONENT_SUPERTYPE = "test/component/supertype";
 
     public static final String LABEL_TAB_0 = "Zeroth tab";
     public static final String LABEL_TAB_1 = "First tab";

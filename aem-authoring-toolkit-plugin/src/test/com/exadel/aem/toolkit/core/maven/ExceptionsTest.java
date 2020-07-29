@@ -19,8 +19,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
+import com.exadel.aem.toolkit.test.component.InheritanceTestCases;
 
 public class ExceptionsTest extends ExceptionsTestBase {
 
@@ -39,5 +41,12 @@ public class ExceptionsTest extends ExceptionsTestBase {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidTabException.class));
         exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
         test(ExceptionsTestCases.ComponentWithNonexistentDependsOnTab.class);
+    }
+
+    @Test
+    public void testComponentWithDuplicateFields() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidFieldContainerException.class));
+        exceptionRule.expectMessage("duplicate field names detected: fieldsetText");
+        test(InheritanceTestCases.InheritanceOverride.class);
     }
 }
