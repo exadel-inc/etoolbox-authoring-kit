@@ -121,6 +121,7 @@
                             </execution>
                         </executions>
                         <configuration>
+                            <terminateOn>ALL</terminateOn>
                             <!-- Place here the path to the node under which your component nodes are stored -->
                             <componentsPathBase>jcr_root/apps/${project.jcrAppFolder}/components</componentsPathBase>
                         </configuration>
