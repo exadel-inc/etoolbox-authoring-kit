@@ -101,6 +101,7 @@ public class DialogConstants {
     public static final String PN_DEPENDS_ON_ACTION = "dependsOnAction";
     public static final String PN_DEPENDS_ON_REF = "dependsOnRef";
     public static final String PN_DEPENDS_ON_REFTYPE = "dependsOnRefType";
+    public static final String PN_DEPENDS_ON_REFLAZY = "dependsOnRefLazy";
     public static final String PN_DESCRIPTION = "description";
     public static final String PN_DIALOG_LAYOUT = "dialogLayout";
     public static final String PN_DISCONNECTED = "disconnected";

@@ -153,6 +153,9 @@ public class DependsOnHandler implements Handler, BiConsumer<Element, Field> {
         if (!value.type().toString().equals(DependsOnRefTypes.AUTO.toString())) {
             valueMap.put(DialogConstants.PN_DEPENDS_ON_REFTYPE, value.type().toString().toLowerCase());
         }
+        if (value.lazy()) {
+            valueMap.put(DialogConstants.PN_DEPENDS_ON_REFLAZY, StringUtils.EMPTY);
+        }
         getXmlUtil().appendDataAttributes(element, valueMap);
     }
 }
