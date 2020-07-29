@@ -28,7 +28,7 @@ public @interface DependsOnRef {
     DependsOnRefTypes type() default DependsOnRefTypes.AUTO;
 
     /**
-     * Defines the 'dependsInRefLazy' attribute
+     * Defines the 'dependsOnRefLazy' attribute
      * @return marker to make DependsOn reference lazy.
      */
     boolean lazy() default false;
