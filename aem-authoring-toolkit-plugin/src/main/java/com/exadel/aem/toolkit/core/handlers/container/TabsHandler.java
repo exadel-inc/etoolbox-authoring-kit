@@ -38,13 +38,13 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
-import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 
 /**
  * The {@link Handler} for a tabbed TouchUI dialog
@@ -200,7 +200,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
                 ));
         tabCollectionElement.appendChild(tabElement);
         appendTabAttributes(tabElement, tab);
-        Handler.appendToContainer(tabElement, fields);
+        PluginXmlContainerUtility.append(tabElement, fields);
     }
 
     /**

@@ -18,13 +18,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import org.w3c.dom.Element;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
+import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 
 /**
  * The {@link Handler} for a fixed-columns TouchUI dialog.
@@ -59,6 +60,6 @@ public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Elemen
         contentItems.appendChild(contentItemsColumn);
 
         List<Field> allFields = PluginReflectionUtility.getAllFields(componentClass);
-        Handler.appendToContainer(contentItemsColumn, allFields);
+        PluginXmlContainerUtility.append(contentItemsColumn, allFields);
     }
 }
