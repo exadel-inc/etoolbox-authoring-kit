@@ -24,6 +24,7 @@ import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
+import com.exadel.aem.toolkit.test.component.InheritanceTestCases;
 
 public class DialogsTest extends DefaultTestBase {
     @Test
@@ -59,6 +60,11 @@ public class DialogsTest extends DefaultTestBase {
     @Test
     public void testChildEditConfig() {
         test(ChildEditConfigAnnotation.class);
+    }
+
+    @Test
+    public void testInheritanceOverride() {
+        test(InheritanceTestCases.InheritanceOverride.class);
     }
 
     @Test
