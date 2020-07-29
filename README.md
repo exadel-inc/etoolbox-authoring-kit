@@ -753,7 +753,11 @@ public class MyComponentDialog { /* ... */ }
 
 #### Fields inheritance and ways to cancel it
 
-Same as dialog tabs, dialog fields are "inherited" across the Java classes. However, there is the possibility to "cancel" a superclass-bound field from rendering in a current dialog or a narrower container. Add `@IgnoreFields` annotation to the current class:
+Same as dialog tabs, dialog fields are "inherited" across Java classes. Dialog fields from a superclass and from a child class are always considered two different fields, event if sharing same name. If a superclass contains a field like `@DialogField @TextField private String text;`, and its child class contains a `@DialogField @TextField private String text;` of its own, *both*  will be rendered in a dialog for the child class.
+
+Note that the presence of two or more same-named fields in a single "class with its ancestors - to - dialog" context will not break the rendering, but may cause trouble as to saving authored data. That is why `InvalidFieldContainerException` is thrown in such a case.  
+
+There is the possibility to "cancel" a superclass-bound field from rendering in a current dialog or a narrower container. Add `@IgnoreFields` annotation to the current class:
 ```java
     @Dialog(
             name = "component-dialog",
@@ -775,6 +779,15 @@ If we add an `@IgnoreFields(@ClassField(...))` instruction with its _source_ poi
 But if we need to ignore a field in one particular FieldSet of Multifield within the dialog, we may add `@IgnoreFields(@ClassField(...))` to that very field, below `@FieldSet` or `@Multifield` annotation accordingly. The _source_ parameter is naturally skipped in this case. The setting will take effect for the field and will not affect others. 
 
 Same as for tabs ignoring, the `@IgnoreFields` setting is *not* inherited, unlike fields themselves, and works only for the class where it was specified. 
+
+Apart from ignoring fields, there is the option to replace an (ancestral) field with another one. This may be used to virtually "override" a field from superclass preserving the same field name (but with mo duplicating this time). Take a look at the following sample:
+```
+    @DialogField
+    @TextField
+    @ReplaceFields(@ClassField(source = MySuper.class, field = "text"))
+    private String text;
+```
+This way, the "text" field of the `MySuper` class will be removed from the rendering workflow, but the "text" field from the current class will remain. Moreover, this one will be placed where the overridden field would be according to its ranking. As the `@ReplaceFields` accepts an array of _ClassField_ instances, one field may supplant more than one "older" fields: the first will be replaced, and the rest skipped as it would be with the `@IgnoreFields` annotation.
 
 #### @Extends-ing fields annotations 
 Several dialog fields, such as RichTextEditor field, may require vast and sophisticated annotation code. If there are multiple such fields in your Java files, they may become overgrown and difficult to maintain. Moreover, you will probably face the need to copy the lengthy annotation listings between fields, e.g. if you plan to use several RTE boxes with virtually the same set of toolbar buttons, plugins, etc.
