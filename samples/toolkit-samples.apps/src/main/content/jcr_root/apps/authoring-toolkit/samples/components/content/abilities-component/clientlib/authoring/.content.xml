@@ -5,5 +5,5 @@
           allowProxy="{Boolean}true"
           categories="[authoring-toolkit.samples.authoring]"
           dependencies="[cq.authoring.dependson]"
-          jsProcessor="['default:none', 'min:gcc;compilationLevel=advanced']"
+          jsProcessor="[min:gcc;languageIn=ECMASCRIPT_2015,compilationLevel=advanced,languageOut=ECMASCRIPT5]"
 />
