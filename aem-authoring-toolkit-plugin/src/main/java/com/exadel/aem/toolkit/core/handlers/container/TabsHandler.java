@@ -108,7 +108,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
 
         // If tabs collection is empty and yet there are fields to be placed, fire an exception and create a default tab
         if (allTabInstances.isEmpty() && !allFields.isEmpty()) {
-            PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
+            PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(
                     NO_TABS_DEFINED_EXCEPTION_MESSAGE + componentClass.getSimpleName()
             ));
             Tab newTab = PluginObjectUtility.create(Tab.class,
