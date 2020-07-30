@@ -157,6 +157,17 @@ public class PluginReflectionUtility {
     }
 
     /**
+     * Returns {@code <Class>} of exception by its name.
+     * @param exception The name of expected exception
+     * @return {@code <Class>} of exception
+     */
+    public Class<?> getExceptionClass(String exception) {
+        return reflections.getSubTypesOf(Exception.class).stream()
+                .filter(type -> type.getSimpleName().equals(exception)
+                        || type.getName().equals(exception)).findFirst().orElse(null);
+    }
+
+    /**
      * Gets generic list of handler instances invoked from all available derivatives of specified handler {@code Class}.
      * Each is supplied with a reference to {@link PluginRuntimeContext} as required
      * @param handlerClass {@code Class} object

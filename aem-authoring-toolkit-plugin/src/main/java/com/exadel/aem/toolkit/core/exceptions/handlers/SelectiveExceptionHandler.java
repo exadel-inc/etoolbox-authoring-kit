@@ -17,6 +17,8 @@ package com.exadel.aem.toolkit.core.exceptions.handlers;
 import java.util.List;
 
 import com.exadel.aem.toolkit.core.exceptions.PluginException;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import org.apache.commons.lang3.ClassUtils;
 
 /**
  * Implements the "selective" kind of {@link com.exadel.aem.toolkit.api.runtime.ExceptionHandler}, that is, the one
@@ -47,6 +49,26 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
 
     @Override
     public boolean haltsOn(Class<? extends Exception> exceptionType) {
-        return criticalExceptions.stream().anyMatch(exName -> exceptionType.getName().equalsIgnoreCase(exName));
+        Class<?> managedClass;
+        for (String exName : criticalExceptions){
+            if (exName.startsWith("!")) {
+                managedClass = PluginRuntime.context().getReflectionUtility().getExceptionClass(exName.substring(1));
+                if (exceptionType.getName().equalsIgnoreCase(managedClass.getName())) {
+                    return false;
+                }
+            } else if (exName.equals("*")) {
+                return true;
+            } else if (exName.endsWith(".*")) {
+                if (exceptionType.getName().startsWith(exName.substring(0,exName.length()-1))){
+                    return true;
+                } else continue;
+            }
+            managedClass = PluginRuntime.context().getReflectionUtility().getExceptionClass(exName);
+            if (managedClass != null && (ClassUtils.isAssignable(exceptionType, managedClass)
+            || exceptionType.isAssignableFrom(managedClass))) {
+                return true;
+            }
+        }
+        return false;
     }
 }
