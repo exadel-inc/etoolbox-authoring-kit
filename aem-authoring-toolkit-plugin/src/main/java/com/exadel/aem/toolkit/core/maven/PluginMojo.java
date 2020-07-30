@@ -34,8 +34,8 @@ import com.exadel.aem.toolkit.core.util.writer.PackageWriter;
 @Mojo(name = "aem-authoring", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyCollection = ResolutionScope.COMPILE)
 @SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
 public class PluginMojo extends AbstractMojo {
-    private static final String DEPENDENCY_RESOLUTION_EXCEPTION_MESSAGE = "AEM Authoring Toolkit could not resolve dependencies of project %s: %s";
-    private static final String PLUGIN_EXECUTION_EXCEPTION_MESSAGE = "AEM Authoring Toolkit terminated due to %s in project %s: %s";
+    private static final String DEPENDENCY_RESOLUTION_EXCEPTION_MESSAGE = "Could not resolve dependencies of project %s: %s";
+    private static final String PLUGIN_EXECUTION_EXCEPTION_MESSAGE = "Terminated due to %s in module %s: %s";
 
     @Parameter(readonly = true, defaultValue = "${project}")
     private MavenProject project;
