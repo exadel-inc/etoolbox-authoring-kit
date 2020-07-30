@@ -87,7 +87,7 @@
                             <embeddeds>
                                 <embedded>
                                     <groupId>${project.groupId}</groupId>
-                                    <artifactId>toolkit-samples.core</artifactId>
+                                    <artifactId>aem-authoring-toolkit-samples-core</artifactId>
                                     <target>/apps/${project.jcrAppFolder}/install</target>
                                 </embedded>
                             </embeddeds>
