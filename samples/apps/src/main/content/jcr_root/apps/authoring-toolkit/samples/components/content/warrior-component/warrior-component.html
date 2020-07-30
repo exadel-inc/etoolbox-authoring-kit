@@ -5,8 +5,8 @@
 <div class="warrior-component-wrap ${data.colorTheme}">
     <h1 class  ="warrior-component-title">${data.title || "Create your warrior" @ context='text'}</h1>
     <div class="warrior-header">
-        <span class="warrior-header-name">${data.warriorName || "The Guy" @ context='text'}</span>
-        <img class="warrior-header-icon" src="${data.iconPath @ context='uri'}">
+        <span class="warrior-header-name">${data.name || "The Guy" @ context='text'}</span>
+        <img class="warrior-header-icon" src="${data.photo @ context='uri'}">
     </div>
     <div class="warrior-components-wrap" data-sly-resource="${'./parsys/' @ resourceType='wcm/foundation/components/parsys'}"></div>
 </div>

@@ -1,16 +1,5 @@
 package com.exadel.aem.toolkit.samples.models;
 
-import javax.inject.Inject;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.ChildResource;
-import org.apache.sling.models.annotations.injectorspecific.Self;
-
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
@@ -20,6 +9,14 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.ChildResource;
+import org.apache.sling.models.annotations.injectorspecific.Self;
+
+import java.util.Optional;
 
 @Dialog(
         name = "content/homeland-component",
@@ -70,24 +67,11 @@ public class HomelandComponent {
         }
 
         public String getWarriorName() {
-            String warriorName = null;
-
-            Resource resource = getGrandParentResource();
-
-            if (resource != null) {
-                ValueMap resourceValueMap = resource.getValueMap();
-                warriorName = resourceValueMap.get("warriorName", String.class);
-            }
-
-            return StringUtils.defaultIfBlank(warriorName, WarriorComponent.DEFAULT_NAME);
-        }
-
-        private Resource getGrandParentResource() {
-            Resource parentResource = currentResource.getParent();
-            if (parentResource != null) {
-                return parentResource.getParent();
-            }
-            return null;
+            return Optional.ofNullable(currentResource.getParent())
+                    .map(Resource::getParent)
+                    .map(Resource::getValueMap)
+                    .map(valueMap -> valueMap.get("name", String.class))
+                    .orElse(WarriorComponent.DEFAULT_NAME);
         }
     }
 

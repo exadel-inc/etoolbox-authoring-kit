@@ -1,14 +1,14 @@
 package com.exadel.aem.toolkit.samples.models.fieldsets;
 
-import org.apache.commons.lang3.BooleanUtils;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
+import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.samples.utils.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
-
-import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
-import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WeaponFieldSet {
@@ -17,31 +17,31 @@ public class WeaponFieldSet {
     @Checkbox
     @DialogField(label = "Bow")
     @ValueMapValue
-    private boolean bow;
+    private boolean bowChosen;
 
     @DependsOnRef(name = "checkbox")
     @Checkbox
     @DialogField(label = "Sword")
     @ValueMapValue
-    private boolean sword;
+    private boolean swordChosen;
 
-    public boolean getBow() {
-        return bow;
+    public boolean isBowChosen() {
+        return bowChosen;
     }
 
-    public boolean getSword() {
-        return sword;
+    public boolean isSwordChosen() {
+        return swordChosen;
     }
 
-    private String getStringBow() {
-        return BooleanUtils.isNotTrue(bow) ? "" : "bow, ";
+    private String getBow() {
+        return bowChosen ? "bow" : StringUtils.EMPTY;
     }
 
-    private String getStringSword() {
-        return BooleanUtils.isNotTrue(sword) ? "" : "sword, ";
+    private String getSword() {
+        return swordChosen ? "sword" : StringUtils.EMPTY;
     }
 
     public String getWeapon() {
-        return (getStringBow() + getStringSword());
+        return ListUtils.joinNonBlank(ListUtils.COMMA_SPACE_DELIMITER, getBow(), getSword());
     }
 }

@@ -1,13 +1,14 @@
 package com.exadel.aem.toolkit.samples.models.fieldsets;
 
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
+import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.samples.utils.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
-
-import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
-import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ProductsFieldSet {
@@ -16,31 +17,31 @@ public class ProductsFieldSet {
     @Checkbox
     @DialogField(label = "Milk")
     @ValueMapValue
-    private boolean milk;
+    private boolean milkChosen;
 
     @DependsOnRef(name = "checkbox")
     @Checkbox
     @DialogField(label = "Cheese")
     @ValueMapValue
-    private boolean cheese;
+    private boolean cheeseChosen;
 
-    public boolean getMilk() {
-        return milk;
+    public boolean isMilkChosen() {
+        return milkChosen;
     }
 
-    public boolean getCheese() {
-        return cheese;
+    public boolean isCheeseChosen() {
+        return cheeseChosen;
     }
 
-    private String getStringMilk() {
-        return milk ? "milk, " : "";
+    private String getMilk() {
+        return milkChosen ? "milk" : StringUtils.EMPTY;
     }
 
-    private String getStringCheese() {
-        return cheese ? "cheese, " : "";
+    private String getCheese() {
+        return cheeseChosen ? "cheese" : StringUtils.EMPTY;
     }
 
     public String getProducts() {
-        return (getStringMilk() + getStringCheese());
+        return ListUtils.joinNonBlank(ListUtils.COMMA_SPACE_DELIMITER, getMilk(), getCheese());
     }
 }

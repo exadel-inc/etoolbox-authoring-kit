@@ -60,7 +60,7 @@ public class WarriorDescriptionComponent {
 
     private static final String DESCRIPTION_TEMPLATE = "%s was born on a cold but bright day %s. He would %s. %s, and %s";
     private static final String DEFAULT_BIRTHDAY = "29.03.2000";
-    private static final String DEFAULT_CHARACTER = "always smiles creepily";
+    private static final String DEFAULT_CHARACTER = "always smile creepily";
     private static final String DEFAULT_FRUIT_TEXT = "He doesn't like fruit";
     private static final String DEFAULT_MOVIES_TEXT = "He doesn't like movies";
 
@@ -158,9 +158,9 @@ public class WarriorDescriptionComponent {
 
     @PlaceOnTab(WarriorDescriptionComponent.TAB_MAIN)
     @RadioGroup(buttons = {
-            @RadioButton(text = "Funny", value = "always smiles creepily", checked = true),
-            @RadioButton(text = "Sad", value = "always steals your handkerchief"),
-            @RadioButton(text = "Angry", value = "always ignores you")
+            @RadioButton(text = "Funny", value = "always smile creepily", checked = true),
+            @RadioButton(text = "Sad", value = "always steal your handkerchief"),
+            @RadioButton(text = "Angry", value = "always ignore you")
     })
     @DialogField(
             label = "Character",
@@ -197,7 +197,7 @@ public class WarriorDescriptionComponent {
         return Optional.ofNullable(resource.getParent())
                 .map(Resource::getParent)
                 .map(Resource::getValueMap)
-                .map(valueMap -> valueMap.get("warriorName", String.class))
+                .map(valueMap -> valueMap.get("name", String.class))
                 .orElse(WarriorComponent.DEFAULT_NAME);
     }
 

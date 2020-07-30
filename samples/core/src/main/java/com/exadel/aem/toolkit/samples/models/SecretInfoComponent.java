@@ -68,7 +68,7 @@ public class SecretInfoComponent {
             command = "shift+s",
             block = true
     )
-    private String button1;
+    private String button;
 
     public String getPassword() {
         return password;

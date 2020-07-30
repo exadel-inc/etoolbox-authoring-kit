@@ -1,5 +1,6 @@
 package com.exadel.aem.toolkit.samples.models;
 
+import com.exadel.aem.toolkit.samples.utils.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
@@ -37,8 +38,8 @@ public class ShoppingListComponent {
     static final String TAB_MAIN = "Shopping list";
 
     private static final String DEFAULT_EMPTY_LIST_TEXT = "it seems like your warrior is happy and without any purchases.";
-    private static final String DEFAULT_NOT_WONDERFUL_TEXT = "and your warrior is not wonderful!";
-    private static final String DEFAULT_WONDERFUL_TEXT = "and he thinks he is wonderful, because ";
+    private static final String DEFAULT_NOT_WONDERFUL_TEXT = ", and your warrior is not wonderful!";
+    private static final String DEFAULT_WONDERFUL_TEXT = ", and he thinks he is wonderful, because ";
     private static final String DEFAULT_ANSWER = "he was born like this.";
 
     @Attribute(className = "weapon-fieldSet")
@@ -66,12 +67,13 @@ public class ShoppingListComponent {
     }
 
     public String getText() {
-        String shoppingList = productsFieldSet.getProducts() + weaponFieldSet.getWeapon();
+        String shoppingList = ListUtils.joinNonBlank(ListUtils.COMMA_SPACE_DELIMITER,
+                productsFieldSet.getProducts(), weaponFieldSet.getWeapon());
         StringBuilder text = new StringBuilder(shoppingList);
 
         if (StringUtils.isEmpty(shoppingList)) {
             text.append(DEFAULT_EMPTY_LIST_TEXT);
-        } else if (weaponFieldSet.getBow() && weaponFieldSet.getSword()) {
+        } else if (weaponFieldSet.isBowChosen() && weaponFieldSet.isSwordChosen()) {
             text.append(DEFAULT_NOT_WONDERFUL_TEXT);
         } else {
             text.append(DEFAULT_WONDERFUL_TEXT).append(getAnswer());

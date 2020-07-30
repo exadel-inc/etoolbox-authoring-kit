@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
         componentGroup = GroupConstants.COMPONENT_CONTAINER_GROUP,
         tabs = {
                 @Tab(title = WarriorComponent.TAB_MAIN),
-                @Tab(title = WarriorComponent.TAB_ICON),
+                @Tab(title = WarriorComponent.TAB_PHOTO),
                 @Tab(title = WarriorComponent.TAB_THEME)
         },
         isContainer = true
@@ -45,7 +45,7 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
                 ),
                 @InplaceEditingConfig(
                         title = "Warrior's name",
-                        propertyName = "warriorName",
+                        propertyName = "name",
                         type = EditorType.PLAINTEXT,
                         editElementQuery = ".warrior-name-span"
                 )
@@ -58,7 +58,7 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
 public class WarriorComponent {
 
     static final String TAB_MAIN = "Main info";
-    static final String TAB_ICON = "Icon";
+    static final String TAB_PHOTO = "Photo";
     static final String TAB_THEME = "Color theme";
     static final String DEFAULT_NAME = "The Guy";
 
@@ -75,16 +75,16 @@ public class WarriorComponent {
     @TextField(emptyText = WarriorComponent.DEFAULT_NAME)
     @DialogField(label = "Warrior name")
     @ValueMapValue
-    private String warriorName;
+    private String name;
 
-    @PlaceOnTab(WarriorComponent.TAB_ICON)
+    @PlaceOnTab(WarriorComponent.TAB_PHOTO)
     @PathField(
             emptyText = "Face",
             rootPath = "/content/dam"
     )
     @DialogField(label = "Photo of warrior")
     @ValueMapValue
-    private String iconPath;
+    private String photo;
 
     @PlaceOnTab(WarriorComponent.TAB_THEME)
     @Switch()
@@ -97,12 +97,12 @@ public class WarriorComponent {
         return StringUtils.defaultIfBlank(title, DEFAULT_TITLE);
     }
 
-    public String getWarriorName() {
-        return StringUtils.defaultIfBlank(warriorName, DEFAULT_NAME);
+    public String getName() {
+        return StringUtils.defaultIfBlank(name, DEFAULT_NAME);
     }
 
-    public String getIconPath() {
-        return iconPath;
+    public String getPhoto() {
+        return photo;
     }
 
     public String getColorTheme() {

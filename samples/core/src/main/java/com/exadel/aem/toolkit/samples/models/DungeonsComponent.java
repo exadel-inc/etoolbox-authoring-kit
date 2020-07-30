@@ -55,14 +55,14 @@ public class DungeonsComponent extends ParentSelectComponent {
     @Default(values = "1")
     @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
     @ValueMapValue
-    private String dungeonsSelect;
+    private String dungeon;
 
     public String getDungeonRules() {
         return StringUtils.defaultIfBlank(dungeonRules, DEFAULT_RULES);
     }
 
     public String getDungeonDescription() {
-        if (dungeonsSelect.equals("1")) {
+        if ("1".equals(dungeon)) {
             return DEFAULT_ROTTEN_SWAMPS_TEXT;
         }
         return DEFAULT_ICE_VALLEY_TEXT;
