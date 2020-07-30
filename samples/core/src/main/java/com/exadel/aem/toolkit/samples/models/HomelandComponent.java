@@ -51,8 +51,8 @@ public class HomelandComponent {
     @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
     public static class HomelandTab {
 
-        @Inject
-        private ResourceResolver resourceResolver;
+        @Self
+        Resource currentResource;
 
         @ImageUpload
         @DialogField(
@@ -72,7 +72,7 @@ public class HomelandComponent {
         public String getWarriorName() {
             String warriorName = null;
 
-            Resource resource = resourceResolver.getResource(PathConstants.WARRIOR_COMPONENT_PATH);
+            Resource resource = getGrandParentResource();
 
             if (resource != null) {
                 ValueMap resourceValueMap = resource.getValueMap();
@@ -80,6 +80,14 @@ public class HomelandComponent {
             }
 
             return StringUtils.defaultIfBlank(warriorName, WarriorComponent.DEFAULT_NAME);
+        }
+
+        private Resource getGrandParentResource() {
+            Resource parentResource = currentResource.getParent();
+            if (parentResource != null) {
+                return parentResource.getParent();
+            }
+            return null;
         }
     }
 
