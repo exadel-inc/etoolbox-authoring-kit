@@ -47,7 +47,7 @@
          * */
         static sanitizeName(target) {
            return target.toLowerCase().replace(NAME_REGEX, '');
-        }p
+        }
 
         /**
          * @param {string} name - is action name
