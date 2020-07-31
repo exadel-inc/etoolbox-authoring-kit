@@ -46,7 +46,7 @@ public class ExceptionsTest extends ExceptionsTestBase {
     @Test
     public void testComponentWithDuplicateFields() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidFieldContainerException.class));
-        exceptionRule.expectMessage("duplicate field names detected: fieldsetText");
-        test(InheritanceTestCases.InheritanceOverride.class);
+        exceptionRule.expectMessage("Field name \"text2\" in class \"DuplicateOverride\"");
+        test(InheritanceTestCases.DuplicateOverride.class);
     }
 }

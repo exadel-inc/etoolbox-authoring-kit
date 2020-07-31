@@ -15,7 +15,9 @@
 package com.exadel.aem.toolkit.test.component;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.core.util.TestConstants;
 
@@ -79,6 +81,30 @@ public class InheritanceTestCases {
         )
         @TextField
         private String fieldsetText;
+    }
+
+    private static class DuplicateBase {
+        @DialogField
+        @TextField
+        private String text1;
+
+        @DialogField(ranking = 1)
+        @TextField
+        private String text2;
+    }
+
+    @Dialog(
+            name = TestConstants.DEFAULT_COMPONENT_NAME,
+            title = TestConstants.DEFAULT_COMPONENT_TITLE
+    )
+    public static class DuplicateOverride extends DuplicateBase {
+        @DialogField
+        @TextField
+        private String text1; // will not cause an exception because placed underneath the field from superclass by order
+
+        @DialogField
+        @TextField
+        private String text2; // will cause and exception because placed above the field from superclass by order
     }
 }
 
