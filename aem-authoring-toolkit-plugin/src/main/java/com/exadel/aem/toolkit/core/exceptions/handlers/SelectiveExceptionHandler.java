@@ -17,8 +17,8 @@ package com.exadel.aem.toolkit.core.exceptions.handlers;
 import java.util.List;
 
 import com.exadel.aem.toolkit.core.exceptions.PluginException;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Implements the "selective" kind of {@link com.exadel.aem.toolkit.api.runtime.ExceptionHandler}, that is, the one
@@ -28,6 +28,10 @@ import org.apache.commons.lang3.ClassUtils;
  */
 class SelectiveExceptionHandler extends PermissiveExceptionHandler {
     private List<String> criticalExceptions;
+    private static final String ALL_EXCEPTIONS = "all";
+    private static final String EXCEPTIONS_WILDCARD = "*";
+    private static final String EXCLAMATION_MARK = "!";
+    private static final String PACKAGE_POSTFIX = ".*";
 
     SelectiveExceptionHandler(List<String> criticalExceptions) {
         this.criticalExceptions = criticalExceptions;
@@ -50,23 +54,30 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
     @Override
     public boolean haltsOn(Class<? extends Exception> exceptionType) {
         Class<?> managedClass;
-        for (String exName : criticalExceptions){
-            if (exName.startsWith("!")) {
-                managedClass = PluginRuntime.context().getReflectionUtility().getExceptionClass(exName.substring(1));
-                if (exceptionType.getName().equalsIgnoreCase(managedClass.getName())) {
-                    return false;
-                }
-            } else if (exName.equals("*")) {
+        boolean inverse;
+        for (String exName : criticalExceptions) {
+            inverse = false;
+            if (StringUtils.equalsAnyIgnoreCase(exName, ALL_EXCEPTIONS, EXCEPTIONS_WILDCARD)) {
                 return true;
-            } else if (exName.endsWith(".*")) {
-                if (exceptionType.getName().startsWith(exName.substring(0,exName.length()-1))){
-                    return true;
-                } else continue;
             }
-            managedClass = PluginRuntime.context().getReflectionUtility().getExceptionClass(exName);
-            if (managedClass != null && (ClassUtils.isAssignable(exceptionType, managedClass)
-            || exceptionType.isAssignableFrom(managedClass))) {
-                return true;
+            if (exName.startsWith(EXCLAMATION_MARK)) {
+                inverse = true;
+                exName = exName.substring(1);
+            }
+            if (exName.endsWith(PACKAGE_POSTFIX)) {
+                if (exceptionType.getName().startsWith(exName.substring(0, exName.length() - 1))) {
+                    return !inverse;
+                } else continue;
+            } else {
+                try {
+                    managedClass = Class.forName(exName);
+                } catch (ClassNotFoundException exception) {
+                    continue;
+                }
+                if (managedClass != null && (ClassUtils.isAssignable(exceptionType, managedClass)
+                        || exceptionType.isAssignableFrom(managedClass))) {
+                    return !inverse;
+                }
             }
         }
         return false;

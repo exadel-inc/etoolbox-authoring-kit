@@ -27,7 +27,7 @@ import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
  */
 public class PluginExceptionHandlers {
     private static final String ALL_EXCEPTIONS = "all";
-    private static final String ALL_EXCEPTIONS_1 = "*";
+    private static final String EXCEPTIONS_WILDCARD = "*";
     private static final String NONE_EXCEPTIONS = "none";
 
     private PluginExceptionHandlers() {
@@ -43,7 +43,7 @@ public class PluginExceptionHandlers {
         if (StringUtils.isBlank(value) || NONE_EXCEPTIONS.equalsIgnoreCase(value)) {
             return new PermissiveExceptionHandler();
         }
-        if (ALL_EXCEPTIONS.equalsIgnoreCase(value) || ALL_EXCEPTIONS_1.equals(value)) {
+        if (StringUtils.equalsAnyIgnoreCase(value,ALL_EXCEPTIONS,EXCEPTIONS_WILDCARD)) {
             return new StrictExceptionHandler();
         }
         return new SelectiveExceptionHandler(Arrays.stream(StringUtils.split(value, ','))
