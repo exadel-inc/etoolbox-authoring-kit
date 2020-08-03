@@ -19,8 +19,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.markers._This;
+
 /**
- * Used to refer a particular field of a class for a specific processing while building XML markup
+ * Used to refer to a particular field of a class for a specific processing while building XML markup
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -30,11 +32,11 @@ public @interface ClassField {
      * The Java class possessing the field
      * @return {@code Class<?>} instance
      */
-    Class<?> source() default Object.class;
+    Class<?> source() default _This.class;
 
     /**
      * The name of the field
-     * @return String value, non-empty
+     * @return String value
      */
-    String field();
+    String field() default "";
 }
