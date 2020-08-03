@@ -784,10 +784,12 @@ Apart from ignoring fields, there is the option to replace an (ancestral) field 
 ```
     @DialogField
     @TextField
-    @ReplaceFields(@ClassField(source = MySuper.class, field = "text"))
+    @Replace(@ClassField(source = MySuper.class, field = "text"))
     private String text;
 ```
-This way, the "text" field of the `MySuper` class will be removed from the rendering workflow, but the "text" field from the current class will remain. Moreover, this one will be placed where the overridden field would be according to its ranking. As the `@ReplaceFields` accepts an array of _ClassField_ instances, one field may supplant more than one "older" fields: the first will be replaced, and the rest skipped as it would be with the `@IgnoreFields` annotation.
+This way, the "text" field of the `MySuper` class will be removed from the rendering workflow, but the "text" field from the current class will remain. Moreover, this one will be placed where the overridden field would be according to its ranking. 
+
+If you omit the `source` part from `@Replace`, the current class will be supposed. Otherwise, if you omit the `field` name, the same-named field from the speciafied source class will be supposed. 
 
 #### @Extends-ing fields annotations 
 Several dialog fields, such as RichTextEditor field, may require vast and sophisticated annotation code. If there are multiple such fields in your Java files, they may become overgrown and difficult to maintain. Moreover, you will probably face the need to copy the lengthy annotation listings between fields, e.g. if you plan to use several RTE boxes with virtually the same set of toolbar buttons, plugins, etc.
