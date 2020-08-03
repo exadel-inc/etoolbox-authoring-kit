@@ -111,6 +111,7 @@ public class DialogConstants {
     public static final String PN_EXTERNAL_STYLESHEETS = "externalStyleSheets";
     public static final String PN_FALLBACK_BLOCK_TAG = "fallbackBlockTag";
     public static final String PN_FEATURES = "features";
+    public static final String PN_FIELD = "field";
     public static final String PN_GRANITE_CLASS = "granite:class";
     public static final String PN_GROUPS = "groups";
     public static final String PN_HEIGHT = "height";

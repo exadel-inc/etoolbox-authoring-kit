@@ -22,13 +22,13 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.core.handlers.Handler;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
-import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
+import com.exadel.aem.toolkit.core.util.PluginClassFieldUtility;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 
 import static com.exadel.aem.toolkit.core.util.DialogConstants.PN_COMPONENT_CLASS;
@@ -56,17 +56,13 @@ interface WidgetSetHandler extends Handler, BiConsumer<Element, Field> {
         // (apart from those defined for the container class itself)
         Stream<ClassField> classLevelIgnoredFields = componentType != null && componentType.isAnnotationPresent(IgnoreFields.class)
                 ? Arrays.stream(componentType.getAnnotation(IgnoreFields.class).value())
-                .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
-                        ClassField.class,
-                        DialogConstants.PN_SOURCE_CLASS,
-                        componentType))
+                    .filter(classField -> StringUtils.isNotEmpty(classField.field()))
+                    .map(classField -> PluginClassFieldUtility.populateDefaults(classField, componentType))
                 : Stream.empty();
         Stream<ClassField> fieldLevelIgnoredFields = field.isAnnotationPresent(IgnoreFields.class)
                 ? Arrays.stream(field.getAnnotation(IgnoreFields.class).value())
-                .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
-                        ClassField.class,
-                        DialogConstants.PN_SOURCE_CLASS,
-                        containerType))
+                    .filter(classField -> StringUtils.isNotEmpty(classField.field()))
+                    .map(classField -> PluginClassFieldUtility.populateDefaults(classField, containerType))
                 : Stream.empty();
         List<ClassField> allIgnoredFields = Stream.concat(classLevelIgnoredFields, fieldLevelIgnoredFields)
                 .filter(classField -> PluginReflectionUtility.getClassHierarchy(containerType).stream()
