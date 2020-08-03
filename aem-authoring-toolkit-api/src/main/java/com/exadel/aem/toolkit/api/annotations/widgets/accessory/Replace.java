@@ -31,12 +31,12 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassField;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ReplaceFields {
+public @interface Replace {
     /**
      * Enumerates the fields to be replaced by the current field in the rendered XML for the dialog.
      * Each field is specified by a reference to a {@code Class} and a field name
      * @see ClassField
      * @return One or more {@code ClassField} annotations
      */
-    ClassField[] value();
+    ClassField value();
 }
