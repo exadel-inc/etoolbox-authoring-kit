@@ -135,7 +135,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
             boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
             storedCurrentTabFields.addAll(moreCurrentTabFields);
             if (needResort) {
-                storedCurrentTabFields.sort(PluginReflectionUtility.Predicates::compareDialogFields);
+                storedCurrentTabFields.sort(PluginReflectionUtility.Predicates::compareByRanking);
             }
             allFields.removeAll(moreCurrentTabFields);
 

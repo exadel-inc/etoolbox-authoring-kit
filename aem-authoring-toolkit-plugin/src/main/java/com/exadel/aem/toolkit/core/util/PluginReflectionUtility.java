@@ -412,13 +412,13 @@ public class PluginReflectionUtility {
         }
 
         /**
-         * Called by XML rendering routines to order {@code Dialog} fields based on their class affiliation and their
-         * optional {@link DialogField} annotations' ranking values
+         * Facilitates ordering {@code Field} instances according to their optional {@link DialogField} annotations'
+         * ranking values and then their class affiliation
          * @param f1 First comparison member
          * @param f2 Second comparison member
          * @return Integer value per {@code Comparator#compare(Object, Object)} convention
          */
-        public static int compareDialogFields(Field f1, Field f2)  {
+        public static int compareByRanking(Field f1, Field f2)  {
             int rank1 = 0;
             int rank2 = 0;
             if (f1.isAnnotationPresent(DialogField.class)) {
@@ -432,6 +432,17 @@ public class PluginReflectionUtility {
             if (rank1 != rank2) {
                 return Integer.compare(rank1, rank2);
             }
+            return compareByOrigin(f1, f2);
+        }
+
+        /**
+         * Facilitates ordering {@code Field} instances according to their class affiliation (if both fields' classes
+         * are of the same inheritance tree, a field from the senior class goes first)
+         * @param f1 First comparison member
+         * @param f2 Second comparison member
+         * @return Integer value per {@code Comparator#compare(Object, Object)} convention
+         */
+        private static int compareByOrigin(Field f1, Field f2) {
             if (f1.getDeclaringClass() != f2.getDeclaringClass()) {
                 if (ClassUtils.isAssignable(f1.getDeclaringClass(), f2.getDeclaringClass())) {
                     return 1;
