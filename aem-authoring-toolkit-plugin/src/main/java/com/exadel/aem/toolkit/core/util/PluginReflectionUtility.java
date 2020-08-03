@@ -37,7 +37,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -308,57 +307,6 @@ public class PluginReflectionUtility {
         }
         Collections.reverse(result);
         return result;
-    }
-
-    /**
-     * Retrieves list of properties of an {@code Annotation} object for which non-default values have been set
-     * @param annotation The annotation instance to analyze
-     * @return List of {@code Method} instances that represent properties initialized with non-defaults
-     */
-    public static List<Method> getAnnotationNonDefaultProperties(Annotation annotation) {
-        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .filter(method -> !annotationPropertyIsDefault(annotation, method))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Gets whether all the {@code Annotation}'s properties have default values
-     * @param annotation The annotation to analyze
-     * @return True or false
-     */
-    public static boolean annotationIsDefault(Annotation annotation) {
-        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .allMatch(method -> annotationPropertyIsDefault(annotation, method));
-    }
-
-    /**
-     * Gets whether an {@code Annotation} property has a value which is not default
-     * @param annotation The annotation to analyze
-     * @param method The method representing the property
-     * @return True or false
-     */
-    static boolean annotationPropertyIsDefault(Annotation annotation, Method method) {
-        try {
-            Object defaultValue = method.getDefaultValue();
-            if (defaultValue == null) {
-                return false;
-            }
-            Object invocationResult = method.invoke(annotation);
-            if (method.getReturnType().isArray() && ArrayUtils.isEmpty((Object[])invocationResult)) {
-                return true;
-            }
-            return defaultValue.equals(invocationResult);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            return false;
-        }
-    }
-
-    static boolean annotationPropertyIsDefault(Annotation annotation, String method) {
-        try {
-            return annotationPropertyIsDefault(annotation, annotation.annotationType().getDeclaredMethod(method));
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
     }
 
     /**

@@ -48,7 +48,7 @@ import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
-import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.core.util.validation.CharactersObjectValidator;
 
@@ -331,7 +331,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     private void populatePasteRulesNode(Supplier<Element> elementSupplier){
         HtmlPasteRules rules = this.rteAnnotation.htmlPasteRules();
         Element htmlPasteRulesNode = getXmlUtil().createNodeElement(DialogConstants.NN_HTML_PASTE_RULES);
-        List<String> nonDefaultAllowPropsNames = PluginReflectionUtility.getAnnotationNonDefaultProperties(rules).stream()
+        List<String> nonDefaultAllowPropsNames = PluginObjectUtility.getNonDefaultProperties(rules).stream()
                 .filter(field -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(field.getName()).matches())
                 .map(field -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(field.getName()).replaceAll("$1").toLowerCase())
                 .filter(propName -> {
@@ -378,7 +378,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
      */
     private void populateHtmlLinkRules(Element element) {
         HtmlLinkRules rules = this.rteAnnotation.htmlLinkRules();
-        if (PluginReflectionUtility.annotationIsDefault(rules)) {
+        if (PluginObjectUtility.isDefault(rules)) {
             return;
         }
         Element htmlRulesNode = getXmlUtil().createNodeElement(DialogConstants.NN_HTML_RULES);

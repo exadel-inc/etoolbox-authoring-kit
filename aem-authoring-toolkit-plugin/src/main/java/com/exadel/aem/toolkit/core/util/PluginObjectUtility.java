@@ -31,7 +31,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
@@ -117,6 +119,63 @@ public class PluginObjectUtility {
             methods.put(methodName, (annotation, args) -> fixedValue);
         });
         return modify(source, type, methods);
+    }
+
+    /**
+     * Gets whether all the {@code Annotation}'s properties have default values
+     * @param annotation The annotation to analyze
+     * @return True or false
+     */
+    public static boolean isDefault(Annotation annotation) {
+        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
+                .allMatch(method -> isDefaultValue(annotation, method));
+    }
+
+    /**
+     * Gets whether an {@code Annotation} property has a value which is not default
+     * @param annotation The annotation to analyze
+     * @param method The name of the method representing the property
+     * @return True or false
+     */
+    static boolean isDefaultValue(Annotation annotation, String method) {
+        try {
+            return isDefaultValue(annotation, annotation.annotationType().getDeclaredMethod(method));
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Gets whether an {@code Annotation} property has a value which is not default
+     * @param annotation The annotation to analyze
+     * @param method The method representing the property
+     * @return True or false
+     */
+    static boolean isDefaultValue(Annotation annotation, Method method) {
+        try {
+            Object defaultValue = method.getDefaultValue();
+            if (defaultValue == null) {
+                return false;
+            }
+            Object invocationResult = method.invoke(annotation);
+            if (method.getReturnType().isArray() && ArrayUtils.isEmpty((Object[])invocationResult)) {
+                return true;
+            }
+            return defaultValue.equals(invocationResult);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Retrieves list of properties of an {@code Annotation} object for which non-default values have been set
+     * @param annotation The annotation instance to analyze
+     * @return List of {@code Method} instances that represent properties initialized with non-defaults
+     */
+    public static List<Method> getNonDefaultProperties(Annotation annotation) {
+        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
+                .filter(method -> !isDefaultValue(annotation, method))
+                .collect(Collectors.toList());
     }
 
     /**
