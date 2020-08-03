@@ -74,6 +74,7 @@ public class WarriorDescriptionComponent {
     @Self
     private Resource resource;
 
+    @DialogField
     @PlaceOnTab(WarriorDescriptionComponent.TAB_MAIN)
     @RichTextEditor(
             features = {
@@ -120,11 +121,13 @@ public class WarriorDescriptionComponent {
                     @ParagraphFormat(tag = "h2", description = "My custom subheader")
             }
     )
-    @DialogField
     @ValueMapValue
     private String description;
 
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_MAIN)
+    @DialogField(
+            label = "Birthday",
+            description = "Enter the birthday of your warrior"
+    )
     @DatePicker(
             type = DatePickerType.DATE,
             displayedFormat = "DD.MM.YYYY",
@@ -132,64 +135,62 @@ public class WarriorDescriptionComponent {
             maxDate = @DateTimeValue(day = 1, month = 12, year = 2019),
             typeHint = TypeHint.STRING
     )
-    @DialogField(
-            label = "Birthday",
-            description = "Enter the birthday of your warrior"
-    )
+    @PlaceOnTab(WarriorDescriptionComponent.TAB_MAIN)
     @ValueMapValue
     private String birthday;
 
-    @DependsOnRef(name = "likesFruits")
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_TASTES)
     @DialogField(label = "Does your warrior like fruits?")
     @Checkbox
+    @DependsOnRef(name = "likesFruits")
+    @PlaceOnTab(WarriorDescriptionComponent.TAB_TASTES)
     @ValueMapValue
     private boolean likesFruits;
 
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_FRUITS)
+    @DialogField(label = "Favorite fruit")
     @Autocomplete(
             multiple = true,
             forceSelection = true,
             datasource = @AutocompleteDatasource(namespaces = {"fruit"})
     )
-    @DialogField(label = "Favorite fruit")
+    @PlaceOnTab(WarriorDescriptionComponent.TAB_FRUITS)
     @ValueMapValue
     private String[] fruit;
 
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_MAIN)
-    @RadioGroup(buttons = {
-            @RadioButton(text = "Funny", value = "always smile creepily", checked = true),
-            @RadioButton(text = "Sad", value = "always steal your handkerchief"),
-            @RadioButton(text = "Angry", value = "always ignore you")
-    })
     @DialogField(
             label = "Character",
             description = "Choose character of your warrior",
             ranking = 4
     )
+    @RadioGroup(buttons = {
+            @RadioButton(text = "Funny", value = "always smile creepily", checked = true),
+            @RadioButton(text = "Sad", value = "always steal your handkerchief"),
+            @RadioButton(text = "Angry", value = "always ignore you")
+    })
+    @PlaceOnTab(WarriorDescriptionComponent.TAB_MAIN)
     @ValueMapValue
     private String character;
 
+    @DialogField(label = "Does your warrior like movies?")
+    @Checkbox
     @DependsOnRef(name = "likesMovies")
     @PlaceOnTab(WarriorDescriptionComponent.TAB_TASTES)
-    @Checkbox
-    @DialogField(label = "Does your warrior like movies?")
     @ValueMapValue
     private boolean likesMovies;
 
+    @DialogField
     @Hidden
     @DependsOn(query = "'../../colorTheme'", action = DependsOnActions.FETCH)
     @DependsOnRef(name = "isDarkColorTheme", type = DependsOnRefTypes.BOOLSTRING)
     private String isDarkColorTheme;
 
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_MOVIES)
-    @DependsOn(query = "@isDarkColorTheme", action = "namespaceFilter")
+    @DialogField(label = "Favorite movies")
     @Autocomplete(
             multiple = true,
             forceSelection = true,
             datasource = @AutocompleteDatasource(namespaces = {"movies"})
     )
-    @DialogField(label = "Favorite movies")
+    @DependsOn(query = "@isDarkColorTheme", action = "namespaceFilter")
+    @PlaceOnTab(WarriorDescriptionComponent.TAB_MOVIES)
     @ValueMapValue
     private String[] movies;
 

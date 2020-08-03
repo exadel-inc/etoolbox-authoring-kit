@@ -1,5 +1,6 @@
 package com.exadel.aem.toolkit.samples.models;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.HtmlTag;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
@@ -32,11 +33,12 @@ public class ArmorColorComponent {
     public static final String FIELDS_PREFIX = "color";
     public static final String FIELDS_POSTFIX = "-test";
 
-    @FieldsetPostfix(postfix = ArmorColorComponent.FIELDS_POSTFIX)
+    @DialogField
     @FieldSet(
             title = "Color of warrior's armor",
             namePrefix = ArmorColorComponent.FIELDS_PREFIX
     )
+    @FieldsetPostfix(postfix = ArmorColorComponent.FIELDS_POSTFIX)
     @Self
     private ArmorColorFields armorColor;
 

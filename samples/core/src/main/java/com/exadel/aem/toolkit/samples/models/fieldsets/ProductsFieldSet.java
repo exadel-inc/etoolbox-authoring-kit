@@ -13,15 +13,15 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ProductsFieldSet {
 
-    @DependsOnRef(name = "checkbox")
-    @Checkbox
     @DialogField(label = "Milk")
+    @Checkbox
+    @DependsOnRef(name = "checkbox")
     @ValueMapValue
     private boolean milkChosen;
 
-    @DependsOnRef(name = "checkbox")
-    @Checkbox
     @DialogField(label = "Cheese")
+    @Checkbox
+    @DependsOnRef(name = "checkbox")
     @ValueMapValue
     private boolean cheeseChosen;
 

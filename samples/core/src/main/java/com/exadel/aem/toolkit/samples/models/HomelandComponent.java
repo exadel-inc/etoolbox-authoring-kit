@@ -51,11 +51,11 @@ public class HomelandComponent {
         @Self
         Resource currentResource;
 
-        @ImageUpload
         @DialogField(
                 name = "./homelandImage/",
                 description = "Choose an image of your warrior homeland"
         )
+        @ImageUpload
         @ChildResource
         private Resource homelandImage;
 

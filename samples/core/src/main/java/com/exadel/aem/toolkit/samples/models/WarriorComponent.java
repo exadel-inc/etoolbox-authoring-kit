@@ -66,29 +66,29 @@ public class WarriorComponent {
     private static final String DARK_THEME_CLASS = "dark-theme";
     private static final String LIGHT_THEME_CLASS = "light-theme";
 
-    @Attribute(className = "test")
-    @TextField(emptyText = DEFAULT_TITLE)
     @DialogField(label = "Container title")
+    @TextField(emptyText = DEFAULT_TITLE)
+    @Attribute(className = "test")
     @ValueMapValue
     private String title;
 
-    @TextField(emptyText = WarriorComponent.DEFAULT_NAME)
     @DialogField(label = "Warrior name")
+    @TextField(emptyText = WarriorComponent.DEFAULT_NAME)
     @ValueMapValue
     private String name;
 
-    @PlaceOnTab(WarriorComponent.TAB_PHOTO)
+    @DialogField(label = "Photo of warrior")
     @PathField(
             emptyText = "Face",
             rootPath = "/content/dam"
     )
-    @DialogField(label = "Photo of warrior")
+    @PlaceOnTab(WarriorComponent.TAB_PHOTO)
     @ValueMapValue
     private String photo;
 
-    @PlaceOnTab(WarriorComponent.TAB_THEME)
-    @Switch()
     @DialogField(label = "Dark theme")
+    @Switch
+    @PlaceOnTab(WarriorComponent.TAB_THEME)
     @Default(booleanValues = {false})
     @ValueMapValue
     private boolean colorTheme;

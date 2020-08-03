@@ -15,26 +15,26 @@ public class ArmorColorFields {
 
     private static final String DEFAULT_COLOR = "#A9A9A9";
 
+    @DialogField(ranking = 2)
     @ColorField(
             emptyText = "Choose armor color"
     )
-    @DialogField(ranking = 2)
     @Default(values = {DEFAULT_COLOR})
     @ValueMapValue(name = ArmorColorComponent.FIELDS_PREFIX + "armor" + ArmorColorComponent.FIELDS_POSTFIX)
     private String armor;
 
+    @DialogField(ranking = 3)
     @ColorField(
             emptyText = "Choose shoes color"
     )
-    @DialogField(ranking = 3)
     @Default(values = {DEFAULT_COLOR})
     @ValueMapValue(name = ArmorColorComponent.FIELDS_PREFIX + "shoes" + ArmorColorComponent.FIELDS_POSTFIX)
     private String shoes;
 
+    @DialogField(ranking = 1)
     @ColorField(
             emptyText = "Choose helmet color"
     )
-    @DialogField(ranking = 1)
     @Default(values = {DEFAULT_COLOR})
     @ValueMapValue(name = ArmorColorComponent.FIELDS_PREFIX + "helmet" + ArmorColorComponent.FIELDS_POSTFIX)
     private String helmet;

@@ -25,11 +25,11 @@ public class ParentSelectComponent {
     static final String TAB_MAIN = "Main";
     private static final String DEFAULT_SELECT_TEXT = "nothing is selected";
 
+    @DialogField(label = "Dungeons select")
     @Select(options = {
             @Option(text = "A", value = "a"),
             @Option(text = "B", value = "b")
     })
-    @DialogField(label = "Dungeons select")
     @ValueMapValue
     private String dungeonsSelect;
 

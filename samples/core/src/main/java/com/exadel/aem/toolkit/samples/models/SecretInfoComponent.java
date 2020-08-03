@@ -36,31 +36,31 @@ public class SecretInfoComponent {
 
     private static final String DEFAULT_SECRET = "This warrior is clear";
 
-    @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
-    @Password(retype = "confirmPassword")
     @DialogField(
             description = "Enter a password to unlock secret information about the warrior",
             label = "Enter secret password"
     )
+    @Password(retype = "confirmPassword")
+    @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
     @ValueMapValue
     private String password;
 
-    @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
-    @Password
     @DialogField(label = "Confirm your password")
+    @Password
+    @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
     @ValueMapValue
     private String confirmPassword;
 
-    @PlaceOnTab(SecretInfoComponent.TAB_SECRET)
-    @TextArea(autofocus = true, maxlength = 200)
     @DialogField(
             label = "Secret info",
             description = "Enter secret information about your warrior"
     )
+    @TextArea(autofocus = true, maxlength = 200)
+    @PlaceOnTab(SecretInfoComponent.TAB_SECRET)
     @ValueMapValue
     private String info;
 
-    @PlaceOnTab(SecretInfoComponent.TAB_SECRET)
+    @DialogField
     @Button(
             type = ButtonType.SUBMIT,
             text = "save",
@@ -68,6 +68,7 @@ public class SecretInfoComponent {
             command = "shift+s",
             block = true
     )
+    @PlaceOnTab(SecretInfoComponent.TAB_SECRET)
     private String button;
 
     public String getPassword() {

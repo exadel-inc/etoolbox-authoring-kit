@@ -42,23 +42,23 @@ public class ShoppingListComponent {
     private static final String DEFAULT_WONDERFUL_TEXT = ", and he thinks he is wonderful, because ";
     private static final String DEFAULT_ANSWER = "he was born like this.";
 
-    @Attribute(className = "weapon-fieldSet")
-    @FieldSet(title = "Choose weapon to buy")
     @DialogField
+    @FieldSet(title = "Choose weapon to buy")
+    @Attribute(className = "weapon-fieldSet")
     @Self
     private WeaponFieldSet weaponFieldSet;
 
-    @Attribute(className = "products-fieldSet")
-    @FieldSet(title = "Choose products to buy")
     @DialogField(description = "Check all checkboxes from this group to show text field")
+    @FieldSet(title = "Choose products to buy")
+    @Attribute(className = "products-fieldSet")
     @Self
     private ProductsFieldSet productsFieldSet;
 
+    @DialogField(label = "Why are you such a wonderful warrior?")
+    @TextField(emptyText = "Check all checkboxes to disable this text field")
     @DependsOn(query = "AATSamples.getShoppingDefaultText(@@checkbox(coral-panel |> .weapon-fieldSet), @this)", action = DependsOnActions.SET)
     @DependsOn(query = "@@checkbox(coral-panel |> .products-fieldSet).every(item => item)")
     @DependsOn(query = "@@checkbox.every(item => item)", action = DependsOnActions.DISABLED)
-    @TextField(emptyText = "Check all checkboxes to disable this text field")
-    @DialogField(label = "Why are you such a wonderful warrior?")
     @ValueMapValue
     private String answer;
 

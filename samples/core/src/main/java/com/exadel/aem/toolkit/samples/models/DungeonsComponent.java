@@ -36,6 +36,7 @@ public class DungeonsComponent extends ParentSelectComponent {
     private static final String DEFAULT_ICE_VALLEY_TEXT = "ice valley, where you can lose your arm from strong frost,";
     private static final String DEFAULT_RULES = "no rules!";
 
+    @DialogField(label = "Make your own dungeons rules")
     @Extends(value = WarriorDescriptionComponent.class, field = "description")
     @RichTextEditor(
             features = {
@@ -43,17 +44,16 @@ public class DungeonsComponent extends ParentSelectComponent {
                     RteFeatures.LISTS_ORDERED,
                     RteFeatures.LISTS_UNORDERED
             })
-    @DialogField(label = "Make your own dungeons rules")
     @ValueMapValue
     private String dungeonRules;
 
+    @DialogField(label = "Dungeons select")
     @Select(options = {
             @Option(text = "Rotten swamps", value = "1"),
             @Option(text = "Ice valley", value = "2")
     })
-    @DialogField(label = "Dungeons select")
-    @Default(values = "1")
     @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
+    @Default(values = "1")
     @ValueMapValue
     private String dungeon;
 

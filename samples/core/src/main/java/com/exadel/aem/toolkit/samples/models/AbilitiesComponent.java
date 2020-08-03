@@ -41,8 +41,7 @@ public class AbilitiesComponent {
     @Heading(text = "Here you can choose abilities", level = 2)
     String heading;
 
-    @DependsOnRef(name = "ability")
-    @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
+    @DialogField(ranking = 2)
     @Select(
             options = {
                     @Option(
@@ -60,10 +59,18 @@ public class AbilitiesComponent {
                     )
             },
             emptyText = "Select ability")
-    @DialogField(ranking = 2)
+    @DependsOnRef(name = "ability")
+    @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
     @ValueMapValue
     private String ability;
 
+    @DialogField(
+            label = "Elements",
+            name = "./elements",
+            description = "Add elements that your magician owns",
+            ranking = 3
+    )
+    @MultiField(field = Element.class)
     @DependsOn(
             query = "@this.length <= 3",
             action = DependsOnActions.VALIDATE,
@@ -71,13 +78,6 @@ public class AbilitiesComponent {
     )
     @DependsOn(query = "@ability === 'magic'")
     @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
-    @MultiField(field = Element.class)
-    @DialogField(
-            label = "Elements",
-            name = "./elements",
-            description = "Add elements that your magician owns",
-            ranking = 3
-    )
     @ValueMapValue(name = "./element")
     private String[] elements;
 
@@ -87,13 +87,13 @@ public class AbilitiesComponent {
         public String element;
     }
 
-    @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
-    @NumberField(min = 0, max = 100)
     @DialogField(
             label = "Warrior experience",
             description = "Enter your warrior ability level",
             ranking = 1
     )
+    @NumberField(min = 0, max = 100)
+    @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
     @ValueMapValue
     private int abilityLevel;
 
