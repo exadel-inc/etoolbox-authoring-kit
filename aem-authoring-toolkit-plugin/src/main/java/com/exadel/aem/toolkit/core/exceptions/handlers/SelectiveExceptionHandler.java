@@ -67,15 +67,16 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
             if (exName.endsWith(PACKAGE_POSTFIX)) {
                 if (exceptionType.getName().startsWith(exName.substring(0, exName.length() - 1))) {
                     return !inverse;
-                } else continue;
+                } else {
+                    continue;
+                }
             } else {
                 try {
                     managedClass = Class.forName(exName);
                 } catch (ClassNotFoundException exception) {
                     continue;
                 }
-                if (managedClass != null && (ClassUtils.isAssignable(exceptionType, managedClass)
-                        || exceptionType.isAssignableFrom(managedClass))) {
+                if (ClassUtils.isAssignable(exceptionType, managedClass)) {
                     return !inverse;
                 }
             }
