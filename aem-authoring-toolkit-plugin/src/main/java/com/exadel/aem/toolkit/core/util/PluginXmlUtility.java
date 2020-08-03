@@ -291,10 +291,10 @@ public class PluginXmlUtility implements XmlUtility {
                                      Annotation source,
                                      BinaryOperator<String> attributeMerger) {
         try {
-            Method sourceMethod = source.annotationType().getDeclaredMethod(name);
-            if (!PluginReflectionUtility.annotationPropertyIsNotDefault(source, sourceMethod)) {
+            if (PluginReflectionUtility.annotationPropertyIsDefault(source, name)) {
                 return;
             }
+            Method sourceMethod = source.annotationType().getDeclaredMethod(name);
             PropertyRendering propertyRendering = sourceMethod.getAnnotation(PropertyRendering.class);
             PropertyName propertyName = sourceMethod.getAnnotation(PropertyName.class);
             String effectiveName = name;

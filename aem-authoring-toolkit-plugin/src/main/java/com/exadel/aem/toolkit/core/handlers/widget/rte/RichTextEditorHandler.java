@@ -378,7 +378,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
      */
     private void populateHtmlLinkRules(Element element) {
         HtmlLinkRules rules = this.rteAnnotation.htmlLinkRules();
-        if (!PluginReflectionUtility.annotationIsNotDefault(rules)) {
+        if (PluginReflectionUtility.annotationIsDefault(rules)) {
             return;
         }
         Element htmlRulesNode = getXmlUtil().createNodeElement(DialogConstants.NN_HTML_RULES);

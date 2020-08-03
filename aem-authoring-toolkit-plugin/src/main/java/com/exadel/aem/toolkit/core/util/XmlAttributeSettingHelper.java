@@ -102,7 +102,7 @@ class XmlAttributeSettingHelper<T> {
             attributeSetter.ignoredValues = new String[] {method.getAnnotation(IgnoreValue.class).value()};
         }
 
-        if (PluginReflectionUtility.annotationPropertyIsNotDefault(annotation, method)) {
+        if (!PluginReflectionUtility.annotationPropertyIsDefault(annotation, method)) {
             attributeSetter.validationChecker = Validation.forMethod(method);
         }
         return attributeSetter;

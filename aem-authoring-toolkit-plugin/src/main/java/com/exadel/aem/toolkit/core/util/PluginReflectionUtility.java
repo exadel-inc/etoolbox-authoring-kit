@@ -316,24 +316,24 @@ public class PluginReflectionUtility {
 
 
     /**
-     * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
+     * Retrieves list of properties of an {@code Annotation} object for which non-default values have been set
      * @param annotation The annotation instance to analyze
      * @return List of {@code Method} instances that represent properties initialized with non-defaults
      */
     public static List<Method> getAnnotationNonDefaultProperties(Annotation annotation) {
         return Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .filter(method -> annotationPropertyIsNotDefault(annotation, method))
+                .filter(method -> !annotationPropertyIsDefault(annotation, method))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Gets whether any of the {@code Annotation}'s properties has a value which is not default
+     * Gets whether all the {@code Annotation}'s properties have default values
      * @param annotation The annotation to analyze
      * @return True or false
      */
-    public static boolean annotationIsNotDefault(Annotation annotation) {
+    public static boolean annotationIsDefault(Annotation annotation) {
         return Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .anyMatch(method -> annotationPropertyIsNotDefault(annotation, method));
+                .allMatch(method -> annotationPropertyIsDefault(annotation, method));
     }
 
     /**
@@ -342,19 +342,27 @@ public class PluginReflectionUtility {
      * @param method The method representing the property
      * @return True or false
      */
-    static boolean annotationPropertyIsNotDefault(Annotation annotation, Method method) {
+    static boolean annotationPropertyIsDefault(Annotation annotation, Method method) {
         try {
             Object defaultValue = method.getDefaultValue();
             if (defaultValue == null) {
-                return true;
+                return false;
             }
             Object invocationResult = method.invoke(annotation);
             if (method.getReturnType().isArray() && ArrayUtils.isEmpty((Object[])invocationResult)) {
-                return false;
+                return true;
             }
-            return !defaultValue.equals(invocationResult);
+            return defaultValue.equals(invocationResult);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            return true;
+            return false;
+        }
+    }
+
+    static boolean annotationPropertyIsDefault(Annotation annotation, String method) {
+        try {
+            return annotationPropertyIsDefault(annotation, annotation.annotationType().getDeclaredMethod(method));
+        } catch (NoSuchMethodException e) {
+            return false;
         }
     }
 
