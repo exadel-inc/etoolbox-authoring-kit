@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +40,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -49,7 +51,7 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.ReplaceFields;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Replace;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.runtime.Injected;
@@ -250,26 +252,20 @@ public class PluginReflectionUtility {
      */
     public static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates) {
         List<Class<?>> classHierarchy = getClassHierarchy(targetClass);
-        List<Field> fields;
-        List<ClassField> ignoredFields = new LinkedList<>();
-
-        for (Class<?> classEntry : classHierarchy) {
-            if (classEntry.getAnnotation(IgnoreFields.class) != null) {
-                List<ClassField> processedClassFields = Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
-                        .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
-                                ClassField.class,
-                                DialogConstants.PN_SOURCE_CLASS,
-                                targetClass))
-                        .collect(Collectors.toList());
-                ignoredFields.addAll(processedClassFields);
-            }
-        }
-        fields = classHierarchy.stream()
+        List<Field> allFields = classHierarchy.stream()
                 .flatMap(classEntry -> Arrays.stream(classEntry.getDeclaredFields()).filter(Predicates.getCombinedPredicate(predicates)))
-                .filter(Predicates.getNotIgnoredFieldsPredicate(ignoredFields))
-                .sorted(Predicates::compareDialogFields)
                 .collect(Collectors.toList());
-        return processReplacements(targetClass, fields);
+
+        List<Field> ignoredFields = classHierarchy.stream()
+                .filter(classEntry -> classEntry.getAnnotation(IgnoreFields.class) != null)
+                .flatMap(classEntry -> Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value()).map(classFieldEntry -> Pair.of(classFieldEntry, classEntry)))
+                .filter(classFieldClassPair -> StringUtils.isNotEmpty(classFieldClassPair.getKey().field()))
+                .map(classFieldClassPair -> PluginClassFieldUtility.populateDefaults(classFieldClassPair.getKey(), classFieldClassPair.getValue()))
+                .flatMap(classFieldEntry -> allFields.stream().filter(field -> Predicates.isMatchByClassField(field, classFieldEntry)))
+                .collect(Collectors.toList());
+        Predicate<Field> ignoredFieldsPredicate = Predicates.getNotIgnoredFieldsPredicate(ignoredFields);
+
+        return processFieldsOverrides(allFields.stream().filter(ignoredFieldsPredicate).sorted(Predicates::compareByRanking).collect(Collectors.toList()));
     }
 
     /**
@@ -313,7 +309,6 @@ public class PluginReflectionUtility {
         Collections.reverse(result);
         return result;
     }
-
 
     /**
      * Retrieves list of properties of an {@code Annotation} object for which non-default values have been set
@@ -368,36 +363,35 @@ public class PluginReflectionUtility {
 
     /**
      * Called by {@link PluginReflectionUtility#getAllFields(Class, List)} to finalize the list of managed fields.
-     * As long as any of the fields within the provided collection is marked with {@link ReplaceFields},
+     * As long as any of the fields within the provided collection is marked with {@link Replace},
      * the routine searches for the other referenced fields within the same collection, swaps the current field
      * with the first one of the found, and removes the rest of the found
-     * @param fields The list of fields to apply replacements to
+     * @param allFields The list of fields to apply replacements to
      * @return Modified {@code List<Field>} collection
      */
-    private static List<Field> processReplacements(Class<?> targetClass, List<Field> fields) {
-        List<Field> result = new ArrayList<>(fields);
-        Queue<Field> replacements = result.stream().filter(field -> field.getDeclaredAnnotation(ReplaceFields.class) != null).collect(Collectors.toCollection(LinkedList::new));
-        while (!replacements.isEmpty()) {
-            Field replacementField = replacements.remove();
-            List<Field> replaceableFields = Arrays.stream(replacementField.getDeclaredAnnotation(ReplaceFields.class).value())
-                    .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
-                            ClassField.class,
-                            DialogConstants.PN_SOURCE_CLASS,
-                            targetClass))
-                    .map(classField -> result.stream().filter(field -> Predicates.isMatchByClassField(field, classField)).findFirst().orElse(null))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            replaceableFields.remove(replacementField); // to make sure that a replacement field does not "point" at itself
-            if (replaceableFields.isEmpty()) {
+    private static List<Field> processFieldsOverrides(List<Field> allFields) {
+        List<Field> result = new ArrayList<>(allFields);
+        Queue<Field> replacingFields = result.stream()
+                .filter(field -> field.getDeclaredAnnotation(Replace.class) != null)
+                .sorted(Predicates::compareByOrigin)
+                .collect(Collectors.toCollection(LinkedList::new));
+        while (!replacingFields.isEmpty()) {
+            Field replacingField = replacingFields.remove();
+            ClassField replaceableClassField = PluginClassFieldUtility.populateDefaults(replacingField.getAnnotation(Replace.class).value(), replacingField);
+            Field replaceableField = allFields.stream()
+                    .filter(field -> Predicates.isMatchByClassField(field, replaceableClassField))
+                    .findFirst()
+                    .orElse(null);
+            if (replaceableField == null || replaceableField.equals(replacingField)) {
                 continue;
             }
-            result.remove(replacementField);
-            int insertPosition = result.indexOf(replaceableFields.get(0));
-            result.add(insertPosition, replacementField);
-            replaceableFields.forEach(replaceableField -> {
-                result.remove(replaceableField);
-                replacements.remove(replaceableField);
-            });
+            // move the replacing field to the position of replaceable field
+            result.remove(replacingField);
+            int insertPosition = result.indexOf(replaceableField);
+            result.add(insertPosition, replacingField);
+            // purge the replaceable field
+            result.remove(replaceableField);
+            replacingFields.remove(replaceableField); // because a replaceable field may also be declared as "replacing"
         }
         return result;
     }
@@ -431,18 +425,31 @@ public class PluginReflectionUtility {
         }
 
         /**
-         * Gets a {@code Predicate<Field>} for sorting out the fields set to be ignored
-         * @param ignoredFields List of {@link ClassField} representing the fields set to be ignored
+         * Gets a {@code Predicate<Field>} for sorting out the fields to be ignored
+         * @param ignoredFields List of {@link ClassField} representing the fields to be ignored
          * @return A {@code Predicate<Field>} which is affirmative by default, that is, returns *true* if the field is
          * not ignored, and *false* if the field is set to be ignored
          */
-        public static Predicate<Field> getNotIgnoredFieldsPredicate(List<ClassField> ignoredFields) {
+        public static Predicate<Field> getNotIgnoredFieldsPredicate(Collection<ClassField> ignoredFields) {
             if (ignoredFields == null || ignoredFields.isEmpty()) {
                 return field -> true;
             }
             return field -> ignoredFields.stream().noneMatch(
                     ignoredClassField -> isMatchByClassField(field, ignoredClassField)
             );
+        }
+
+        /**
+         * Gets a {@code Predicate<Field>} for sorting out the fields to be ignored
+         * @param ignoredFields List of {@link Field} instances representing the fields to be ignored
+         * @return A {@code Predicate<Field>} which is affirmative by default, that is, returns *true* if the field is
+         * not ignored, and *false* if the field is set to be ignored
+         */
+        private static Predicate<Field> getNotIgnoredFieldsPredicate(List<Field> ignoredFields) {
+            if (ignoredFields == null || ignoredFields.isEmpty()) {
+                return field -> true;
+            }
+            return field -> ignoredFields.stream().noneMatch(ignored -> ignored.equals(field));
         }
 
         /**
@@ -458,14 +465,14 @@ public class PluginReflectionUtility {
         }
 
         /**
-         * gets whether the specified {@code Field} matches a {@code @ClassField} signature
-         * @param field A {@link Field} to test
+         * Gets whether the specified {@code Field} matches a {@code @ClassField} signature
+         * @param field The {@link Field} to test
          * @param classField {@link ClassField} instance representing
          * @return {@code Predicate<Field>} instance
          */
         private static boolean isMatchByClassField(Field field, ClassField classField) {
-            return classField.source().equals(field.getDeclaringClass())
-                    && classField.field().equals(field.getName());
+            return field.getDeclaringClass().equals(classField.source())
+                    && field.getName().equals(classField.field());
         }
 
         /**
