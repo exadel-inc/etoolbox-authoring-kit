@@ -20,7 +20,9 @@ import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.ReplaceFields;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Replace;
+import com.exadel.aem.toolkit.api.markers._Super;
 import com.exadel.aem.toolkit.core.util.TestConstants;
 
 @SuppressWarnings("unused")
@@ -37,22 +39,42 @@ public class InheritanceTestCases {
 
         @DialogField(label = "Base label 2")
         @TextField
-        @ReplaceFields(@ClassField(source = InheritanceOverride.class, field = "text2")) // "downward" replacement (possible, but not recommended)
+        @Replace(@ClassField(source = InheritanceOverride.class, field = "text2")) // "downward" replacement
+                                                // (technically possible but discouraged because breaks DIP)
         private String text2;
+
+        @DialogField(ranking = 5)
+        @TextField
+        private String text3;
     }
 
     private static class InheritanceInterim extends InheritanceBase {
         @DialogField(
                 label = "Interim label",
                 required = true,
-                ranking = 1
+                ranking = 1 // this ranking will be ignored
         )
         @TextField
-        @ReplaceFields({
-                @ClassField(source = InheritanceBase.class, field = "text"), // regular "upward" replacement
-                @ClassField(source = InheritanceBase.class, field = "otherText") // will be ignored as a non-existing field
-        })
+        @Replace(@ClassField(source = InheritanceBase.class, field = "text"))
         private String text;
+
+        @DialogField(label = "Interim label 2")
+        @TextField
+        @Replace(@ClassField(source = _Super.class)) // Will override InheritanceBase#text2 but be placed at InheritanceOverride#text2
+        private String text2;
+
+        @DialogField
+        @TextField
+        private String text3; // Will not be rendered, because explicitly ignored in the child class
+
+        @DialogField(
+                label = "Override label 4",
+                ranking = 4
+        )
+        @TextField
+        @Replace(@ClassField(field = "text4")) // Will not replace anything, because is considered "pointing" at itself
+        private String text4;                  // Will be placed above #text2 because having some ranking but originating
+                                               // from a superclass
     }
 
     @Dialog(
@@ -63,18 +85,11 @@ public class InheritanceTestCases {
             disableTargeting = true,
             layout = DialogLayout.FIXED_COLUMNS
     )
+    @IgnoreFields({
+            @ClassField(source = _Super.class, field = "text3"),
+            @ClassField(source = InheritanceBase.class, field = "text3")
+    })
     public static class InheritanceOverride extends InheritanceInterim {
-        @DialogField(
-                label = "Override label",
-                required = true
-        )
-        @TextField
-        @ReplaceFields({
-                @ClassField(source = InheritanceBase.class, field = "text"),
-                @ClassField(source = InheritanceInterim.class, field = "text")
-        })
-        private String text;
-
         @DialogField(
                 name = "./fieldset",
                 ranking = 3
@@ -88,6 +103,7 @@ public class InheritanceTestCases {
         )
         @TextField
         private String text2;
+
     }
 
     private static class FieldsetBase {
@@ -98,6 +114,13 @@ public class InheritanceTestCases {
         )
         @TextField
         private String fieldsetText;
+
+        @DialogField(
+                name = "fieldsetBaseText3",
+                label = "Fieldset base label 3"
+        )
+        @TextField
+        private String fieldsetText3;
     }
 
     private static class FieldsetInterim extends FieldsetBase {
@@ -107,6 +130,7 @@ public class InheritanceTestCases {
                 ranking = 3
         )
         @TextField
+        @Replace(@ClassField(source = _Super.class))
         private String fieldsetText3;
 
         @DialogField(
@@ -122,14 +146,20 @@ public class InheritanceTestCases {
         @DialogField(
                 name = "fieldsetOverrideText",
                 label = "Fieldset override label",
-                ranking = 3 // will be ignored because this one is placed by the replace target placement
+                ranking = 3 // will be ignored because will occupy the replaced field's place
         )
         @TextField
-        @ReplaceFields({
-                @ClassField(source = FieldsetOverride.class, field = "fieldsetText"), // will be ignored as "self-reference"
-                @ClassField(source = FieldsetBase.class, field = "fieldsetText"),
-        })
+        @Replace(@ClassField(source = FieldsetBase.class))
         private String fieldsetText;
+
+        @DialogField(
+                name = "fieldsetOverrideText3",
+                label = "Fieldset override label 3",
+                ranking = 3 // will be ignored because will occupy the replaced field's place
+        )
+        @TextField
+        @Replace(@ClassField(source = _Super.class))
+        private String fieldsetText3;
     }
 
     private static class DuplicateBase {

@@ -19,7 +19,7 @@
                     <text jcr:primaryType="nt:unstructured"
                           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                           name="./text"
-                          fieldLabel="Override label"
+                          fieldLabel="Interim label"
                           disabled="{Boolean}false"
                           renderHidden="{Boolean}false"
                           required="{Boolean}true"/>
@@ -32,6 +32,14 @@
                             renderHidden="{Boolean}false"
                             required="{Boolean}false">
                         <items jcr:primaryType="nt:unstructured">
+                            <fieldsetText3
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./fieldsetOverrideText3"
+                                    fieldLabel="Fieldset override label 3"
+                                    disabled="{Boolean}false"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"/>
                             <fieldsetText
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
@@ -48,21 +56,19 @@
                                     disabled="{Boolean}false"
                                     renderHidden="{Boolean}false"
                                     required="{Boolean}false"/>
-                            <fieldsetText3
-                                    jcr:primaryType="nt:unstructured"
-                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                                    name="./fieldsetInterimText3"
-                                    fieldLabel="Fieldset interim label 3"
-                                    disabled="{Boolean}false"
-                                    renderHidden="{Boolean}false"
-                                    required="{Boolean}false"/>
-
                         </items>
                     </fieldsetOverride>
+                    <text4 jcr:primaryType="nt:unstructured"
+                           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                           name="./text4"
+                           fieldLabel="Override label 4"
+                           disabled="{Boolean}false"
+                           renderHidden="{Boolean}false"
+                           required="{Boolean}false"/>
                     <text2 jcr:primaryType="nt:unstructured"
                           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                           name="./text2"
-                          fieldLabel="Base label 2"
+                          fieldLabel="Interim label 2"
                           disabled="{Boolean}false"
                           renderHidden="{Boolean}false"
                           required="{Boolean}false"/>
