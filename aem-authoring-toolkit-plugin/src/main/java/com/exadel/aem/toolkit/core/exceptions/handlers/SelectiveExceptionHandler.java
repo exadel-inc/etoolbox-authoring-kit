@@ -20,6 +20,7 @@ import java.util.Optional;
 import com.exadel.aem.toolkit.core.exceptions.PluginException;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements the "selective" kind of {@link com.exadel.aem.toolkit.api.runtime.ExceptionHandler}, that is, the one
@@ -28,14 +29,14 @@ import org.apache.commons.lang3.StringUtils;
  * falls back to {@code PermissiveExceptionHandler} behavior
  */
 class SelectiveExceptionHandler extends PermissiveExceptionHandler {
-    private List<String> criticalExceptions;
+    private List<String> exceptionTokens;
     private static final String ALL_EXCEPTIONS = "all";
     private static final String EXCEPTIONS_WILDCARD = "*";
     private static final String EXCLAMATION_MARK = "!";
     private static final String PACKAGE_POSTFIX = ".*";
 
-    SelectiveExceptionHandler(List<String> criticalExceptions) {
-        this.criticalExceptions = criticalExceptions;
+    SelectiveExceptionHandler(List<String> exceptionTokens) {
+        this.exceptionTokens = exceptionTokens;
     }
 
     /**
@@ -54,42 +55,35 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
 
     @Override
     public boolean haltsOn(Class<? extends Exception> exceptionType) {
-        Optional result;
-        boolean inverse;
-        for (String exName : criticalExceptions) {
-            inverse = false;
-            if (exName.startsWith(EXCLAMATION_MARK)) {
-                inverse = true;
-                exName = exName.substring(1);
-            }
-            result = checkException(exceptionType, exName, inverse);
-            if(result.equals(Optional.of(true))){
-                return true;
-            } else if (result.equals(Optional.of(false))){
-                return false;
+        for (String exceptionToken : exceptionTokens) {
+            Optional<Boolean> result = isMatch(exceptionType,
+                    StringUtils.strip(exceptionToken, EXCLAMATION_MARK),
+                    exceptionToken.startsWith(EXCLAMATION_MARK));
+            if (result.isPresent()) {
+                return result.get();
             }
         }
         return false;
     }
 
-    private Optional checkException(Class<? extends Exception> exceptionType, String criticalException, boolean inverse){
-        if (StringUtils.equalsAnyIgnoreCase(criticalException, ALL_EXCEPTIONS, EXCEPTIONS_WILDCARD)) {
+    private Optional<Boolean> isMatch(Class<? extends Exception> exceptionType, String exceptionToken, boolean inverse) {
+        if (StringUtils.equalsAnyIgnoreCase(exceptionToken, ALL_EXCEPTIONS, EXCEPTIONS_WILDCARD)) {
             return Optional.of(!inverse);
         }
-        if (criticalException.endsWith(PACKAGE_POSTFIX)) {
-            if (exceptionType.getName().startsWith(criticalException.substring(0, criticalException.length() - 1))) {
+        if (exceptionToken.endsWith(PACKAGE_POSTFIX)) {
+            if (exceptionType.getName().startsWith(StringUtils.strip(exceptionToken, PACKAGE_POSTFIX))) {
                 return Optional.of(!inverse);
             } else {
                 return Optional.empty();
             }
         }
         try {
-            Class<?> managedClass = Class.forName(criticalException);
+            Class<?> managedClass = Class.forName(exceptionToken);
             if (ClassUtils.isAssignable(exceptionType, managedClass)) {
                 return Optional.of(!inverse);
             }
         } catch (ClassNotFoundException exception) {
-            return Optional.empty();
+            LoggerFactory.getLogger("AEM Authoring Toolkit").warn("Class name is not defined: " + exceptionToken);
         }
         return Optional.empty();
     }

@@ -71,7 +71,7 @@ public class ExceptionsTest extends ExceptionsTestBase {
         Map<String, Exception> terminateOnCases = ImmutableMap.of(
                 " ValidationException, !java.lang.RuntimeException", new ValidationException(""),
                 "!java.lang.IndexOutOfBoundsException, *", new IndexOutOfBoundsException(),
-                "!java.lang.IOException, !java.lang.RuntimeException, !com.exadel.aem.plugin.exceptions.*",
+                "!java.io.IOException, !java.lang.RuntimeException, !com.exadel.aem.plugin.exceptions.*",
                 new InvalidTabException("")
         );
         terminateOnCases.forEach((setting,exception)->{
