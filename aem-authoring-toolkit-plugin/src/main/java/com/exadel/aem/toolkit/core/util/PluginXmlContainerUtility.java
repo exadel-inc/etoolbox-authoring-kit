@@ -102,7 +102,7 @@ public class PluginXmlContainerUtility {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toCollection(LinkedList::new));
         LinkedList<Field> sameNameFieldsByOrigin = sameNameFields.stream()
-                .sorted(PluginReflectionUtility.Predicates::compareByOrigin)
+                .sorted(PluginObjectPredicates::compareByOrigin)
                 .collect(Collectors.toCollection(LinkedList::new));
 
         if (sameNameFields.getLast().equals(sameNameFieldsByOrigin.getLast())) {

@@ -42,6 +42,7 @@ import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.PluginObjectPredicates;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
@@ -135,7 +136,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
             boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
             storedCurrentTabFields.addAll(moreCurrentTabFields);
             if (needResort) {
-                storedCurrentTabFields.sort(PluginReflectionUtility.Predicates::compareByRanking);
+                storedCurrentTabFields.sort(PluginObjectPredicates::compareByRanking);
             }
             allFields.removeAll(moreCurrentTabFields);
 
