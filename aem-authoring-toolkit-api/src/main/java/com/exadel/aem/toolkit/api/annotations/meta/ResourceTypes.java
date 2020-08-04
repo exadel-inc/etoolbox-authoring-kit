@@ -24,6 +24,7 @@ public class ResourceTypes {
     public static final String AUTOCOMPLETE = "granite/ui/components/coral/foundation/form/autocomplete";
     public static final String AUTOCOMPLETE_LIST = "granite/ui/components/coral/foundation/form/autocomplete/list";
     public static final String AUTOCOMPLETE_TAG = "granite/ui/components/coral/foundation/form/autocomplete/tags";
+    public static final String BUTTON = "granite/ui/components/coral/foundation/button";
     public static final String CHECKBOX = "granite/ui/components/coral/foundation/form/checkbox";
     public static final String COLORFIELD = "granite/ui/components/coral/foundation/form/colorfield";
     public static final String CONTAINER = "granite/ui/components/coral/foundation/container";

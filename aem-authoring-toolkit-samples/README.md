@@ -257,9 +257,12 @@ Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.anno
    )
    ```
  - [**WarriorDescriptionComponent**](./toolkit-samples-core/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java) 
-   - to call custom action with a parent component's path argument, that gets color theme of a parent:
+   - to get property 'colorTheme' from the following path:
    ```
-   @DependsOn(query = "@parentPath", action = "getParentColorTheme")
+   @DependsOn(
+       query = "'../../colorTheme'",
+       action = DependsOnActions.FETCH
+   )
    ```
    - to call custom action, that changes tags scope of `@Autocomplete` depending on a color theme:
    ```

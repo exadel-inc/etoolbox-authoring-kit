@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-    jcr:primaryType="nt:unstructured"
-    jcr:title="Test Component"
-    sling:resourceType="cq/gui/components/authoring/dialog"
-    height="{Double}480.0"
-    width="{Double}560.0"
-    extraClientlibs="[cq.common.wcm]">
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="nt:unstructured"
+          jcr:title="Test Component"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          height="{Double}480.0"
+          width="{Double}560.0"
+          extraClientlibs="[cq.common.wcm]">
     <content
         jcr:primaryType="nt:unstructured"
         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -128,11 +129,11 @@
                                     checked="{Boolean}true"
                                     disabled="{Boolean}false"
                                     fieldDescription="description enable gradient"
-                                    fieldLabel="label enable gradient"
-                                    name="./fieldEnableGradient"
+                                    fieldLabel="Label enable gradient"
+                                    name="../enableGradientToParentNode"
                                     renderHidden="{Boolean}false"
                                     required="{Boolean}false"
-                                    text="label enable gradient"
+                                    text="Label enable gradient"
                                     uncheckedValue="{Boolean}false"
                                     value="{Boolean}true"/>
                         </items>
@@ -148,8 +149,8 @@
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                     disabled="{Boolean}false"
                                     fieldDescription="description media text"
-                                    fieldLabel="label media text"
-                                    name="./field_media_text"
+                                    fieldLabel="Label media text"
+                                    name="../../mediaText/toSiblingNode"
                                     renderHidden="{Boolean}false"
                                     required="{Boolean}true"/>
                             <textContent
@@ -207,6 +208,7 @@
                                             fieldDescription="description feed chanel"
                                             fieldLabel="label feed chanel"
                                             filter="custom_filter"
+                                            filter_1="custom_filter_1"
                                             name="./feedFirstfield_feed_channel"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
@@ -361,6 +363,7 @@
                                             fieldDescription="description feed chanel"
                                             fieldLabel="label feed chanel"
                                             filter="custom_filter"
+                                            filter_1="custom_filter_1"
                                             name="./feed/second/field_feed_channel"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
@@ -642,6 +645,7 @@
                                             fieldLabel="label video resource"
                                             name="./fieldVideoResource"
                                             property="video_resource_prop"
+                                            property1="video_resource_prop1"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
                                             rootPath="/root/path"/>

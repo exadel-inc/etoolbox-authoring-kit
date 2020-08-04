@@ -11,6 +11,8 @@ import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
+import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
+import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonType;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
@@ -57,6 +59,16 @@ public class SecretInfoComponent {
     )
     @ValueMapValue
     private String info;
+
+    @PlaceOnTab(SecretInfoComponent.TAB_SECRET)
+    @Button(
+            type = ButtonType.SUBMIT,
+            text = "save",
+            icon = "edit",
+            command = "shift+s",
+            block = true
+    )
+    private String button1;
 
     public String getPassword() {
         return password;

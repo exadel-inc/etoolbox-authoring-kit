@@ -61,11 +61,11 @@ public @interface TagField {
 
     /**
      * Maps to the 'deleteHint' attribute of this TouchUI dialog component's node.
-     * If set to true, generate the `SlingPostServlet @Delete
-     * <http://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#delete>`
+     * If set to true, generate the <a href="http://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#delete">
+     * {@code @Delete}</a> attribute for the http request
      * @return True or false
      */
-    boolean deleteHint () default true;
+    boolean deleteHint() default true;
 
     /**
      * Maps to the 'root' attribute of this TouchUI dialog component's node.

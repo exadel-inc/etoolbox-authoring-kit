@@ -62,6 +62,7 @@ public @interface Select {
      */
     @Deprecated
     @IgnorePropertyMapping
+    @SuppressWarnings("squid:S1133")
     String acsListResourceType() default "";
     /**
      * @deprecated Use {@code datasource:path} instead
@@ -71,5 +72,20 @@ public @interface Select {
      */
     @Deprecated
     @IgnorePropertyMapping
+    @SuppressWarnings("squid:S1133")
     String acsListPath() default "";
+
+    /**
+     * When this option is to true, and also {@link Select#acsListPath()} is specified, renders the {@code addNone} attribute
+     * to the {@code datasource} node of this TouchUI dialog component's node so that "none" option is added to the
+     * list of selectable options.
+     * This option has no effect unless valid {@code acsListPath} is set.
+     * @return True or false
+     *
+     * @deprecated This will be removed starting from version 2.0.0
+     */
+    @IgnorePropertyMapping
+    @Deprecated
+    @SuppressWarnings("squid:S1133")
+    boolean addNoneOption() default false;
 }

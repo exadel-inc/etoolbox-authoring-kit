@@ -74,7 +74,7 @@
                 this._value = value;
                 this.emit();
             }
-        };
+        }
 
         /**
          * Returns actual listeners count

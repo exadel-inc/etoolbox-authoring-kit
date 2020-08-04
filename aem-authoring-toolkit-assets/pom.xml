@@ -5,7 +5,7 @@
     <parent>
         <artifactId>aem-authoring-toolkit</artifactId>
         <groupId>com.exadel.aem</groupId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.2.1-SNAPSHOT</version>
     </parent>
 
     <name>${project.prettyName} Assets (Client Libraries)</name>

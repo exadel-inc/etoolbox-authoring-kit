@@ -38,9 +38,15 @@
         .on('foundation-contentloaded.dependsOn', (e) => ns.initialize(e && e.target || document));
 
     // Track reference field changes
+    const handleChange = ns.ElementReferenceRegistry.handleChange;
     $document
-        .off('change.dependsOn').on('change.dependsOn', '[data-dependsonref]', ns.ElementReferenceRegistry.handleChange)
-        .off('selected.dependsOn').on('selected.dependsOn', '[data-dependsonref]', ns.ElementReferenceRegistry.handleChange);
+        .off('change.dependsOn').on('change.dependsOn', '[data-dependsonref]', handleChange)
+        .off('selected.dependsOn').on('selected.dependsOn', '[data-dependsonref]', handleChange);
+
+    // Track input event
+    const handleChangeDebounced = $.debounce(750, handleChange);
+    $document
+        .off('input.dependsOn').on('input', '[data-dependsonref]:not([data-dependsonreflazy])', handleChangeDebounced);
 
     // Track collection change to update dynamic references
     $document

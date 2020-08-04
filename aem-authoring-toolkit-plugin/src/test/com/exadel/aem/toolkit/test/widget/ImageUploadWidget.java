@@ -37,7 +37,8 @@ public class ImageUploadWidget {
             buttonText = "Upload Image",
             buttonVariant = ButtonVariant.QUIET,
             fileNameParameter = "./image/fileName",
-            multiple = true
+            multiple = true,
+            className = "css-class-name"
     )
     String file1;
 }

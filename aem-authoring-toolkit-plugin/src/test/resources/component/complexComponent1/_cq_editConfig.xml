@@ -112,8 +112,8 @@
                 jcr:primaryType="nt:unstructured"
                 sling:resourceType="cq:InplaceEditingConfig"
                 editElementQuery=".editable-prtopic1title"
-                propertyName="./primary1_topicTitle"
-                textPropertyName="./primary1_topicTitle"/>
+                propertyName="../primary1_topicTitle"
+                textPropertyName="../primary1_topicTitle"/>
             <primary1_topicDescription
                 jcr:primaryType="nt:unstructured"
                 sling:resourceType="cq:InplaceEditingConfig"

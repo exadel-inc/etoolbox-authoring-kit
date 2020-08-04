@@ -32,32 +32,50 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 @PropertyMapping(prefix = "granite:")
 @SuppressWarnings("unused")
 public @interface Attribute {
+
     /**
      * The HTML 'id' attribute
      * @return String value
      */
     String id() default "";
+
     /**
      * The HTML 'rel' attribute
      * @return String value
      */
     String rel() default "";
+
     /**
-     * The HTML 'class' attribute
+     *  The HTML 'class' attribute. With this property, you can assign an arbitrary CSS class, or a set of classes, space-separated, to the widget's container.
+     *  Mind you can also use a number of <a href="https://opensource.adobe.com/coral-spectrum/dist/documentation/manual/styles.html#css-utility-classes">pre-defined utility classes</a> by Coral.
      * @return String value
      */
     @PropertyRendering(name = "class")
     String className() default "";
+
+    /**
+     * The HTML 'class' attribute
+     * @return String value
+     *
+     * @deprecated This will be removed starting from version 2.0.0. Please use {@link Attribute#className()} instead
+     */
+    @IgnorePropertyMapping
+    @Deprecated
+    @SuppressWarnings("squid:S1133")
+    String clas() default "";
+
     /**
      * The HTML 'title' attribute
      * @return String value
      */
     String title() default "";
+
     /**
      * The HTML 'hidden' attribute
      * @return True or false
      */
     boolean hidden() default false;
+
     /**
      * Optional collection of extra attributes represented as name-value pairs
      * @return Single {@code @Data} annotation value, or an array of {@code @Data}

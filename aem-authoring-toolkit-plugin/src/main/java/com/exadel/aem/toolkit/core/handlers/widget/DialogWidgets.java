@@ -35,6 +35,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
+import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
@@ -66,14 +67,15 @@ public enum DialogWidgets implements DialogWidget {
     SWITCH(Switch.class),
     DATE_PICKER(DatePicker.class, new DatePickerHandler()),
     FILE_UPLOAD(FileUpload.class),
-    IMAGE_UPLOAD(ImageUpload.class),
+    IMAGE_UPLOAD(ImageUpload.class, new ImageUploadHandler()),
     TEXT_AREA(TextArea.class),
     RICH_TEXT_EDITOR(RichTextEditor.class, new RichTextEditorHandler()),
     HIDDEN(Hidden.class),
     AUTOCOMPLETE(Autocomplete.class, new AutocompleteHandler()),
     PASSWORD(Password.class, new PasswordHandler()),
     HEADING(Heading.class),
-    ALERT(Alert.class);
+    ALERT(Alert.class),
+    BUTTON(Button.class);
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";
     private static final BiConsumer<Element, Field> EMPTY_HANDLER = (componentNode, field) -> {};

@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
- * @version 2.2.3
+ * @version 2.2.4
  *
  * DependsOn plugin utils
  * */
@@ -10,9 +10,9 @@
     /**
      * Create sequence generator
      * */
-    ns.createSequence = function() {
+    ns.createSequence = function () {
         let index = 1;
-        return { next: () => index++ };
+        return {next: () => index++};
     };
 
     /**
@@ -26,7 +26,7 @@
     };
 
     /**
-     * Extended comparison that supports NaN and Arrays
+     * Extended comparison that supports NaN, Arrays and Objects
      * @returns {boolean}
      * */
     ns.isEqual = function isEqual(a, b) {
@@ -36,13 +36,19 @@
         if (Array.isArray(a) && Array.isArray(b)) {
             return a.length === b.length && a.every((val, i) => isEqual(val, b[i]));
         }
+        if (ns.isObject(a) && ns.isObject(b)) {
+            const keysA = Object.keys(a);
+            const keysB = Object.keys(b);
+            if (keysA.length !== keysB.length) return false;
+            return keysA.every(key => isEqual(a[key], b[key]));
+        }
         return false;
     };
 
     /**
      * Cast field value to passed type
      * @param value
-     * @param {'boolean'|'boolstring'|'number'|'string'|'any'} type
+     * @param {'boolean'|'boolstring'|'number'|'string'|'json'|'any'} type
      * */
     ns.castToType = function (value, type) {
         switch (type.toLowerCase()) {
@@ -54,6 +60,8 @@
                 return Number(value);
             case 'string':
                 return String(value);
+            case 'json':
+                return ns.parseSafe(value);
             default:
                 return value;
         }
@@ -90,7 +98,7 @@
      * */
     ns.parseActionData = function (el, actionName = '', index = 0) {
         const prefix = `data-dependson-${actionName}-`;
-        const suffix = index ? `-${index}`: '';
+        const suffix = index ? `-${index}` : '';
 
         let attrs = [].slice.call(el.attributes);
         attrs = attrs.filter((attr) => attr.name.slice(0, prefix.length) === prefix);
@@ -111,6 +119,59 @@
      * @param state {boolean}
      */
     ns.toggleAsterisk = function ($el, state) {
-        $el.text($el.text().replace(/\s?\*?$/, state ? ' *': ''));
+        $el.text($el.text().replace(/\s?\*?$/, state ? ' *' : ''));
+    };
+
+    /**
+     * Get current component path
+     * @param {JQuery} item - dialog form element, could be just "this" in dependsOn (query)
+     * @returns string
+     * */
+    ns.getDialogPath = function (item) {
+        return item.closest('form.cq-dialog').attr('action');
     }
+
+    /**
+     * Check if the passed value is an object
+     * @param value - value to check
+     * @returns {boolean} true if the value is an object, false otherwise
+     * */
+    ns.isObject = function (value) {
+        return value !== null && typeof value === 'object';
+    }
+
+    /**
+     * Attempts to parse a string value into JSON object
+     * @param {string} value to parse
+     * @return {Object} parsed value or an empty object in case of any exceptions
+     */
+    ns.parseSafe = function (value) {
+        try {
+            return JSON.parse(value);
+        } catch (e) {
+            return {};
+        }
+    }
+
+    /**
+     * Parse function string to a real function.
+     * @param {string|function} exp
+     * @param {function} defaultFn
+     */
+    ns.evalFn = function evalFunction(exp, defaultFn) {
+        if (!exp) return defaultFn;
+        if (typeof exp === 'function') return exp;
+        let fn = defaultFn;
+        try {
+            fn = (new Function(`return ${exp}`))(); //NOSONAR: not a javascript:S3523 case, real evaluation should be done
+        } catch (e) {
+            console.error(`[DependsOn]: can not process function '${exp}': `, e);
+        }
+        if (typeof fn !== 'function') {
+            console.error(`[DependsOn]: evaluation '${exp}' result is not a function`);
+            return defaultFn;
+        }
+        return fn;
+    }
+
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

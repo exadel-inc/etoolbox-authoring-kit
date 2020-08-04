@@ -11,12 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets.color;
+
+package com.exadel.aem.toolkit.api.annotations.widgets.button;
 
 /**
- * Contains possible values of {@link ColorField#value()} property
+ * Contains possible values of {@link Button#type()} property
  */
 @SuppressWarnings("unused")
-public enum ColorValue {
-    HEX, RGB, RGBA, HSB, CMYK
+public enum ButtonType {
+    SUBMIT,
+    BUTTON,
+    RESET
 }

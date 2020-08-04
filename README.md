@@ -277,7 +277,7 @@ The fields are sorted in order of their *ranking*. If several fields have the sa
 ##### @Alert
 Used to render components responsible for showing conditional alerts to the users in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Alert](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html?highlight=alert). Usage is similar to the following:
 ```java
-public class DialogWithAlers{
+public class DialogWithAlert{
     @Alert(
             size = AlertSize.LARGE,
             text = "Alert content",
@@ -294,6 +294,24 @@ Used to render the component in TouchUI dialogs. Exposes properties as described
 public class AutocompleteDialog {
     @DialogField
     @Autocomplete(multiple = true, datasource = @AutocompleteDatasource(namespaces = {"workflow", "we-retail"}))
+    String field;
+}
+```
+##### @Button
+Used to produce buttons in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Button](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/button/index.html).
+
+*Note:* this widget annotation does not need to be accompanied with `@DialogWidget`
+
+```java
+public class DialogWithButton {
+    @Button(
+        type = ButtonType.SUBMIT,
+        text = "save",
+        icon = "edit",
+        command = "shift+s",
+        variant = ElementVariantConstants.PRIMARY,
+        block = true
+    )
     String field;
 }
 ```
@@ -379,9 +397,10 @@ public class ImageFieldDialog {
 ```
 ###### @Heading
 Used to render heading element in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Heading](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/heading/index.html).
+
+*Note:* this widget annotation does not need to be accompanied with `@DialogWidget`
 ```java
-public class HeadingDialog {
-    @DialogField
+public class DialogWithHeading {
     @Heading(text = "Heading text", level = 2)
     String heading;
 }
@@ -481,7 +500,9 @@ Used to logically group a number of different fields as described in [Adobe's Gr
 
 Hierarchy of classes is honored (so that a *FieldSet*-producing class may extend another class from same or even foreign scope. Proper field order within a fieldset can be guaranteed by use of *ranking* values (see chapter on `@DialogField` above). 
 
-Names of fields added to a FieldSet may share common prefix specified in *namePrefix* property. This can be a simple word, or a string trailed with slash. In the latter case, values assigned to the FieldSet's fields will directed to a a subnode of the resource being edited.
+Names of fields added to a FieldSet may share a common prefix specified in *namePrefix* property. This can be a simple word, or a string trailed with slash. In the latter case, values assigned to the FieldSet's fields will directed to a subnode of the resource being edited.
+
+If you do not need a margin around the fieldset added by default, add `@Attribute(className="u-coral-noMargin")`
 ```java
 public class DialogWithFieldSet {
     @FieldSet(title = "Field set example", namePrefix="fs-")
@@ -1055,6 +1076,13 @@ public class CustomPropertiesDialog {
         @Property(name = "numericAttr", value = "{Long}42")
     })
     String field1;
+
+    //another way to define properties
+    @DialogField(label = "Field 2")
+    @TextField
+    @Property(name = "stringAttr", value = "Hello World")
+    @Property(name = "numericAttr", value = "{Long}42")
+    String field1;
 }
 ```
 ##### Custom properties for in-place editing configurations
@@ -1095,8 +1123,14 @@ For these goals, `@CommonProperties` annotation is designed. It accepts similar 
         path = "//*[@size='L']",
         name = "size",
         value = "S"
-    ),
+    )
 })
+public class CustomPropertiesDialog { /* ... */ }
+
+//another way to define properties
+@CommonProperty(name = "stringAttr", value = "Hello World")
+@CommonProperty(scope = XmlScope.CQ_DIALOG, name = "numericAttr", value = "{Long}-1000")
+@CommonProperty(scope = XmlScope.CQ_EDIT_CONFIG, name = "arrayAttr", value = "[any,many,minny,moe]")
 public class CustomPropertiesDialog { /* ... */ }
 ```
 Pay attention to the third and forth `@CommonProperty`-s. Specifying the *path* value gives the ability to traverse to any child node of the prepared XML with use of an XPath-formatted string.

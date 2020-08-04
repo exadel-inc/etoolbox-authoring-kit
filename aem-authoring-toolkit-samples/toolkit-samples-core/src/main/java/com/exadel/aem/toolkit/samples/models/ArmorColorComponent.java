@@ -1,6 +1,6 @@
 package com.exadel.aem.toolkit.samples.models;
 
-import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.HtmlTag;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;

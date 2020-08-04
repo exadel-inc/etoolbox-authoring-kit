@@ -2,7 +2,7 @@
 
 Author _Alexey Stsefanovich (ala'n)_ and _Yana Bernatskaya (YanaBr)_
 
-Version _2.2.3_
+Version _2.4.0_
  
 DependsOn Plugin is a clientlib that executes defined action on dependent fields.
  
@@ -28,6 +28,9 @@ DependsOn workflow consists of the following steps:
  
 **ObservedReferences** are external elements or group of elements whose values can be used inside of **Query**.
  
+More detailed DependsOn structure is presented below. 
+![DependsOn Structure](./docs/structure.jpg)
+
 #### Introduction  
 
 "DependsOn" plugin is based on the following data attributes.
@@ -42,6 +45,7 @@ For referenced field:
 
 * `data-dependsonref` - to mark a field, that is referenced from the Query.
 * `data-dependsonreftype` - (optional) to define expected type of reference value. 
+* `data-dependsonreflazy` - (marker) attribute to mark reference as lazy. In this case, DependsOn will not observe rapid events like `input`.
 
 #### DependsOn Usage
 
@@ -59,11 +63,25 @@ Built-in plugin actions are:
 
 If the action is not specified then `visibility` is used by default.
 
+##### Async actions
+
+Build-in plugin async actions:
+ * `fetch` - action to set the result of fetching an arbitrary resource.  
+Action to set the result of fetching an arbitrary resource.  
+Uses query as a target path to node or property.  
+Path should end with the property name or '/' to retrieve the whole node.  
+Path can be relative (e.g. 'node/property' or '../../property') or absolute ('whole/path/to/the/node/property').  
+_Additional parameters:_ 
+   * `map` (optional) - function `(result: any, name: string, path: string) => any` to process result. Can be used as mapping / keys-filtering or can provide more complicated action.
+   * `err` (optional, map to empty string and log error to console by default) - function `(error: Error, name: string, path: string) => any` to process error. Can be used to map or ignore error result.  
+   Note: If the mapping result is `undefined` then the action will not change the current value.
+   * `postfix` (optional, `.json` by default) - string to append to the path if it is not presented already
+
 ##### Action Registry
 
 Custom action can be specified using `Granite.DependsOnPlugin.ActionRegistry`.
 
-Action should have name and function to execute. 
+Action should have name (allowed symbols: a-z, 0-9, -) and function to execute. 
 For example build-in `set` action is defined as follows:
 ```javascript
 Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('set', function setValue(value) {
@@ -80,9 +98,12 @@ Allowed reference types:
 * `boolstring` - cast as a string value to boolean (true if string cast equals "true")
 * `number` - cast to number value
 * `string` - cast to string
+* `json` - parse JSON string
 
 If the type is not specified manually it will be chosen automatically based on element widget type 
 (see _preferableType_ in ElementsAccessor definition).
+
+In any other case (e.g. if type is `any`) no cast will be performed.
 
 ##### ElementsAccessor Registry
 
@@ -141,7 +162,7 @@ Single reference should reference existing field and will not be reattached on d
 Note: multiple reference triggers query update on any group update: changing some of group fields value, adding or removing referenced field. 
 So usage of multiple reference can slow down queries performance.
 
-Reference can not be named as 'this', that name is reserved and always reach current element value.
+Reference cannot be named 'this', because 'this' is reserved to refer to the value of the current element
 Reference name is not necessary for referencing current element by `@this`.
 
 Area to find referenced field can be narrowed down by providing the Scope. 
@@ -151,7 +172,7 @@ Scope is defined in parentheses after reference name.
 Examples:
 * `@enableCta (coral-panel)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of the closest parent Panel element.
 * `@enableCta (.my-fieldset)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of the closest parent container element with "my-fieldset" class.
-* `@@enableCta (coral-multifield)` - will references all values of the fields marked by `dependsOnRef=enableCta` in bounds of the closest multifield.
+* `@@enableCta (coral-multifield)` - will reference all values of the fields marked by `dependsOnRef=enableCta` in bounds of the closest multifield.
 
 "Back-forward" CSS selectors are available in the Scope syntax, i.e. we can define CSS selector to determinate parent element and then provide selector to search the target element for scope in bounds of found parent. 
 Back and forward selectors are separated by '|>' combination. 
@@ -581,5 +602,97 @@ public class Component {
         @DialogField
         public String item;
     }
+}
+```
+
+#### 13. Fetch action
+'fetch' action provides easy access to parent nodes' properties.
+
+Allows to set 'opaque' option only if 'bg' option of parent component is not blank.
+```java
+public class Component {
+        @Hidden
+        @DependsOn(action = DependsOnActions.FETCH, query = "'../../bg'")
+        @DependsOnRef(name = "parentBg")
+        private String parentBg;
+
+        @DialogField
+        @TextField
+        @DependsOn(query = "!!@parentBg")
+        private String opaque;
+}
+```
+
+'fetch' action has a short term caching, so multiple properties will be requested once without loss of performance
+ ```java
+ public class Component {
+         @Hidden
+         @DependsOn(action = DependsOnActions.FETCH, query = "'../../field1'")
+         @DependsOnRef(name = "parentProperty1")
+         private String parentProperty1;
+ 
+         @Hidden
+         @DependsOn(action = DependsOnActions.FETCH, query = "'../../field2'")
+         @DependsOnRef(name = "parentProperty2")
+         private String parentProperty2;
+ }
+ ```
+
+`map` acton param can be used to process result. 
+The example below retrieves parent component's title and type in a special format.
+ ```java
+ public class Component {
+         @Hidden
+         @DependsOn(action = DependsOnActions.FETCH, query = "'../../'", params = {
+            @DependsOnParam(name = "map", value = "(resource) => resource.name + ' (' + resource.type + ')'")
+         })
+         @DependsOnRef(name = "parentHeading")
+         private String parentHeading;
+ 
+         @Heading
+         @DependsOn(action = "set", query = "@parentHeading")
+         private String parentComponentHeading;
+ }
+ ```
+
+#### 14. Alert accessors
+
+DependsOn provides the ability to conditionally change any property of Alert widget:
+- text;
+- title;
+- size;
+- variant.
+
+Setting Alert's text is done the same way as setting the value of other widgets.
+If you want to set multiple properties at once, use a JSON object (see the example below).
+
+Also, you can reference alert widgets. Alert reference is an object that provides alert's title and text.
+```java
+public class Component {
+    
+    @DialogField(label = "Set alert text")
+        @TextField
+        @DependsOnRef
+        private String textSetter;
+    
+        @DialogField(label = "Set alert size")
+        @Select(options = {
+                @Option(text = "Small", value = "S"),
+                @Option(text = "Large", value = "L")
+        })
+        @DependsOnRef
+        private String sizeSetter;
+    
+        @DialogField
+        @Alert(text = "2", variant = StatusVariantConstants.WARNING)
+        @DependsOnRef
+        @DependsOn(query = "\\{'text': @textSetter, 'size': @sizeSetter\\}", action = DependsOnActions.SET)
+        // @DependsOn(query = "@textSetter", action = DependsOnActions.SET) //works as well
+        private String alert;
+    
+        @DialogField(label = "Get alert text")
+        @TextField
+        @DependsOn(query = "@alert.text", action = DependsOnActions.SET)
+        private String alertGetter;
 }
 ```

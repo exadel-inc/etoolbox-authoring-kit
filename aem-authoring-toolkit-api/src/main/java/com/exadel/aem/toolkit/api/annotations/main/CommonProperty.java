@@ -16,12 +16,21 @@ package com.exadel.aem.toolkit.api.annotations.main;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.annotation.Repeatable;
+
 /**
  * Used to populate {@link CommonProperties} value with set of name-value string pairs. They are rendered as XML nodes' attributes
  * To define appropriate XML node, {@link XmlScope} and node's {@code XPath} can be specified
  * @see CommonProperties
  * @see PropertyScope
  */
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Repeatable(CommonProperties.class)
 @SuppressWarnings("unused")
 public @interface CommonProperty {
     /**
