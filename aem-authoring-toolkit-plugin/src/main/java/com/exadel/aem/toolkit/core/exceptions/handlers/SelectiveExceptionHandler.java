@@ -15,6 +15,7 @@
 package com.exadel.aem.toolkit.core.exceptions.handlers;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.exadel.aem.toolkit.core.exceptions.PluginException;
 import org.apache.commons.lang3.ClassUtils;
@@ -53,34 +54,43 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
 
     @Override
     public boolean haltsOn(Class<? extends Exception> exceptionType) {
-        Class<?> managedClass;
+        Optional result;
         boolean inverse;
         for (String exName : criticalExceptions) {
             inverse = false;
-            if (StringUtils.equalsAnyIgnoreCase(exName, ALL_EXCEPTIONS, EXCEPTIONS_WILDCARD)) {
-                return true;
-            }
             if (exName.startsWith(EXCLAMATION_MARK)) {
                 inverse = true;
                 exName = exName.substring(1);
             }
-            if (exName.endsWith(PACKAGE_POSTFIX)) {
-                if (exceptionType.getName().startsWith(exName.substring(0, exName.length() - 1))) {
-                    return !inverse;
-                } else {
-                    continue;
-                }
-            } else {
-                try {
-                    managedClass = Class.forName(exName);
-                } catch (ClassNotFoundException exception) {
-                    continue;
-                }
-                if (ClassUtils.isAssignable(exceptionType, managedClass)) {
-                    return !inverse;
-                }
+            result = checkException(exceptionType, exName, inverse);
+            if(result.equals(Optional.of(true))){
+                return true;
+            } else if (result.equals(Optional.of(false))){
+                return false;
             }
         }
         return false;
+    }
+
+    private Optional checkException(Class<? extends Exception> exceptionType, String criticalException, boolean inverse){
+        if (StringUtils.equalsAnyIgnoreCase(criticalException, ALL_EXCEPTIONS, EXCEPTIONS_WILDCARD)) {
+            return Optional.of(!inverse);
+        }
+        if (criticalException.endsWith(PACKAGE_POSTFIX)) {
+            if (exceptionType.getName().startsWith(criticalException.substring(0, criticalException.length() - 1))) {
+                return Optional.of(!inverse);
+            } else {
+                return Optional.empty();
+            }
+        }
+        try {
+            Class<?> managedClass = Class.forName(criticalException);
+            if (ClassUtils.isAssignable(exceptionType, managedClass)) {
+                return Optional.of(!inverse);
+            }
+        } catch (ClassNotFoundException exception) {
+            return Optional.empty();
+        }
+        return Optional.empty();
     }
 }

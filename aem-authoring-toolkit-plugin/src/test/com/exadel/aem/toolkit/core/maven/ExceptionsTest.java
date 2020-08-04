@@ -81,7 +81,6 @@ public class ExceptionsTest extends ExceptionsTestBase {
                     return setting;
                 }
             };
-
             PluginExceptionHandlers.getHandler(setting).handle(exception);
         });
     }
