@@ -78,10 +78,13 @@ public class PluginXmlUtility implements XmlUtility {
     public static final String ATTRIBUTE_LIST_SURROUND = "[]";
     public static final Pattern ATTRIBUTE_LIST_PATTERN = Pattern.compile("^\\[.+]$");
 
+    private static final XmlTransferPolicy DEFAULT_XML_TRANSFER_POLICY = XmlTransferPolicy.SKIP;
+
     /**
      * Default routine to manage merging two values of an XML attribute by suppressing existing value with a non-empty new one
      */
     public static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
+
 
     private Document document;
     private String namePrefix = DialogConstants.RELATIVE_PATH_PREFIX;
@@ -453,28 +456,6 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     /**
-     * Migrates attributes and child nodes between {@code source} and {@code target}. Attributesm save for {@code jcr:primaryType},
-     * are copied, while child nodes are moved
-     * @param source Element to serve as the source of migration
-     * @param target Element to serve as the target of migration
-     */
-    public void migrateElementContent(Element source, Element target) {
-        if (isBlankElement(source) || target == null) {
-            return;
-        }
-        for (int i = 0; i < source.getAttributes().getLength(); i++) {
-            Node attribute = source.getAttributes().item(i);
-            if (attribute.getNodeName().equals(DialogConstants.PN_PRIMARY_TYPE)) {
-                continue;
-            }
-            target.setAttribute(attribute.getNodeName(), attribute.getNodeValue());
-        }
-        while (source.hasChildNodes()) {
-            target.appendChild(source.getFirstChild());
-        }
-    }
-
-    /**
      * Merges attributes of two {@code Element} nodes, e.g. when a child node is appended to a parent node that already
      * has another child with same name, the existing child is updated with values from the newcomer. Way of merging
      * is defined by {@param attributeMerger} routine
@@ -664,5 +645,69 @@ public class PluginXmlUtility implements XmlUtility {
                 resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
         element.appendChild(dataSourceElement);
         return dataSourceElement;
+    }
+
+
+    /**
+     * Migrates attributes and child nodes between {@code source} and {@code target}. Whether particular attributes
+     * and child nodes are copied, moved or left alone, is defined by the {@code policies} map
+     * @param source Element to serve as the source of migration
+     * @param target Element to serve as the target of migration
+     * @param policies Map containing attribute names (must start with {@code @}), child node names (must start with
+     *                 {@code ./}) and the action appropriate to each of them, whether to copy element, move, or leave
+     *                 intact. Wildcard symbol ({@code *}) is supported to specify common policy for multiple elements
+     */
+    public void transfer(Element source, Element target, Map<String, XmlTransferPolicy> policies) {
+        if (isBlankElement(source) || target == null) {
+            return;
+        }
+        // Process attributes
+        List<String> removableAttributes = new ArrayList<>();
+        for (int i = 0; i < source.getAttributes().getLength(); i++) {
+            Node attribute = source.getAttributes().item(i);
+            XmlTransferPolicy policy = getTransferPolicyForNode(attribute, DialogConstants.ATTRIBUTE_PREFIX, policies);
+            if (policy != XmlTransferPolicy.SKIP) {
+                target.setAttribute(attribute.getNodeName(), attribute.getNodeValue());
+            }
+            if (policy == XmlTransferPolicy.MOVE) {
+                removableAttributes.add(attribute.getNodeName());
+            }
+        }
+        removableAttributes.forEach(source::removeAttribute);
+        // Process child nodes
+        int childNodePos = 0;
+        while (childNodePos < source.getChildNodes().getLength()) {
+            Node childNode = source.getChildNodes().item(childNodePos);
+            XmlTransferPolicy policy = getTransferPolicyForNode(childNode, DialogConstants.RELATIVE_PATH_PREFIX, policies);
+            if (policy == XmlTransferPolicy.MOVE) {
+                target.appendChild(childNode);
+                continue;
+            } else if (policy == XmlTransferPolicy.COPY) {
+                Element copiedChildNode = createNodeElement(childNode.getNodeName());
+                transfer((Element) childNode, copiedChildNode, ImmutableMap.of(StringUtils.EMPTY, XmlTransferPolicy.COPY));
+            }
+            childNodePos++;
+        }
+    }
+
+    /**
+     * Called by {@link PluginXmlUtility#transfer(Element, Element, Map)} to pick up an appropriate {@link XmlTransferPolicy}
+     * from the set of provided policies
+     * @param node Node ({code Element} or {@code Attribute}) to provide policy for
+     * @param prefix String prefix distinguishing whether the policy applies to attributes or child nodes
+     * @param policies {@code Map<String, XmlTransferPolicy>} describing available policies
+     * @return The selected policy, or a default policy if no appropriate option found
+     */
+    private static XmlTransferPolicy getTransferPolicyForNode(Node node, String prefix, Map<String, XmlTransferPolicy> policies) {
+        if (policies == null || policies.isEmpty()) {
+            return DEFAULT_XML_TRANSFER_POLICY;
+        }
+        return policies.entrySet().stream()
+                .filter(entry -> entry.getKey().endsWith(DialogConstants.WILDCARD)
+                        ? (prefix + node.getNodeName()).startsWith(StringUtils.stripEnd(entry.getKey(), DialogConstants.WILDCARD))
+                        : (prefix + node.getNodeName()).equals(entry.getKey()))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(DEFAULT_XML_TRANSFER_POLICY);
     }
 }
