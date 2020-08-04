@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.core.util;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.apache.commons.lang3.ClassUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -37,8 +35,8 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
  * Contains utility methods that handle adding nodes describing Granite widgets to a widget container node
  */
 public class PluginXmlContainerUtility {
-    private static final String DUPLICATE_FIELDS_MESSAGE_TEMPLATE = "Field name \"%s\" in class \"%s\": " +
-            "collides with same name in superclass '%s'. This may cause unexpected behavior while saving data";
+    private static final String DUPLICATE_FIELDS_MESSAGE_TEMPLATE = "Field named \"%s\" in class \"%s\" " +
+            "collides with the field having same name in superclass \"%s\". This may cause unexpected behavior";
 
     /**
      * Default (private) constructor
@@ -94,32 +92,29 @@ public class PluginXmlContainerUtility {
     /**
      * Called from {@link PluginXmlContainerUtility#checkForDuplicateFields(Element, Map)} to test Tests the provided
      * collection of fields and a particular duplicating tag name. Throws an exception if a field from a superclass
-     * is positioned below the correspondent field from a subclass, therefore, will have precedence
+     * is positioned below the corresponding field from a subclass, therefore, will have precedence
      * @param tagName String representing the tag name in question
      * @param managedFields {@code Map<Field, String>} that matches rendered fields to corresponding element names
      */
     private static void checkForDuplicateFields(String tagName, Map<Field, String> managedFields) {
-        LinkedList<Field> matchedFields = managedFields.entrySet().stream()
+        LinkedList<Field> sameNameFields = managedFields.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(tagName))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toCollection(LinkedList::new));
-        Iterator<Field> iterator = matchedFields.descendingIterator();
-        while (iterator.hasNext()) {
-            Field currentField = iterator.next();
-            if (!iterator.hasNext()) {
-                return;
-            }
-            Field nextField = iterator.next();
-            if (!ClassUtils.isAssignable(currentField.getDeclaringClass(), nextField.getDeclaringClass())) {
-                PluginRuntime
-                        .context()
-                        .getExceptionHandler()
-                        .handle(new InvalidFieldContainerException(String.format(
-                                DUPLICATE_FIELDS_MESSAGE_TEMPLATE,
-                                currentField.getName(),
-                                nextField.getDeclaringClass().getSimpleName(),
-                                currentField.getDeclaringClass().getSimpleName())));
-            }
+        LinkedList<Field> sameNameFieldsByOrigin = sameNameFields.stream()
+                .sorted(PluginReflectionUtility.Predicates::compareByOrigin)
+                .collect(Collectors.toCollection(LinkedList::new));
+
+        if (sameNameFields.getLast().equals(sameNameFieldsByOrigin.getLast())) {
+            return;
         }
+        PluginRuntime
+                .context()
+                .getExceptionHandler()
+                .handle(new InvalidFieldContainerException(String.format(
+                        DUPLICATE_FIELDS_MESSAGE_TEMPLATE,
+                        sameNameFieldsByOrigin.getLast().getName(),
+                        sameNameFieldsByOrigin.getLast().getDeclaringClass().getSimpleName(),
+                        sameNameFields.getLast().getDeclaringClass().getSimpleName())));
     }
 }

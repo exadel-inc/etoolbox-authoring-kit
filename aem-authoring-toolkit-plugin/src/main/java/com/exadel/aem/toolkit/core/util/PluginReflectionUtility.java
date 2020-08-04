@@ -266,7 +266,7 @@ public class PluginReflectionUtility {
         }
         return fields.stream()
                 .filter(Predicates.getNotIgnoredFieldsPredicate(ignoredFields))
-                .sorted(Predicates::compareDialogFields)
+                .sorted(Predicates::compareByRanking)
                 .collect(Collectors.toList());
     }
 
@@ -442,7 +442,7 @@ public class PluginReflectionUtility {
          * @param f2 Second comparison member
          * @return Integer value per {@code Comparator#compare(Object, Object)} convention
          */
-        private static int compareByOrigin(Field f1, Field f2) {
+        static int compareByOrigin(Field f1, Field f2) {
             if (f1.getDeclaringClass() != f2.getDeclaringClass()) {
                 if (ClassUtils.isAssignable(f1.getDeclaringClass(), f2.getDeclaringClass())) {
                     return 1;

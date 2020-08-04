@@ -15,73 +15,12 @@
 package com.exadel.aem.toolkit.test.component;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.core.util.TestConstants;
 
 @SuppressWarnings("unused")
 public class InheritanceTestCases {
-
-    private static class InheritanceBase {
-        @DialogField(
-                label = "Base label",
-                required = true,
-                ranking = 1
-        )
-        @TextField
-        private String text;
-    }
-
-    @Dialog(
-            name = TestConstants.DEFAULT_COMPONENT_NAME,
-            title = TestConstants.DEFAULT_COMPONENT_TITLE,
-            componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
-            resourceSuperType = TestConstants.DEFAULT_COMPONENT_SUPERTYPE,
-            disableTargeting = true,
-            layout = DialogLayout.FIXED_COLUMNS
-    )
-    public static class InheritanceOverride extends InheritanceBase {
-        @DialogField(
-                label = "Override label",
-                required = true
-        )
-        @TextField
-        private String text;
-
-        @DialogField(name = "./fieldset")
-        @FieldSet(title = "Fieldset")
-        private FieldsetOverride fieldsetOverride;
-    }
-
-    private static class FieldsetBase {
-        @DialogField(
-                name = "baseFieldsetText",
-                label = "Fieldset base label",
-                ranking = 1
-        )
-        @TextField
-        private String fieldsetText;
-    }
-
-    private static class FieldsetInterim extends FieldsetBase {
-        @DialogField(
-                name = "interimFieldsetText",
-                label = "Fieldset interim label"
-        )
-        @TextField
-        private String fieldsetText2;
-    }
-
-    private static class FieldsetOverride extends FieldsetInterim {
-        @DialogField(
-                name = "overrideFieldsetText",
-                label = "Fieldset override label"
-        )
-        @TextField
-        private String fieldsetText;
-    }
 
     private static class DuplicateBase {
         @DialogField
@@ -93,18 +32,29 @@ public class InheritanceTestCases {
         private String text2;
     }
 
+    private static class DuplicateInterim extends DuplicateBase {
+
+        @DialogField
+        @TextField
+        private String text1; // will not cause an exception because of not being a rendering target
+
+        @DialogField
+        @TextField
+        private String text2; // will not cause an exception because of not being a rendering target
+    }
+
     @Dialog(
             name = TestConstants.DEFAULT_COMPONENT_NAME,
             title = TestConstants.DEFAULT_COMPONENT_TITLE
     )
-    public static class DuplicateOverride extends DuplicateBase {
+    public static class DuplicateOverride extends DuplicateInterim {
         @DialogField
         @TextField
         private String text1; // will not cause an exception because placed underneath the field from superclass by order
 
         @DialogField
         @TextField
-        private String text2; // will cause and exception because placed above the field from superclass by order
+        private String text2; // will cause an exception because placed above the field from superclass by order
     }
 }
 
