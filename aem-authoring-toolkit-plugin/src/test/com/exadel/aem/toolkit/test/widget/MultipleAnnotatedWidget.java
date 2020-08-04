@@ -14,11 +14,16 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
+import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
+import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
@@ -29,8 +34,46 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
 )
 @SuppressWarnings("unused")
 public class MultipleAnnotatedWidget {
-    @DialogField(label = "Multiple TextFields")
-    @TextField(emptyText = "empty text")
+    @DialogField(
+            label = "Multiple TextFields",
+            name = "overriddenName",
+            required = true
+    )
+    @TextField(
+            emptyText = "empty text",
+            value = "default value"
+    )
+    @Attribute(
+            id = "text1",
+            data = @Data(name = "key", value = "value")
+    )
+    @DependsOnRef
     @Multiple
     String text1;
+
+    @DialogField(
+            label = "Nested FieldSet",
+            required = true
+    )
+    @FieldSet(namePrefix = "my")
+    @Multiple
+    private NestedFieldSet nestedFieldSet;
+
+    @DialogField(
+            label = "Nested Multifield"
+    )
+    @MultiField(field = NestedFieldSet.class)
+    @Multiple
+    private NestedFieldSet nestedMultifield;
+
+
+    private static class NestedFieldSet {
+        @DialogField(label = "Nested Text 1")
+        @TextField
+        private String nestedText1;
+
+        @DialogField(label = "Nested Text 2")
+        @TextField
+        private String nestedText2;
+    }
 }
