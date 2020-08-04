@@ -48,49 +48,19 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
             return;
         }
 
-        // Create the new element wrapper
-        Element fieldElement = getXmlUtil().createNodeElement(DialogConstants.NN_FIELD);
+        Element fieldElement;
         boolean isComposite = false;
 
         if (isFieldSet(element)) {
-            // Append the existing "items" node to the "field" node
-            fieldElement.appendChild(getXmlUtil().getChildElement(element, DialogConstants.NN_ITEMS));
-            // Move only "name" property to the "field" node
-            getXmlUtil().transfer(
-                    element,
-                    fieldElement,
-                    ImmutableMap.of(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_NAME, XmlTransferPolicy.MOVE));
+            fieldElement = getFieldSetWrapper(element);
             isComposite = true;
 
         } else if (isMultifield(element)) {
-            // Create nested "items > multifield > field > items" node structure
-            Element nestedItems = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
-            Element nestedMultifield = getXmlUtil().createNodeElement(element.getTagName() + POSTFIX_NESTED);
-            nestedItems.appendChild(nestedMultifield);
-            fieldElement.appendChild(nestedItems);
-
-            // Move existing multifield attributes to the nested multifield
-            Map<String, XmlTransferPolicy> multifieldPolicies = invert(getStandardTransferPolicies());
-            multifieldPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, XmlTransferPolicy.COPY);
-            getXmlUtil().transfer(
-                    element,
-                    nestedMultifield,
-                    multifieldPolicies);
-
-            // Set the "name" attribute of the "field" node of the current multifield
-            // At the same time, alter the "name" attribute of the nested multifield to not get mixed with the name of the current one
-            Element nestedMultifieldField = getXmlUtil().getChildElement(nestedMultifield, DialogConstants.NN_FIELD);
-            String nestedMultifieldFieldName = StringUtils.defaultString(nestedMultifieldField.getAttribute(DialogConstants.PN_NAME));
-            getXmlUtil().setAttribute(fieldElement, DialogConstants.PN_NAME, nestedMultifieldFieldName);
-            getXmlUtil().setAttribute(nestedMultifieldField, DialogConstants.PN_NAME, nestedMultifieldFieldName + POSTFIX_NESTED);
+            fieldElement = getNestedMutifieldWrapper(element);
             isComposite = true;
 
         } else {
-            // Move content to the new wrapper
-            getXmlUtil().transfer(
-                    element,
-                    fieldElement,
-                    getStandardTransferPolicies());
+            fieldElement = getSimpleWrapper(element);
         }
 
         // Facilitate the newly created element to work as a multifield
@@ -121,6 +91,63 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
     private boolean isFieldSet(Element element) {
         Element itemsElement = getXmlUtil().getChildElement(element, DialogConstants.NN_ITEMS);
         return itemsElement != null && itemsElement.hasChildNodes();
+    }
+
+    /**
+     * Creates a {@code field} node encapsulating source element's properties to be used within a synthetic multifield
+     * @param source Previously rendered {@code Element} being converted to a synthetic multifield
+     * @return {@code Element} representing the {@code field} node
+     */
+    private Element getSimpleWrapper(Element source) {
+        Element result = getXmlUtil().createNodeElement(DialogConstants.NN_FIELD);
+        // Move content to the new wrapper
+        getXmlUtil().transfer(source, result, getStandardTransferPolicies());
+        return result;
+    }
+
+    /**
+     * Creates a {@code field} node wrapping a set of fields that will be subsequently used within a synthetic multifield
+     * @param source Previously rendered {@code Element} being converted to a synthetic multifield
+     * @return {@code Element} representing the {@code field} node
+     */
+    private Element getFieldSetWrapper(Element source) {
+        Element result = getXmlUtil().createNodeElement(DialogConstants.NN_FIELD);
+        // Append the existing "items" node to the "field" node
+        result.appendChild(getXmlUtil().getChildElement(source, DialogConstants.NN_ITEMS));
+        // Move only "name" property to the "field" node
+        getXmlUtil().transfer(
+                source,
+                result,
+                ImmutableMap.of(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_NAME, XmlTransferPolicy.MOVE));
+        return result;
+    }
+
+    /**
+     * Creates a {@code field} node wrapping an existing {@code multifield} that will be used within a synthetic multifield
+     * @param source Previously rendered {@code Element} being converted to a synthetic multifield
+     * @return {@code Element} representing the {@code field} node
+     */
+    private Element getNestedMutifieldWrapper(Element source) {
+        Element result = getXmlUtil().createNodeElement(DialogConstants.NN_FIELD);
+        // Create nested "items > multifield > field > items" node structure
+        Element nestedItems = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
+        Element nestedMultifield = getXmlUtil().createNodeElement(source.getTagName() + POSTFIX_NESTED);
+        nestedItems.appendChild(nestedMultifield);
+        result.appendChild(nestedItems);
+
+        // Move existing multifield attributes to the nested multifield
+        Map<String, XmlTransferPolicy> multifieldPolicies = invert(getStandardTransferPolicies());
+        multifieldPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, XmlTransferPolicy.COPY);
+        getXmlUtil().transfer(source, nestedMultifield, multifieldPolicies);
+
+        // Set the "name" attribute of the "field" node of the current multifield
+        // At the same time, alter the "name" attribute of the nested multifield to not get mixed with the name of the current one
+        Element nestedMultifieldField = getXmlUtil().getChildElement(nestedMultifield, DialogConstants.NN_FIELD);
+        String nestedMultifieldFieldName = StringUtils.defaultString(nestedMultifieldField.getAttribute(DialogConstants.PN_NAME));
+        getXmlUtil().setAttribute(result, DialogConstants.PN_NAME, nestedMultifieldFieldName);
+        getXmlUtil().setAttribute(nestedMultifieldField, DialogConstants.PN_NAME, nestedMultifieldFieldName + POSTFIX_NESTED);
+
+        return result;
     }
 
     /**
