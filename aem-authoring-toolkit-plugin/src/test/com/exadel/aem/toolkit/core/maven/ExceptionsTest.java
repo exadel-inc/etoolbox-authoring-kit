@@ -14,6 +14,9 @@
 
 package com.exadel.aem.toolkit.core.maven;
 
+import com.exadel.aem.toolkit.core.exceptions.ValidationException;
+import com.exadel.aem.toolkit.core.exceptions.handlers.PluginExceptionHandlers;
+import com.google.common.collect.ImmutableMap;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,6 +24,9 @@ import org.junit.rules.ExpectedException;
 
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
+
+import java.io.IOException;
+import java.util.Map;
 
 public class ExceptionsTest extends ExceptionsTestBase {
 
@@ -39,5 +45,44 @@ public class ExceptionsTest extends ExceptionsTestBase {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidTabException.class));
         exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
         test(ExceptionsTestCases.ComponentWithNonexistentDependsOnTab.class);
+    }
+
+    @Test
+    public void testTerminateOnSettings() {
+        Map<String, Exception> terminateOnCases = ImmutableMap.of(
+                "java.lang.RuntimeException", new IndexOutOfBoundsException(),
+                "java.lang.IOException, !java.lang.Exception, *", new IOException(),
+                "!java.lang.IndexOutOfBoundsException, java.lang.RuntimeException", new NullPointerException()
+        );
+        terminateOnCases.forEach((setting,exception)->{
+            ExceptionsTest newTest = new ExceptionsTest(){
+                @Override
+                String getExceptionSetting() {
+                    return setting;
+                }
+            };
+            exceptionRule.expectCause(IsInstanceOf.instanceOf(exception.getClass()));
+            PluginExceptionHandlers.getHandler(setting).handle(exception);
+        });
+    }
+
+    @Test
+    public void testNonTerminatingSettings() {
+        Map<String, Exception> terminateOnCases = ImmutableMap.of(
+                " ValidationException, !java.lang.RuntimeException", new ValidationException(""),
+                "!java.lang.IndexOutOfBoundsException, *", new IndexOutOfBoundsException(),
+                "!java.lang.IOException, !java.lang.RuntimeException, !com.exadel.aem.plugin.exceptions.*",
+                new InvalidTabException("")
+        );
+        terminateOnCases.forEach((setting,exception)->{
+            ExceptionsTest newTest = new ExceptionsTest(){
+                @Override
+                String getExceptionSetting() {
+                    return setting;
+                }
+            };
+
+            PluginExceptionHandlers.getHandler(setting).handle(exception);
+        });
     }
 }
