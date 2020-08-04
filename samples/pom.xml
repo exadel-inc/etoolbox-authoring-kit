@@ -10,16 +10,26 @@
         <version>1.2.1-SNAPSHOT</version>
     </parent>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
+    <repositories>
+        <!-- For AEM Authoring Toolkit snapshot version -->
         <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>em-authoring-toolkit-snapshots</id>
+            <name>Toolkit Snapshot</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
-    </distributionManagement>
+    </repositories>
+    <pluginRepositories>
+        <!-- For AEM Authoring Toolkit snapshot version -->
+        <pluginRepository>
+            <id>aem-authoring-toolkit-snapshots</id>
+            <name>Toolkit Snapshot</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
     <artifactId>aem-authoring-toolkit-samples</artifactId>
     <name>AEM Authoring Toolkit - Samples</name>
