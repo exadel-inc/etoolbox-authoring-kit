@@ -73,6 +73,13 @@
                                     disabled="{Boolean}false"
                                     fieldDescription="Third field description"
                                     fieldLabel="Third field label"
+                                    multiple="{Boolean}false"
+                                    translateOptions="{Boolean}true"
+                                    ordered="{Boolean}false"
+                                    emptyOption="{Boolean}false"
+                                    deleteHint="{Boolean}true"
+                                    variant="default"
+                                    forceIgnoreFreshness="{Boolean}false"
                                     name="./field_with:namespace"
                                     renderHidden="{Boolean}false"
                                     required="{Boolean}true">

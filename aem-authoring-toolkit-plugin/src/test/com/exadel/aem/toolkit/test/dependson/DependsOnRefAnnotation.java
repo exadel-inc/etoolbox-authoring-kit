@@ -47,11 +47,6 @@ public class DependsOnRefAnnotation {
     private String referenceNameAndType;
 
     @DialogField
-    @TextField
-    @DependsOnRef(name = "lazyReference", lazy = true)
-    private String lazyReference;
-
-    @DialogField
     @RichTextEditor
     @DependsOnRef(type = DependsOnRefTypes.AUTO)
     private String typeAuto;

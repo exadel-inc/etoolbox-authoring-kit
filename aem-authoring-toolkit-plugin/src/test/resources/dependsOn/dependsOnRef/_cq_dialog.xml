@@ -29,11 +29,6 @@
                         <granite:data jcr:primaryType="nt:unstructured" dependsOnRef="nameAndType"
                                       dependsOnRefType="boolstring"/>
                     </referenceNameAndType>
-                    <lazyReference jcr:primaryType="nt:unstructured" disabled="{Boolean}false" name="./lazyReference"
-                                   renderHidden="{Boolean}false" required="{Boolean}false"
-                                   sling:resourceType="granite/ui/components/coral/foundation/form/textfield">
-                        <granite:data jcr:primaryType="nt:unstructured" dependsOnRef="lazyReference" dependsOnRefLazy=""/>
-                    </lazyReference>
                     <typeAuto jcr:primaryType="nt:unstructured" disabled="{Boolean}false" name="./typeAuto"
                              renderHidden="{Boolean}false"
                              required="{Boolean}false" sling:resourceType="cq/gui/components/authoring/dialog/richtext"
