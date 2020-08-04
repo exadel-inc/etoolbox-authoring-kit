@@ -23,7 +23,8 @@ As the Toolkit was developed, thorough comparative investigation of Coral v.2 an
    - [Fields annotations](#fields-annotations)
        - [@DialogField](#dialogfield) 
        - [Widget annotations A-Z](#widget-annotations-a-z)
-       - [Field grouping and multiplying](#field-grouping-and-multiplying)
+       - [Fields grouping and multiplying](#fields-grouping-and-multiplying)
+       - [Common attributes of felds](#common-attributes-of-fields)
        - [Implementing RichTextEditor](#implementing-richtexteditor)
    - [Altering field's decoration tag with @HtmlTag](#altering-fields-decoration-tag-with-htmltag)
    - [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it)
@@ -494,7 +495,7 @@ Used to render textarea HTML inputs in TouchUI dialogs. Exposes properties as de
 ###### @TextField
 Used to produce text inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on TextField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textfield/index.html).
 
-#### Field grouping and multiplying
+#### Fields grouping and multiplying
 ##### @FieldSet
 Used to logically group a number of different fields as described in [Adobe's Granite UI manual on FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html). This goal is achieved by an external or a nested class that encapsulates grouping fields. Then a *\<OtherClass>*-typed field is declared, and `@FieldSet` annotation is added. 
 
@@ -570,7 +571,15 @@ public class CompositeMultiFieldDialog {
 }
 ```
 Note that the inheritance of class(-es) encapsulating multifield items works here the same way as for the `@FieldSet`.   
-##### Fields common attributes
+
+##### @Multiple
+The easiest way to create a *Multifield* is with the `@Multiple` annotation. Just add it to the Java class field where a widget annotation is already present. A *simple multifield* containing this particular widget will be created on the fly. 
+
+If you, on the other hand, add `@Multiple` to a field marked with `@Fieldset`, a *composite multifield* will be created (much like the one you could have adding `@Multifield` annotation itself). Moreover, you can add `@Multiple` to a mere `@Multifield`-marked field and enjoy a sort of "multifield of multifields".
+
+Please note, however, that `@Multiple` is primarily designed for easy, "quick give me a multifield out of my single widget without creating a nested class" cases. For more complicated cases, it lacks tweaking capablities that `@Multifield` itself presents. 
+
+#### Common attributes of fields
 Components TouchUI dialogs honor the concept of [global HTML attributes](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/docs/server/commonattrs.html) added to rendered HTML tags. To set them via AEM-Dialog-Plugin, you use the @Attribute annotation.
 ```java
 public class DialogWithHtmlAttributes {
