@@ -46,8 +46,8 @@ public @interface Attribute {
     String rel() default "";
 
     /**
-     *  The HTML 'class' attribute. With this property, you can assign an arbitrary CSS class, or a set of classes, space-separated, to the widget's container.
-     *  Mind you can also use a number of <a href="https://opensource.adobe.com/coral-spectrum/dist/documentation/manual/styles.html#css-utility-classes">pre-defined utility classes</a> by Coral.
+     * The HTML 'class' attribute. With this property, you can assign an arbitrary CSS class, or a set of classes, space-separated, to the widget's container.
+     * Mind you can also use a number of <a href="https://opensource.adobe.com/coral-spectrum/dist/documentation/manual/styles.html#css-utility-classes">pre-defined utility classes</a> by Coral.
      * @return String value
      */
     @PropertyRendering(name = "class")

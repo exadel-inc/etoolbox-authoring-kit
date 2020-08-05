@@ -23,10 +23,11 @@ import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreField;
-import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite {@code FieldSet} widget functionality
@@ -65,7 +66,7 @@ class FieldSetHandler implements WidgetSetHandler {
         // end of compatibility block
 
         if(fields.isEmpty()) {
-            PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
+            PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
                     EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName()
             ));
             return;
@@ -78,7 +79,7 @@ class FieldSetHandler implements WidgetSetHandler {
         }
 
         // append the valid fields to the container
-        Handler.appendToContainer(element, fields);
+        PluginXmlContainerUtility.append(element, fields);
 
         // Restore the name prefix
         getXmlUtil().setNamePrefix(previousNamePrefix);
