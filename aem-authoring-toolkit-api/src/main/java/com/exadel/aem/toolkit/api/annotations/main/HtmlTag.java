@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.api.annotations.widgets.accessory;
+package com.exadel.aem.toolkit.api.annotations.main;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
 /**
- * Used to define decoration tag of an AEM widget according to the
+ * Used to define decoration tag of an AEM component according to the
  * <a href="https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/decoration-tag.html">Adobe specification</a>
  */
 @Target(ElementType.TYPE)
