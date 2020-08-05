@@ -14,20 +14,14 @@
                     sling:resourceType="granite/ui/components/coral/foundation/container">
                 <items jcr:primaryType="nt:unstructured">
                     <acsListOptions
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                            name="./acsListOptions"
+                            deleteHint="{Boolean}false"
                             disabled="{Boolean}false"
                             fieldLabel="ACS List Options"
-                            multiple="{Boolean}false"
-                            translateOptions="{Boolean}true"
-                            ordered="{Boolean}false"
-                            emptyOption="{Boolean}false"
-                            deleteHint="{Boolean}true"
-                            variant="default"
-                            forceIgnoreFreshness="{Boolean}false"
-                            jcr:primaryType="nt:unstructured"
-                            name="./acsListOptions"
                             renderHidden="{Boolean}false"
-                            required="{Boolean}false"
-                            sling:resourceType="granite/ui/components/coral/foundation/form/select">
+                            required="{Boolean}false">
                         <datasource
                             jcr:primaryType="nt:unstructured"
                             path="/path/to/acs/list"

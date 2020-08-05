@@ -50,7 +50,8 @@ public class SelectWidget {
     },
             emptyText = "Select rating",
             multiple = true,
-            variant = SelectVariant.DEFAULT
+            variant = SelectVariant.QUICK,
+            translateOptions = false
     )
     String rating;
 
@@ -62,13 +63,17 @@ public class SelectWidget {
             @Option(text = "UTC -1", value = "-01:00"),
             @Option(text = "UTC -2", value = "-02:00")},
             emptyText = "Select timezone",
-            variant = SelectVariant.DEFAULT)
+            ordered = true,
+            emptyOption = true)
     String timezone;
 
     @DialogField(label="ACS List Options")
-    @Select(datasource = @DataSource(
-            resourceType = "acs/list/resource/type",
-            path = "/path/to/acs/list"
-    ))
+    @Select(
+            datasource = @DataSource(
+                    resourceType = "acs/list/resource/type",
+                    path = "/path/to/acs/list"
+            ),
+            deleteHint = false
+    )
     String acsListOptions;
 }

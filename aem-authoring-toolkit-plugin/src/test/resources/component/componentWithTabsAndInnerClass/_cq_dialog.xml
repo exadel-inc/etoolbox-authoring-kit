@@ -65,21 +65,22 @@
                     <thirdTab granite:hidden="{Boolean}false" jcr:primaryType="nt:unstructured" jcr:title="Third tab"
                               sling:resourceType="granite/ui/components/coral/foundation/container">
                         <items jcr:primaryType="nt:unstructured">
-                            <field3 disabled="{Boolean}false" fieldLabel="Field 2.1" jcr:primaryType="nt:unstructured"
-                                    name="./field3" renderHidden="{Boolean}false" required="{Boolean}false"
+                            <field3 jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./field3"
+                                    disabled="{Boolean}false"
+                                    fieldLabel="Field 2.1"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"
                                     wrapperClass="my-wrapper-class"/>
-                            <dropdown disabled="{Boolean}false" emptyText="Select rating" fieldLabel="Rating"
-                                      jcr:primaryType="nt:unstructured" name="./dropdown" renderHidden="{Boolean}false"
-                                      required="{Boolean}false"
-                                      multiple="{Boolean}false"
-                                      translateOptions="{Boolean}true"
-                                      ordered="{Boolean}false"
-                                      emptyOption="{Boolean}false"
-                                      deleteHint="{Boolean}true"
-                                      variant="default"
-                                      forceIgnoreFreshness="{Boolean}false"
-                                      sling:resourceType="granite/ui/components/coral/foundation/form/select">
+                            <dropdown jcr:primaryType="nt:unstructured"
+                                      sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                      name="./dropdown"
+                                      disabled="{Boolean}false"
+                                      emptyText="Select rating"
+                                      fieldLabel="Rating"
+                                      renderHidden="{Boolean}false"
+                                      required="{Boolean}false">
                                 <items jcr:primaryType="nt:unstructured">
                                     <item1 jcr:primaryType="nt:unstructured" text="1 star" value="1"/>
                                     <item2 jcr:primaryType="nt:unstructured" text="2 star" value="2"/>
