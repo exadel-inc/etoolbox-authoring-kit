@@ -11,18 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.exadel.aem.toolkit.core.exceptions;
+package com.exadel.aem.toolkit.api.annotations.widgets.select;
 
 /**
- * Represents the plugin-specific exception due to one of exceptions produced by {@code java.lang.reflect} routines
+ * Contains values defining the {@code Select} widget display mode
+ * @see Select#variant()
  */
-public class ReflectionException extends RuntimeException {
-    public ReflectionException(String message, Exception inner) {
-        super(message, inner);
-    }
-
-    public ReflectionException(Class<?> clazz, String fieldName) {
-        super(String.format("Field '%s' not present in %s", fieldName, clazz));
-    }
+@SuppressWarnings("unused")
+public enum SelectVariant {
+    DEFAULT,
+    QUICK
 }

@@ -22,10 +22,11 @@ import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
-import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
@@ -52,7 +53,7 @@ public class MultiFieldHandler implements WidgetSetHandler {
         // Get the filtered fields collection for the current container; early return if collection is empty
         List<Field> fields = getContainerFields(element, field, multifieldType);
         if (fields.isEmpty()) {
-            PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
+            PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + multifieldType.getName()
             ));
             return;
@@ -91,7 +92,7 @@ public class MultiFieldHandler implements WidgetSetHandler {
                 ? previousNamePrefix.substring(2)
                 : previousNamePrefix);
 
-        Handler.appendToContainer(multifieldContainerElement, fields);
+        PluginXmlContainerUtility.append(multifieldContainerElement, fields);
 
         // Restore the name prefix
         getXmlUtil().setNamePrefix(previousNamePrefix);

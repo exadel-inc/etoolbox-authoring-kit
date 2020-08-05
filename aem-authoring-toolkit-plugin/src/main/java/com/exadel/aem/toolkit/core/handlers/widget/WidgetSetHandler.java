@@ -28,6 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.PluginObjectPredicates;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 
@@ -76,7 +77,7 @@ interface WidgetSetHandler extends Handler, BiConsumer<Element, Field> {
         // Create filters to sort out ignored fields (apart from those defined for the container class)
         // and to banish non-widget fields
         // Return the filtered field list
-        Predicate<Field> nonIgnoredFields = PluginReflectionUtility.Predicates.getNotIgnoredFieldsPredicate(allIgnoredFields);
+        Predicate<Field> nonIgnoredFields = PluginObjectPredicates.getNotIgnoredFieldsPredicate(allIgnoredFields);
         Predicate<Field> dialogFields = DialogWidgets::isPresent;
         return PluginReflectionUtility.getAllFields(containerType, Arrays.asList(nonIgnoredFields, dialogFields));
     }
