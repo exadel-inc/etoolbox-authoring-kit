@@ -92,7 +92,7 @@
                             </embeddeds>
                             <subPackages>
                                 <subPackage>
-                                    <groupId>${project.groupId}</groupId>
+                                    <groupId>com.exadel.aem</groupId>
                                     <artifactId>aem-authoring-toolkit-assets</artifactId>
                                     <filter>true</filter>
                                 </subPackage>
@@ -111,7 +111,7 @@
                     <plugin>
                         <groupId>com.exadel.aem</groupId>
                         <artifactId>aem-authoring-toolkit-plugin</artifactId>
-                        <version>${project.parent.version}</version>
+                        <version>${aat.version}</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -158,9 +158,9 @@
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>com.exadel.aem</groupId>
             <artifactId>aem-authoring-toolkit-assets</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${aat.version}</version>
             <type>content-package</type>
         </dependency>
     </dependencies>
