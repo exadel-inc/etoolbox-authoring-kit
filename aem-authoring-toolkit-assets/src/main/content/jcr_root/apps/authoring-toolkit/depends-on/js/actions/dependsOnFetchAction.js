@@ -29,7 +29,7 @@
         return val;
     };
     const DEFAULT_FALLBACK = (e, name, path) => {
-        console.warn(`[Depends On]: \'fetch\' can not get '${name}' from path '${path}': `, e);
+        console.warn(`[Depends On]: "fetch" can not get ${name ? `property ${name}` : 'resource'} from "${path}": `, e);
         return '';
     };
 
@@ -46,7 +46,7 @@
     function fetchAction(query, config) {
         // If not a string -> incorrect input
         if (typeof query !== 'string') {
-            query && console.warn('[DependsOn]: can not execute \'fetch\', query should be a string');
+            query && console.warn('[DependsOn]: can not execute "fetch", query should be a string');
             return;
         }
         // If empty string then just set empty string
@@ -73,7 +73,7 @@
                 (err) => DependsOn.evalFn(config.err, DEFAULT_FALLBACK)(err, name, path)
             )
             .then((res) => (res !== undefined) && DependsOn.ElementAccessors.setValue($el, res))
-            .catch((e) => console.warn('[DependsOn]: \'fetch\' failed while executing post-request mappers: ', e));
+            .catch((e) => console.warn('[DependsOn]: "fetch" failed while executing post-request mappers: ', e));
     }
 
     DependsOn.ActionRegistry.register('fetch', fetchAction);
