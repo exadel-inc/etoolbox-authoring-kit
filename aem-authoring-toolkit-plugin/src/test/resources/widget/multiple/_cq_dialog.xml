@@ -18,7 +18,10 @@
                            fieldLabel="Multiple TextFields"
                            disabled="{Boolean}false"
                            renderHidden="{Boolean}false"
-                           required="{Boolean}true">
+                           required="{Boolean}true"
+                           customProperty1="custom value 1"
+                           customProperty2="custom value 2"
+                           multifieldSpecial="This is added to top-level Multifields">
                         <granite:data
                                 jcr:primaryType="nt:unstructured"
                                 key="value"
@@ -41,7 +44,9 @@
                                     fieldLabel="Nested FieldSet"
                                     disabled="{Boolean}false"
                                     renderHidden="{Boolean}false"
-                                    required="{Boolean}true">
+                                    required="{Boolean}true"
+                                    customProperty="custom value"
+                                    multifieldSpecial="This is added to top-level Multifields">
                         <field jcr:primaryType="nt:unstructured"
                                sling:resourceType="granite/ui/components/coral/foundation/container"
                                name="./nestedFieldSet">
@@ -70,19 +75,24 @@
                                       sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
                                       composite="{Boolean}true"
                                       disabled="{Boolean}false"
+                                      fieldLabel="Nested Multifield"
                                       renderHidden="{Boolean}false"
-                                      required="{Boolean}false">
+                                      required="{Boolean}false"
+                                      customProperty="custom value"
+                                      multifieldSpecial="This is added to top-level Multifields">
+                        <granite:data jcr:primaryType="nt:unstructured"
+                                      dependsOnRef="nestedMultifield"/>
                         <field jcr:primaryType="nt:unstructured"
                                sling:resourceType="granite/ui/components/coral/foundation/container"
                                name="./nestedMultifield">
                             <items jcr:primaryType="nt:unstructured">
                                 <nestedMultifield_nested jcr:primaryType="nt:unstructured"
                                                          sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
-                                                         fieldLabel="Nested Multifield"
                                                          composite="{Boolean}true"
                                                          disabled="{Boolean}false"
                                                          renderHidden="{Boolean}false"
-                                                         required="{Boolean}false">
+                                                         required="{Boolean}false"
+                                                         multifieldSpecial="This is added to Multifields">
                                     <field jcr:primaryType="nt:unstructured"
                                            sling:resourceType="granite/ui/components/coral/foundation/container"
                                            name="./nestedMultifield_nested">
@@ -109,11 +119,13 @@
                             </items>
                         </field>
                     </nestedMultifield>
+
                     <customAnnotation jcr:primaryType="nt:unstructured"
-                                          sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
-                                          disabled="{Boolean}false"
-                                          renderHidden="{Boolean}false"
-                                          required="{Boolean}false">
+                                      sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                      disabled="{Boolean}false"
+                                      renderHidden="{Boolean}false"
+                                      required="{Boolean}false"
+                                      multifieldSpecial="This is added to top-level Multifields">
                         <field jcr:primaryType="nt:unstructured"
                                sling:resourceType="test-components/form/customfield"
                                name="./customAnnotation"

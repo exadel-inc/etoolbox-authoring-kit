@@ -24,7 +24,9 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
-import com.exadel.aem.toolkit.test.custom.CustomAnnotation;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
+import com.exadel.aem.toolkit.test.custom.CustomDialogAnnotation;
+import com.exadel.aem.toolkit.test.custom.CustomWidgetAnnotation;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
@@ -33,6 +35,7 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
         title = "Dialog with Multiple-Annotated Fields",
         layout = DialogLayout.FIXED_COLUMNS
 )
+@CustomDialogAnnotation
 @SuppressWarnings("unused")
 public class MultipleAnnotatedWidget {
     @DialogField(
@@ -48,8 +51,10 @@ public class MultipleAnnotatedWidget {
             id = "text1",
             data = @Data(name = "key", value = "value")
     )
-    @DependsOnRef
     @Multiple
+    @DependsOnRef
+    @Property(name="customProperty1", value = "custom value 1")
+    @Property(name="customProperty2", value = "custom value 2")
     String text1;
 
     @DialogField(
@@ -58,6 +63,7 @@ public class MultipleAnnotatedWidget {
     )
     @FieldSet(namePrefix = "my")
     @Multiple
+    @Property(name="customProperty", value = "custom value")
     private NestedFieldSet nestedFieldSet;
 
     @DialogField(
@@ -65,6 +71,8 @@ public class MultipleAnnotatedWidget {
     )
     @MultiField(field = NestedFieldSet.class)
     @Multiple
+    @DependsOnRef
+    @Property(name="customProperty", value = "custom value")
     private NestedFieldSet nestedMultifield;
 
 
@@ -79,7 +87,7 @@ public class MultipleAnnotatedWidget {
     }
 
     @DialogField
-    @CustomAnnotation(customField = "Custom!")
+    @CustomWidgetAnnotation(customField = "Custom!")
     @Multiple
     String customAnnotation;
 

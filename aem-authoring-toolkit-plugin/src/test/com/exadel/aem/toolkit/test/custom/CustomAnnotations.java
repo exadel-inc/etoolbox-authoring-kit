@@ -27,12 +27,12 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 @SuppressWarnings("unused")
 public class CustomAnnotations {
     @DialogField
-    @CustomAnnotation(customField = "Custom!")
+    @CustomWidgetAnnotation(customField = "Custom!")
     String testCustomAnnotation;
 
     @DialogField
     @TextField
-    @CustomAnnotation
+    @CustomWidgetAnnotation
     String testCustomAnnotationDefault;
 
     @DialogField

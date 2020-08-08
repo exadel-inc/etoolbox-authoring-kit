@@ -21,7 +21,8 @@
                                 fieldDescription="Multifield Description"
                                 disabled="{Boolean}false"
                                 renderHidden="{Boolean}false"
-                                required="{Boolean}false">
+                                required="{Boolean}false"
+                                multifieldSpecial="This is added to Multifields">
                         <field jcr:primaryType="nt:unstructured"
                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                name="./dialogItem"
