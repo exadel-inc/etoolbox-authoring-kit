@@ -15,7 +15,6 @@
 package com.exadel.aem.toolkit.samples.models;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.HtmlTag;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
@@ -23,6 +22,7 @@ import org.apache.sling.models.annotations.injectorspecific.Self;
 
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.samples.annotations.FieldsetPostfix;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;

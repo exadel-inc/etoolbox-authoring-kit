@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.HtmlTag;
+import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 
 public class TestXmlWriterHelper {
     private static final Logger LOG = LoggerFactory.getLogger(TestXmlWriterHelper.class);
