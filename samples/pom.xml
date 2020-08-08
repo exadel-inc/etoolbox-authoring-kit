@@ -22,7 +22,7 @@
     <repositories>
         <!-- For AEM Authoring Toolkit snapshot version -->
         <repository>
-            <id>em-authoring-toolkit-snapshots</id>
+            <id>aem-authoring-toolkit-snapshots</id>
             <name>Toolkit Snapshot</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
