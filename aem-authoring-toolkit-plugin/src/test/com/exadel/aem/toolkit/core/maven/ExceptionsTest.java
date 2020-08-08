@@ -22,8 +22,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
+import com.exadel.aem.toolkit.test.component.InheritanceTestCases;
 
 import java.io.IOException;
 import java.util.Map;
@@ -47,6 +49,12 @@ public class ExceptionsTest extends ExceptionsTestBase {
         test(ExceptionsTestCases.ComponentWithNonexistentDependsOnTab.class);
     }
 
+    public void testComponentWithDuplicateFields() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidFieldContainerException.class));
+        exceptionRule.expectMessage("Field named \"text2\" in class \"DuplicateOverride\"");
+        test(InheritanceTestCases.DuplicateOverride.class);
+    }
+
     @Test
     public void testTerminateOnSettings() {
         Map<String, Exception> terminateOnCases = ImmutableMap.of(
@@ -54,7 +62,7 @@ public class ExceptionsTest extends ExceptionsTestBase {
                 "java.lang.IOException, !java.lang.Exception, *", new IOException(),
                 "!java.lang.IndexOutOfBoundsException, java.lang.RuntimeException", new NullPointerException()
         );
-        terminateOnCases.forEach((setting,exception)->{
+        terminateOnCases.forEach((setting, exception) -> {
             ExceptionsTest newTest = new ExceptionsTest(){
                 @Override
                 String getExceptionSetting() {
@@ -71,10 +79,9 @@ public class ExceptionsTest extends ExceptionsTestBase {
         Map<String, Exception> terminateOnCases = ImmutableMap.of(
                 " ValidationException, !java.lang.RuntimeException", new ValidationException(""),
                 "!java.lang.IndexOutOfBoundsException, *", new IndexOutOfBoundsException(),
-                "!java.io.IOException, !java.lang.RuntimeException, !com.exadel.aem.plugin.exceptions.*",
-                new InvalidTabException("")
+                "!java.io.IOException, !java.lang.RuntimeException, !com.exadel.aem.plugin.exceptions.*", new InvalidTabException("")
         );
-        terminateOnCases.forEach((setting,exception)->{
+        terminateOnCases.forEach((setting, exception) -> {
             ExceptionsTest newTest = new ExceptionsTest(){
                 @Override
                 String getExceptionSetting() {

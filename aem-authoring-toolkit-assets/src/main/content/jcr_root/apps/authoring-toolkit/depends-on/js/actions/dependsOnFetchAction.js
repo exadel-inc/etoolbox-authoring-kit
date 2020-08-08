@@ -20,7 +20,7 @@
     const END_PATH_TERM_REGEX = /\/?$/;
     const RELATIVE_TERMS_REGEX = /\.?\.\//g;
     const DUPLICATE_DELIMITER_REGEX = /\/\//g;
-    const PARENT_PATH_GROUP_REGEX = /[^/]+\/\.\.\//g;
+    const PARENT_PATH_GROUP_REGEX = /[^/]+\/\.\.\//;
     const REDUNDANT_PATH_TERM_REGEX = /(^|\/)\.\//g;
 
     const DEFAULT_RESOLVE = (res, name) => {

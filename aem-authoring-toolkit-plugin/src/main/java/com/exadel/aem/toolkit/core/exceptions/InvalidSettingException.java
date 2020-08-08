@@ -22,7 +22,4 @@ public class InvalidSettingException extends RuntimeException {
     public InvalidSettingException(String message) {
         super(message);
     }
-    public InvalidSettingException(String message, Exception inner) {
-        super(message, inner);
-    }
 }

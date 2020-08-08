@@ -15,14 +15,11 @@
 package com.exadel.aem.toolkit.core.exceptions;
 
 /**
- * Represents the plugin-specific exception due to one of exceptions produced by {@code java.lang.reflect} routines
+ * Represents the plugin-specific exception thrown when there is an error in a field container (dialog, or fieldset) setup:
+ * no valid fields present, duplicate field entries detected, etc.
  */
-public class ReflectionException extends RuntimeException {
-    public ReflectionException(String message, Exception inner) {
-        super(message, inner);
-    }
-
-    public ReflectionException(Class<?> clazz, String fieldName) {
-        super(String.format("Field '%s' not present in %s", fieldName, clazz));
+public class InvalidFieldContainerException extends RuntimeException {
+    public InvalidFieldContainerException(String message) {
+        super(message);
     }
 }

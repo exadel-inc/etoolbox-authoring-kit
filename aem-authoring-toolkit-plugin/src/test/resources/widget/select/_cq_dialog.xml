@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
-          xmlns:cq="http://www.day.com/jcr/cq/1.0"
-          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           jcr:primaryType="nt:unstructured"
@@ -20,8 +18,11 @@
                             fieldLabel="Rating"
                             disabled="{Boolean}false"
                             emptyText="Select rating"
+                            multiple="{Boolean}true"
                             renderHidden="{Boolean}false"
-                            required="{Boolean}false">
+                            required="{Boolean}false"
+                            translateOptions="{Boolean}false"
+                            variant="quick">
                         <items jcr:primaryType="nt:unstructured">
                             <item jcr:primaryType="nt:unstructured" text="Empty" value=""/>
                             <item1 jcr:primaryType="nt:unstructured" text="Blank" value=" "/>
@@ -43,7 +44,9 @@
                               name="./timezone"
                               fieldLabel="Timezone"
                               disabled="{Boolean}false"
+                              emptyOption="{Boolean}true"
                               emptyText="Select timezone"
+                              ordered="{Boolean}true"
                               renderHidden="{Boolean}false"
                               required="{Boolean}false">
                         <items jcr:primaryType="nt:unstructured">
@@ -58,6 +61,7 @@
                                     sling:resourceType="granite/ui/components/coral/foundation/form/select"
                                     name="./acsListOptions"
                                     fieldLabel="ACS List Options"
+                                    deleteHint="{Boolean}false"
                                     disabled="{Boolean}false"
                                     renderHidden="{Boolean}false"
                                     required="{Boolean}false">
