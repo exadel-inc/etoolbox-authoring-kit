@@ -685,6 +685,7 @@ public class PluginXmlUtility implements XmlUtility {
             } else if (policy == XmlTransferPolicy.COPY) {
                 Element copiedChildNode = createNodeElement(childNode.getNodeName());
                 transfer((Element) childNode, copiedChildNode, ImmutableMap.of(StringUtils.EMPTY, XmlTransferPolicy.COPY));
+                target.appendChild(copiedChildNode);
             }
             childNodePos++;
         }

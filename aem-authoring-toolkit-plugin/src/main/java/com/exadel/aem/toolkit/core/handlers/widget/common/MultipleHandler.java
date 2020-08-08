@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.core.handlers.widget.common;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -29,8 +30,11 @@ import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.XmlTransferPolicy;
 
@@ -41,12 +45,18 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
     private static final String PREFIX_GRANITE = "granite:*";
     private static final String POSTFIX_NESTED = "_nested";
 
+    /**
+     * Processes the user-defined data and writes it to XML entity
+     * @param element XML element
+     * @param field Current {@code Field} instance
+     */
     @Override
     public void accept(Element element, Field field) {
         if (!field.isAnnotationPresent(Multiple.class)) {
             return;
         }
 
+        // Modify the existing XML DOM element with new subnode(-s) and attributes
         Element fieldElement;
         boolean isComposite = false;
 
@@ -55,14 +65,14 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
             isComposite = true;
 
         } else if (isMultifield(element)) {
-            fieldElement = getNestedMutifieldWrapper(element);
+            fieldElement = getNestedMultifieldWrapper(element, field);
             isComposite = true;
 
         } else {
-            fieldElement = getSimpleWrapper(element);
+            fieldElement = getSimpleWrapper(element, field);
         }
 
-        // Facilitate the newly created element to work as a multifield
+        // Facilitate the modified element to work as Multifield
         if (isComposite) {
             getXmlUtil().setAttribute(fieldElement, JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER);
             getXmlUtil().setAttribute(element, DialogConstants.PN_COMPOSITE, true);
@@ -79,7 +89,7 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
 
     /**
      * Gets whether the currently rendered XML element is a Granite {@code Multifield} element
-     * @param element {@code Element} to analyze
+     * @param element XML element
      * @return True or false
      */
     private boolean isMultifield(Element element) {
@@ -89,7 +99,7 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
 
     /**
      * Gets whether the currently rendered XML element is a {@code FieldSet} kind of elements
-     * @param element {@code Element} to analyze
+     * @param element XML element
      * @return True or false
      */
     private boolean isFieldSet(Element element) {
@@ -100,12 +110,13 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
     /**
      * Creates a {@code field} node encapsulating source element's properties to be used within a synthetic multifield
      * @param source Previously rendered {@code Element} being converted to a synthetic multifield
+     * @param field Current {@code Field} instance
      * @return {@code Element} representing the {@code field} node
      */
-    private Element getSimpleWrapper(Element source) {
+    private Element getSimpleWrapper(Element source, Field field) {
         Element result = getXmlUtil().createNodeElement(DialogConstants.NN_FIELD);
         // Move content to the new wrapper
-        getXmlUtil().transfer(source, result, getStandardTransferPolicies());
+        getXmlUtil().transfer(source, result, getTransferPolicies(field));
         return result;
     }
 
@@ -129,9 +140,10 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
     /**
      * Creates a {@code field} node wrapping an existing {@code multifield} that will be used within a synthetic multifield
      * @param source Previously rendered {@code Element} being converted to a synthetic multifield
+     * @param field Current {@code Field} instance
      * @return {@code Element} representing the {@code field} node
      */
-    private Element getNestedMutifieldWrapper(Element source) {
+    private Element getNestedMultifieldWrapper(Element source, Field field) {
         Element result = getXmlUtil().createNodeElement(DialogConstants.NN_FIELD);
         // Create nested "items > multifield > field > items" node structure
         Element nestedItems = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
@@ -140,7 +152,11 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
         result.appendChild(nestedItems);
 
         // Move existing multifield attributes to the nested multifield
-        Map<String, XmlTransferPolicy> multifieldPolicies = invert(getStandardTransferPolicies());
+        Map<String, XmlTransferPolicy> standardPolicies = getTransferPolicies(field);
+        Map<String, XmlTransferPolicy> multifieldPolicies = new LinkedHashMap<>();
+        multifieldPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_COMPOSITE, XmlTransferPolicy.COPY);
+        multifieldPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.NN_FIELD, XmlTransferPolicy.MOVE);
+        standardPolicies.forEach(multifieldPolicies::put);
         multifieldPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, XmlTransferPolicy.COPY);
         getXmlUtil().transfer(source, nestedMultifield, multifieldPolicies);
 
@@ -155,13 +171,15 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
     }
 
     /**
-     * Generates the stereotype set of transfer policies to convert the current element into a multifield
+     * Generates set of node transfer policies to properly distribute XML element requisites between the wrapper level
+     * and the nested element level while converting a singular element to a multifield
+     * @param field Current {@code Field} instance
      * @return {@code Map<String, XmlTransferPolicy>} instance
      */
-    private static Map<String, XmlTransferPolicy> getStandardTransferPolicies() {
+    private static Map<String, XmlTransferPolicy> getTransferPolicies(Field field) {
         Map<String, XmlTransferPolicy> transferPolicies = new LinkedHashMap<>();
 
-        // All "standard" @DialogField props will belong to the Multifield node unless specified below, that is, stay where they are
+        // All "standard" @DialogField props will belong to the Multifield node unless in the cases specified below,
         // while "widget-specific" properties will move to the "inner" node
         Arrays.stream(DialogField.class.getDeclaredMethods())
                 .forEach(method -> {
@@ -170,16 +188,17 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
                             : method.getName();
                     transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + propertyName, XmlTransferPolicy.SKIP);
                 });
+        // Also, all the values set via @Property will belong to the Multifield node
+        Arrays.stream(field.getAnnotationsByType(Property.class))
+                .forEach(property -> transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + property.name(), XmlTransferPolicy.SKIP));
+        // Need to override policy for "name" as has been stored in a loop above
+        transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_NAME, XmlTransferPolicy.MOVE);
         // Some attribute values are expected to be copied
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + JcrConstants.PN_PRIMARY_TYPE, XmlTransferPolicy.COPY);
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_DISABLED, XmlTransferPolicy.COPY);
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_REQUIRED, XmlTransferPolicy.COPY);
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_RENDER_HIDDEN, XmlTransferPolicy.COPY);
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, XmlTransferPolicy.MOVE);
-        // This one is specially for multifield nodes copying
-        transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_COMPOSITE, XmlTransferPolicy.COPY);
-        // Need to override policy for "name" as has been stored in a loop above
-        transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_NAME, XmlTransferPolicy.MOVE);
         // Need to leave "granite:"-prefixed props (as they are probably set via @Attribute) at the multifield level
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + PREFIX_GRANITE, XmlTransferPolicy.MOVE);
         // Rest of element attributes will move to the inner field
@@ -187,21 +206,5 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
         // While all child nodes will stay as the property of multifield
         transferPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.WILDCARD, XmlTransferPolicy.SKIP);
         return transferPolicies;
-    }
-
-    /**
-     * Inverts the provided map of node-to-{@link XmlTransferPolicy} values so that an element to move becomes the one
-     * to skip, a skippable element becomes the one to move, while the copyable elements stay the same
-     * @param transferPolicies {@code Map<String, XmlTransferPolicy>} representing currently defined policies
-     * @return {@code Map<String, XmlTransferPolicy>} representing inverted policies
-     */
-    private static Map<String, XmlTransferPolicy> invert(Map<String, XmlTransferPolicy> transferPolicies) {
-        Map<String, XmlTransferPolicy> result = new LinkedHashMap<>();
-        UnaryOperator<XmlTransferPolicy> invertPolicy = policy -> policy == XmlTransferPolicy.SKIP ? XmlTransferPolicy.MOVE : XmlTransferPolicy.SKIP;
-        transferPolicies.forEach((key, policy) -> {
-            XmlTransferPolicy changedPolicy = (policy == XmlTransferPolicy.COPY) ? policy : invertPolicy.apply(policy);
-            result.put(key, changedPolicy);
-        });
-        return result;
     }
 }
