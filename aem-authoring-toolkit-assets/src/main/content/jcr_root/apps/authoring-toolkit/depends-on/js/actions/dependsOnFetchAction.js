@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Liubou Masiuk (liubou-masiuk), Yana Bernatskaya (YanaBr)
- * @version 2.4.0
+ * @version 2.4.1
  *
  * Action to set the result of fetching an arbitrary resource.
  * Uses query as a target path to node or property.
