@@ -37,7 +37,7 @@ As the Toolkit was developed, thorough comparative investigation of Coral v.2 an
     - [Debugging custom logic](#debugging-custom-logic)
 5. [Extra features and assets](#extra-features-and-assets)
     - [DependsOn](#dependson)   
-6. [Samples](#samples) 
+    - [Samples](#samples)
 
 ***
 
@@ -1194,10 +1194,10 @@ public class DependsOnSample {
 }
 ``` 
 
-## Samples
+#### Samples
 
-Examples of use AEM Authoring Toolkit API and DependsOn library are presented in a separate [AAT Samples](samples) module.
+Examples of how to use AEM Authoring Toolkit API and DependsOn library are presented in a separate [AAT Samples](samples) module.
 
-Run `mvn clean install -P install-samples` from the root folder of [AAT Samples](samples) to __install__ a sample project.
+Run `mvn clean install -P install-samples` from the root folder of [AAT Samples](samples) to __install__ the sample project.
 
 To directly find necessary annotations or specific use of these annotations, read [AAT Samples Readme](samples/README.md).
