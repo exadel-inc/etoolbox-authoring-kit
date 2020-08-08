@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.UnaryOperator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
@@ -71,6 +70,11 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
         element.appendChild(fieldElement);
         element.removeAttribute(DialogConstants.PN_NAME);
         element.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.MULTIFIELD);
+
+        // Since this element has just "emerged" as a multifield, we need to check if there are multifield bound
+        // (custom) handlers and run such one more time
+        PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers(Collections.singletonList(MultiField.class))
+                .forEach(handler -> handler.accept(element, field));
     }
 
     /**
