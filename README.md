@@ -35,9 +35,11 @@ As the Toolkit was developed, thorough comparative investigation of Coral v.2 an
     - [Custom annotations and handlers](#custom-annotations-and-handlers)
     - [Custom properties](#custom-properties)
     - [Debugging custom logic](#debugging-custom-logic)
-5. [Extra features and assets](#extra-features-and-assets)
+5. [Plugin settings](#plugin-settings)
+    - [terminateOn setting](#terminateon-setting)
+6. [Extra features and assets](#extra-features-and-assets)
     - [DependsOn](#dependson)   
-6. [Samples](#samples) 
+7. [Samples](#samples) 
 
 ***
 
@@ -94,8 +96,9 @@ Feel free to clone the project sources and run ```mvn clean install``` from the 
         <componentsPathBase>jcr_root/apps/projectName/components</componentsPathBase>
         <!-- OPTIONAL: specify root package for component classes --> 
         <componentsReferenceBase>com.acme.project.samples</componentsReferenceBase>
-        <!-- OPTIONAL: specify list of exceptions, comma-separated, that would cause this plugin to terminate
-            the build process. 'ALL' and 'NONE' may be specified as well. -->
+        <!-- OPTIONAL: specify list of exceptions, comma-separated, that would cause 
+             this plugin to terminate the build process. 
+             See section "terminateOn setting" below -->
         <terminateOn>ALL</terminateOn>
     </configuration>
 </plugin>
@@ -1152,6 +1155,21 @@ You can debug your custom logic while building your app. In order to do it run y
 mvnDebug clean install -PautoInstallPackage
 ```
 Afterwards you can set breakpoints in your IDE, start a debugging session and connect to the build process. Default port is 8000.
+
+## Plugin settings
+#### "terminateOn" setting
+
+Specifies the list of exceptions, comma-separated, that would cause this plugin to terminate
+the build process. 
+
+Each item may present:
+ - a particular exception, by its fully qualified name like `java.io.IOException`. When a singular exception specified, all subclasses of the provided class also count;
+ - or a package where multiple exceptions reside like `com.exadel.aem.plugin.exceptions.*`.
+ 
+Apart from this, you may specify the values `all` (alias `*`) and `none`.
+If an exception or a group of exceptions must be explicitly neglected, `!` should be prepended to the item.
+
+Exception patterns are considered in order. Earlier patterns are applied before later patterns. For example, if `java.*, !java.lang.RuntimeException` provided, and a `NullPointerException` is thrown, the second ("negated") pattern will have no effect since any exception originating from the `java` package has already been accounted by the first pattern. That is why, if you need define a scope of exceptions that would cause termination but need to explicitly exclude some exceptions from that scope, put "negated" patterns in the first place. It is also considered a good practice to end the enumeration of patterns with a default "fallback" pattern, typically the asterisk `*`, if there are exclusions on the list. So, `<terminateOn>!java.lang.NullPointerException,!com.exadel.aem.plugin.exceptions.*,java.lang.RuntimeException</terminateOn>`, or `<terminateOn>!java.lang.RuntimeException,!iava.io.IOException,*</terminateOn>` would be some good samples.
 
 ## Extra features and assets
 ### DependsOn
