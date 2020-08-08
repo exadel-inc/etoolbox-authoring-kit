@@ -79,7 +79,7 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
      */
     private Optional<Boolean> isMatch(Class<? extends Exception> exceptionType, String exceptionToken, boolean inverse) {
         if (StringUtils.equalsAnyIgnoreCase(exceptionToken, EXCEPTION_TOKEN_ALL, EXCEPTION_WILDCARD)) {
-            return Optional.of(!inverse);
+            return !inverse ? Optional.of(true) : Optional.empty();
         }
         if (exceptionToken.endsWith(PACKAGE_POSTFIX)) {
             if (exceptionType.getName().startsWith(StringUtils.strip(exceptionToken, PACKAGE_POSTFIX))) {
