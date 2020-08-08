@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
@@ -127,9 +128,19 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
      */
     private Element getFieldSetWrapper(Element source) {
         Element result = getXmlUtil().createNodeElement(DialogConstants.NN_FIELD);
+        // Get the existing "items" node and remove leading "./"-s from "name" attributes of particular items
+        Element existingItems = getXmlUtil().getChildElement(source, DialogConstants.NN_ITEMS);
+        IntStream.range(0, existingItems.getChildNodes().getLength())
+                .mapToObj(pos -> (Element) existingItems.getChildNodes().item(pos))
+                .forEach(element -> {
+                    String name = element.getAttribute(DialogConstants.PN_NAME);
+                    if (StringUtils.isNotEmpty(name)) {
+                        element.setAttribute(DialogConstants.PN_NAME, StringUtils.removeStart(name, DialogConstants.RELATIVE_PATH_PREFIX));
+                    }
+                });
         // Append the existing "items" node to the "field" node
-        result.appendChild(getXmlUtil().getChildElement(source, DialogConstants.NN_ITEMS));
-        // Move only "name" property to the "field" node
+        result.appendChild(existingItems);
+        // Move "name" property of the source node to the "field" node
         getXmlUtil().transfer(
                 source,
                 result,
@@ -193,12 +204,11 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
                 .forEach(property -> transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + property.name(), XmlTransferPolicy.SKIP));
         // Need to override policy for "name" as has been stored in a loop above
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_NAME, XmlTransferPolicy.MOVE);
-        // Some attribute values are expected to be copied
+        // Some attribute values are expected to be moved or copied though set to "skipped" above
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + JcrConstants.PN_PRIMARY_TYPE, XmlTransferPolicy.COPY);
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_DISABLED, XmlTransferPolicy.COPY);
-        transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_REQUIRED, XmlTransferPolicy.COPY);
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_RENDER_HIDDEN, XmlTransferPolicy.COPY);
-        transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, XmlTransferPolicy.MOVE);
+        transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_REQUIRED, XmlTransferPolicy.MOVE);
         // Need to leave "granite:"-prefixed props (as they are probably set via @Attribute) at the multifield level
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + PREFIX_GRANITE, XmlTransferPolicy.MOVE);
         // Rest of element attributes will move to the inner field
