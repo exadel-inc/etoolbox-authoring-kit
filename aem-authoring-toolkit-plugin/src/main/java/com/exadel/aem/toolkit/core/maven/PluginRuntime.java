@@ -14,8 +14,6 @@
 
 package com.exadel.aem.toolkit.core.maven;
 
-import java.util.List;
-
 /**
  * The thread-local {@link PluginRuntimeContext} handler to be used within {@code PluginMojo} execution. Starts with
  * {@link EmptyRuntimeContext} and switches to the {@link LoadedRuntimeContext} upon proper runtime initialization
@@ -36,15 +34,11 @@ public class PluginRuntime {
     }
 
     /**
-     * Initializes a new instance of {@link LoadedRuntimeContext} with the relevant plugin data
-     * @param classPathElements List of classpath elements to be used in reflection routines
-     * @param packageBase String representing package prefix of processable AEM backend components,
-     *                    like {@code com.acme.aem.components.*}.
-     *      *                      If not specified, all available components will be processed
-     * @param terminatingExceptions Value matching the {@code terminateOn} AEM Authoring Toolkit plugin setting
+     * Creates a Builder intended to accumulate plugin settings and produce a functional ("loaded") {@code PluginRuntimeContext}
+     * @return {@link LoadedRuntimeContext.Builder} instance
      */
-    static void initialize(List<String> classPathElements, String packageBase, String terminatingExceptions) {
-        INSTANCE.set(new LoadedRuntimeContext(classPathElements, packageBase, terminatingExceptions));
+    static LoadedRuntimeContext.Builder contextBuilder() {
+        return new LoadedRuntimeContext.Builder(INSTANCE::set);
     }
 
     /**
