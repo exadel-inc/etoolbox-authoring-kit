@@ -7,7 +7,7 @@
     'use strict';
 
     /**
-     * Remove custom input with a name field_name@Delete when a field needs to be shown
+     * Remove custom input with the name field_name@Delete when a field needs to be shown
      * @param element {HTMLElement}
      * @private
      */
