@@ -13,13 +13,17 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WeaponFieldSet {
 
-    @DialogField(label = "Bow")
+    private static final String LABEL_BOW = "Bow";
+
+    private static final String LABEL_SWORD = "Sword";
+
+    @DialogField(label = LABEL_BOW)
     @Checkbox
     @DependsOnRef(name = "checkbox")
     @ValueMapValue
     private boolean bowChosen;
 
-    @DialogField(label = "Sword")
+    @DialogField(label = LABEL_SWORD)
     @Checkbox
     @DependsOnRef(name = "checkbox")
     @ValueMapValue

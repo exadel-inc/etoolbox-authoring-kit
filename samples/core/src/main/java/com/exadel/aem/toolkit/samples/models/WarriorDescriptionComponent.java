@@ -20,6 +20,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.*;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
+import com.exadel.aem.toolkit.samples.utils.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -48,7 +49,7 @@ import java.util.stream.Collectors;
         },
         extraClientlibs = "authoring-toolkit.samples.authoring"
 )
-@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUITS, query = "@likesFruits")
+@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUITS, query = "@likesFruit")
 @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_MOVIES, query = "@likesMovies")
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WarriorDescriptionComponent {
@@ -58,6 +59,18 @@ public class WarriorDescriptionComponent {
     static final String TAB_FRUITS = "Fruits";
     static final String TAB_MOVIES = "Movies";
 
+    private static final String LABEL_BIRTHDAY = "Birthday";
+    private static final String DESCRIPTION_BIRTHDAY = "Enter the birthday of your warrior";
+
+    private static final String LABEL_CHARACTER = "Character";
+    private static final String DESCRIPTION_CHARACTER = "Choose character of your warrior";
+
+    private static final String LABEL_LIKES_FRUIT = "Does your warrior like fruit?";
+    private static final String LABEL_FRUIT = "Favorite fruit";
+    private static final String LABEL_LIKES_MOVIES = "Does your warrior like movies?";
+    private static final String LABEL_MOVIES = "Favorite movies";
+
+
     private static final String DESCRIPTION_TEMPLATE = "%s was born on a cold but bright day %s. He would %s. %s, and %s";
     private static final String DEFAULT_BIRTHDAY = "29.03.2000";
     private static final String DEFAULT_CHARACTER = "always smile creepily";
@@ -66,7 +79,6 @@ public class WarriorDescriptionComponent {
 
     private static final String FRUIT_TEXT = "His favorite fruit: ";
     private static final String MOVIES_TEXT = "his favorite movie genres: ";
-    private static final String TAGS_DELIMITER = ", ";
 
     @Inject
     private ResourceResolver resourceResolver;
@@ -125,8 +137,8 @@ public class WarriorDescriptionComponent {
     private String description;
 
     @DialogField(
-            label = "Birthday",
-            description = "Enter the birthday of your warrior"
+            label = LABEL_BIRTHDAY,
+            description = DESCRIPTION_BIRTHDAY
     )
     @DatePicker(
             type = DatePickerType.DATE,
@@ -139,26 +151,26 @@ public class WarriorDescriptionComponent {
     @ValueMapValue
     private String birthday;
 
-    @DialogField(label = "Does your warrior like fruits?")
+    @DialogField(label = LABEL_LIKES_FRUIT)
     @Checkbox
-    @DependsOnRef(name = "likesFruits")
+    @DependsOnRef(name = "likesFruit")
     @PlaceOnTab(WarriorDescriptionComponent.TAB_TASTES)
     @ValueMapValue
-    private boolean likesFruits;
+    private boolean likesFruit;
 
-    @DialogField(label = "Favorite fruit")
+    @DialogField(label = LABEL_FRUIT)
     @Autocomplete(
             multiple = true,
             forceSelection = true,
-            datasource = @AutocompleteDatasource(namespaces = {"fruit"})
+            datasource = @AutocompleteDatasource(namespaces = "fruit")
     )
     @PlaceOnTab(WarriorDescriptionComponent.TAB_FRUITS)
     @ValueMapValue
     private String[] fruit;
 
     @DialogField(
-            label = "Character",
-            description = "Choose character of your warrior",
+            label = LABEL_CHARACTER,
+            description = DESCRIPTION_CHARACTER,
             ranking = 4
     )
     @RadioGroup(buttons = {
@@ -170,7 +182,7 @@ public class WarriorDescriptionComponent {
     @ValueMapValue
     private String character;
 
-    @DialogField(label = "Does your warrior like movies?")
+    @DialogField(label = LABEL_LIKES_MOVIES)
     @Checkbox
     @DependsOnRef(name = "likesMovies")
     @PlaceOnTab(WarriorDescriptionComponent.TAB_TASTES)
@@ -181,13 +193,13 @@ public class WarriorDescriptionComponent {
     @Hidden
     @DependsOn(query = "'../../colorTheme'", action = DependsOnActions.FETCH)
     @DependsOnRef(name = "isDarkColorTheme", type = DependsOnRefTypes.BOOLSTRING)
-    private String isDarkColorTheme;
+    private boolean isDarkColorTheme;
 
-    @DialogField(label = "Favorite movies")
+    @DialogField(label = LABEL_MOVIES)
     @Autocomplete(
             multiple = true,
             forceSelection = true,
-            datasource = @AutocompleteDatasource(namespaces = {"movies"})
+            datasource = @AutocompleteDatasource(namespaces = "movies")
     )
     @DependsOn(query = "@isDarkColorTheme", action = "namespaceFilter")
     @PlaceOnTab(WarriorDescriptionComponent.TAB_MOVIES)
@@ -214,14 +226,14 @@ public class WarriorDescriptionComponent {
         if (likesMovies && movies != null) {
             String moviesString = Arrays.stream(movies)
                     .map(movie -> movie.replaceAll("^.*/(.*)$", "$1"))
-                    .collect(Collectors.joining(TAGS_DELIMITER));
+                    .collect(Collectors.joining(ListUtils.COMMA_SPACE_DELIMITER));
             return MOVIES_TEXT + moviesString;
         }
         return DEFAULT_MOVIES_TEXT;
     }
 
     public String getFruit() {
-        if (likesFruits && fruit != null) {
+        if (likesFruit && fruit != null) {
             TagManager tagManager = resourceResolver.adaptTo(TagManager.class);
             if (tagManager != null) {
                 return (FRUIT_TEXT +
@@ -229,7 +241,7 @@ public class WarriorDescriptionComponent {
                                 .map(tagManager::resolve)
                                 .filter(Objects::nonNull)
                                 .map(Tag::getTitle)
-                                .collect(Collectors.joining(TAGS_DELIMITER)));
+                                .collect(Collectors.joining(ListUtils.COMMA_SPACE_DELIMITER)));
             }
         }
         return DEFAULT_FRUIT_TEXT;

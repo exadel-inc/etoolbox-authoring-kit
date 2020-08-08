@@ -36,6 +36,13 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class AbilitiesComponent {
 
+    private static final String FIELD_ELEMENTS = "./elements";
+    private static final String LABEL_ELEMENTS = "Elements";
+    private static final String DESCRIPTION_ELEMENTS = "Add elements that your magician owns";
+
+    private static final String LABEL_ABILITY_LEVEL = "Warrior experience";
+    private static final String DESCRIPTION_ABILITY_LEVEL = "Enter your warrior ability level";
+
     static final String TAB_ABILITIES = "Abilities";
 
     @Heading(text = "Here you can choose abilities", level = 2)
@@ -65,9 +72,9 @@ public class AbilitiesComponent {
     private String ability;
 
     @DialogField(
-            label = "Elements",
-            name = "./elements",
-            description = "Add elements that your magician owns",
+            name = FIELD_ELEMENTS,
+            label = LABEL_ELEMENTS,
+            description = DESCRIPTION_ELEMENTS,
             ranking = 3
     )
     @MultiField(field = Element.class)
@@ -78,18 +85,18 @@ public class AbilitiesComponent {
     )
     @DependsOn(query = "@ability === 'magic'")
     @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
-    @ValueMapValue(name = "./element")
+    @ValueMapValue(name = FIELD_ELEMENTS)
     private String[] elements;
 
-    public class Element {
+    private class Element {
         @TextField
         @DialogField
         public String element;
     }
 
     @DialogField(
-            label = "Warrior experience",
-            description = "Enter your warrior ability level",
+            label = LABEL_ABILITY_LEVEL,
+            description = DESCRIPTION_ABILITY_LEVEL,
             ranking = 1
     )
     @NumberField(min = 0, max = 100)

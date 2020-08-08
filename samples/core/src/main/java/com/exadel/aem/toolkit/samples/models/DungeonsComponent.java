@@ -26,17 +26,20 @@ import com.exadel.aem.toolkit.samples.constants.GroupConstants;
         resourceSuperType = "authoring-toolkit/samples/components/content/father-select-component",
         componentGroup = GroupConstants.COMPONENT_GROUP,
         tabs = {
-                @Tab(title = ParentSelectComponent.TAB_MAIN),
+                @Tab(title = ParentSelectComponent.TAB_MAIN)
         }
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class DungeonsComponent extends ParentSelectComponent {
 
+    private static final String LABEL_DUNGEON_RULES = "Make your own dungeons rules";
+    private static final String LABEL_DUNGEON_SELECT = "Dungeons select";
+
     private static final String DEFAULT_ROTTEN_SWAMPS_TEXT = "rotten swamps, where your nose will suffer from terrible smells,";
     private static final String DEFAULT_ICE_VALLEY_TEXT = "ice valley, where you can lose your arm from strong frost,";
     private static final String DEFAULT_RULES = "no rules!";
 
-    @DialogField(label = "Make your own dungeons rules")
+    @DialogField(label = LABEL_DUNGEON_RULES)
     @Extends(value = WarriorDescriptionComponent.class, field = "description")
     @RichTextEditor(
             features = {
@@ -47,7 +50,7 @@ public class DungeonsComponent extends ParentSelectComponent {
     @ValueMapValue
     private String dungeonRules;
 
-    @DialogField(label = "Dungeons select")
+    @DialogField(label = LABEL_DUNGEON_SELECT)
     @Select(options = {
             @Option(text = "Rotten swamps", value = "1"),
             @Option(text = "Ice valley", value = "2")

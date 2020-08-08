@@ -37,24 +37,28 @@ public class ShoppingListComponent {
 
     static final String TAB_MAIN = "Shopping list";
 
-    private static final String DEFAULT_EMPTY_LIST_TEXT = "it seems like your warrior is happy and without any purchases.";
+    private static final String DESCRIPTION_PRODUCTS_FIELD_SET = "Check all checkboxes from this group to show the text field";
+
+    private static final String LABEL_ANSWER = "Why are you such a wonderful warrior?";
+
+    private static final String DEFAULT_EMPTY_LIST_TEXT = "it seems like your warrior is happy without any purchases.";
     private static final String DEFAULT_NOT_WONDERFUL_TEXT = ", and your warrior is not wonderful!";
     private static final String DEFAULT_WONDERFUL_TEXT = ", and he thinks he is wonderful, because ";
     private static final String DEFAULT_ANSWER = "he was born like this.";
 
     @DialogField
-    @FieldSet(title = "Choose weapon to buy")
+    @FieldSet(title = "Choose a weapon to buy")
     @Attribute(className = "weapon-fieldSet")
     @Self
     private WeaponFieldSet weaponFieldSet;
 
-    @DialogField(description = "Check all checkboxes from this group to show text field")
+    @DialogField(description = DESCRIPTION_PRODUCTS_FIELD_SET)
     @FieldSet(title = "Choose products to buy")
     @Attribute(className = "products-fieldSet")
     @Self
     private ProductsFieldSet productsFieldSet;
 
-    @DialogField(label = "Why are you such a wonderful warrior?")
+    @DialogField(label = LABEL_ANSWER)
     @TextField(emptyText = "Check all checkboxes to disable this text field")
     @DependsOn(query = "AATSamples.getShoppingDefaultText(@@checkbox(coral-panel |> .weapon-fieldSet), @this)", action = DependsOnActions.SET)
     @DependsOn(query = "@@checkbox(coral-panel |> .products-fieldSet).every(item => item)")

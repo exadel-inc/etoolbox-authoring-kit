@@ -22,12 +22,14 @@ import com.exadel.aem.toolkit.samples.models.fieldsets.ArmorColorFields;
         resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
         componentGroup = GroupConstants.COMPONENT_GROUP,
         tabs = {
-                @Tab(title = ArmorColorComponent.TAB_COLOR),
+                @Tab(title = ArmorColorComponent.TAB_COLOR)
         }
 )
 @HtmlTag(className = "component-wrap")
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ArmorColorComponent {
+
+    private static final String TITLE_ARMOR_COLOR = "Color of warrior's armor";
 
     static final String TAB_COLOR = "Armor color";
     public static final String FIELDS_PREFIX = "color";
@@ -35,7 +37,7 @@ public class ArmorColorComponent {
 
     @DialogField
     @FieldSet(
-            title = "Color of warrior's armor",
+            title = TITLE_ARMOR_COLOR,
             namePrefix = ArmorColorComponent.FIELDS_PREFIX
     )
     @FieldsetPostfix(postfix = ArmorColorComponent.FIELDS_POSTFIX)

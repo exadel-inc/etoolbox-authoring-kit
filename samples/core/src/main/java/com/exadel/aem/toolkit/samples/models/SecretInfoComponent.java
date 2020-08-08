@@ -34,26 +34,34 @@ public class SecretInfoComponent {
     static final String TAB_PASSWORD = "Password";
     static final String TAB_SECRET = "Secret";
 
+    private static final String LABEL_PASSWORD = "Enter password";
+    private static final String DESCRIPTION_PASSWORD = "Enter a password to unlock secret information about the warrior";
+
+    private static final String LABEL_CONFIRM_PASSWORD = "Confirm your password";
+
+    private static final String LABEL_INFO = "Secret info";
+    private static final String DESCRIPTION_INFO = "Enter secret information about your warrior";
+
     private static final String DEFAULT_SECRET = "This warrior is clear";
 
     @DialogField(
-            description = "Enter a password to unlock secret information about the warrior",
-            label = "Enter secret password"
+            label = LABEL_PASSWORD,
+            description = DESCRIPTION_PASSWORD
     )
     @Password(retype = "confirmPassword")
     @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
     @ValueMapValue
     private String password;
 
-    @DialogField(label = "Confirm your password")
+    @DialogField(label = LABEL_CONFIRM_PASSWORD)
     @Password
     @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
     @ValueMapValue
     private String confirmPassword;
 
     @DialogField(
-            label = "Secret info",
-            description = "Enter secret information about your warrior"
+            label = LABEL_INFO,
+            description = DESCRIPTION_INFO
     )
     @TextArea(autofocus = true, maxlength = 200)
     @PlaceOnTab(SecretInfoComponent.TAB_SECRET)

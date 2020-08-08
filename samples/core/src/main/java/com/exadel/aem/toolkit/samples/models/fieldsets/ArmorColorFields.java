@@ -19,7 +19,7 @@ public class ArmorColorFields {
     @ColorField(
             emptyText = "Choose armor color"
     )
-    @Default(values = {DEFAULT_COLOR})
+    @Default(values = DEFAULT_COLOR)
     @ValueMapValue(name = ArmorColorComponent.FIELDS_PREFIX + "armor" + ArmorColorComponent.FIELDS_POSTFIX)
     private String armor;
 
@@ -27,7 +27,7 @@ public class ArmorColorFields {
     @ColorField(
             emptyText = "Choose shoes color"
     )
-    @Default(values = {DEFAULT_COLOR})
+    @Default(values = DEFAULT_COLOR)
     @ValueMapValue(name = ArmorColorComponent.FIELDS_PREFIX + "shoes" + ArmorColorComponent.FIELDS_POSTFIX)
     private String shoes;
 
@@ -35,7 +35,7 @@ public class ArmorColorFields {
     @ColorField(
             emptyText = "Choose helmet color"
     )
-    @Default(values = {DEFAULT_COLOR})
+    @Default(values = DEFAULT_COLOR)
     @ValueMapValue(name = ArmorColorComponent.FIELDS_PREFIX + "helmet" + ArmorColorComponent.FIELDS_POSTFIX)
     private String helmet;
 

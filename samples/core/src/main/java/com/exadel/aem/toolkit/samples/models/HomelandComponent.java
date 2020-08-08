@@ -31,8 +31,8 @@ import java.util.Optional;
                 @DropTargetConfig(
                         propertyName = "./homelandImage/fileReference",
                         nodeName = "homelandImage",
-                        accept = {"image/.*"},
-                        groups = {"media"}
+                        accept = "image/.*",
+                        groups = "media"
                 )
         }
 )
@@ -48,12 +48,15 @@ public class HomelandComponent {
     @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
     public static class HomelandTab {
 
+        private static final String FIELD_HOMELAND_IMAGE = "./homelandImage/";
+        private static final String DESCRIPTION_HOMELAND_IMAGE = "Choose an image of your warrior homeland";
+
         @Self
         Resource currentResource;
 
         @DialogField(
-                name = "./homelandImage/",
-                description = "Choose an image of your warrior homeland"
+                name = FIELD_HOMELAND_IMAGE,
+                description = DESCRIPTION_HOMELAND_IMAGE
         )
         @ImageUpload
         @ChildResource

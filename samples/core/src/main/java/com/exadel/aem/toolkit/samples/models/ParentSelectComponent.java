@@ -16,16 +16,19 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
         name = "content/parent-select-component",
         title = "Parent Select Component",
         tabs = {
-                @Tab(title = ParentSelectComponent.TAB_MAIN),
+                @Tab(title = ParentSelectComponent.TAB_MAIN)
         }
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ParentSelectComponent {
 
     static final String TAB_MAIN = "Main";
+
+    private static final String LABEL_DUNGEONS_SELECT = "Dungeons select";
+
     private static final String DEFAULT_SELECT_TEXT = "nothing is selected";
 
-    @DialogField(label = "Dungeons select")
+    @DialogField(label = LABEL_DUNGEONS_SELECT)
     @Select(options = {
             @Option(text = "A", value = "a"),
             @Option(text = "B", value = "b")
