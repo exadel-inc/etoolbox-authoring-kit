@@ -63,7 +63,7 @@ public class HomelandComponent {
     public static class HomelandTab {
 
         private static final String FIELD_HOMELAND_IMAGE = "./homelandImage/";
-        private static final String DESCRIPTION_HOMELAND_IMAGE = "Choose an image of your warrior homeland";
+        private static final String DESCRIPTION_HOMELAND_IMAGE = "Choose an image of your warrior's homeland";
 
         @Self
         Resource currentResource;
