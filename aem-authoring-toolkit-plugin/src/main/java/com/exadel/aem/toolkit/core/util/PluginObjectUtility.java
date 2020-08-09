@@ -61,13 +61,13 @@ public class PluginObjectUtility {
                             values != null && values.containsKey(method.getName())
                                     ? values.get(method.getName())
                                     : method.getDefaultValue();
-                    methods.put(method.getName(),methodFunction);
+                    methods.put(method.getName(), methodFunction);
                 });
         return modify(null, type, methods);
     }
 
     /**
-     * Creates at runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with only some fields
+     * Creates in runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with only some fields
      * set to a non-default value, others voided
      * This method is used to render the same {@code Annotation} object differently (like two or more different sets of values)
      * depending on the values specified
@@ -90,14 +90,12 @@ public class PluginObjectUtility {
     }
 
     /**
-     * Creates at runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with only some fields
-     * set to a non-default value, others voided
-     * This method is used to render the same {@code Annotation} object differently (like two or more different sets of values)
-     * depending on the values specified
+     * Creates in runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with the new value
+     * for the given property that will be assigned in case the current value equals to this property's default
      * @param source {@code Annotation} instance to produce a facade for
      * @param type Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
      * @param name String representing the method to check for default value, non-blank
-     * @param value Fallback value
+     * @param value The value to use in case the method above returns its default
      * @param <T> Particular type of the annotation facade
      * @param <R> Return type of a fallback method / methods
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
@@ -107,14 +105,13 @@ public class PluginObjectUtility {
     }
 
     /**
-     * Creates at runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with only some fields
-     * set to a non-default value, others voided
-     * This method is used to render the same {@code Annotation} object differently (like two or more different sets of values)
-     * depending on the values specified
+     * Creates in runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with new values
+     * for the given properties (specified in {@code method name -> value} map that will be used in case these methods
+     * return default values
      * @param source {@code Annotation} instance to produce a facade for
      * @param type Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
-     * @param fallbackValues {@code Map<String, Object>} representing values to be exposed by the annotation methods
-     *                                                  whether they possess their default values
+     * @param fallbackValues {@code Map<String, Object>} representing values to be returned by the annotation methods
+     *                                                  whether they have now their default values
      * @param <T> Particular type of the annotation facade
      * @param <R> Return type of a fallback method / methods
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
@@ -153,7 +150,7 @@ public class PluginObjectUtility {
      * Extends an object in runtime by casting it to an extension interface and applying additional methods
      * @param value Source object, typically final or one coming from outside the user scope
      * @param modification {@code Class} object representing an interface that {@code value} implements,
-     *                                        or an extending interfaca of such
+     *                                        or an extending interface of such
      * @param methods {@code Map<String, Function>} of named routines that represent the new and/or modified methods
      *                                             that {@code value} must expose. Each routine accepts a source object,
      *                                             and a variadic array of {@code Object}-typed arguments

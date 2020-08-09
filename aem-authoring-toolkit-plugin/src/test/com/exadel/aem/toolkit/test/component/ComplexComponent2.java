@@ -58,10 +58,10 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_7;
         title = TestConstants.DEFAULT_COMPONENT_TITLE,
         description = TestConstants.DEFAULT_COMPONENT_DESCRIPTION,
         componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
-        layout = DialogLayout.TABS,
+        resourceSuperType = TestConstants.DEFAULT_COMPONENT_SUPERTYPE,
         disableTargeting = true,
-        resourceSuperType = "TestComponentSuperType",
         extraClientlibs = "cq.common.wcm",
+        layout = DialogLayout.TABS,
         tabs = {
                 @Tab(title = LABEL_TAB_1),
                 @Tab(title = LABEL_TAB_2),

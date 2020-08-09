@@ -24,6 +24,7 @@ public class DialogConstants {
     public static final String PATH_SEPARATOR = "/";
     public static final String EXTENSION_SEPARATOR = ".";
     public static final String VALUE_SEPARATOR = ";";
+    public static final String INLINE_ITEM_SEPARATOR = ", ";
 
     public static final String RELATIVE_PATH_PREFIX = "./";
     public static final String PARENT_PATH_PREFIX = "../";
