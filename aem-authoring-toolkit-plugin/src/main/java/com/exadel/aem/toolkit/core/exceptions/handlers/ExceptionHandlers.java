@@ -14,38 +14,38 @@
 
 package com.exadel.aem.toolkit.core.exceptions.handlers;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
  * The factory-like class for getting an instance of {@link ExceptionHandler} that matches the value specified in
  * the {@code terminateOn} AEM Authoring Toolkit plugin setting
  */
-public class PluginExceptionHandlers {
-    private static final String ALL_EXCEPTIONS = "all";
-    private static final String NONE_EXCEPTIONS = "none";
+public class ExceptionHandlers {
+    private static final String EXCEPTION_TOKEN_NONE = "none";
 
-    private PluginExceptionHandlers() {
+    private ExceptionHandlers() {
     }
 
     /**
      * Gets the instance of {@link ExceptionHandler} that matches the value specified in
-     * {@code terminateOn} AEM Authoring Toolkit plugin setting
+     * the {@code terminateOn} AEM Authoring Toolkit plugin setting
      * @param value Setting value
      * @return {@code ExceptionHandler} instance
      */
-    public static ExceptionHandler getHandler(String value) {
-        if (StringUtils.isBlank(value) || NONE_EXCEPTIONS.equalsIgnoreCase(value)) {
+    public static ExceptionHandler forSetting(String value) {
+        if (StringUtils.isBlank(value) || EXCEPTION_TOKEN_NONE.equalsIgnoreCase(value)) {
             return new PermissiveExceptionHandler();
         }
-        if (ALL_EXCEPTIONS.equalsIgnoreCase(value)) {
-            return new StrictExceptionHandler();
-        }
-        return new SelectiveExceptionHandler(Arrays.stream(StringUtils.split(value, ','))
-                .map(String::trim).collect(Collectors.toList()));
+        List<String> exceptionTokens = Arrays.stream(StringUtils.split(value, DialogConstants.ITEM_SEPARATOR_COMMA))
+                .map(String::trim)
+                .collect(Collectors.toList());
+        return new SelectiveExceptionHandler(exceptionTokens);
     }
 }
