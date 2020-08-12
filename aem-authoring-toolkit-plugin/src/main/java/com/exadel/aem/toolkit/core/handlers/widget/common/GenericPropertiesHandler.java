@@ -19,11 +19,11 @@ import java.util.function.BiConsumer;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
 
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 /**
  * Handler for storing {@link ResourceType} and like properties to a Granite UI widget XML node
@@ -51,7 +51,7 @@ public class GenericPropertiesHandler implements BiConsumer<Element, Field> {
      * @return String representing the resource type
      */
     private String getResourceType(Class<?> value) {
-        if(!value.isAnnotationPresent(ResourceType.class)){
+        if(!value.isAnnotationPresent(ResourceType.class)) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
                     RESTYPE_MISSING_EXCEPTION_MESSAGE + value.getName()));
             return null;

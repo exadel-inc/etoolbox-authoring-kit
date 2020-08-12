@@ -15,8 +15,8 @@
 package com.exadel.aem.toolkit.test.component;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
@@ -42,10 +42,7 @@ public class ValidationTestCases {
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     @SuppressWarnings("unused")
     public static class InvalidImageUploadDialog {
-        @ImageUpload(
-                title="Invalid Image Upload",
-                sizeLimit = -99
-        )
+        @ImageUpload(sizeLimit = -99)
         String image;
     }
 
