@@ -52,7 +52,11 @@ public abstract class DefaultTestBase {
                 TestConstants.API_MODULE_TARGET,
                 TestConstants.PLUGIN_MODULE_TEST_TARGET
         );
-        PluginRuntime.initialize(classpathElements, StringUtils.EMPTY, getExceptionSetting());
+        PluginRuntime.contextBuilder()
+                .classPathElements(classpathElements)
+                .packageBase(StringUtils.EMPTY)
+                .terminateOn(getExceptionSetting())
+                .build();
     }
 
     void test(Class<?> testable) {
