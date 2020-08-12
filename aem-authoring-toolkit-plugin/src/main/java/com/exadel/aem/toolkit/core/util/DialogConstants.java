@@ -19,13 +19,16 @@ package com.exadel.aem.toolkit.core.util;
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class DialogConstants {
+    public static final String WILDCARD = "*";
+
     public static final String PATH_SEPARATOR = "/";
     public static final String EXTENSION_SEPARATOR = ".";
     public static final String VALUE_SEPARATOR = ";";
-    public static final String INLINE_ITEM_SEPARATOR = ", ";
+    public static final String ITEM_SEPARATOR_COMMA = ",";
 
     public static final String RELATIVE_PATH_PREFIX = "./";
     public static final String PARENT_PATH_PREFIX = "../";
+    public static final String ATTRIBUTE_PREFIX = "@";
 
     public static final String NN_ALLOW_BASICS = "allowBasics";
     public static final String NN_CHARS = "chars";
@@ -106,6 +109,7 @@ public class DialogConstants {
     public static final String PN_DEPENDS_ON_REFLAZY = "dependsOnRefLazy";
     public static final String PN_DESCRIPTION = "description";
     public static final String PN_DIALOG_LAYOUT = "dialogLayout";
+    public static final String PN_DISABLED = "disabled";
     public static final String PN_DISCONNECTED = "disconnected";
     public static final String PN_EDIT_ELEMENT_QUERY = "editElementQuery";
     public static final String PN_EDITOR_TYPE = "editorType";
@@ -129,6 +133,8 @@ public class DialogConstants {
     public static final String PN_PROPERTY_NAME = "propertyName";
     public static final String PN_PROTOCOLS = "protocols";
     public static final String PN_REF = "ref";
+    public static final String PN_RENDER_HIDDEN = "renderHidden";
+    public static final String PN_REQUIRED = "required";
     public static final String PN_RETYPE = "retype";
     public static final String PN_SELECTED = "selected";
     public static final String PN_SOURCE_CLASS = "source";

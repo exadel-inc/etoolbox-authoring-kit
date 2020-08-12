@@ -24,6 +24,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
@@ -102,7 +104,7 @@ public class PluginReflectionUtility {
 
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
-     * scope the plugin is operating in
+     * scope of the plugin
      * @return {@code List<DialogWidgetHandler>} of instances
      */
     public List<DialogWidgetHandler> getCustomDialogWidgetHandlers() {
@@ -111,6 +113,35 @@ public class PluginReflectionUtility {
         }
         customDialogWidgetHandlers = getHandlers(DialogWidgetHandler.class);
         return customDialogWidgetHandlers;
+    }
+
+    /**
+     * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
+     * scope of the plugin matching the specified widget annotation
+     * @param annotationClass {@code Class<?>} reference to pick up handlers for
+     * @return {@code List<DialogWidgetHandler>} of instances
+     */
+    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers(Class<? extends Annotation> annotationClass) {
+        return getCustomDialogWidgetHandlers(Collections.singletonList(annotationClass));
+    }
+
+    /**
+     * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
+     * scope of the plugin matching the specified widget annotation
+     * @param annotationClasses List of {@code Class<?>} reference to pick up handlers for
+     * @return {@code List<DialogWidgetHandler>} of instances
+     */
+    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers(List<Class<? extends Annotation>> annotationClasses) {
+        if (annotationClasses == null) {
+            return Collections.emptyList();
+        }
+        return getCustomDialogWidgetHandlers().stream()
+                .filter(handler -> handler.getClass().isAnnotationPresent(HandlesWidgets.class))
+                .filter(handler -> {
+                    Class<?>[] handled = handler.getClass().getDeclaredAnnotation(HandlesWidgets.class).value();
+                    return annotationClasses.stream().anyMatch(annotationClass -> ArrayUtils.contains(handled, annotationClass));
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -165,6 +196,7 @@ public class PluginReflectionUtility {
         return reflections.getSubTypesOf(handlerClass).stream()
                 .map(PluginReflectionUtility::getHandlerInstance)
                 .filter(Objects::nonNull)
+                .sorted(Comparator.comparing(handler -> handler.getClass().getCanonicalName())) // to provide stable handlers sequence between runs
                 .collect(Collectors.toList());
     }
 

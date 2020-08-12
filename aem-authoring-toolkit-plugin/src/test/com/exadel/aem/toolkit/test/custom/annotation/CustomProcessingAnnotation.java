@@ -12,17 +12,14 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.exceptions.handlers;
+package com.exadel.aem.toolkit.test.custom.annotation;
 
-import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/**
- * Represents an abstraction of a "permissive" or "selective", or "strict" {@link ExceptionHandler} that can log
- * exception messages
- */
-abstract class AbstractExceptionHandler implements ExceptionHandler {
-    @Override
-    public void handle(Exception e) {
-        handle(e.getMessage(), e);
-    }
-}
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@SuppressWarnings("unused")
+public @interface CustomProcessingAnnotation {}

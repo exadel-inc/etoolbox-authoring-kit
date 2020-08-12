@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.2.2
+ * @version 2.4.1
  *
  * Coral 3 RTE accessor
  * */
@@ -28,10 +28,12 @@
             const rteInstance = $editor.data(RTE_DATA_INSTANCE);
 
             $rteContainer.find(RTE_INPUT_SELECTOR).val(value);
-            if (rteInstance && typeof rteInstance.setContent === 'function') {
+            if (rteInstance && rteInstance.isActive && typeof rteInstance.setContent === 'function') {
                 rteInstance.setContent(value);
             }
-
+            if (rteInstance && !rteInstance.isActive && typeof rteInstance.getTextDiv === 'function') {
+                rteInstance.getTextDiv(rteInstance.$element).html(value);
+            }
             notify && $editor.trigger('change');
         },
         required: function ($el, val) {
@@ -52,13 +54,15 @@
             if (!rteInstance) return;
 
             // disable rte editing
-            if (val) {
-                rteInstance.suspend();
-            } else {
-                // use old content as initial content to reactivate rte
-                const initContent = rteInstance.editorKernel && rteInstance.editorKernel.getProcessedHtml();
-                rteInstance.reactivate(initContent);
-            }
+            setTimeout(function () {
+                if (val) {
+                    rteInstance.suspend();
+                } else {
+                    // use old content as initial content to reactivate rte
+                    const initContent = rteInstance.editorKernel && rteInstance.editorKernel.getProcessedHtml();
+                    rteInstance.reactivate(initContent);
+                }
+            }, 100);
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

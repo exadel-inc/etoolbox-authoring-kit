@@ -20,6 +20,7 @@
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="test-components/form/customfield"
                         customField="Custom!"
+                        customProcessing="turned on"
                         disabled="{Boolean}false"
                         name="./testCustomAnnotation"
                         renderHidden="{Boolean}false"

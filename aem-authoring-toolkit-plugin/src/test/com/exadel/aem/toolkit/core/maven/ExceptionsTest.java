@@ -14,17 +14,26 @@
 
 package com.exadel.aem.toolkit.core.maven;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.hamcrest.core.IsInstanceOf;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
+import com.exadel.aem.toolkit.core.exceptions.ValidationException;
+import com.exadel.aem.toolkit.core.exceptions.handlers.ExceptionHandlers;
 import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
 import com.exadel.aem.toolkit.test.component.InheritanceTestCases;
 
 public class ExceptionsTest extends ExceptionsTestBase {
+    private static final String NOT_AN_EXCEPTION_MESSAGE = "Not an exception: testing terminateOn logic";
+    private static final String SHOULD_TERMINATE_TEMPLATE = "Setting \"%s\" should have caused termination with %s";
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
@@ -48,5 +57,33 @@ public class ExceptionsTest extends ExceptionsTestBase {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidFieldContainerException.class));
         exceptionRule.expectMessage("Field named \"text2\" in class \"DuplicateOverride\"");
         test(InheritanceTestCases.DuplicateOverride.class);
+    }
+
+    @Test
+    public void testTerminateOnSettings() {
+        // Test non-terminating cases
+        Map<String, Exception> nonTerminatingCases = ImmutableMap.of(
+                " ValidationException, !java.lang.RuntimeException", new ValidationException(NOT_AN_EXCEPTION_MESSAGE),
+                "!java.lang.IndexOutOfBoundsException, *", new IndexOutOfBoundsException(NOT_AN_EXCEPTION_MESSAGE),
+                "!java.io.IOException, !java.lang.RuntimeException, !com.exadel.aem.plugin.exceptions.*", new ValidationException(NOT_AN_EXCEPTION_MESSAGE),
+                "!java.lang.IndexOutOfBoundsException, !*", new RuntimeException(NOT_AN_EXCEPTION_MESSAGE) // must neglect the "!*" sign
+        );
+        nonTerminatingCases.forEach((setting, exception) -> ExceptionHandlers.forSetting(setting).handle(exception));
+
+        // Test terminating cases
+        Map<String, Exception> terminatingCases = ImmutableMap.of(
+                "java.lang.RuntimeException", new IndexOutOfBoundsException(),
+                "java.io.IOException, !java.lang.Exception, *", new IOException(),
+                "!java.lang.IndexOutOfBoundsException, java.lang.RuntimeException", new NullPointerException(),
+                "java.lang.Exception, !java.lang.Exception, *", new RuntimeException()
+        );
+        for (Map.Entry<String, Exception> terminatingCase : terminatingCases.entrySet()) {
+            try {
+                ExceptionHandlers.forSetting(terminatingCase.getKey()).handle(terminatingCase.getValue());
+                Assert.fail(String.format(SHOULD_TERMINATE_TEMPLATE, terminatingCase.getKey(), terminatingCase.getValue().getClass().getName()));
+            } catch (Exception ignored) {
+                // As the exception is legitimately caught, the test should proceed
+            }
+        }
     }
 }

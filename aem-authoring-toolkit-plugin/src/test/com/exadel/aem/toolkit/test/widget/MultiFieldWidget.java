@@ -29,7 +29,10 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
 )
 @SuppressWarnings("unused")
 public class MultiFieldWidget {
-    @DialogField(label="Multi")
+    @DialogField(
+            label="Multifield Label",
+            description = "Multifield Description"
+    )
     @MultiField(field = MultiFieldContainer.class)
     String multiField;
 

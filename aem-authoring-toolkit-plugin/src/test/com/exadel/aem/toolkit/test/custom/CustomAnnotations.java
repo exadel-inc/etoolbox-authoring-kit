@@ -18,6 +18,9 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomProcessingAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 
 @Dialog(
         name = "test-component",
@@ -27,20 +30,21 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 @SuppressWarnings("unused")
 public class CustomAnnotations {
     @DialogField
-    @CustomAnnotation(customField = "Custom!")
+    @CustomWidgetAnnotation(customField = "Custom!")
+    @CustomProcessingAnnotation
     String testCustomAnnotation;
 
     @DialogField
     @TextField
-    @CustomAnnotation
+    @CustomWidgetAnnotation
     String testCustomAnnotationDefault;
 
     @DialogField
-    @CustomAnnotationAutomapping(customField = "Custom!")
+    @CustomWidgetAnnotationAuto(customField = "Custom!")
     String testCustomAnnotationAuto;
 
     @DialogField
     @TextField
-    @CustomAnnotationAutomapping
+    @CustomWidgetAnnotationAuto
     String testCustomAnnotationAutoDefault;
 }

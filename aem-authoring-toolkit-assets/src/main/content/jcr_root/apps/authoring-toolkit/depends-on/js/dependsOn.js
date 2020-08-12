@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.2
+ * @version 2.4.1
  *
  * DependsOn plugin entry point
  *
@@ -11,6 +11,9 @@
 
     const $window = $(window);
     const $document = $(document);
+
+    // Version to track actual DependsOn version from code/browser console
+    ns.version = '2.4.1';
 
     /**
      * Depends On entry point
