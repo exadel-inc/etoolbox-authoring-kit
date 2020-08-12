@@ -56,7 +56,7 @@ public class SecretInfoComponent {
     private static final String LABEL_INFO = "Secret info";
     private static final String DESCRIPTION_INFO = "Enter secret information about your warrior";
 
-    private static final String DEFAULT_SECRET = "This warrior is clear";
+    private static final String DEFAULT_SECRET = "This warrior has no secrets";
 
     @DialogField(
             label = LABEL_PASSWORD,

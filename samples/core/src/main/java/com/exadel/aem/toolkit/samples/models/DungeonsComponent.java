@@ -37,7 +37,7 @@ import com.exadel.aem.toolkit.samples.constants.GroupConstants;
         name = "content/dungeons-component",
         title = "Dungeons Component",
         description = "Choose a dungeon for your warrior",
-        resourceSuperType = "authoring-toolkit/samples/components/content/father-select-component",
+        resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
         componentGroup = GroupConstants.COMPONENT_GROUP,
         tabs = {
                 @Tab(title = ParentSelectComponent.TAB_MAIN)

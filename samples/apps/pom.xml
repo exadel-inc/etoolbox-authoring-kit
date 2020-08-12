@@ -14,19 +14,11 @@
     <name>AEM Authoring Toolkit - Samples Apps</name>
     <version>1.2.1-SNAPSHOT</version>
 
-    <properties>
-        <host>localhost</host>
-        <port>4502</port>
-        <serviceUrl>http://${host}:${port}/crx/packmgr/service.jsp</serviceUrl>
-        <project.jcrAppFolder>authoring-toolkit/samples</project.jcrAppFolder>
-    </properties>
-
     <build>
         <finalName>aem-dialog-plugin-sandbox-apps-${project.version}</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.2</version>
                 <executions>
                     <execution>
                         <id>default-jar</id>
@@ -36,13 +28,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
-                <executions>
-                    <execution>
-                        <id>default-install</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
@@ -75,14 +60,7 @@
                     <plugin>
                         <groupId>com.day.jcr.vault</groupId>
                         <artifactId>content-package-maven-plugin</artifactId>
-                        <version>0.5.1</version>
-                        <extensions>true</extensions>
                         <configuration>
-                            <targetURL>${serviceUrl}</targetURL>
-                            <packaging>zip</packaging>
-                            <userId>${vault.user}</userId>
-                            <password>${vault.password}</password>
-                            <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
                             <embeddeds>
                                 <embedded>
                                     <groupId>${project.groupId}</groupId>
@@ -98,29 +76,11 @@
                                 </subPackage>
                             </subPackages>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <id>Compile and install local application package</id>
-                                <goals>
-                                    <goal>package</goal>
-                                    <goal>install</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                     <plugin>
                         <groupId>com.exadel.aem</groupId>
                         <artifactId>aem-authoring-toolkit-plugin</artifactId>
-                        <version>${aat.version}</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>aem-authoring</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                         <configuration>
-                            <terminateOn>ALL</terminateOn>
                             <!-- Place here the path to the node under which your component nodes are stored -->
                             <componentsPathBase>jcr_root/apps/${project.jcrAppFolder}/components</componentsPathBase>
                         </configuration>
@@ -131,36 +91,17 @@
     </profiles>
 
     <dependencies>
-        <!-- Foreign -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
-            <version>2.18.4</version>
-            <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.models.api</artifactId>
-            <version>1.3.8</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Internal -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>aem-authoring-toolkit-samples-core</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.exadel.aem</groupId>
             <artifactId>aem-authoring-toolkit-assets</artifactId>
-            <version>${aat.version}</version>
             <type>content-package</type>
         </dependency>
     </dependencies>

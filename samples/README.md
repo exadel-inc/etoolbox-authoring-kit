@@ -289,7 +289,7 @@ Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.anno
 `@DependsOnTab` annotation is used in the [**WarriorDescriptionComponent**](./toolkit-samples.core/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java) to switch visibility of tabs with simple boolean queries:
 
     ```
-    @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUITS, query = "@likesFruits")
+    @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUITS, query = "@likesFruit")
     @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_MOVIES, query = "@likesMovies")
     ```
 
