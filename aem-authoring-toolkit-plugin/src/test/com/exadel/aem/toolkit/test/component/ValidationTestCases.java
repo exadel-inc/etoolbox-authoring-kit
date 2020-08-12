@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.ParagraphFormat;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
-import com.exadel.aem.toolkit.test.custom.CustomAnnotationAutomapping;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_TITLE;
@@ -89,7 +89,7 @@ public class ValidationTestCases {
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     @SuppressWarnings("unused")
     public static class InvalidCustomAnnotationDialog {
-        @CustomAnnotationAutomapping(customColor = "yellow")
+        @CustomWidgetAnnotationAuto(customColor = "yellow")
         String custom;
     }
 

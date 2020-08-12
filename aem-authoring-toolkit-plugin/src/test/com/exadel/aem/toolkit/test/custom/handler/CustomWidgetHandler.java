@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.test.custom;
+package com.exadel.aem.toolkit.test.custom.handler;
 
 import java.lang.reflect.Field;
 
@@ -21,6 +21,7 @@ import org.w3c.dom.Element;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
 
 @SuppressWarnings("unused")
 public class CustomWidgetHandler implements DialogWidgetHandler {

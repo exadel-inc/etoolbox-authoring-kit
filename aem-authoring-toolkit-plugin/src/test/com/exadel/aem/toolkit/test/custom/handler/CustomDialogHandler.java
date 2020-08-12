@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.test.custom;
+package com.exadel.aem.toolkit.test.custom.handler;
 
 import java.util.Optional;
 import java.util.function.Consumer;

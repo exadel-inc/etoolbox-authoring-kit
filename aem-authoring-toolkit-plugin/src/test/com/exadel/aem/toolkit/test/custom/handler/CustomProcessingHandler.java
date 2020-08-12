@@ -12,26 +12,26 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.test.custom;
+package com.exadel.aem.toolkit.test.custom.handler;
 
 import java.lang.reflect.Field;
 
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomProcessingAnnotation;
 
-@HandlesWidgets(MultiField.class)
+@HandlesWidgets(CustomProcessingAnnotation.class)
 @SuppressWarnings("unused")
-public class CustomMultifieldHandler implements DialogWidgetHandler {
+public class CustomProcessingHandler implements DialogWidgetHandler {
     @Override
     public String getName() {
-        return "customMultifieldHandler";
+        return "testCustomProcessing";
     }
 
     @Override
     public void accept(Element element, Field field) {
-        element.setAttribute("multifieldSpecial", "This is added to Multifields");
+        element.setAttribute("customProcessing", "turned on");
     }
 }

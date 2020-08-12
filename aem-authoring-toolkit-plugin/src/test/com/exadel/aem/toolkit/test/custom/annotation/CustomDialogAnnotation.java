@@ -12,24 +12,17 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.api.annotations.widgets.accessory;
+package com.exadel.aem.toolkit.test.custom.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
 
-/**
- * When appended to a field that has a valid widget annotation
- * (such as {@link TextField}, {@link com.exadel.aem.toolkit.api.annotations.widgets.select.Select}, etc.)
- * indicates that an arbitrary array of widgets of this type should be rendered instead of a singular widget.
- * <br><br>
- * Technically, for a statement like "{@code @SomeWidget @Multiple private String field... }", there will be rendered
- * a {@code Multifield} that may contain an arbitrary number of {@code SomeWidget}s
- */
-@Target({ElementType.FIELD})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Multiple {
+@DialogAnnotation(source = "customDialogProcessing")
+public @interface CustomDialogAnnotation {
 }
