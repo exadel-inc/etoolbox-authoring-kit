@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.test.custom;
+package com.exadel.aem.toolkit.test.custom.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -20,13 +20,21 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@DialogWidgetAnnotation(source = "testCustomAnnotation")
+@DialogWidgetAnnotation
 @ResourceType("test-components/form/customfield")
+@PropertyMapping(prefix = "granite:data/cq:")
 @SuppressWarnings("unused")
-public @interface CustomAnnotation {
+public @interface CustomWidgetAnnotationAuto {
+    @PropertyRendering(name = "custom")
     String customField() default "Custom annotation's field!";
+
+    @ValueRestriction("com.exadel.aem.toolkit.test.custom.CustomValidator")
+    String customColor() default "";
 }

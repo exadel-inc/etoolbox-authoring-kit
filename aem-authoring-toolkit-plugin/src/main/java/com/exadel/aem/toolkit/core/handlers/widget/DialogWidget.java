@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.core.handlers.widget.common.CustomHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.DialogFieldHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.GenericPropertiesHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.InheritanceHandler;
+import com.exadel.aem.toolkit.core.handlers.widget.common.MultipleHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.PropertyMappingHandler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
@@ -83,7 +84,8 @@ public interface DialogWidget {
                 .andThen(new DialogFieldHandler())
                 .andThen(getHandler())
                 .andThen(new DependsOnHandler())
-                .andThen(new CustomHandler());
+                .andThen(new CustomHandler())
+                .andThen(new MultipleHandler());
         return new InheritanceHandler(mainChain).andThen(mainChain);
     }
 }

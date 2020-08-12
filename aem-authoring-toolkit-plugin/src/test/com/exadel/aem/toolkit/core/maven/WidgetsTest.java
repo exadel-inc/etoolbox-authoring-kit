@@ -28,6 +28,7 @@ import com.exadel.aem.toolkit.test.widget.HeadingWidget;
 import com.exadel.aem.toolkit.test.widget.HiddenWidget;
 import com.exadel.aem.toolkit.test.widget.ImageUploadWidget;
 import com.exadel.aem.toolkit.test.widget.MultiFieldWidget;
+import com.exadel.aem.toolkit.test.widget.MultipleAnnotatedWidget;
 import com.exadel.aem.toolkit.test.widget.NestedCheckboxListWidget;
 import com.exadel.aem.toolkit.test.widget.NumberFieldWidget;
 import com.exadel.aem.toolkit.test.widget.PasswordWidget;
@@ -145,5 +146,10 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testTagField() {
         test(TagFieldWidget.class);
+    }
+
+    @Test
+    public void testWidgetAnnotatedWithMultiple() {
+        test(MultipleAnnotatedWidget.class, RESOURCE_FOLDER_WIDGET, "multiple");
     }
 }
