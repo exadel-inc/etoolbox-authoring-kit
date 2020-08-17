@@ -23,17 +23,13 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.api.annotations.main.Component;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -151,9 +147,18 @@ public class PluginReflectionUtility {
      * @return {@code List<Class>} of instances
      */
     public List<Class<?>> getComponentClasses() {
-        return reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
+        List<Class<?>> dialogClasses = reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
                 .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
                 .collect(Collectors.toList());
+        List<Class<?>> componentClasses = reflections.getTypesAnnotatedWith(Component.class, true).stream()
+                .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
+                .collect(Collectors.toList());
+
+        List<Class<?>> classesFromComponent = new ArrayList<>();
+        componentClasses.forEach(cls -> classesFromComponent.addAll(Arrays.asList(cls.getAnnotation(Component.class).views())));
+        componentClasses.addAll(dialogClasses.stream().filter(cls -> !classesFromComponent.contains(cls)).collect(Collectors.toList()));
+
+        return componentClasses;
     }
 
     /**
