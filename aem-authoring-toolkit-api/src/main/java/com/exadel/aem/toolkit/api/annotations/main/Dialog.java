@@ -37,7 +37,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 @SuppressWarnings("unused")
 public @interface Dialog {
     /**
-     * Maps to the 'jcr:title' attributes of both the component root node node and its {@code cq:dialog} node
+     * Maps to the 'jcr:title' attributes of the {@code cq:dialog} node
      * @return String value, non-blank
      */
     @PropertyRendering(name = JcrConstants.PN_TITLE)
