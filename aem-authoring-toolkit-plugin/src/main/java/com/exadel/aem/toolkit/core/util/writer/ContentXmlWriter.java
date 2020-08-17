@@ -55,7 +55,7 @@ class ContentXmlWriter extends PackageEntryWriter {
     /**
      * Gets whether current {@code Class} is eligible for populating {@code .content.xml} structure
      * @param componentClass The {@code Class} under consideration
-     * @return True if current {@code Class} is annotated with {@link Dialog}; otherwise, false
+     * @return True if current {@code Class} is annotated with {@link Dialog} or {@link Component}; otherwise, false
      */
     @Override
     boolean isProcessed(Class<?> componentClass) {

@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.core.util.writer;
 
+import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
@@ -29,29 +30,45 @@ import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
+import java.lang.annotation.Annotation;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing AEM TouchUI dialog definition (writes data to the
  * {@code _cq_dialog.xml} file within the current component folder before package is uploaded
  */
-class CqDialogWriter extends ContentXmlWriter {
+class CqDialogWriter extends PackageEntryWriter {
+
+    private final XmlScope scope;
+
     /**
      * Basic constructor
      * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
      *                                               of this writer
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
      */
-    CqDialogWriter(DocumentBuilder documentBuilder, Transformer transformer) {
+    CqDialogWriter(DocumentBuilder documentBuilder, Transformer transformer, XmlScope scope) {
         super(documentBuilder, transformer);
+        this.scope = scope;
     }
 
     /**
      * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
+     *
      * @return {@link XmlScope} value
      */
     @Override
     XmlScope getXmlScope() {
-        return XmlScope.CQ_DIALOG;
+        return scope;
+    }
+
+    /**
+     * Gets whether current {@code Class} is eligible for populating {@code _cq_dialog.xml} structure
+     * @param componentClass The {@code Class} under consideration
+     * @return True if current {@code Class} is annotated with {@link Dialog} or {@link DesignDialog}; otherwise, false
+     */
+    @Override
+    boolean isProcessed(Class<?> componentClass) {
+        return XmlScope.CQ_DIALOG.equals(scope) ? componentClass.isAnnotationPresent(Dialog.class) : componentClass.isAnnotationPresent(DesignDialog.class);
     }
 
     /**
@@ -64,15 +81,24 @@ class CqDialogWriter extends ContentXmlWriter {
      */
     @Override
     void populateDomDocument(Class<?> componentClass, Element root) {
-        Dialog dialog = componentClass.getDeclaredAnnotation(Dialog.class);
-        PluginRuntime.context().getXmlUtility().mapProperties(root, dialog, XmlScope.CQ_DIALOG);
+        Annotation dialog = XmlScope.CQ_DIALOG.equals(scope) ? componentClass.getDeclaredAnnotation(Dialog.class)
+                : componentClass.getDeclaredAnnotation(DesignDialog.class);
+        PluginRuntime.context().getXmlUtility().mapProperties(root, dialog, scope);
         root.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.DIALOG);
 
-        DialogLayout dialogLayout = ArrayUtils.isEmpty(dialog.tabs()) ? dialog.layout() : DialogLayout.TABS;
+        DialogLayout dialogLayout = getLayout(dialog);
         DialogContainer.getContainer(dialogLayout).build(componentClass, root);
 
-        writeCommonProperties(componentClass, XmlScope.CQ_DIALOG);
+        writeCommonProperties(componentClass, scope);
         new DependsOnTabHandler().accept(root, componentClass);
         new CustomDialogAnnotationHandler().accept(root, componentClass);
+    }
+
+    private DialogLayout getLayout(Annotation annotation) {
+        if (XmlScope.CQ_DIALOG.equals(scope)) {
+            return ArrayUtils.isEmpty(((Dialog) annotation).tabs()) ? ((Dialog) annotation).layout() : DialogLayout.TABS;
+        } else {
+            return ArrayUtils.isEmpty(((DesignDialog) annotation).tabs()) ? ((DesignDialog) annotation).layout() : DialogLayout.TABS;
+        }
     }
 }

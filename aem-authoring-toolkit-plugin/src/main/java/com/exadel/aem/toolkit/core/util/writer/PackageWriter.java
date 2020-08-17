@@ -32,6 +32,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.project.MavenProject;
 import com.google.common.collect.ImmutableMap;
@@ -147,8 +148,8 @@ public class PackageWriter implements AutoCloseable {
             Transformer transformer = createTransformer();
             writers = Arrays.asList(
                     new ContentXmlWriter(documentBuilder, transformer),
-                    new CqDialogWriter(documentBuilder, transformer),
-                    new CqDesignDialogWriter(documentBuilder, transformer),
+                    new CqDialogWriter(documentBuilder, transformer, XmlScope.CQ_DIALOG),
+                    new CqDialogWriter(documentBuilder, transformer, XmlScope.CQ_DESIGN_DIALOG),
                     new CqEditConfigWriter(documentBuilder, transformer),
                     new CqChildEditConfigWriter(documentBuilder, transformer),
                     new CqHtmlTagWriter(documentBuilder, transformer)
