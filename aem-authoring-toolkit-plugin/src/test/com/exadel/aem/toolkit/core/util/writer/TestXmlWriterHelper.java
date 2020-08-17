@@ -15,6 +15,7 @@
 package com.exadel.aem.toolkit.core.util.writer;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import org.slf4j.Logger;
@@ -58,8 +59,8 @@ public class TestXmlWriterHelper {
             DocumentBuilder documentBuilder = PackageWriter.createDocumentBuilder();
             Transformer transformer = PackageWriter.createTransformer();
             writers.add(new ContentXmlWriter(documentBuilder, transformer));
-            writers.add(new CqDialogWriter(documentBuilder, transformer));
-            writers.add(new CqDesignDialogWriter(documentBuilder, transformer));
+            writers.add(new CqDialogWriter(documentBuilder, transformer, XmlScope.CQ_DIALOG));
+            writers.add(new CqDialogWriter(documentBuilder, transformer, XmlScope.CQ_DESIGN_DIALOG));
             writers.add(new CqEditConfigWriter(documentBuilder, transformer));
             writers.add(new CqChildEditConfigWriter(documentBuilder, transformer));
             writers.add(new CqHtmlTagWriter(documentBuilder, transformer));
@@ -78,6 +79,7 @@ public class TestXmlWriterHelper {
             try (StringWriter stringWriter = new StringWriter()) {
                 if (packageEntryWriter instanceof ContentXmlWriter) {
                     writeContent(packageEntryWriter, stringWriter, views);
+                    actualFiles.put(packageEntryWriter.getXmlScope().toString(), stringWriter.toString());
                     return;
                 }
                 List<Class<?>> processedClasses = views.stream().filter(packageEntryWriter::isProcessed).collect(Collectors.toList());
