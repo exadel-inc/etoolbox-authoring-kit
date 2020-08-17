@@ -175,10 +175,6 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_6;
                 ),
         }
 )
-@Component(
-        path = TestConstants.DEFAULT_COMPONENT_NAME,
-        views = DesignDialogView.class
-)
 @SuppressWarnings("unused")
 public class ComplexComponent1 {
     private static final String PREFIX_FIRST_PRIMARY_DIALOG = "primary1";
