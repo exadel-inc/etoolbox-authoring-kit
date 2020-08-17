@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.core.maven;
 
+import com.exadel.aem.toolkit.test.mvc.component.ClassicModel;
 import org.junit.Test;
 
 import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
@@ -58,5 +59,10 @@ public class DialogsTest extends DefaultTestBase {
     @Test
     public void testChildEditConfig() {
         test(ChildEditConfigAnnotation.class);
+    }
+
+    @Test
+    public void testMVC() {
+        test(ClassicModel.class, "mvc/component");
     }
 }
