@@ -17,6 +17,7 @@ package com.exadel.aem.toolkit.core.util.writer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 
+import com.exadel.aem.toolkit.api.annotations.main.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -24,6 +25,8 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+
+import java.lang.annotation.Annotation;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing component-wide attributes (writes data to the
@@ -56,7 +59,8 @@ class ContentXmlWriter extends PackageEntryWriter {
      */
     @Override
     boolean isProcessed(Class<?> componentClass) {
-        return componentClass.isAnnotationPresent(Dialog.class);
+        return componentClass.isAnnotationPresent(Dialog.class) ||
+                componentClass.isAnnotationPresent(Component.class);
     }
 
     /**
@@ -67,10 +71,15 @@ class ContentXmlWriter extends PackageEntryWriter {
      */
     @Override
     void populateDomDocument(Class<?> componentClass, Element root) {
-        Dialog dialog = componentClass.getDeclaredAnnotation(Dialog.class);
+        Annotation annotation = componentClass.getDeclaredAnnotation(Component.class);
+        if (annotation == null) {
+            annotation = componentClass.getDeclaredAnnotation(Dialog.class);
+        }
         root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT);
-        PluginRuntime.context().getXmlUtility().mapProperties(root, dialog, XmlScope.COMPONENT);
-        if(dialog.isContainer()) root.setAttribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
+        PluginRuntime.context().getXmlUtility().mapProperties(root, annotation, XmlScope.COMPONENT);
+        if (annotation instanceof Dialog && ((Dialog) annotation).isContainer()) {
+            root.setAttribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
+        }
         writeCommonProperties(componentClass, XmlScope.COMPONENT);
     }
 }
