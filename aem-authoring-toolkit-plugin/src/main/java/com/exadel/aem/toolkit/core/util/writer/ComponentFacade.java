@@ -48,6 +48,10 @@ public class ComponentFacade {
      */
     public void write(Path path) {
         writers.forEach(writer -> {
+            if (writer instanceof ContentXmlWriter) {
+                writeContent(writer, path);
+                return;
+            }
             List<Class<?>> processedClasses = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
             if (processedClasses.size() > 1) {
                 PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(EXCEPTION_MESSAGE_TEMPLATE, writer.getXmlScope())));
@@ -58,5 +62,24 @@ public class ComponentFacade {
             }
             writer.writeXml(processedClasses.get(0), path);
         });
+    }
+
+    private void writeContent(PackageEntryWriter writer, Path path) {
+        List<Class<?>> processedClasses = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
+        if (processedClasses.size() > 2) {
+            PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(EXCEPTION_MESSAGE_TEMPLATE, writer.getXmlScope())));
+            return;
+        }
+        if (processedClasses.size() == 2) {
+            if (processedClasses.get(0).getDeclaredAnnotation(Component.class) != null) {
+                writer.writeXml(processedClasses.get(0), path);
+            } else {
+                writer.writeXml(processedClasses.get(1), path);
+            }
+            return;
+        }
+        if (!processedClasses.isEmpty()) {
+            writer.writeXml(processedClasses.get(0), path);
+        }
     }
 }
