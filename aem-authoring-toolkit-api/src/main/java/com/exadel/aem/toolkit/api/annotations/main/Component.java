@@ -14,6 +14,12 @@
 
 package com.exadel.aem.toolkit.api.annotations.main;
 
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -56,4 +62,68 @@ public @interface Component {
      * @return Array {@code Class<?>} references, or an empty array
      */
     Class<?>[] views() default {};
+
+    /**
+     * When set to non-blank, maps to the 'jcr:description' attribute of the component's root node
+     * @return String value
+     */
+    @PropertyRendering(name = JcrConstants.PN_DESCRIPTION)
+    @PropertyScope(XmlScope.COMPONENT)
+    String description() default "";
+
+    /**
+     * When set to non-blank, maps to the 'cq:cellName' attribute of the component's root node
+     * @return String value
+     */
+    @PropertyRendering(name = JcrConstants.PN_CELL_NAME)
+    @PropertyScope(XmlScope.COMPONENT)
+    String cellName() default "";
+
+    /**
+     * When set to non-blank, maps to the 'componentGroup' attribute of the component root node
+     * @return String value
+     */
+    @PropertyScope(XmlScope.COMPONENT)
+    String componentGroup() default "";
+
+    /**
+     * Maps to the 'dialogPath' attribute of the component root node. Must represent a valid JCR path
+     * @return String value
+     */
+    @PropertyScope(XmlScope.COMPONENT)
+    @ValueRestriction(ValueRestrictions.JCR_PATH)
+    String dialogPath() default "";
+
+    /**
+     * When set to true, renders as the 'cq:noDecoration' attribute of the component root node with `true` value
+     * @return True or false
+     */
+    @PropertyRendering(name = JcrConstants.PN_NO_DECORATION, ignoreValues = "false")
+    @PropertyScope(XmlScope.COMPONENT)
+    boolean noDecoration() default false;
+
+    /**
+     * When set to non-blank, renders as the 'sling:resourceSuperType' attribute of the component root node
+     * @return String value
+     */
+    @PropertyRendering(name = JcrConstants.PN_RESOURCE_SUPER_TYPE)
+    @PropertyScope(XmlScope.COMPONENT)
+    String resourceSuperType() default "";
+
+    /**
+     * Maps to the 'cq:templatePath' attribute of the component root node. Must represent a valid JCR path
+     * @return String value
+     */
+    @PropertyRendering(name = JcrConstants.PN_TEMPLATE_PATH)
+    @PropertyScope(XmlScope.COMPONENT)
+    @ValueRestriction(ValueRestrictions.JCR_PATH)
+    String templatePath() default "";
+
+    /**
+     * When set to true, renders as the `disableTargeting` attribute of the component root node with `true` value
+     * @return True or false
+     */
+    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyRendering(ignoreValues = "false")
+    boolean disableTargeting() default false;
 }
