@@ -14,10 +14,7 @@
 
 package com.exadel.aem.toolkit.api.annotations.main;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
-import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
-import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
+import com.exadel.aem.toolkit.api.annotations.meta.*;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 
 import java.lang.annotation.ElementType;
@@ -44,6 +41,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@PropertyMapping
 public @interface Component {
 
     /**
@@ -53,6 +51,7 @@ public @interface Component {
      *
      * @return String value, non-blank
      */
+    @IgnorePropertyMapping
     String path();
 
     /**
@@ -61,6 +60,7 @@ public @interface Component {
      *
      * @return Array {@code Class<?>} references, or an empty array
      */
+    @IgnorePropertyMapping
     Class<?>[] views() default {};
 
     /**
@@ -126,4 +126,12 @@ public @interface Component {
     @PropertyScope(XmlScope.COMPONENT)
     @PropertyRendering(ignoreValues = "false")
     boolean disableTargeting() default false;
+
+    /**
+     * Maps to the 'jcr:title' attributes of the component root node
+     * @return String value, non-blank
+     */
+    @PropertyRendering(name = JcrConstants.PN_TITLE)
+    @ValueRestriction(ValueRestrictions.NOT_BLANK)
+    String title();
 }
