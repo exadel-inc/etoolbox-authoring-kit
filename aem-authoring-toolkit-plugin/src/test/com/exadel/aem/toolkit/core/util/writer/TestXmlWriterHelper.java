@@ -15,6 +15,8 @@
 package com.exadel.aem.toolkit.core.util.writer;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
+import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +30,12 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TestXmlWriterHelper {
     private static final Logger LOG = LoggerFactory.getLogger(TestXmlWriterHelper.class);
+
+    private static final String EXCEPTION_MESSAGE_TEMPLATE = "Can't choose view for %s";
 
     private TestXmlWriterHelper() {
     }
@@ -71,17 +76,45 @@ public class TestXmlWriterHelper {
         Optional.ofNullable(dialogClass.getAnnotation(Component.class)).ifPresent(component -> Collections.addAll(views, component.views()));
         writers.forEach(packageEntryWriter -> {
             try (StringWriter stringWriter = new StringWriter()) {
-                Class<?> processedClass = views.stream().filter(packageEntryWriter::isProcessed).findFirst().orElse(null);
-                if (processedClass == null) {
+                if (packageEntryWriter instanceof ContentXmlWriter) {
+                    writeContent(packageEntryWriter, stringWriter, views);
                     return;
                 }
-                packageEntryWriter.writeXml(processedClass, stringWriter);
+                List<Class<?>> processedClasses = views.stream().filter(packageEntryWriter::isProcessed).collect(Collectors.toList());
+                if (processedClasses.size() > 1) {
+                    PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
+                            String.format(EXCEPTION_MESSAGE_TEMPLATE, packageEntryWriter.getXmlScope())));
+                    return;
+                }
+                if (processedClasses.isEmpty()) {
+                    return;
+                }
+                packageEntryWriter.writeXml(processedClasses.get(0), stringWriter);
                 actualFiles.put(packageEntryWriter.getXmlScope().toString(), stringWriter.toString());
             } catch (IOException ex) {
                 LOG.error("Could not implement test writer", ex);
             }
         });
         return actualFiles;
+    }
+
+    private static void writeContent(PackageEntryWriter writer, StringWriter stringWriter, List<Class<?>> views) {
+        List<Class<?>> processedClasses = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
+        if (processedClasses.size() > 2) {
+            PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(EXCEPTION_MESSAGE_TEMPLATE, writer.getXmlScope())));
+            return;
+        }
+        if (processedClasses.size() == 2) {
+            if (processedClasses.get(0).getDeclaredAnnotation(Component.class) != null) {
+                writer.writeXml(processedClasses.get(0), stringWriter);
+            } else {
+                writer.writeXml(processedClasses.get(1), stringWriter);
+            }
+            return;
+        }
+        if (!processedClasses.isEmpty()) {
+            writer.writeXml(processedClasses.get(0), stringWriter);
+        }
     }
 
     private static Map<String, String> getExpectedFiles(Path componentsPath) {
