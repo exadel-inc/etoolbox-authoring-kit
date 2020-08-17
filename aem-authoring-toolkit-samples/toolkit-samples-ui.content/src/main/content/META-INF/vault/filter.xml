@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<workspaceFilter version="1.0">
-    <filter root="/content/aem-authoring-toolkit-samples" mood="merge"/>
-    <filter root="/content/cq:tags/films"/>
-    <filter root="/content/cq:tags/fruit"/>
-</workspaceFilter>
