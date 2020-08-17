@@ -81,7 +81,7 @@ class CqDesignDialogWriter extends PackageEntryWriter {
         DialogLayout dialogLayout = ArrayUtils.isEmpty(designDialog.tabs()) ? designDialog.layout() : DialogLayout.TABS;
         DialogContainer.getContainer(dialogLayout).build(componentClass, root);
 
-        writeCommonProperties(componentClass, XmlScope.CQ_DIALOG);
+        writeCommonProperties(componentClass, XmlScope.CQ_DESIGN_DIALOG);
         new DependsOnTabHandler().accept(root, componentClass);
         new CustomDialogAnnotationHandler().accept(root, componentClass);
     }
