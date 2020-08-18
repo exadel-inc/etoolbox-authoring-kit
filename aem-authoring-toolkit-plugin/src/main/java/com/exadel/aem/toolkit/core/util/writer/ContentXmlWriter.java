@@ -77,7 +77,8 @@ class ContentXmlWriter extends PackageEntryWriter {
         }
         root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT);
         PluginRuntime.context().getXmlUtility().mapProperties(root, annotation, XmlScope.COMPONENT);
-        if (annotation instanceof Dialog && ((Dialog) annotation).isContainer()) {
+        if (annotation instanceof Component && ((Component) annotation).isContainer()
+            || annotation instanceof Dialog && ((Dialog) annotation).isContainer()) {
             root.setAttribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
         }
         writeCommonProperties(componentClass, XmlScope.COMPONENT);
