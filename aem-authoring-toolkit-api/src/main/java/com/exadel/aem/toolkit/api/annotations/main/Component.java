@@ -23,7 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represents the back-end part of an AEM page component - an entity used to supply component metadata and
+ * Represents the back-end part of an AEM component - an entity used to supply component metadata and
  * {@code Adobe Granite}-compliant XML markup for the associated component authoring tools to the component folder
  * in AEM content package.<br><br>
  * <p>
@@ -134,4 +134,11 @@ public @interface Component {
     @PropertyRendering(name = JcrConstants.PN_TITLE)
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String title();
+
+    /**
+     * Renders as the 'isContainer' attribute of the component root node
+     * @return True or false
+     */
+    @IgnorePropertyMapping
+    boolean isContainer() default false;
 }
