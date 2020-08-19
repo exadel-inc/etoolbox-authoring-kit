@@ -7,7 +7,7 @@
     <artifactId>aem-authoring-toolkit-samples</artifactId>
     <groupId>com.exadel.aem</groupId>
     <name>AEM Authoring Toolkit - Samples</name>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.2.1</version>
 
     <packaging>pom</packaging>
 
@@ -24,7 +24,7 @@
         <port>4502</port>
         <serviceUrl>http://${host}:${port}/crx/packmgr/service.jsp</serviceUrl>
         <project.jcrAppFolder>authoring-toolkit/samples</project.jcrAppFolder>
-        <aat.version>1.2.1-SNAPSHOT</aat.version>
+        <aat.version>1.2.1</aat.version>
     </properties>
 
     <build>
@@ -92,6 +92,7 @@
 
     <dependencyManagement>
         <dependencies>
+
             <!-- Foreign -->
             <dependency>
                 <groupId>org.osgi</groupId>
