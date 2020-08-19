@@ -15,7 +15,27 @@
     <version>1.2.1-SNAPSHOT</version>
 
     <build>
-        <finalName>aem-dialog-plugin-sandbox-apps-${project.version}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/content/jcr_root</directory>
+                <excludes>
+                    <exclude>**/*.vlt/**</exclude>
+                    <exclude>**/*.vlt</exclude>
+                    <exclude>**/*.DS_Store</exclude>
+                </excludes>
+                <targetPath>.</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/content/META-INF</directory>
+                <excludes>
+                    <exclude>**/*.vlt/**</exclude>
+                    <exclude>**/*.vlt</exclude>
+                    <exclude>**/*.DS_Store</exclude>
+                </excludes>
+                <targetPath>../vault-work/META-INF</targetPath>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -27,7 +47,24 @@
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-install-plugin</artifactId>
+                <groupId>com.day.jcr.vault</groupId>
+                <artifactId>content-package-maven-plugin</artifactId>
+                <configuration>
+                    <embeddeds>
+                        <embedded>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>aem-authoring-toolkit-samples-core</artifactId>
+                            <target>/apps/${project.jcrAppFolder}/install</target>
+                        </embedded>
+                    </embeddeds>
+                    <subPackages>
+                        <subPackage>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>aem-authoring-toolkit-assets</artifactId>
+                            <filter>true</filter>
+                        </subPackage>
+                    </subPackages>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -36,52 +73,23 @@
         <profile>
             <id>install-samples</id>
             <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/content/jcr_root</directory>
-                        <excludes>
-                            <exclude>**/*.vlt/**</exclude>
-                            <exclude>**/*.vlt</exclude>
-                            <exclude>**/*.DS_Store</exclude>
-                        </excludes>
-                        <targetPath>.</targetPath>
-                    </resource>
-                    <resource>
-                        <directory>src/main/content/META-INF</directory>
-                        <excludes>
-                            <exclude>**/*.vlt/**</exclude>
-                            <exclude>**/*.vlt</exclude>
-                            <exclude>**/*.DS_Store</exclude>
-                        </excludes>
-                        <targetPath>../vault-work/META-INF</targetPath>
-                    </resource>
-                </resources>
                 <plugins>
                     <plugin>
                         <groupId>com.day.jcr.vault</groupId>
                         <artifactId>content-package-maven-plugin</artifactId>
-                        <configuration>
-                            <embeddeds>
-                                <embedded>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>aem-authoring-toolkit-samples-core</artifactId>
-                                    <target>/apps/${project.jcrAppFolder}/install</target>
-                                </embedded>
-                            </embeddeds>
-                            <subPackages>
-                                <subPackage>
-                                    <groupId>com.exadel.aem</groupId>
-                                    <artifactId>aem-authoring-toolkit-assets</artifactId>
-                                    <filter>true</filter>
-                                </subPackage>
-                            </subPackages>
-                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>Installing AEM package</id>
+                                <goals>
+                                    <goal>install</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                     <plugin>
                         <groupId>com.exadel.aem</groupId>
                         <artifactId>aem-authoring-toolkit-plugin</artifactId>
                         <configuration>
-                            <!-- Place here the path to the node under which your component nodes are stored -->
                             <componentsPathBase>jcr_root/apps/${project.jcrAppFolder}/components</componentsPathBase>
                         </configuration>
                     </plugin>
@@ -100,9 +108,9 @@
             <artifactId>aem-authoring-toolkit-samples-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.exadel.aem</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>aem-authoring-toolkit-assets</artifactId>
-            <type>content-package</type>
+            <type>zip</type>
         </dependency>
     </dependencies>
 </project>
