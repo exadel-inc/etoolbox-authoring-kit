@@ -100,10 +100,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>aem-authoring-toolkit-samples-core</artifactId>
         </dependency>
