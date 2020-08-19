@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>aem-authoring-toolkit-samples</artifactId>
+        <groupId>com.exadel.aem</groupId>
+        <version>1.2.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>aem-authoring-toolkit-samples-content</artifactId>
+    <name>AEM Authoring Toolkit - Samples Content</name>
+    <version>1.2.1-SNAPSHOT</version>
+
+    <build>
+        <finalName>aem-dialog-plugin-sandbox-content-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-install-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>install-samples</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/content/jcr_root</directory>
+                        <excludes>
+                            <exclude>**/*.vlt/**</exclude>
+                            <exclude>**/*.vlt</exclude>
+                            <exclude>**/*.DS_Store</exclude>
+                        </excludes>
+                        <targetPath>.</targetPath>
+                    </resource>
+                    <resource>
+                        <directory>src/main/content/META-INF</directory>
+                        <excludes>
+                            <exclude>**/*.vlt/**</exclude>
+                            <exclude>**/*.vlt</exclude>
+                            <exclude>**/*.DS_Store</exclude>
+                        </excludes>
+                        <targetPath>../vault-work/META-INF</targetPath>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>com.day.jcr.vault</groupId>
+                        <artifactId>content-package-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
