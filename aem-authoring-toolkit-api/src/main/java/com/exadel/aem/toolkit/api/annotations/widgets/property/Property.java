@@ -13,14 +13,20 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.property;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.annotation.Repeatable;
 
 /**
  * Represent a name-value pair to be rendered as a TouchUI Dialog element attribute and its value
  * @see Properties
  */
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(Properties.class)
+@SuppressWarnings("unused")
 public @interface Property {
     /**
      * Indicates the attribute name

@@ -20,14 +20,19 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
+import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+
 @Dialog(
-        name = "test-component",
-        title = "test-component-dialog",
+        name = DEFAULT_COMPONENT_NAME,
+        title = "MultiField Widget Dialog",
         layout = DialogLayout.FIXED_COLUMNS
 )
 @SuppressWarnings("unused")
 public class MultiFieldWidget {
-    @DialogField(label="Multi")
+    @DialogField(
+            label="Multifield Label",
+            description = "Multifield Description"
+    )
     @MultiField(field = MultiFieldContainer.class)
     String multiField;
 

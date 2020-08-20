@@ -13,23 +13,17 @@
  */
 package com.exadel.aem.toolkit.core.util.validation;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.util.Arrays;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ClassUtils;
-
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
+import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 
 /**
  *  {@link Validator} implementation for testing that provided character range is valid
  */
 public class CharactersObjectValidator extends AllNotBlankValidator {
     private static final String MSG_VALID_PARAMS_EXPECTED = "a character range (start < end) or entity definition must be set";
-    private static final String METHOD_TO_STRING = "toString";
-    private static final String METHOD_ANNOTATION_TYPE = "annotationType";
     private static final String METHOD_RANGE_START = "rangeStart";
     private static final String METHOD_RANGE_END = "rangeEnd";
     private static final String METHOD_NAME = "name";
@@ -45,7 +39,10 @@ public class CharactersObjectValidator extends AllNotBlankValidator {
         if (super.test(obj)) {
             return true;
         }
-        Characters characters = (Characters)obj;
+        if (!isApplicableTo(obj)) {
+            return false;
+        }
+        Characters characters = (Characters) obj;
         return characters.rangeStart() > 0 && characters.rangeEnd() > characters.rangeStart();
     }
 
@@ -56,55 +53,26 @@ public class CharactersObjectValidator extends AllNotBlankValidator {
      */
     @Override
     public boolean isApplicableTo(Object obj) {
-        return ClassUtils.isAssignable(obj.getClass(), Characters.class);
+        return obj instanceof Characters;
     }
 
     /**
-     * Filters out {@code Characters} instances with redundant data
-     * @param obj {@code Characters} annotation instance
-     * @return Filtered value
+     * Gets a {@code Characters} annotation instance with redundant data filtered out based on the result
+     * of {@link AllNotBlankValidator#test(Object)} and {@link CharactersObjectValidator#test(Object)}
+     * @param source Source {@code Characters} annotation
+     * @return Filtered {@code Characters} value:
+     * either with the two of "name" and "entity" String fields set, while the numeric fields are nilled,
+     * or with the two "rangeStart" and "rangeEnd" numeric fields set, while String fields are voided
      */
-    @Override
-    public Object getFilteredValue(Object obj) {
-        if (super.test(obj)) {
-            return getCharactersProxyInstance(obj, new String[]{METHOD_NAME, METHOD_ENTITY});
+    public Characters getFilteredInstance(Characters source) {
+        if (super.test(source)) {
+            return PluginObjectUtility.filter(source, Characters.class, Arrays.asList(METHOD_RANGE_START, METHOD_RANGE_END));
         }
-        return getCharactersProxyInstance(obj, new String[]{METHOD_RANGE_START, METHOD_RANGE_END});
+        return PluginObjectUtility.filter(source, Characters.class, Arrays.asList(METHOD_NAME, METHOD_ENTITY));
     }
 
     @Override
     public String getWarningMessage() {
         return MSG_VALID_PARAMS_EXPECTED;
-    }
-
-    /**
-     * Utility method for creating {@code Characters}-compatible instance at runtime
-     */
-    private static Characters getCharactersProxyInstance(Object source, String[] setFields) {
-        return (Characters) Proxy.newProxyInstance(Characters.class.getClassLoader(),
-                new Class[]{Characters.class},
-                getProxyInvocationHandler(source, setFields)
-        );
-    }
-
-    /**
-     * Utility method to get invocation handler for {@link CharactersObjectValidator#getCharactersProxyInstance(Object, String[])} routine
-     */
-    private static InvocationHandler getProxyInvocationHandler(Object source, String[] setFields) {
-        return (proxy, method, args) -> {
-            if (method.getName().equals(METHOD_ANNOTATION_TYPE)) {
-                return Characters.class; // for XmlUtil introspection
-            }
-            if (method.getName().equals(METHOD_TO_STRING)) {
-                return Characters.class.getCanonicalName(); // for debugging
-            }
-            Method baseMethod = ArrayUtils.contains(setFields, method.getName())
-                    ? Characters.class.getDeclaredMethod(method.getName())
-                    : null;
-            if (baseMethod == null) {
-                return method.getReturnType().equals(String.class) ? "" : 0L;
-            }
-            return baseMethod.invoke(source);
-        };
     }
 }

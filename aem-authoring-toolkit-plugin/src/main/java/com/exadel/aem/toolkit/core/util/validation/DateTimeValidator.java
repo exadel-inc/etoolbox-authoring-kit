@@ -13,17 +13,9 @@
  */
 package com.exadel.aem.toolkit.core.util.validation;
 
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.Temporal;
-
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
+import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
+import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 
 /**
  * {@link Validator} implementation for testing that provided DateTimeValue is valid
@@ -38,7 +30,10 @@ public class DateTimeValidator implements Validator {
      */
     @Override
     public boolean test(Object obj) {
-        return getDateTimeInstance(obj) != null;
+        if (!isApplicableTo(obj)) {
+            return false;
+        }
+        return PluginObjectUtility.getDateTimeInstance(obj) != null;
     }
 
     /**
@@ -48,39 +43,11 @@ public class DateTimeValidator implements Validator {
      */
     @Override
     public boolean isApplicableTo(Object obj) {
-        return ClassUtils.isAssignable(obj.getClass(), DateTimeValue.class);
-    }
-
-    /**
-     * Filters out {@code DateTimeValue} with insufficient and/or erroneous data
-     * @param obj {@code DateTimeValue} annotation instance
-     * @return Filtered value
-     */
-    @Override
-    public Object getFilteredValue(Object obj) {
-        return getDateTimeInstance(obj);
+        return obj instanceof DateTimeValue;
     }
 
     @Override
     public String getWarningMessage() {
         return MSG_DATETIME_EXPECTED;
     }
-
-    /**
-     * Utility method to create Java {@code Temporal} from {@code DateTimeValue} annotation
-     * @param obj {@code DateTimeValue} annotation instance
-     * @return Canonical Temporal instance, or null
-     */
-    private static Temporal getDateTimeInstance(Object obj) {
-        DateTimeValue dt = (DateTimeValue)obj;
-        try {
-            if (StringUtils.isNotBlank(dt.timezone())) { // the following induces exception if any of DateTime parameters is invalid
-                return ZonedDateTime.of(dt.year(), dt.month(), dt.day(), dt.hour(), dt.minute(), 0, 0, ZoneId.of(dt.timezone()));
-            }
-            return LocalDateTime.of(dt.year(), dt.month(), dt.day(), dt.hour(), dt.minute());
-        } catch (DateTimeException e) {
-            return null;
-        }
-    }
-
 }

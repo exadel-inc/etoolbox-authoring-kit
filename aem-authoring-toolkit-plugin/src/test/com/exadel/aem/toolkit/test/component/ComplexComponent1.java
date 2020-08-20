@@ -30,16 +30,25 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.core.util.TestConstants;
+
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_1;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_2;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_3;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_4;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_5;
+import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_6;
 
 @Dialog(
-        name = "test-component",
-        title = "Component",
+        name = TestConstants.DEFAULT_COMPONENT_NAME,
+        title = TestConstants.DEFAULT_COMPONENT_TITLE,
         description = "test component",
-        componentGroup = "test_component_group",
+        componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
         resourceSuperType = "resource/super/type",
         disableTargeting = true,
         isContainer = true,
@@ -50,13 +59,12 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
                 "cq.wcm.msm.properties"
         },
         tabs = {
-                @Tab(title = "Tab_1"),
-                @Tab(title = "Tab_2"),
-                @Tab(title = "Tab_3"),
-                @Tab(title = "Tab_4"),
-                @Tab(title = "Tab_5"),
-                @Tab(title = "Tab_6"),
-                @Tab(title = "Tab_7")
+                @Tab(title = LABEL_TAB_1),
+                @Tab(title = LABEL_TAB_2),
+                @Tab(title = LABEL_TAB_3),
+                @Tab(title = LABEL_TAB_4, attribute = @Attribute(hidden = true, rel = "me")),
+                @Tab(title = LABEL_TAB_5),
+                @Tab(title = LABEL_TAB_6)
         }
 )
 @EditConfig(
@@ -102,7 +110,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
                 ),
                 @InplaceEditingConfig(
                         title = "Primary Topic 1 Title",
-                        propertyName = "primary1_topicTitle",
+                        propertyName = "../primary1_topicTitle",
                         type = "Primary_type",
                         editElementQuery = ".editable-prtopic1title"
                 ),
@@ -168,41 +176,39 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
         }
 )
 @SuppressWarnings("unused")
-public class ComplexComponent1 {
-    private static final String TAB_TOPIC_1 = "Topic 1";
-    private static final String TAB_TOPIC_2 = "Topic 2";
-    private static final String TAB_TOPIC_3 = "Topic 3";
-    private static final String TAB_ADDITIONAL_TOPICS = "Additional Topics";
-
+public class ComplexComponent1 extends ComplexComponent1Parent {
     private static final String PREFIX_FIRST_PRIMARY_DIALOG = "primary1";
     private static final String PREFIX_SECOND_PRIMARY_DIALOG = "primary2";
     private static final String PREFIX_THIRD_PRIMARY_DIALOG = "primary3";
-    private static final String PREFIX_FIRST_EXAMPLE_DIALOG = "secondary1";
+
+    private static final String PREFIX_FIRST_SECONDARY_DIALOG = "secondary1";
     private static final String PREFIX_SECOND_SECONDARY_DIALOG = "secondary2";
 
-    private static final String FIELDSET_TITLE_FIRST_EXAMPLE_DIALOG = "Additional Topic #1";
-    private static final String TITLE_SECOND_EXAMPLE_DIALOG = "Additional Topic #2";
+    private static final String TITLE_FIRST_SECONDARY_DIALOG = "Additional Topic #1";
+    private static final String TITLE_SECOND_SECONDARY_DIALOG = "Additional Topic #2";
 
-    private static final String FIELD_FIRST_SECONDARY_ENABLED = "firstSecondaryEnabled";
+    private static final String FIELD_FIRST_SECONDARY_DIALOG_ENABLED = "firstSecondaryDialogEnabled";
 
-    private static final String SECOND_EXAMPLE_DIALOG_ENABLED = "secondSecondaryEnabled";
+    private static final String FIELD_SECOND_SECONDARY_DIALOG_ENABLED = "secondSecondaryDialogEnabled";
 
-    private static final String LABEL_SECONDARY_ENABLED = "Enable Additional Topic?";
+    private static final String LABEL_SECONDARY_DIALOG_ENABLED = "Enable Additional Topic?";
 
     @DialogField(
-            name = "first_field",
+            name = "field_with_colon_at_the_end:",
             label = "First field label",
             description = "First field description",
+            validation = "foundation.jcr.name",
             required = true
     )
     @TextField
-    @PlaceOnTab("Tab_1")
+    @PlaceOnTab(LABEL_TAB_1)
     private String firstField;
 
     @DialogField(
-            name = "second_field",
+            name = "field_with_slash_at_the_end/",
             label = "Second field label",
-            description = "Second field description"
+            description = "Second field description",
+            validation = {"foundation.jcr.name1", "foundation.jcr.name2"}
     )
     @RichTextEditor(
             features = {
@@ -212,11 +218,11 @@ public class ComplexComponent1 {
                     RteFeatures.SUBSUPERSCRIPT_SUPERSCRIPT
             }
     )
-    @PlaceOnTab("Tab_1")
+    @PlaceOnTab(LABEL_TAB_1)
     private String secondField;
 
     @DialogField(
-            name = "third_Field",
+            name = "field_with:namespace",
             label = "Third field label",
             description = "Third field description",
             required = true
@@ -228,57 +234,57 @@ public class ComplexComponent1 {
                     @Option(text = "Third", value = "3"),
                     @Option(text = "Fourth", value = "4")
             })
-    @PlaceOnTab("Tab_1")
+    @PlaceOnTab(LABEL_TAB_1)
     private String thirdField;
 
     @DialogField
     @FieldSet(namePrefix = PREFIX_FIRST_PRIMARY_DIALOG)
-    @PlaceOnTab(TAB_TOPIC_1)
+    @PlaceOnTab(LABEL_TAB_2)
     private SampleFieldsetBase2 firstPrimaryDialog;
 
     @DialogField
     @FieldSet(namePrefix = PREFIX_SECOND_PRIMARY_DIALOG)
-    @PlaceOnTab(TAB_TOPIC_2)
+    @PlaceOnTab(LABEL_TAB_2)
     private SampleFieldsetBase2 secondPrimaryDialog;
 
     @DialogField
     @FieldSet(namePrefix = PREFIX_THIRD_PRIMARY_DIALOG)
-    @PlaceOnTab(TAB_TOPIC_3)
+    @PlaceOnTab(LABEL_TAB_2)
     private SampleFieldsetBase2 thirdPrimaryDialog;
 
     @DialogField(
-            name = FIELD_FIRST_SECONDARY_ENABLED,
-            label = LABEL_SECONDARY_ENABLED
+            name = FIELD_FIRST_SECONDARY_DIALOG_ENABLED,
+            label = LABEL_SECONDARY_DIALOG_ENABLED
     )
     @Switch
     @DependsOnRef(name = "first")
-    @PlaceOnTab(TAB_ADDITIONAL_TOPICS)
-    private boolean firstDialogEnabled;
+    @PlaceOnTab(LABEL_TAB_3)
+    private boolean firstSecondaryDialogEnabled;
 
     @DialogField
     @FieldSet(
-            title = FIELDSET_TITLE_FIRST_EXAMPLE_DIALOG,
-            namePrefix = PREFIX_FIRST_EXAMPLE_DIALOG
+            title = TITLE_FIRST_SECONDARY_DIALOG,
+            namePrefix = PREFIX_FIRST_SECONDARY_DIALOG
     )
     @DependsOn(query = "@first")
-    @PlaceOnTab(TAB_ADDITIONAL_TOPICS)
-    private SampleFieldsetAncestor firstExampleDialog;
+    @PlaceOnTab(LABEL_TAB_3)
+    private SampleFieldsetAncestor firstSecondaryDialog;
 
     @DialogField(
-            name = SECOND_EXAMPLE_DIALOG_ENABLED,
-            label = LABEL_SECONDARY_ENABLED
+            name = FIELD_SECOND_SECONDARY_DIALOG_ENABLED,
+            label = LABEL_SECONDARY_DIALOG_ENABLED
     )
     @Switch
-    @PlaceOnTab(TAB_ADDITIONAL_TOPICS)
-    private boolean secondExampleDialogEnabled;
+    @PlaceOnTab(LABEL_TAB_3)
+    private boolean secondSecondaryDialogEnabled;
 
     @DialogField
     @FieldSet(
-            title = TITLE_SECOND_EXAMPLE_DIALOG,
+            title = TITLE_SECOND_SECONDARY_DIALOG,
             namePrefix = PREFIX_SECOND_SECONDARY_DIALOG
     )
-    @PlaceOnTab(TAB_ADDITIONAL_TOPICS)
-    private SampleFieldsetAncestor secondExampleDialogDialog;
+    @PlaceOnTab(LABEL_TAB_3)
+    private SampleFieldsetAncestor secondSecondaryDialog;
 
     @DialogField(
             name = "first_number_field",
@@ -287,8 +293,8 @@ public class ComplexComponent1 {
     )
     @TextField
     @NumberField(min = 0)
-    @PlaceOnTab("Tab_6")
-    private Integer exampleFirstNumberField;
+    @PlaceOnTab(LABEL_TAB_5)
+    private Integer sampleFirstNumberField;
 
     @DialogField(
             name = "second_number_field",
@@ -297,11 +303,22 @@ public class ComplexComponent1 {
     )
     @TextField
     @NumberField(min = 0)
-    @PlaceOnTab("Tab_6")
-    private Integer exampleSecondNumberField;
+    @PlaceOnTab(LABEL_TAB_5)
+    private Integer sampleSecondNumberField;
 
     @DialogField
     @FieldSet
-    @PlaceOnTab("Tab_7")
-    private SampleFieldsetBase3 exampleFieldSet;
+    @PlaceOnTab(LABEL_TAB_6)
+    private SampleFieldsetBase3 sampleFieldSet;
+}
+
+@Dialog(
+        name = TestConstants.DEFAULT_COMPONENT_NAME + "-parent",
+        title = TestConstants.DEFAULT_COMPONENT_TITLE,
+        tabs = {
+                @Tab(title = LABEL_TAB_3),
+                @Tab(title = LABEL_TAB_2)
+        }
+)
+abstract class ComplexComponent1Parent {
 }

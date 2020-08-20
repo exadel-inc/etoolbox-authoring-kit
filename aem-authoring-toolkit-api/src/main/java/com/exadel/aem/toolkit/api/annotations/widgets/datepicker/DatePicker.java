@@ -44,11 +44,6 @@ public @interface DatePicker {
      */
     String emptyText() default "";
     /**
-     * Maps to the 'validation' attribute of this TouchUI dialog component's node.
-     * @return String value or an array of strings
-     */
-    String[] validation() default {};
-    /**
      * Maps to the 'type' attribute of this TouchUI dialog component's node.
      * Used the specify whether this DatePicker allows to pick date, time, or both
      * @see DatePickerType

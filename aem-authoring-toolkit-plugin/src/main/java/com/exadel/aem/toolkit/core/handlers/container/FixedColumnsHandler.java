@@ -18,13 +18,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import org.w3c.dom.Element;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
+import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 
 /**
  * The {@link Handler} for a fixed-columns TouchUI dialog.
@@ -46,7 +47,7 @@ public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Elemen
         );
         Element contentItems = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
 
-        Element column = getXmlUtil().createNodeElement(
+        Element contentItemsColumn = getXmlUtil().createNodeElement(
                 DialogConstants.NN_COLUMN,
                 Collections.singletonMap(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER)
         );
@@ -56,9 +57,9 @@ public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Elemen
         content.appendChild(layout);
         content.appendChild(contentItems);
 
-        contentItems.appendChild(column);
+        contentItems.appendChild(contentItemsColumn);
 
-        List<Field> allFields = PluginReflectionUtility.getAllNonStaticFields(componentClass);
-        Handler.appendToContainer(allFields, column);
+        List<Field> allFields = PluginReflectionUtility.getAllFields(componentClass);
+        PluginXmlContainerUtility.append(contentItemsColumn, allFields);
     }
 }

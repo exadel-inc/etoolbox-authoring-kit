@@ -18,10 +18,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnoreValue;
+import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
@@ -36,8 +38,11 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @PropertyMapping
 @SuppressWarnings("unused")
 public @interface TextArea {
-    String name() default "";
-
+    /**
+     * When set to a non-blank string, maps to the 'value' attribute of this TouchUI dialog component's node
+     * Used to define default value for a TextField
+     * @return String value
+     */
     String value() default "";
     /**
      * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
@@ -57,14 +62,15 @@ public @interface TextArea {
      * @return Long value
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
-    long maxlength() default Long.MAX_VALUE;
+    @PropertyRendering(ignoreValues = "0")
+    long maxlength() default 0;
     /**
      * Maps to the 'cols' attribute of this TouchUI dialog component's node.
      * Sets the visible width of the text control, in average character widths
      * @return Long values
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
-    @IgnoreValue("1")
+    @PropertyRendering(ignoreValues = "1")
     long cols() default 1;
     /**
      * Maps to the 'rows' attribute of this TouchUI dialog component's node.
@@ -74,15 +80,11 @@ public @interface TextArea {
     @ValueRestriction(ValueRestrictions.POSITIVE)
     long rows() default 5;
     /**
-     * Maps to the 'validation' attribute of this TouchUI dialog component's node.
-     * @return String value or an array of strings
-     */
-    String[] validation() default "";
-    /**
      * Maps to the 'resize' attribute of this TouchUI dialog component's node.
      * Sets the resizing type of this TextArea
      * @see TextAreaResizeType
      * @return One of {@code TextAreaResizeType} values
      */
+    @EnumValue(transformation = StringTransformation.LOWERCASE)
     TextAreaResizeType resize() default TextAreaResizeType.NONE;
 }

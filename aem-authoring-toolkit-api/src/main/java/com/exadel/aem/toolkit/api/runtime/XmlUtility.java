@@ -13,6 +13,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 /**
  * An abstraction of class encapsulating routines for XML generation and handling
  */
+@SuppressWarnings("unused")
 public interface XmlUtility {
     /**
      * Creates named XML {@code Element} node with default JCR type
@@ -166,15 +167,6 @@ public interface XmlUtility {
      * @param skippedFields List of field names to skip
      */
     void mapProperties(Element element, Annotation annotation, List<String> skippedFields);
-
-    /**
-     * Appends to the current {@code Element} node and returns a child {@code datasource} node bearing link to an ACS Commons list
-     * @param element Element to store data in
-     * @param path Path to ACS Commons List in JCR repository
-     * @param resourceType Use this to set {@code sling:resourceType} of data source, other than standard
-     * @return Appended {@code datasource} node
-     */
-    Element appendAcsCommonsList(Element element, String path, String resourceType);
 
     /**
      * Appends {@link Data} values to an {@code Element} node, storing them within {@code granite:data} predefined subnode

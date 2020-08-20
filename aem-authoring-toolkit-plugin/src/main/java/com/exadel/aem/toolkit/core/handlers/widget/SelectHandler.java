@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.lang.reflect.Field;
@@ -28,13 +29,16 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * {@link Handler} implementation used to create markup responsible for Granite {@code Select} widget functionality
  * within the {@code cq:dialog} XML node
  */
-public class SelectHandler implements Handler, BiConsumer<Element, Field> {
+class SelectHandler implements Handler, BiConsumer<Element, Field> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
      * @param field Current {@code Field} instance
      */
     @Override
+    @SuppressWarnings({"deprecation", "squid:S1874"})
+    // .acsListPath() and .acsListResourceType() method calls, as well as .addNoneOption() processing
+    // remain for compatibility reasons until v.2.0.0
     public void accept(Element element, Field field) {
         Select select = field.getAnnotation(Select.class);
         if (ArrayUtils.isNotEmpty(select.options())) {
@@ -45,9 +49,14 @@ public class SelectHandler implements Handler, BiConsumer<Element, Field> {
                 getXmlUtil().mapProperties(item, option);
             }
         }
-        Element datasource = getXmlUtil().appendAcsCommonsList(element, select.acsListPath(), select.acsListResourceType());
-        if (datasource != null && select.addNoneOption()) {
-            getXmlUtil().setAttribute(datasource, DialogConstants.PN_ADD_NONE, true);
+        Element dataSourceElement = getXmlUtil().appendDataSource(
+                element,
+                select.datasource(),
+                select.acsListPath(),
+                select.acsListResourceType());
+        if (dataSourceElement != null && select.addNoneOption()) {
+            getXmlUtil().setAttribute(dataSourceElement, DialogConstants.PN_ADD_NONE, true);
         }
+
     }
 }

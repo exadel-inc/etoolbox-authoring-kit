@@ -18,9 +18,11 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 
+import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+
 @Dialog(
-        name = "test-component",
-        title = "test-component-dialog",
+        name = DEFAULT_COMPONENT_NAME,
+        title = "Nested CheckboxList Widget Dialog",
         layout = DialogLayout.FIXED_COLUMNS
 )
 @SuppressWarnings("unused")

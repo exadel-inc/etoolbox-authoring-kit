@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.2
+ * @version 2.4.1
  *
  * DependsOn plugin entry point
  *
@@ -11,6 +11,9 @@
 
     const $window = $(window);
     const $document = $(document);
+
+    // Version to track actual DependsOn version from code/browser console
+    ns.version = '2.4.1';
 
     /**
      * Depends On entry point
@@ -38,14 +41,21 @@
         .on('foundation-contentloaded.dependsOn', (e) => ns.initialize(e && e.target || document));
 
     // Track reference field changes
+    const handleChange = ns.ElementReferenceRegistry.handleChange;
     $document
-        .off('change.dependsOn').on('change.dependsOn', '[data-dependsonref]', ns.ElementReferenceRegistry.handleChange)
-        .off('selected.dependsOn').on('selected.dependsOn', '[data-dependsonref]', ns.ElementReferenceRegistry.handleChange);
+        .off('change.dependsOn').on('change.dependsOn', '[data-dependsonref]', handleChange)
+        .off('selected.dependsOn').on('selected.dependsOn', '[data-dependsonref]', handleChange);
+
+    // Track input event
+    const handleChangeDebounced = $.debounce(750, handleChange);
+    $document
+        .off('input.dependsOn').on('input', '[data-dependsonref]:not([data-dependsonreflazy])', handleChangeDebounced);
 
     // Track collection change to update dynamic references
     $document
-        .off('coral-collection:remove.dependsOn').on('coral-collection:remove.dependsOn', 'coral-multifield', () => {
-            // We should actualize references on coral-collection:remove too.
+        .off('coral-collection:remove.dependsOn coral-collection:add.dependsOn').on('coral-collection:remove.dependsOn coral-collection:add.dependsOn', 'coral-multifield', (e) => {
+            // We should actualize references on coral-collection:remove and coral-collection:add too.
+            ns.ElementReferenceRegistry.handleChange(e);
             ns.ElementReferenceRegistry.actualize();
             ns.GroupReferenceRegistry.actualize();
         });

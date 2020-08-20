@@ -14,23 +14,13 @@
 
 package com.exadel.aem.toolkit.core.handlers;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
-import org.w3c.dom.Element;
-
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
-import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
-import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 
 /**
  * Manifests the common interface for AEM Authoring Toolkit plugin {@code widget}s', {@code editConfig}s',
- * {@code container}s' handlers. Encapsulates utility methods for fitting containers and widgets together
+ * {@code container}s' handlers
  */
 public interface Handler {
     /**
@@ -39,37 +29,5 @@ public interface Handler {
      */
     default PluginXmlUtility getXmlUtil() {
         return PluginRuntime.context().getXmlUtility();
-    }
-
-    /**
-     * Processes the specified {@link Field}s and appends the generated XML markup to the specified container element
-     * @param fields List of {@code Field}s of a component's Java class
-     * @param containerElement XML definition of a pre-defined widget container
-     */
-    static void appendToContainer(List<Field> fields, Element containerElement) {
-        appendToContainer(fields, containerElement, true);
-    }
-
-    /**
-     * Processes the specified {@link Field}s and appends the generated XML markup to the specified container element
-     * @param fields List of {@code Field}s of a component's Java class
-     * @param containerElement XML definition of a pre-defined widget container
-     * @param setResourceType True if particular {@code sling:resourceType} value must be set to the container element;
-     *                        otherwise, false
-     */
-    static void appendToContainer(List<Field> fields, Element containerElement, boolean setResourceType){
-        if (setResourceType) {
-            containerElement.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER);
-        }
-        Element itemsElement = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_ITEMS);
-        containerElement.appendChild(itemsElement);
-
-        for (Field field : fields) {
-            DialogWidget widget = DialogWidgets.fromField(field);
-            if (widget == null) {
-                continue;
-            }
-            widget.append(itemsElement, field);
-        }
     }
 }

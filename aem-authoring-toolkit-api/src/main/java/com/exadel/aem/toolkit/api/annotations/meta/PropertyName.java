@@ -22,10 +22,13 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 
 /**
  * Used to override name of annotation property which is equal to {@code Field} name by default, and/or name prefix
+ *
+ * @deprecated This will be removed starting from version 2.0.0. Please use {@link PropertyRendering} instead
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@SuppressWarnings("unused")
+@Deprecated
+@SuppressWarnings("squid:S1133")
 public @interface PropertyName {
     /**
      * Maps to the 'name' attribute of a field node

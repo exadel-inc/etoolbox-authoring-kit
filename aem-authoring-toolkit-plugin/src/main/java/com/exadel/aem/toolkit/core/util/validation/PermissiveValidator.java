@@ -35,14 +35,6 @@ public final class PermissiveValidator implements Validator {
         return true;
     }
 
-    /**
-     * {@inheritDoc}. In {@code PermissiveValidator}, defines the zero-change function
-     */
-    @Override
-    public Object getFilteredValue(Object obj) {
-        return obj;
-    }
-
     @Override
     public String getWarningMessage() {
         return null;

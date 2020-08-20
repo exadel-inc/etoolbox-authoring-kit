@@ -2,17 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>aem-authoring-toolkit</artifactId>
         <groupId>com.exadel.aem</groupId>
-        <version>1.1.0</version>
+        <version>1.2.1</version>
     </parent>
-    <packaging>jar</packaging>
-    <modelVersion>4.0.0</modelVersion>
 
     <name>${project.prettyName} API</name>
-
     <artifactId>aem-authoring-toolkit-api</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <sonar.coverage.jacoco.xmlReportPaths>../${project.parent.artifactId}-plugin/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+    </properties>
 
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -40,42 +44,36 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>deploy</id>
+
+        <profile><id>test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile><id>deploy</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution><id>attach-sources</id>
-                                <phase>package</phase>
-                                <goals><goal>jar-no-fork</goal></goals>
-                            </execution>
-                        </executions>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution><id>attach-javadoc</id>
-                                <phase>package</phase>
-                                <goals><goal>jar</goal></goals>
-                            </execution>
-                        </executions>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution><id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals><goal>sign</goal></goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
         </profile>
+
     </profiles>
 </project>

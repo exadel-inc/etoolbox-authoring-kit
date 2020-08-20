@@ -24,15 +24,18 @@ import org.w3c.dom.Element;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
 import com.exadel.aem.toolkit.api.annotations.widgets.Hidden;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
+import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
+import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
@@ -52,6 +55,7 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
  */
 public enum DialogWidgets implements DialogWidget {
     TEXT_FIELD(TextField.class),
+    TAG_FIELD(TagField.class),
     CHECKBOX(Checkbox.class, new CheckboxHandler()),
     SELECT(Select.class, new SelectHandler()),
     PATH_FIELD(PathField.class),
@@ -63,13 +67,15 @@ public enum DialogWidgets implements DialogWidget {
     SWITCH(Switch.class),
     DATE_PICKER(DatePicker.class, new DatePickerHandler()),
     FILE_UPLOAD(FileUpload.class),
-    IMAGE_UPLOAD(ImageUpload.class),
+    IMAGE_UPLOAD(ImageUpload.class, new ImageUploadHandler()),
     TEXT_AREA(TextArea.class),
     RICH_TEXT_EDITOR(RichTextEditor.class, new RichTextEditorHandler()),
     HIDDEN(Hidden.class),
     AUTOCOMPLETE(Autocomplete.class, new AutocompleteHandler()),
     PASSWORD(Password.class, new PasswordHandler()),
-    ALERT(Alert.class);
+    HEADING(Heading.class),
+    ALERT(Alert.class),
+    BUTTON(Button.class);
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";
     private static final BiConsumer<Element, Field> EMPTY_HANDLER = (componentNode, field) -> {};
@@ -119,7 +125,7 @@ public enum DialogWidgets implements DialogWidget {
             return new CustomDialogWidget(fieldAnnotationClass);
         }
         DialogWidgets result = Arrays.stream(values())
-                .filter(dialogComponent -> fieldAnnotationClass.equals(dialogComponent.getAnnotationClass()))
+                .filter(dialogWidget -> fieldAnnotationClass.equals(dialogWidget.getAnnotationClass()))
                 .findFirst()
                 .orElse(null);
         if (result == null) {

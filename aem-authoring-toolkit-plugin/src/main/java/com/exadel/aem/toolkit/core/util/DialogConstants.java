@@ -19,10 +19,16 @@ package com.exadel.aem.toolkit.core.util;
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class DialogConstants {
+    public static final String WILDCARD = "*";
+
     public static final String PATH_SEPARATOR = "/";
     public static final String EXTENSION_SEPARATOR = ".";
-    public static final String RELATIVE_PATH_PREFIX = "./";
     public static final String VALUE_SEPARATOR = ";";
+    public static final String ITEM_SEPARATOR_COMMA = ",";
+
+    public static final String RELATIVE_PATH_PREFIX = "./";
+    public static final String PARENT_PATH_PREFIX = "../";
+    public static final String ATTRIBUTE_PREFIX = "@";
 
     public static final String NN_ALLOW_BASICS = "allowBasics";
     public static final String NN_CHARS = "chars";
@@ -80,12 +86,16 @@ public class DialogConstants {
     public static final String NT_WIDGET_COLLECTION = "cq:WidgetCollection";
 
     public static final String PN_ACCEPT = "accept";
+    public static final String PN_ACTIONS = "actions";
     public static final String PN_ACTIVE = "active";
     public static final String PN_ADD_NONE = "addNone";
     public static final String PN_ALLOW = "allow";
     public static final String PN_ALLOW_BLOCK_TAGS = "allowBlockTags";
     public static final String PN_AUTOGENERATE_COLORS = "autogenerateColors";
+    public static final String PN_AUTOCREATE_TAG = "autocreateTag";
     public static final String PN_CHECKED = "checked";
+    public static final String PN_CLASS = "class";
+    public static final String PN_COMPONENT_CLASS = "componentClass";
     public static final String PN_COMPONENT_GROUP = "componentGroup";
     public static final String PN_COMPOSITE = "composite";
     public static final String PN_CSS_EXTERNAL = "cssExternal";
@@ -96,14 +106,17 @@ public class DialogConstants {
     public static final String PN_DEPENDS_ON_ACTION = "dependsOnAction";
     public static final String PN_DEPENDS_ON_REF = "dependsOnRef";
     public static final String PN_DEPENDS_ON_REFTYPE = "dependsOnRefType";
+    public static final String PN_DEPENDS_ON_REFLAZY = "dependsOnRefLazy";
     public static final String PN_DESCRIPTION = "description";
     public static final String PN_DIALOG_LAYOUT = "dialogLayout";
+    public static final String PN_DISABLED = "disabled";
     public static final String PN_DISCONNECTED = "disconnected";
     public static final String PN_EDIT_ELEMENT_QUERY = "editElementQuery";
     public static final String PN_EDITOR_TYPE = "editorType";
     public static final String PN_EXTERNAL_STYLESHEETS = "externalStyleSheets";
     public static final String PN_FALLBACK_BLOCK_TAG = "fallbackBlockTag";
     public static final String PN_FEATURES = "features";
+    public static final String PN_GRANITE_CLASS = "granite:class";
     public static final String PN_GROUPS = "groups";
     public static final String PN_HEIGHT = "height";
     public static final String PN_HELP_PATH = "helpPath";
@@ -120,9 +133,13 @@ public class DialogConstants {
     public static final String PN_PROPERTY_NAME = "propertyName";
     public static final String PN_PROTOCOLS = "protocols";
     public static final String PN_REF = "ref";
+    public static final String PN_RENDER_HIDDEN = "renderHidden";
+    public static final String PN_REQUIRED = "required";
     public static final String PN_RETYPE = "retype";
     public static final String PN_SELECTED = "selected";
+    public static final String PN_SOURCE_CLASS = "source";
     public static final String PN_TAB_SIZE = "tabSize";
+    public static final String PN_TAG_NAME = "cq:tagName";
     public static final String PN_TARGET_EXTERNAL = "targetExternal";
     public static final String PN_TARGET_INTERNAL = "targetInternal";
     public static final String PN_TEXT = "text";

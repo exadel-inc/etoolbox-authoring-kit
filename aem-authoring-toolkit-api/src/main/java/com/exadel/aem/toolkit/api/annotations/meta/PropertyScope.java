@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 
 /**
  * Used to specify one or more {@link XmlScope}s this annotation or annotation property is rendered in, i.e. whether
- * this is rendered to {@code cq:Component} (component root), {@code ca:dialog}, or {@code cq:editorConfig} JCR nodes.
+ * this is rendered to {@code cq:Component} (component root), {@code cq:dialog}, {@code cq:editorConfig}, or {@code cq:htmlTag} JCR nodes.
  * Mind that it applies only to values that technically may be rendered to multiple JCR nodes,
  * such as {@link com.exadel.aem.toolkit.api.annotations.main.Dialog} annotation properties
  */
@@ -34,5 +34,5 @@ public @interface PropertyScope {
      * Defines valid {@code XmlScope} or scopes
      * @return Array of {@link XmlScope} values
      */
-    XmlScope[] value() default {XmlScope.COMPONENT, XmlScope.CQ_DIALOG, XmlScope.CQ_EDIT_CONFIG};
+    XmlScope[] value() default {XmlScope.COMPONENT, XmlScope.CQ_DIALOG, XmlScope.CQ_EDIT_CONFIG, XmlScope.CQ_HTML_TAG};
 }

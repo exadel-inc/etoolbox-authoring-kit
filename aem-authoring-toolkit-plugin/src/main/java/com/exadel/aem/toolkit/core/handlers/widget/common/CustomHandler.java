@@ -13,16 +13,15 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
-import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
@@ -45,24 +44,11 @@ public class CustomHandler implements Handler, BiConsumer<Element, Field> {
                         .filter(handler -> source.equals(handler.getName())))
                 .forEach(handler -> handler.accept(element, field));
 
-        PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers().stream()
-                .filter(c -> c.getClass().isAnnotationPresent(HandlesWidgets.class))
-                .filter(c -> PluginReflectionUtility.getFieldAnnotations(field).anyMatch(a -> this.matchesDialogComponentsAnnotations(a, c.getClass())))
+        PluginRuntime.context().getReflectionUtility()
+                .getCustomDialogWidgetHandlers(PluginReflectionUtility.getFieldAnnotations(field).collect(Collectors.toList()))
                 .forEach(handler -> handler.accept(element, field));
-        if (field.isAnnotationPresent(Properties.class)) {
-            Arrays.stream(field.getAnnotation(Properties.class).value())
-                    .forEach(p -> element.setAttribute(getXmlUtil().getValidFieldName(p.name()), p.value()));
-        }
-    }
 
-    /**
-     * Called within a stream filtering routine to decide whether this {@code Annotation} matches a handler {@code Class}
-     * @param widgetAnnotation {@code Annotation} instance to test
-     * @param handlerClass {@code Class} definition to test
-     * @return True or false
-     */
-    private boolean matchesDialogComponentsAnnotations(Class<? extends Annotation> widgetAnnotation, Class<?> handlerClass) {
-        HandlesWidgets handlesWidgets = (HandlesWidgets) handlerClass.getDeclaredAnnotations()[0];
-        return Arrays.asList(handlesWidgets.value()).contains(widgetAnnotation);
+        Arrays.stream(field.getAnnotationsByType(Property.class))
+                .forEach(p -> element.setAttribute(getXmlUtil().getValidFieldName(p.name()), p.value()));
     }
 }

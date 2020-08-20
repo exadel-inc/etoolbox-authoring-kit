@@ -21,9 +21,13 @@ import java.lang.annotation.Target;
 /**
  * Marks that a specific value of an annotation not to be rendered as an XML attribute
  * (typically, the default values according to Adobe specifications don't need to be explicitly set)
+ *
+ * @deprecated This will be removed starting from version 2.0.0. Please use {@link PropertyRendering} instead
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated
+@SuppressWarnings("squid:S1133")
 public @interface IgnoreValue {
     String value() default "";
 }

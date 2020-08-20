@@ -18,7 +18,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -28,7 +27,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,17 +37,18 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
+import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreField;
+import com.exadel.aem.toolkit.api.annotations.meta.Validator;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
@@ -57,52 +59,17 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
  * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields are marked with
  */
 public class PluginReflectionUtility {
-    /**
-     * Default all-allowed predicate for {@code Field} instances
-     */
-    private static final Predicate<Field> TRUE_PREDICATE = field -> true;
-    /**
-     * Predicate for picking out non-static {@code Field} instances
-     */
-    private static final Predicate<Field> NON_STATIC_FIELD_PREDICATE = field -> !Modifier.isStatic(field.getModifiers());
-    /**
-     * Predicate for picking out {@code Field} instances marked with {@code IgnoreField} annotation
-     */
-    private static final Predicate<Field> IGNORE_PROPERTY = field -> field.getAnnotation(IgnoreField.class) != null;
-    /**
-     * Comparison function for sorting {@code Field} based on their {@code DialogField} annotations' ranking values
-     */
-    private static final Comparator<Field> FIELD_RANKING_COMPARATOR = (f1, f2) -> {
-        int rank1 = 0;
-        int rank2 = 0;
-        if (f1.isAnnotationPresent(DialogField.class)) {
-            DialogField dialogField1 = f1.getAnnotationsByType(DialogField.class)[0];
-            rank1 = dialogField1.ranking();
-        }
-        if (f2.isAnnotationPresent(DialogField.class)) {
-            DialogField dialogField2 = f2.getAnnotationsByType(DialogField.class)[0];
-            rank2 = dialogField2.ranking();
-        }
-        if (rank1 != rank2) {
-            return Integer.compare(rank1, rank2);
-        }
-        if (f1.getDeclaringClass() != f2.getDeclaringClass()) {
-            if (ClassUtils.isAssignable(f1.getDeclaringClass(), f2.getDeclaringClass())) {
-                return 1;
-            }
-            if (ClassUtils.isAssignable(f2.getDeclaringClass(), f1.getDeclaringClass())) {
-                return -1;
-            }
-        }
-        return 0;
-    };
     private static final String PACKAGE_BASE_WILDCARD = ".*";
 
-    private org.reflections.Reflections reflections;
-    private List<DialogWidgetHandler> customDialogWidgetHandlers;
-    private List<DialogHandler> customDialogHandlers;
     private String packageBase;
 
+    private org.reflections.Reflections reflections;
+
+    private List<DialogWidgetHandler> customDialogWidgetHandlers;
+
+    private List<DialogHandler> customDialogHandlers;
+
+    private Map<String, Validator> validators;
 
     private PluginReflectionUtility() {
     }
@@ -110,7 +77,7 @@ public class PluginReflectionUtility {
     /**
      * Used to initialize {@code PluginReflectionUtility} instance based on list of available classpath entries in the
      * scope of this Maven plugin
-     * @param elements List of classpath elements
+     * @param elements List of classpath elements to be used in reflection routines
      * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
      *                      If not specified, all available components will be processed
      * @return {@link PluginReflectionUtility} instance
@@ -137,7 +104,7 @@ public class PluginReflectionUtility {
 
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
-     * scope the plugin is operating in
+     * scope of the plugin
      * @return {@code List<DialogWidgetHandler>} of instances
      */
     public List<DialogWidgetHandler> getCustomDialogWidgetHandlers() {
@@ -149,16 +116,61 @@ public class PluginReflectionUtility {
     }
 
     /**
+     * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
+     * scope of the plugin matching the specified widget annotation
+     * @param annotationClass {@code Class<?>} reference to pick up handlers for
+     * @return {@code List<DialogWidgetHandler>} of instances
+     */
+    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers(Class<? extends Annotation> annotationClass) {
+        return getCustomDialogWidgetHandlers(Collections.singletonList(annotationClass));
+    }
+
+    /**
+     * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
+     * scope of the plugin matching the specified widget annotation
+     * @param annotationClasses List of {@code Class<?>} reference to pick up handlers for
+     * @return {@code List<DialogWidgetHandler>} of instances
+     */
+    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers(List<Class<? extends Annotation>> annotationClasses) {
+        if (annotationClasses == null) {
+            return Collections.emptyList();
+        }
+        return getCustomDialogWidgetHandlers().stream()
+                .filter(handler -> handler.getClass().isAnnotationPresent(HandlesWidgets.class))
+                .filter(handler -> {
+                    Class<?>[] handled = handler.getClass().getDeclaredAnnotation(HandlesWidgets.class).value();
+                    return annotationClasses.stream().anyMatch(annotationClass -> ArrayUtils.contains(handled, annotationClass));
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Initializes as necessary and returns collection of {@code CustomDialogHandler}s defined within the Compile
-     * scope the plugin is operating in
+     * scope of the AEM Authoring Toolkit Maven plugin
      * @return {@code List<DialogHandler>} of instances
      */
-    List<DialogHandler> getCustomDialogHandlers() {
+    public List<DialogHandler> getCustomDialogHandlers() {
         if (customDialogHandlers != null) {
             return customDialogHandlers;
         }
         customDialogHandlers = getHandlers(DialogHandler.class);
         return customDialogHandlers;
+    }
+
+    /**
+     * Initializes as necessary and returns collection of {@code Validator}s defined within the Compile
+     * scope of the AEM Authoring Toolkit Maven plugin
+     * @return {@code List<Validator>} of instances
+     */
+    public Map<String, Validator> getValidators() {
+        if (validators != null) {
+            return validators;
+        }
+        validators = reflections.getSubTypesOf(Validator.class).stream()
+                .map(PluginReflectionUtility::getInstance)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(validator -> validator.getClass().getName(), Function.identity()));
+        return validators;
     }
 
     /**
@@ -184,31 +196,44 @@ public class PluginReflectionUtility {
         return reflections.getSubTypesOf(handlerClass).stream()
                 .map(PluginReflectionUtility::getHandlerInstance)
                 .filter(Objects::nonNull)
+                .sorted(Comparator.comparing(handler -> handler.getClass().getCanonicalName())) // to provide stable handlers sequence between runs
                 .collect(Collectors.toList());
     }
 
     /**
      * Creates new instance object of a handler {@code Class} and populates {@link RuntimeContext} instance to
      * every field annotated with {@link Injected}
-     * @param handlerClass The class to instantiate
+     * @param handlerClass The handler class to instantiate
      * @param <T> Instance type
-     * @return New object instance
+     * @return New handler instance
      */
     private static <T> T getHandlerInstance(Class<? extends T> handlerClass) {
-        try {
-            T instance = handlerClass.getConstructor().newInstance();
+        T instance = getInstance(handlerClass);
+        if (instance != null) {
             Arrays.stream(handlerClass.getDeclaredFields())
                     .filter(field -> field.isAnnotationPresent(Injected.class)
                             && ClassUtils.isAssignable(field.getType(), RuntimeContext.class))
                     .forEach(field -> populateRuntimeContext(instance, field));
-            return instance;
+        }
+        return instance;
+    }
+
+    /**
+     * Creates a new instance object of the specified {@code Class}
+     * @param instanceClass The class to instantiate
+     * @param <T> Instance type
+     * @return New object instance
+     */
+    private static <T> T getInstance(Class<? extends T> instanceClass) {
+        try {
+            return instanceClass.getConstructor().newInstance();
         } catch (InstantiationException
                 | IllegalAccessException
-                | NoSuchMethodException
-                | InvocationTargetException e) {
-            PluginRuntime.context().getExceptionHandler().handle(new ExtensionApiException(handlerClass, e));
-            return null;
+                | InvocationTargetException
+                | NoSuchMethodException e) {
+            PluginRuntime.context().getExceptionHandler().handle(new ExtensionApiException(instanceClass, e));
         }
+        return null;
     }
 
     /**
@@ -236,53 +261,43 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Analyzes a {@code Class} and retrieves {@code List} of its {@code Field}s marked with {@code IgnoreField} annotation
-     * @param targetClass The class to analyze
-     * @return List of {@code Field} objects
-     */
-    public static List<Field> getAllIgnoredFields(Class<?> targetClass) {
-        return getAllFields(targetClass, Collections.singletonList(IGNORE_PROPERTY), null);
-    }
-
-    /**
-     * Analyzes a {@code Class} and retrieves {@code List} of its non-static {@code Field}s
-     * @param targetClass The class to analyze
-     * @return List of {@code Field} objects
-     */
-    public static List<Field> getAllNonStaticFields(Class<?> targetClass) {
-        return getAllFields(targetClass, Collections.singletonList(NON_STATIC_FIELD_PREDICATE), FIELD_RANKING_COMPARATOR);
-    }
-
-    /**
-     * Retrieves a complete {@code Field} list of a {@code Class}
+     * Retrieves a complete list of {@code Field}s of a {@code Class}
      * @param targetClass The class to analyze
      * @return List of {@code Field} objects
      */
     public static List<Field> getAllFields(Class<?> targetClass) {
-        return getAllFields(targetClass, Collections.emptyList(), FIELD_RANKING_COMPARATOR);
+        return getAllFields(targetClass, Collections.emptyList());
     }
 
     /**
-     * Retrieves an ordered list of all {@code Field}s of a certain {@code Class} that match specific criteria
+     * Retrieves a sequential list of all {@code Field}s of a certain {@code Class} that match specific criteria
      * @param targetClass The class to analyze
      * @param predicates List of {@code Predicate<Field>} instances to pick up appropriate fields
-     * @param comparator Comparison function to put picked fields in special order
      * @return List of {@code Field} objects
      */
-    private static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates, Comparator<Field> comparator) {
+    public static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates) {
         List<Field> fields = new LinkedList<>();
-        Predicate<Field> predicate = TRUE_PREDICATE;
-        if (predicates != null && !predicates.isEmpty()) {
-            predicate = predicates.stream().filter(Objects::nonNull).reduce(TRUE_PREDICATE, Predicate::and);
-        }
-        for (Class<?> clazz : getAllSuperClasses(targetClass)) {
-            List<Field> classFields = Arrays.stream(clazz.getDeclaredFields())
-                    .filter(predicate)
+        List<ClassField> ignoredFields = new LinkedList<>();
+
+        for (Class<?> classEntry : getClassHierarchy(targetClass)) {
+            List<Field> classFields = Arrays.stream(classEntry.getDeclaredFields())
+                    .filter(PluginObjectPredicates.getFieldsPredicate(predicates))
                     .collect(Collectors.toList());
             fields.addAll(classFields);
+            if (classEntry.getAnnotation(IgnoreFields.class) != null) {
+                List<ClassField> processedClassFields = Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
+                        .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
+                                ClassField.class,
+                                DialogConstants.PN_SOURCE_CLASS,
+                                targetClass))
+                        .collect(Collectors.toList());
+                ignoredFields.addAll(processedClassFields);
+            }
         }
-        if (comparator != null) fields.sort(comparator);
-        return fields;
+        return fields.stream()
+                .filter(PluginObjectPredicates.getNotIgnoredFieldsPredicate(ignoredFields))
+                .sorted(PluginObjectPredicates::compareByRanking)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -298,22 +313,35 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Retrieves the sequential list of superclasses of a specific {@code Class}, including this class itself.
-     * Closer ancestors are enumerated first
-     * @param targetClass The class to analyze
+     * Retrieves the sequential list of ancestral of a specific {@code Class}, target class itself included,
+     * starting from the "top" of the inheritance tree. {@code Object} class is not added to the hierarchy
+     * @param targetClass The class to build the tree upon
      * @return List of {@code Class} objects
      */
-    private static List<Class<?>> getAllSuperClasses(Class<?> targetClass) {
-        List<Class<?>> superClasses = new LinkedList<>();
-        if (targetClass != null && !targetClass.isInterface() && !targetClass.equals(Object.class)) {
-            superClasses.add(targetClass);
-            Class<?> superClass = targetClass.getSuperclass();
-            if (superClass != null) {
-                superClasses.addAll(getAllSuperClasses(superClass));
-            }
-        }
-        return superClasses;
+    public static List<Class<?>> getClassHierarchy(Class<?> targetClass) {
+        return getClassHierarchy(targetClass, true);
     }
+
+    /**
+     * Retrieves the sequential list of ancestral classes of a specific {@code Class}, started from the "top" of the inheritance
+     * tree. {@code Object} class is not added to the hierarchy
+     * @param targetClass The class to analyze
+     * @param includeTarget Whether to include the {@code targetClass} itself to the hierarchy
+     * @return List of {@code Class} objects
+     */
+    public static List<Class<?>> getClassHierarchy(Class<?> targetClass, boolean includeTarget) {
+        List<Class<?>> result = new LinkedList<>();
+        Class<?> current = targetClass;
+        while (current != null && !current.isInterface() && !current.equals(Object.class)) {
+            if (!current.equals(targetClass) || includeTarget) {
+                result.add(current);
+            }
+            current = current.getSuperclass();
+        }
+        Collections.reverse(result);
+        return result;
+    }
+
 
     /**
      * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
@@ -324,6 +352,16 @@ public class PluginReflectionUtility {
         return Arrays.stream(annotation.annotationType().getDeclaredMethods())
                 .filter(method -> annotationPropertyIsNotDefault(annotation, method))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets whether any of the {@code Annotation}'s properties has a value which is not default
+     * @param annotation The annotation to analyze
+     * @return True or false
+     */
+    public static boolean annotationIsNotDefault(Annotation annotation) {
+        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
+                .anyMatch(method -> annotationPropertyIsNotDefault(annotation, method));
     }
 
     /**
@@ -349,16 +387,6 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Gets whether any of the {@code Annotation}'s properties has a value which is not default
-     * @param annotation The annotation to analyze
-     * @return True or false
-     */
-    public static boolean annotationIsNotDefault(Annotation annotation) {
-        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .anyMatch(method -> annotationPropertyIsNotDefault(annotation, method));
-    }
-
-    /**
      * Converts {@link URI} parameter, such as of a classpath element, to an {@link URL} instance used by {@link Reflections}
      * @param uri {@code URI} value
      * @return {@code URL} value
@@ -371,4 +399,5 @@ public class PluginReflectionUtility {
         }
         return null;
     }
+
 }

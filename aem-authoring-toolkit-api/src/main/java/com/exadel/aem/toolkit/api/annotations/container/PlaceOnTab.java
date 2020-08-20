@@ -18,9 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
-import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
-
 /**
  * In multi-tab TouchUI Dialog setup, used to specify on which tab a dialog field is placed
  */
@@ -32,6 +29,5 @@ public @interface PlaceOnTab {
      * String equal to appropriate {@link Tab#title()} value
      * @return String value
      */
-    @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String value();
 }

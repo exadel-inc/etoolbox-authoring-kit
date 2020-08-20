@@ -17,11 +17,14 @@ package com.exadel.aem.toolkit.api.annotations.main;
  * Contains common string constants used in AEM Authoring Toolkit API classes
  */
 public class JcrConstants {
+
     static final String PN_CELL_NAME = "cq:cellName";
     static final String PN_DESCRIPTION = "jcr:description";
     static final String PN_NO_DECORATION = "cq:noDecoration";
+    public static final String PN_PRIMARY_TYPE = "jcr:primaryType";
     static final String PN_RESOURCE_SUPER_TYPE = "sling:resourceSuperType";
     static final String PN_TEMPLATE_PATH = "cq:templatePath";
     public static final String PN_TITLE = "jcr:title";
+
     private JcrConstants() {}
 }

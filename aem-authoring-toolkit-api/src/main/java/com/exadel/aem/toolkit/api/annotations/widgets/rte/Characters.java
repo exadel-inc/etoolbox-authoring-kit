@@ -18,7 +18,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnoreValue;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 
 /**
@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ValueRestriction("CharactersObjectValidator")
+@ValueRestriction("com.exadel.aem.toolkit.core.util.validation.CharactersObjectValidator")
 @SuppressWarnings("unused")
 public @interface Characters {
     /**
@@ -47,12 +47,12 @@ public @interface Characters {
      * In a range buildup, represents the first position in the Unicode subset
      * @return Long value, greater than zero
      */
-    @IgnoreValue("0")
+    @PropertyRendering(ignoreValues = "0")
     long rangeStart() default 0;
     /**
      * In a range buildup, represents the last position in the Unicode subset
      * @return Long value, greater than zero
      */
-    @IgnoreValue("0")
+    @PropertyRendering(ignoreValues = "0")
     long rangeEnd() default 0;
 }

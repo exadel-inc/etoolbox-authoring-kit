@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
@@ -30,6 +31,7 @@ import com.google.common.base.CaseFormat;
 
 import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnoreValue;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.core.exceptions.ReflectionException;
@@ -53,7 +55,8 @@ class XmlAttributeSettingHelper<T> {
     private Annotation annotation;
     private Method method;
     private String name;
-    private String ignoredValue;
+    private String[] ignoredValues;
+    private boolean blankValuesAllowed;
 
     private boolean isEnum;
     private EnumValue enumModifier;
@@ -75,6 +78,7 @@ class XmlAttributeSettingHelper<T> {
      * @param method Method representing target annotation's property
      * @return New {@code XmlAttributeSettingHelper} instance
      */
+    @SuppressWarnings({"deprecation", "squid:S1874"}) // IgnoreValue processing remains for compatibility reasons until v.2.0.0
     static XmlAttributeSettingHelper forMethod(Annotation annotation, Method method) {
         XmlAttributeSettingHelper attributeSetter = new XmlAttributeSettingHelper<>(getMethodWrappedType(method));
         if (!fits(method)) {
@@ -90,9 +94,14 @@ class XmlAttributeSettingHelper<T> {
         if (method.isAnnotationPresent(EnumValue.class)) {
             attributeSetter.enumModifier = method.getDeclaredAnnotation(EnumValue.class);
         }
-        if (method.isAnnotationPresent(IgnoreValue.class)) {
-            attributeSetter.ignoredValue = method.getAnnotation(IgnoreValue.class).value();
+        if (method.isAnnotationPresent(PropertyRendering.class)) {
+            PropertyRendering propertyRendering = method.getAnnotation(PropertyRendering.class);
+            attributeSetter.ignoredValues = propertyRendering.ignoreValues();
+            attributeSetter.blankValuesAllowed = propertyRendering.allowBlank();
+        } else if (method.isAnnotationPresent(IgnoreValue.class)) {
+            attributeSetter.ignoredValues = new String[] {method.getAnnotation(IgnoreValue.class).value()};
         }
+
         if (PluginReflectionUtility.annotationPropertyIsNotDefault(annotation, method)) {
             attributeSetter.validationChecker = Validation.forMethod(method);
         }
@@ -170,10 +179,13 @@ class XmlAttributeSettingHelper<T> {
         if (!valueTypeIsSupported) {
             return;
         }
-        String stringifiedValue = value != null ? value.toString() : null;
-        if (StringUtils.isBlank(stringifiedValue) || stringifiedValue.equals(ignoredValue)) {
+        String stringifiedValue = value != null ? value.toString() : StringUtils.EMPTY;
+
+        if (!isValid(stringifiedValue)) {
+            element.removeAttribute(name);
             return;
         }
+
         setAttribute(element, valueType.equals(String.class)
                 ? stringifiedValue
                 : String.format(TYPE_TOKEN_TEMPLATE, valueType.getSimpleName(), stringifiedValue));
@@ -190,7 +202,7 @@ class XmlAttributeSettingHelper<T> {
         }
         String valueString = values.stream()
                 .map(Object::toString)
-                .filter(s -> !s.isEmpty() && !s.equals(ignoredValue))
+                .filter(this::isValid)
                 .map(s -> s.startsWith(RteFeatures.BEGIN_POPOVER) && s.endsWith(RteFeatures.END_POPOVER) ? STRING_ESCAPE + s : s)
                 .collect(Collectors.joining(RteFeatures.FEATURE_SEPARATOR));
         if (valueString.isEmpty()) {
@@ -204,13 +216,25 @@ class XmlAttributeSettingHelper<T> {
     /**
      * Sets String-casted attribute value to an {@code Element} node
      * @param element Element node instance
-     * @param stringifiedValue String to store as the attribute
+     * @param value String to store as the attribute
      */
-    private void setAttribute(Element element, String stringifiedValue) {
+    private void setAttribute(Element element, String value) {
         String oldAttributeValue = element.hasAttribute(name)
                 ? element.getAttribute(name)
                 : "";
-        element.setAttribute(name, valueMerger.apply(oldAttributeValue, stringifiedValue));
+        element.setAttribute(name, valueMerger.apply(oldAttributeValue, value));
+    }
+
+    /**
+     * Gets whether this string, as an arbitrary user-set value representation, is valid to be stored as an XML attribute
+     * @param value String representing a user-set value
+     * @return True or false
+     */
+    private boolean isValid(String value) {
+        if (StringUtils.isBlank(value) && !blankValuesAllowed) {
+            return false;
+        }
+        return !ArrayUtils.contains(ignoredValues, value);
     }
 
     /**
@@ -219,14 +243,16 @@ class XmlAttributeSettingHelper<T> {
      * @return Type-casted value, or null
      */
     private T cast(Object value) {
-        Object filteredValue = validationChecker.getFilteredValue(value);
+        if (!validationChecker.test(value)) {
+            return null;
+        }
         if (enumModifier != null) {
-            return valueType.cast(transform(filteredValue.toString(), enumModifier.transformation()));
+            return valueType.cast(transform(value.toString(), enumModifier.transformation()));
         }
         if (isEnum) {
-            return valueType.cast(filteredValue.toString());
+            return valueType.cast(value.toString());
         }
-        return filteredValue != null ? valueType.cast(filteredValue) : null;
+        return value != null ? valueType.cast(value) : null;
     }
 
     /**

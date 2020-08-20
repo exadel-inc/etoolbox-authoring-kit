@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Represents a name-value pair to be rendered as a DependsOn parameter
+ * Represents a name-value pair of {@code granite:data} attributes to be rendered as a DependsOn parameter
  *
  * @see DependsOn
  */

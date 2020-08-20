@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.core.util;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,12 +30,15 @@ class XmlNamingHelper {
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
     private static final Pattern NODE_NAME_INDEX_PATTERN = Pattern.compile("\\d*$");
 
-    private static final Pattern INVALID_FIELD_NAME_PATTERN = Pattern.compile("^\\W+|[^\\w-/]+");
+    private static final Pattern INVALID_FIELD_NAME_PATTERN = Pattern.compile("^\\W+|[^\\w-/]$|[^\\w-/:]+");
     private static final Pattern INVALID_NODE_NAME_PATTERN = Pattern.compile("\\W+");
     private static final Pattern INVALID_NAMESPACE_NODE_NAME_PATTERN = Pattern.compile("^\\W*:|\\W+:$|[^\\w:]+");
 
+    private static final Pattern PARENT_PATH_PREFIX_PATTERN = Pattern.compile("^(?:\\.\\./)+");
+
     private PluginXmlUtility xmlUtil;
     private boolean lowercaseFirst;
+    private boolean preserveParentPath;
     private Pattern clearingPattern;
 
     /**
@@ -59,11 +63,20 @@ class XmlNamingHelper {
         }
 
         String result = source.trim();
-        boolean convertToCamelCase = WHITESPACE_PATTERN.matcher(source).find();
+        Matcher parentPathPrefixMatcher = preserveParentPath
+                ? PARENT_PATH_PREFIX_PATTERN.matcher(result)
+                : null;
+        String parentPathPrefix = parentPathPrefixMatcher != null && parentPathPrefixMatcher.find()
+                ? parentPathPrefixMatcher.group()
+                : StringUtils.EMPTY;
+
+        Matcher whitespacePatternMatcher = WHITESPACE_PATTERN.matcher(result);
+        boolean convertToCamelCase = whitespacePatternMatcher.find();
 
         if (convertToCamelCase) {
             result = WHITESPACE_PATTERN.matcher(result).replaceAll(VERB_SEPARATOR);
         }
+
         result = clearingPattern.matcher(result).replaceAll(StringUtils.EMPTY);
 
         if (convertToCamelCase) {
@@ -73,8 +86,13 @@ class XmlNamingHelper {
         if (result.isEmpty() || !Character.isAlphabetic(result.codePointAt(0))) {
             result = StringUtils.defaultString(defaultValue) +  result;
         }
+
         if (lowercaseFirst && !result.chars().allMatch(Character::isUpperCase)) {
             return StringUtils.uncapitalize(result);
+        }
+
+        if (StringUtils.isNotEmpty(parentPathPrefix)) {
+            return parentPathPrefix + result;
         }
         return result;
     }
@@ -107,6 +125,7 @@ class XmlNamingHelper {
     static XmlNamingHelper forFieldName(PluginXmlUtility xmlUtility) {
         XmlNamingHelper helper = new XmlNamingHelper(xmlUtility);
         helper.lowercaseFirst = false;
+        helper.preserveParentPath = true;
         helper.clearingPattern = INVALID_FIELD_NAME_PATTERN;
         return helper;
     }

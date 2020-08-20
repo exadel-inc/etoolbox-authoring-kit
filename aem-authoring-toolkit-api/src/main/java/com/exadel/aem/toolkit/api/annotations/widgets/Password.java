@@ -57,9 +57,4 @@ public @interface Password {
      * @return String value representing a valid component
      */
     String retype() default "";
-    /**
-     * Maps to the 'validation' attribute of this TouchUI dialog component's node.
-     * @return String value or an array of strings
-     */
-    String[] validation() default {};
 }

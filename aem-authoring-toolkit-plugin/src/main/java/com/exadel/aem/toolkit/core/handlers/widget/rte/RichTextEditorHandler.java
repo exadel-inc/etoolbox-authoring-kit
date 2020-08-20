@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.w3c.dom.Element;
@@ -49,6 +50,7 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
+import com.exadel.aem.toolkit.core.util.validation.CharactersObjectValidator;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code RichTextEditor} widget functionality
@@ -142,6 +144,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
         // if ./cui node has been added any children, append it to ./uiSettings and then append ./uiSettings to root element
         appendElement(uiSettings, cui);
         appendElement(element, uiSettings, RichTextEditorHandler::mergeFeatureAttributes);
+        getXmlUtil().setAttribute(element, DialogConstants.PN_EXTERNAL_STYLESHEETS, rteAnnotation, PluginXmlUtility::mergeStringAttributes);
         // build rtePlugins node, merge it to existing element structure (to pick up child nodes that may have already been populated)
         // then populate rtePlugins node with the context rteAnnotation fields, then merge again
         Element rtePlugins = appendElement(element, pluginsBuilder.build());
@@ -201,7 +204,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
         if (parent == null) {
             return;
         }
-        Element child = getXmlUtil().getChildElementNode(parent, existingChildName,
+        Element child = getXmlUtil().getChildElement(parent, existingChildName,
                 p -> PluginRuntime.context().getXmlUtility().createNodeElement(existingChildName));
         elementConsumer.accept(() -> {
             if (child.getParentNode() != null) {
@@ -282,19 +285,25 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
 
     /**
      * Called by {@link RichTextEditorHandler#accept(Element, Field)} to create if necessary and then retrieve
-     * the {@code formats} node for the RichTextEditor XML markup
+     * the {@code specialCharsConfig} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
      */
     private Element getSpecialCharactersNode() {
         Function<Annotation, String> childNodeNameProvider = c -> {
-            Characters chars = (Characters)c;
+            Characters chars = (Characters) c;
             return chars.rangeStart() > 0 ? String.valueOf(chars.rangeStart()) : chars.entity();
         };
         Element charsConfigNode = getXmlUtil().createNodeElement(DialogConstants.NN_SPECIAL_CHARS_CONFIG);
-        Element charsNode = getXmlUtil().createNodeElement(DialogConstants.NN_CHARS,
-                childNodeNameProvider,
-                rteAnnotation.specialCharacters());
-        getXmlUtil().appendNonemptyChildElement(charsConfigNode, charsNode);
+        CharactersObjectValidator validator = new CharactersObjectValidator();
+        Annotation[] validCharactersAnnotations = Arrays.stream(rteAnnotation.specialCharacters())
+                .map(validator::getFilteredInstance)
+                .toArray(Annotation[]::new);
+        if (ArrayUtils.isNotEmpty(validCharactersAnnotations)) {
+            Element charsNode = getXmlUtil().createNodeElement(DialogConstants.NN_CHARS,
+                    childNodeNameProvider,
+                    validCharactersAnnotations);
+            getXmlUtil().appendNonemptyChildElement(charsConfigNode, charsNode);
+        }
         return charsConfigNode;
     }
 
@@ -305,7 +314,6 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
      */
     private void populateStylesNode(Supplier<Element> elementSupplier){
         Element stylesElement = elementSupplier.get();
-        getXmlUtil().setAttribute(stylesElement, DialogConstants.PN_EXTERNAL_STYLESHEETS, rteAnnotation, PluginXmlUtility::mergeStringAttributes);
         if (!featureExists(RteFeatures.Popovers.STYLES::equals)) {
             return;
         }

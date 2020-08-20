@@ -21,9 +21,11 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 
+import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+
 @Dialog(
-        name = "test-component",
-        title = "test-component-dialog",
+        name = DEFAULT_COMPONENT_NAME,
+        title = "Tabs Test Dialog",
         layout = DialogLayout.TABS,
         tabs = {
                 @Tab(title = "First tab"),

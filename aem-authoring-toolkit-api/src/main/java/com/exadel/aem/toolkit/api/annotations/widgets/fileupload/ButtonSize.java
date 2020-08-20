@@ -13,21 +13,24 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.fileupload;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizeConstants;
+
 /**
  * Contains possible values of {@link FileUpload#buttonSize()} property
  */
 @SuppressWarnings("unused")
 public enum ButtonSize {
-    MEDIUM {
-        @Override
-        public String toString() {
-            return "M";
-        }
-    },
-    LARGE {
-        @Override
-        public String toString() {
-            return "L";
-        }
+    MEDIUM(ElementSizeConstants.MEDIUM),
+    LARGE(ElementSizeConstants.LARGE);
+
+    private final String token;
+
+    ButtonSize(String token) {
+        this.token = token;
+    }
+
+    @Override
+    public String toString() {
+        return token;
     }
 }

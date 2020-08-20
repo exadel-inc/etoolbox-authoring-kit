@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="nt:unstructured"
+          jcr:title="Component with external classes"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          height="{Double}480.0"
+          width="{Double}560.0">
+    <content
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <tabs
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/tabs">
+                <items jcr:primaryType="nt:unstructured">
+                    <mainTab
+                        granite:hidden="{Boolean}false"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Main tab"
+                        sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <layout
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                disabled="{Boolean}false"
+                                fieldDescription="Layout description"
+                                fieldLabel="Layout"
+                                name="./layout"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}true">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <right
+                                        jcr:primaryType="nt:unstructured"
+                                        text="Header to the right"
+                                        value="right"/>
+                                    <left
+                                        jcr:primaryType="nt:unstructured"
+                                        selected="{Boolean}true"
+                                        text="Header to the left"
+                                        value="left"/>
+                                </items>
+                            </layout>
+                            <backgroundColor
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                disabled="{Boolean}false"
+                                fieldDescription="Background color description"
+                                fieldLabel="Background color"
+                                name="./backgroundColor"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}true">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <white
+                                        jcr:primaryType="nt:unstructured"
+                                        text="White"
+                                        value="white"/>
+                                    <grey
+                                        jcr:primaryType="nt:unstructured"
+                                        text="Grey"
+                                        value="grey"/>
+                                </items>
+                            </backgroundColor>
+                            <header
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                disabled="{Boolean}false"
+                                fieldDescription="Header description"
+                                fieldLabel="Header label"
+                                name="./Header_name"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"/>
+                            <description
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="cq/gui/components/authoring/dialog/richtext"
+                                disabled="{Boolean}false"
+                                fieldDescription="description of component"
+                                fieldLabel="Description's label"
+                                name="./descriptionOfComponent"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"
+                                useFixedInlineToolbar="{Boolean}true">
+                                <uiSettings jcr:primaryType="nt:unstructured">
+                                    <cui jcr:primaryType="nt:unstructured">
+                                        <inline
+                                            jcr:primaryType="nt:unstructured"
+                                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                                        <fullscreen
+                                            jcr:primaryType="nt:unstructured"
+                                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                                        <dialogFullScreen
+                                            jcr:primaryType="nt:unstructured"
+                                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                                    </cui>
+                                </uiSettings>
+                                <rtePlugins jcr:primaryType="nt:unstructured">
+                                    <subsuperscript
+                                        jcr:primaryType="nt:unstructured"
+                                        features="[subscript,superscript]"/>
+                                    <links
+                                        jcr:primaryType="nt:unstructured"
+                                        features="[unlink,modifylink]"/>
+                                    <styles jcr:primaryType="nt:unstructured"/>
+                                </rtePlugins>
+                            </description>
+                        </items>
+                    </mainTab>
+                    <links
+                        granite:hidden="{Boolean}false"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Links"
+                        sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <linksLayout
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/radiogroup"
+                                disabled="{Boolean}false"
+                                fieldDescription="Select layout for the Link List."
+                                fieldLabel="Links Layout"
+                                name="./linksLayout"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}true"
+                                vertical="{Boolean}true">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <simple
+                                        jcr:primaryType="nt:unstructured"
+                                        checked="{Boolean}true"
+                                        text="Simple Link"
+                                        value="simple"/>
+                                    <asset
+                                        jcr:primaryType="nt:unstructured"
+                                        text="Link With Icon"
+                                        value="asset"/>
+                                    <numbered
+                                        jcr:primaryType="nt:unstructured"
+                                        text="Numbered Link"
+                                        value="numbered"/>
+                                </items>
+                            </linksLayout>
+                            <links
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                composite="{Boolean}true"
+                                disabled="{Boolean}false"
+                                fieldLabel="Links"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"
+                                multifieldSpecial="This is added to Multifields">
+                                <field
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/container"
+                                    name="./links">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <label
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                            disabled="{Boolean}false"
+                                            fieldDescription="description"
+                                            fieldLabel="Label"
+                                            name="labelsName"
+                                            renderHidden="{Boolean}false"
+                                            required="{Boolean}true"/>
+                                        <url
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                            disabled="{Boolean}false"
+                                            fieldDescription="Field's description"
+                                            fieldLabel="Field label"
+                                            name="FieldName"
+                                            renderHidden="{Boolean}false"
+                                            required="{Boolean}true"
+                                            rootPath="root/path"/>
+                                        <checkbox
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
+                                            autosubmit="{Boolean}false"
+                                            checked="{Boolean}false"
+                                            disabled="{Boolean}false"
+                                            fieldDescription="Checkbox description"
+                                            fieldLabel="Checkbox label"
+                                            name="CheckboxName"
+                                            renderHidden="{Boolean}false"
+                                            required="{Boolean}false"
+                                            text="Checkbox label"
+                                            uncheckedValue="{Boolean}false"
+                                            value="{Boolean}true"/>
+                                        <iconName
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                            attribute="attribute_value"
+                                            disabled="{Boolean}false"
+                                            fieldDescription="Icon description"
+                                            fieldLabel="Icon label"
+                                            name="iconName"
+                                            renderHidden="{Boolean}false"
+                                            required="{Boolean}true"
+                                            rootPath="icons/folder/path"/>
+                                    </items>
+                                </field>
+                            </links>
+                            <extendedLinks
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                    composite="{Boolean}true"
+                                    disabled="{Boolean}false"
+                                    fieldLabel="Extended Links"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"
+                                    multifieldSpecial="This is added to Multifields">
+                                <field
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/container"
+                                        name="./extendedLinks">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <label
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="description"
+                                                fieldLabel="Label"
+                                                name="labelsName"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}true"/>
+                                        <url
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Field's description"
+                                                fieldLabel="Field label"
+                                                name="FieldName"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}true"
+                                                rootPath="root/path"/>
+                                        <checkbox
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
+                                                autosubmit="{Boolean}false"
+                                                checked="{Boolean}false"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Checkbox description"
+                                                fieldLabel="Checkbox label"
+                                                name="CheckboxName"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}false"
+                                                text="Checkbox label"
+                                                uncheckedValue="{Boolean}false"
+                                                value="{Boolean}true"/>
+                                        <iconName
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                                attribute="attribute_value"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Icon description"
+                                                fieldLabel="Icon label"
+                                                name="iconName"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}true"
+                                                rootPath="icons/folder/path"/>
+                                        <additionalLabel
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Sample multifield - additional info"
+                                                fieldLabel="Additional info"
+                                                name="additionalLabel"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}false"/>
+                                        <additionalInfo
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
+                                                autofocus="{Boolean}false"
+                                                disabled="{Boolean}false"
+                                                fieldDescription="Sample multifield - additional info"
+                                                fieldLabel="Additional info"
+                                                name="additionalInfo"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}false"
+                                                resize="none"
+                                                rows="{Long}15"/>
+                                    </items>
+                                </field>
+                            </extendedLinks>
+                        </items>
+                    </links>
+                    <featuredCard1
+                        granite:hidden="{Boolean}false"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Featured Card 1"
+                        sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <firstCard
+                                granite:class="first-card"
+                                granite:hidden="{Boolean}false"
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
+                                <granite:data
+                                    jcr:primaryType="nt:unstructured"
+                                    data-name="data-value"/>
+                                <items jcr:primaryType="nt:unstructured">
+                                    <title
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        disabled="{Boolean}false"
+                                        fieldDescription="Title's description"
+                                        fieldLabel="Label title's"
+                                        name="./firstTitle"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"/>
+                                    <description
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="cq/gui/components/authoring/dialog/richtext"
+                                        disabled="{Boolean}false"
+                                        fieldDescription="description"
+                                        fieldLabel="Description's label"
+                                        name="./firstDescription"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"
+                                        useFixedInlineToolbar="{Boolean}true">
+                                        <uiSettings jcr:primaryType="nt:unstructured">
+                                            <cui jcr:primaryType="nt:unstructured">
+                                                <inline
+                                                    jcr:primaryType="nt:unstructured"
+                                                    toolbar="[links#modifylink,links#unlink]"/>
+                                                <fullscreen
+                                                    jcr:primaryType="nt:unstructured"
+                                                    toolbar="[links#modifylink,links#unlink]"/>
+                                                <dialogFullScreen
+                                                    jcr:primaryType="nt:unstructured"
+                                                    toolbar="[links#modifylink,links#unlink]"/>
+                                            </cui>
+                                        </uiSettings>
+                                        <rtePlugins jcr:primaryType="nt:unstructured">
+                                            <links
+                                                jcr:primaryType="nt:unstructured"
+                                                features="[unlink,modifylink]"/>
+                                            <styles jcr:primaryType="nt:unstructured"/>
+                                        </rtePlugins>
+                                    </description>
+                                    <caption
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        disabled="{Boolean}false"
+                                        fieldDescription="Provide the text to be shown as the Caption."
+                                        fieldLabel="Caption"
+                                        name="./firstCaption"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"/>
+                                    <label
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        disabled="{Boolean}false"
+                                        fieldDescription="description"
+                                        fieldLabel="Label"
+                                        name="./firstlabelsName"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}true"/>
+                                    <url
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                        disabled="{Boolean}false"
+                                        fieldDescription="Field's description"
+                                        fieldLabel="Field label"
+                                        name="./firstFieldName"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}true"
+                                        rootPath="root/path"/>
+                                    <imageText
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        disabled="{Boolean}false"
+                                        fieldDescription="Description for text on image"
+                                        fieldLabel="Text on image"
+                                        name="./firstImageText"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"/>
+                                </items>
+                            </firstCard>
+                            <enableSecondCard
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/switch"
+                                checked="{Boolean}false"
+                                disabled="{Boolean}false"
+                                fieldDescription="Check to enable second Featured Card."
+                                fieldLabel="Enable Second Card?"
+                                ignoreData="{Boolean}false"
+                                name="./enableSecondCard"
+                                offText="Off"
+                                onText="On"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"
+                                uncheckedValue="{Boolean}false"
+                                value="{Boolean}true"/>
+                        </items>
+                    </featuredCard1>
+                    <featuredCard2
+                        granite:hidden="{Boolean}false"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Featured Card 2"
+                        sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <secondCard
+                                granite:hidden="{Boolean}false"
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
+                                <granite:data
+                                    jcr:primaryType="nt:unstructured"
+                                    second-data-name="second-data-value"/>
+                                <items jcr:primaryType="nt:unstructured">
+                                    <title
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        disabled="{Boolean}false"
+                                        fieldDescription="Title's description"
+                                        fieldLabel="Label title's"
+                                        name="./second_Title"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"/>
+                                    <description
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="cq/gui/components/authoring/dialog/richtext"
+                                        disabled="{Boolean}false"
+                                        fieldDescription="description"
+                                        fieldLabel="Description's label"
+                                        name="./second_Description"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"
+                                        useFixedInlineToolbar="{Boolean}true">
+                                        <uiSettings jcr:primaryType="nt:unstructured">
+                                            <cui jcr:primaryType="nt:unstructured">
+                                                <inline
+                                                    jcr:primaryType="nt:unstructured"
+                                                    toolbar="[links#modifylink,links#unlink]"/>
+                                                <fullscreen
+                                                    jcr:primaryType="nt:unstructured"
+                                                    toolbar="[links#modifylink,links#unlink]"/>
+                                                <dialogFullScreen
+                                                    jcr:primaryType="nt:unstructured"
+                                                    toolbar="[links#modifylink,links#unlink]"/>
+                                            </cui>
+                                        </uiSettings>
+                                        <rtePlugins jcr:primaryType="nt:unstructured">
+                                            <links
+                                                jcr:primaryType="nt:unstructured"
+                                                features="[unlink,modifylink]"/>
+                                            <styles jcr:primaryType="nt:unstructured"/>
+                                        </rtePlugins>
+                                    </description>
+                                    <caption
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        disabled="{Boolean}false"
+                                        fieldDescription="Provide the text to be shown as the Caption."
+                                        fieldLabel="Caption"
+                                        name="./second_Caption"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"/>
+                                    <label
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        disabled="{Boolean}false"
+                                        fieldDescription="description"
+                                        fieldLabel="Label"
+                                        name="./second_labelsName"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}true"/>
+                                    <url
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                        disabled="{Boolean}false"
+                                        fieldDescription="Field's description"
+                                        fieldLabel="Field label"
+                                        name="./second_FieldName"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}true"
+                                        rootPath="root/path"/>
+                                    <imageText
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        disabled="{Boolean}false"
+                                        fieldDescription="Description for text on image"
+                                        fieldLabel="Text on image"
+                                        name="./second_ImageText"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"/>
+                                </items>
+                            </secondCard>
+                        </items>
+                    </featuredCard2>
+                </items>
+            </tabs>
+        </items>
+    </content>
+</jcr:root>

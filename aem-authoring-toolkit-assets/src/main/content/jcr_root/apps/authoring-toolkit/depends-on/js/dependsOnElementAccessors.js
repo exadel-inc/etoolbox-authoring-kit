@@ -24,11 +24,19 @@
             return $el.val() || '';
         },
         set: function ($el, value, notify) {
+            if (ns.isObject(value)) {
+                value = JSON.stringify(value);
+            }
             $el.val(value);
             notify && $el.trigger('change');
         },
         required: function ($el, val) {
-            $el.attr('aria-required', val ? 'true' : null);
+            const fieldApi = $el.adaptTo('foundation-field');
+            if (fieldApi && typeof fieldApi.setRequired === 'function') {
+                fieldApi.setRequired(val);
+            } else {
+                $el.attr('required', val ? 'true' : null);
+            }
             ns.ElementAccessors.updateValidity($el, true);
         },
         visibility: function ($el, state) {
@@ -36,7 +44,7 @@
             $el.closest(FIELD_WRAPPER)
                 .attr('hidden', state ? null : 'true')
                 .attr('data-dependson-controllable', 'true');
-            // Force update validity if field hidden
+            // Force update validity if the field is hidden
             if (!state) {
                 ns.ElementAccessors.clearValidity($el);
             }
@@ -167,7 +175,7 @@
          * */
         static setLabelRequired($el, required) {
             const $label = $el.closest(FIELD_WRAPPER).find(FIELD_LABEL);
-            $label.text($label.text().replace(/\s?\*?$/, required ? ' *': ''));
+            ns.toggleAsterisk($label, required);
         }
 
         static _findAccessor($el, type) {

@@ -14,47 +14,74 @@
 package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreField;
+import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite {@code FieldSet} widget functionality
  * within the {@code cq:dialog} XML node
  */
-public class FieldSetHandler implements Handler, BiConsumer<Element, Field> {
+class FieldSetHandler implements WidgetSetHandler {
+    private static final String EMPTY_FIELDSET_EXCEPTION_MESSAGE = "No valid fields found in fieldset class ";
+
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
      * @param field Current {@code Field} instance
      */
     @Override
+    @SuppressWarnings({"deprecation", "squid:S1874"})
+    // the processing of deprecated "IgnoreField" annotation remains for compatibility reasons until v.2.0.0
     public void accept(Element element, Field field) {
-        Class<?> fieldSetClass = field.getType();
+        // Define the working @FieldSet annotation instance and the fieldset type
         FieldSet fieldSet = field.getDeclaredAnnotation(FieldSet.class);
-        String restoredNamePrefix = getXmlUtil().getNamePrefix();
-        if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
-            getXmlUtil().setNamePrefix(restoredNamePrefix + getXmlUtil().getValidSimpleName(fieldSet.namePrefix()));
-        }
+        Class<?> fieldSetType = field.getType();
 
-        List<Field> fields = PluginReflectionUtility.getAllNonStaticFields(fieldSetClass);
+        // Get the filtered fields collection for the current container; early return if collection is empty
+        List<Field> fields = getContainerFields(element, field, fieldSetType);
 
-        List<Field> ignoreFields = PluginReflectionUtility.getAllIgnoredFields(fieldSetClass);
-        if(!ignoreFields.isEmpty()) {
+        // COMPATIBILITY: retrieve and process list of fields marked with a legacy "IgnoreField" annotation
+        // to be removed after v.2.0.0
+        List<Field> legacyIgnoredFields = PluginReflectionUtility.getAllFields(
+                fieldSetType,
+                Collections.singletonList(f -> f.isAnnotationPresent(IgnoreField.class)));
+        if (!legacyIgnoredFields.isEmpty()) {
             fields = fields.stream()
-                    .filter(f -> ignoreFields.stream()
-                            .anyMatch(ignoreField -> !f.getName().equals(ignoreField.getName())))
+                    .filter(f -> legacyIgnoredFields.stream()
+                            .anyMatch(ignoredField -> !f.getName().equals(ignoredField.getName())))
                     .collect(Collectors.toList());
         }
+        // end of compatibility block
 
-        Handler.appendToContainer(fields, element, false);
-        getXmlUtil().setNamePrefix(restoredNamePrefix);
+        if(fields.isEmpty()) {
+            PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
+                    EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName()
+            ));
+            return;
+        }
+
+        // Cache existing name prefix and set updated name prefix with the parameter of the FieldSet annotation as needed
+        String previousNamePrefix = getXmlUtil().getNamePrefix();
+        if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
+            getXmlUtil().setNamePrefix(previousNamePrefix + getXmlUtil().getValidFieldName(fieldSet.namePrefix()));
+        }
+
+        // append the valid fields to the container
+        PluginXmlContainerUtility.append(element, fields);
+
+        // Restore the name prefix
+        getXmlUtil().setNamePrefix(previousNamePrefix);
     }
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          height="{Double}480.0"
+          width="{Double}560.0"
+          jcr:title="Test Component">
+    <content jcr:primaryType="nt:unstructured"
+             sling:resourceType="granite/ui/components/coral/foundation/container">
+        <layout jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
+        <items jcr:primaryType="nt:unstructured">
+            <column jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/container">
+                <items jcr:primaryType="nt:unstructured">
+                    <acsListOption jcr:primaryType="nt:unstructured"
+                                   sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                   name="./acsListOption"
+                                   fieldLabel="ACS List Options"
+                                   disabled="{Boolean}false"
+                                   renderHidden="{Boolean}false"
+                                   required="{Boolean}false"
+                                   granite:hidden="{Boolean}false"
+                                   granite:class="deprecated-class-assignment">
+                        <datasource jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="acs/list/resource/type"
+                                    addNone="{Boolean}true"
+                                    path="/path/to/acs/list"/>
+                    </acsListOption>
+                    <imageUpload jcr:primaryType="nt:unstructured"
+                                 sling:resourceType="cq/gui/components/authoring/dialog/fileupload"
+                                 name="./imageUpload"
+                                 allowUpload="{Boolean}false"
+                                 chunkUploadSupported="{Boolean}false"
+                                 class="css-class-name"
+                                 disabled="{Boolean}false"
+                                 fieldLabel="Coral 2 Image Upload"
+                                 mimeTypes="[image]"
+                                 multiple="{Boolean}false"
+                                 renderHidden="{Boolean}false"
+                                 required="{Boolean}false"
+                                 text="Upload"
+                                 uploadUrl="${suffix.path}"
+                                 useHTML5="{Boolean}true"
+                                 variant="secondary"/>
+                    <customWidget jcr:primaryType="nt:unstructured"
+                                  sling:resourceType="test-components/form/customfield"
+                                  name="./customWidget"
+                                  custom="Custom annotation field"
+                                  disabled="{Boolean}false"
+                                  fieldLabel="Custom Widget"
+                                  renderHidden="{Boolean}false"
+                                  required="{Boolean}false"/>
+                    <fieldSet jcr:primaryType="nt:unstructured"
+                              sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
+                        <items jcr:primaryType="nt:unstructured">
+                            <usedField jcr:primaryType="nt:unstructured"
+                                       sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                       name="./usedField"
+                                       disabled="{Boolean}false"
+                                       fieldLabel="Used field"
+                                       renderHidden="{Boolean}false"
+                                       required="{Boolean}false"/>
+                        </items>
+                    </fieldSet>
+                </items>
+            </column>
+        </items>
+    </content>
+</jcr:root>

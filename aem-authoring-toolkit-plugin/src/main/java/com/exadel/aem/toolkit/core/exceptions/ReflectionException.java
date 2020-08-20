@@ -15,7 +15,7 @@
 package com.exadel.aem.toolkit.core.exceptions;
 
 /**
- * Represents the plugin-specific exception due to one of exceptions produces by {@code java.lang.reflect} routines
+ * Represents the plugin-specific exception due to one of exceptions produced by {@code java.lang.reflect} routines
  */
 public class ReflectionException extends RuntimeException {
     public ReflectionException(String message, Exception inner) {
@@ -25,5 +25,4 @@ public class ReflectionException extends RuntimeException {
     public ReflectionException(Class<?> clazz, String fieldName) {
         super(String.format("Field '%s' not present in %s", fieldName, clazz));
     }
-
 }

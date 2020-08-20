@@ -13,21 +13,29 @@
  */
 package com.exadel.aem.toolkit.core.util.validation;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 
 /**
  *  {@link Validator} implementation for testing that provided value is of numeric type
  */
 public class NumberValidator implements Validator {
-    private static final String MSG_NUMBER_EXPECTED = "numeric value expected";
+    private static final String MSG_NUMBER_EXPECTED = "numeric value or an empty string expected";
 
     /**
-     * Tests that the provided value is of numeric type
+     * Tests that the provided value is of numeric type or an empty string
      * @param obj Generic value
      * @return True or false
      */
     @Override
     public boolean test(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (StringUtils.EMPTY.equals(obj)) {
+            return true;
+        }
         try {
             Double.valueOf(obj.toString());
             return true;
@@ -42,14 +50,6 @@ public class NumberValidator implements Validator {
     @Override
     public boolean isApplicableTo(Object obj) {
         return true;
-    }
-
-    /**
-     * {@inheritDoc}. In {@code NumberValidator}, defines the zero-change function
-     */
-    @Override
-    public Object getFilteredValue(Object obj) {
-        return obj;
     }
 
     @Override
