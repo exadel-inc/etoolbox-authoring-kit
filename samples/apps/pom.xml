@@ -7,12 +7,12 @@
     <parent>
         <artifactId>aem-authoring-toolkit-samples</artifactId>
         <groupId>com.exadel.aem</groupId>
-        <version>1.2.1</version>
+        <version>1.2.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>aem-authoring-toolkit-samples-apps</artifactId>
     <name>AEM Authoring Toolkit - Samples Apps</name>
-    <version>1.2.1</version>
+    <version>1.2.2-SNAPSHOT</version>
 
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
