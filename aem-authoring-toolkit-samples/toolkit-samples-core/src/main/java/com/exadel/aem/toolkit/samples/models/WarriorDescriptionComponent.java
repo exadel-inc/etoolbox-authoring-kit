@@ -1,25 +1,7 @@
 package com.exadel.aem.toolkit.samples.models;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.ModifiableValueMap;
-import org.apache.sling.api.resource.PersistenceException;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.Self;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import com.day.cq.tagging.Tag;
 import com.day.cq.tagging.TagManager;
-
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.*;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
@@ -38,6 +20,19 @@ import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.*;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Dialog(
         name = "content/warrior-description-component",
@@ -182,9 +177,9 @@ public class WarriorDescriptionComponent {
     private boolean isLikesFilms;
 
     @Hidden
-    @DependsOn(query = "@parentPath", action = "getParentColorTheme")
+    @DependsOn(query = "'../../colorTheme'", action = DependsOnActions.FETCH)
     @DependsOnRef(name = "isDarkColorTheme", type = DependsOnRefTypes.BOOLSTRING)
-    private boolean isDarkColorTheme;
+    private String isDarkColorTheme;
 
     @PlaceOnTab(WarriorDescriptionComponent.TAB_FILMS)
     @DependsOn(query = "@isDarkColorTheme", action = "namespaceFilter")
@@ -197,29 +192,11 @@ public class WarriorDescriptionComponent {
     @ValueMapValue
     private String[] films;
 
-    @DependsOnRef(name = "parentPath")
-    @Hidden
-    private String parentPath;
-
-    @PostConstruct
-    public void init() throws PersistenceException {
-        ModifiableValueMap valueMap = resource.adaptTo(ModifiableValueMap.class);
-        if (valueMap == null) {
-            return;
-        }
-        String parentPath = Optional.ofNullable(resource.getParent())
-                .map(Resource::getParent)
-                .map(Resource::getPath)
-                .orElse("");
-        valueMap.put("parentPath", parentPath);
-        resource.getResourceResolver().commit();
-    }
-
     public String getWarriorName() {
         return Optional.ofNullable(resource.getParent())
                 .map(Resource::getParent)
                 .map(Resource::getValueMap)
-                .map((valueMap) -> valueMap.get("warriorName", String.class))
+                .map(valueMap -> valueMap.get("warriorName", String.class))
                 .orElse(WarriorComponent.DEFAULT_NAME);
     }
 
