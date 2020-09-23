@@ -12,8 +12,6 @@
         <items jcr:primaryType="nt:unstructured">
             <accordion
                     jcr:primaryType="nt:unstructured"
-                    margin="{Boolean}false"
-                    multiple="{Boolean}false"
                     sling:resourceType="granite/ui/components/coral/foundation/accordion">
                 <items jcr:primaryType="nt:unstructured">
                     <basic
@@ -66,6 +64,10 @@
                                          trackingElement="test-element"
                                          trackingFeature="test-feature"/>
                             <accordion jcr:primaryType="nt:unstructured"
+                                       margin="{Boolean}false"
+                                       multiple="{Boolean}false"
+                                       title="Field"
+                                       variant="default"
                                        sling:resourceType="granite/ui/components/coral/foundation/accordion">
                                 <items jcr:primaryType="nt:unstructured">
                                     <field

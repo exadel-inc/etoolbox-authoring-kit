@@ -45,8 +45,6 @@ class AccordionHandler implements WidgetSetHandler {
     public void accept(Element element, Field field) {
 
         Element tabItemsElement = (Element) element
-                .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS))
-                .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ACCORDION, ResourceTypes.ACCORDION))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
         Accordion accordion = field.getDeclaredAnnotation(Accordion.class);
         Class<?> accordionType = field.getType();

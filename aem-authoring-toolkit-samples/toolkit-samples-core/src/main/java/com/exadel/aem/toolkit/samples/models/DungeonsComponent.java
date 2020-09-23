@@ -48,23 +48,31 @@ public class DungeonsComponent extends ParentSelectComponent {
     @PlaceOn("Main")
     private String dungeonRules;
 
-    @Select(options = {
-            @Option(text = "Rotten swamps", value = "1"),
-            @Option(text = "Ice valley", value = "2")
-    })
-    @DialogField(label = "Dungeons select")
-    @Default(values = "1")
-    @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
-    @ValueMapValue
+    @Accordion(title = "Dungeons select")
     @PlaceOn("Main")
-    private String dungeonsSelect;
+    DungeonSelect dungeonSelect;
+
+    static class DungeonSelect {
+        @Select(options = {
+                @Option(text = "Rotten swamps", value = "1"),
+                @Option(text = "Ice valley", value = "2")
+        })
+        @DialogField(label = "Dungeons select")
+        @Default(values = "1")
+        @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
+        @ValueMapValue
+        @PlaceOn("Main")
+        String dungeonsSelect;
+
+    }
+
 
     public String getDungeonRules() {
         return StringUtils.defaultIfBlank(dungeonRules, DEFAULT_RULES);
     }
 
     public String getDungeonDescription() {
-        if (dungeonsSelect.equals("1")) {
+        if (dungeonSelect.dungeonsSelect.equals("1")) {
             return DEFAULT_ROTTEN_SWAMPS_TEXT;
         }
         return DEFAULT_ICE_VALLEY_TEXT;
