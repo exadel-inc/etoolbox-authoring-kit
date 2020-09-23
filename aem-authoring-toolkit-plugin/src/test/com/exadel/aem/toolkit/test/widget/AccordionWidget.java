@@ -15,9 +15,10 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.container.Accordion;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnAccordion;
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonType;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizeConstants;
@@ -51,7 +52,7 @@ public class AccordionWidget {
             trackingElement = "test-element",
             trackingFeature = "test-feature"
     )
-    @PlaceOnAccordion("Basic")
+    @PlaceOn("Basic")
     String buttonField1;
 
     @Button(
@@ -70,8 +71,17 @@ public class AccordionWidget {
             trackingElement = "test-element",
             trackingFeature = "test-feature"
     )
-    @PlaceOnAccordion("Basic2")
+    @PlaceOn("Basic2")
     String buttonField;
 
+    @Accordion(title = "Field")
+    @PlaceOn("Basic2")
+    AccordionExample accordion;
+
+    static class AccordionExample {
+        @DialogField
+        @TextField
+        String field6;
+    }
 
 }

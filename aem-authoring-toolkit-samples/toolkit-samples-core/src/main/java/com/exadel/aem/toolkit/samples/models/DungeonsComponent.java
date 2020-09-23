@@ -1,7 +1,7 @@
 package com.exadel.aem.toolkit.samples.models;
 
 import com.exadel.aem.toolkit.api.annotations.container.Accordion;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnAccordion;
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
@@ -45,7 +45,7 @@ public class DungeonsComponent extends ParentSelectComponent {
             })
     @DialogField(label = "Make your own dungeons rules")
     @ValueMapValue
-    @PlaceOnAccordion("Main")
+    @PlaceOn("Main")
     private String dungeonRules;
 
     @Select(options = {
@@ -56,7 +56,7 @@ public class DungeonsComponent extends ParentSelectComponent {
     @Default(values = "1")
     @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
     @ValueMapValue
-    @PlaceOnAccordion("Main")
+    @PlaceOn("Main")
     private String dungeonsSelect;
 
     public String getDungeonRules() {

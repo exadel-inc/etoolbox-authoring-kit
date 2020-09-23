@@ -25,6 +25,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
@@ -147,12 +148,18 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
 
         // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
         // for which a non-existent tab was specified. Handle an InvalidTabException for each of them
-        allFields.forEach(field -> PluginRuntime.context().getExceptionHandler()
-                .handle(new InvalidTabException(
-                        field.isAnnotationPresent(PlaceOnTab.class)
-                                ? field.getAnnotation(PlaceOnTab.class).value()
-                                : StringUtils.EMPTY
-                )));
+        for (Field field:allFields) {
+            if(field.isAnnotationPresent(PlaceOnTab.class)) {
+                PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(field.isAnnotationPresent(PlaceOnTab.class) ? field.getAnnotation(PlaceOnTab.class).value() : StringUtils.EMPTY));
+            }
+            if(field.isAnnotationPresent(PlaceOn.class)){
+                PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(field.isAnnotationPresent(PlaceOn.class) ? field.getAnnotation(PlaceOn.class).value() : StringUtils.EMPTY));
+            }
+            else{
+                PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(StringUtils.EMPTY));
+            }
+        }
+//
     }
 
     /**
@@ -223,8 +230,11 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
      * @return True or false
      */
     private static boolean isFieldForTab(Field field, Tab tab, boolean isDefaultTab) {
-        if (!field.isAnnotationPresent(PlaceOnTab.class)) {
+        if (!field.isAnnotationPresent(PlaceOnTab.class) && !field.isAnnotationPresent(PlaceOn.class)) {
             return isDefaultTab;
+        }
+        if(field.isAnnotationPresent(PlaceOn.class)){
+            return tab.title().equalsIgnoreCase(field.getAnnotation(PlaceOn.class).value());
         }
         return tab.title().equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
     }

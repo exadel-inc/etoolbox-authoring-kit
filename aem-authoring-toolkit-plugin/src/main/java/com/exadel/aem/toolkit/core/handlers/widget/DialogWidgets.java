@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
+import com.exadel.aem.toolkit.api.annotations.container.Accordion;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.widgets.*;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
@@ -75,7 +76,8 @@ public enum DialogWidgets implements DialogWidget {
     PASSWORD(Password.class, new PasswordHandler()),
     HEADING(Heading.class),
     ALERT(Alert.class),
-    BUTTON(Button.class);
+    BUTTON(Button.class),
+    ACCORDION(Accordion.class, new AccordionHandler());
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";
     private static final BiConsumer<Element, Field> EMPTY_HANDLER = (componentNode, field) -> {

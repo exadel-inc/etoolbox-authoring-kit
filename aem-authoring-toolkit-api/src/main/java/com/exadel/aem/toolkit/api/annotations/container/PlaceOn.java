@@ -24,9 +24,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @SuppressWarnings("unused")
-public @interface PlaceOnAccordion {
+public @interface PlaceOn {
     /**
-     * String equal to appropriate {@link Accordion#title()} value
+     * String equal to appropriate {@link Accordion#title()} value or {@link Tab #title()}
      * @return String value
      */
     String value();

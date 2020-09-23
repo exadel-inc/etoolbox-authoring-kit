@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.core.handlers.container;
 
 import com.exadel.aem.toolkit.api.annotations.container.Accordion;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnAccordion;
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
@@ -115,8 +115,8 @@ public class AccordionHandler implements Handler, BiConsumer<Class<?>, Element> 
 
         allFields.forEach(field -> PluginRuntime.context().getExceptionHandler()
                 .handle(new InvalidTabException(
-                        field.isAnnotationPresent(PlaceOnAccordion.class)
-                                ? field.getAnnotation(PlaceOnAccordion.class).value()
+                        field.isAnnotationPresent(PlaceOn.class)
+                                ? field.getAnnotation(PlaceOn.class).value()
                                 : StringUtils.EMPTY
                 )));
     }
@@ -149,9 +149,9 @@ public class AccordionHandler implements Handler, BiConsumer<Class<?>, Element> 
      * @return True or false
      */
     private static boolean isFieldForAccordion(Field field, Accordion accordion, boolean isDefaultTab) {
-        if (!field.isAnnotationPresent(PlaceOnAccordion.class)) {
+        if (!field.isAnnotationPresent(PlaceOn.class)) {
             return isDefaultTab;
         }
-        return accordion.title().equalsIgnoreCase(field.getAnnotation(PlaceOnAccordion.class).value());
+        return accordion.title().equalsIgnoreCase(field.getAnnotation(PlaceOn.class).value());
     }
 }
