@@ -30,16 +30,6 @@ public class FieldsetPostfixAnnotationHandler implements DialogWidgetHandler {
     }
 
     @Override
-    public String before() {
-        return null;
-    }
-
-    @Override
-    public String after() {
-        return null;
-    }
-
-    @Override
     public void accept(Element element, Field field) {
 
         Element currentElement;
