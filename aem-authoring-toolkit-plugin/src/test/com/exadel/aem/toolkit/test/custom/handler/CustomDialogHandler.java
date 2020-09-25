@@ -35,6 +35,16 @@ public class CustomDialogHandler implements DialogHandler {
     }
 
     @Override
+    public String before() {
+        return "CustomProcessingHandler";
+    }
+
+    @Override
+    public String after() {
+        return "CustomWidgetHandler";
+    }
+
+    @Override
     public void accept(Element element, Class<?> aClass) {
         visitElements(element, elt -> {
             if (StringUtils.equals(elt.getAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY), ResourceTypes.MULTIFIELD)

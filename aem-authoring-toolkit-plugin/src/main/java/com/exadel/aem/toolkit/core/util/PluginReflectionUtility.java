@@ -13,35 +13,6 @@
  */
 package com.exadel.aem.toolkit.core.util;
 
-import java.io.File;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ConfigurationBuilder;
-
 import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
@@ -54,6 +25,28 @@ import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ConfigurationBuilder;
+
+import java.io.File;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields are marked with
@@ -77,13 +70,14 @@ public class PluginReflectionUtility {
     /**
      * Used to initialize {@code PluginReflectionUtility} instance based on list of available classpath entries in the
      * scope of this Maven plugin
-     * @param elements List of classpath elements to be used in reflection routines
+     *
+     * @param elements    List of classpath elements to be used in reflection routines
      * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
-     *                      If not specified, all available components will be processed
+     *                    If not specified, all available components will be processed
      * @return {@link PluginReflectionUtility} instance
      */
     public static PluginReflectionUtility fromCodeScope(List<String> elements, String packageBase) {
-        URL[] urls = new URL[] {};
+        URL[] urls = new URL[]{};
         if (elements != null) {
             urls = elements.stream()
                     .map(File::new)
@@ -105,6 +99,7 @@ public class PluginReflectionUtility {
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
      * scope of the plugin
+     *
      * @return {@code List<DialogWidgetHandler>} of instances
      */
     public List<DialogWidgetHandler> getCustomDialogWidgetHandlers() {
@@ -112,12 +107,18 @@ public class PluginReflectionUtility {
             return customDialogWidgetHandlers;
         }
         customDialogWidgetHandlers = getHandlers(DialogWidgetHandler.class);
+        boolean check = false;
+        while (!check) {
+            compareNode(customDialogWidgetHandlers);
+            check = check(customDialogWidgetHandlers);
+        }
         return customDialogWidgetHandlers;
     }
 
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
      * scope of the plugin matching the specified widget annotation
+     *
      * @param annotationClass {@code Class<?>} reference to pick up handlers for
      * @return {@code List<DialogWidgetHandler>} of instances
      */
@@ -128,10 +129,12 @@ public class PluginReflectionUtility {
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
      * scope of the plugin matching the specified widget annotation
+     *
      * @param annotationClasses List of {@code Class<?>} reference to pick up handlers for
      * @return {@code List<DialogWidgetHandler>} of instances
      */
-    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers(List<Class<? extends Annotation>> annotationClasses) {
+    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers(List<Class<? extends
+            Annotation>> annotationClasses) {
         if (annotationClasses == null) {
             return Collections.emptyList();
         }
@@ -147,6 +150,7 @@ public class PluginReflectionUtility {
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogHandler}s defined within the Compile
      * scope of the AEM Authoring Toolkit Maven plugin
+     *
      * @return {@code List<DialogHandler>} of instances
      */
     public List<DialogHandler> getCustomDialogHandlers() {
@@ -160,6 +164,7 @@ public class PluginReflectionUtility {
     /**
      * Initializes as necessary and returns collection of {@code Validator}s defined within the Compile
      * scope of the AEM Authoring Toolkit Maven plugin
+     *
      * @return {@code List<Validator>} of instances
      */
     public Map<String, Validator> getValidators() {
@@ -177,6 +182,7 @@ public class PluginReflectionUtility {
      * Returns list of {@code @Dialog}-annotated classes within the Compile scope the plugin is operating in, to
      * determine which of the component folders to process.
      * If {@code componentsPath} is set for this instance, classes are tested to be under that path
+     *
      * @return {@code List<Class>} of instances
      */
     public List<Class<?>> getComponentClasses() {
@@ -188,8 +194,9 @@ public class PluginReflectionUtility {
     /**
      * Gets generic list of handler instances invoked from all available derivatives of specified handler {@code Class}.
      * Each is supplied with a reference to {@link PluginRuntimeContext} as required
+     *
      * @param handlerClass {@code Class} object
-     * @param <T> Expected handler type
+     * @param <T>          Expected handler type
      * @return {@link List<T>} of instances
      */
     private <T> List<T> getHandlers(Class<? extends T> handlerClass) {
@@ -203,8 +210,9 @@ public class PluginReflectionUtility {
     /**
      * Creates new instance object of a handler {@code Class} and populates {@link RuntimeContext} instance to
      * every field annotated with {@link Injected}
+     *
      * @param handlerClass The handler class to instantiate
-     * @param <T> Instance type
+     * @param <T>          Instance type
      * @return New handler instance
      */
     private static <T> T getHandlerInstance(Class<? extends T> handlerClass) {
@@ -220,8 +228,9 @@ public class PluginReflectionUtility {
 
     /**
      * Creates a new instance object of the specified {@code Class}
+     *
      * @param instanceClass The class to instantiate
-     * @param <T> Instance type
+     * @param <T>           Instance type
      * @return New object instance
      */
     private static <T> T getInstance(Class<? extends T> instanceClass) {
@@ -238,8 +247,9 @@ public class PluginReflectionUtility {
 
     /**
      * Used to set a reference to {@link PluginRuntimeContext} to the handler instance
+     *
      * @param handler Handler instance
-     * @param field The field of handler to populate
+     * @param field   The field of handler to populate
      */
     private static void populateRuntimeContext(Object handler, Field field) {
         field.setAccessible(true);
@@ -252,16 +262,18 @@ public class PluginReflectionUtility {
 
     /**
      * Retrieves annotations of a {@code Field} instance as a sequential {@code Stream}
+     *
      * @param field The field to analyze
      * @return Stream of annotation objects,
      */
-    public static Stream<Class<? extends Annotation>> getFieldAnnotations(Field field){
+    public static Stream<Class<? extends Annotation>> getFieldAnnotations(Field field) {
         return Arrays.stream(field.getDeclaredAnnotations())
                 .map(Annotation::annotationType);
     }
 
     /**
      * Retrieves a complete list of {@code Field}s of a {@code Class}
+     *
      * @param targetClass The class to analyze
      * @return List of {@code Field} objects
      */
@@ -271,8 +283,9 @@ public class PluginReflectionUtility {
 
     /**
      * Retrieves a sequential list of all {@code Field}s of a certain {@code Class} that match specific criteria
+     *
      * @param targetClass The class to analyze
-     * @param predicates List of {@code Predicate<Field>} instances to pick up appropriate fields
+     * @param predicates  List of {@code Predicate<Field>} instances to pick up appropriate fields
      * @return List of {@code Field} objects
      */
     public static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates) {
@@ -303,6 +316,7 @@ public class PluginReflectionUtility {
     /**
      * Retrieves type of object(s) returned by the method. If method is designed to provide single object, its type
      * is returned. But if method supplies an array, type of array's element is returned
+     *
      * @param method The method to analyze
      * @return Appropriate {@code Class} instance
      */
@@ -315,6 +329,7 @@ public class PluginReflectionUtility {
     /**
      * Retrieves the sequential list of ancestral of a specific {@code Class}, target class itself included,
      * starting from the "top" of the inheritance tree. {@code Object} class is not added to the hierarchy
+     *
      * @param targetClass The class to build the tree upon
      * @return List of {@code Class} objects
      */
@@ -325,7 +340,8 @@ public class PluginReflectionUtility {
     /**
      * Retrieves the sequential list of ancestral classes of a specific {@code Class}, started from the "top" of the inheritance
      * tree. {@code Object} class is not added to the hierarchy
-     * @param targetClass The class to analyze
+     *
+     * @param targetClass   The class to analyze
      * @param includeTarget Whether to include the {@code targetClass} itself to the hierarchy
      * @return List of {@code Class} objects
      */
@@ -345,6 +361,7 @@ public class PluginReflectionUtility {
 
     /**
      * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
+     *
      * @param annotation The annotation instance to analyze
      * @return List of {@code Method} instances that represent properties initialized with non-defaults
      */
@@ -356,6 +373,7 @@ public class PluginReflectionUtility {
 
     /**
      * Gets whether any of the {@code Annotation}'s properties has a value which is not default
+     *
      * @param annotation The annotation to analyze
      * @return True or false
      */
@@ -366,8 +384,9 @@ public class PluginReflectionUtility {
 
     /**
      * Gets whether an {@code Annotation} property has a value which is not default
+     *
      * @param annotation The annotation to analyze
-     * @param method The method representing the property
+     * @param method     The method representing the property
      * @return True or false
      */
     static boolean annotationPropertyIsNotDefault(Annotation annotation, Method method) {
@@ -377,7 +396,7 @@ public class PluginReflectionUtility {
                 return true;
             }
             Object invocationResult = method.invoke(annotation);
-            if (method.getReturnType().isArray() && ArrayUtils.isEmpty((Object[])invocationResult)) {
+            if (method.getReturnType().isArray() && ArrayUtils.isEmpty((Object[]) invocationResult)) {
                 return false;
             }
             return !defaultValue.equals(invocationResult);
@@ -388,16 +407,73 @@ public class PluginReflectionUtility {
 
     /**
      * Converts {@link URI} parameter, such as of a classpath element, to an {@link URL} instance used by {@link Reflections}
+     *
      * @param uri {@code URI} value
      * @return {@code URL} value
      */
-    private static URL toUrl(URI uri){
+    private static URL toUrl(URI uri) {
         try {
             return uri.toURL();
         } catch (MalformedURLException e) {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
         return null;
+    }
+
+    private static List<DialogWidgetHandler> compareNode(List<DialogWidgetHandler> copy) {
+        List<DialogWidgetHandler> list = new ArrayList<>(copy);
+        List<String> temp = new ArrayList<>();
+        int after;
+        int before;
+        int i;
+        for (DialogWidgetHandler handler : copy) {
+            for (DialogWidgetHandler item : list) {
+                String[] className = item.getClass().getName().split("\\.");
+                temp.add(className[className.length - 1]);
+            }
+            for (int k = 0; k < list.size(); k++) {
+                int current = temp.indexOf(handler.getClass().getName().split("\\.")[handler.getClass().getName().split("\\.").length - 1]);
+                after = handler.after() != null ? temp.indexOf(handler.after()) : current;
+                before = handler.before() != null ? temp.indexOf(handler.before()) : current;
+                if (after > before) {
+                    Collections.swap(list, after, before);
+                    Collections.swap(temp, after, before);
+                    i = after;
+                    after = before;
+                    before = i;
+                }
+                if (current > before) {
+                    Collections.swap(list, current, before);
+                    Collections.swap(temp, current, before);
+                    i = current;
+                    current = before;
+                    before = i;
+                }
+                if (current < after) {
+                    Collections.swap(list, current, after);
+                    Collections.swap(temp, current, after);
+                    i = current;
+                    current = after;
+                    after = i;
+                }
+            }
+        }
+        return list;
+    }
+
+    private boolean check(List<DialogWidgetHandler> list) {
+        List<String> temp = new ArrayList<>();
+        for (DialogWidgetHandler item : list) {
+            String[] className = item.getClass().getName().split("\\.");
+            temp.add(className[className.length - 1]);
+        }
+        for (DialogWidgetHandler item : list) {
+            String current = item.getClass().getName().split("\\.")[item.getClass().getName().split("\\.").length - 1];
+            if ((temp.indexOf(item.before()) < temp.indexOf(current) || temp.indexOf(item.after()) > temp.indexOf(current)) && !(item.before().equals(item.after()) && !item.before().equals(current))) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

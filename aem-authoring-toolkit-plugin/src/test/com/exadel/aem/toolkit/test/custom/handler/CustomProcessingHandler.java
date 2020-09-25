@@ -31,6 +31,16 @@ public class CustomProcessingHandler implements DialogWidgetHandler {
     }
 
     @Override
+    public String before() {
+        return "CustomMultifieldHandler";
+    }
+
+    @Override
+    public String after() {
+        return "CustomWidgetHandler";
+    }
+
+    @Override
     public void accept(Element element, Field field) {
         element.setAttribute("customProcessing", "turned on");
     }

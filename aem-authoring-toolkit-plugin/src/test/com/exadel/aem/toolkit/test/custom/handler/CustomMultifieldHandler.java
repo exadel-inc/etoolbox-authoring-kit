@@ -31,6 +31,16 @@ public class CustomMultifieldHandler implements DialogWidgetHandler {
     }
 
     @Override
+    public String before() {
+        return "CustomMultifieldHandler";
+    }
+
+    @Override
+    public String after() {
+        return "CustomProcessingHandler";
+    }
+
+    @Override
     public void accept(Element element, Field field) {
         element.setAttribute("multifieldSpecial", "This is added to Multifields");
     }

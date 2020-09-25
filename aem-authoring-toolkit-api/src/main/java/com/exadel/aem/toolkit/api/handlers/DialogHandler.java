@@ -28,4 +28,8 @@ public interface DialogHandler extends BiConsumer<Element, Class<?>> {
      * @return String value, non-blank
      */
     String getName();
+
+    String before();
+
+    String after();
 }

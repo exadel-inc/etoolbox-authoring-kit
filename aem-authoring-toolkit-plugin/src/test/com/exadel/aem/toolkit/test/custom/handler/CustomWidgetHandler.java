@@ -35,6 +35,16 @@ public class CustomWidgetHandler implements DialogWidgetHandler {
     }
 
     @Override
+    public String before() {
+        return "CustomWidgetHandler";
+    }
+
+    @Override
+    public String after() {
+        return "CustomWidgetHandler";
+    }
+
+    @Override
     public void accept(Element element, Field field) {
         CustomWidgetAnnotation testCustomAnnotation = field.getDeclaredAnnotation(CustomWidgetAnnotation.class);
         runtimeContext.getXmlUtility().setAttribute(element, "customField", testCustomAnnotation.customField());
