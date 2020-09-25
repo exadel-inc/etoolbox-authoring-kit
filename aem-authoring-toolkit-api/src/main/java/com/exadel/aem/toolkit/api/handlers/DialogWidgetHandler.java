@@ -29,8 +29,4 @@ public interface DialogWidgetHandler extends BiConsumer<Element, Field> {
      * @return String value, non-blank
      */
     String getName();
-
-    String before();
-
-    String after();
 }

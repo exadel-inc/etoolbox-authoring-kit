@@ -19,25 +19,15 @@ import java.lang.reflect.Field;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
-import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomProcessingAnnotation;
 
-@HandlesWidgets(CustomProcessingAnnotation.class)
+@Handles(value = CustomProcessingAnnotation.class, before = CustomMultifieldHandler.class, after = CustomWidgetHandler.class)
 @SuppressWarnings("unused")
 public class CustomProcessingHandler implements DialogWidgetHandler {
     @Override
     public String getName() {
         return "testCustomProcessing";
-    }
-
-    @Override
-    public String before() {
-        return "CustomMultifieldHandler";
-    }
-
-    @Override
-    public String after() {
-        return "CustomWidgetHandler";
     }
 
     @Override

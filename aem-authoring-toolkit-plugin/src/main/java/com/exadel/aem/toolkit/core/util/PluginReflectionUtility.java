@@ -19,7 +19,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
-import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
@@ -107,11 +107,6 @@ public class PluginReflectionUtility {
             return customDialogWidgetHandlers;
         }
         customDialogWidgetHandlers = getHandlers(DialogWidgetHandler.class);
-        boolean check = false;
-        while (!check) {
-            compareNode(customDialogWidgetHandlers);
-            check = check(customDialogWidgetHandlers);
-        }
         return customDialogWidgetHandlers;
     }
 
@@ -139,9 +134,9 @@ public class PluginReflectionUtility {
             return Collections.emptyList();
         }
         return getCustomDialogWidgetHandlers().stream()
-                .filter(handler -> handler.getClass().isAnnotationPresent(HandlesWidgets.class))
+                .filter(handler -> handler.getClass().isAnnotationPresent(Handles.class))
                 .filter(handler -> {
-                    Class<?>[] handled = handler.getClass().getDeclaredAnnotation(HandlesWidgets.class).value();
+                    Class<?>[] handled = handler.getClass().getDeclaredAnnotation(Handles.class).value();
                     return annotationClasses.stream().anyMatch(annotationClass -> ArrayUtils.contains(handled, annotationClass));
                 })
                 .collect(Collectors.toList());
@@ -200,11 +195,87 @@ public class PluginReflectionUtility {
      * @return {@link List<T>} of instances
      */
     private <T> List<T> getHandlers(Class<? extends T> handlerClass) {
-        return reflections.getSubTypesOf(handlerClass).stream()
+        List<T> list = reflections.getSubTypesOf(handlerClass).stream()
                 .map(PluginReflectionUtility::getHandlerInstance)
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(handler -> handler.getClass().getCanonicalName())) // to provide stable handlers sequence between runs
                 .collect(Collectors.toList());
+        Graph classGraph = new Graph(list);
+        for (T item : list) {
+            Class<?> after = item.getClass().getDeclaredAnnotation(Handles.class).after();
+            Class<?> before = item.getClass().getDeclaredAnnotation(Handles.class).before();
+            classGraph.addEdge(item.getClass(), before);
+            classGraph.addEdge(after, item.getClass());
+        }
+        List<T> sortedList = (List<T>) classGraph.topologicalSort();
+        List<T> finalList = new ArrayList<>();
+        int i = 0;
+        int k = 0;
+        while (finalList.size() != list.size()) {
+            if (list.get(i).getClass().equals(sortedList.get(k))) {
+                finalList.add(list.get(i));
+                k++;
+                i = 0;
+            } else {
+                i++;
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Implements topological sorting
+     */
+    public class Graph {
+        private HashMap<Class<?>, ArrayList> edges;
+        private List nodes;
+        private List nodeVisited;
+        private ArrayList edgeList;
+
+        public Graph(List vertices) {
+            nodes = vertices;
+            edges = new HashMap();
+            nodeVisited = new ArrayList();
+        }
+
+        public void addEdge(Class<?> x, Class<?> y) {
+            if (!edges.containsKey(x)) {
+                edgeList = new ArrayList();
+            } else {
+                edgeList = edges.get(x);
+            }
+            edgeList.add(y);
+            edges.put(x, edgeList);
+        }
+
+        public <T> List<Class<? extends T>> topologicalSort() {
+            Stack stack = new Stack();
+            List<Class<? extends T>> list = new ArrayList();
+            for (Object c : nodes) {
+                if (!nodeVisited.contains(c.getClass())) {
+                    sort(c.getClass(), stack);
+                }
+            }
+            while (!stack.empty()) {
+                list.add((Class<? extends T>) stack.pop());
+            }
+            return list;
+        }
+
+        public void sort(Class<?> ch, Stack stack) {
+            nodeVisited.add(ch);
+            if (edges.get(ch) != null) {
+                Iterator iter = edges.get(ch).iterator();
+                Class<?> neighborNode;
+                while (iter.hasNext()) {
+                    neighborNode = (Class<?>) iter.next();
+                    if (!nodeVisited.contains(neighborNode)) {
+                        sort(neighborNode, stack);
+                    }
+                }
+            }
+            stack.push(ch);
+        }
     }
 
     /**
@@ -418,62 +489,6 @@ public class PluginReflectionUtility {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
         return null;
-    }
-
-    private static List<DialogWidgetHandler> compareNode(List<DialogWidgetHandler> copy) {
-        List<DialogWidgetHandler> list = new ArrayList<>(copy);
-        List<String> temp = new ArrayList<>();
-        int after;
-        int before;
-        int i;
-        for (DialogWidgetHandler handler : copy) {
-            for (DialogWidgetHandler item : list) {
-                String[] className = item.getClass().getName().split("\\.");
-                temp.add(className[className.length - 1]);
-            }
-            for (int k = 0; k < list.size(); k++) {
-                int current = temp.indexOf(handler.getClass().getName().split("\\.")[handler.getClass().getName().split("\\.").length - 1]);
-                after = handler.after() != null ? temp.indexOf(handler.after()) : current;
-                before = handler.before() != null ? temp.indexOf(handler.before()) : current;
-                if (after > before) {
-                    Collections.swap(list, after, before);
-                    Collections.swap(temp, after, before);
-                    i = after;
-                    after = before;
-                    before = i;
-                }
-                if (current > before) {
-                    Collections.swap(list, current, before);
-                    Collections.swap(temp, current, before);
-                    i = current;
-                    current = before;
-                    before = i;
-                }
-                if (current < after) {
-                    Collections.swap(list, current, after);
-                    Collections.swap(temp, current, after);
-                    i = current;
-                    current = after;
-                    after = i;
-                }
-            }
-        }
-        return list;
-    }
-
-    private boolean check(List<DialogWidgetHandler> list) {
-        List<String> temp = new ArrayList<>();
-        for (DialogWidgetHandler item : list) {
-            String[] className = item.getClass().getName().split("\\.");
-            temp.add(className[className.length - 1]);
-        }
-        for (DialogWidgetHandler item : list) {
-            String current = item.getClass().getName().split("\\.")[item.getClass().getName().split("\\.").length - 1];
-            if ((temp.indexOf(item.before()) < temp.indexOf(current) || temp.indexOf(item.after()) > temp.indexOf(current)) && !(item.before().equals(item.after()) && !item.before().equals(current))) {
-                return false;
-            }
-        }
-        return true;
     }
 
 }
