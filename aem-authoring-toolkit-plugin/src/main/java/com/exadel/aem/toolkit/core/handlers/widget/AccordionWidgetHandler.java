@@ -31,7 +31,7 @@ import java.util.List;
  * {@link Handler} implementation used to create markup responsible for Granite {@code Accordion} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class AccordionHandler implements WidgetSetHandler {
+class AccordionWidgetHandler implements WidgetSetHandler {
     private static final String DEFAULT_TAB_NAME = "accordion";
     private static final String EMPTY_ACCORDION_EXCEPTION_MESSAGE = "No valid fields found in accordion class ";
 

@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 /**
  * The {@link Handler} for a tabbed TouchUI dialog
  */
-public class AccordionHandler implements Handler, BiConsumer<Class<?>, Element> {
+public class AccordionContainerHandler implements Handler, BiConsumer<Class<?>, Element> {
     private static final String DEFAULT_TAB_NAME = "accordion";
     private static final String NO_TABS_DEFINED_EXCEPTION_MESSAGE = "No accordions defined for the dialog at ";
 

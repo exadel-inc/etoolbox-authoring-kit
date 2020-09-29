@@ -219,7 +219,7 @@ public class TestTabs {
 
 ### @Accordion annotation
 
-To define array of `@Accordion` within `@Dialog` annotation. Then, to settle a field to a certain accordion you will need  to add `@PlaceOnAccordion` annotation to this particular field.  The values of `@PlaceOnAccordion` must correspond to the *title* value of the desired accordion. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that tab title is specified everywhere in the very same format, no extra spaces, etc.
+To define array of `@Accordion` within `@Dialog` annotation. Then, to settle a field to a certain accordion you will need  to add `@PlaceOn` annotation to this particular field.  The values of `@PlaceOn` must correspond to the *title* value of the desired accordion. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that tab title is specified everywhere in the very same format, no extra spaces, etc.
 ```java
 @Dialog(
     name = "test-component",
@@ -231,7 +231,7 @@ To define array of `@Accordion` within `@Dialog` annotation. Then, to settle a f
 public class TestAccordion {
     @DialogField(label = "Field on the first tab")
     @TextField
-    @PlaceOnAccordion("First accordion")
+    @PlaceOn("First accordion")
     String field1;
 }
 ```
