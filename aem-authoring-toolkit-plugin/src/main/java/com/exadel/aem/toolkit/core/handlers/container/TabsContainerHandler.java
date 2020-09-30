@@ -13,26 +13,8 @@
  */
 package com.exadel.aem.toolkit.core.handlers.container;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
-import org.w3c.dom.Element;
-import com.google.common.collect.ImmutableMap;
-
 import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
@@ -42,23 +24,37 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.core.handlers.container.common.CommonTabUtils;
+import com.exadel.aem.toolkit.core.handlers.container.common.TabInstance;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
+import org.w3c.dom.Element;
+
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The {@link Handler} for a tabbed TouchUI dialog
  */
-public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
+public class TabsContainerHandler implements Handler, BiConsumer<Class<?>, Element> {
     private static final String DEFAULT_TAB_NAME = "tab";
     private static final String NO_TABS_DEFINED_EXCEPTION_MESSAGE = "No tabs defined for the dialog at ";
 
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
      * to process component-backing Java class and append the results to the XML root node
+     *
      * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param parentElement XML document root element
+     * @param parentElement  XML document root element
      */
     @Override
     public void accept(Class<?> componentClass, Element parentElement) {
@@ -72,7 +68,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
         // Note that "ignored tabs" setting is not inherited and is for current class only, unlike tabs collection
         String[] ignoredTabs = componentClass.isAnnotationPresent(IgnoreTabs.class)
                 ? componentClass.getAnnotation(IgnoreTabs.class).value()
-                : new String[] {};
+                : new String[]{};
 
         // Retrieve superclasses of the current class, from top of the hierarchy to the most immediate ancestor,
         // populate tab registry and store fields that are within @Tab-marked nested classes
@@ -129,17 +125,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
         while (tabInstanceIterator.hasNext()) {
             final boolean isFirstTab = iterationStep++ == 0;
             TabInstance currentTabInstance = tabInstanceIterator.next().getValue();
-            List<Field> storedCurrentTabFields = currentTabInstance.getFields();
-            List<Field> moreCurrentTabFields = allFields.stream()
-                    .filter(field -> isFieldForTab(field, currentTabInstance.getTab(), isFirstTab))
-                    .collect(Collectors.toList());
-            boolean needResort = !storedCurrentTabFields.isEmpty() && ! moreCurrentTabFields.isEmpty();
-            storedCurrentTabFields.addAll(moreCurrentTabFields);
-            if (needResort) {
-                storedCurrentTabFields.sort(PluginReflectionUtility.Predicates::compareDialogFields);
-            }
-            allFields.removeAll(moreCurrentTabFields);
-
+            List<Field> storedCurrentTabFields = CommonTabUtils.getStoredCurrentTabFields(allFields, currentTabInstance, isFirstTab);
             if (ArrayUtils.contains(ignoredTabs, currentTabInstance.getTab().title())) {
                 continue;
             }
@@ -148,27 +134,44 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
 
         // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
         // for which a non-existent tab was specified. Handle an InvalidTabException for each of them
-        for (Field field:allFields) {
-            if(field.isAnnotationPresent(PlaceOnTab.class)) {
-                PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(field.isAnnotationPresent(PlaceOnTab.class) ? field.getAnnotation(PlaceOnTab.class).value() : StringUtils.EMPTY));
-            }
-            if(field.isAnnotationPresent(PlaceOn.class)){
-                PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(field.isAnnotationPresent(PlaceOn.class) ? field.getAnnotation(PlaceOn.class).value() : StringUtils.EMPTY));
-            }
-            else{
-                PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(StringUtils.EMPTY));
-            }
-        }
+        CommonTabUtils.handleInvalidTabException(allFields);
 //
+    }
+
+    private void appendTab(Element tabCollectionElement, Tab tab, List<Field> fields) {
+        String nodeName = getXmlUtil().getUniqueName(tab.title(), DEFAULT_TAB_NAME, tabCollectionElement);
+        Element tabElement = getXmlUtil().createNodeElement(
+                nodeName,
+                ImmutableMap.of(
+                        JcrConstants.PN_TITLE, tab.title(),
+                        JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
+                ));
+        tabCollectionElement.appendChild(tabElement);
+        appendTabAttributes(tabElement, tab);
+        Handler.appendToContainer(tabElement, fields);
+    }
+
+    /**
+     * Appends tab attributes to a pre-built tab-defining XML element
+     *
+     * @param tabElement {@link Element} instance representing a TouchUI dialog tab
+     * @param tab        {@link Tab} annotation that contains settings
+     */
+    private void appendTabAttributes(Element tabElement, Tab tab) {
+        tabElement.setAttribute(JcrConstants.PN_TITLE, tab.title());
+        Attribute attribute = tab.attribute();
+        getXmlUtil().mapProperties(tabElement, attribute);
+        getXmlUtil().appendDataAttributes(tabElement, attribute.data());
     }
 
     /**
      * Retrieves a collection of tabs derived from the specified hierarchical collection of classes. Calls to this
      * method are used to compile a "tab registry" consisting of all tabs from the current class and/or its superclasses
+     *
      * @param classes The {@code Class<?>}-es to search for defined tabs
      * @return Map of entries, each specified by a tab title and containing a {@link TabInstance} aggregate object
      */
-    private Map<String, TabInstance> getTabInstances(List<Class<?>> classes) {
+    public Map<String, TabInstance> getTabInstances(List<Class<?>> classes) {
         Map<String, TabInstance> result = new LinkedHashMap<>();
         for (Class<?> cls : classes) {
             List<Class<?>> tabClasses = Arrays.stream(cls.getDeclaredClasses())
@@ -191,110 +194,4 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
         return result;
     }
 
-    /**
-     * Adds a tab definition to the XML markup
-     * @param tabCollectionElement The {@link Element} instance to append particular fields' markup
-     * @param tab The {@link Tab} instance to render as a dialog tab
-     * @param fields The list of {@link Field} instances to render as dialog fields
-     */
-    private void appendTab(Element tabCollectionElement, Tab tab, List<Field> fields){
-        String nodeName = getXmlUtil().getUniqueName(tab.title(), DEFAULT_TAB_NAME, tabCollectionElement);
-        Element tabElement = getXmlUtil().createNodeElement(
-                nodeName,
-                ImmutableMap.of(
-                        JcrConstants.PN_TITLE, tab.title(),
-                        JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
-                ));
-        tabCollectionElement.appendChild(tabElement);
-        appendTabAttributes(tabElement, tab);
-        Handler.appendToContainer(tabElement, fields);
-    }
-
-    /**
-     * Appends tab attributes to a pre-built tab-defining XML element
-     * @param tabElement {@link Element} instance representing a TouchUI dialog tab
-     * @param tab {@link Tab} annotation that contains settings
-     */
-    private void appendTabAttributes(Element tabElement, Tab tab){
-        tabElement.setAttribute(JcrConstants.PN_TITLE, tab.title());
-        Attribute attribute = tab.attribute();
-        getXmlUtil().mapProperties(tabElement, attribute);
-        getXmlUtil().appendDataAttributes(tabElement, attribute.data());
-    }
-
-    /**
-     * The predicate to match a {@code Field} against particular {@code Tab}
-     * @param field  {@link Field} instance to analyze
-     * @param tab {@link Tab} annotation to analyze
-     * @param isDefaultTab True if the current tab accepts fields for which no tab was specified; otherwise, false
-     * @return True or false
-     */
-    private static boolean isFieldForTab(Field field, Tab tab, boolean isDefaultTab) {
-        if (!field.isAnnotationPresent(PlaceOnTab.class) && !field.isAnnotationPresent(PlaceOn.class)) {
-            return isDefaultTab;
-        }
-        if(field.isAnnotationPresent(PlaceOn.class)){
-            return tab.title().equalsIgnoreCase(field.getAnnotation(PlaceOn.class).value());
-        }
-        return tab.title().equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
-    }
-
-
-    /**
-     * Represents an aggregate of {@link Tab} instance and a list of fields designed to be rendered within this tab.
-     * Used to compose a sorted "tab registry" for a component class
-     * @see TabsHandler#getTabInstances(List)
-     */
-    private static class TabInstance {
-        private Tab tab;
-
-        private List<Field> fields;
-
-        /**
-         * Creates a new {@code TabInstance} wrapped around a specified {@link Tab} with an empty list of associated fields
-         * @param tab {@code Tab} object
-         */
-        private TabInstance(Tab tab) {
-            this.tab = tab;
-            this.fields = new LinkedList<>();
-        }
-
-        /**
-         * Creates a new {@code TabInstance} wrapped around a specified {@link Tab} with a particular list of associated
-         * fields
-         * @param tab {@code Tab} object
-         * @param fields List of {@code Field} objects to associate with the current tab
-         */
-        private TabInstance(Tab tab, List<Field> fields) {
-            this.tab = tab;
-            this.fields = new LinkedList<>(fields);
-        }
-
-        /**
-         * Gets the stored {@link Tab}
-         * @return {@code Tab} object
-         */
-        private Tab getTab() {
-            return tab;
-        }
-
-        /**
-         * Gets the stored list of {@link Field}s
-         * @return {@code List<Field>} object
-         */
-        private List<Field> getFields() {
-            return fields;
-        }
-
-        /**
-         * Merges a foreign {@code TabInstance} to the current instance, basically by adding other instance's {@code Field}s
-         * while preserving the same {@code Tab} reference
-         * @param other Foreign {@code TabInstance} object
-         * @return This instance
-         */
-        private TabInstance merge(TabInstance other) {
-            this.fields.addAll(other.getFields());
-            return this;
-        }
-    }
 }

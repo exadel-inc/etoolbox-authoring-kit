@@ -1,6 +1,8 @@
 package com.exadel.aem.toolkit.samples.models;
 
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
+import com.exadel.aem.toolkit.api.annotations.widgets.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
@@ -14,10 +16,6 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
-import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
@@ -85,12 +83,22 @@ public class WarriorComponent {
     @ValueMapValue
     private String iconPath;
 
+    @TabsWidget(title = "color", tabs = {@Tab(title = "Color")})
     @PlaceOnTab(WarriorComponent.TAB_THEME)
-    @Switch()
-    @DialogField(label = "Dark theme")
-    @Default(booleanValues = {false})
-    @ValueMapValue
-    private boolean colorTheme;
+    private Color color;
+
+    private static class Color {
+        @Switch()
+        @DialogField(label = "Dark theme")
+        @Default(booleanValues = {false})
+        @PlaceOn("Color")
+        @ValueMapValue
+        private boolean colorTheme;
+
+        public String getColorTheme() {
+            return colorTheme ? DARK_THEME_CLASS : LIGHT_THEME_CLASS;
+        }
+    }
 
     public String getTitle() {
         return StringUtils.defaultIfBlank(title, DEFAULT_TITLE);
@@ -105,6 +113,6 @@ public class WarriorComponent {
     }
 
     public String getColorTheme() {
-        return colorTheme ? DARK_THEME_CLASS : LIGHT_THEME_CLASS;
+        return color.colorTheme ? DARK_THEME_CLASS : LIGHT_THEME_CLASS;
     }
 }

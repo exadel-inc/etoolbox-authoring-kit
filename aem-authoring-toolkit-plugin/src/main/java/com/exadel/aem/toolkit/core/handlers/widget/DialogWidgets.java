@@ -14,19 +14,8 @@
 package com.exadel.aem.toolkit.core.handlers.widget;
 
 import com.exadel.aem.toolkit.api.annotations.container.Accordion;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
-import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
-import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
-import com.exadel.aem.toolkit.api.annotations.widgets.Hidden;
-import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
-import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Password;
-import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
-import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
-import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.*;
 import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
@@ -77,7 +66,8 @@ public enum DialogWidgets implements DialogWidget {
     HEADING(Heading.class),
     ALERT(Alert.class),
     BUTTON(Button.class),
-    ACCORDION(Accordion.class, new AccordionWidgetHandler());
+    ACCORDION(Accordion.class, new AccordionWidgetHandler()),
+    TABS(TabsWidget.class, new TabsWidgetHandler());
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";
     private static final BiConsumer<Element, Field> EMPTY_HANDLER = (componentNode, field) -> {

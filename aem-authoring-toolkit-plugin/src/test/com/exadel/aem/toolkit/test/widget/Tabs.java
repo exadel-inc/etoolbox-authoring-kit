@@ -14,9 +14,12 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
+import com.exadel.aem.toolkit.api.annotations.container.Accordion;
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.TabsWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
@@ -39,6 +42,33 @@ public class Tabs {
     @TextField
     @PlaceOnTab("First tab")
     String field1;
+
+    @TabsWidget(
+            title = "innerTabs",
+            tabs = {
+                    @Tab(title = "First Inner"),
+                    @Tab(title = "Second Inner")
+            })
+    @PlaceOn("First tab")
+    TabsExample tabsField;
+
+
+    static class TabsExample {
+        @DialogField(label = "Field 1 on the inner Tab")
+        @TextField
+        @PlaceOn("First Inner")
+        String innerFieldInTab;
+
+        @Accordion(title = "Field 2 on the inner Tab")
+        @PlaceOn("Second Inner")
+        AccordionExample accordion;
+
+        static class AccordionExample {
+            @DialogField
+            @TextField
+            String field6;
+        }
+    }
 
     @DialogField(label = "Field on the second tab")
     @TextField
