@@ -20,6 +20,54 @@
                                     jcr:primaryType="nt:unstructured" name="./field1" renderHidden="{Boolean}false"
                                     required="{Boolean}false"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                            <tabsField jcr:primaryType="nt:unstructured" title="innerTabs"
+                                       sling:resourceType="granite/ui/components/coral/foundation/tabs">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <firstInner jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/container"
+                                                jcr:title="First Inner"
+                                                granite:hidden="{Boolean}false">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <innerFieldInTab jcr:primaryType="nt:unstructured"
+                                                             sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                             name="./innerFieldInTab"
+                                                             fieldLabel="Field 1 on the inner Tab"
+                                                             disabled="{Boolean}false"
+                                                             renderHidden="{Boolean}false"
+                                                             required="{Boolean}false"/>
+                                        </items>
+                                    </firstInner>
+                                    <secondInner jcr:primaryType="nt:unstructured"
+                                                 sling:resourceType="granite/ui/components/coral/foundation/container"
+                                                 jcr:title="Second Inner"
+                                                 granite:hidden="{Boolean}false">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <accordion jcr:primaryType="nt:unstructured"
+                                                       margin="{Boolean}false"
+                                                       multiple="{Boolean}false"
+                                                       title="Field 2 on the inner Tab"
+                                                       variant="default"
+                                                       sling:resourceType="granite/ui/components/coral/foundation/accordion">
+                                                <items jcr:primaryType="nt:unstructured">
+                                                    <field2OnTheInnerTab
+                                                            jcr:primaryType="nt:unstructured"
+                                                            jcr:title="Field 2 on the inner Tab"
+                                                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                                                        <items jcr:primaryType="nt:unstructured">
+                                                            <field6 disabled="{Boolean}false"
+                                                                    jcr:primaryType="nt:unstructured"
+                                                                    name="./field6"
+                                                                    renderHidden="{Boolean}false"
+                                                                    required="{Boolean}false"
+                                                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                                        </items>
+                                                    </field2OnTheInnerTab>
+                                                </items>
+                                            </accordion>
+                                        </items>
+                                    </secondInner>
+                                </items>
+                            </tabsField>
                         </items>
                     </firstTab>
                     <secondTab granite:hidden="{Boolean}false" jcr:primaryType="nt:unstructured" jcr:title="Second tab"

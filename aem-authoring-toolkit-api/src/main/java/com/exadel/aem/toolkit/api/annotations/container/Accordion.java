@@ -33,8 +33,7 @@ import java.lang.annotation.Target;
 public @interface Accordion {
 
     /**
-     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs/items/<this_accordion>} node
-     *
+     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs (or accordion)/items/<this_accordion>} node
      * @return String value, required
      */
     String title();
