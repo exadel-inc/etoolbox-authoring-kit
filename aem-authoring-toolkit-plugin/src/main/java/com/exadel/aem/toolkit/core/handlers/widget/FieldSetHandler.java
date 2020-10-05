@@ -55,16 +55,20 @@ class FieldSetHandler implements WidgetSetHandler {
             return;
         }
 
-        members.forEach(member ->  {
-            if (StringUtils.isNotBlank(fieldSet.namePrefix())){
-                member.addValue(DialogConstants.PN_PREFIX, member.getValue(DialogConstants.PN_PREFIX) + getXmlUtil().getValidFieldName(fieldSet.namePrefix()));
-            }
-            if (StringUtils.isNotBlank(fieldSet.namePostfix())) {
-                member.addValue(DialogConstants.PN_POSTFIX, fieldSet.namePostfix() + member.getValue(DialogConstants.PN_POSTFIX));
-            }
-        });
+        members.forEach(populated -> populatePrefixPostfix(populated, memberWrapper, fieldSet));
 
         // append the valid fields to the container
         Handler.appendToContainer(element, members);
+    }
+
+    private void populatePrefixPostfix(MemberWrapper populated, MemberWrapper current, FieldSet fieldSet) {
+        if (StringUtils.isNotBlank(fieldSet.namePrefix())){
+            populated.addValue(DialogConstants.PN_PREFIX, current.getValue(DialogConstants.PN_PREFIX).toString() +
+                    populated.getValue(DialogConstants.PN_PREFIX).toString().substring(2) + getXmlUtil().getValidFieldName(fieldSet.namePrefix()));
+        }
+        if (StringUtils.isNotBlank(fieldSet.namePostfix())) {
+            populated.addValue(DialogConstants.PN_POSTFIX, fieldSet.namePostfix() + populated.getValue(DialogConstants.PN_POSTFIX) +
+                    current.getValue(DialogConstants.PN_POSTFIX).toString());
+        }
     }
 }
