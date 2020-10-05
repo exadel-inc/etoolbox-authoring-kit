@@ -12,7 +12,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
  * Allows to define a {@code datasource} node for a {@link @Select or a @RadioGroup} annotation
  * Use this to specify either an ACS Commons list source or a custom datasource for your selection or radioGroup
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping
 public @interface DataSource {

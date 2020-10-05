@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * the current widget node to engage DependsOn frontend routines. For this to work properly, the {@code aem-authoring-toolkit-assets}
  * package must be added to the AEM installation
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @SuppressWarnings("unused")
 public @interface DependsOnRef {
