@@ -238,7 +238,7 @@ public class ComplexComponent1 {
     private String thirdField;
 
     @DialogField
-    @FieldSet(namePrefix = PREFIX_FIRST_PRIMARY_DIALOG)
+    @FieldSet(namePrefix = PREFIX_FIRST_PRIMARY_DIALOG, namePostfix = "postfix")
     @PlaceOnTab(LABEL_TAB_2)
     private SampleFieldsetBase2 firstPrimaryDialog;
 

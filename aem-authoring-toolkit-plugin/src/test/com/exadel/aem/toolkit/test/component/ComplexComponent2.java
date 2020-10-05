@@ -287,7 +287,7 @@ public class ComplexComponent2 {
     private boolean videoElementEnable;
 
     @DialogField
-    @FieldSet(title = VIDEO_ELEMENT_LABEL)
+    @FieldSet(title = VIDEO_ELEMENT_LABEL, namePrefix = "pre", namePostfix = "fix")
     @PlaceOnTab(LABEL_TAB_5)
     private VideoElementFieldSet videoElement;
 
@@ -387,6 +387,10 @@ public class ComplexComponent2 {
         @Property(name = "property", value = "video_resource_prop")
         @Property(name = "property1", value = "video_resource_prop1")
         private String videoResource;
+
+        @DialogField
+        @FieldSet(namePrefix = "fix", namePostfix = "post")
+        private SampleFieldsetBase2 firstPrimaryDialog;
     }
 
     private static class FeedFieldSet {
