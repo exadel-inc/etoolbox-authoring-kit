@@ -55,10 +55,9 @@
                                                        variant="default"
                                                        sling:resourceType="granite/ui/components/coral/foundation/accordion">
                                                 <items jcr:primaryType="nt:unstructured">
-                                                    <field2OnTheInnerTab
-                                                            jcr:primaryType="nt:unstructured"
-                                                            jcr:title="Field 2 on the inner Tab"
-                                                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                                                    <firstPanel jcr:primaryType="nt:unstructured"
+                                                                sling:resourceType="granite/ui/components/coral/foundation/container"
+                                                                jcr:title="First Panel">
                                                         <items jcr:primaryType="nt:unstructured">
                                                             <field6 disabled="{Boolean}false"
                                                                     jcr:primaryType="nt:unstructured"
@@ -67,7 +66,7 @@
                                                                     required="{Boolean}false"
                                                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
                                                         </items>
-                                                    </field2OnTheInnerTab>
+                                                    </firstPanel>
                                                 </items>
                                             </accordion>
                                         </items>

@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 @SuppressWarnings("unused")
 public @interface PlaceOn {
     /**
-     * String equal to appropriate {@link Accordion#title()} value or {@link Tab #title()}
+     * String equal to appropriate {@link AccordionPanel#title()} value or {@link Tab #title()}
      * @return String value
      */
     String value();

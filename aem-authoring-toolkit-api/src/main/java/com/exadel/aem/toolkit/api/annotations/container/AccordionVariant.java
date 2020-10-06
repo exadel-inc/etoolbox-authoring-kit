@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.container;
 
 /**
- * Contains possible values of {@link Accordion#variant()} property
+ * Contains possible values of {@link AccordionPanel#variant()} property
  */
 @SuppressWarnings("unused")
 public enum AccordionVariant {

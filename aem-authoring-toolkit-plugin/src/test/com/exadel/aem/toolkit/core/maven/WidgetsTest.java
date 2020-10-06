@@ -131,6 +131,6 @@ public class WidgetsTest extends DefaultTestBase {
 
     @Test
     public void testAccordion() {
-         test(AccordionWidget.class, RESOURCE_FOLDER_WIDGET, "accordion");
+        test(Accordion.class, RESOURCE_FOLDER_WIDGET, "accordion");
     }
 }

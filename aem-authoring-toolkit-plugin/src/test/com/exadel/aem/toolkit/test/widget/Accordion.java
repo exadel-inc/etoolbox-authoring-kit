@@ -14,9 +14,10 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
-import com.exadel.aem.toolkit.api.annotations.container.Accordion;
+import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
@@ -29,12 +30,12 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
         name = DEFAULT_COMPONENT_NAME,
         title = "Accordion Test Dialog",
         accordionTabs = {
-                @Accordion(title = "Basic"),
-                @Accordion(title = "Basic2")
+                @AccordionPanel(title = "Basic"),
+                @AccordionPanel(title = "Basic2")
         }
 )
 @SuppressWarnings("unused")
-public class AccordionWidget {
+public class Accordion {
 
     @Button(
             type = ButtonType.SUBMIT,
@@ -74,11 +75,14 @@ public class AccordionWidget {
     @PlaceOn("Basic2")
     String buttonField;
 
-    @Accordion(title = "Field")
+    @AccordionWidget(
+            title = "Field",
+            panels = {@AccordionPanel(title = "Accordion Widget Panel 1")})
     @PlaceOn("Basic2")
     AccordionExample accordion;
 
     static class AccordionExample {
+        @PlaceOn("Accordion Widget Panel 1")
         @DialogField
         @TextField
         String field6;

@@ -70,17 +70,16 @@
                                        variant="default"
                                        sling:resourceType="granite/ui/components/coral/foundation/accordion">
                                 <items jcr:primaryType="nt:unstructured">
-                                    <field
-                                            jcr:primaryType="nt:unstructured"
-                                            jcr:title="Field"
-                                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                                    <accordionWidgetPanel1 jcr:primaryType="nt:unstructured"
+                                                           sling:resourceType="granite/ui/components/coral/foundation/container"
+                                                           jcr:title="Accordion Widget Panel 1">
                                         <items jcr:primaryType="nt:unstructured">
                                             <field6 disabled="{Boolean}false" jcr:primaryType="nt:unstructured"
                                                     name="./field6"
                                                     renderHidden="{Boolean}false" required="{Boolean}false"
                                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
                                         </items>
-                                    </field>
+                                    </accordionWidgetPanel1>
                                 </items>
                             </accordion>
                         </items>

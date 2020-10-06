@@ -9,6 +9,7 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,7 @@ public class CommonTabUtils {
         }
     }
 
-    public static List<Field> getStoredCurrentTabFields(List<Field> allFields, TabInstance currentTabInstance, final boolean isFirstTab) {
+    public static List<List<Field>> getStoredCurrentTabFields(List<Field> allFields, TabInstance currentTabInstance, final boolean isFirstTab) {
         List<Field> storedCurrentTabFields = currentTabInstance.getFields();
         List<Field> moreCurrentTabFields = allFields.stream()
                 .filter(field1 -> CommonTabUtils.isFieldForTab(field1, currentTabInstance.getTab(), isFirstTab))
@@ -58,6 +59,9 @@ public class CommonTabUtils {
             storedCurrentTabFields.sort(PluginReflectionUtility.Predicates::compareDialogFields);
         }
         allFields.removeAll(moreCurrentTabFields);
-        return storedCurrentTabFields;
+        List<List<Field>> finalList = new ArrayList<>();
+        finalList.add(storedCurrentTabFields);
+        finalList.add(allFields);
+        return finalList;
     }
 }

@@ -1,8 +1,9 @@
 package com.exadel.aem.toolkit.samples.models;
 
-import com.exadel.aem.toolkit.api.annotations.container.Accordion;
+import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
@@ -26,7 +27,7 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
         resourceSuperType = "authoring-toolkit/samples/components/content/father-select-component",
         componentGroup = GroupConstants.COMPONENT_GROUP,
         accordionTabs = {
-                @Accordion(title = "Main")
+                @AccordionPanel(title = "Main")
         }
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
@@ -48,7 +49,7 @@ public class DungeonsComponent extends ParentSelectComponent {
     @PlaceOn("Main")
     private String dungeonRules;
 
-    @Accordion(title = "Dungeons select")
+    @AccordionWidget(title = "Dungeons select", panels = {@AccordionPanel(title = "Dungeons select")})
     @PlaceOn("Main")
     DungeonSelect dungeonSelect;
 
@@ -61,7 +62,7 @@ public class DungeonsComponent extends ParentSelectComponent {
         @Default(values = "1")
         @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
         @ValueMapValue
-        @PlaceOn("Main")
+        @PlaceOn("Dungeons select")
         String dungeonsSelect;
 
     }
