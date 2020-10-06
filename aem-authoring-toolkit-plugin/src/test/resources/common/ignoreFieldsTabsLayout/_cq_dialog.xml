@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
-          xmlns:cq="http://www.day.com/jcr/cq/1.0"
           xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
@@ -49,10 +48,9 @@
                                                        variant="default"
                                                        sling:resourceType="granite/ui/components/coral/foundation/accordion">
                                                 <items jcr:primaryType="nt:unstructured">
-                                                    <field2OnTheInnerTab
-                                                            jcr:primaryType="nt:unstructured"
-                                                            jcr:title="Field 2 on the inner Tab"
-                                                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                                                    <firstPanel jcr:primaryType="nt:unstructured"
+                                                                sling:resourceType="granite/ui/components/coral/foundation/container"
+                                                                jcr:title="First Panel">
                                                         <items jcr:primaryType="nt:unstructured">
                                                             <field6 disabled="{Boolean}false"
                                                                     jcr:primaryType="nt:unstructured"
@@ -61,7 +59,7 @@
                                                                     required="{Boolean}false"
                                                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
                                                         </items>
-                                                    </field2OnTheInnerTab>
+                                                    </firstPanel>
                                                 </items>
                                             </accordion>
                                         </items>

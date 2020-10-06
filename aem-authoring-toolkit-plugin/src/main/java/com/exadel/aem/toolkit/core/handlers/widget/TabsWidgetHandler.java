@@ -77,7 +77,9 @@ public class TabsWidgetHandler implements WidgetSetHandler {
         while (tabInstanceIterator.hasNext()) {
             final boolean isFirstTab = iterationStep++ == 0;
             TabInstance currentTabInstance = tabInstanceIterator.next().getValue();
-            List<Field> storedCurrentTabFields = CommonTabUtils.getStoredCurrentTabFields(allFields, currentTabInstance, isFirstTab);
+            List<List<Field>> tabFields = CommonTabUtils.getStoredCurrentTabFields(allFields, currentTabInstance, isFirstTab);
+            List<Field> storedCurrentTabFields = tabFields.get(0);
+            allFields = tabFields.get(1);
             appendTab(tabItemsElement, currentTabInstance.getTab(), storedCurrentTabFields);
         }
         CommonTabUtils.handleInvalidTabException(allFields);

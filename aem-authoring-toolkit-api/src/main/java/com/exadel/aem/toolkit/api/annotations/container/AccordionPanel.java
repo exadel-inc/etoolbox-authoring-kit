@@ -30,10 +30,11 @@ import java.lang.annotation.Target;
 @ResourceType(ResourceTypes.ACCORDION)
 @PropertyMapping
 @SuppressWarnings("unused")
-public @interface Accordion {
+public @interface AccordionPanel {
 
     /**
      * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs (or accordion)/items/<this_accordion>} node
+     *
      * @return String value, required
      */
     String title();

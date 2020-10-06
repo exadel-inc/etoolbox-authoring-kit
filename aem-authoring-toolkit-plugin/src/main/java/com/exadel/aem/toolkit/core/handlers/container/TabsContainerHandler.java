@@ -33,13 +33,12 @@ import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
+import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.handlers.container.common.CommonTabUtils;
@@ -87,7 +86,7 @@ public class TabsContainerHandler implements Handler, BiConsumer<Class<?>, Eleme
         // Note that "ignored tabs" setting is not inherited and is for current class only, unlike tabs collection
         String[] ignoredTabs = componentClass.isAnnotationPresent(IgnoreTabs.class)
                 ? componentClass.getAnnotation(IgnoreTabs.class).value()
-                : new String[] {};
+                : new String[]{};
 
         // Retrieve superclasses of the current class, from top of the hierarchy to the most immediate ancestor,
         // populate tab registry and store fields that are within @Tab-marked nested classes
@@ -144,7 +143,9 @@ public class TabsContainerHandler implements Handler, BiConsumer<Class<?>, Eleme
         while (tabInstanceIterator.hasNext()) {
             final boolean isFirstTab = iterationStep++ == 0;
             TabInstance currentTabInstance = tabInstanceIterator.next().getValue();
-            List<Field> storedCurrentTabFields = CommonTabUtils.getStoredCurrentTabFields(allFields, currentTabInstance, isFirstTab);
+            List<List<Field>> tabFields = CommonTabUtils.getStoredCurrentTabFields(allFields, currentTabInstance, isFirstTab);
+            List<Field> storedCurrentTabFields = tabFields.get(0);
+            allFields = tabFields.get(1);
             if (ArrayUtils.contains(ignoredTabs, currentTabInstance.getTab().title())) {
                 continue;
             }
@@ -154,7 +155,6 @@ public class TabsContainerHandler implements Handler, BiConsumer<Class<?>, Eleme
         // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
         // for which a non-existent tab was specified. Handle an InvalidTabException for each of them
         CommonTabUtils.handleInvalidTabException(allFields);
-//
     }
 
     private void appendTab(Element tabCollectionElement, Tab tab, List<Field> fields) {

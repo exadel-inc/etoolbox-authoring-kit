@@ -13,7 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import com.exadel.aem.toolkit.api.annotations.container.Accordion;
+import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.widgets.*;
 import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
@@ -66,7 +66,7 @@ public enum DialogWidgets implements DialogWidget {
     HEADING(Heading.class),
     ALERT(Alert.class),
     BUTTON(Button.class),
-    ACCORDION(Accordion.class, new AccordionWidgetHandler()),
+    ACCORDION(AccordionWidget.class, new AccordionWidgetHandler()),
     TABS(TabsWidget.class, new TabsWidgetHandler());
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";

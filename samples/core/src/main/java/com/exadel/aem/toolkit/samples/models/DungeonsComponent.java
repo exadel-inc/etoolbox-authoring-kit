@@ -14,9 +14,12 @@
 
 package com.exadel.aem.toolkit.samples.models;
 
+import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.container.Accordion;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnAccordion;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
@@ -40,7 +43,7 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
         resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
         componentGroup = GroupConstants.COMPONENT_GROUP,
         accordionTabs = {
-                @Accordion(title = "Main")
+                @AccordionPanel(title = "Main")
         }
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
@@ -62,19 +65,27 @@ public class DungeonsComponent extends ParentSelectComponent {
                     RteFeatures.LISTS_UNORDERED
             })
     @ValueMapValue
-    @PlaceOnAccordion("Main")
+    @PlaceOn("Main")
     private String dungeonRules;
 
-    @DialogField(label = LABEL_DUNGEON_SELECT)
-    @Select(options = {
-            @Option(text = "Rotten swamps", value = "1"),
-            @Option(text = "Ice valley", value = "2")
-    })
-    @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
-    @Default(values = "1")
-    @ValueMapValue
-    @PlaceOnAccordion("Main")
-    private String dungeon;
+    @AccordionWidget(title = "Dungeons select", panels = {@AccordionPanel(title = "Dungeons select")})
+    @PlaceOn("Main")
+    DungeonSelect dungeonSelect;
+
+    static class DungeonSelect {
+        @Select(options = {
+                @Option(text = "Rotten swamps", value = "1"),
+                @Option(text = "Ice valley", value = "2")
+        })
+        @DialogField(label = "Dungeons select")
+        @Default(values = "1")
+        @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
+        @ValueMapValue
+        @PlaceOn("Dungeons select")
+        String dungeonsSelect;
+
+    }
+
 
     public String getDungeonRules() {
         return StringUtils.defaultIfBlank(dungeonRules, DEFAULT_RULES);

@@ -15,6 +15,9 @@ package com.exadel.aem.toolkit.core.handlers.container;
 
 import com.exadel.aem.toolkit.api.annotations.container.Accordion;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnAccordion;
+import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
@@ -26,6 +29,7 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
@@ -49,7 +53,6 @@ public class AccordionContainerHandler implements Handler, BiConsumer<Class<?>, 
      * @param componentClass {@code Class<?>} instance used as the source of markup
      * @param parentElement  XML document root element
      */
-    //works like TabsHandler without some features like IgnoreTabs
     @Override
     public void accept(Class<?> componentClass, Element parentElement) {
         Element tabItemsElement = (Element) parentElement.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER))
@@ -57,18 +60,22 @@ public class AccordionContainerHandler implements Handler, BiConsumer<Class<?>, 
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ACCORDION, ResourceTypes.ACCORDION))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
 
-        Map<String, Accordion> tabInstances = new LinkedHashMap<>();
+        String[] ignoredTabs = componentClass.isAnnotationPresent(IgnoreTabs.class)
+                ? componentClass.getAnnotation(IgnoreTabs.class).value()
+                : new String[]{};
+
+        Map<String, AccordionPanel> tabInstances = new LinkedHashMap<>();
 
         Map<String, List<Field>> tabFields = new HashMap<>();
 
         for (Class<?> cls : PluginReflectionUtility.getAllSuperClasses(componentClass)) {
             List<Class<?>> tabClasses = Arrays.stream(cls.getDeclaredClasses())
-                    .filter(nestedCls -> nestedCls.isAnnotationPresent(Accordion.class))
+                    .filter(nestedCls -> nestedCls.isAnnotationPresent(AccordionPanel.class))
                     .collect(Collectors.toList());
             Collections.reverse(tabClasses);
             tabClasses.forEach(nestedCls -> {
-                String tabTitle = nestedCls.getAnnotation(Accordion.class).title();
-                tabInstances.put(tabTitle, nestedCls.getAnnotation(Accordion.class));
+                String tabTitle = nestedCls.getAnnotation(AccordionPanel.class).title();
+                tabInstances.put(tabTitle, nestedCls.getAnnotation(AccordionPanel.class));
                 tabFields.putIfAbsent(tabTitle, new LinkedList<>());
                 tabFields.get(tabTitle).addAll(Arrays.asList(nestedCls.getDeclaredFields()));
             });
@@ -87,18 +94,18 @@ public class AccordionContainerHandler implements Handler, BiConsumer<Class<?>, 
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
                     NO_TABS_DEFINED_EXCEPTION_MESSAGE + componentClass.getSimpleName()
             ));
-            tabInstances.put(StringUtils.EMPTY, PluginObjectUtility.create(Accordion.class,
+            tabInstances.put(StringUtils.EMPTY, PluginObjectUtility.create(AccordionPanel.class,
                     Collections.singletonMap(DialogConstants.PN_TITLE, StringUtils.EMPTY)));
             tabFields.putIfAbsent(StringUtils.EMPTY, new LinkedList<>());
         }
 
 
-        Iterator<Map.Entry<String, Accordion>> tabIterator = tabInstances.entrySet().iterator();
+        Iterator<Map.Entry<String, AccordionPanel>> tabIterator = tabInstances.entrySet().iterator();
         int iterationStep = 0;
 
         while (tabIterator.hasNext()) {
             final boolean isFirstTab = iterationStep++ == 0;
-            Accordion currentTab = tabIterator.next().getValue();
+            AccordionPanel currentTab = tabIterator.next().getValue();
             List<Field> storedCurrentTabFields = tabFields.get(currentTab.title());
             List<Field> moreCurrentTabFields = allFields.stream()
                     .filter(field -> isFieldForAccordion(field, currentTab, isFirstTab))
@@ -109,14 +116,16 @@ public class AccordionContainerHandler implements Handler, BiConsumer<Class<?>, 
                 storedCurrentTabFields.sort(PluginReflectionUtility.Predicates::compareDialogFields);
             }
             allFields.removeAll(moreCurrentTabFields);
-
+            if (ArrayUtils.contains(ignoredTabs, currentTab.title())) {
+                continue;
+            }
             addAccordion(tabItemsElement, currentTab, storedCurrentTabFields);
         }
 
         allFields.forEach(field -> PluginRuntime.context().getExceptionHandler()
                 .handle(new InvalidTabException(
-                        field.isAnnotationPresent(PlaceOnAccordion.class)
-                                ? field.getAnnotation(PlaceOnAccordion.class).value()
+                        field.isAnnotationPresent(PlaceOn.class)
+                                ? field.getAnnotation(PlaceOn.class).value()
                                 : StringUtils.EMPTY
                 )));
     }
@@ -125,15 +134,15 @@ public class AccordionContainerHandler implements Handler, BiConsumer<Class<?>, 
      * Adds a accordion definition to the XML markup
      *
      * @param tabCollectionElement The {@link Element} instance to append particular fields' markup
-     * @param accordion            The {@link Accordion} instance to render as a dialog accordion
+     * @param accordionPanel            The {@link AccordionPanel} instance to render as a dialog accordion
      * @param fields               The list of {@link Field} instances to render as dialog fields
      */
-    private void addAccordion(Element tabCollectionElement, Accordion accordion, List<Field> fields) {
-        String nodeName = getXmlUtil().getUniqueName(accordion.title(), DEFAULT_TAB_NAME, tabCollectionElement);
+    private void addAccordion(Element tabCollectionElement, AccordionPanel accordionPanel, List<Field> fields) {
+        String nodeName = getXmlUtil().getUniqueName(accordionPanel.title(), DEFAULT_TAB_NAME, tabCollectionElement);
         Element tabElement = getXmlUtil().createNodeElement(
                 nodeName,
                 ImmutableMap.of(
-                        JcrConstants.PN_TITLE, accordion.title(),
+                        JcrConstants.PN_TITLE, accordionPanel.title(),
                         JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
                 ));
         tabCollectionElement.appendChild(tabElement);
@@ -144,14 +153,14 @@ public class AccordionContainerHandler implements Handler, BiConsumer<Class<?>, 
      * The predicate to match a {@code Field} against particular {@code Accordion}
      *
      * @param field        {@link Field} instance to analyze
-     * @param accordion    {@link Accordion} annotation to analyze
+     * @param accordionPanel    {@link AccordionPanel} annotation to analyze
      * @param isDefaultTab True if the current accordion accepts fields for which no accordion was specified; otherwise, false
      * @return True or false
      */
-    private static boolean isFieldForAccordion(Field field, Accordion accordion, boolean isDefaultTab) {
-        if (!field.isAnnotationPresent(PlaceOnAccordion.class)) {
+    private static boolean isFieldForAccordion(Field field, AccordionPanel accordionPanel, boolean isDefaultTab) {
+        if (!field.isAnnotationPresent(PlaceOn.class)) {
             return isDefaultTab;
         }
-        return accordion.title().equalsIgnoreCase(field.getAnnotation(PlaceOnAccordion.class).value());
+        return accordionPanel.title().equalsIgnoreCase(field.getAnnotation(PlaceOn.class).value());
     }
 }

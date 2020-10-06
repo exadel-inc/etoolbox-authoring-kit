@@ -13,10 +13,8 @@
  */
 package com.exadel.aem.toolkit.api.annotations.container;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-
 /**
- * Contains possible values of {@link Select#variant()} property
+ * Contains possible values of {@link AccordionPanel#variant()} property
  */
 @SuppressWarnings("unused")
 public enum AccordionVariant {
