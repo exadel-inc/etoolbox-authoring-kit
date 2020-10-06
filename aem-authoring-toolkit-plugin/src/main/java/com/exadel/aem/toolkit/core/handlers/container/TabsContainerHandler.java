@@ -13,41 +13,21 @@
  */
 package com.exadel.aem.toolkit.core.handlers.container;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
-import org.w3c.dom.Element;
-import com.google.common.collect.ImmutableMap;
-
-import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
-import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.handlers.container.common.CommonTabUtils;
 import com.exadel.aem.toolkit.core.handlers.container.common.TabInstance;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
-import com.exadel.aem.toolkit.core.util.PluginObjectPredicates;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +39,6 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 
 /**
  * The {@link Handler} for a tabbed TouchUI dialog
@@ -71,8 +50,9 @@ public class TabsContainerHandler implements Handler, BiConsumer<Class<?>, Eleme
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
      * to process component-backing Java class and append the results to the XML root node
+     *
      * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param parentElement XML document root element
+     * @param parentElement  XML document root element
      */
     @Override
     public void accept(Class<?> componentClass, Element parentElement) {
@@ -167,7 +147,7 @@ public class TabsContainerHandler implements Handler, BiConsumer<Class<?>, Eleme
                 ));
         tabCollectionElement.appendChild(tabElement);
         appendTabAttributes(tabElement, tab);
-        Handler.appendToContainer(tabElement, fields);
+        PluginXmlContainerUtility.append(tabElement, fields);
     }
 
     /**
@@ -186,6 +166,7 @@ public class TabsContainerHandler implements Handler, BiConsumer<Class<?>, Eleme
     /**
      * Retrieves a collection of tabs derived from the specified hierarchical collection of classes. Calls to this
      * method are used to compile a "tab registry" consisting of all tabs from the current class and/or its superclasses
+     *
      * @param classes The {@code Class<?>}-es to search for defined tabs
      * @return Map of entries, each specified by a tab title and containing a {@link TabInstance} aggregate object
      */

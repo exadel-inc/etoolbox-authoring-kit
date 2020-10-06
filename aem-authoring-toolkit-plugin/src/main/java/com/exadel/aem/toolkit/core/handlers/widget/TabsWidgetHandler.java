@@ -25,6 +25,7 @@ import com.exadel.aem.toolkit.core.handlers.container.common.TabInstance;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
+import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
@@ -95,7 +96,7 @@ public class TabsWidgetHandler implements WidgetSetHandler {
                 ));
         tabCollectionElement.appendChild(tabElement);
         appendTabAttributes(tabElement, tab);
-        Handler.appendToContainer(tabElement, fields);
+        PluginXmlContainerUtility.append(tabElement, fields);
     }
 
     private void appendTabAttributes(Element tabElement, Tab tab) {

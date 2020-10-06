@@ -22,8 +22,9 @@ import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.PluginObjectPredicates;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
-import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
@@ -88,7 +89,7 @@ class AccordionWidgetHandler implements WidgetSetHandler {
             boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
             storedCurrentTabFields.addAll(moreCurrentTabFields);
             if (needResort) {
-                storedCurrentTabFields.sort(PluginReflectionUtility.Predicates::compareDialogFields);
+                storedCurrentTabFields.sort(PluginObjectPredicates::compareByRanking);
             }
             fields.removeAll(moreCurrentTabFields);
             addAccordion(tabItemsElement, currentTab, storedCurrentTabFields);
@@ -104,7 +105,7 @@ class AccordionWidgetHandler implements WidgetSetHandler {
                         JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
                 ));
         tabCollectionElement.appendChild(tabElement);
-        Handler.appendToContainer(tabElement, fields);
+        PluginXmlContainerUtility.append(tabElement, fields);
     }
 
     private static boolean isFieldForAccordion(Field field, AccordionPanel accordionPanel, boolean isDefaultTab) {

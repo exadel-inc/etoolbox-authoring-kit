@@ -16,8 +16,6 @@ package com.exadel.aem.toolkit.samples.models;
 
 import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
-import com.exadel.aem.toolkit.api.annotations.container.Accordion;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnAccordion;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -68,16 +66,16 @@ public class DungeonsComponent extends ParentSelectComponent {
     @PlaceOn("Main")
     private String dungeonRules;
 
-    @AccordionWidget(title = "Dungeons select", panels = {@AccordionPanel(title = "Dungeons select")})
+    @AccordionWidget(title = LABEL_DUNGEON_SELECT, panels = {@AccordionPanel(title = LABEL_DUNGEON_SELECT)})
     @PlaceOn("Main")
-    DungeonSelect dungeonSelect;
+    DungeonSelect dungeon;
 
     static class DungeonSelect {
         @Select(options = {
                 @Option(text = "Rotten swamps", value = "1"),
                 @Option(text = "Ice valley", value = "2")
         })
-        @DialogField(label = "Dungeons select")
+        @DialogField(label = LABEL_DUNGEON_SELECT)
         @Default(values = "1")
         @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
         @ValueMapValue
@@ -92,7 +90,7 @@ public class DungeonsComponent extends ParentSelectComponent {
     }
 
     public String getDungeonDescription() {
-        if ("1".equals(dungeon)) {
+        if ("1".equals(dungeon.dungeonsSelect)) {
             return DEFAULT_ROTTEN_SWAMPS_TEXT;
         }
         return DEFAULT_ICE_VALLEY_TEXT;

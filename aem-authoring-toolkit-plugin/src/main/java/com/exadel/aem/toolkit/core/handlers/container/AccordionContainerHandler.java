@@ -13,8 +13,6 @@
  */
 package com.exadel.aem.toolkit.core.handlers.container;
 
-import com.exadel.aem.toolkit.api.annotations.container.Accordion;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnAccordion;
 import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
@@ -25,9 +23,7 @@ import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
-import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
-import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.core.util.*;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -68,7 +64,7 @@ public class AccordionContainerHandler implements Handler, BiConsumer<Class<?>, 
 
         Map<String, List<Field>> tabFields = new HashMap<>();
 
-        for (Class<?> cls : PluginReflectionUtility.getAllSuperClasses(componentClass)) {
+        for (Class<?> cls : PluginReflectionUtility.getClassHierarchy(componentClass)) {
             List<Class<?>> tabClasses = Arrays.stream(cls.getDeclaredClasses())
                     .filter(nestedCls -> nestedCls.isAnnotationPresent(AccordionPanel.class))
                     .collect(Collectors.toList());
@@ -113,7 +109,7 @@ public class AccordionContainerHandler implements Handler, BiConsumer<Class<?>, 
             boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
             storedCurrentTabFields.addAll(moreCurrentTabFields);
             if (needResort) {
-                storedCurrentTabFields.sort(PluginReflectionUtility.Predicates::compareDialogFields);
+                storedCurrentTabFields.sort(PluginObjectPredicates::compareByRanking);
             }
             allFields.removeAll(moreCurrentTabFields);
             if (ArrayUtils.contains(ignoredTabs, currentTab.title())) {
@@ -134,7 +130,7 @@ public class AccordionContainerHandler implements Handler, BiConsumer<Class<?>, 
      * Adds a accordion definition to the XML markup
      *
      * @param tabCollectionElement The {@link Element} instance to append particular fields' markup
-     * @param accordionPanel            The {@link AccordionPanel} instance to render as a dialog accordion
+     * @param accordionPanel       The {@link AccordionPanel} instance to render as a dialog accordion
      * @param fields               The list of {@link Field} instances to render as dialog fields
      */
     private void addAccordion(Element tabCollectionElement, AccordionPanel accordionPanel, List<Field> fields) {
@@ -146,15 +142,15 @@ public class AccordionContainerHandler implements Handler, BiConsumer<Class<?>, 
                         JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
                 ));
         tabCollectionElement.appendChild(tabElement);
-        Handler.appendToContainer(tabElement, fields);
+        PluginXmlContainerUtility.append(tabElement, fields);
     }
 
     /**
      * The predicate to match a {@code Field} against particular {@code Accordion}
      *
-     * @param field        {@link Field} instance to analyze
-     * @param accordionPanel    {@link AccordionPanel} annotation to analyze
-     * @param isDefaultTab True if the current accordion accepts fields for which no accordion was specified; otherwise, false
+     * @param field          {@link Field} instance to analyze
+     * @param accordionPanel {@link AccordionPanel} annotation to analyze
+     * @param isDefaultTab   True if the current accordion accepts fields for which no accordion was specified; otherwise, false
      * @return True or false
      */
     private static boolean isFieldForAccordion(Field field, AccordionPanel accordionPanel, boolean isDefaultTab) {

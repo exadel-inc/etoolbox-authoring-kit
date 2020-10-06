@@ -5,7 +5,7 @@ import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.core.util.PluginObjectPredicates;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
@@ -56,7 +56,7 @@ public class CommonTabUtils {
         boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
         storedCurrentTabFields.addAll(moreCurrentTabFields);
         if (needResort) {
-            storedCurrentTabFields.sort(PluginReflectionUtility.Predicates::compareDialogFields);
+            storedCurrentTabFields.sort(PluginObjectPredicates::compareByRanking);
         }
         allFields.removeAll(moreCurrentTabFields);
         List<List<Field>> finalList = new ArrayList<>();
