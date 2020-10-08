@@ -202,8 +202,8 @@ public class PluginReflectionUtility {
                 .collect(Collectors.toList());
         Graph classGraph = new Graph(list);
         for (T item : list) {
-            Class<?> after = item.getClass().getDeclaredAnnotation(Handles.class).after();
-            Class<?> before = item.getClass().getDeclaredAnnotation(Handles.class).before();
+            Class<?> after = item.getClass().isAnnotationPresent(Handles.class) ? item.getClass().getDeclaredAnnotation(Handles.class).after() : item.getClass();
+            Class<?> before = item.getClass().isAnnotationPresent(Handles.class) ? item.getClass().getDeclaredAnnotation(Handles.class).before() : item.getClass();
             classGraph.addEdge(item.getClass(), before);
             classGraph.addEdge(after, item.getClass());
         }
