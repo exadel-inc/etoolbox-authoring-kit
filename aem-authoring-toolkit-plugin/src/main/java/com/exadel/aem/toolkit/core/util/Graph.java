@@ -27,15 +27,20 @@ class Graph {
      * @param y {@code Class<?>} Custom Handler y that comes after Custom Handler x
      */
     void addEdge(Class<?> x, Class<?> y) {
-        if (!edges.containsKey(x)) {
-            edgeList = new ArrayList<>();
-        } else {
-            edgeList = edges.get(x);
-        }
-        //check to prevent loops
-        if (edges.containsKey(y)) {
-            ArrayList<Class<?>> edgeListY = edges.get(y);
-            if (!edgeListY.contains(x)) {
+        if (!x.equals(Object.class)) {
+            if (!edges.containsKey(x)) {
+                edgeList = new ArrayList<>();
+            } else {
+                edgeList = edges.get(x);
+            }
+            //check to prevent loops
+            if (edges.containsKey(y)) {
+                ArrayList<Class<?>> edgeListY = edges.get(y);
+                if (!edgeListY.contains(x)) {
+                    edgeList.add(y);
+                    edges.put(x, edgeList);
+                }
+            } else {
                 edgeList.add(y);
                 edges.put(x, edgeList);
             }
