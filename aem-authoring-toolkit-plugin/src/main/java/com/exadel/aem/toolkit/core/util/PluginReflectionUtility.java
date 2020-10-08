@@ -430,6 +430,9 @@ public class PluginReflectionUtility {
         int i = 0;
         int k = 0;
         while (finalList.size() != list.size()) {
+            if (sortedList.get(k).equals(Object.class)) {
+                k++;
+            }
             if (list.get(i).getClass().equals(sortedList.get(k))) {
                 finalList.add(list.get(i));
                 k++;
