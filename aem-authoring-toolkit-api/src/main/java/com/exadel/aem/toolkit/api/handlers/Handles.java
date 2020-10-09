@@ -25,6 +25,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @SuppressWarnings("unused")
-public @interface HandlesWidgets {
+public @interface Handles {
     Class<? extends Annotation>[] value() default {};
+
+    Class<?> before() default Object.class;
+
+    Class<?> after() default Object.class;
 }

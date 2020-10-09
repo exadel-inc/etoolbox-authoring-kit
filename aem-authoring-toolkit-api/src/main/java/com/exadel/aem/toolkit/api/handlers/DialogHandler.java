@@ -15,12 +15,14 @@ package com.exadel.aem.toolkit.api.handlers;
 
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import org.w3c.dom.Element;
 
 /**
  * Abstraction of handler class to process logic of AEM components and/or AEM TouchUI dialog.
  * Serves as the marker interface for creating and enumerating handlers instances
  */
+@Handles(Dialog.class)
 @SuppressWarnings("unused")
 public interface DialogHandler extends BiConsumer<Element, Class<?>> {
     /**
