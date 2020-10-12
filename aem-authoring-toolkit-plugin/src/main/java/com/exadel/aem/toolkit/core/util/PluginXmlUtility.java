@@ -567,7 +567,7 @@ public class PluginXmlUtility implements XmlUtility {
      * @param nodeName Name of the required element
      * @return Element instance
      */
-    public Element getParentOrChildElement(Element element, String nodeName) {
+    private Element getParentOrChildElement(Element element, String nodeName) {
         if(nodeName.contains("..")){
             return (Element)element.getParentNode();
         }

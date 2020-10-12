@@ -1087,6 +1087,7 @@ Note that, in this particular case, only "https:" will be stored to webProtocols
 #### Custom Properties
 ##### Custom properties for fields
 If you need some attributes with plain values added to a dialog field, this can be achieved without creating a custom annotation and handler. Just add `@Properties` annotation to a field in your Java class and populate it with properties you need.
+Relative path can be defined via *name* in such a way that the substring before the ultimate `/` represents path, and the substring after the ultimate `/` represents property name.
 ```java
 
 @Dialog(name = "componentName")
@@ -1098,7 +1099,12 @@ public class CustomPropertiesDialog {
         @Property(name = "stringAttr", value = "Hello World"),
         // this way you create a Long-typed JCR attribute. Attributes of other JCR-supported types
         // are stored similarly
-        @Property(name = "numericAttr", value = "{Long}42")
+        @Property(name = "numericAttr", value = "{Long}42"),
+        // this will produce the String-typed JCR attribute "attr1" into the subnode "element1"  with value "Inside"
+        @Property(name = "element1/attr1", value = "Inside"),
+        // this will produce the String-typed JCR attribute "stringAttr" into the supernode of field1 with value "Outside"
+        @Property(name = "../stringAttr", value = "Outside")
+
     })
     String field1;
 
@@ -1107,7 +1113,9 @@ public class CustomPropertiesDialog {
     @TextField
     @Property(name = "stringAttr", value = "Hello World")
     @Property(name = "numericAttr", value = "{Long}42")
-    String field1;
+    @Property(name = "element1/attr1", value = "Inside")
+    @Property(name = "../stringAttr", value = "Outside")
+String field1;
 }
 ```
 ##### Custom properties for in-place editing configurations
