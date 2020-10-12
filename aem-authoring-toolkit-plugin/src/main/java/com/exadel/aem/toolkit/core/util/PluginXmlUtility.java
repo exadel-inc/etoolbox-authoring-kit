@@ -340,19 +340,32 @@ public class PluginXmlUtility implements XmlUtility {
                 ? StringUtils.substringBeforeLast(prefix, DialogConstants.PATH_SEPARATOR)
                 : StringUtils.EMPTY;
 
-        Element effectiveElement;
-        if (StringUtils.isEmpty(nodePrefix)) {
-            effectiveElement = element;
-        } else {
-            effectiveElement = Pattern.compile(DialogConstants.PATH_SEPARATOR)
-                    .splitAsStream(nodePrefix)
-                    .reduce(element, this::getOrAddChildElement, (prev, next) -> next);
-        }
+        Element effectiveElement = getRequiredElement(element, nodePrefix);
+
         Arrays.stream(annotation.annotationType().getDeclaredMethods())
                 .filter(m -> ArrayUtils.isEmpty(propMapping.mappings()) || ArrayUtils.contains(propMapping.mappings(), m.getName()))
                 .filter(m -> !m.isAnnotationPresent(IgnorePropertyMapping.class))
                 .filter(m -> !skipped.contains(m.getName()))
                 .forEach(m -> populateProperty(m, effectiveElement, annotation));
+    }
+
+    /**
+     * Sets value of a particular {@code Property} to an {@code Element} node
+     * @param element Element node
+     * @param path Contains relative path and property name
+     * @param value Value of the property
+     */
+    public void mapProperty(Element element, String path, String value) {
+        String prefix = path.contains(DialogConstants.PATH_SEPARATOR)
+                ? StringUtils.substringBeforeLast(path, DialogConstants.PATH_SEPARATOR)
+                : StringUtils.EMPTY;
+        String name = path.contains(DialogConstants.PATH_SEPARATOR)
+                ? StringUtils.substringAfterLast(path, DialogConstants.PATH_SEPARATOR)
+                : path;
+
+        Element effectiveElement = getRequiredElement(element, prefix);
+        effectiveElement.setAttribute(getValidFieldName(name), value);
+
     }
 
     /**
@@ -387,6 +400,21 @@ public class PluginXmlUtility implements XmlUtility {
                 .withName(name)
                 .withMerger(merger)
                 .setAttribute(element);
+    }
+
+    /**
+     * Retrieves the required {@code Element} of the specified node by its relative path.
+     * @param element Current element node
+     * @param path Relative path to required element
+     * @return Element instance
+     * */
+    private Element getRequiredElement(Element element, String path) {
+        if (StringUtils.isEmpty(path)) {
+            return element;
+        }
+        return Pattern.compile(DialogConstants.PATH_SEPARATOR)
+                .splitAsStream(path)
+                .reduce(element, this::getParentOrChildElement, (prev, next) -> next);
     }
 
     /**
@@ -531,6 +559,19 @@ public class PluginXmlUtility implements XmlUtility {
             child = child.getNextSibling();
         }
         return fallbackSupplier.apply(parent);
+    }
+
+    /**
+     * Retrieve parent or child {@code Element} node of the specified node by name
+     * @param element Current element node
+     * @param nodeName Name of the required element
+     * @return Element instance
+     */
+    public Element getParentOrChildElement(Element element, String nodeName) {
+        if(nodeName.contains("..")){
+            return (Element)element.getParentNode();
+        }
+        return getOrAddChildElement(element, nodeName);
     }
 
     /**
