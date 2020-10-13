@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 /**
  * Used to set up Coral 3 FileUpload element based on {@code cq/gui/components/authoring/dialog/fileupload} Granite component in TouchUI dialog
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.FILEUPLOAD)
 @PropertyMapping

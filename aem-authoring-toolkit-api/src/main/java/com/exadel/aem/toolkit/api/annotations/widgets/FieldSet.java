@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html">
  * FieldSet element</a> in TouchUI dialog
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.FIELDSET)
 @PropertyMapping
@@ -49,4 +49,11 @@ public @interface FieldSet {
      */
     @IgnorePropertyMapping
     String namePrefix() default "";
+
+    /**
+     * Used to define string postfix for names of all fields in the FieldSet
+     * @return String value
+     */
+    @IgnorePropertyMapping
+    String namePostfix() default "";
 }
