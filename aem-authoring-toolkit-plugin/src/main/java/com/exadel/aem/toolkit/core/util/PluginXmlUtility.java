@@ -568,7 +568,7 @@ public class PluginXmlUtility implements XmlUtility {
      * @return Element instance
      */
     private Element getParentOrChildElement(Element element, String nodeName) {
-        if(nodeName.contains("..")){
+        if(nodeName.contains(DialogConstants.PARENT_PATH_INDICATOR)){
             return (Element)element.getParentNode();
         }
         return getOrAddChildElement(element, nodeName);
