@@ -52,6 +52,10 @@ public class TabInstanceN {
         return fields;
     }
 
+    public void setFields(String name, Object value) {
+        this.fields.put(name, value);
+    }
+
     /**
      * Merges a foreign {@code TabInstanceN} to the current instance, basically by adding other instance's fields
      * while preserving the same  reference

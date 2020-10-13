@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.core.handlers.container;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.core.handlers.container.common.ContainerHandler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import org.w3c.dom.Element;
 

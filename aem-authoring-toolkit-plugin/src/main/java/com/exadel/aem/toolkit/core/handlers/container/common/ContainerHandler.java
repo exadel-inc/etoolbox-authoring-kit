@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.handlers.container;
+package com.exadel.aem.toolkit.core.handlers.container.common;
 
 import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element> {
+public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element> {
     default void acceptParent(Class<?> componentClass, Element parentElement, Class<? extends Annotation> annotation, String containerName, String resourceType, String exceptionMessage, String DEFAULT_TAB_NAME) {
         Element tabItemsElement = (Element) parentElement.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS))
@@ -122,7 +122,9 @@ interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element> {
             for (Field field : moreCurrentTabFields) {
                 storedCurrentTabFields.put(field.getName(), field);
             }
-            listField.addAll(moreCurrentTabFields);
+            for (String key : storedCurrentTabFields.keySet()) {
+                listField.add((Field) storedCurrentTabFields.get(key));
+            }
             if (needResort) {
                 listField.sort(PluginObjectPredicates::compareByRanking);
             }
@@ -186,7 +188,10 @@ interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element> {
             for (Class<?> tabClass : tabClasses) {
                 Annotation annotation2 = tabClass.getDeclaredAnnotation(annotation);
                 annotationMap = getAnnotationFields(annotation2);
-                result.put(annotationMap.get("title").toString(), new TabInstanceN(annotationMap.get("title").toString()));
+                TabInstanceN tabInstanceN = new TabInstanceN(annotationMap.get("title").toString());
+                tabInstanceN.setAttributes(annotationMap);
+                Arrays.stream(tabClass.getDeclaredFields()).forEach(field -> tabInstanceN.setFields(field.getName(), field));
+                result.put(annotationMap.get("title").toString(), tabInstanceN);
             }
             if (cls.isAnnotationPresent(Dialog.class)) {
                 if (containerName.equals("tabs")) {
