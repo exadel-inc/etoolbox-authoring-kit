@@ -17,6 +17,7 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -34,6 +35,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.core.SourceFacadeImpl;
+import com.google.common.base.Predicates;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +46,7 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
-import com.exadel.aem.toolkit.api.annotations.main.ClassField;
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
@@ -252,21 +256,29 @@ public class PluginReflectionUtility {
 
     /**
      * Retrieves annotations of a {@code Field} instance as a sequential {@code Stream}
-     * @param field The field to analyze
+     * @param sourceFacade The sourceFacade to analyze
      * @return Stream of annotation objects,
      */
-    public static Stream<Class<? extends Annotation>> getFieldAnnotations(Field field){
-        return Arrays.stream(field.getDeclaredAnnotations())
+    public static Stream<Class<? extends Annotation>> getFieldAnnotations(SourceFacade sourceFacade){
+        return Arrays.stream(sourceFacade.adaptTo(Annotation[].class))
                 .map(Annotation::annotationType);
     }
 
+    public static List<SourceFacade> getAllSourceFacades(Class<?> targetClass, List<Predicate<Member>> predicates) {
+        return getAllMembers(targetClass, predicates).stream().map(SourceFacadeImpl::new).collect(Collectors.toList());
+    }
+
+    public static List<SourceFacade> getAllSourceFacades(Class<?> targetClass) {
+        return getAllSourceFacades(targetClass, Collections.emptyList());
+    }
+
     /**
-     * Retrieves a complete list of {@code Field}s of a {@code Class}
+     * Retrieves a complete list of {@code Member}s of a {@code Class}
      * @param targetClass The class to analyze
-     * @return List of {@code Field} objects
+     * @return List of {@code Member} objects
      */
-    public static List<Field> getAllFields(Class<?> targetClass) {
-        return getAllFields(targetClass, Collections.emptyList());
+    public static List<Member> getAllMembers(Class<?> targetClass) {
+        return getAllMembers(targetClass, Collections.emptyList());
     }
 
     /**
@@ -275,28 +287,31 @@ public class PluginReflectionUtility {
      * @param predicates List of {@code Predicate<Field>} instances to pick up appropriate fields
      * @return List of {@code Field} objects
      */
-    public static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates) {
-        List<Field> fields = new LinkedList<>();
-        List<ClassField> ignoredFields = new LinkedList<>();
+    public static List<Member> getAllMembers(Class<?> targetClass, List<Predicate<Member>> predicates) {
+        List<Member> members = new LinkedList<>();
+        List<ClassMember> ignoredMembers = new LinkedList<>();
 
         for (Class<?> classEntry : getClassHierarchy(targetClass)) {
-            List<Field> classFields = Arrays.stream(classEntry.getDeclaredFields())
-                    .filter(PluginObjectPredicates.getFieldsPredicate(predicates))
+            Stream<Member> classMembersStream = targetClass.isInterface()
+                    ? Arrays.stream(classEntry.getMethods())
+                    : Arrays.stream(classEntry.getDeclaredFields());
+            List<Member> classMembers = classMembersStream
+                    .filter(PluginObjectPredicates.getMembersPredicate(predicates))
                     .collect(Collectors.toList());
-            fields.addAll(classFields);
+            members.addAll(classMembers);
             if (classEntry.getAnnotation(IgnoreFields.class) != null) {
-                List<ClassField> processedClassFields = Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
-                        .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
-                                ClassField.class,
+                List<ClassMember> processedClassMembers = Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
+                        .map(classMember -> PluginObjectUtility.modifyIfDefault(classMember,
+                                ClassMember.class,
                                 DialogConstants.PN_SOURCE_CLASS,
                                 targetClass))
                         .collect(Collectors.toList());
-                ignoredFields.addAll(processedClassFields);
+                ignoredMembers.addAll(processedClassMembers);
             }
         }
-        return fields.stream()
-                .filter(PluginObjectPredicates.getNotIgnoredFieldsPredicate(ignoredFields))
-                .sorted(PluginObjectPredicates::compareByRanking)
+        return members.stream()
+                .filter(PluginObjectPredicates.getNotIgnoredMembersPredicate(ignoredMembers))
+                .sorted(PluginObjectPredicates::compareDialogMembers)
                 .collect(Collectors.toList());
     }
 

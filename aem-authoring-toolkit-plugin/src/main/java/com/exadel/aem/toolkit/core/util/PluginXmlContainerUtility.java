@@ -14,7 +14,7 @@
 
 package com.exadel.aem.toolkit.core.util;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -45,22 +46,22 @@ public class PluginXmlContainerUtility {
     }
 
     /**
-     * Processes the specified {@link Field}s and appends the generated XML markup to the specified container element
+     * Processes the specified {@link Member}s and appends the generated XML markup to the specified container element
      * @param container XML definition of a pre-defined widget container
-     * @param fields List of {@code Field}s of a component's Java class
+     * @param sourceFacades List of {@code Member}s of a component's Java class
      */
-    public static void append(Element container, List<Field> fields) {
-        Map<Field, String> managedFields = new LinkedHashMap<>();
+    public static void append(Element container, List<SourceFacade> sourceFacades) {
+        Map<SourceFacade, String> managedFields = new LinkedHashMap<>();
         Element itemsElement = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_ITEMS);
         container.appendChild(itemsElement);
 
-        for (Field field : fields) {
-            DialogWidget widget = DialogWidgets.fromField(field);
+        for (SourceFacade sourceFacade : sourceFacades) {
+            DialogWidget widget = DialogWidgets.fromSourceFacade(sourceFacade);
             if (widget == null) {
                 continue;
             }
-            Element newElement = widget.appendTo(itemsElement, field);
-            managedFields.put(field, newElement.getTagName());
+            Element newElement = widget.appendTo(itemsElement, sourceFacade);
+            managedFields.put(sourceFacade, newElement.getTagName());
         }
 
         if (container.hasChildNodes()) {
@@ -75,7 +76,7 @@ public class PluginXmlContainerUtility {
      * @param container XML definition of an immediate parent for widget nodes (typically, an {@code items} element)
      * @param managedFields {@code Map<Field, String>} that matches rendered fields to corresponding element names
      */
-    private static void checkForDuplicateFields(Element container, Map<Field, String> managedFields) {
+    private static void checkForDuplicateFields(Element container, Map<SourceFacade, String> managedFields) {
         List<String> childElementsTagNames = IntStream
                 .range(0, container.getChildNodes().getLength())
                 .mapToObj(index -> container.getChildNodes().item(index))
@@ -96,12 +97,12 @@ public class PluginXmlContainerUtility {
      * @param tagName String representing the tag name in question
      * @param managedFields {@code Map<Field, String>} that matches rendered fields to corresponding element names
      */
-    private static void checkForDuplicateFields(String tagName, Map<Field, String> managedFields) {
-        LinkedList<Field> sameNameFields = managedFields.entrySet().stream()
+    private static void checkForDuplicateFields(String tagName, Map<SourceFacade, String> managedFields) {
+        LinkedList<SourceFacade> sameNameFields = managedFields.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(tagName))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toCollection(LinkedList::new));
-        LinkedList<Field> sameNameFieldsByOrigin = sameNameFields.stream()
+        LinkedList<SourceFacade> sameNameFieldsByOrigin = sameNameFields.stream()
                 .sorted(PluginObjectPredicates::compareByOrigin)
                 .collect(Collectors.toCollection(LinkedList::new));
 
@@ -113,8 +114,8 @@ public class PluginXmlContainerUtility {
                 .getExceptionHandler()
                 .handle(new InvalidFieldContainerException(String.format(
                         DUPLICATE_FIELDS_MESSAGE_TEMPLATE,
-                        sameNameFieldsByOrigin.getLast().getName(),
-                        sameNameFieldsByOrigin.getLast().getDeclaringClass().getSimpleName(),
-                        sameNameFields.getLast().getDeclaringClass().getSimpleName())));
+                        ((Member) sameNameFieldsByOrigin.getLast().getSource()).getName(),
+                        ((Member) sameNameFieldsByOrigin.getLast().getSource()).getDeclaringClass().getSimpleName(),
+                        ((Member) sameNameFields.getLast().getSource()).getDeclaringClass().getSimpleName())));
     }
 }
