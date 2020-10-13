@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.test.custom.handler;
 
 import java.lang.reflect.Field;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
@@ -31,7 +32,7 @@ public class CustomProcessingHandler implements DialogWidgetHandler {
     }
 
     @Override
-    public void accept(Element element, Field field) {
+    public void accept(SourceFacade sourceFacade, Element element) {
         element.setAttribute("customProcessing", "turned on");
     }
 }
