@@ -15,9 +15,10 @@
 package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.core.handlers.assets.dependson.DependsOnHandler;
@@ -47,38 +48,38 @@ public interface DialogWidget {
      * applied to several widgets, either built-in or user-defined
      * @return {@code BiConsumer<Element, Field>} instance
      */
-    BiConsumer<Element, Field> getHandler();
+    BiConsumer<SourceFacade, Element> getHandler();
 
     /**
      * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified name
      * @param element Parent {@code Element} instance
-     * @param field Current {@code Field}
+     * @param sourceFacade Current {@code Field}
      * @return The new {@code Element} created for the current {@code Field}
      */
-    default Element appendTo(Element element, Field field) {
-        return appendTo(element, field, field.getName());
+    default Element appendTo(Element element, SourceFacade sourceFacade) {
+        return appendTo(element, sourceFacade, ((Member) sourceFacade.getSource()).getName());
     }
 
     /**
      * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified element name
      * @param element Parent {@code Element} instance
-     * @param field Current {@code Field}
+     * @param sourceFacade Current {@code Field}
      * @param name The node name to store
      * @return The new {@code Element} created for the current {@code Field}
      */
-    default Element appendTo(Element element, Field field, String name) {
+    default Element appendTo(Element element, SourceFacade sourceFacade, String name) {
         Element widgetChildElement = PluginRuntime.context().getXmlUtility().createNodeElement(name);
         element.appendChild(widgetChildElement);
-        getHandlerChain().accept(widgetChildElement, field);
+        getHandlerChain().accept(sourceFacade, widgetChildElement);
         return widgetChildElement;
     }
 
     /**
      * Generates the chain of handlers to store {@code cq:editConfig} XML markup
-     * @return {@code BiConsumer<Element, Field>} instance
+     * @return {@code BiConsumer<SourceFacade, Element>} instance
      */
-    default BiConsumer<Element, Field> getHandlerChain() {
-        BiConsumer<Element, Field> mainChain = new GenericPropertiesHandler()
+    default BiConsumer<SourceFacade, Element> getHandlerChain() {
+        BiConsumer<SourceFacade, Element> mainChain = new GenericPropertiesHandler()
                 .andThen(new PropertyMappingHandler())
                 .andThen(new AttributesHandler())
                 .andThen(new DialogFieldHandler())

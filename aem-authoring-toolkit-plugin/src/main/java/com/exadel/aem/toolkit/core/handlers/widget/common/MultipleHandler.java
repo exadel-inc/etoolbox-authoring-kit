@@ -14,7 +14,6 @@
 
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -22,6 +21,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.IntStream;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
@@ -42,18 +42,18 @@ import com.exadel.aem.toolkit.core.util.XmlTransferPolicy;
 /**
  * Handler for creating ad-hoc {@code Multifield}s for {@link Multiple}-marked dialog fields
  */
-public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
+public class MultipleHandler implements Handler, BiConsumer<SourceFacade, Element> {
     private static final String PREFIX_GRANITE = "granite:*";
     private static final String POSTFIX_NESTED = "_nested";
 
     /**
      * Processes the user-defined data and writes it to XML entity
+     * @param sourceFacade Current {@code SourceFacade} instance
      * @param element XML element
-     * @param field Current {@code Field} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        if (!field.isAnnotationPresent(Multiple.class)) {
+    public void accept(SourceFacade sourceFacade, Element element) {
+        if (sourceFacade.adaptTo(Multiple.class) == null) {
             return;
         }
 
@@ -66,11 +66,11 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
             isComposite = true;
 
         } else if (isMultifield(element)) {
-            fieldElement = getNestedMultifieldWrapper(element, field);
+            fieldElement = getNestedMultifieldWrapper(element, sourceFacade);
             isComposite = true;
 
         } else {
-            fieldElement = getSimpleWrapper(element, field);
+            fieldElement = getSimpleWrapper(element, sourceFacade);
         }
 
         // Facilitate the modified element to work as Multifield
@@ -85,7 +85,7 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
         // Since this element has just "emerged" as a multifield, we need to check if there are multifield bound
         // (custom) handlers and run such one more time
         PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers(Collections.singletonList(MultiField.class))
-                .forEach(handler -> handler.accept(element, field));
+                .forEach(handler -> handler.accept(sourceFacade, element));
     }
 
     /**
@@ -109,15 +109,15 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
     }
 
     /**
-     * Creates a {@code field} node encapsulating source element's properties to be used within a synthetic multifield
+     * Creates a {@code sourceFacade} node encapsulating source element's properties to be used within a synthetic multifield
      * @param source Previously rendered {@code Element} being converted to a synthetic multifield
-     * @param field Current {@code Field} instance
-     * @return {@code Element} representing the {@code field} node
+     * @param sourceFacade Current {@code Field} instance
+     * @return {@code Element} representing the {@code sourceFacade} node
      */
-    private Element getSimpleWrapper(Element source, Field field) {
+    private Element getSimpleWrapper(Element source, SourceFacade sourceFacade) {
         Element result = getXmlUtil().createNodeElement(DialogConstants.NN_FIELD);
         // Move content to the new wrapper
-        getXmlUtil().transfer(source, result, getTransferPolicies(field));
+        getXmlUtil().transfer(source, result, getTransferPolicies(sourceFacade));
         return result;
     }
 
@@ -149,21 +149,21 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
     }
 
     /**
-     * Creates a {@code field} node wrapping an existing {@code multifield} that will be used within a synthetic multifield
+     * Creates a {@code sourceFacade} node wrapping an existing {@code multifield} that will be used within a synthetic multifield
      * @param source Previously rendered {@code Element} being converted to a synthetic multifield
-     * @param field Current {@code Field} instance
-     * @return {@code Element} representing the {@code field} node
+     * @param sourceFacade Current {@code Field} instance
+     * @return {@code Element} representing the {@code sourceFacade} node
      */
-    private Element getNestedMultifieldWrapper(Element source, Field field) {
+    private Element getNestedMultifieldWrapper(Element source, SourceFacade sourceFacade) {
         Element result = getXmlUtil().createNodeElement(DialogConstants.NN_FIELD);
-        // Create nested "items > multifield > field > items" node structure
+        // Create nested "items > multifield > sourceFacade > items" node structure
         Element nestedItems = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
         Element nestedMultifield = getXmlUtil().createNodeElement(source.getTagName() + POSTFIX_NESTED);
         nestedItems.appendChild(nestedMultifield);
         result.appendChild(nestedItems);
 
         // Move existing multifield attributes to the nested multifield
-        Map<String, XmlTransferPolicy> standardPolicies = getTransferPolicies(field);
+        Map<String, XmlTransferPolicy> standardPolicies = getTransferPolicies(sourceFacade);
         Map<String, XmlTransferPolicy> multifieldPolicies = new LinkedHashMap<>();
         multifieldPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_COMPOSITE, XmlTransferPolicy.COPY);
         multifieldPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.NN_FIELD, XmlTransferPolicy.MOVE);
@@ -171,7 +171,7 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
         multifieldPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, XmlTransferPolicy.COPY);
         getXmlUtil().transfer(source, nestedMultifield, multifieldPolicies);
 
-        // Set the "name" attribute of the "field" node of the current multifield
+        // Set the "name" attribute of the "sourceFacade" node of the current multifield
         // At the same time, alter the "name" attribute of the nested multifield to not get mixed with the name of the current one
         Element nestedMultifieldField = getXmlUtil().getChildElement(nestedMultifield, DialogConstants.NN_FIELD);
         String nestedMultifieldFieldName = StringUtils.defaultString(nestedMultifieldField.getAttribute(DialogConstants.PN_NAME));
@@ -184,10 +184,10 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
     /**
      * Generates set of node transfer policies to properly distribute XML element requisites between the wrapper level
      * and the nested element level while converting a singular element to a multifield
-     * @param field Current {@code Field} instance
+     * @param sourceFacade Current {@code Field} instance
      * @return {@code Map<String, XmlTransferPolicy>} instance
      */
-    private static Map<String, XmlTransferPolicy> getTransferPolicies(Field field) {
+    private static Map<String, XmlTransferPolicy> getTransferPolicies(SourceFacade sourceFacade) {
         Map<String, XmlTransferPolicy> transferPolicies = new LinkedHashMap<>();
 
         // All "standard" @DialogField props will belong to the Multifield node unless in the cases specified below,
@@ -200,7 +200,7 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
                     transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + propertyName, XmlTransferPolicy.SKIP);
                 });
         // Also, all the values set via @Property will belong to the Multifield node
-        Arrays.stream(field.getAnnotationsByType(Property.class))
+        Arrays.stream(sourceFacade.adaptTo(Property[].class))
                 .forEach(property -> transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + property.name(), XmlTransferPolicy.SKIP));
         // Need to override policy for "name" as has been stored in a loop above
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_NAME, XmlTransferPolicy.MOVE);
@@ -211,7 +211,7 @@ public class MultipleHandler implements Handler, BiConsumer<Element, Field> {
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_REQUIRED, XmlTransferPolicy.MOVE);
         // Need to leave "granite:"-prefixed props (as they are probably set via @Attribute) at the multifield level
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + PREFIX_GRANITE, XmlTransferPolicy.MOVE);
-        // Rest of element attributes will move to the inner field
+        // Rest of element attributes will move to the inner sourceFacade
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.WILDCARD, XmlTransferPolicy.MOVE);
         // While all child nodes will stay as the property of multifield
         transferPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.WILDCARD, XmlTransferPolicy.SKIP);

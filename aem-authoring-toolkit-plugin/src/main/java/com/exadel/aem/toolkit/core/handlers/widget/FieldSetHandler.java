@@ -13,21 +13,19 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Element;
-
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
-import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreField;
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
 import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
+import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Element;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite {@code FieldSet} widget functionality
@@ -38,50 +36,45 @@ class FieldSetHandler implements WidgetSetHandler {
 
     /**
      * Processes the user-defined data and writes it to XML entity
+     * @param sourceFacade Current {@code SourceFacade} instance
      * @param element Current XML element
-     * @param field Current {@code Field} instance
      */
     @Override
     @SuppressWarnings({"deprecation", "squid:S1874"})
-    // the processing of deprecated "IgnoreField" annotation remains for compatibility reasons until v.2.0.0
-    public void accept(Element element, Field field) {
+    public void accept(SourceFacade sourceFacade, Element element) {
         // Define the working @FieldSet annotation instance and the fieldset type
-        FieldSet fieldSet = field.getDeclaredAnnotation(FieldSet.class);
-        Class<?> fieldSetType = field.getType();
+        FieldSet fieldSet = sourceFacade.adaptTo(FieldSet.class);
+        Class<?> fieldSetType = getFieldSetType(sourceFacade.getSource());
 
-        // Get the filtered fields collection for the current container; early return if collection is empty
-        List<Field> fields = getContainerFields(element, field, fieldSetType);
+        List<SourceFacade> sourceFacades = getContainerSourceFacades(element, sourceFacade, fieldSetType);
 
-        // COMPATIBILITY: retrieve and process list of fields marked with a legacy "IgnoreField" annotation
-        // to be removed after v.2.0.0
-        List<Field> legacyIgnoredFields = PluginReflectionUtility.getAllFields(
-                fieldSetType,
-                Collections.singletonList(f -> f.isAnnotationPresent(IgnoreField.class)));
-        if (!legacyIgnoredFields.isEmpty()) {
-            fields = fields.stream()
-                    .filter(f -> legacyIgnoredFields.stream()
-                            .anyMatch(ignoredField -> !f.getName().equals(ignoredField.getName())))
-                    .collect(Collectors.toList());
-        }
-        // end of compatibility block
-
-        if(fields.isEmpty()) {
+        if(sourceFacades.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
                     EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName()
             ));
             return;
         }
 
-        // Cache existing name prefix and set updated name prefix with the parameter of the FieldSet annotation as needed
-        String previousNamePrefix = getXmlUtil().getNamePrefix();
-        if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
-            getXmlUtil().setNamePrefix(previousNamePrefix + getXmlUtil().getValidFieldName(fieldSet.namePrefix()));
+        sourceFacades.forEach(populated -> populatePrefixPostfix(populated, sourceFacade, fieldSet));
+
+        // append the valid sourceFacades to the container
+        PluginXmlContainerUtility.append(element, sourceFacades);
+    }
+
+    private void populatePrefixPostfix(SourceFacade populated, SourceFacade current, FieldSet fieldSet) {
+        if (StringUtils.isNotBlank(fieldSet.namePrefix())){
+            populated.addToValueMap(DialogConstants.PN_PREFIX, current.fromValueMap(DialogConstants.PN_PREFIX).toString() +
+                    populated.fromValueMap(DialogConstants.PN_PREFIX).toString().substring(2) + getXmlUtil().getValidFieldName(fieldSet.namePrefix()));
         }
+        if (StringUtils.isNotBlank(fieldSet.namePostfix())) {
+            populated.addToValueMap(DialogConstants.PN_POSTFIX, fieldSet.namePostfix() + populated.fromValueMap(DialogConstants.PN_POSTFIX) +
+                    current.fromValueMap(DialogConstants.PN_POSTFIX).toString());
+        }
+    }
 
-        // append the valid fields to the container
-        PluginXmlContainerUtility.append(element, fields);
-
-        // Restore the name prefix
-        getXmlUtil().setNamePrefix(previousNamePrefix);
+    private Class<?> getFieldSetType(Object member) {
+        return member instanceof Field
+                ? ((Field) member).getType()
+                : ((Method) member).getReturnType();
     }
 }

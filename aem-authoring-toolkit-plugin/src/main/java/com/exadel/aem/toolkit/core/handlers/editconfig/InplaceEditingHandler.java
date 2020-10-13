@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.core.SourceFacadeImpl;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
@@ -146,12 +148,12 @@ public class InplaceEditingHandler implements Handler, BiConsumer<Element, EditC
      * @param config {@link InplaceEditingConfig} annotation instance
      */
     private void populateRteConfig(Element element, InplaceEditingConfig config) {
-        Field referencedRteField = getReferencedRteField(config);
-        if (referencedRteField != null && referencedRteField.getAnnotation(RichTextEditor.class) != null) {
-            BiConsumer<Element, Field> rteHandler = new RichTextEditorHandler(false);
-            new InheritanceHandler(rteHandler).andThen(rteHandler).accept(element, referencedRteField);
+        SourceFacade referencedRteField = getReferencedRteField(config);
+        if (referencedRteField != null && referencedRteField.adaptTo(RichTextEditor.class) != null) {
+            BiConsumer<SourceFacade, Element> rteHandler = new RichTextEditorHandler(false);
+            new InheritanceHandler(rteHandler).andThen(rteHandler).accept(referencedRteField, element);
             getXmlUtil().mapProperties(element,
-                    referencedRteField.getAnnotation(RichTextEditor.class),
+                    referencedRteField.adaptTo(RichTextEditor.class),
                     Collections.singletonList(DialogConstants.PN_USE_FIXED_INLINE_TOOLBAR));
         }
         new RichTextEditorHandler(false).accept(element, config.richTextConfig());
@@ -163,14 +165,14 @@ public class InplaceEditingHandler implements Handler, BiConsumer<Element, EditC
      * @param config {@link InplaceEditingConfig} annotation instance
      * @return {@code Field} instance
      */
-    private static Field getReferencedRteField(InplaceEditingConfig config) {
+    private static SourceFacade getReferencedRteField(InplaceEditingConfig config) {
         if (config.richText().value().equals(Object.class)
                 && StringUtils.isBlank(config.richText().field())) {
             // richText attribute not specified, which is a valid case
             return null;
         }
         try {
-            return config.richText().value().getDeclaredField(config.richText().field());
+            return new SourceFacadeImpl(config.richText().value().getDeclaredField(config.richText().field()));
         } catch (NoSuchFieldException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
                     config.richText().value(),

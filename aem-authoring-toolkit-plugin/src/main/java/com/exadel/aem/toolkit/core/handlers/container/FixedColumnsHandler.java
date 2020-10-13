@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
 
@@ -59,7 +60,7 @@ public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Elemen
 
         contentItems.appendChild(contentItemsColumn);
 
-        List<Field> allFields = PluginReflectionUtility.getAllFields(componentClass);
-        PluginXmlContainerUtility.append(contentItemsColumn, allFields);
+        List<SourceFacade> allSourceFacades = PluginReflectionUtility.getAllSourceFacades(componentClass);
+        PluginXmlContainerUtility.append(contentItemsColumn, allSourceFacades);
     }
 }

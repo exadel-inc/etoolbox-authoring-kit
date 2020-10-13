@@ -13,9 +13,10 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
@@ -26,30 +27,31 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 /**
  * Handler for storing {@link DialogField} properties to a Granite UI widget XML node
  */
-public class DialogFieldHandler implements BiConsumer<Element, Field> {
+public class DialogFieldHandler implements BiConsumer<SourceFacade, Element> {
     /**
      * Processes the user-defined data and writes it to XML entity
+     * @param sourceFacade Current {@code SourceFacade} instance
      * @param element XML element
-     * @param field Current {@code Field} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        if (!field.isAnnotationPresent(DialogField.class)) {
+    public void accept(SourceFacade sourceFacade, Element element) {
+        DialogField dialogField = sourceFacade.adaptTo(DialogField.class);
+        if (dialogField == null) {
             return;
         }
-        DialogField dialogField = field.getAnnotation(DialogField.class);
-        String name = field.getName();
-        if(StringUtils.isNotBlank(dialogField.name())){
+        String name = ((Member) sourceFacade.getSource()).getName();
+        if (StringUtils.isNotBlank(dialogField.name())) {
             name = !DialogConstants.PATH_SEPARATOR.equals(dialogField.name()) && !DialogConstants.RELATIVE_PATH_PREFIX.equals(dialogField.name())
                 ? PluginRuntime.context().getXmlUtility().getValidFieldName(dialogField.name())
                 : DialogConstants.RELATIVE_PATH_PREFIX;
         }
-        String namePrefix = PluginRuntime.context().getXmlUtility().getNamePrefix();
-        if(StringUtils.isNotBlank(namePrefix)
-                && !(namePrefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.equals(DialogConstants.RELATIVE_PATH_PREFIX))
-                && !(namePrefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.startsWith(DialogConstants.PARENT_PATH_PREFIX))) {
-            name = namePrefix + name;
+        String prefix = (String) sourceFacade.fromValueMap(DialogConstants.PN_PREFIX);
+        if (StringUtils.isNotBlank(prefix)
+                && !(prefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.equals(DialogConstants.RELATIVE_PATH_PREFIX))
+                && !(prefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.startsWith(DialogConstants.PARENT_PATH_PREFIX))) {
+            name = prefix + name;
         }
+        name = name + sourceFacade.fromValueMap(DialogConstants.PN_POSTFIX);
         element.setAttribute(DialogConstants.PN_NAME, name);
     }
 }

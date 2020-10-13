@@ -25,6 +25,8 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.core.SourceFacadeImpl;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
@@ -105,10 +107,10 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
         }
 
         // Get all *non-nested* fields from superclasses and the current class
-        List<Field> allFields = PluginReflectionUtility.getAllFields(componentClass);
+        List<SourceFacade> allSourceFacades = PluginReflectionUtility.getAllSourceFacades(componentClass);
 
         // If tabs collection is empty and yet there are fields to be placed, fire an exception and create a default tab
-        if (allTabInstances.isEmpty() && !allFields.isEmpty()) {
+        if (allTabInstances.isEmpty() && !allSourceFacades.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(
                     NO_TABS_DEFINED_EXCEPTION_MESSAGE + componentClass.getSimpleName()
             ));
@@ -129,8 +131,8 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
         while (tabInstanceIterator.hasNext()) {
             final boolean isFirstTab = iterationStep++ == 0;
             TabInstance currentTabInstance = tabInstanceIterator.next().getValue();
-            List<Field> storedCurrentTabFields = currentTabInstance.getFields();
-            List<Field> moreCurrentTabFields = allFields.stream()
+            List<SourceFacade> storedCurrentTabFields = currentTabInstance.getFields();
+            List<SourceFacade> moreCurrentTabFields = allSourceFacades.stream()
                     .filter(field -> isFieldForTab(field, currentTabInstance.getTab(), isFirstTab))
                     .collect(Collectors.toList());
             boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
@@ -138,7 +140,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
             if (needResort) {
                 storedCurrentTabFields.sort(PluginObjectPredicates::compareByRanking);
             }
-            allFields.removeAll(moreCurrentTabFields);
+            allSourceFacades.removeAll(moreCurrentTabFields);
 
             if (ArrayUtils.contains(ignoredTabs, currentTabInstance.getTab().title())) {
                 continue;
@@ -148,10 +150,10 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
 
         // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
         // for which a non-existent tab was specified. Handle an InvalidTabException for each of them
-        allFields.forEach(field -> PluginRuntime.context().getExceptionHandler()
+        allSourceFacades.forEach(sourceFacade -> PluginRuntime.context().getExceptionHandler()
                 .handle(new InvalidTabException(
-                        field.isAnnotationPresent(PlaceOnTab.class)
-                                ? field.getAnnotation(PlaceOnTab.class).value()
+                        sourceFacade.adaptTo(PlaceOnTab.class) != null
+                                ? sourceFacade.adaptTo(PlaceOnTab.class).value()
                                 : StringUtils.EMPTY
                 )));
     }
@@ -175,7 +177,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
                         tabTitle,
                         new TabInstance(
                                 nestedCls.getAnnotation(Tab.class),
-                                Arrays.asList(nestedCls.getDeclaredFields())));
+                                Arrays.stream(nestedCls.getDeclaredFields()).map(SourceFacadeImpl::new).collect(Collectors.toList())));
             });
             if (cls.isAnnotationPresent(Dialog.class)) {
                 Arrays.stream(cls.getAnnotation(Dialog.class).tabs())
@@ -187,11 +189,11 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
 
     /**
      * Adds a tab definition to the XML markup
-     * @param tabCollectionElement The {@link Element} instance to append particular fields' markup
+     * @param tabCollectionElement The {@link Element} instance to append particular sourceFacades' markup
      * @param tab The {@link Tab} instance to render as a dialog tab
-     * @param fields The list of {@link Field} instances to render as dialog fields
+     * @param sourceFacades The list of {@link Field} instances to render as dialog sourceFacades
      */
-    private void appendTab(Element tabCollectionElement, Tab tab, List<Field> fields){
+    private void appendTab(Element tabCollectionElement, Tab tab, List<SourceFacade> sourceFacades){
         String nodeName = getXmlUtil().getUniqueName(tab.title(), DEFAULT_TAB_NAME, tabCollectionElement);
         Element tabElement = getXmlUtil().createNodeElement(
                 nodeName,
@@ -201,7 +203,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
                 ));
         tabCollectionElement.appendChild(tabElement);
         appendTabAttributes(tabElement, tab);
-        PluginXmlContainerUtility.append(tabElement, fields);
+        PluginXmlContainerUtility.append(tabElement, sourceFacades);
     }
 
     /**
@@ -217,17 +219,17 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
     }
 
     /**
-     * The predicate to match a {@code Field} against particular {@code Tab}
-     * @param field  {@link Field} instance to analyze
+     * The predicate to match a {@code SourceFacade} against particular {@code Tab}
+     * @param sourceFacade  {@link SourceFacade} instance to analyze
      * @param tab {@link Tab} annotation to analyze
      * @param isDefaultTab True if the current tab accepts fields for which no tab was specified; otherwise, false
      * @return True or false
      */
-    private static boolean isFieldForTab(Field field, Tab tab, boolean isDefaultTab) {
-        if (!field.isAnnotationPresent(PlaceOnTab.class)) {
+    private static boolean isFieldForTab(SourceFacade sourceFacade, Tab tab, boolean isDefaultTab) {
+        if (sourceFacade.adaptTo(PlaceOnTab.class) == null) {
             return isDefaultTab;
         }
-        return tab.title().equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
+        return tab.title().equalsIgnoreCase(sourceFacade.adaptTo(PlaceOnTab.class).value());
     }
 
 
@@ -239,7 +241,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
     private static class TabInstance {
         private Tab tab;
 
-        private List<Field> fields;
+        private List<SourceFacade> fields;
 
         /**
          * Creates a new {@code TabInstance} wrapped around a specified {@link Tab} with an empty list of associated fields
@@ -256,7 +258,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
          * @param tab {@code Tab} object
          * @param fields List of {@code Field} objects to associate with the current tab
          */
-        private TabInstance(Tab tab, List<Field> fields) {
+        private TabInstance(Tab tab, List<SourceFacade> fields) {
             this.tab = tab;
             this.fields = new LinkedList<>(fields);
         }
@@ -273,7 +275,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
          * Gets the stored list of {@link Field}s
          * @return {@code List<Field>} object
          */
-        private List<Field> getFields() {
+        private List<SourceFacade> getFields() {
             return fields;
         }
 

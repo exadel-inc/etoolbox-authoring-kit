@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
 import org.apache.commons.lang3.ArrayUtils;
 import org.w3c.dom.Element;
 
@@ -29,17 +30,17 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * {@link Handler} implementation used to create markup responsible for {@code RadioGroup} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class RadioGroupHandler implements Handler, BiConsumer<Element, Field> {
+class RadioGroupHandler implements Handler, BiConsumer<SourceFacade, Element> {
     /**
      * Processes the user-defined data and writes it to XML entity
+     * @param sourceFacade Current {@code SourceFacade} instance
      * @param element Current XML element
-     * @param field Current {@code Field} instance
      */
     @Override
     @SuppressWarnings({"deprecation", "squid:S1874"})
     // .acsListPath() and .acsListResourceType() method calls remain for compatibility reasons until v.2.0.0
-    public void accept(Element element, Field field) {
-        RadioGroup radioGroup = field.getDeclaredAnnotation(RadioGroup.class);
+    public void accept(SourceFacade sourceFacade, Element element) {
+        RadioGroup radioGroup = sourceFacade.adaptTo(RadioGroup.class);
         if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {
             Element items = (Element) element.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
             Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));

@@ -13,9 +13,9 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
@@ -26,18 +26,18 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * {@link Handler} implementation used to create markup responsible for {@code Password} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class PasswordHandler implements Handler, BiConsumer<Element, Field> {
+class PasswordHandler implements Handler, BiConsumer<SourceFacade, Element> {
     /**
      * Processes the user-defined data and writes it to XML entity
+     * @param sourceFacade Current {@code SourceFacade} instance
      * @param element Current XML element
-     * @param field Current {@code Field} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        Password password = field.getDeclaredAnnotation(Password.class);
-        if(!password.retype().isEmpty()){
+    public void accept(SourceFacade sourceFacade, Element element) {
+        Password password = sourceFacade.adaptTo(Password.class);
+        if(!password.retype().isEmpty()) {
             element.setAttribute(DialogConstants.PN_RETYPE,
-                    getXmlUtil().getNamePrefix() + getXmlUtil().getValidFieldName(password.retype()));
+                    sourceFacade.fromValueMap(DialogConstants.PN_PREFIX) + getXmlUtil().getValidFieldName(password.retype()) + sourceFacade.fromValueMap(DialogConstants.PN_POSTFIX));
         }
     }
 }

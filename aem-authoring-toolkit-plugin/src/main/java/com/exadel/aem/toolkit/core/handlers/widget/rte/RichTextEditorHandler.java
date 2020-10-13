@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -56,7 +57,7 @@ import com.exadel.aem.toolkit.core.util.validation.CharactersObjectValidator;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code RichTextEditor} widget functionality
  * within the {@code cq:dialog} and {@code cq:editConfig} XML nodes
  */
-public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field> {
+public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, Element> {
     private static final String KEYWORD_AUTO = "auto";
 
     private static final String FEATURE_ALL = "*";
@@ -81,11 +82,11 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * @param sourceFacade Current {@code Field} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        accept(element, field.getAnnotation(RichTextEditor.class));
+    public void accept(SourceFacade sourceFacade, Element element) {
+        accept(element, sourceFacade.adaptTo(RichTextEditor.class));
     }
 
     /**
@@ -215,7 +216,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Element, Field)} to facilitate single feature token from the
+     * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to facilitate single feature token from the
      * {@link RichTextEditor#features()} or {@link RichTextEditor#fullscreenFeatures()} collection to one or more appropriate
      * {@code XmlNodeBuilder}-s
      * @param featureItem A mutually linked pair consisting of a {@code XmlNodeBuilder} for either {@code features()}
@@ -260,7 +261,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Element, Field)} to create if necessary and then retrieve
+     * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to create if necessary and then retrieve
      * the {@code icons} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
      */
@@ -271,7 +272,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Element, Field)} to create if necessary and then retrieve
+     * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to create if necessary and then retrieve
      * the {@code formats} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
      */
@@ -284,7 +285,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Element, Field)} to create if necessary and then retrieve
+     * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to create if necessary and then retrieve
      * the {@code specialCharsConfig} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
      */
@@ -372,7 +373,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Element, Field
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Element, Field)} to create and append an XML node representing
+     * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to create and append an XML node representing
      * {@code htmlRules} to the RichTextEditor XML markup
      * @param element {@code Element} instance representing the RichTextEditor node
      */

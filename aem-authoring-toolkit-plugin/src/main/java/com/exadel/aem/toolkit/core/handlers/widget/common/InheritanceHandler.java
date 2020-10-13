@@ -13,11 +13,13 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.core.SourceFacadeImpl;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
@@ -29,49 +31,49 @@ import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
  * Handler for processing Granite UI widgets features "inherited" by the current component class {@code Field} from
  * other fields via {@link Extends} mechanism
  */
-public class InheritanceHandler implements BiConsumer<Element, Field> {
-    private BiConsumer<Element, Field> descendantChain;
-    public InheritanceHandler(BiConsumer<Element, Field> descendantChain) {
+public class InheritanceHandler implements BiConsumer<SourceFacade, Element> {
+    private BiConsumer<SourceFacade, Element> descendantChain;
+    public InheritanceHandler(BiConsumer<SourceFacade, Element> descendantChain) {
         this.descendantChain = descendantChain;
     }
 
     /**
      * Processes the user-defined data and writes it to XML entity
+     * @param sourceFacade Current {@code SourceFacade} instance
      * @param element XML element
-     * @param field Current {@code Field} instance
      */
     @Override
-    public void accept(Element element, Field field) {
+    public void accept(SourceFacade sourceFacade, Element element) {
         if (descendantChain == null) return;
-        Deque<Field> inheritanceTree = getInheritanceTree(field);
+        Deque<SourceFacade> inheritanceTree = getInheritanceTree(sourceFacade);
         while (!inheritanceTree.isEmpty()) {
-            descendantChain.accept(element, inheritanceTree.pollLast()); // to render 'ancestors' of context field starting from next handler in chain
+            descendantChain.accept(inheritanceTree.pollLast(), element); // to render 'ancestors' of context sourceFacade starting from next handler in chain
         }
     }
 
     /**
      * Builds the inheritance sequence for the current {@code Field}
-     * @param field Current {@code Field} instance
+     * @param sourceFacade Current {@code SourceFacade} instance
      * @return Ancestral {@code Field}s, as an ordered sequence
      */
-    private static Deque<Field> getInheritanceTree(Field field) {
-        Deque<Field> result = new LinkedList<>();
-        DialogWidget referencedComponent = DialogWidgets.fromField(field);
+    private static Deque<SourceFacade> getInheritanceTree(SourceFacade sourceFacade) {
+        Deque<SourceFacade> result = new LinkedList<>();
+        DialogWidget referencedComponent = DialogWidgets.fromSourceFacade(sourceFacade);
         if (referencedComponent == null) {
             return result;
         }
-        Extends extendsAnnotation = field.getDeclaredAnnotation(Extends.class);
+        Extends extendsAnnotation = sourceFacade.adaptTo(Extends.class);
         while (extendsAnnotation != null) {
-            String referencedFieldName = extendsAnnotation.field().isEmpty() ? field.getName() : extendsAnnotation.field();
+            String referencedFieldName = extendsAnnotation.field().isEmpty() ? ((Member) sourceFacade.getSource()).getName() : extendsAnnotation.field();
             try {
-                Field referencedField = extendsAnnotation.value().getDeclaredField(referencedFieldName);
-                if (referencedField.equals(field) || result.contains(referencedField)) { // to avoid circular references
+                SourceFacade referencedField = new SourceFacadeImpl(extendsAnnotation.value().getDeclaredField(referencedFieldName));
+                if (referencedField.equals(sourceFacade) || result.contains(referencedField)) { // to avoid circular references
                     break;
                 }
-                if (referencedComponent.equals(DialogWidgets.fromField(referencedField))) { // to avoid mixing up props of different components
+                if (referencedComponent.equals(DialogWidgets.fromSourceFacade(referencedField))) { // to avoid mixing up props of different components
                     result.add(referencedField);
                 }
-                extendsAnnotation = referencedField.getDeclaredAnnotation(Extends.class);
+                extendsAnnotation = referencedField.adaptTo(Extends.class);
             } catch (NoSuchFieldException e) {
                 PluginRuntime.context().getExceptionHandler().handle(e);
                 extendsAnnotation = null;

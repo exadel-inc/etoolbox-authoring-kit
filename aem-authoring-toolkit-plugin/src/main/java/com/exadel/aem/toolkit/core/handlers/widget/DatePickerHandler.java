@@ -13,12 +13,12 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
 import java.time.DateTimeException;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
@@ -36,18 +36,18 @@ import com.exadel.aem.toolkit.core.util.validation.Validation;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code DatePicker} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class DatePickerHandler implements Handler, BiConsumer<Element, Field> {
+class DatePickerHandler implements Handler, BiConsumer<SourceFacade, Element> {
     private static final String INVALID_FORMAT_EXCEPTION_TEMPLATE = "Invalid %s '%s' for @DatePicker field '%s'";
     private static final String INVALID_VALUE_EXCEPTION_TEMPLATE = "Property '%s' of @DatePicker does not correspond to specified valueFormat";
 
     /**
      * Processes the user-defined data and writes it to XML entity
+     * @param sourceFacade Current {@code SourceFacade} instance
      * @param element Current XML element
-     * @param field Current {@code Field} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        DatePicker datePickerAttribute = field.getAnnotationsByType(DatePicker.class)[0];
+    public void accept(SourceFacade sourceFacade, Element element) {
+        DatePicker datePickerAttribute = sourceFacade.adaptTo(DatePicker.class);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
 
         // check specified typeHint, report if invalid
@@ -61,7 +61,7 @@ class DatePickerHandler implements Handler, BiConsumer<Element, Field> {
                     element.getTagName()));
             return;
         }
-        // for a String-storing field, check and process specified valueFormat, report if invalid
+        // for a String-storing sourceFacade, check and process specified valueFormat, report if invalid
         if (datePickerAttribute.typeHint() == TypeHint.STRING
             && !StringUtils.isEmpty(datePickerAttribute.valueFormat())) {
             try {
