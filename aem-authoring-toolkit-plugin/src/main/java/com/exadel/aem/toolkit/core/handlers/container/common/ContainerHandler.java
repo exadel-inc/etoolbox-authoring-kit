@@ -24,8 +24,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
-import com.exadel.aem.toolkit.core.handlers.container.common.CommonTabUtils;
-import com.exadel.aem.toolkit.core.handlers.container.common.TabInstanceN;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.*;
 import com.google.common.collect.ImmutableMap;
@@ -113,26 +111,23 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
             final boolean isFirstTab = iterationStep++ == 0;
             TabInstanceN currentTabInstance
                     = tabInstanceIterator.next().getValue();
-            Map<String, Object> storedCurrentTabFields = currentTabInstance.getFields();
-            List<Field> listField = new ArrayList<>();
+            List<Field> storedCurrentTabFields = new ArrayList<>();
+            for (String key : currentTabInstance.getFields().keySet()) {
+                storedCurrentTabFields.add((Field) currentTabInstance.getFields().get(key));
+            }
             List<Field> moreCurrentTabFields = allFields.stream()
                     .filter(field1 -> isFieldForTab(field1, currentTabInstance.getTab(), isFirstTab))
                     .collect(Collectors.toList());
             boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
-            for (Field field : moreCurrentTabFields) {
-                storedCurrentTabFields.put(field.getName(), field);
-            }
-            for (String key : storedCurrentTabFields.keySet()) {
-                listField.add((Field) storedCurrentTabFields.get(key));
-            }
+            storedCurrentTabFields.addAll(moreCurrentTabFields);
             if (needResort) {
-                listField.sort(PluginObjectPredicates::compareByRanking);
+                storedCurrentTabFields.sort(PluginObjectPredicates::compareByRanking);
             }
             allFields.removeAll(moreCurrentTabFields);
             if (ArrayUtils.contains(ignoredTabs, currentTabInstance.getTab())) {
                 continue;
             }
-            appendTab(tabItemsElement, currentTabInstance, listField, DEFAULT_TAB_NAME);
+            appendTab(tabItemsElement, currentTabInstance, storedCurrentTabFields, DEFAULT_TAB_NAME);
         }
 
         // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
