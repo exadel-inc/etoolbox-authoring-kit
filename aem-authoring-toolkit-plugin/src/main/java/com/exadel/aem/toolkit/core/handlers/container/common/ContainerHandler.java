@@ -58,17 +58,17 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
         // Retrieve superclasses of the current class, from top of the hierarchy to the most immediate ancestor,
         // populate tab registry and store fields that are within @Tab-marked nested classes
         // (because we will not have access to them later)
-        Map<String, TabInstanceN> tabInstancesFromSuperClasses = getTabInstances(PluginReflectionUtility.getClassHierarchy(componentClass, false), annotation, containerName);
+        Map<String, TabContainerInstance> tabInstancesFromSuperClasses = getTabInstances(PluginReflectionUtility.getClassHierarchy(componentClass, false), annotation, containerName);
 
         // Retrieve tabs of the current class same way
-        Map<String, TabInstanceN> tabInstancesFromCurrentClass = getTabInstances(Collections.singletonList(componentClass), annotation, containerName);
+        Map<String, TabContainerInstance> tabInstancesFromCurrentClass = getTabInstances(Collections.singletonList(componentClass), annotation, containerName);
 
         // Compose the "overall" registry of tabs.
         // Whether the current class has any tabs that match tabs from superclasses,we consider that the "right" order
         // of tabs is defined herewith, and place tabs from the current class first, then rest of the tabs.
         // Otherwise, we consider the tabs of the current class to be an "addendum" of tabs from superclasses, and put
         // them in the end
-        Map<String, TabInstanceN> allTabInstances;
+        Map<String, TabContainerInstance> allTabInstances;
         if (tabInstancesFromCurrentClass.keySet().stream().anyMatch(tabInstancesFromSuperClasses::containsKey)) {
             allTabInstances = Stream.concat(tabInstancesFromCurrentClass.entrySet().stream(), tabInstancesFromSuperClasses.entrySet().stream())
                     .collect(Collectors.toMap(
@@ -81,7 +81,7 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
                     .collect(Collectors.toMap(
                             Map.Entry::getKey,
                             Map.Entry::getValue,
-                            TabInstanceN::merge,
+                            TabContainerInstance::merge,
                             LinkedHashMap::new));
         }
 
@@ -94,7 +94,7 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
                     exceptionMessage + componentClass.getSimpleName()
             ));
             if (containerName.equals("tabs")) {
-                allTabInstances.put(StringUtils.EMPTY, new TabInstanceN("newTab"));
+                allTabInstances.put(StringUtils.EMPTY, new TabContainerInstance("newTab"));
             }
         }
 
@@ -104,12 +104,12 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
         // 2) re-sort the current tab's fields collection with the field ranking comparator
         // 3) remove managed fields from the "all fields" collection
         // 4) render XML markup for the current tab
-        Iterator<Map.Entry<String, TabInstanceN>> tabInstanceIterator = allTabInstances.entrySet().iterator();
+        Iterator<Map.Entry<String, TabContainerInstance>> tabInstanceIterator = allTabInstances.entrySet().iterator();
         int iterationStep = 0;
 
         while (tabInstanceIterator.hasNext()) {
             final boolean isFirstTab = iterationStep++ == 0;
-            TabInstanceN currentTabInstance
+            TabContainerInstance currentTabInstance
                     = tabInstanceIterator.next().getValue();
             List<Field> storedCurrentTabFields = new ArrayList<>();
             for (String key : currentTabInstance.getFields().keySet()) {
@@ -135,7 +135,7 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
         CommonTabUtils.handleInvalidTabException(allFields);
     }
 
-    default void appendTab(Element tabCollectionElement, TabInstanceN tab, List<Field> fields, String DEFAULT_TAB_NAME) {
+    default void appendTab(Element tabCollectionElement, TabContainerInstance tab, List<Field> fields, String DEFAULT_TAB_NAME) {
         String nodeName = getXmlUtil().getUniqueName(tab.getTab(), DEFAULT_TAB_NAME, tabCollectionElement);
         Element tabElement = getXmlUtil().createNodeElement(
                 nodeName,
@@ -170,10 +170,10 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
      * method are used to compile a "tab registry" consisting of all tabs from the current class and/or its superclasses
      *
      * @param classes The {@code Class<?>}-es to search for defined tabs
-     * @return Map of entries, each specified by a tab title and containing a {@link TabInstanceN} aggregate object
+     * @return Map of entries, each specified by a tab title and containing a {@link TabContainerInstance} aggregate object
      */
-    default Map<String, TabInstanceN> getTabInstances(List<Class<?>> classes, Class<? extends Annotation> annotation, String containerName) {
-        Map<String, TabInstanceN> result = new LinkedHashMap<>();
+    default Map<String, TabContainerInstance> getTabInstances(List<Class<?>> classes, Class<? extends Annotation> annotation, String containerName) {
+        Map<String, TabContainerInstance> result = new LinkedHashMap<>();
         Map<String, Object> annotationMap;
         for (Class<?> cls : classes) {
             List<Class<?>> tabClasses = Arrays.stream(cls.getDeclaredClasses())
@@ -183,22 +183,22 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
             for (Class<?> tabClass : tabClasses) {
                 Annotation annotation2 = tabClass.getDeclaredAnnotation(annotation);
                 annotationMap = getAnnotationFields(annotation2);
-                TabInstanceN tabInstanceN = new TabInstanceN(annotationMap.get("title").toString());
-                tabInstanceN.setAttributes(annotationMap);
-                Arrays.stream(tabClass.getDeclaredFields()).forEach(field -> tabInstanceN.setFields(field.getName(), field));
-                result.put(annotationMap.get("title").toString(), tabInstanceN);
+                TabContainerInstance tabContainerInstance = new TabContainerInstance(annotationMap.get("title").toString());
+                tabContainerInstance.setAttributes(annotationMap);
+                Arrays.stream(tabClass.getDeclaredFields()).forEach(field -> tabContainerInstance.setFields(field.getName(), field));
+                result.put(annotationMap.get("title").toString(), tabContainerInstance);
             }
             if (cls.isAnnotationPresent(Dialog.class)) {
                 if (containerName.equals("tabs")) {
                     Arrays.stream(cls.getAnnotation(Dialog.class).tabs())
                             .forEach(tab -> {
-                                TabInstanceN tabInstanceN = new TabInstanceN(tab.title());
-                                tabInstanceN.setAttributes(getAnnotationFields(tab));
-                                result.put(tab.title(), tabInstanceN);
+                                TabContainerInstance tabContainerInstance = new TabContainerInstance(tab.title());
+                                tabContainerInstance.setAttributes(getAnnotationFields(tab));
+                                result.put(tab.title(), tabContainerInstance);
                             });
                 } else {
                     Arrays.stream(cls.getAnnotation(Dialog.class).accordionTabs())
-                            .forEach(tab -> result.put(tab.title(), new TabInstanceN(tab.title())));
+                            .forEach(tab -> result.put(tab.title(), new TabContainerInstance(tab.title())));
                 }
             }
         }
