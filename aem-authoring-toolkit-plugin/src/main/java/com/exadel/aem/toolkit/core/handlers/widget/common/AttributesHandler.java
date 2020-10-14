@@ -16,12 +16,10 @@ package com.exadel.aem.toolkit.core.handlers.widget.common;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
  * Handler for storing {@link Attribute} properties to a Granite UI widget XML node

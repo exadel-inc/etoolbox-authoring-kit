@@ -13,14 +13,12 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.core.SourceFacadeImpl;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
 

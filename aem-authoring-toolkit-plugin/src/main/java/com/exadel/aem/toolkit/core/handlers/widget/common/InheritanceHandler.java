@@ -28,8 +28,8 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
 
 /**
- * Handler for processing Granite UI widgets features "inherited" by the current component class {@code Field} from
- * other fields via {@link Extends} mechanism
+ * Handler for processing Granite UI widgets features "inherited" by the current component class {@code SourceFacade} from
+ * other SourceFacades via {@link Extends} mechanism
  */
 public class InheritanceHandler implements BiConsumer<SourceFacade, Element> {
     private BiConsumer<SourceFacade, Element> descendantChain;
@@ -54,7 +54,7 @@ public class InheritanceHandler implements BiConsumer<SourceFacade, Element> {
     /**
      * Builds the inheritance sequence for the current {@code Field}
      * @param sourceFacade Current {@code SourceFacade} instance
-     * @return Ancestral {@code Field}s, as an ordered sequence
+     * @return Ancestral {@code SourceFacade}s, as an ordered sequence
      */
     private static Deque<SourceFacade> getInheritanceTree(SourceFacade sourceFacade) {
         Deque<SourceFacade> result = new LinkedList<>();

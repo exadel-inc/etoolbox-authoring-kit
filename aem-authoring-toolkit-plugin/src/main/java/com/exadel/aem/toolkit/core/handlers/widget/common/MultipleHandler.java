@@ -122,9 +122,9 @@ public class MultipleHandler implements Handler, BiConsumer<SourceFacade, Elemen
     }
 
     /**
-     * Creates a {@code field} node wrapping a set of fields that will be subsequently used within a synthetic multifield
+     * Creates a {@code SourceFacade} node wrapping a set of fields that will be subsequently used within a synthetic multifield
      * @param source Previously rendered {@code Element} being converted to a synthetic multifield
-     * @return {@code Element} representing the {@code field} node
+     * @return {@code Element} representing the {@code SourceFacade} node
      */
     private Element getFieldSetWrapper(Element source) {
         Element result = getXmlUtil().createNodeElement(DialogConstants.NN_FIELD);
@@ -151,7 +151,7 @@ public class MultipleHandler implements Handler, BiConsumer<SourceFacade, Elemen
     /**
      * Creates a {@code sourceFacade} node wrapping an existing {@code multifield} that will be used within a synthetic multifield
      * @param source Previously rendered {@code Element} being converted to a synthetic multifield
-     * @param sourceFacade Current {@code Field} instance
+     * @param sourceFacade Current {@code SourceFacade} instance
      * @return {@code Element} representing the {@code sourceFacade} node
      */
     private Element getNestedMultifieldWrapper(Element source, SourceFacade sourceFacade) {
@@ -184,7 +184,7 @@ public class MultipleHandler implements Handler, BiConsumer<SourceFacade, Elemen
     /**
      * Generates set of node transfer policies to properly distribute XML element requisites between the wrapper level
      * and the nested element level while converting a singular element to a multifield
-     * @param sourceFacade Current {@code Field} instance
+     * @param sourceFacade Current {@code SourceFacade} instance
      * @return {@code Map<String, XmlTransferPolicy>} instance
      */
     private static Map<String, XmlTransferPolicy> getTransferPolicies(SourceFacade sourceFacade) {

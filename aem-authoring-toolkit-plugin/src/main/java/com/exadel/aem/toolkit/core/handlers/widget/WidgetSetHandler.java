@@ -42,7 +42,7 @@ import static com.exadel.aem.toolkit.core.util.DialogConstants.PN_COMPONENT_CLAS
 interface WidgetSetHandler extends Handler, BiConsumer<SourceFacade, Element> {
 
     /**
-     * Retrieves the list of fields applicable to the current container, by calling {@link PluginReflectionUtility#getAllMembers(Class)}
+     * Retrieves the list of fields applicable to the current container, by calling {@link PluginReflectionUtility#getAllSourceFacades(Class)} (Class)}
      * with additional predicates that allow to sort out the fields set to be ignored at sourceFacade level and at nesting class
      * level, and then sort out the non-widget fields
      * @param element Current XML element

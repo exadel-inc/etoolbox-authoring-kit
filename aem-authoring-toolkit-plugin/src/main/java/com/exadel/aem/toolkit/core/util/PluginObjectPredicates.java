@@ -37,7 +37,7 @@ public class PluginObjectPredicates {
     }
 
     /**
-     * A predicate for picking out non-static {@code Field} instances which is by default
+     * A predicate for picking out non-static {@code Member} instances which is by default
      * in {@link PluginReflectionUtility#getAllMembers(Class)} routines
      */
     private static final java.util.function.Predicate<Member> VALID_MEMBER_PREDICATE = member ->
@@ -48,7 +48,7 @@ public class PluginObjectPredicates {
     /**
      * Gets a predicate for sorting out the fields set to be ignored
      * @param ignoredMembers List of {@link ClassMember} representing the fields set to be ignored
-     * @return A {@code Predicate<Field>} which is affirmative by default, that is, returns *tru* if the field is not
+     * @return A {@code Predicate<Member>} which is affirmative by default, that is, returns *tru* if the field is not
      * ignored, and *false* if the field is set to be ignored
      */
     public static Predicate<Member> getNotIgnoredMembersPredicate(List<ClassMember> ignoredMembers) {
@@ -62,8 +62,8 @@ public class PluginObjectPredicates {
     }
 
     /**
-     * Generates an combined {@code Predicate<Field>} from the list of partial predicates given
-     * @param predicates List of {@code Predicate<Field>} instances
+     * Generates an combined {@code Predicate<Member>} from the list of partial predicates given
+     * @param predicates List of {@code Predicate<Member>} instances
      * @return An {@code AND}-joined combined predicate, or a default all-allowed predicate if no partial predicates provided
      */
     static Predicate<Member> getMembersPredicate(List<Predicate<Member>> predicates) {
@@ -74,7 +74,7 @@ public class PluginObjectPredicates {
     }
 
     /**
-     * Facilitates ordering {@code Field} instances according to their optional {@link DialogField} annotations'
+     * Facilitates ordering {@code Member} instances according to their optional {@link DialogField} annotations'
      * ranking values and then their class affiliation
      * @param f1 First comparison member
      * @param f2 Second comparison member
@@ -98,7 +98,7 @@ public class PluginObjectPredicates {
     }
 
     /**
-     * Facilitates ordering {@code Field} instances according to their class affiliation (if both fields' classes
+     * Facilitates ordering {@code Member} instances according to their class affiliation (if both fields' classes
      * are of the same inheritance tree, a field from the senior class goes first)
      * @param f1 First comparison member
      * @param f2 Second comparison member

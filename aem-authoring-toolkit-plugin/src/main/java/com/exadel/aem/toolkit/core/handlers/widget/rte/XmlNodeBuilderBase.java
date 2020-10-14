@@ -13,16 +13,16 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.rte;
 
-import java.lang.reflect.Field;
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import org.w3c.dom.Element;
+
 import java.util.Arrays;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
-import org.w3c.dom.Element;
-
 /**
  * Represents a generic builder for a {@code RichTextEditor} configuration XML markup.
- * Required by {@link RichTextEditorHandler#accept(Element, Field)}
+ * Required by {@link RichTextEditorHandler#accept(SourceFacade, Element)}
  */
 abstract class XmlNodeBuilderBase {
     private String name;

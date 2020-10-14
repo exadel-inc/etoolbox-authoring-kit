@@ -33,8 +33,8 @@ public class GenericPropertiesHandler implements BiConsumer<SourceFacade, Elemen
 
     /**
      * Processes the user-defined data and writes it to XML entity
+     * @param sourceFacade Current {@code SourceFacade} instance
      * @param element XML element
-     * @param sourceFacade Current {@code Field} instance
      */
     @Override
     public void accept(SourceFacade sourceFacade, Element element) {

@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.core.handlers.widget.rte;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -81,8 +80,8 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
 
     /**
      * Processes the user-defined data and writes it to XML entity
+     * @param sourceFacade Current {@code SourceFacade} instance
      * @param element Current XML element
-     * @param sourceFacade Current {@code Field} instance
      */
     @Override
     public void accept(SourceFacade sourceFacade, Element element) {

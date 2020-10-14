@@ -284,12 +284,12 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Retrieves a sequential list of all {@code Field}s of a certain {@code Class} that match specific criteria
+     * Retrieves a sequential list of all {@code Member}s of a certain {@code Class} that match specific criteria
      * @param targetClass The class to analyze
-     * @param predicates List of {@code Predicate<Field>} instances to pick up appropriate fields
-     * @return List of {@code Field} objects
+     * @param predicates List of {@code Predicate<Member>} instances to pick up appropriate fields
+     * @return List of {@code Member} objects
      */
-    public static List<Member> getAllMembers(Class<?> targetClass, List<Predicate<Member>> predicates) {
+    private static List<Member> getAllMembers(Class<?> targetClass, List<Predicate<Member>> predicates) {
         List<Member> members = new LinkedList<>();
         List<ClassMember> ignoredMembers = new LinkedList<>();
 
