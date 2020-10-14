@@ -1005,7 +1005,13 @@ public class CustomStructureDialog {
 ...the `@CustomDialog` annotation will result in *greeting* and *test* attributes being added to the *\<cq:dialog>* node of TouchUI markup (first from the auto-mapping, and second because of handler routine).
 
 There's another option for `@PropertyMapping`, and this is to specify its _prefix_ value. If *prefix* is set to simple literal, like *"cq:"*, all of the auto-mapped attribute names will be prepended with this. Yet if the prefix is a relative path, like *"granite:data/"*, all of the auto-mapped attributes will go to the specifically created sub-node (particularly useful for creating *granite:data* nodes for TouchUI tweaks).
-   
+
+`@Handles` annotation is used to specify one or more TouchUI dialog widgets annotations for a handler. It has 'before()' and 'after()' attributes that you can define if you need one handler to be called before (or after) another. If you don't define before(after) attribute or define the same handler class as you can see below it will mean that this position will be ignored.
+```java
+@Handles(value = MultiField.class, before = CustomMultifieldHandler.class, after = CustomProcessingHandler.class)
+public class CustomMultifieldHandler implements DialogWidgetHandler {}
+   ```
+
 #### Runtime methods for custom handlers
 If you define in your handler class a field of type `RuntimeContext` marked with `@Injected` annotation, the link to the global *RuntimeContext* object will be injected by the Maven plugin. It allows to engage a number of utility methods and techniques, such as those of the [`XmlUtility`](aem-authoring-toolkit-api/src/main/java/com/exadel/aem/toolkit/api/runtime/XmlUtility.java) interface. Of special interest are the methods `.createNodeElement()` with overloads for creating nodes with specific *jcr:primaryType*, *sling:resourceType* and other attributes, `.appendChild()` with overloads for appending or merging a newcomer node to a set of existing child nodes of a local root, and `.setAttribute()` with overloads for populating previously created node with generic-typed annotation values, optionally validated and then optionally fallen back to defaults.   
 

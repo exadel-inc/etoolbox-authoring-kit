@@ -13,6 +13,26 @@
  */
 package com.exadel.aem.toolkit.core.util;
 
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.meta.Validator;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
+import com.exadel.aem.toolkit.api.handlers.DialogHandler;
+import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.runtime.Injected;
+import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
+import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ConfigurationBuilder;
+
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -23,41 +43,11 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.core.SourceFacadeImpl;
-import com.google.common.base.Predicates;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ConfigurationBuilder;
-
-import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.meta.Validator;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
-import com.exadel.aem.toolkit.api.handlers.DialogHandler;
-import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
-import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
-import com.exadel.aem.toolkit.api.runtime.Injected;
-import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
-import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
 
 /**
  * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields are marked with
@@ -140,9 +130,9 @@ public class PluginReflectionUtility {
             return Collections.emptyList();
         }
         return getCustomDialogWidgetHandlers().stream()
-                .filter(handler -> handler.getClass().isAnnotationPresent(HandlesWidgets.class))
+                .filter(handler -> handler.getClass().isAnnotationPresent(Handles.class))
                 .filter(handler -> {
-                    Class<?>[] handled = handler.getClass().getDeclaredAnnotation(HandlesWidgets.class).value();
+                    Class<?>[] handled = handler.getClass().getDeclaredAnnotation(Handles.class).value();
                     return annotationClasses.stream().anyMatch(annotationClass -> ArrayUtils.contains(handled, annotationClass));
                 })
                 .collect(Collectors.toList());
@@ -197,11 +187,21 @@ public class PluginReflectionUtility {
      * @return {@link List<T>} of instances
      */
     private <T> List<T> getHandlers(Class<? extends T> handlerClass) {
-        return reflections.getSubTypesOf(handlerClass).stream()
+        List<T> list = reflections.getSubTypesOf(handlerClass).stream()
                 .map(PluginReflectionUtility::getHandlerInstance)
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(handler -> handler.getClass().getCanonicalName())) // to provide stable handlers sequence between runs
                 .collect(Collectors.toList());
+        Graph classGraph = new Graph(list);
+        for (T item : list) {
+            Class<?> after = item.getClass().isAnnotationPresent(Handles.class) ? item.getClass().getDeclaredAnnotation(Handles.class).after() : item.getClass();
+            Class<?> before = item.getClass().isAnnotationPresent(Handles.class) ? item.getClass().getDeclaredAnnotation(Handles.class).before() : item.getClass();
+            classGraph.addEdge(item.getClass(), before);
+            classGraph.addEdge(after, item.getClass());
+        }
+        List<T> sortedList = (List<T>) classGraph.topologicalSort();
+        return listCorrectOrder(list, sortedList);
+
     }
 
     /**
@@ -392,7 +392,7 @@ public class PluginReflectionUtility {
                 return true;
             }
             Object invocationResult = method.invoke(annotation);
-            if (method.getReturnType().isArray() && ArrayUtils.isEmpty((Object[])invocationResult)) {
+            if (method.getReturnType().isArray() && ArrayUtils.isEmpty((Object[]) invocationResult)) {
                 return false;
             }
             return !defaultValue.equals(invocationResult);
@@ -406,13 +406,32 @@ public class PluginReflectionUtility {
      * @param uri {@code URI} value
      * @return {@code URL} value
      */
-    private static URL toUrl(URI uri){
+    private static URL toUrl(URI uri) {
         try {
             return uri.toURL();
         } catch (MalformedURLException e) {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
         return null;
+    }
+
+    private <T> List<T> listCorrectOrder(List<T> list, List<T> sortedList) {
+        List<T> finalList = new ArrayList<>();
+        int i = 0;
+        int k = 0;
+        while (finalList.size() != list.size()) {
+            if (sortedList.get(k).equals(Object.class)) {
+                k++;
+            }
+            if (list.get(i).getClass().equals(sortedList.get(k))) {
+                finalList.add(list.get(i));
+                k++;
+                i = 0;
+            } else {
+                i++;
+            }
+        }
+        return finalList;
     }
 
 }

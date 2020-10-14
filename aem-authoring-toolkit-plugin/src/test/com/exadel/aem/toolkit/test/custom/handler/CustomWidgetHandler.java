@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.test.custom.handler;
 
 import java.lang.reflect.Field;
 
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
 import org.w3c.dom.Element;
 
@@ -25,6 +26,7 @@ import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
 
 @SuppressWarnings("unused")
+@Handles(before = CustomWidgetHandler.class, after = CustomWidgetHandler.class)
 public class CustomWidgetHandler implements DialogWidgetHandler {
     @Injected
     @SuppressWarnings("UnusedDeclaration")
