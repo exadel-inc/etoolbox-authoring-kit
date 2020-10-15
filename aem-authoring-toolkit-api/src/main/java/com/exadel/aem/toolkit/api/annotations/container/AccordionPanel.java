@@ -38,29 +38,4 @@ public @interface AccordionPanel {
      * @return String value, required
      */
     String title();
-
-    /**
-     * Whether multiple items can be opened at the same time.
-     *
-     * @return True or False
-     */
-    boolean multiple() default false;
-
-    /**
-     * The variant of the accordion.
-     * The default look and feel.Quiet variant with minimal borders.
-     * Large variant, typically used inside a navigation rail since it does not have borders on the sides.
-     *
-     * @return One of {@code AccordionVariant} values
-     * @see AccordionVariant
-     */
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
-    AccordionVariant variant() default AccordionVariant.DEFAULT;
-
-    /**
-     * Put vertical margin to the root element.
-     *
-     * @return True or False
-     */
-    boolean margin() default false;
 }
