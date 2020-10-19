@@ -38,4 +38,18 @@ public @interface AccordionPanel {
      * @return String value, required
      */
     String title();
+
+    /**
+     * True to disable the item; false otherwise.
+     *
+     * @return True or false
+     */
+    boolean disabled() default false;
+
+    /**
+     * True to open the item initially; false otherwise.
+     *
+     * @return True or false
+     */
+    boolean active() default false;
 }

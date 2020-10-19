@@ -14,10 +14,7 @@
 
 package com.exadel.aem.toolkit.core.handlers.container.common;
 
-import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.container.*;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
@@ -147,6 +144,12 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
             Tab newTab = PluginObjectUtility.create(Tab.class,
                     tab.getAttributes());
             appendTabAttributes(tabElement, newTab);
+        } else {
+            AccordionPanel accordionPanel = PluginObjectUtility.create(AccordionPanel.class,
+                    tab.getAttributes());
+            List<String> list = new ArrayList<>();
+            list.add("title");
+            getXmlUtil().mapProperties(tabElement, accordionPanel, list);
         }
         tabCollectionElement.appendChild(tabElement);
         PluginXmlContainerUtility.append(tabElement, fields);
@@ -198,7 +201,11 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
                             });
                 } else {
                     Arrays.stream(cls.getAnnotation(Dialog.class).accordionTabs())
-                            .forEach(tab -> result.put(tab.title(), new TabContainerInstance(tab.title())));
+                            .forEach(tab -> {
+                                TabContainerInstance tabContainerInstance = new TabContainerInstance(tab.title());
+                                tabContainerInstance.setAttributes(getAnnotationFields(tab));
+                                result.put(tab.title(), tabContainerInstance);
+                            });
                 }
             }
         }

@@ -30,7 +30,7 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
         name = DEFAULT_COMPONENT_NAME,
         title = "Accordion Test Dialog",
         accordionTabs = {
-                @AccordionPanel(title = "Basic"),
+                @AccordionPanel(title = "Basic", disabled = true),
                 @AccordionPanel(title = "Basic2")
         }
 )
@@ -77,6 +77,7 @@ public class Accordion {
 
     @AccordionWidget(
             title = "Field",
+            disabled = true,
             panels = {@AccordionPanel(title = "Accordion Widget Panel 1")})
     @PlaceOn("Basic2")
     AccordionExample accordion;
