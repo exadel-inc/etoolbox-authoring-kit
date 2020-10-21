@@ -40,8 +40,8 @@ public class PropertiesAnnotation {
     @TextField
     @Properties({
             @Property(name = "simpleProperty", value = "value"),
-            @Property(name = "emptyValueProperty", value = ""),
-            @Property(name = "wrong f@ield! NamE", value = "non-latin символы"),
+            @Property(name = "../emptyValueProperty", value = ""),
+            @Property(name = "ad/wrong f@ield! NamE", value = "non-latin символы"),
     })
     String field;
 }

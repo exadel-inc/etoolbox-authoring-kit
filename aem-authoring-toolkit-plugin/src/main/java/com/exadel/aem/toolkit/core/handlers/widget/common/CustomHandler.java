@@ -49,6 +49,6 @@ public class CustomHandler implements Handler, BiConsumer<Element, Field> {
                 .forEach(handler -> handler.accept(element, field));
 
         Arrays.stream(field.getAnnotationsByType(Property.class))
-                .forEach(p -> element.setAttribute(getXmlUtil().getValidFieldName(p.name()), p.value()));
+                .forEach(p -> PluginRuntime.context().getXmlUtility().mapProperty(element, p.name(), p.value()));
     }
 }
