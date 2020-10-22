@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Content-Package-Roots: /apps/authoring-toolkit/depends-on-injector,/apps/authoring-toolkit/depends-on
+Content-Package-Roots: /apps/authoring-toolkit/depends-on-injector,/apps/authoring-toolkit/depends-on, /apps/authoring-toolkit/fixes
 Content-Package-Type: application
 Content-Package-Id: com.exadel.aem:aem-authoring-toolkit-assets:1.2.1
 Content-Package-Description: Aem Authoring Toolkit - Assets (DependsOn)

@@ -17,6 +17,10 @@
             mode="replace"
             root="/apps/authoring-toolkit/depends-on-injector"
             rules="[]"/>
+        <f2 jcr:primaryType="nt:unstructured"
+            mode="replace"
+            root="/apps/authoring-toolkit/fixes"
+            rules="[]"/>
     </filter>
     <screenshots jcr:primaryType="nt:unstructured"/>
 </jcr:root>
