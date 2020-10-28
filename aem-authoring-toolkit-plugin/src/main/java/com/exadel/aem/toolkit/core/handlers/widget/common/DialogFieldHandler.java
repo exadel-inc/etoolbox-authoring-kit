@@ -17,8 +17,9 @@ import java.lang.reflect.Member;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.core.util.NamingUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
@@ -27,14 +28,14 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 /**
  * Handler for storing {@link DialogField} properties to a Granite UI widget XML node
  */
-public class DialogFieldHandler implements BiConsumer<SourceFacade, Element> {
+public class DialogFieldHandler implements BiConsumer<SourceFacade, TargetFacade> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element XML element
+     * @param targetFacade XML targetFacade
      */
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
+    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
         DialogField dialogField = sourceFacade.adaptTo(DialogField.class);
         if (dialogField == null) {
             return;
@@ -42,7 +43,7 @@ public class DialogFieldHandler implements BiConsumer<SourceFacade, Element> {
         String name = ((Member) sourceFacade.getSource()).getName();
         if (StringUtils.isNotBlank(dialogField.name())) {
             name = !DialogConstants.PATH_SEPARATOR.equals(dialogField.name()) && !DialogConstants.RELATIVE_PATH_PREFIX.equals(dialogField.name())
-                ? PluginRuntime.context().getXmlUtility().getValidFieldName(dialogField.name())
+                ? NamingUtil.getValidFieldName(dialogField.name())
                 : DialogConstants.RELATIVE_PATH_PREFIX;
         }
         String prefix = (String) sourceFacade.fromValueMap(DialogConstants.PN_PREFIX);
@@ -52,6 +53,6 @@ public class DialogFieldHandler implements BiConsumer<SourceFacade, Element> {
             name = prefix + name;
         }
         name = name + sourceFacade.fromValueMap(DialogConstants.PN_POSTFIX);
-        element.setAttribute(DialogConstants.PN_NAME, name);
+        targetFacade.setAttribute(DialogConstants.PN_NAME, name);
     }
 }

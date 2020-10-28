@@ -15,13 +15,14 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
 import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.NamingUtil;
 import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Element;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -37,16 +38,15 @@ class FieldSetHandler implements WidgetSetHandler {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element Current XML element
+     * @param targetFacade Current XML targetFacade
      */
     @Override
-    @SuppressWarnings({"deprecation", "squid:S1874"})
-    public void accept(SourceFacade sourceFacade, Element element) {
+    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
         // Define the working @FieldSet annotation instance and the fieldset type
         FieldSet fieldSet = sourceFacade.adaptTo(FieldSet.class);
         Class<?> fieldSetType = getFieldSetType(sourceFacade.getSource());
 
-        List<SourceFacade> sourceFacades = getContainerSourceFacades(element, sourceFacade, fieldSetType);
+        List<SourceFacade> sourceFacades = getContainerSourceFacades(targetFacade, sourceFacade, fieldSetType);
 
         if(sourceFacades.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
@@ -58,13 +58,13 @@ class FieldSetHandler implements WidgetSetHandler {
         sourceFacades.forEach(populated -> populatePrefixPostfix(populated, sourceFacade, fieldSet));
 
         // append the valid sourceFacades to the container
-        PluginXmlContainerUtility.append(element, sourceFacades);
+        PluginXmlContainerUtility.append(targetFacade, sourceFacades);
     }
 
     private void populatePrefixPostfix(SourceFacade populated, SourceFacade current, FieldSet fieldSet) {
         if (StringUtils.isNotBlank(fieldSet.namePrefix())){
             populated.addToValueMap(DialogConstants.PN_PREFIX, current.fromValueMap(DialogConstants.PN_PREFIX).toString() +
-                    populated.fromValueMap(DialogConstants.PN_PREFIX).toString().substring(2) + getXmlUtil().getValidFieldName(fieldSet.namePrefix()));
+                    populated.fromValueMap(DialogConstants.PN_PREFIX).toString().substring(2) + NamingUtil.getValidFieldName(fieldSet.namePrefix()));
         }
         if (StringUtils.isNotBlank(fieldSet.namePostfix())) {
             populated.addToValueMap(DialogConstants.PN_POSTFIX, fieldSet.namePostfix() + populated.fromValueMap(DialogConstants.PN_POSTFIX) +

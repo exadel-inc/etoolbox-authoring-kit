@@ -19,7 +19,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
@@ -29,20 +30,22 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 /**
  * {@link Handler} implementation for storing {@link Listener} arguments to {@code cq:editConfig} XML node
  */
-public class ListenersHandler implements Handler, BiConsumer<Element, EditConfig> {
+public class ListenersHandler implements Handler, BiConsumer<TargetFacade, EditConfig> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param root XML element
      * @param editConfig {@code EditConfig} annotation instance
      */
     @Override
-    public void accept(Element root, EditConfig editConfig) {
+    public void accept(TargetFacade root, EditConfig editConfig) {
         List<Listener> listeners = Arrays.asList(editConfig.listeners());
         if(listeners.isEmpty()){
             return;
         }
         Map<String, String> properties = listeners.stream()
             .collect(Collectors.toMap(Listener::event, Listener::action));
-        root.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_LISTENERS, DialogConstants.NT_LISTENERS, properties));
+        root.appendChild(new TargetFacadeFacadeImpl(DialogConstants.NN_LISTENERS)
+                .setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_LISTENERS)
+                .setAttributes(properties));
     }
 }

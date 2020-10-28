@@ -13,48 +13,48 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
+import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+
 import java.lang.reflect.Member;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
-import org.w3c.dom.Element;
-
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.core.handlers.Handler;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
-import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
-
 /**
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code Checkbox} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class CheckboxHandler implements Handler, BiConsumer<SourceFacade, Element> {
+class CheckboxHandler implements Handler, BiConsumer<SourceFacade, TargetFacade> {
     private static final String POSTFIX_FOR_ROOT_CHECKBOX = "Checkbox";
 
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element Current XML element
+     * @param targetFacade Current {@code TargetFacade} instance
      */
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
+    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
         Checkbox checkbox = sourceFacade.adaptTo(Checkbox.class);
 
         if (checkbox.sublist()[0] == Object.class) {
-            getXmlUtil().mapProperties(element, checkbox);
-            setTextAttribute(sourceFacade, element);
+            targetFacade.mapProperties(checkbox);
+            setTextAttribute(sourceFacade, targetFacade);
         } else {
-            element.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.NESTED_CHECKBOX_LIST);
-            Element itemsElement = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
-            element.appendChild(itemsElement);
+            targetFacade.setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST);
+            TargetFacade itemsElement = new TargetFacadeFacadeImpl(DialogConstants.NN_ITEMS);
+            targetFacade.appendChild(itemsElement);
 
-            Element checkboxElement = getXmlUtil().createNodeElement(((Member) sourceFacade.getSource()).getName() + POSTFIX_FOR_ROOT_CHECKBOX, ResourceTypes.CHECKBOX);
-            getXmlUtil().mapProperties(checkboxElement, checkbox);
+            TargetFacade checkboxElement = new TargetFacadeFacadeImpl(((Member) sourceFacade.getSource()).getName() + POSTFIX_FOR_ROOT_CHECKBOX)
+                    .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX);
+            checkboxElement.mapProperties(checkbox);
             itemsElement.appendChild(checkboxElement);
 
             appendNestedCheckBoxList(sourceFacade, checkboxElement);
@@ -64,14 +64,15 @@ class CheckboxHandler implements Handler, BiConsumer<SourceFacade, Element> {
     /**
      * Creates and appends markup correspondent to a Granite UI nested {@code Checkbox} structure
      * @param sourceFacade Current {@code SourceFacade} of a component class
-     * @param element {@code Element} instance representing current XML node
+     * @param targetFacade {@code TargetFacade} instance representing current XML node
      */
-    private void appendNestedCheckBoxList(SourceFacade sourceFacade, Element element) {
-        Element sublist = getXmlUtil().createNodeElement(DialogConstants.NN_SUBLIST, ResourceTypes.NESTED_CHECKBOX_LIST);
-        getXmlUtil().setAttribute(sublist, DialogConstants.PN_DISCONNECTED, sourceFacade.adaptTo(Checkbox.class).disconnectedSublist());
-        element.appendChild(sublist);
+    private void appendNestedCheckBoxList(SourceFacade sourceFacade, TargetFacade targetFacade) {
+        TargetFacade sublist = new TargetFacadeFacadeImpl(DialogConstants.NN_SUBLIST)
+                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST);
+        sublist.setAttribute(DialogConstants.PN_DISCONNECTED, sourceFacade.adaptTo(Checkbox.class).disconnectedSublist());
+        targetFacade.appendChild(sublist);
 
-        Element itemsElement = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
+        TargetFacade itemsElement = new TargetFacadeFacadeImpl(DialogConstants.NN_ITEMS);
         sublist.appendChild(itemsElement);
 
         appendCheckbox(sourceFacade, itemsElement);
@@ -80,9 +81,9 @@ class CheckboxHandler implements Handler, BiConsumer<SourceFacade, Element> {
     /**
      * Creates and appends single Granite UI {@code Checkbox} markup to the current XML node
      * @param sourceFacade Current {@code SourceFacade} of a component class
-     * @param element {@code Element} instance representing current XML node
+     * @param targetFacade {@code TargetFacade} instance representing current XML node
      */
-    private void appendCheckbox(SourceFacade sourceFacade, Element element) {
+    private void appendCheckbox(SourceFacade sourceFacade, TargetFacade targetFacade) {
         Checkbox checkbox = sourceFacade.adaptTo(Checkbox.class);
 
         for (Class<?> sublistClass : checkbox.sublist()) {
@@ -91,11 +92,12 @@ class CheckboxHandler implements Handler, BiConsumer<SourceFacade, Element> {
                     .collect(Collectors.toList());
 
             for (SourceFacade innerSourceFacade : sourceFacades) {
-                Element checkboxElement = getXmlUtil().createNodeElement(((Member) innerSourceFacade.getSource()).getName(), ResourceTypes.CHECKBOX);
-                getXmlUtil().mapProperties(checkboxElement, innerSourceFacade.adaptTo(Checkbox.class));
+                TargetFacade checkboxElement = new TargetFacadeFacadeImpl(((Member) innerSourceFacade.getSource()).getName())
+                        .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX);
+                checkboxElement.mapProperties(innerSourceFacade.adaptTo(Checkbox.class));
                 setTextAttribute(innerSourceFacade, checkboxElement);
 
-                element.appendChild(checkboxElement);
+                targetFacade.appendChild(checkboxElement);
 
                 if (innerSourceFacade.adaptTo(Checkbox.class).sublist()[0] != Object.class) {
                     appendNestedCheckBoxList(innerSourceFacade, checkboxElement);
@@ -107,14 +109,14 @@ class CheckboxHandler implements Handler, BiConsumer<SourceFacade, Element> {
     /**
      * Decides which property of the current field to use as the {@code text} attribute of checkbox node and populates it
      * @param sourceFacade Current {@code SourceFacade} of a component class
-     * @param element {@code Element} instance representing current XML node
+     * @param targetFacade {@code TargetFacade} instance representing current XML node
      */
-    private void setTextAttribute(SourceFacade sourceFacade, Element element) {
+    private void setTextAttribute(SourceFacade sourceFacade, TargetFacade targetFacade) {
         Checkbox checkbox = sourceFacade.adaptTo(Checkbox.class);
         if (checkbox.text().isEmpty() && sourceFacade.adaptTo(DialogField.class) != null) {
-            element.setAttribute(DialogConstants.PN_TEXT, sourceFacade.adaptTo(DialogField.class).label());
+            targetFacade.setAttribute(DialogConstants.PN_TEXT, sourceFacade.adaptTo(DialogField.class).label());
         } else if (checkbox.text().isEmpty()) {
-            element.setAttribute(DialogConstants.PN_TEXT, ((Member) sourceFacade.getSource()).getName());
+            targetFacade.setAttribute(DialogConstants.PN_TEXT, ((Member) sourceFacade.getSource()).getName());
         }
     }
 }

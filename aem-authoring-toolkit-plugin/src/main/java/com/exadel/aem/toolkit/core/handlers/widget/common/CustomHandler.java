@@ -18,7 +18,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
@@ -30,25 +30,25 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
  * Handler for storing properties coming from custom annotations and, optionally, processed by custom handlers
  * to a Granite UI widget XML node
  */
-public class CustomHandler implements Handler, BiConsumer<SourceFacade, Element> {
+public class CustomHandler implements Handler, BiConsumer<SourceFacade, TargetFacade> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element XML element
+     * @param targetFacade Current {@code TargetFacade} instance
      */
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
+    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
         PluginReflectionUtility.getFieldAnnotations(sourceFacade).filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
                 .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
                 .flatMap(source -> PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers().stream()
                         .filter(handler -> source.equals(handler.getName())))
-                .forEach(handler -> handler.accept(sourceFacade, element));
+                .forEach(handler -> handler.accept(sourceFacade, targetFacade));
 
         PluginRuntime.context().getReflectionUtility()
                 .getCustomDialogWidgetHandlers(PluginReflectionUtility.getFieldAnnotations(sourceFacade).collect(Collectors.toList()))
-                .forEach(handler -> handler.accept(sourceFacade, element));
+                .forEach(handler -> handler.accept(sourceFacade, targetFacade));
 
-        Arrays.stream(sourceFacade.adaptTo(Property[].class))
-                .forEach(p -> element.setAttribute(getXmlUtil().getValidFieldName(p.name()), p.value()));
+        /*Arrays.stream(sourceFacade.adaptTo(Property[].class))
+                .forEach(p -> targetFacade.setAttribute(getXmlUtil().getValidFieldName(p.name()), p.value()));*/
     }
 }

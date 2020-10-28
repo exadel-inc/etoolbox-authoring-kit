@@ -20,8 +20,8 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
 import com.exadel.aem.toolkit.core.SourceFacadeImpl;
-import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
@@ -80,16 +80,16 @@ public enum DialogWidgets implements DialogWidget {
     BUTTON(Button.class);
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";
-    private static final BiConsumer<SourceFacade, Element> EMPTY_HANDLER = (componentNode, field) -> {};
+    private static final BiConsumer<SourceFacade, TargetFacade> EMPTY_HANDLER = (componentNode, field) -> {};
 
     private Class<? extends Annotation> annotation;
-    private BiConsumer<SourceFacade, Element> handler;
+    private BiConsumer<SourceFacade, TargetFacade> handler;
 
     DialogWidgets(Class<? extends Annotation> annotation) {
         this.annotation = annotation;
     }
 
-    DialogWidgets(Class<? extends Annotation> annotation, BiConsumer<SourceFacade, Element> handler) {
+    DialogWidgets(Class<? extends Annotation> annotation, BiConsumer<SourceFacade, TargetFacade> handler) {
         this(annotation);
         this.handler = handler;
     }
@@ -100,7 +100,7 @@ public enum DialogWidgets implements DialogWidget {
     }
 
     @Override
-    public BiConsumer<SourceFacade, Element> getHandler() {
+    public BiConsumer<SourceFacade, TargetFacade> getHandler() {
         return handler != null ? handler : EMPTY_HANDLER;
     }
 
@@ -197,7 +197,7 @@ public enum DialogWidgets implements DialogWidget {
         }
 
         @Override
-        public BiConsumer<SourceFacade, Element> getHandler() {
+        public BiConsumer<SourceFacade, TargetFacade> getHandler() {
             return EMPTY_HANDLER;
         }
     }

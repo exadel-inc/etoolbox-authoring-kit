@@ -26,12 +26,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
 import com.exadel.aem.toolkit.core.SourceFacadeImpl;
+import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
+import com.exadel.aem.toolkit.core.util.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
-import org.w3c.dom.Element;
-import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
@@ -43,16 +43,11 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
-import com.exadel.aem.toolkit.core.util.PluginObjectPredicates;
-import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
-import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
-import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 
 /**
  * The {@link Handler} for a tabbed TouchUI dialog
  */
-public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
+public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetFacade> {
     private static final String DEFAULT_TAB_NAME = "tab";
     private static final String NO_TABS_DEFINED_EXCEPTION_MESSAGE = "No tabs defined for the dialog at ";
 
@@ -63,12 +58,12 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
      * @param parentElement XML document root element
      */
     @Override
-    public void accept(Class<?> componentClass, Element parentElement) {
+    public void accept(Class<?> componentClass, TargetFacade parentElement) {
         // Render the generic XML markup for tabs setting
-        Element tabItemsElement = (Element) parentElement.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER))
-                .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS))
-                .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_TABS, ResourceTypes.TABS))
-                .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
+        TargetFacade tabItemsElement = parentElement.appendChild(new TargetFacadeFacadeImpl(DialogConstants.NN_CONTENT).setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER))
+                .appendChild(new TargetFacadeFacadeImpl(DialogConstants.NN_ITEMS))
+                .appendChild(new TargetFacadeFacadeImpl(DialogConstants.NN_TABS).setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.TABS))
+                .appendChild(new TargetFacadeFacadeImpl(DialogConstants.NN_ITEMS));
 
         // Initialize ignored tabs list for the current class if IgnoreTabs annotation is present.
         // Note that "ignored tabs" setting is not inherited and is for current class only, unlike tabs collection
@@ -189,33 +184,29 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Element> {
 
     /**
      * Adds a tab definition to the XML markup
-     * @param tabCollectionElement The {@link Element} instance to append particular sourceFacades' markup
+     * @param targetFacade The {@link TargetFacade} instance to append particular sourceFacades' markup
      * @param tab The {@link Tab} instance to render as a dialog tab
      * @param sourceFacades The list of {@link Field} instances to render as dialog sourceFacades
      */
-    private void appendTab(Element tabCollectionElement, Tab tab, List<SourceFacade> sourceFacades){
-        String nodeName = getXmlUtil().getUniqueName(tab.title(), DEFAULT_TAB_NAME, tabCollectionElement);
-        Element tabElement = getXmlUtil().createNodeElement(
-                nodeName,
-                ImmutableMap.of(
-                        JcrConstants.PN_TITLE, tab.title(),
-                        JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
-                ));
-        tabCollectionElement.appendChild(tabElement);
+    private void appendTab(TargetFacade targetFacade, Tab tab, List<SourceFacade> sourceFacades) {
+        TargetFacade tabElement = new TargetFacadeFacadeImpl(tab.title())
+                .setAttribute(JcrConstants.PN_TITLE, tab.title())
+                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
+        targetFacade.appendChild(tabElement, DEFAULT_TAB_NAME);
         appendTabAttributes(tabElement, tab);
         PluginXmlContainerUtility.append(tabElement, sourceFacades);
     }
 
     /**
      * Appends tab attributes to a pre-built tab-defining XML element
-     * @param tabElement {@link Element} instance representing a TouchUI dialog tab
+     * @param targetFacade {@link TargetFacade} instance representing a TouchUI dialog tab
      * @param tab {@link Tab} annotation that contains settings
      */
-    private void appendTabAttributes(Element tabElement, Tab tab){
-        tabElement.setAttribute(JcrConstants.PN_TITLE, tab.title());
+    private void appendTabAttributes(TargetFacade targetFacade, Tab tab){
+        targetFacade.setAttribute(JcrConstants.PN_TITLE, tab.title());
         Attribute attribute = tab.attribute();
-        getXmlUtil().mapProperties(tabElement, attribute);
-        getXmlUtil().appendDataAttributes(tabElement, attribute.data());
+        targetFacade.mapProperties(attribute);
+        PluginXmlUtility.appendDataAttributes(targetFacade, attribute.data());
     }
 
     /**

@@ -19,7 +19,8 @@ import java.lang.reflect.Member;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
 
 import com.exadel.aem.toolkit.core.handlers.assets.dependson.DependsOnHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.AttributesHandler;
@@ -29,7 +30,6 @@ import com.exadel.aem.toolkit.core.handlers.widget.common.GenericPropertiesHandl
 import com.exadel.aem.toolkit.core.handlers.widget.common.InheritanceHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.MultipleHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.PropertyMappingHandler;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 /**
  * Represents an abstraction of a built-in or a custom dialog widget that has a widget annotation attached.
@@ -48,28 +48,28 @@ public interface DialogWidget {
      * applied to several widgets, either built-in or user-defined
      * @return {@code BiConsumer<Element, Field>} instance
      */
-    BiConsumer<SourceFacade, Element> getHandler();
+    BiConsumer<SourceFacade, TargetFacade> getHandler();
 
     /**
      * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified name
-     * @param element Parent {@code Element} instance
+     * @param targetFacade Parent {@code Element} instance
      * @param sourceFacade Current {@code Field}
      * @return The new {@code Element} created for the current {@code Field}
      */
-    default Element appendTo(Element element, SourceFacade sourceFacade) {
-        return appendTo(element, sourceFacade, ((Member) sourceFacade.getSource()).getName());
+    default TargetFacade appendTo(TargetFacade targetFacade, SourceFacade sourceFacade) {
+        return appendTo(targetFacade, sourceFacade, ((Member) sourceFacade.getSource()).getName());
     }
 
     /**
-     * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified element name
-     * @param element Parent {@code Element} instance
+     * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified targetFacade name
+     * @param targetFacade Parent {@code Element} instance
      * @param sourceFacade Current {@code Field}
      * @param name The node name to store
      * @return The new {@code Element} created for the current {@code Field}
      */
-    default Element appendTo(Element element, SourceFacade sourceFacade, String name) {
-        Element widgetChildElement = PluginRuntime.context().getXmlUtility().createNodeElement(name);
-        element.appendChild(widgetChildElement);
+    default TargetFacade appendTo(TargetFacade targetFacade, SourceFacade sourceFacade, String name) {
+        TargetFacade widgetChildElement = new TargetFacadeFacadeImpl(name);
+        targetFacade.appendChild(widgetChildElement);
         getHandlerChain().accept(sourceFacade, widgetChildElement);
         return widgetChildElement;
     }
@@ -78,8 +78,8 @@ public interface DialogWidget {
      * Generates the chain of handlers to store {@code cq:editConfig} XML markup
      * @return {@code BiConsumer<SourceFacade, Element>} instance
      */
-    default BiConsumer<SourceFacade, Element> getHandlerChain() {
-        BiConsumer<SourceFacade, Element> mainChain = new GenericPropertiesHandler()
+    default BiConsumer<SourceFacade, TargetFacade> getHandlerChain() {
+        BiConsumer<SourceFacade, TargetFacade> mainChain = new GenericPropertiesHandler()
                 .andThen(new PropertyMappingHandler())
                 .andThen(new AttributesHandler())
                 .andThen(new DialogFieldHandler())

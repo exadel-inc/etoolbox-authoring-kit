@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.core.handlers.editconfig;
 
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
@@ -25,15 +26,15 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 /**
  * {@link Handler} implementation for storing {@link EditConfig} properties to {@code cq:editConfig} XML node
  */
-public class PropertiesHandler implements Handler, BiConsumer<Element, EditConfig> {
+public class PropertiesHandler implements Handler, BiConsumer<TargetFacade, EditConfig> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param root XML element
      * @param editConfig {@code EditConfig} annotation instance
      */
     @Override
-    public void accept(Element root, EditConfig editConfig) {
-        getXmlUtil().mapProperties(root, editConfig);
+    public void accept(TargetFacade root, EditConfig editConfig) {
+        root.mapProperties(editConfig);
         EditConfigLayout dialogLayout = editConfig.dialogLayout();
         if (dialogLayout != EditConfigLayout.DEFAULT) {
             root.setAttribute(DialogConstants.PN_DIALOG_LAYOUT, dialogLayout.toString().toLowerCase());

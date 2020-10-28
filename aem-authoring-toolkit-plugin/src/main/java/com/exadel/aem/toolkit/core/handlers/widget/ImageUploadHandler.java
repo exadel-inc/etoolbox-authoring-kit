@@ -16,8 +16,8 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 import com.exadel.aem.toolkit.core.handlers.Handler;
@@ -27,18 +27,18 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class ImageUploadHandler implements Handler, BiConsumer<SourceFacade, Element> {
+class ImageUploadHandler implements Handler, BiConsumer<SourceFacade, TargetFacade> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element Current XML element
+     * @param targetFacade Current XML targetFacade
      */
     @Override
     @SuppressWarnings({"deprecation", "squid:S1874"}) // the "clas" property is to remain for compatibility reasons until v.2.0.0
-    public void accept(SourceFacade sourceFacade, Element element) {
+    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
         ImageUpload imageUpload = sourceFacade.adaptTo(ImageUpload.class);
         if (StringUtils.isNotBlank(imageUpload.clas())) {
-            element.setAttribute(DialogConstants.PN_CLASS, imageUpload.clas());
+            targetFacade.setAttribute(DialogConstants.PN_CLASS, imageUpload.clas());
         }
     }
 }

@@ -19,8 +19,8 @@ import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
 import com.exadel.aem.toolkit.core.SourceFacadeImpl;
-import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
@@ -31,23 +31,23 @@ import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
  * Handler for processing Granite UI widgets features "inherited" by the current component class {@code SourceFacade} from
  * other SourceFacades via {@link Extends} mechanism
  */
-public class InheritanceHandler implements BiConsumer<SourceFacade, Element> {
-    private BiConsumer<SourceFacade, Element> descendantChain;
-    public InheritanceHandler(BiConsumer<SourceFacade, Element> descendantChain) {
+public class InheritanceHandler implements BiConsumer<SourceFacade, TargetFacade> {
+    private BiConsumer<SourceFacade, TargetFacade> descendantChain;
+    public InheritanceHandler(BiConsumer<SourceFacade, TargetFacade> descendantChain) {
         this.descendantChain = descendantChain;
     }
 
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element XML element
+     * @param targetFacade Current {@code TargetFacade} instance
      */
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
+    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
         if (descendantChain == null) return;
         Deque<SourceFacade> inheritanceTree = getInheritanceTree(sourceFacade);
         while (!inheritanceTree.isEmpty()) {
-            descendantChain.accept(inheritanceTree.pollLast(), element); // to render 'ancestors' of context sourceFacade starting from next handler in chain
+            descendantChain.accept(inheritanceTree.pollLast(), targetFacade); // to render 'ancestors' of context sourceFacade starting from next handler in chain
         }
     }
 

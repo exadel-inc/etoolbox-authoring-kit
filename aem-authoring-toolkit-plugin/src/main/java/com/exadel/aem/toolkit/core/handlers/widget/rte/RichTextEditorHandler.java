@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -56,7 +58,7 @@ import com.exadel.aem.toolkit.core.util.validation.CharactersObjectValidator;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code RichTextEditor} widget functionality
  * within the {@code cq:dialog} and {@code cq:editConfig} XML nodes
  */
-public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, Element> {
+public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, TargetFacade> {
     private static final String KEYWORD_AUTO = "auto";
 
     private static final String FEATURE_ALL = "*";
@@ -81,19 +83,22 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element Current XML element
+     * @param targetFacade Current XML targetFacade
      */
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
-        accept(element, sourceFacade.adaptTo(RichTextEditor.class));
+    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
+        //accept(sourceFacade.adaptTo(RichTextEditor.class), targetFacade);
     }
 
-    /**
+/*
+    */
+/**
      * Processes the user-defined data and writes it to XML entity
-     * @param element Current XML element
+     * @param targetFacade Current {@code TargetFacade} instance
      * @param rteAnnotation Current {@link RichTextEditor} instance
-     */
-    public void accept(Element element, RichTextEditor rteAnnotation) {
+     *//*
+
+    public void accept(RichTextEditor rteAnnotation, TargetFacade targetFacade) {
         this.rteAnnotation = rteAnnotation;
         // create the four basic builders: for ./uiSettings/cui/inline, ./uiSettings/cui/dialogFullScreen,
         // ./uiSettings/cui/tableEditOptions, and ./rtePlugins
@@ -141,13 +146,13 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
         if (renderDialogFullScreenNode) appendElement(cui, fullScreenBuilder.build());
         appendElement(cui, tableEditBuilder.build());
         appendElement(cui, getIconsNode());
-        // if ./cui node has been added any children, append it to ./uiSettings and then append ./uiSettings to root element
+        // if ./cui node has been added any children, append it to ./uiSettings and then append ./uiSettings to root targetFacade
         appendElement(uiSettings, cui);
-        appendElement(element, uiSettings, RichTextEditorHandler::mergeFeatureAttributes);
-        getXmlUtil().setAttribute(element, DialogConstants.PN_EXTERNAL_STYLESHEETS, rteAnnotation, PluginXmlUtility::mergeStringAttributes);
-        // build rtePlugins node, merge it to existing element structure (to pick up child nodes that may have already been populated)
+        appendElement(targetFacade, uiSettings, RichTextEditorHandler::mergeFeatureAttributes);
+        getXmlUtil().setAttribute(targetFacade, DialogConstants.PN_EXTERNAL_STYLESHEETS, rteAnnotation, PluginXmlUtility::mergeStringAttributes);
+        // build rtePlugins node, merge it to existing targetFacade structure (to pick up child nodes that may have already been populated)
         // then populate rtePlugins node with the context rteAnnotation fields, then merge again
-        Element rtePlugins = appendElement(element, pluginsBuilder.build());
+        Element rtePlugins = appendElement(targetFacade, pluginsBuilder.build());
         appendElement(rtePlugins, DialogConstants.NN_PARAFORMAT, getFormatNode());
         appendElement(rtePlugins, DialogConstants.NN_MISCTOOLS, getSpecialCharactersNode());
         appendElement(rtePlugins, DialogConstants.NN_EDIT, this::populatePasteRulesNode);
@@ -155,66 +160,75 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
         appendElement(rtePlugins, DialogConstants.NN_UNDO, e -> getXmlUtil().setAttribute(e, DialogConstants.PN_MAX_UNDO_STEPS, rteAnnotation));
         appendElement(rtePlugins, DialogConstants.NN_KEYS, e -> getXmlUtil().setAttribute(e, DialogConstants.PN_TAB_SIZE, rteAnnotation));
         appendElement(rtePlugins, DialogConstants.NN_LISTS, e -> getXmlUtil().setAttribute(e, DialogConstants.PN_INDENT_SIZE, rteAnnotation));
-        appendElement(element, rtePlugins, PluginXmlUtility::mergeStringAttributes);
-        // build htmlLinkRules node and append to root element, if needed
-        populateHtmlLinkRules(element);
+        appendElement(targetFacade, rtePlugins, PluginXmlUtility::mergeStringAttributes);
+        // build htmlLinkRules node and append to root targetFacade, if needed
+        populateHtmlLinkRules(targetFacade);
     }
 
-    /**
+    */
+/**
      * Appends non-empty child XML node to a parent node. If same-named child node exists, merges attributes of the
      * provided child with those of the existing child with use of the default merging routine
      * @param parent {@code Element} instance representing parent node
      * @param child {@code Element} instance representing child node
      * @return {@code Element} instance representing the appended node
-     */
+     *//*
+
     private Element appendElement(Element parent, Element child) {
         return getXmlUtil().appendNonemptyChildElement(parent, child);
     }
 
-    /**
+    */
+/**
      * Appends non-empty child XML node to a parent node. If same-named child node exists, merges attributes of the
      * provided child with those of the existing child with use of the provided merger
      * @param parent {@code Element} instance representing parent node
      * @param child {@code Element} instance representing child node
      * @param merger {@code BinaryOperator<String>} instance
-     */
+     *//*
+
     private void appendElement(Element parent, Element child, BinaryOperator<String> merger) {
         getXmlUtil().appendNonemptyChildElement(parent, child, merger);
     }
 
-    /**
+    */
+/**
      * Appends non-empty child XML node to the child node of the provided parent that has the specified name
      * @param parent {@code Element} instance representing parent node
      * @param existingChildName String representing the name of the existing child
      * @param newChild {@code Element} instance representing new child node
-     */
+     *//*
+
     private void appendElement(Element parent, String existingChildName, Element newChild) {
         Element existingChild = getXmlUtil().getChildElement(parent, existingChildName);
         getXmlUtil().appendNonemptyChildElement(existingChild, newChild);
     }
 
-    /**
+    */
+/**
      * Appends non-empty child XML node to the child node of the provided parent that has the specified name
      * @param parent {@code Element} instance representing parent node
      * @param existingChildName String representing the name of the existing child
      * @param elementConsumer {@code Consumer<Supplier<Element>>} routine that implements lazy generation of child
      * {@code Element} (one that is triggered only if element with {@code existingChildName} actually present)
-     */
-    private void appendElement(Element parent, String existingChildName, Consumer<Supplier<Element>> elementConsumer) {
+     *//*
+
+    private void appendElement(TargetFacade parent, String existingChildName, Consumer<Supplier<TargetFacade>> elementConsumer) {
         if (parent == null) {
             return;
         }
-        Element child = getXmlUtil().getChildElement(parent, existingChildName,
-                p -> PluginRuntime.context().getXmlUtility().createNodeElement(existingChildName));
+        TargetFacade child = getXmlUtil().getChildElement(parent, existingChildName,
+                p -> new TargetFacadeFacadeImpl(existingChildName));
         elementConsumer.accept(() -> {
-            if (child.getParentNode() != null) {
+            if (child.getParent() != null) {
                 return child; // not to 'reattach' the previously existed child, which would change sequence of children
             }
-            return (Element)parent.appendChild(child);
+            return parent.appendChild(child);
         }); // the newly created child is appended to DOM only if .get() is called in the context of elementConsumer
     }
 
-    /**
+    */
+/**
      * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to facilitate single feature token from the
      * {@link RichTextEditor#features()} or {@link RichTextEditor#fullscreenFeatures()} collection to one or more appropriate
      * {@code XmlNodeBuilder}-s
@@ -222,7 +236,8 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
      *                    or {@code fullscreenFeatures()} or the current RTE config, and a particular feature token
      * @param tableEditBuilder Additional {@code XmlNodeBuilder} for the tables node
      * @param pluginsBuilder Additional {@code XmlNodeBuilder} for the plugins node
-     */
+     *//*
+
     private static void processFeatureItem(
             ImmutablePair<XmlNodeWithListBuilder,String> featureItem,
             XmlNodeWithListBuilder tableEditBuilder,
@@ -259,22 +274,26 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
         }
     }
 
-    /**
+    */
+/**
      * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to create if necessary and then retrieve
      * the {@code icons} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
-     */
+     *//*
+
     private Element getIconsNode() {
         return getXmlUtil().createNodeElement(DialogConstants.NN_ICONS,
                 iconMapping -> ((IconMapping)iconMapping).command(),
                 rteAnnotation.icons());
     }
 
-    /**
+    */
+/**
      * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to create if necessary and then retrieve
      * the {@code formats} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
-     */
+     *//*
+
     private Element getFormatNode() {
         Element result = getXmlUtil().createNodeElement(DialogConstants.NN_FORMATS,
                 paragraphFormat -> ((ParagraphFormat)paragraphFormat).tag(),
@@ -283,11 +302,13 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
         return result;
     }
 
-    /**
+    */
+/**
      * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to create if necessary and then retrieve
      * the {@code specialCharsConfig} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
-     */
+     *//*
+
     private Element getSpecialCharactersNode() {
         Function<Annotation, String> childNodeNameProvider = c -> {
             Characters chars = (Characters) c;
@@ -307,11 +328,13 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
         return charsConfigNode;
     }
 
-    /**
+    */
+/**
      * Called by {@link RichTextEditorHandler#appendElement(Element, String, Consumer)} to create as required and then
      * populate with attributes the {@code styles} node
      * @param elementSupplier The routine to generate {@code styles} node and append it to the overall RTE markup
-     */
+     *//*
+
     private void populateStylesNode(Supplier<Element> elementSupplier){
         Element stylesElement = elementSupplier.get();
         if (!featureExists(RteFeatures.Popovers.STYLES::equals)) {
@@ -323,11 +346,13 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
         getXmlUtil().setAttribute(stylesElement, DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION);
     }
 
-    /**
+    */
+/**
      * Called by {@link RichTextEditorHandler#appendElement(Element, String, Consumer)} to create as required and then
      * populate with attributes the {@code htmlPasteRules} node
      * @param elementSupplier The routine to generate {@code htmlPasteRules} node and append it to the overall RTE markup
-     */
+     *//*
+
     private void populatePasteRulesNode(Supplier<Element> elementSupplier){
         HtmlPasteRules rules = this.rteAnnotation.htmlPasteRules();
         Element htmlPasteRulesNode = getXmlUtil().createNodeElement(DialogConstants.NN_HTML_PASTE_RULES);
@@ -357,13 +382,15 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
         getXmlUtil().setAttribute(elementSupplier, DialogConstants.PN_DEFAULT_PASTE_MODE, rteAnnotation);
     }
 
-    /**
+    */
+/**
      * Called for {@link RichTextEditorHandler#populatePasteRulesNode(Supplier)} to create XML noe representing
      * a HTMl paste rule for one of the predefined entities
      * @param entity String representing table, list or like
      * @param allowRule The {@link AllowElement} instance
      * @return Newly created XML {@code Element} with the rule
-     */
+     *//*
+
     private Element getHtmlPasteRulesNode(String entity, AllowElement allowRule) {
         Element disallowed = getXmlUtil().createNodeElement(entity);
         getXmlUtil().setAttribute(disallowed, DialogConstants.PN_ALLOW, false);
@@ -371,11 +398,13 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
         return disallowed;
     }
 
-    /**
-     * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to create and append an XML node representing
+    */
+/**
+     * Called by {@link RichTextEditorHandler#accept(SourceFacade, TargetFacade)} to create and append an XML node representing
      * {@code htmlRules} to the RichTextEditor XML markup
      * @param element {@code Element} instance representing the RichTextEditor node
-     */
+     *//*
+
     private void populateHtmlLinkRules(Element element) {
         HtmlLinkRules rules = this.rteAnnotation.htmlLinkRules();
         if (!PluginReflectionUtility.annotationIsNotDefault(rules)) {
@@ -403,14 +432,16 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
         appendElement(element, htmlRulesNode, PluginXmlUtility::mergeStringAttributes);
     }
 
-    /**
+    */
+/**
      * The {@code BiFunction} used to merge feature token sets in XML nodes attributes to rule out repeating same features
      * as they come from different sets, although it is OK if the same feature token is planted twice deliberately in
      * the same set
      * @param array0 String representing a multitude of feature tokens
      * @param array1 String representing a multitude of feature tokens
      * @return String representing the merged feature token set
-     */
+     *//*
+
     private static String mergeFeatureAttributes(String array0, String array1) {
         if (!PluginXmlUtility.ATTRIBUTE_LIST_PATTERN.matcher(array0).matches() || !PluginXmlUtility.ATTRIBUTE_LIST_PATTERN.matcher(array1).matches()) {
             return PluginXmlUtility.DEFAULT_ATTRIBUTE_MERGER.apply(array0, array1);
@@ -421,26 +452,31 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
         return String.format(PluginXmlUtility.ATTRIBUTE_LIST_TEMPLATE, String.join(RteFeatures.FEATURE_SEPARATOR, result));
     }
 
-    /**
+    */
+/**
      * Called by {@link RichTextEditorHandler#mergeFeatureAttributes(String, String)} to extract tokens within a
      * {@code [feature#token, feature#token2]} unit
      * @param array String representing a multitude of feature tokens
      * @return {@code String[]} array with the extracted feature tokens
-     */
+     *//*
+
     private static String[] getNestedTokens(String array) {
         return StringUtils.strip(array, PluginXmlUtility.ATTRIBUTE_LIST_SURROUND).split(PluginXmlUtility.ATTRIBUTE_LIST_SPLIT_PATTERN);
     }
 
-    /**
+    */
+/**
      * Gets whether a certain feature exists in the feature set
      * @param matcher Feature token predicate
      * @return True or false
-     */
+     *//*
+
     private boolean featureExists(Predicate<String> matcher) {
         return Stream.concat(Arrays.stream(rteAnnotation.features()), Arrays.stream(rteAnnotation.fullscreenFeatures()))
                 .map(s -> Arrays.stream(s.split(PluginXmlUtility.ATTRIBUTE_LIST_SPLIT_PATTERN)))
                 .flatMap(stringStream -> stringStream)
                 .anyMatch(matcher);
     }
+*/
 
 }

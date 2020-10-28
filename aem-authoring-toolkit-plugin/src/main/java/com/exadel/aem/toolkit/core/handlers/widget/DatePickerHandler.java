@@ -19,8 +19,8 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
@@ -36,29 +36,29 @@ import com.exadel.aem.toolkit.core.util.validation.Validation;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code DatePicker} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class DatePickerHandler implements Handler, BiConsumer<SourceFacade, Element> {
+class DatePickerHandler implements Handler, BiConsumer<SourceFacade, TargetFacade> {
     private static final String INVALID_FORMAT_EXCEPTION_TEMPLATE = "Invalid %s '%s' for @DatePicker field '%s'";
     private static final String INVALID_VALUE_EXCEPTION_TEMPLATE = "Property '%s' of @DatePicker does not correspond to specified valueFormat";
 
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element Current XML element
+     * @param targetFacade Current {@code SourceFacade} instance
      */
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
+    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
         DatePicker datePickerAttribute = sourceFacade.adaptTo(DatePicker.class);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
 
         // check specified typeHint, report if invalid
         if (datePickerAttribute.typeHint() == TypeHint.STRING) {
-            element.setAttribute(DialogConstants.PN_TYPE_HINT, datePickerAttribute.typeHint().toString());
+            targetFacade.setAttribute(DialogConstants.PN_TYPE_HINT, datePickerAttribute.typeHint().toString());
         } else if (datePickerAttribute.typeHint() != TypeHint.NONE) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(
                     INVALID_FORMAT_EXCEPTION_TEMPLATE,
                     "typeHint",
                     datePickerAttribute.typeHint(),
-                    element.getTagName()));
+                    targetFacade.getName()));
             return;
         }
         // for a String-storing sourceFacade, check and process specified valueFormat, report if invalid
@@ -78,24 +78,24 @@ class DatePickerHandler implements Handler, BiConsumer<SourceFacade, Element> {
                         INVALID_FORMAT_EXCEPTION_TEMPLATE,
                         "valueFormat",
                         datePickerAttribute.valueFormat(),
-                        element.getTagName()));
+                        targetFacade.getName()));
                 return;
             }
         }
         // store values with specified or default formatting
-        storeDateValue(element, DialogConstants.PN_MIN_DATE, datePickerAttribute.minDate(), dateTimeFormatter);
-        storeDateValue(element, DialogConstants.PN_MAX_DATE, datePickerAttribute.maxDate(), dateTimeFormatter);
+        storeDateValue(targetFacade, DialogConstants.PN_MIN_DATE, datePickerAttribute.minDate(), dateTimeFormatter);
+        storeDateValue(targetFacade, DialogConstants.PN_MAX_DATE, datePickerAttribute.maxDate(), dateTimeFormatter);
     }
 
     /**
      * Writes formatted {@link DateTimeValue} attribute to XML node
-     * @param element XML {@code Element} to store data in
+     * @param targetFacade XML {@code TargetFacade} to store data in
      * @param attribute Name of date-preserving attribute
      * @param value The {@code DateTimeValue} to store
      * @param formatter {@link DateTimeFormatter} instance
      */
     private void storeDateValue(
-            Element element,
+            TargetFacade targetFacade,
             String attribute,
             DateTimeValue value,
             DateTimeFormatter formatter
@@ -104,7 +104,7 @@ class DatePickerHandler implements Handler, BiConsumer<SourceFacade, Element> {
             return;
         }
         try {
-            getXmlUtil().setAttribute(element, attribute, formatter.format(Objects.requireNonNull(PluginObjectUtility.getDateTimeInstance(value))));
+            targetFacade.setAttribute(attribute, formatter.format(Objects.requireNonNull(PluginObjectUtility.getDateTimeInstance(value))));
         } catch (DateTimeException | NullPointerException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(
                     INVALID_VALUE_EXCEPTION_TEMPLATE,

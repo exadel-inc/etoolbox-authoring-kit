@@ -16,8 +16,8 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 import java.util.List;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
 import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
@@ -38,20 +38,19 @@ public class MultiFieldHandler implements WidgetSetHandler {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element Current XML element
+     * @param targetFacade Current {@code TargetFacade} targetFacade
      */
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
+    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
         // Define the working @Multifield annotation instance and the multifield type
         MultiField multiField = sourceFacade.adaptTo(MultiField.class);
         Class<?> multifieldType = multiField.field();
 
-        // Modify the element's attributes for multifield mode
-        String name = element.getAttribute(DialogConstants.PN_NAME);
-        element.removeAttribute(DialogConstants.PN_NAME);
+        // Modify the targetFacade's attributes for multifield mode
+        String name = (String) targetFacade.deleteAttribute(DialogConstants.PN_NAME);
 
         // Get the filtered members collection for the current container; early return if collection is empty
-        List<SourceFacade> members = getContainerSourceFacades(element, sourceFacade, multifieldType);
+        List<SourceFacade> members = getContainerSourceFacades(targetFacade, sourceFacade, multifieldType);
         if (members.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + multifieldType.getName()
@@ -61,27 +60,26 @@ public class MultiFieldHandler implements WidgetSetHandler {
 
         // Render separately the multiple-sourceFacade and the single-sourceFacade modes of multifield
         if (members.size() > 1){
-            render(members, element, name);
+            render(members, targetFacade, name);
         } else {
-            render(members.get(0), element);
+            render(members.get(0), targetFacade);
         }
     }
 
     /**
      * Renders multiple widgets as XML nodes within the current multifield container
      * @param sourceFacades The collection of {@code SourceFacade} instances to render TouchUI widgets from
-     * @param element Current XML element
-     * @param name The element's {@code name} attribute
+     * @param targetFacade Current XML targetFacade
+     * @param name The targetFacade's {@code name} attribute
      */
-    private void render(List<SourceFacade> sourceFacades, Element element, String name) {
-        getXmlUtil().setAttribute(element, DialogConstants.PN_COMPOSITE, true);
-        Element multifieldContainerElement = PluginRuntime.context().getXmlUtility().createNodeElement(
-                DialogConstants.NN_FIELD,
-                ImmutableMap.of(
+    private void render(List<SourceFacade> sourceFacades, TargetFacade targetFacade, String name) {
+        targetFacade.setAttribute(DialogConstants.PN_COMPOSITE, true);
+        TargetFacade multifieldContainerElement = new TargetFacadeFacadeImpl(
+                DialogConstants.NN_FIELD).setAttributes(ImmutableMap.of(
                         DialogConstants.PN_NAME, name,
-                        JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
+                        DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER
                 ));
-        element.appendChild(multifieldContainerElement);
+        targetFacade.appendChild(multifieldContainerElement);
 
         // In case there are multiple sourceFacades in multifield container, their "name" values must not be preceded
         // with "./" which is by default
@@ -99,13 +97,13 @@ public class MultiFieldHandler implements WidgetSetHandler {
     /**
      * Renders a single widget within the current multifield container
      * @param sourceFacade The {@code SourceFacade} instance to render TouchUI widget from
-     * @param element Current XML element
+     * @param targetFacade Current {@code TargetFacade} targetFacade
      */
-    private void render(SourceFacade sourceFacade, Element element) {
+    private void render(SourceFacade sourceFacade, TargetFacade targetFacade) {
         DialogWidget widget = DialogWidgets.fromSourceFacade(sourceFacade);
         if (widget == null) {
             return;
         }
-        widget.appendTo(element, sourceFacade, DialogConstants.NN_FIELD);
+        widget.appendTo(targetFacade, sourceFacade, DialogConstants.NN_FIELD);
     }
 }

@@ -13,14 +13,12 @@
  */
 package com.exadel.aem.toolkit.core.handlers.container;
 
-import java.lang.reflect.Field;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.core.handlers.Handler;
@@ -31,29 +29,28 @@ import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 /**
  * The {@link Handler} for a fixed-columns TouchUI dialog.
  */
-public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Element> {
+public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, TargetFacade> {
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
      * to process component-backing Java class and append the results to the XML root node
      * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param parentElement XML document root element
+     * @param targetFacade XML document root element
      */
     @Override
-    public void accept(Class<?> componentClass, Element parentElement) {
-        Element content = getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER);
+    public void accept(Class<?> componentClass, TargetFacade targetFacade) {
+        TargetFacade content = new TargetFacadeFacadeImpl(DialogConstants.NN_CONTENT)
+            .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 
-        Element layout = getXmlUtil().createNodeElement(
-                DialogConstants.NN_LAYOUT,
-                Collections.singletonMap(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.FIXED_COLUMNS)
-        );
-        Element contentItems = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
+        TargetFacade layout = new TargetFacadeFacadeImpl(DialogConstants.NN_LAYOUT)
+                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.FIXED_COLUMNS);
 
-        Element contentItemsColumn = getXmlUtil().createNodeElement(
-                DialogConstants.NN_COLUMN,
-                Collections.singletonMap(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER)
-        );
+        TargetFacade contentItems = new TargetFacadeFacadeImpl(DialogConstants.NN_ITEMS);
 
-        parentElement.appendChild(content);
+        TargetFacade contentItemsColumn = new TargetFacadeFacadeImpl(
+                DialogConstants.NN_COLUMN)
+                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
+
+        targetFacade.appendChild(content);
 
         content.appendChild(layout);
         content.appendChild(contentItems);

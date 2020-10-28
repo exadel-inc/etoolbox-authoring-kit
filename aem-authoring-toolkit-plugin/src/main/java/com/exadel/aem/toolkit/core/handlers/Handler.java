@@ -14,20 +14,11 @@
 
 package com.exadel.aem.toolkit.core.handlers;
 
-import com.exadel.aem.toolkit.api.runtime.XmlUtility;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 
 /**
  * Manifests the common interface for AEM Authoring Toolkit plugin {@code widget}s', {@code editConfig}s',
  * {@code container}s' handlers
  */
 public interface Handler {
-    /**
-     * Shortcut method for getting the {@link XmlUtility} descendant associated with the current context
-     * @return The {@link PluginXmlUtility} instance
-     */
-    default PluginXmlUtility getXmlUtil() {
-        return PluginRuntime.context().getXmlUtility();
-    }
+
 }

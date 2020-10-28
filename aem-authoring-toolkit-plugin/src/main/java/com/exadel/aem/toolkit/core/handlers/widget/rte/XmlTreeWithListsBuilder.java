@@ -45,7 +45,7 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
         super(tagName, attributeName);
         this.argumentTree = new HashMap<>();
         this.addPluginIdsToFeatures = addPluginIdsToFeatures;
-        this.xmlUtil = PluginRuntime.context().getXmlUtility();
+        //this.xmlUtil = PluginRuntime.context().getXmlUtility();
     }
     XmlTreeWithListsBuilder(
             String tagName,
@@ -59,7 +59,7 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
         this.addPluginIdsToFeatures = sample.addPluginIdsToFeatures;
         this.setPostprocessing(sample.getPostprocessing());
         this.argumentTree = new HashMap<>();
-        this.xmlUtil = PluginRuntime.context().getXmlUtility();
+        //this.xmlUtil = PluginRuntime.context().getXmlUtility();
     }
 
     @Override

@@ -16,9 +16,10 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
-import org.w3c.dom.Element;
 
 import java.util.function.BiConsumer;
 
@@ -26,25 +27,29 @@ import java.util.function.BiConsumer;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class AutocompleteHandler implements Handler, BiConsumer<SourceFacade, Element> {
+class AutocompleteHandler implements Handler, BiConsumer<SourceFacade, TargetFacade> {
     /**
      * Processes the user-defined data and writes it to XML entity
+     *
      * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element Current XML element
+     * @param targetFacade Current {@code TargetFacade} instance
      */
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
+    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
         Autocomplete autocomplete = sourceFacade.adaptTo(Autocomplete.class);
-        Element datasource = getXmlUtil().createNodeElement(DialogConstants.NN_DATASOURCE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value());
-        getXmlUtil().mapProperties(datasource, autocomplete.datasource());
-        element.appendChild(datasource);
+        TargetFacade datasource = new TargetFacadeFacadeImpl(DialogConstants.NN_DATASOURCE)
+                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value());
+        datasource.mapProperties(autocomplete.datasource());
+        targetFacade.appendChild(datasource);
 
-        Element options = getXmlUtil().createNodeElement(DialogConstants.NN_OPTIONS, autocomplete.options().annotationType().getAnnotation(ResourceType.class).value());
-        getXmlUtil().mapProperties(options, autocomplete.options());
-        element.appendChild(options);
+        TargetFacade options = new TargetFacadeFacadeImpl(DialogConstants.NN_OPTIONS)
+                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value());
+        datasource.mapProperties(autocomplete.options());
+        targetFacade.appendChild(options);
 
-        Element values = getXmlUtil().createNodeElement(DialogConstants.NN_VALUES, autocomplete.values().annotationType().getAnnotation(ResourceType.class).value());
-        getXmlUtil().mapProperties(values, autocomplete.values());
-        element.appendChild(values);
+        TargetFacade values = new TargetFacadeFacadeImpl(DialogConstants.NN_VALUES)
+                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value());
+        values.mapProperties(autocomplete.values());
+        targetFacade.appendChild(values);
     }
 }
