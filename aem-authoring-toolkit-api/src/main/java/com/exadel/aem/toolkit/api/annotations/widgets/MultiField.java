@@ -22,6 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
  * Used to set up
@@ -39,5 +40,5 @@ public @interface MultiField {
      * @return Reference to a class
      */
     @IgnorePropertyMapping
-    Class field();
+    Class<?> field() default _Default.class;
 }
