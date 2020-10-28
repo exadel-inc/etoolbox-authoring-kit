@@ -24,8 +24,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
@@ -47,12 +48,12 @@ public class PluginXmlContainerUtility {
 
     /**
      * Processes the specified {@link Member}s and appends the generated XML markup to the specified container element
-     * @param container XML definition of a pre-defined widget container
+     * @param container {@code TargetFacade} definition of a pre-defined widget container
      * @param sourceFacades List of {@code Member}s of a component's Java class
      */
-    public static void append(Element container, List<SourceFacade> sourceFacades) {
+    public static void append(TargetFacade container, List<SourceFacade> sourceFacades) {
         Map<SourceFacade, String> managedFields = new LinkedHashMap<>();
-        Element itemsElement = PluginRuntime.context().getXmlUtility().createNodeElement(DialogConstants.NN_ITEMS);
+        TargetFacade itemsElement = new TargetFacadeFacadeImpl(DialogConstants.NN_ITEMS);
         container.appendChild(itemsElement);
 
         for (SourceFacade sourceFacade : sourceFacades) {
@@ -60,11 +61,11 @@ public class PluginXmlContainerUtility {
             if (widget == null) {
                 continue;
             }
-            Element newElement = widget.appendTo(itemsElement, sourceFacade);
-            managedFields.put(sourceFacade, newElement.getTagName());
+            TargetFacade newElement = widget.appendTo(itemsElement, sourceFacade);
+            managedFields.put(sourceFacade, newElement.getName());
         }
 
-        if (container.hasChildNodes()) {
+        if (container.hasChildren()) {
             checkForDuplicateFields(itemsElement, managedFields);
         }
     }
@@ -76,11 +77,11 @@ public class PluginXmlContainerUtility {
      * @param container XML definition of an immediate parent for widget nodes (typically, an {@code items} element)
      * @param managedFields {@code Map<Field, String>} that matches rendered fields to corresponding element names
      */
-    private static void checkForDuplicateFields(Element container, Map<SourceFacade, String> managedFields) {
+    private static void checkForDuplicateFields(TargetFacade container, Map<SourceFacade, String> managedFields) {
         List<String> childElementsTagNames = IntStream
-                .range(0, container.getChildNodes().getLength())
-                .mapToObj(index -> container.getChildNodes().item(index))
-                .map(Node::getNodeName)
+                .range(0, container.getListChildren().size())
+                .mapToObj(index -> container.getListChildren().get(index))
+                .map(TargetFacade::getName)
                 .collect(Collectors.toList());
         if (childElementsTagNames.size() == new HashSet<>(childElementsTagNames).size()) {
             return;
@@ -91,7 +92,7 @@ public class PluginXmlContainerUtility {
     }
 
     /**
-     * Called from {@link PluginXmlContainerUtility#checkForDuplicateFields(Element, Map)} to test Tests the provided
+     * Tests the provided
      * collection of fields and a particular duplicating tag name. Throws an exception if a field from a superclass
      * is positioned below the corresponding field from a subclass, therefore, will have precedence
      * @param tagName String representing the tag name in question

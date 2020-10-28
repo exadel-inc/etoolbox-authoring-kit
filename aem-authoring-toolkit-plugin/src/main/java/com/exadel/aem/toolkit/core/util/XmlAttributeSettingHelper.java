@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +44,7 @@ import com.exadel.aem.toolkit.core.util.validation.Validation;
  * @see com.exadel.aem.toolkit.api.runtime.XmlUtility#setAttribute(Element, String, Annotation, BinaryOperator)
  * @param <T> Type of value to be rendered as XML attribute
  */
-class XmlAttributeSettingHelper<T> {
+public class XmlAttributeSettingHelper<T> {
     private static final String TYPE_TOKEN_TEMPLATE = "{%s}%s";
     private static final String TYPE_TOKEN_ARRAY_TEMPLATE = "{%s}[%s]";
     private static final String STRING_ESCAPE = "\\";
@@ -79,7 +80,7 @@ class XmlAttributeSettingHelper<T> {
      * @return New {@code XmlAttributeSettingHelper} instance
      */
     @SuppressWarnings({"deprecation", "squid:S1874"}) // IgnoreValue processing remains for compatibility reasons until v.2.0.0
-    static XmlAttributeSettingHelper forMethod(Annotation annotation, Method method) {
+    public static XmlAttributeSettingHelper forMethod(Annotation annotation, Method method) {
         XmlAttributeSettingHelper attributeSetter = new XmlAttributeSettingHelper<>(getMethodWrappedType(method));
         if (!fits(method)) {
             return attributeSetter;
@@ -129,7 +130,7 @@ class XmlAttributeSettingHelper<T> {
      * @param name Provisional name
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    XmlAttributeSettingHelper<T> withName(String name) {
+    public XmlAttributeSettingHelper<T> withName(String name) {
         this.name = name;
         return this;
     }
@@ -139,9 +140,31 @@ class XmlAttributeSettingHelper<T> {
      * @param merger Function that manages an existing attribute value and a new one (whether to keep only one of them or combine/merge)
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    XmlAttributeSettingHelper<T> withMerger(BinaryOperator<String> merger) {
+    public XmlAttributeSettingHelper<T> withMerger(BinaryOperator<String> merger) {
         this.valueMerger = merger;
         return this;
+    }
+
+    public void setAttribute(TargetFacade targetFacade) {
+        if (!valueTypeIsSupported) {
+            return;
+        }
+        try {
+            Object invocationResult = method.invoke(annotation);
+            if (method.getReturnType().isArray()) {
+                List<T> invocationResultList = Arrays.stream(castToArray(invocationResult))
+                        .map(this::cast)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+                setAttribute(targetFacade, invocationResultList);
+            } else {
+                setAttribute(targetFacade, cast(invocationResult));
+            }
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
+                    String.format(REFLECTION_EXCEPTION_MESSAGE_TEMPLATE, method.getName(), annotation.annotationType().getSimpleName()),
+                    e));
+        }
     }
 
     /**
@@ -159,9 +182,9 @@ class XmlAttributeSettingHelper<T> {
                         .map(this::cast)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
-                setAttribute(element, invocationResultList);
+                //setAttribute(element, invocationResultList);
             } else {
-                setAttribute(element, cast(invocationResult));
+                //setAttribute(element, cast(invocationResult));
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
@@ -175,14 +198,14 @@ class XmlAttributeSettingHelper<T> {
      * @param element Element node instance
      * @param value Particular value to be rendered
      */
-    void setAttribute(Element element, T value) {
+    void setAttribute(TargetFacade element, T value) {
         if (!valueTypeIsSupported) {
             return;
         }
         String stringifiedValue = value != null ? value.toString() : StringUtils.EMPTY;
 
         if (!isValid(stringifiedValue)) {
-            element.removeAttribute(name);
+            element.deleteAttribute(name);
             return;
         }
 
@@ -196,7 +219,7 @@ class XmlAttributeSettingHelper<T> {
      * @param element Element node instance
      * @param values List of values to be rendered
      */
-    void setAttribute(Element element, List<T> values) {
+    void setAttribute(TargetFacade element, List<T> values) {
         if (!valueTypeIsSupported || values == null || values.isEmpty()) {
             return;
         }
@@ -218,7 +241,7 @@ class XmlAttributeSettingHelper<T> {
      * @param element Element node instance
      * @param value String to store as the attribute
      */
-    private void setAttribute(Element element, String value) {
+    private void setAttribute(TargetFacade element, String value) {
         String oldAttributeValue = element.hasAttribute(name)
                 ? element.getAttribute(name)
                 : "";

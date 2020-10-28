@@ -13,62 +13,44 @@
  */
 package com.exadel.aem.toolkit.core.util;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.core.util.writer.PackageWriter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import com.google.common.collect.ImmutableMap;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
-import com.exadel.aem.toolkit.api.runtime.XmlUtility;
-import com.exadel.aem.toolkit.core.exceptions.ReflectionException;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.validation.Validation;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Utility methods to process, verify and store AEM TouchUI dialog-related data to XML markup
  */
-public class PluginXmlUtility implements XmlUtility {
+public class PluginXmlUtility {
     public static final Map<String, String> XML_NAMESPACES = ImmutableMap.of(
             "xmlns:jcr", "http://www.jcp.org/jcr/1.0",
             "xmlns:nt", "http://www.jcp.org/jcr/nt/1.0",
-            "xmlns:sling", JcrResourceConstants.SLING_NAMESPACE_URI,
+            "xmlns:sling", "http://sling.apache.org/jcr/sling/1.0",
             "xmlns:cq", "http://www.day.com/jcr/cq/1.0",
             "xmlns:granite", "http://www.adobe.com/jcr/granite/1.0"
     );
@@ -85,452 +67,77 @@ public class PluginXmlUtility implements XmlUtility {
      */
     public static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
-
-    private Document document;
-    private String namePrefix = DialogConstants.RELATIVE_PATH_PREFIX;
-
-    private XmlNamingHelper fieldNameHelper = XmlNamingHelper.forFieldName(this);
-    private XmlNamingHelper simpleNameHelper = XmlNamingHelper.forSimpleName(this);
-    private XmlNamingHelper namespaceNameHelper = XmlNamingHelper.forNamespaceAndName(this);
-
-    /**
-     * Initializes new {@link Document} instance shipped with the root element
-     * @param builder {@link DocumentBuilder} to create new XML document
-     * @param componentClass {@code Class} instance representing source object for this document
-     * @return Root {@link Element}
-     */
-    public Element newDocumentRoot(DocumentBuilder builder, Class<?> componentClass) {
-        document = builder.newDocument();
-        document.setUserData(DialogConstants.PN_COMPONENT_CLASS, componentClass, null);
-        Element rootElement = createNodeElement(DialogConstants.NN_ROOT, XML_NAMESPACES);
-        document.appendChild(rootElement);
-        return rootElement;
-    }
-
-    /**
-     * Retrieves current {@link Document} that is involved in {@code createNodeElement} routines
-     * @return {@code Document} instance
-     */
-    public Document getCurrentDocument() {
-        return document;
-    }
-
-    /**
-     * Retrieves name prefix added to all {@code Element}s' tag names in current context
-     * @return Prefix as a string, default is "./"
-     */
-    public String getNamePrefix() {
-        return this.namePrefix;
-    }
-
-    /**
-     * Sets name prefix added to all Elements' tag names in current context
-     * @param namePrefix String value
-     */
-    public void setNamePrefix(String namePrefix) {
-        this.namePrefix = namePrefix;
-    }
-
-    @Override
-    public Element createNodeElement(String name, String nodeType, Map<String, String> properties, String resourceType) {
-        Element element = document.createElement(getValidName(name));
-        if (nodeType == null) {
-            nodeType = DialogConstants.NT_UNSTRUCTURED;
-        }
-        element.setAttribute(DialogConstants.PN_PRIMARY_TYPE, nodeType);
-        if (resourceType != null) {
-            element.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, resourceType);
-        }
-        if (properties != null) {
-            properties.forEach((key, value) -> {
-                if (StringUtils.isNoneBlank(key, value)) element.setAttribute(key, value);
-            });
-        }
-        return element;
-    }
-
-    @Override
-    public Element createNodeElement(String name, String nodeType, Map<String, String> properties) {
-        return createNodeElement(name, nodeType, properties, null);
-    }
-
-    @Override
-    public Element createNodeElement(String name, Map<String, String> properties, String resourceType) {
-        return createNodeElement(name, null, properties, resourceType);
-    }
-
-    @Override
-    public Element createNodeElement(String name, String resourceType) {
-        return createNodeElement(name, null, new HashMap<>(), resourceType);
-    }
-
-    @Override
-    public Element createNodeElement(String name, Map<String, String> properties) {
-        return createNodeElement(name, null, properties);
-    }
-
-    @Override
-    public Element createNodeElement(String name) {
-        return createNodeElement(name, null, new HashMap<>());
-    }
-
-    @Override
-    public Element createNodeElement(String name, Annotation source) {
-        return createNodeElement(annotation -> name, source);
-    }
-
-    /**
-     * Creates named XML {@code Element} node wrapping several child element nodes from an array of {@code Annotation} instance
-     * @param name Tag name of the wrapper XML node
-     * @param childNodeNameProvider Function that generates child node's tag name based on corresponding Annotation instance
-     * @param sources Array of annotations to be rendered to XML
-     * @return {@code Element} instance
-     */
-    public Element createNodeElement(String name, Function<Annotation, String> childNodeNameProvider, Annotation[] sources) {
-        Element newNode = createNodeElement(name);
-        Arrays.stream(sources)
-                .forEach(source -> appendNonemptyChildElement(newNode, createNodeElement(childNodeNameProvider, source)));
-        return newNode;
-    }
-
-    /**
-     * Creates named XML {2code Element} node from specified {@code Annotation} using specified name provider
-     * @param nameProvider Function that processes {@code Annotation} instance to produce valid node name
-     * @param source Annotation to be rendered to XML
-     * @return {@code Element} instance
-     */
-    private Element createNodeElement(Function<Annotation, String> nameProvider, Annotation source) {
-        if (!Validation.forType(source.annotationType()).test(source)) {
-            return null;
-        }
-        Element newNode = createNodeElement(nameProvider.apply(source));
-        Arrays.stream(source.annotationType().getDeclaredMethods())
-                .forEach(method -> XmlAttributeSettingHelper.forMethod(source, method).setAttribute(newNode));
-        return newNode;
-    }
-
-    @Override
-    public String getValidName(String name) {
-        return namespaceNameHelper.getValidName(name, DialogConstants.NN_ITEM);
-    }
-
-    @Override
-    public String getValidSimpleName(String name) {
-        return simpleNameHelper.getValidName(name, DialogConstants.NN_ITEM);
-    }
-
-    @Override
-    public String getValidFieldName(String name) {
-        return fieldNameHelper.getValidName(name, DialogConstants.NN_FIELD);
-    }
-
-    @Override
-    public String getUniqueName(String name, String defaultValue, Element context) {
-        return simpleNameHelper.getUniqueName(name, defaultValue, context);
-    }
-
-    @Override
-    public void setAttribute(Element element, String name, Double value) {
-        XmlAttributeSettingHelper.forNamedValue(name, Double.class).setAttribute(element, value);
-    }
-
-    @Override
-    public void setAttribute(Element element, String name, Long value) {
-        XmlAttributeSettingHelper.forNamedValue(name, Long.class).setAttribute(element, value);
-    }
-
-    @Override
-    public void setAttribute(Element element, String name, Boolean value) {
-        XmlAttributeSettingHelper.forNamedValue(name, Boolean.class).setAttribute(element, value);
-    }
-
-    @Override
-    public void setAttribute(Element element, String name, String value) {
-        XmlAttributeSettingHelper.forNamedValue(name, String.class).setAttribute(element, value);
-    }
-
-    @Override
-    public void setAttribute(Element element, String name, List<String> values) {
-        setAttribute(element, name, values, PluginXmlUtility::mergeStringAttributes);
-    }
-
-    @Override
-    public void setAttribute(Element element, String name, List<String> values, BinaryOperator<String> attributeMerger) {
-        XmlAttributeSettingHelper.forNamedValue(name, String.class).withMerger(attributeMerger).setAttribute(element, values);
-    }
-
-    @Override
-    public void setAttribute(Element element, String name, Annotation source) {
-        setAttribute(element, name, source, DEFAULT_ATTRIBUTE_MERGER);
-    }
-
-    @Override
-    public void setAttribute(Element element, String name, Annotation source, BinaryOperator<String> attributeMerger) {
-        setAttribute(() -> element, name, source, attributeMerger);
-    }
-
-    /**
-     * Stores property value of a specific {@code Annotation} as an XML attribute
-     * @param elementSupplier Routine that generates and/or returns an {@code Element} node
-     * @param name Attribute name, same as annotation property name
-     * @param source Annotation to look fo a value in
-     */
-    public void setAttribute(Supplier<Element> elementSupplier, String name, Annotation source) {
-        setAttribute(elementSupplier, name, source, DEFAULT_ATTRIBUTE_MERGER);
-    }
-
-    /**
-     * Stores property value of a specific {@code Annotation} as an XML attribute
-     * @param elementSupplier Routine that generates and/or returns an {@code Element} node
-     * @param name Attribute name, same as annotation property name
-     * @param source Annotation to look for a value in
-     * @param attributeMerger Function that manages an existing attribute value and a new one
-     *                        in case when a new value is set to an existing {@code Element}
-     */
-    @SuppressWarnings({"deprecation", "squid:S1874"})
-    // PropertyName processing remains for compatibility reasons until v.2.0.0
-    private static void setAttribute(Supplier<Element> elementSupplier,
-                                     String name,
-                                     Annotation source,
-                                     BinaryOperator<String> attributeMerger) {
-        try {
-            Method sourceMethod = source.annotationType().getDeclaredMethod(name);
-            if (!PluginReflectionUtility.annotationPropertyIsNotDefault(source, sourceMethod)) {
-                return;
-            }
-            PropertyRendering propertyRendering = sourceMethod.getAnnotation(PropertyRendering.class);
-            PropertyName propertyName = sourceMethod.getAnnotation(PropertyName.class);
-            String effectiveName = name;
-            if (propertyRendering != null) {
-                effectiveName = StringUtils.defaultIfBlank(propertyRendering.name(), name);
-            } else if (propertyName != null) {
-                effectiveName = StringUtils.defaultIfBlank(propertyName.value(), name);
-            }
-            XmlAttributeSettingHelper.forMethod(source, sourceMethod)
-                    .withName(effectiveName)
-                    .withMerger(attributeMerger)
-                    .setAttribute(elementSupplier.get());
-        } catch (NoSuchMethodException e) {
-            PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(source.getClass(), name));
-        }
-    }
-
-    @Override
-    public void mapProperties(Element element, Annotation annotation) {
-        mapProperties(element, annotation, Collections.emptyList());
-    }
-
-    @Override
-    public void mapProperties(Element element, Annotation annotation, XmlScope scope) {
-        List<String> skippedFields = Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .filter(m -> !fitsInScope(m, scope))
-                .map(Method::getName)
-                .collect(Collectors.toList());
-        mapProperties(element, annotation, skippedFields);
-    }
-
-    @Override
-    public void mapProperties(Element element, Annotation annotation, List<String> skipped) {
-        PropertyMapping propMapping = annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class);
-        if (propMapping == null) {
+    public static void appendDataAttributes(TargetFacade targetFacade, Data[] data) {
+        if (ArrayUtils.isEmpty(data)) {
             return;
         }
-        String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
-        String nodePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
-                ? StringUtils.substringBeforeLast(prefix, DialogConstants.PATH_SEPARATOR)
-                : StringUtils.EMPTY;
-
-        Element effectiveElement;
-        if (StringUtils.isEmpty(nodePrefix)) {
-            effectiveElement = element;
-        } else {
-            effectiveElement = Pattern.compile(DialogConstants.PATH_SEPARATOR)
-                    .splitAsStream(nodePrefix)
-                    .reduce(element, this::getOrAddChildElement, (prev, next) -> next);
-        }
-        Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .filter(m -> ArrayUtils.isEmpty(propMapping.mappings()) || ArrayUtils.contains(propMapping.mappings(), m.getName()))
-                .filter(m -> !m.isAnnotationPresent(IgnorePropertyMapping.class))
-                .filter(m -> !skipped.contains(m.getName()))
-                .forEach(m -> populateProperty(m, effectiveElement, annotation));
+        appendDataAttributes(targetFacade, Arrays.stream(data).collect(Collectors.toMap(Data::name, Data::value)));
     }
 
-    /**
-     * Sets value of a particular {@code Annotation} property to an {@code Element} node
-     * @param method {@code Method} instance representing a property of an annotation
-     * @param element Element node
-     * @param annotation Annotation to look for a value in
-     */
-    @SuppressWarnings({"deprecation", "squid:S1874"})
-    // PropertyName processing remains for compatibility reasons until v.2.0.0
-    private static void populateProperty(Method method, Element element, Annotation annotation) {
-        String name = method.getName();
-        boolean ignorePrefix = false;
-        if (method.isAnnotationPresent(PropertyRendering.class)) {
-            PropertyRendering propertyRendering = method.getAnnotation(PropertyRendering.class);
-            name = StringUtils.defaultIfBlank(propertyRendering.name(), name);
-            ignorePrefix = propertyRendering.ignorePrefix();
-        } else if (method.isAnnotationPresent(PropertyName.class)) {
-            PropertyName propertyName = method.getAnnotation(PropertyName.class);
-            name = propertyName.value();
-            ignorePrefix = propertyName.ignorePrefix();
-        }
-        String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
-        String namePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
-                ? StringUtils.substringAfterLast(prefix, DialogConstants.PATH_SEPARATOR)
-                : prefix;
-        if (!ignorePrefix && StringUtils.isNotBlank(prefix)) {
-            name = namePrefix + name;
-        }
-        BinaryOperator<String> merger = PluginXmlUtility::mergeStringAttributes;
-        XmlAttributeSettingHelper.forMethod(annotation, method)
-                .withName(name)
-                .withMerger(merger)
-                .setAttribute(element);
-    }
-
-    /**
-     * Gets whether this annotation method falls within the specified {@link PropertyScope}. True if no scope specified
-     * for method (that is, the method is applicable to any scope
-     * @param method {@code Method} instance representing a property of an annotation
-     * @param scope {@code PropertyScope} value
-     * @return True or false
-     */
-    private static boolean fitsInScope(Method method, XmlScope scope) {
-        if (!method.isAnnotationPresent(PropertyScope.class)) {
-            return true;
-        }
-        return Arrays.asList(method.getAnnotation(PropertyScope.class).value()).contains(scope);
-    }
-
-    /**
-     * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
-     * Appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
-     * or a child node
-     * If child node with same name already exists, it is updated with attribute values of the newcomer node
-     * @param parent Routine than provides Element to serve as parent
-     * @param child Element to serve as child
-     * @param attributeMerger Function that manages an existing attribute value and a new one
-     *                        in case when a new value is set to an existing {@code Element}
-     */
-    public void appendNonemptyChildElement(Supplier<Element> parent, Element child, BinaryOperator<String> attributeMerger) {
-        if (isBlankElement(child)) {
+    public static void appendDataAttributes(TargetFacade targetFacade, Map<String, String> data) {
+        if (data == null || data.isEmpty()) {
             return;
         }
-        appendNonemptyChildElement(parent.get(), child, attributeMerger);
+        TargetFacade graniteDataNode = targetFacade.getOrAddChild(DialogConstants.NN_DATA);
+        graniteDataNode.setName(DialogConstants.NN_DATA);
+        data.entrySet().stream()
+                .filter(entry -> StringUtils.isNotBlank(entry.getKey()))
+                .forEach(entry -> graniteDataNode.setAttribute(entry.getKey(), entry.getValue()));
     }
 
-    @Override
-    public Element appendNonemptyChildElement(Element parent, Element child) {
-        if (parent == null || isBlankElement(child)) {
+    /**
+     * Appends {@link DataSource} value and, for compatibility reasons, deprecated {@code acsListPath}
+     * and {@code acsListResourceType} values to an {@code Element} node
+     * @param targetFacade TargetFacade to store data in
+     * @param dataSource Provided values as a {@code DataSource} annotation
+     * @param acsListPath Path to ACS Commons List in JCR repository
+     * @param acsListResourceType Use this to set {@code sling:resourceType} of data source, other than standard
+     * @return Appended {@code datasource} node
+     */
+    public static TargetFacade appendDataSource(TargetFacade targetFacade, DataSource dataSource, String acsListPath, String acsListResourceType) {
+        Map<String, String> arbitraryProperties = Arrays.stream(dataSource.properties())
+                .collect(Collectors.toMap(Property::name, Property::value));
+        TargetFacade dataSourceElement = appendDataSource(targetFacade, dataSource.path(), dataSource.resourceType(), arbitraryProperties);
+        if (dataSourceElement == null) {
+            dataSourceElement = appendAcsCommonsList(targetFacade, acsListPath, acsListResourceType);
+        }
+        return dataSourceElement;
+    }
+
+    /**
+     * Appends to the current {@code Element} node and returns a child {@code datasource} node
+     * @param targetFacade Element to store data in
+     * @param path Path to targetFacade
+     * @param resourceType Use this to set {@code sling:resourceType} of data source
+     * @return Appended {@code datasource} node, or null if the provided {@code resourceType} is invalid
+     */
+    private static TargetFacade appendDataSource(TargetFacade targetFacade, String path, String resourceType, Map<String, String> properties) {
+        if (StringUtils.isBlank(resourceType)) {
             return null;
         }
-        return appendNonemptyChildElement(parent, child, DEFAULT_ATTRIBUTE_MERGER);
+        properties.put(DialogConstants.PN_PATH, path);
+        TargetFacade dataSourceElement = new TargetFacadeFacadeImpl(DialogConstants.NN_DATASOURCE)
+                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
+                .setAttributes(properties);
+        return targetFacade.appendChild(dataSourceElement);
     }
 
     /**
-     * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
-     * Appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
-     * or a child node
-     * If child node with same name already exists, it is updated with attribute values of the arriving node
-     * @param parent Element to serve as parent
-     * @param child Element to serve as child
-     * @param attributeMerger Function that manages an existing attribute value and a new one
-     *                        in case when a new value is set to an existing {@code Element}
-     * @return Appended child
+     * Appends to the current {@code Element} node and returns a child {@code datasource} node bearing link to an ACS Commons list
+     * @param targetFacade {@code TargetFacade} to store data in
+     * @param path Path to ACS Commons List in JCR repository
+     * @param resourceType Use this to set {@code sling:resourceType} of data source, other than standard
+     * @return Appended {@code datasource} node, or null if the provided {@code path} is invalid
      */
-    public Element appendNonemptyChildElement(Element parent, Element child, BinaryOperator<String> attributeMerger) {
-        if (parent == null || isBlankElement(child)) {
+    private static TargetFacade appendAcsCommonsList(TargetFacade targetFacade, String path, String resourceType) {
+        if (StringUtils.isBlank(path)) {
             return null;
         }
-        Element existingChild = getChildElement(parent, child.getNodeName());
-        if (existingChild == null) {
-            return (Element) parent.appendChild(child.cloneNode(true));
-        }
-        Node grandchild = child.getFirstChild();
-        while (grandchild != null) {
-            appendNonemptyChildElement(existingChild, (Element) grandchild, attributeMerger);
-            grandchild = grandchild.getNextSibling();
-        }
-        return mergeAttributes(existingChild, child, attributeMerger);
-    }
-
-    /**
-     * Merges attributes of two {@code Element} nodes, e.g. when a child node is appended to a parent node that already
-     * has another child with same name, the existing child is updated with values from the newcomer. Way of merging
-     * is defined by {@param attributeMerger} routine
-     * @param first First (e.g. existing) Element node
-     * @param second Second (e.g. rendered anew) Element node
-     * @param attributeMerger Function that manages an existing attribute value and a new one
-     * @return {@code Element} node with merged attribute values
-     */
-    private static Element mergeAttributes(Element first, Element second, BinaryOperator<String> attributeMerger) {
-        NamedNodeMap newAttributes = second.getAttributes();
-        for (int i = 0; i < newAttributes.getLength(); i++) {
-            XmlAttributeSettingHelper.forNamedValue(newAttributes.item(i).getNodeName(), String.class)
-                    .withMerger(attributeMerger)
-                    .setAttribute(first, newAttributes.item(i).getNodeValue());
-        }
-        return first;
-    }
-
-    /**
-     * Merges string attributes of two {@code Element} nodes, e.g. when a child node is appended to a parent node that already
-     * has another child with same name, the existing child is updated with values from the newcomer.
-     * Default way of merging is to replace first string with non-blank second string if they do not look like JCR lists,
-     * or merge lists otherwise
-     * @param first First (e.g. existing) Element node
-     * @param second Second (e.g. rendered anew) Element node
-     * @return {@code Element} node with merged attribute values
-     */
-    public static String mergeStringAttributes(String first, String second) {
-        if (!ATTRIBUTE_LIST_PATTERN.matcher(first).matches() || !ATTRIBUTE_LIST_PATTERN.matcher(second).matches()) {
-            return DEFAULT_ATTRIBUTE_MERGER.apply(first, second);
-        }
-        Set<String> result = new HashSet<>(Arrays.asList(StringUtils
-                .strip(first, ATTRIBUTE_LIST_SURROUND)
-                .split(ATTRIBUTE_LIST_SPLIT_PATTERN)));
-        result.addAll(new HashSet<>(Arrays.asList(StringUtils
-                .strip(second, ATTRIBUTE_LIST_SURROUND)
-                .split(ATTRIBUTE_LIST_SPLIT_PATTERN))));
-        return String.format(ATTRIBUTE_LIST_TEMPLATE, String.join(RteFeatures.FEATURE_SEPARATOR, result));
-    }
-
-    @Override
-    public Element getOrAddChildElement(Element parent, String childName) {
-        return getChildElement(parent,
-                childName,
-                parentElement -> (Element) parentElement.appendChild(createNodeElement(childName)));
-    }
-
-    @Override
-    public Element getChildElement(Element parent, String childName) {
-        return getChildElement(parent, childName, p -> null);
-    }
-
-    /**
-     * Retrieve child {@code Element} node of the specified node by name
-     * @param parent Element to analyze
-     * @param childName Name of child to look for
-     * @param fallbackSupplier Routine that returns a fallback Element instance if parent node does not exist or child not found
-     * @return Element instance
-     */
-    public Element getChildElement(Element parent, String childName, UnaryOperator<Element> fallbackSupplier) {
-        if (parent == null) {
-            return fallbackSupplier.apply(null);
-        }
-        if (childName.contains(DialogConstants.PATH_SEPARATOR)) {
-            return Arrays.stream(StringUtils.split(childName, DialogConstants.PATH_SEPARATOR))
-                    .reduce(parent, (p, c) -> getChildElement(p, c, fallbackSupplier), (c1, c2) -> c2);
-        }
-        Node child = parent.getFirstChild();
-        while (child != null) {
-            if (child instanceof Element && child.getNodeName().equals(childName)) {
-                return (Element) child;
-            }
-            child = child.getNextSibling();
-        }
-        return fallbackSupplier.apply(parent);
+        TargetFacade dataSourceElement = new TargetFacadeFacadeImpl(DialogConstants.NN_DATASOURCE)
+                .setAttribute(DialogConstants.PN_PATH, path)
+                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
+        targetFacade.appendChild(dataSourceElement);
+        return dataSourceElement;
     }
 
     /**
@@ -538,7 +145,7 @@ public class PluginXmlUtility implements XmlUtility {
      * @param xPath String xPath representation
      * @return List of {@code Element}s, or an empty list
      */
-    public List<Element> getElementNodes(String xPath) {
+    public static List<Element> getElementNodes(String xPath, Document document) {
         XPath xPathInstance = XPathFactory.newInstance().newXPath();
         List<Element> result = new ArrayList<>();
         try {
@@ -560,155 +167,29 @@ public class PluginXmlUtility implements XmlUtility {
         return result;
     }
 
-    /**
-     * Gets whether current {@code Element} is null, or is blank, i.e. has neither attributes, save for JCR type, nor children
-     * @param element Element to check
-     * @return True or false
-     */
-    private static boolean isBlankElement(Element element) {
-        if (element == null) {
-            return true;
-        }
-        if (element.hasChildNodes() || element.getAttributes().getLength() > 1) return false;
-        return DialogConstants.PN_PRIMARY_TYPE.equals(element.getAttributes().item(0).getNodeName());
+    public static Document buildXml(TargetFacade targetFacade, Document document) throws ParserConfigurationException {
+        Element root = populateDocument(targetFacade, document);
+        XML_NAMESPACES.forEach((key, value) -> {
+                    if (StringUtils.isNoneBlank(key, value)) root.setAttribute(key, value);
+                });
+        document.appendChild(root);
+        return document;
     }
 
-    @Override
-    public void appendDataAttributes(Element element, Data[] data) {
-        if (ArrayUtils.isEmpty(data)) {
-            return;
-        }
-        appendDataAttributes(element, Arrays.stream(data).collect(Collectors.toMap(Data::name, Data::value)));
+    private static Element populateDocument(TargetFacade targetFacade, Document document) {
+        Element tmp = document.createElement(targetFacade.getName());
+        mapProperties(tmp, targetFacade);
+        targetFacade.getListChildren().forEach(child -> tmp.appendChild(populateDocument(child, document)));
+        return tmp;
     }
 
-    @Override
-    public void appendDataAttributes(Element element, Map<String, String> data) {
-        if (data == null || data.isEmpty()) {
-            return;
-        }
-        Element graniteDataNode = getOrAddChildElement(element,
-                DialogConstants.NN_DATA);
-        data.entrySet().stream()
-                .filter(entry -> StringUtils.isNotBlank(entry.getKey()))
-                .forEach(entry -> graniteDataNode.setAttribute(entry.getKey(), entry.getValue()));
-    }
-
-    /**
-     * Appends {@link DataSource} value and, for compatibility reasons, deprecated {@code acsListPath}
-     * and {@code acsListResourceType} values to an {@code Element} node
-     * @param element Element to store data in
-     * @param dataSource Provided values as a {@code DataSource} annotation
-     * @param acsListPath Path to ACS Commons List in JCR repository
-     * @param acsListResourceType Use this to set {@code sling:resourceType} of data source, other than standard
-     * @return Appended {@code datasource} node
-     */
-    public Element appendDataSource(Element element, DataSource dataSource, String acsListPath, String acsListResourceType) {
-        Map<String, String> arbitraryProperties = Arrays.stream(dataSource.properties())
-                .collect(Collectors.toMap(Property::name, Property::value));
-        Element dataSourceElement = appendDataSource(element, dataSource.path(), dataSource.resourceType(), arbitraryProperties);
-        if (dataSourceElement == null) {
-            dataSourceElement = appendAcsCommonsList(element, acsListPath, acsListResourceType);
-        }
-        return dataSourceElement;
-    }
-
-    /**
-     * Appends to the current {@code Element} node and returns a child {@code datasource} node
-     * @param element Element to store data in
-     * @param path Path to element
-     * @param resourceType Use this to set {@code sling:resourceType} of data source
-     * @return Appended {@code datasource} node, or null if the provided {@code resourceType} is invalid
-     */
-    private Element appendDataSource(Element element, String path, String resourceType, Map<String, String> properties) {
-        if (StringUtils.isBlank(resourceType)) {
-            return null;
-        }
-        properties.put(DialogConstants.PN_PATH, path);
-        Element dataSourceElement = createNodeElement(DialogConstants.NN_DATASOURCE, null,
-                properties, resourceType);
-        return (Element) element.appendChild(dataSourceElement);
-    }
-
-    /**
-     * Appends to the current {@code Element} node and returns a child {@code datasource} node bearing link to an ACS Commons list
-     * @param element Element to store data in
-     * @param path Path to ACS Commons List in JCR repository
-     * @param resourceType Use this to set {@code sling:resourceType} of data source, other than standard
-     * @return Appended {@code datasource} node, or null if the provided {@code path} is invalid
-     */
-    private Element appendAcsCommonsList(Element element, String path, String resourceType) {
-        if (StringUtils.isBlank(path)) {
-            return null;
-        }
-        Element dataSourceElement = createNodeElement(DialogConstants.NN_DATASOURCE, null,
-                new ImmutableMap.Builder<String, String>().put(DialogConstants.PN_PATH, path).build(),
-                resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
-        element.appendChild(dataSourceElement);
-        return dataSourceElement;
-    }
-
-
-    /**
-     * Migrates attributes and child nodes between {@code source} and {@code target}. Whether particular attributes
-     * and child nodes are copied, moved or left alone, is defined by the {@code policies} map
-     * @param source Element to serve as the source of migration
-     * @param target Element to serve as the target of migration
-     * @param policies Map containing attribute names (must start with {@code @}), child node names (must start with
-     *                 {@code ./}) and the action appropriate to each of them, whether to copy element, move, or leave
-     *                 intact. Wildcard symbol ({@code *}) is supported to specify common policy for multiple elements
-     */
-    public void transfer(Element source, Element target, Map<String, XmlTransferPolicy> policies) {
-        if (isBlankElement(source) || target == null) {
-            return;
-        }
-        // Process attributes
-        List<String> removableAttributes = new ArrayList<>();
-        for (int i = 0; i < source.getAttributes().getLength(); i++) {
-            Node attribute = source.getAttributes().item(i);
-            XmlTransferPolicy policy = getTransferPolicyForNode(attribute, DialogConstants.ATTRIBUTE_PREFIX, policies);
-            if (policy != XmlTransferPolicy.SKIP) {
-                target.setAttribute(attribute.getNodeName(), attribute.getNodeValue());
-            }
-            if (policy == XmlTransferPolicy.MOVE) {
-                removableAttributes.add(attribute.getNodeName());
-            }
-        }
-        removableAttributes.forEach(source::removeAttribute);
-        // Process child nodes
-        int childNodePos = 0;
-        while (childNodePos < source.getChildNodes().getLength()) {
-            Node childNode = source.getChildNodes().item(childNodePos);
-            XmlTransferPolicy policy = getTransferPolicyForNode(childNode, DialogConstants.RELATIVE_PATH_PREFIX, policies);
-            if (policy == XmlTransferPolicy.MOVE) {
-                target.appendChild(childNode);
-                continue;
-            } else if (policy == XmlTransferPolicy.COPY) {
-                Element copiedChildNode = createNodeElement(childNode.getNodeName());
-                transfer((Element) childNode, copiedChildNode, ImmutableMap.of(StringUtils.EMPTY, XmlTransferPolicy.COPY));
-                target.appendChild(copiedChildNode);
-            }
-            childNodePos++;
+    private static void mapProperties(Element element, TargetFacade targetFacade) {
+        for (Map.Entry<String, String> entry : targetFacade.getValueMap().entrySet()) {
+            element.setAttribute(entry.getKey(), entry.getValue());
         }
     }
 
-    /**
-     * Called by {@link PluginXmlUtility#transfer(Element, Element, Map)} to pick up an appropriate {@link XmlTransferPolicy}
-     * from the set of provided policies
-     * @param node Node ({code Element} or {@code Attribute}) to provide policy for
-     * @param prefix String prefix distinguishing whether the policy applies to attributes or child nodes
-     * @param policies {@code Map<String, XmlTransferPolicy>} describing available policies
-     * @return The selected policy, or a default policy if no appropriate option found
-     */
-    private static XmlTransferPolicy getTransferPolicyForNode(Node node, String prefix, Map<String, XmlTransferPolicy> policies) {
-        if (policies == null || policies.isEmpty()) {
-            return DEFAULT_XML_TRANSFER_POLICY;
-        }
-        return policies.entrySet().stream()
-                .filter(entry -> entry.getKey().endsWith(DialogConstants.WILDCARD)
-                        ? (prefix + node.getNodeName()).startsWith(StringUtils.stripEnd(entry.getKey(), DialogConstants.WILDCARD))
-                        : (prefix + node.getNodeName()).equals(entry.getKey()))
-                .map(Map.Entry::getValue)
-                .findFirst()
-                .orElse(DEFAULT_XML_TRANSFER_POLICY);
+    private PluginXmlUtility() {
+
     }
 }
