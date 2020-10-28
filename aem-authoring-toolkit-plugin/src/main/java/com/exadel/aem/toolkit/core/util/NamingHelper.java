@@ -17,15 +17,15 @@ package com.exadel.aem.toolkit.core.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Element;
 import com.google.common.base.CaseFormat;
 
 /**
  * Helper class for creating standard compliant names for XML entities designed to work together
  * with a {@link com.exadel.aem.toolkit.api.runtime.XmlUtility} implementation
  */
-class XmlNamingHelper {
+class NamingHelper {
     private static final String VERB_SEPARATOR = "_";
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
     private static final Pattern NODE_NAME_INDEX_PATTERN = Pattern.compile("\\d*$");
@@ -36,17 +36,14 @@ class XmlNamingHelper {
 
     private static final Pattern PARENT_PATH_PREFIX_PATTERN = Pattern.compile("^(?:\\.\\./)+");
 
-    private PluginXmlUtility xmlUtil;
     private boolean lowercaseFirst;
     private boolean preserveParentPath;
     private Pattern clearingPattern;
 
     /**
      * {@code XmlNamingHelper} constructor. Stores reference to {@link PluginXmlUtility} object
-     * @param xmlUtility {@code PluginXmlUtility} instance
      */
-    private XmlNamingHelper(PluginXmlUtility xmlUtility) {
-        this.xmlUtil = xmlUtility;
+    private NamingHelper() {
     }
 
     /**
@@ -105,25 +102,24 @@ class XmlNamingHelper {
      * @param context {@code Element} instance to search for existing child nodes
      * @return String value
      */
-    String getUniqueName(String source, String defaultValue, Element context) {
+    String getUniqueName(String source, String defaultValue, TargetFacade context) {
         String result = getValidName(source, defaultValue);
         if (context == null) {
             return result;
         }
         int index = 1;
-        while (xmlUtil.getChildElement(context, result) != null) {
+        while (context.getChild(result) != null) {
             result = NODE_NAME_INDEX_PATTERN.matcher(result).replaceFirst(String.valueOf(index++));
         }
         return result;
     }
 
     /**
-     * Creates and initializes an instance of {@link XmlNamingHelper} to deal with field names
-     * @param xmlUtility {@code PluginXmlUtility} instance
+     * Creates and initializes an instance of {@link NamingHelper} to deal with field names
      * @return {@code XmlNamingHelper} object
      */
-    static XmlNamingHelper forFieldName(PluginXmlUtility xmlUtility) {
-        XmlNamingHelper helper = new XmlNamingHelper(xmlUtility);
+    static NamingHelper forFieldName() {
+        NamingHelper helper = new NamingHelper();
         helper.lowercaseFirst = false;
         helper.preserveParentPath = true;
         helper.clearingPattern = INVALID_FIELD_NAME_PATTERN;
@@ -131,26 +127,24 @@ class XmlNamingHelper {
     }
 
     /**
-     * Creates and initializes an instance of {@link XmlNamingHelper} to deal with simple (non-namespaced) node names
+     * Creates and initializes an instance of {@link NamingHelper} to deal with simple (non-namespaced) node names
      * and attribute names
-     * @param xmlUtility {@code PluginXmlUtility} instance
      * @return {@code XmlNamingHelper} object
      */
-    static XmlNamingHelper forSimpleName(PluginXmlUtility xmlUtility) {
-        XmlNamingHelper helper = new XmlNamingHelper(xmlUtility);
+    static NamingHelper forSimpleName() {
+        NamingHelper helper = new NamingHelper();
         helper.lowercaseFirst = true;
         helper.clearingPattern = INVALID_NODE_NAME_PATTERN;
         return helper;
     }
 
     /**
-     * Creates and initializes an instance of {@link XmlNamingHelper} to deal with fully qualified (namespaced) node
+     * Creates and initializes an instance of {@link NamingHelper} to deal with fully qualified (namespaced) node
      * names and attribute names
-     * @param xmlUtility {@code PluginXmlUtility} instance
      * @return {@code XmlNamingHelper} object
      */
-    static XmlNamingHelper forNamespaceAndName(PluginXmlUtility xmlUtility) {
-        XmlNamingHelper helper = new XmlNamingHelper(xmlUtility);
+    static NamingHelper forNamespaceAndName() {
+        NamingHelper helper = new NamingHelper();
         helper.lowercaseFirst = true;
         helper.clearingPattern = INVALID_NAMESPACE_NODE_NAME_PATTERN;
         return helper;
