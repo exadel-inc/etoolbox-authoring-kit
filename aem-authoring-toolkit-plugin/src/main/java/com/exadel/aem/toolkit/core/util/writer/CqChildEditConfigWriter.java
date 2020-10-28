@@ -14,16 +14,14 @@
 
 package com.exadel.aem.toolkit.core.util.writer;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.core.handlers.editconfig.EditConfigHandlingHelper;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
@@ -34,12 +32,10 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 class CqChildEditConfigWriter extends PackageEntryWriter {
     /**
      * Basic constructor
-     * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
-     *                                               of this writer
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
      */
-    CqChildEditConfigWriter(DocumentBuilder documentBuilder, Transformer transformer) {
-        super(documentBuilder, transformer);
+    CqChildEditConfigWriter(Transformer transformer) {
+        super(transformer);
     }
 
     /**
@@ -62,17 +58,16 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Element)} abstract method to write down contents
+     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, TargetFacade)} abstract method to write down contents
      * of {@code _cq_ChildEditConfig.xml} file
      * @param componentClass The {@code Class} being processed
      * @param root The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateDomDocument(Class<?> componentClass, Element root) {
+    void populateDomDocument(Class<?> componentClass, TargetFacade root) {
         ChildEditConfig childEditConfig = componentClass.getDeclaredAnnotation(ChildEditConfig.class);
         root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
-        PluginRuntime.context().getXmlUtility().mapProperties(root, childEditConfig);
+        root.mapProperties(childEditConfig);
         EditConfigHandlingHelper.append(root, childEditConfig);
-        writeCommonProperties(componentClass, XmlScope.CQ_CHILD_EDIT_CONFIG);
     }
 }

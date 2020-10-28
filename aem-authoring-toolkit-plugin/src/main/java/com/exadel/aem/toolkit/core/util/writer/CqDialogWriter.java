@@ -14,17 +14,18 @@
 
 package com.exadel.aem.toolkit.core.util.writer;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
@@ -43,16 +44,16 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 class CqDialogWriter extends ContentXmlWriter {
     /**
      * Basic constructor
-     * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
-     *                                               of this writer
+     *
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
      */
-    CqDialogWriter(DocumentBuilder documentBuilder, Transformer transformer) {
-        super(documentBuilder, transformer);
+    CqDialogWriter(Transformer transformer) {
+        super(transformer);
     }
 
     /**
      * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
+     *
      * @return {@link XmlScope} value
      */
     @Override
@@ -61,24 +62,25 @@ class CqDialogWriter extends ContentXmlWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Element)} abstract method to write down contents
-     * of {@code _cq_dialog.xml} file. To the root node, several XML building routines are applied in sequence: the predefined
+     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, TargetFacade)} abstract method to write down contents
+     * of {@code _cq_dialog.xml} file. To the targetFacade node, several XML building routines are applied in sequence: the predefined
      * dialog container builder, the common properties writer, {@code DependsOn} handlers and any {@code CustomHandler}s defined for
      * this component class
+     *
      * @param componentClass The {@code Class} being processed
-     * @param root The root element of DOM {@link Document} to feed data to
+     * @param targetFacade   The targetFacade element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateDomDocument(Class<?> componentClass, Element root) {
+    void populateDomDocument(Class<?> componentClass, TargetFacade targetFacade) {
         Dialog dialog = componentClass.getDeclaredAnnotation(Dialog.class);
-        PluginRuntime.context().getXmlUtility().mapProperties(root, dialog, XmlScope.CQ_DIALOG);
-        root.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.DIALOG);
+        targetFacade.mapProperties(dialog, Arrays.stream(Dialog.class.getDeclaredMethods())
+                .filter(m -> !fitsInScope(m, getXmlScope())).map(Method::getName).collect(Collectors.toList()));
+        targetFacade.setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
 
         DialogLayout dialogLayout = ArrayUtils.isEmpty(dialog.tabs()) ? dialog.layout() : DialogLayout.TABS;
-        DialogContainer.getContainer(dialogLayout).build(componentClass, root);
+        DialogContainer.getContainer(dialogLayout).build(componentClass, targetFacade);
 
-        writeCommonProperties(componentClass, XmlScope.CQ_DIALOG);
-        new DependsOnTabHandler().accept(root, componentClass);
+        new DependsOnTabHandler().accept(targetFacade, componentClass);
         if (!classHasCustomDialogAnnotation(componentClass)) {
             return;
         }
@@ -86,11 +88,12 @@ class CqDialogWriter extends ContentXmlWriter {
         PluginRuntime.context().getReflectionUtility().getCustomDialogHandlers().stream()
                 .filter(handler -> customAnnotations.stream()
                         .anyMatch(annotation -> customAnnotationMatchesHandler(annotation, handler)))
-                .forEach(handler -> handler.accept(root, componentClass));
+                .forEach(handler -> handler.accept(targetFacade, componentClass));
     }
 
     /**
      * Retrieves list of {@link DialogAnnotation} instances defined for the current {@code Class}
+     *
      * @param componentClass The {@code Class} being processed
      * @return List of values, empty or non-empty
      */
@@ -103,6 +106,7 @@ class CqDialogWriter extends ContentXmlWriter {
 
     /**
      * Gets whether current {@code Class} has a custom dialog annotation attached
+     *
      * @param componentClass The {@code Class} being processed
      * @return True or false
      */
@@ -114,11 +118,19 @@ class CqDialogWriter extends ContentXmlWriter {
     /**
      * Used while enumerating available {@code CustomDialogHandler}s to set matching between a handler and a {@code CustomDialogAnnotation},
      * since one handler may serve for several annotations, and, optionally, vice versa
+     *
      * @param annotation {@link DialogAnnotation} instance
-     * @param handler {@link DialogHandler} instance
+     * @param handler    {@link DialogHandler} instance
      * @return True if the two arguments are "matching" via their properties, otherwise, false
      */
     private static boolean customAnnotationMatchesHandler(DialogAnnotation annotation, DialogHandler handler) {
         return StringUtils.equals(annotation.source(), handler.getName());
+    }
+
+    private static boolean fitsInScope(Method method, XmlScope scope) {
+        if (!method.isAnnotationPresent(PropertyScope.class)) {
+            return true;
+        }
+        return Arrays.asList(method.getAnnotation(PropertyScope.class).value()).contains(scope);
     }
 }
