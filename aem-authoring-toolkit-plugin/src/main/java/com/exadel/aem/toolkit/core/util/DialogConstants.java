@@ -139,6 +139,7 @@ public class DialogConstants {
     public static final String PN_REQUIRED = "required";
     public static final String PN_RETYPE = "retype";
     public static final String PN_SELECTED = "selected";
+    public static final String PN_SLING_RESOURCE_TYPE = "sling:resourceType";
     public static final String PN_SOURCE_CLASS = "source";
     public static final String PN_TAB_SIZE = "tabSize";
     public static final String PN_TAG_NAME = "cq:tagName";
