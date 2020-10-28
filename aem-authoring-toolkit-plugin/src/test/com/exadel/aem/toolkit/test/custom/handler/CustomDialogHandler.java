@@ -19,8 +19,9 @@ import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -37,32 +38,32 @@ public class CustomDialogHandler implements DialogHandler {
     }
 
     @Override
-    public void accept(Element element, Class<?> aClass) {
+    public void accept(TargetFacade element, Class<?> aClass) {
         visitElements(element, elt -> {
-            if (StringUtils.equals(elt.getAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY), ResourceTypes.MULTIFIELD)
+            if (StringUtils.equals(elt.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE), ResourceTypes.MULTIFIELD)
                     && isTopLevelMultifield(elt)) {
                 elt.setAttribute("multifieldSpecial", "This is added to top-level Multifields");
             }
         });
-        element.getFirstChild();
+        //element.getFirstChild();
 
     }
 
-    private static void visitElements(Element root, Consumer<Element> visitor) {
-        visitor.accept(root);
+    private static void visitElements(TargetFacade root, Consumer<Element> visitor) {
+        /*visitor.accept(root);
         if (!root.hasChildNodes()) {
             return;
         }
         IntStream.range(0, root.getChildNodes().getLength())
                 .mapToObj(pos -> (Element) root.getChildNodes().item(pos))
-                .forEach(elt -> visitElements(elt, visitor));
+                .forEach(elt -> visitElements(elt, visitor));*/
     }
 
     private static boolean isTopLevelMultifield(Element element) {
         String resourceType = Optional.ofNullable(element.getParentNode())
                 .map(Node::getParentNode)
                 .map(Node::getParentNode)
-                .map(node -> node.getAttributes().getNamedItem(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY))
+                .map(node -> node.getAttributes().getNamedItem(DialogConstants.PN_SLING_RESOURCE_TYPE))
                 .map(Node::getNodeValue)
                 .orElse(StringUtils.EMPTY);
         return !resourceType.equals(ResourceTypes.MULTIFIELD);
