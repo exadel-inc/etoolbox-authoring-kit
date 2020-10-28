@@ -13,6 +13,41 @@
  */
 package com.exadel.aem.toolkit.core.util;
 
+import java.io.File;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.MalformedParameterizedTypeException;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ConfigurationBuilder;
+
 import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
@@ -25,31 +60,10 @@ import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ConfigurationBuilder;
-
-import java.io.File;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
- * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields are marked with
+ * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields
+ * are marked with
  */
 public class PluginReflectionUtility {
     private static final String PACKAGE_BASE_WILDCARD = ".*";
@@ -108,17 +122,6 @@ public class PluginReflectionUtility {
         }
         customDialogWidgetHandlers = getHandlers(DialogWidgetHandler.class);
         return customDialogWidgetHandlers;
-    }
-
-    /**
-     * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
-     * scope of the plugin matching the specified widget annotation
-     *
-     * @param annotationClass {@code Class<?>} reference to pick up handlers for
-     * @return {@code List<DialogWidgetHandler>} of instances
-     */
-    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers(Class<? extends Annotation> annotationClass) {
-        return getCustomDialogWidgetHandlers(Collections.singletonList(annotationClass));
     }
 
     /**
@@ -319,16 +322,66 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Retrieves type of object(s) returned by the method. If method is designed to provide single object, its type
-     * is returned. But if method supplies an array, type of array's element is returned
+     * Retrieves the type represented by the provided class member. If the member is designed to provide a single object,
+     * its type is returned. But if the member represents an array, type of array's element is returned
      *
-     * @param method The method to analyze
+     * @param member The class member to analyze
      * @return Appropriate {@code Class} instance
      */
-    public static Class<?> getMethodPlainType(Method method) {
-        return method.getReturnType().isArray()
-                ? method.getReturnType().getComponentType()
-                : method.getReturnType();
+    public static Class<?> getPlainType(Member member) {
+        return getPlainType(member, false);
+    }
+
+    /**
+     * Retrieves the type represented by the provided class member. If the member is designed to provide a single object,
+     * its type is returned. If the member represents an array, type of array's element is returned.
+     * If {@code extractGeneric} flag is set to true, the represented value is examined for being a parametrized
+     * collection, and if so, collection's parameter type is turned
+     *
+     * @param member The class member to analyze
+     * @return Appropriate {@code Class} instance
+     */
+    public static Class<?> getPlainType(Member member, boolean extractParamType) {
+        Class<?> result;
+        if (member instanceof Field) {
+            result = ((Field) member).getType();
+        } else {
+            result = ((Method) member).getReturnType();
+        }
+        if (result.isArray()) {
+            result = result.getComponentType();
+        }
+        if (extractParamType && ClassUtils.isAssignable(result, Collection.class)) {
+            return getGenericType(member, result);
+        }
+        return result;
+    }
+
+
+    /**
+     * Retrieves the underlying parameter type of the class member provided. If the member is an array or a collection.
+     * the item (parameter) type is returned; otherwise, the mere member type is returned
+     *
+     * @param member The class member to analyze
+     * @param defaultValue The value to return if parameter type extraction fails
+     * @return Appropriate {@code Class} instance
+     */
+    private static Class<?> getGenericType(Member member, Class<?> defaultValue) {
+        try {
+            ParameterizedType fieldGenericType;
+            if (member instanceof Field) {
+                fieldGenericType = (ParameterizedType) ((Field) member).getGenericType();
+            } else {
+                fieldGenericType = (ParameterizedType) ((Method) member).getGenericReturnType();
+            }
+            Type[] typeArguments = fieldGenericType.getActualTypeArguments();
+            if (ArrayUtils.isEmpty(typeArguments)) {
+                return defaultValue;
+            }
+            return (Class<?>) typeArguments[0];
+        } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
+            return defaultValue;
+        }
     }
 
     /**
@@ -362,7 +415,6 @@ public class PluginReflectionUtility {
         Collections.reverse(result);
         return result;
     }
-
 
     /**
      * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
