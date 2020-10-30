@@ -19,6 +19,7 @@ package com.exadel.aem.toolkit.api.annotations.meta;
  */
 @SuppressWarnings("unused")
 public class ResourceTypes {
+    public static final String ACCORDION = "granite/ui/components/coral/foundation/accordion";
     public static final String ACS_LIST = "acs-commons/components/utilities/genericlist/datasource";
     public static final String ALERT = "granite/ui/components/coral/foundation/alert";
     public static final String AUTOCOMPLETE = "granite/ui/components/coral/foundation/form/autocomplete";

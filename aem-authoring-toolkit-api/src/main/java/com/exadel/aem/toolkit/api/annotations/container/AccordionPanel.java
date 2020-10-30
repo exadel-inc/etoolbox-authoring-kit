@@ -13,23 +13,43 @@
  */
 package com.exadel.aem.toolkit.api.annotations.container;
 
+import com.exadel.aem.toolkit.api.annotations.meta.*;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * In multi-tab TouchUI Dialog setup, used to specify on which tab a dialog field is placed
- * @deprecated Use {@link PlaceOn} instead
+ * Used to set up
+ * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html">
+ * accordion element</a> in TouchUI dialog
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
+@ResourceType(ResourceTypes.ACCORDION)
+@PropertyMapping
 @SuppressWarnings("unused")
-public @interface PlaceOnTab {
+public @interface AccordionPanel {
+
     /**
-     * String equal to appropriate {@link Tab#title()} value
-     * @return String value
+     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs (or accordion)/items/<this_accordion>} node
+     *
+     * @return String value, required
      */
-    String value();
+    String title();
+
+    /**
+     * True to disable the item; false otherwise.
+     *
+     * @return True or false
+     */
+    boolean disabled() default false;
+
+    /**
+     * True to open the item initially; false otherwise.
+     *
+     * @return True or false
+     */
+    boolean active() default false;
 }

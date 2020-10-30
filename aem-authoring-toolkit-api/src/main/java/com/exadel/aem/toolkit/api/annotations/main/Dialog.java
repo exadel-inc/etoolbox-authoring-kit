@@ -18,6 +18,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
@@ -169,4 +170,11 @@ public @interface Dialog {
      * @return One or more {@code Tab} annotations
      */
     Tab[] tabs() default {};
+
+    /**
+     * For the tabbed TouchUI dialog layout, enumerates the tabs to be rendered
+     * @see AccordionPanel
+     * @return One or more {@code Accordion} annotations
+     */
+    AccordionPanel[] accordionTabs() default {};
 }

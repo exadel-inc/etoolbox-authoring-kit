@@ -11,25 +11,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.container;
+package com.exadel.aem.toolkit.api.annotations.widgets;
+
+import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * In multi-tab TouchUI Dialog setup, used to specify on which tab a dialog field is placed
- * @deprecated Use {@link PlaceOn} instead
- */
+
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
+@ResourceType(ResourceTypes.TABS)
+@PropertyMapping
 @SuppressWarnings("unused")
-public @interface PlaceOnTab {
+public @interface TabsWidget {
+
     /**
-     * String equal to appropriate {@link Tab#title()} value
-     * @return String value
+     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs (or accordion)/items/<this_tabs>} node
+     *
+     * @return String value, required
      */
-    String value();
+    String title();
+
+    /**
+     * For the tabbed TouchUI dialog layout, enumerates the tabs to be rendered
+     *
+     * @return One or more {@code Tab} annotations
+     * @see Tab
+     */
+    Tab[] tabs() default {};
 }

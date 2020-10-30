@@ -14,15 +14,10 @@
 
 package com.exadel.aem.toolkit.samples.models;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.Default;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
-
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
@@ -32,6 +27,12 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Default;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 @Dialog(
         name = "content/dungeons-component",
@@ -39,8 +40,8 @@ import com.exadel.aem.toolkit.samples.constants.GroupConstants;
         description = "Choose a dungeon for your warrior",
         resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
         componentGroup = GroupConstants.COMPONENT_GROUP,
-        tabs = {
-                @Tab(title = ParentSelectComponent.TAB_MAIN)
+        accordionTabs = {
+                @AccordionPanel(title = "Main")
         }
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
@@ -62,24 +63,34 @@ public class DungeonsComponent extends ParentSelectComponent {
                     RteFeatures.LISTS_UNORDERED
             })
     @ValueMapValue
+    @PlaceOn("Main")
     private String dungeonRules;
 
-    @DialogField(label = LABEL_DUNGEON_SELECT)
-    @Select(options = {
-            @Option(text = "Rotten swamps", value = "1"),
-            @Option(text = "Ice valley", value = "2")
-    })
-    @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
-    @Default(values = "1")
-    @ValueMapValue
-    private String dungeon;
+    @AccordionWidget(title = LABEL_DUNGEON_SELECT, panels = {@AccordionPanel(title = LABEL_DUNGEON_SELECT)})
+    @PlaceOn("Main")
+    DungeonSelect dungeon;
+
+    static class DungeonSelect {
+        @Select(options = {
+                @Option(text = "Rotten swamps", value = "1"),
+                @Option(text = "Ice valley", value = "2")
+        })
+        @DialogField(label = LABEL_DUNGEON_SELECT)
+        @Default(values = "1")
+        @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
+        @ValueMapValue
+        @PlaceOn("Dungeons select")
+        String dungeonsSelect;
+
+    }
+
 
     public String getDungeonRules() {
         return StringUtils.defaultIfBlank(dungeonRules, DEFAULT_RULES);
     }
 
     public String getDungeonDescription() {
-        if ("1".equals(dungeon)) {
+        if ("1".equals(dungeon.dungeonsSelect)) {
             return DEFAULT_ROTTEN_SWAMPS_TEXT;
         }
         return DEFAULT_ICE_VALLEY_TEXT;
