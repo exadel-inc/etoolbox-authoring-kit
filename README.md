@@ -1,4 +1,5 @@
 # AEM Authoring Toolkit
+#test
 ![AEM Authoring Toolkit Logo](https://github.com/exadel-inc/aem-authoring-toolkit/blob/master/aem-authoring-toolkit-assets/src/main/content/META-INF/vault/definition/thumbnail.png)
 
 **AEM Authoring Toolkit** is the set of tools for creating comprehensive TouchUI dialogs for AEM components  with use of existing and/or specially designed Java classes. 
