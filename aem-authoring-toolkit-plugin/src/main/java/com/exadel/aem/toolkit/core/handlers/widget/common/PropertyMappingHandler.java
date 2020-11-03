@@ -18,23 +18,23 @@ import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 
 /**
  * Handler for storing sets of generic widget properties to a Granite UI widget XML node
  */
-public class PropertyMappingHandler implements BiConsumer<SourceFacade, TargetFacade> {
+public class PropertyMappingHandler implements BiConsumer<SourceFacade, TargetBuilder> {
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param targetFacade Current {@code TargetFacade} instance
+     * @param source Current {@code SourceFacade} instance
+     * @param target Current {@code TargetFacade} instance
      */
     @Override
-    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
-        Arrays.stream(sourceFacade.adaptTo(Annotation[].class))
+    public void accept(SourceFacade source, TargetBuilder target) {
+        Arrays.stream(source.adaptTo(Annotation[].class))
                 .filter(a -> a.annotationType().isAnnotationPresent(PropertyMapping.class))
-                .forEach(targetFacade::mapProperties);
+                .forEach(target::mapProperties);
     }
 }

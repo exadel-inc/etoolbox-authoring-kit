@@ -14,12 +14,9 @@
 
 package com.exadel.aem.toolkit.test.custom.handler;
 
-import java.lang.reflect.Field;
-
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.runtime.Injected;
@@ -39,8 +36,8 @@ public class CustomWidgetHandler implements DialogWidgetHandler {
     }
 
     @Override
-    public void accept(SourceFacade sourceFacade, TargetFacade element) {
-        CustomWidgetAnnotation testCustomAnnotation = sourceFacade.adaptTo(CustomWidgetAnnotation.class);
-        element.setAttribute("customField", testCustomAnnotation.customField());
+    public void accept(SourceFacade source, TargetBuilder element) {
+        CustomWidgetAnnotation testCustomAnnotation = source.adaptTo(CustomWidgetAnnotation.class);
+        element.attribute("customField", testCustomAnnotation.customField());
     }
 }

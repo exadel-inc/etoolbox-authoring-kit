@@ -20,7 +20,7 @@ import java.util.function.BiConsumer;
  * Serves as the marker interface for creating and enumerating handlers instances
  */
 @SuppressWarnings("unused")
-public interface DialogWidgetHandler extends BiConsumer<SourceFacade, TargetFacade> {
+public interface DialogWidgetHandler extends BiConsumer<SourceFacade, TargetBuilder> {
     /**
      * Identifies this DialogWidgetHandler for binding to a specific {@code DialogWidgetAnnotation}
      * @return String value, non-blank

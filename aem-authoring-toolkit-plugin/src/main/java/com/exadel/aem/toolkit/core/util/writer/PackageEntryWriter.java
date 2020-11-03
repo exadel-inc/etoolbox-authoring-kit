@@ -28,8 +28,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
-import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.core.TargetBuilderImpl;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
@@ -110,9 +110,9 @@ abstract class PackageEntryWriter {
     /**
      * Triggers the particular routines for storing component-related data in the XML markup
      * @param componentClass The {@code Class} being processed
-     * @param targetFacade The targetFacade element of DOM {@link Document} to feed data to
+     * @param target The targetFacade element of DOM {@link Document} to feed data to
      */
-    abstract void populateDomDocument(Class<?> componentClass, TargetFacade targetFacade);
+    abstract void populateDomDocument(Class<?> componentClass, TargetBuilder target);
 
     /**
      * Wraps DOM document creating with use of a {@link DocumentBuilder} and populating it with data
@@ -120,7 +120,7 @@ abstract class PackageEntryWriter {
      * @return {@link Document} created
      */
     private Document createDomDocument(Class<?> componentClass) throws ParserConfigurationException {
-        TargetFacade rootElement = new TargetFacadeFacadeImpl(DialogConstants.NN_ROOT);
+        TargetBuilder rootElement = new TargetBuilderImpl(DialogConstants.NN_ROOT);
         populateDomDocument(componentClass, rootElement);
         Document document = rootElement.buildXml(PackageWriter.createDocumentBuilder().newDocument());
         writeCommonProperties(componentClass, getXmlScope(), document);

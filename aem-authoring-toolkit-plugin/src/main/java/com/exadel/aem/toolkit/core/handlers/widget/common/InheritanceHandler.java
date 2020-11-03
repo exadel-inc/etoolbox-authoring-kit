@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import com.exadel.aem.toolkit.core.SourceFacadeImpl;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
@@ -31,43 +31,43 @@ import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
  * Handler for processing Granite UI widgets features "inherited" by the current component class {@code SourceFacade} from
  * other SourceFacades via {@link Extends} mechanism
  */
-public class InheritanceHandler implements BiConsumer<SourceFacade, TargetFacade> {
-    private BiConsumer<SourceFacade, TargetFacade> descendantChain;
-    public InheritanceHandler(BiConsumer<SourceFacade, TargetFacade> descendantChain) {
+public class InheritanceHandler implements BiConsumer<SourceFacade, TargetBuilder> {
+    private BiConsumer<SourceFacade, TargetBuilder> descendantChain;
+    public InheritanceHandler(BiConsumer<SourceFacade, TargetBuilder> descendantChain) {
         this.descendantChain = descendantChain;
     }
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param targetFacade Current {@code TargetFacade} instance
+     * @param source Current {@code SourceFacade} instance
+     * @param target Current {@code TargetFacade} instance
      */
     @Override
-    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
+    public void accept(SourceFacade source, TargetBuilder target) {
         if (descendantChain == null) return;
-        Deque<SourceFacade> inheritanceTree = getInheritanceTree(sourceFacade);
+        Deque<SourceFacade> inheritanceTree = getInheritanceTree(source);
         while (!inheritanceTree.isEmpty()) {
-            descendantChain.accept(inheritanceTree.pollLast(), targetFacade); // to render 'ancestors' of context sourceFacade starting from next handler in chain
+            descendantChain.accept(inheritanceTree.pollLast(), target); // to render 'ancestors' of context source starting from next handler in chain
         }
     }
 
     /**
      * Builds the inheritance sequence for the current {@code Field}
-     * @param sourceFacade Current {@code SourceFacade} instance
+     * @param source Current {@code SourceFacade} instance
      * @return Ancestral {@code SourceFacade}s, as an ordered sequence
      */
-    private static Deque<SourceFacade> getInheritanceTree(SourceFacade sourceFacade) {
+    private static Deque<SourceFacade> getInheritanceTree(SourceFacade source) {
         Deque<SourceFacade> result = new LinkedList<>();
-        DialogWidget referencedComponent = DialogWidgets.fromSourceFacade(sourceFacade);
+        DialogWidget referencedComponent = DialogWidgets.fromSourceFacade(source);
         if (referencedComponent == null) {
             return result;
         }
-        Extends extendsAnnotation = sourceFacade.adaptTo(Extends.class);
+        Extends extendsAnnotation = source.adaptTo(Extends.class);
         while (extendsAnnotation != null) {
-            String referencedFieldName = extendsAnnotation.field().isEmpty() ? ((Member) sourceFacade.getSource()).getName() : extendsAnnotation.field();
+            String referencedFieldName = extendsAnnotation.field().isEmpty() ? ((Member) source.getSource()).getName() : extendsAnnotation.field();
             try {
                 SourceFacade referencedField = new SourceFacadeImpl(extendsAnnotation.value().getDeclaredField(referencedFieldName));
-                if (referencedField.equals(sourceFacade) || result.contains(referencedField)) { // to avoid circular references
+                if (referencedField.equals(source) || result.contains(referencedField)) { // to avoid circular references
                     break;
                 }
                 if (referencedComponent.equals(DialogWidgets.fromSourceFacade(referencedField))) { // to avoid mixing up props of different components

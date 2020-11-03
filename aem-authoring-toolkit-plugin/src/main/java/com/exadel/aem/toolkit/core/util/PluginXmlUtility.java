@@ -20,17 +20,15 @@ import java.util.Map;
 import java.util.function.BinaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
-import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.core.TargetBuilderImpl;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.writer.PackageWriter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
@@ -67,76 +65,75 @@ public class PluginXmlUtility {
      */
     public static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
-    public static void appendDataAttributes(TargetFacade targetFacade, Data[] data) {
+    public static void appendDataAttributes(TargetBuilder target, Data[] data) {
         if (ArrayUtils.isEmpty(data)) {
             return;
         }
-        appendDataAttributes(targetFacade, Arrays.stream(data).collect(Collectors.toMap(Data::name, Data::value)));
+        appendDataAttributes(target, Arrays.stream(data).collect(Collectors.toMap(Data::name, Data::value)));
     }
 
-    public static void appendDataAttributes(TargetFacade targetFacade, Map<String, String> data) {
+    public static void appendDataAttributes(TargetBuilder target, Map<String, String> data) {
         if (data == null || data.isEmpty()) {
             return;
         }
-        TargetFacade graniteDataNode = targetFacade.getOrAddChild(DialogConstants.NN_DATA);
-        graniteDataNode.setName(DialogConstants.NN_DATA);
+        TargetBuilder graniteDataNode = target.getOrAddChild(DialogConstants.NN_DATA);
         data.entrySet().stream()
                 .filter(entry -> StringUtils.isNotBlank(entry.getKey()))
-                .forEach(entry -> graniteDataNode.setAttribute(entry.getKey(), entry.getValue()));
+                .forEach(entry -> graniteDataNode.attribute(entry.getKey(), entry.getValue()));
     }
 
     /**
      * Appends {@link DataSource} value and, for compatibility reasons, deprecated {@code acsListPath}
      * and {@code acsListResourceType} values to an {@code Element} node
-     * @param targetFacade TargetFacade to store data in
+     * @param target TargetFacade to store data in
      * @param dataSource Provided values as a {@code DataSource} annotation
      * @param acsListPath Path to ACS Commons List in JCR repository
      * @param acsListResourceType Use this to set {@code sling:resourceType} of data source, other than standard
      * @return Appended {@code datasource} node
      */
-    public static TargetFacade appendDataSource(TargetFacade targetFacade, DataSource dataSource, String acsListPath, String acsListResourceType) {
+    public static TargetBuilder appendDataSource(TargetBuilder target, DataSource dataSource, String acsListPath, String acsListResourceType) {
         Map<String, String> arbitraryProperties = Arrays.stream(dataSource.properties())
                 .collect(Collectors.toMap(Property::name, Property::value));
-        TargetFacade dataSourceElement = appendDataSource(targetFacade, dataSource.path(), dataSource.resourceType(), arbitraryProperties);
+        TargetBuilder dataSourceElement = appendDataSource(target, dataSource.path(), dataSource.resourceType(), arbitraryProperties);
         if (dataSourceElement == null) {
-            dataSourceElement = appendAcsCommonsList(targetFacade, acsListPath, acsListResourceType);
+            dataSourceElement = appendAcsCommonsList(target, acsListPath, acsListResourceType);
         }
         return dataSourceElement;
     }
 
     /**
      * Appends to the current {@code Element} node and returns a child {@code datasource} node
-     * @param targetFacade Element to store data in
+     * @param target Element to store data in
      * @param path Path to targetFacade
      * @param resourceType Use this to set {@code sling:resourceType} of data source
      * @return Appended {@code datasource} node, or null if the provided {@code resourceType} is invalid
      */
-    private static TargetFacade appendDataSource(TargetFacade targetFacade, String path, String resourceType, Map<String, String> properties) {
+    private static TargetBuilder appendDataSource(TargetBuilder target, String path, String resourceType, Map<String, String> properties) {
         if (StringUtils.isBlank(resourceType)) {
             return null;
         }
         properties.put(DialogConstants.PN_PATH, path);
-        TargetFacade dataSourceElement = new TargetFacadeFacadeImpl(DialogConstants.NN_DATASOURCE)
-                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
+        TargetBuilder dataSourceElement = new TargetBuilderImpl(DialogConstants.NN_DATASOURCE)
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
                 .setAttributes(properties);
-        return targetFacade.appendChild(dataSourceElement);
+        return target.appendChild(dataSourceElement);
     }
 
     /**
      * Appends to the current {@code Element} node and returns a child {@code datasource} node bearing link to an ACS Commons list
-     * @param targetFacade {@code TargetFacade} to store data in
+     * @param target {@code TargetFacade} to store data in
      * @param path Path to ACS Commons List in JCR repository
      * @param resourceType Use this to set {@code sling:resourceType} of data source, other than standard
      * @return Appended {@code datasource} node, or null if the provided {@code path} is invalid
      */
-    private static TargetFacade appendAcsCommonsList(TargetFacade targetFacade, String path, String resourceType) {
+    private static TargetBuilder appendAcsCommonsList(TargetBuilder target, String path, String resourceType) {
         if (StringUtils.isBlank(path)) {
             return null;
         }
-        TargetFacade dataSourceElement = new TargetFacadeFacadeImpl(DialogConstants.NN_DATASOURCE)
-                .setAttribute(DialogConstants.PN_PATH, path)
-                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
-        targetFacade.appendChild(dataSourceElement);
+        TargetBuilder dataSourceElement = new TargetBuilderImpl(DialogConstants.NN_DATASOURCE)
+                .attribute(DialogConstants.PN_PATH, path)
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
+        target.appendChild(dataSourceElement);
         return dataSourceElement;
     }
 
@@ -167,8 +164,8 @@ public class PluginXmlUtility {
         return result;
     }
 
-    public static Document buildXml(TargetFacade targetFacade, Document document) throws ParserConfigurationException {
-        Element root = populateDocument(targetFacade, document);
+    public static Document buildXml(TargetBuilder target, Document document) {
+        Element root = populateDocument(target, document);
         XML_NAMESPACES.forEach((key, value) -> {
                     if (StringUtils.isNoneBlank(key, value)) root.setAttribute(key, value);
                 });
@@ -176,15 +173,15 @@ public class PluginXmlUtility {
         return document;
     }
 
-    private static Element populateDocument(TargetFacade targetFacade, Document document) {
-        Element tmp = document.createElement(targetFacade.getName());
-        mapProperties(tmp, targetFacade);
-        targetFacade.getListChildren().forEach(child -> tmp.appendChild(populateDocument(child, document)));
+    private static Element populateDocument(TargetBuilder target, Document document) {
+        Element tmp = document.createElement(target.getName());
+        mapProperties(tmp, target);
+        target.getListChildren().forEach(child -> tmp.appendChild(populateDocument(child, document)));
         return tmp;
     }
 
-    private static void mapProperties(Element element, TargetFacade targetFacade) {
-        for (Map.Entry<String, String> entry : targetFacade.getValueMap().entrySet()) {
+    private static void mapProperties(Element element, TargetBuilder target) {
+        for (Map.Entry<String, String> entry : target.getValueMap().entrySet()) {
             element.setAttribute(entry.getKey(), entry.getValue());
         }
     }

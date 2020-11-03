@@ -15,9 +15,8 @@ package com.exadel.aem.toolkit.core.handlers.container;
 
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import org.apache.commons.lang3.EnumUtils;
-import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.core.util.writer.PackageWriter;
@@ -31,9 +30,9 @@ public enum DialogContainer {
     FIXED_COLUMNS(new FixedColumnsHandler()),
     TABS(new TabsHandler());
 
-    private BiConsumer<Class<?>, TargetFacade> handler;
+    private BiConsumer<Class<?>, TargetBuilder> handler;
 
-    DialogContainer(BiConsumer<Class<?>, TargetFacade> handler) {
+    DialogContainer(BiConsumer<Class<?>, TargetBuilder> handler) {
         this.handler = handler;
     }
 
@@ -41,10 +40,10 @@ public enum DialogContainer {
      * Called via {@link PackageWriter} to build dialog markup based on the set
      * of component class fields
      * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param targetFacade XML document root element
+     * @param target XML document root element
      */
-    public void build(Class<?> componentClass, TargetFacade targetFacade){
-        handler.accept(componentClass, targetFacade);
+    public void build(Class<?> componentClass, TargetBuilder target){
+        handler.accept(componentClass, target);
     }
 
     /**

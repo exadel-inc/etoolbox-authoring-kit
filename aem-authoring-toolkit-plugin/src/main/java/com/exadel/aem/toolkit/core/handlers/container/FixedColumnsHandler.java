@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
-import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.core.TargetBuilderImpl;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.core.handlers.Handler;
@@ -29,28 +29,28 @@ import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 /**
  * The {@link Handler} for a fixed-columns TouchUI dialog.
  */
-public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, TargetFacade> {
+public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder> {
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
      * to process component-backing Java class and append the results to the XML root node
      * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param targetFacade XML document root element
+     * @param target XML document root element
      */
     @Override
-    public void accept(Class<?> componentClass, TargetFacade targetFacade) {
-        TargetFacade content = new TargetFacadeFacadeImpl(DialogConstants.NN_CONTENT)
-            .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
+    public void accept(Class<?> componentClass, TargetBuilder target) {
+        TargetBuilder content = new TargetBuilderImpl(DialogConstants.NN_CONTENT)
+            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 
-        TargetFacade layout = new TargetFacadeFacadeImpl(DialogConstants.NN_LAYOUT)
-                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.FIXED_COLUMNS);
+        TargetBuilder layout = new TargetBuilderImpl(DialogConstants.NN_LAYOUT)
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.FIXED_COLUMNS);
 
-        TargetFacade contentItems = new TargetFacadeFacadeImpl(DialogConstants.NN_ITEMS);
+        TargetBuilder contentItems = new TargetBuilderImpl(DialogConstants.NN_ITEMS);
 
-        TargetFacade contentItemsColumn = new TargetFacadeFacadeImpl(
+        TargetBuilder contentItemsColumn = new TargetBuilderImpl(
                 DialogConstants.NN_COLUMN)
-                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 
-        targetFacade.appendChild(content);
+        target.appendChild(content);
 
         content.appendChild(layout);
         content.appendChild(contentItems);

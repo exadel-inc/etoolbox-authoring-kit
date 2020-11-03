@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -145,7 +145,7 @@ public class XmlAttributeSettingHelper<T> {
         return this;
     }
 
-    public void setAttribute(TargetFacade targetFacade) {
+    public void setAttribute(TargetBuilder target) {
         if (!valueTypeIsSupported) {
             return;
         }
@@ -156,9 +156,9 @@ public class XmlAttributeSettingHelper<T> {
                         .map(this::cast)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
-                setAttribute(targetFacade, invocationResultList);
+                setAttribute(target, invocationResultList);
             } else {
-                setAttribute(targetFacade, cast(invocationResult));
+                setAttribute(target, cast(invocationResult));
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
@@ -198,7 +198,7 @@ public class XmlAttributeSettingHelper<T> {
      * @param element Element node instance
      * @param value Particular value to be rendered
      */
-    void setAttribute(TargetFacade element, T value) {
+    void setAttribute(TargetBuilder element, T value) {
         if (!valueTypeIsSupported) {
             return;
         }
@@ -219,7 +219,7 @@ public class XmlAttributeSettingHelper<T> {
      * @param element Element node instance
      * @param values List of values to be rendered
      */
-    void setAttribute(TargetFacade element, List<T> values) {
+    void setAttribute(TargetBuilder element, List<T> values) {
         if (!valueTypeIsSupported || values == null || values.isEmpty()) {
             return;
         }
@@ -241,11 +241,11 @@ public class XmlAttributeSettingHelper<T> {
      * @param element Element node instance
      * @param value String to store as the attribute
      */
-    private void setAttribute(TargetFacade element, String value) {
+    private void setAttribute(TargetBuilder element, String value) {
         String oldAttributeValue = element.hasAttribute(name)
                 ? element.getAttribute(name)
                 : "";
-        element.setAttribute(name, valueMerger.apply(oldAttributeValue, value));
+        element.attribute(name, valueMerger.apply(oldAttributeValue, value));
     }
 
     /**

@@ -14,46 +14,29 @@
 
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.stream.IntStream;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
-import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Element;
-import com.google.common.collect.ImmutableMap;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 
-import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.core.handlers.Handler;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
-import com.exadel.aem.toolkit.core.util.XmlTransferPolicy;
 
 /**
  * Handler for creating ad-hoc {@code Multifield}s for {@link Multiple}-marked dialog fields
  */
-public class MultipleHandler implements Handler, BiConsumer<SourceFacade, TargetFacade> {
+public class MultipleHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
     private static final String PREFIX_GRANITE = "granite:*";
     private static final String POSTFIX_NESTED = "_nested";
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param targetFacade XML targetFacade
+     * @param source Current {@code SourceFacade} instance
+     * @param target XML targetFacade
      */
     @Override
-    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
-        if (sourceFacade.adaptTo(Multiple.class) == null) {
+    public void accept(SourceFacade source, TargetBuilder target) {
+        if (source.adaptTo(Multiple.class) == null) {
             return;
         }
     }/*
@@ -67,11 +50,11 @@ public class MultipleHandler implements Handler, BiConsumer<SourceFacade, Target
             isComposite = true;
 
         } else if (isMultifield(targetFacade)) {
-            fieldElement = getNestedMultifieldWrapper(targetFacade, sourceFacade);
+            fieldElement = getNestedMultifieldWrapper(targetFacade, source);
             isComposite = true;
 
         } else {
-            fieldElement = getSimpleWrapper(targetFacade, sourceFacade);
+            fieldElement = getSimpleWrapper(targetFacade, source);
         }
 
         // Facilitate the modified targetFacade to work as Multifield
@@ -86,7 +69,7 @@ public class MultipleHandler implements Handler, BiConsumer<SourceFacade, Target
         // Since this targetFacade has just "emerged" as a multifield, we need to check if there are multifield bound
         // (custom) handlers and run such one more time
         PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers(Collections.singletonList(MultiField.class))
-                .forEach(handler -> handler.accept(sourceFacade, targetFacade));
+                .forEach(handler -> handler.accept(source, targetFacade));
     }
 
     *//**
@@ -110,15 +93,15 @@ public class MultipleHandler implements Handler, BiConsumer<SourceFacade, Target
     }
 
     *//**
-     * Creates a {@code sourceFacade} node encapsulating source element's properties to be used within a synthetic multifield
+     * Creates a {@code source} node encapsulating source element's properties to be used within a synthetic multifield
      * @param source Previously rendered {@code Element} being converted to a synthetic multifield
-     * @param sourceFacade Current {@code Field} instance
-     * @return {@code Element} representing the {@code sourceFacade} node
+     * @param source Current {@code Field} instance
+     * @return {@code Element} representing the {@code source} node
      *//*
-    private Element getSimpleWrapper(Element source, SourceFacade sourceFacade) {
+    private Element getSimpleWrapper(Element source, SourceFacade source) {
         Element result = getXmlUtil().createNodeElement(DialogConstants.NN_FIELD);
         // Move content to the new wrapper
-        getXmlUtil().transfer(source, result, getTransferPolicies(sourceFacade));
+        getXmlUtil().transfer(source, result, getTransferPolicies(source));
         return result;
     }
 
@@ -150,21 +133,21 @@ public class MultipleHandler implements Handler, BiConsumer<SourceFacade, Target
     }
 
     *//**
-     * Creates a {@code sourceFacade} node wrapping an existing {@code multifield} that will be used within a synthetic multifield
+     * Creates a {@code source} node wrapping an existing {@code multifield} that will be used within a synthetic multifield
      * @param source Previously rendered {@code Element} being converted to a synthetic multifield
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @return {@code Element} representing the {@code sourceFacade} node
+     * @param source Current {@code SourceFacade} instance
+     * @return {@code Element} representing the {@code source} node
      *//*
-    private Element getNestedMultifieldWrapper(Element source, SourceFacade sourceFacade) {
+    private Element getNestedMultifieldWrapper(Element source, SourceFacade source) {
         Element result = getXmlUtil().createNodeElement(DialogConstants.NN_FIELD);
-        // Create nested "items > multifield > sourceFacade > items" node structure
+        // Create nested "items > multifield > source > items" node structure
         Element nestedItems = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
         Element nestedMultifield = getXmlUtil().createNodeElement(source.getTagName() + POSTFIX_NESTED);
         nestedItems.appendChild(nestedMultifield);
         result.appendChild(nestedItems);
 
         // Move existing multifield attributes to the nested multifield
-        Map<String, XmlTransferPolicy> standardPolicies = getTransferPolicies(sourceFacade);
+        Map<String, XmlTransferPolicy> standardPolicies = getTransferPolicies(source);
         Map<String, XmlTransferPolicy> multifieldPolicies = new LinkedHashMap<>();
         multifieldPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_COMPOSITE, XmlTransferPolicy.COPY);
         multifieldPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.NN_FIELD, XmlTransferPolicy.MOVE);
@@ -172,7 +155,7 @@ public class MultipleHandler implements Handler, BiConsumer<SourceFacade, Target
         multifieldPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_SLING_RESOURCE_TYPE, XmlTransferPolicy.COPY);
         getXmlUtil().transfer(source, nestedMultifield, multifieldPolicies);
 
-        // Set the "name" attribute of the "sourceFacade" node of the current multifield
+        // Set the "name" attribute of the "source" node of the current multifield
         // At the same time, alter the "name" attribute of the nested multifield to not get mixed with the name of the current one
         Element nestedMultifieldField = getXmlUtil().getChildElement(nestedMultifield, DialogConstants.NN_FIELD);
         String nestedMultifieldFieldName = StringUtils.defaultString(nestedMultifieldField.getAttribute(DialogConstants.PN_NAME));
@@ -185,10 +168,10 @@ public class MultipleHandler implements Handler, BiConsumer<SourceFacade, Target
     *//**
      * Generates set of node transfer policies to properly distribute XML element requisites between the wrapper level
      * and the nested element level while converting a singular element to a multifield
-     * @param sourceFacade Current {@code SourceFacade} instance
+     * @param source Current {@code SourceFacade} instance
      * @return {@code Map<String, XmlTransferPolicy>} instance
      *//*
-    private static Map<String, XmlTransferPolicy> getTransferPolicies(SourceFacade sourceFacade) {
+    private static Map<String, XmlTransferPolicy> getTransferPolicies(SourceFacade source) {
         Map<String, XmlTransferPolicy> transferPolicies = new LinkedHashMap<>();
 
         // All "standard" @DialogField props will belong to the Multifield node unless in the cases specified below,
@@ -201,7 +184,7 @@ public class MultipleHandler implements Handler, BiConsumer<SourceFacade, Target
                     transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + propertyName, XmlTransferPolicy.SKIP);
                 });
         // Also, all the values set via @Property will belong to the Multifield node
-        Arrays.stream(sourceFacade.adaptTo(Property[].class))
+        Arrays.stream(source.adaptTo(Property[].class))
                 .forEach(property -> transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + property.name(), XmlTransferPolicy.SKIP));
         // Need to override policy for "name" as has been stored in a loop above
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_NAME, XmlTransferPolicy.MOVE);
@@ -212,7 +195,7 @@ public class MultipleHandler implements Handler, BiConsumer<SourceFacade, Target
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_REQUIRED, XmlTransferPolicy.MOVE);
         // Need to leave "granite:"-prefixed props (as they are probably set via @Attribute) at the multifield level
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + PREFIX_GRANITE, XmlTransferPolicy.MOVE);
-        // Rest of element attributes will move to the inner sourceFacade
+        // Rest of element attributes will move to the inner source
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.WILDCARD, XmlTransferPolicy.MOVE);
         // While all child nodes will stay as the property of multifield
         transferPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.WILDCARD, XmlTransferPolicy.SKIP);

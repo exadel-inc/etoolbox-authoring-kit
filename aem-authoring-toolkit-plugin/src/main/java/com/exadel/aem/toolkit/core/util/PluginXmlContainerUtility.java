@@ -24,9 +24,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
-import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.core.TargetBuilderImpl;
 
 import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
@@ -49,20 +48,20 @@ public class PluginXmlContainerUtility {
     /**
      * Processes the specified {@link Member}s and appends the generated XML markup to the specified container element
      * @param container {@code TargetFacade} definition of a pre-defined widget container
-     * @param sourceFacades List of {@code Member}s of a component's Java class
+     * @param sources List of {@code Member}s of a component's Java class
      */
-    public static void append(TargetFacade container, List<SourceFacade> sourceFacades) {
+    public static void append(TargetBuilder container, List<SourceFacade> sources) {
         Map<SourceFacade, String> managedFields = new LinkedHashMap<>();
-        TargetFacade itemsElement = new TargetFacadeFacadeImpl(DialogConstants.NN_ITEMS);
+        TargetBuilder itemsElement = new TargetBuilderImpl(DialogConstants.NN_ITEMS);
         container.appendChild(itemsElement);
 
-        for (SourceFacade sourceFacade : sourceFacades) {
-            DialogWidget widget = DialogWidgets.fromSourceFacade(sourceFacade);
+        for (SourceFacade source : sources) {
+            DialogWidget widget = DialogWidgets.fromSourceFacade(source);
             if (widget == null) {
                 continue;
             }
-            TargetFacade newElement = widget.appendTo(itemsElement, sourceFacade);
-            managedFields.put(sourceFacade, newElement.getName());
+            TargetBuilder newElement = widget.appendTo(itemsElement, source);
+            managedFields.put(source, newElement.getName());
         }
 
         if (container.hasChildren()) {
@@ -77,11 +76,11 @@ public class PluginXmlContainerUtility {
      * @param container XML definition of an immediate parent for widget nodes (typically, an {@code items} element)
      * @param managedFields {@code Map<Field, String>} that matches rendered fields to corresponding element names
      */
-    private static void checkForDuplicateFields(TargetFacade container, Map<SourceFacade, String> managedFields) {
+    private static void checkForDuplicateFields(TargetBuilder container, Map<SourceFacade, String> managedFields) {
         List<String> childElementsTagNames = IntStream
                 .range(0, container.getListChildren().size())
                 .mapToObj(index -> container.getListChildren().get(index))
-                .map(TargetFacade::getName)
+                .map(TargetBuilder::getName)
                 .collect(Collectors.toList());
         if (childElementsTagNames.size() == new HashSet<>(childElementsTagNames).size()) {
             return;

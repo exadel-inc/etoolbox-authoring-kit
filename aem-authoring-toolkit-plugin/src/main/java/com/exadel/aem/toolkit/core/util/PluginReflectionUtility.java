@@ -258,11 +258,11 @@ public class PluginReflectionUtility {
 
     /**
      * Retrieves annotations of a {@code Field} instance as a sequential {@code Stream}
-     * @param sourceFacade The sourceFacade to analyze
+     * @param source The source to analyze
      * @return Stream of annotation objects,
      */
-    public static Stream<Class<? extends Annotation>> getFieldAnnotations(SourceFacade sourceFacade){
-        return Arrays.stream(sourceFacade.adaptTo(Annotation[].class))
+    public static Stream<Class<? extends Annotation>> getFieldAnnotations(SourceFacade source){
+        return Arrays.stream(source.adaptTo(Annotation[].class))
                 .map(Annotation::annotationType);
     }
 

@@ -5,7 +5,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.NamingUtil;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
@@ -14,7 +14,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -22,7 +21,7 @@ import java.util.function.BinaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class TargetFacadeFacadeImpl implements TargetFacade {
+public class TargetBuilderImpl implements TargetBuilder {
 
     private static final String ATTRIBUTE_LIST_TEMPLATE = "[%s]";
     private static final String ATTRIBUTE_LIST_SPLIT_PATTERN = "\\s*,\\s*";
@@ -36,10 +35,10 @@ public class TargetFacadeFacadeImpl implements TargetFacade {
 
     private String name;
     private final Map<String, String> valueMap;
-    private TargetFacade parent;
-    private final List<TargetFacade> listChildren;
+    private TargetBuilder parent;
+    private final List<TargetBuilder> listChildren;
 
-    public TargetFacadeFacadeImpl(String name) {
+    public TargetBuilderImpl(String name) {
         this.name = name;
         this.valueMap = new HashMap<>();
         this.listChildren = new ArrayList<>();
@@ -47,31 +46,31 @@ public class TargetFacadeFacadeImpl implements TargetFacade {
     }
 
     @Override
-    public TargetFacade appendChild(TargetFacade targetFacade) {
-        this.listChildren.add(targetFacade);
-        targetFacade.setParent(this);
-        return targetFacade;
+    public TargetBuilder appendChild(TargetBuilder target) {
+        this.listChildren.add(target);
+        target.setParent(this);
+        return target;
     }
 
     @Override
-    public TargetFacade appendChild(TargetFacade targetFacade, String defaultName) {
-        targetFacade.setName(getUniqueName(targetFacade.getName(), defaultName, this));
-        return appendChild(targetFacade);
+    public TargetBuilder appendChild(TargetBuilder target, String defaultName) {
+        target.name(getUniqueName(target.getName(), defaultName, this));
+        return appendChild(target);
     }
 
-    private String getUniqueName(String name, String defaultName, TargetFacade targetFacade) {
-        return NamingUtil.getUniqueName(name, defaultName, targetFacade);
+    private String getUniqueName(String name, String defaultName, TargetBuilder target) {
+        return NamingUtil.getUniqueName(name, defaultName, target);
     }
 
     @Override
-    public TargetFacade mapProperties(Object o, List<String> skipped) {
+    public TargetBuilder mapProperties(Object o, List<String> skipped) {
         if (o instanceof Annotation) {
             mapAnnotationProperties((Annotation) o, this, skipped);
         }
         return this;
     }
 
-    private void mapAnnotationProperties(Annotation annotation, TargetFacade targetFacade, List<String> skipped) {
+    private void mapAnnotationProperties(Annotation annotation, TargetBuilder target, List<String> skipped) {
         PropertyMapping propMapping = annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class);
         if (propMapping == null) {
             return;
@@ -81,13 +80,13 @@ public class TargetFacadeFacadeImpl implements TargetFacade {
                 ? StringUtils.substringBeforeLast(prefix, DialogConstants.PATH_SEPARATOR)
                 : StringUtils.EMPTY;
 
-        TargetFacade effectiveElement;
+        TargetBuilder effectiveElement;
         if (StringUtils.isEmpty(nodePrefix)) {
-            effectiveElement = targetFacade;
+            effectiveElement = target;
         } else {
             effectiveElement = Pattern.compile(DialogConstants.PATH_SEPARATOR)
                     .splitAsStream(nodePrefix)
-                    .reduce(targetFacade, this::getOrAddChildElement, (prev, next) -> next);
+                    .reduce(target, this::getOrAddChildElement, (prev, next) -> next);
         }
         Arrays.stream(annotation.annotationType().getDeclaredMethods())
                 .filter(m -> ArrayUtils.isEmpty(propMapping.mappings()) || ArrayUtils.contains(propMapping.mappings(), m.getName()))
@@ -97,16 +96,16 @@ public class TargetFacadeFacadeImpl implements TargetFacade {
 
     }
 
-    private TargetFacade getOrAddChildElement(TargetFacade targetFacade, String name) {
-        TargetFacade child = targetFacade.getChild(name);
+    private TargetBuilder getOrAddChildElement(TargetBuilder target, String name) {
+        TargetBuilder child = target.getChild(name);
         if (child == null) {
-            return targetFacade.appendChild(new TargetFacadeFacadeImpl(name));
+            return target.appendChild(new TargetBuilderImpl(name));
         } else {
             return child;
         }
     }
 
-    private void populateProperty(Method method, TargetFacade targetFacade, Annotation annotation) {
+    private void populateProperty(Method method, TargetBuilder target, Annotation annotation) {
         String name = method.getName();
         boolean ignorePrefix = false;
         if (method.isAnnotationPresent(PropertyRendering.class)) {
@@ -129,7 +128,7 @@ public class TargetFacadeFacadeImpl implements TargetFacade {
         XmlAttributeSettingHelper.forMethod(annotation, method)
                 .withName(name)
                 .withMerger(merger)
-                .setAttribute(targetFacade);
+                .setAttribute(target);
     }
 
     private String mergeStringAttributes(String first, String second) {
@@ -146,37 +145,37 @@ public class TargetFacadeFacadeImpl implements TargetFacade {
     }
 
     @Override
-    public TargetFacade setAttribute(String name, String value) {
+    public TargetBuilder attribute(String name, String value) {
         this.valueMap.put(name, value);
         return this;
     }
 
     @Override
-    public TargetFacade setAttribute(String name, boolean value) {
+    public TargetBuilder attribute(String name, boolean value) {
         this.valueMap.put(name, "{Boolean}" + value);
         return this;
     }
 
     @Override
-    public TargetFacade setAttribute(String name, long value) {
+    public TargetBuilder attribute(String name, long value) {
         this.valueMap.put(name, "{Long}" + value);
         return this;
     }
 
     @Override
-    public TargetFacade setAttribute(String name, List<String> values) {
+    public TargetBuilder attribute(String name, List<String> values) {
         this.valueMap.put(name, values.toString());
         return this;
     }
 
     @Override
-    public TargetFacade setParent(TargetFacade parent) {
+    public TargetBuilder setParent(TargetBuilder parent) {
         this.parent = parent;
         return this;
     }
 
     @Override
-    public TargetFacade setAttributes(Map<String, String> map) {
+    public TargetBuilder setAttributes(Map<String, String> map) {
         this.valueMap.putAll(map);
         return this;
     }
@@ -192,7 +191,7 @@ public class TargetFacadeFacadeImpl implements TargetFacade {
     }
 
     @Override
-    public List<TargetFacade> getListChildren() {
+    public List<TargetBuilder> getListChildren() {
         return listChildren;
     }
 
@@ -210,12 +209,12 @@ public class TargetFacadeFacadeImpl implements TargetFacade {
     }
 
     @Override
-    public void setName(String name) {
+    public void name(String name) {
         this.name = name;
     }
 
     @Override
-    public TargetFacade getParent() {
+    public TargetBuilder parent() {
         return parent;
     }
 
@@ -230,9 +229,9 @@ public class TargetFacadeFacadeImpl implements TargetFacade {
     }
 
     @Override
-    public TargetFacade getChild(String relPath) {
+    public TargetBuilder getChild(String relPath) {
         Queue<String> pathChunks = Pattern.compile("/").splitAsStream(relPath).collect(Collectors.toCollection(LinkedList::new));
-        TargetFacade currentFacade = this;
+        TargetBuilder currentFacade = this;
         while (!pathChunks.isEmpty()) {
             String currentChunk = pathChunks.poll();
             if (currentChunk.isEmpty() || currentChunk.equals(currentFacade.getName())) {
@@ -247,10 +246,10 @@ public class TargetFacadeFacadeImpl implements TargetFacade {
     }
 
     @Override
-    public TargetFacade getOrAddChild(String name) {
-        TargetFacade child = this.getChild(name);
+    public TargetBuilder getOrAddChild(String name) {
+        TargetBuilder child = this.getChild(name);
         if (child == null) {
-            return this.appendChild(new TargetFacadeFacadeImpl(name));
+            return this.appendChild(new TargetBuilderImpl(name));
         }
         return child;
     }
@@ -262,12 +261,7 @@ public class TargetFacadeFacadeImpl implements TargetFacade {
 
     @Override
     public Document buildXml(Document document) {
-        try {
-            return PluginXmlUtility.buildXml(this, document);
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return PluginXmlUtility.buildXml(this, document);
     }
 
     @Override

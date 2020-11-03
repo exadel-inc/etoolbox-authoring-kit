@@ -13,52 +13,24 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.rte;
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
-import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import org.w3c.dom.Element;
-import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.AllowElement;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.HtmlLinkRules;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.HtmlPasteRules;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.IconMapping;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.ParagraphFormat;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.Style;
-import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
-import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
-import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
-import com.exadel.aem.toolkit.core.util.validation.CharactersObjectValidator;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code RichTextEditor} widget functionality
  * within the {@code cq:dialog} and {@code cq:editConfig} XML nodes
  */
-public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, TargetFacade> {
+public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
     private static final String KEYWORD_AUTO = "auto";
 
     private static final String FEATURE_ALL = "*";
@@ -82,12 +54,12 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param targetFacade Current XML targetFacade
+     * @param source Current {@code SourceFacade} instance
+     * @param target Current XML targetFacade
      */
     @Override
-    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
-        //accept(sourceFacade.adaptTo(RichTextEditor.class), targetFacade);
+    public void accept(SourceFacade source, TargetBuilder target) {
+        //accept(source.adaptTo(RichTextEditor.class), targetFacade);
     }
 
 /*
@@ -400,7 +372,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
 
     */
 /**
-     * Called by {@link RichTextEditorHandler#accept(SourceFacade, TargetFacade)} to create and append an XML node representing
+     * Called by {@link RichTextEditorHandler#accept(SourceFacade, TargetBuilder)} to create and append an XML node representing
      * {@code htmlRules} to the RichTextEditor XML markup
      * @param element {@code Element} instance representing the RichTextEditor node
      *//*

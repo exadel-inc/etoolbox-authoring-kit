@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import javax.xml.transform.Transformer;
 
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -62,25 +62,25 @@ class CqDialogWriter extends ContentXmlWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, TargetFacade)} abstract method to write down contents
+     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, TargetBuilder)} abstract method to write down contents
      * of {@code _cq_dialog.xml} file. To the targetFacade node, several XML building routines are applied in sequence: the predefined
      * dialog container builder, the common properties writer, {@code DependsOn} handlers and any {@code CustomHandler}s defined for
      * this component class
      *
      * @param componentClass The {@code Class} being processed
-     * @param targetFacade   The targetFacade element of DOM {@link Document} to feed data to
+     * @param target   The targetFacade element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateDomDocument(Class<?> componentClass, TargetFacade targetFacade) {
+    void populateDomDocument(Class<?> componentClass, TargetBuilder target) {
         Dialog dialog = componentClass.getDeclaredAnnotation(Dialog.class);
-        targetFacade.mapProperties(dialog, Arrays.stream(Dialog.class.getDeclaredMethods())
+        target.mapProperties(dialog, Arrays.stream(Dialog.class.getDeclaredMethods())
                 .filter(m -> !fitsInScope(m, getXmlScope())).map(Method::getName).collect(Collectors.toList()));
-        targetFacade.setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
+        target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
 
         DialogLayout dialogLayout = ArrayUtils.isEmpty(dialog.tabs()) ? dialog.layout() : DialogLayout.TABS;
-        DialogContainer.getContainer(dialogLayout).build(componentClass, targetFacade);
+        DialogContainer.getContainer(dialogLayout).build(componentClass, target);
 
-        new DependsOnTabHandler().accept(targetFacade, componentClass);
+        new DependsOnTabHandler().accept(target, componentClass);
         if (!classHasCustomDialogAnnotation(componentClass)) {
             return;
         }
@@ -88,7 +88,7 @@ class CqDialogWriter extends ContentXmlWriter {
         PluginRuntime.context().getReflectionUtility().getCustomDialogHandlers().stream()
                 .filter(handler -> customAnnotations.stream()
                         .anyMatch(annotation -> customAnnotationMatchesHandler(annotation, handler)))
-                .forEach(handler -> handler.accept(targetFacade, componentClass));
+                .forEach(handler -> handler.accept(target, componentClass));
     }
 
     /**

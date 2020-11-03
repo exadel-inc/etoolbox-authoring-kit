@@ -17,8 +17,8 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
-import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.core.TargetBuilderImpl;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -31,32 +31,32 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * {@link Handler} implementation used to create markup responsible for Granite {@code Select} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class SelectHandler implements Handler, BiConsumer<SourceFacade, TargetFacade> {
+class SelectHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param targetFacade Current XML targetFacade
+     * @param source Current {@code SourceFacade} instance
+     * @param target Current XML targetFacade
      */
     @Override
     @SuppressWarnings({"deprecation", "squid:S1874"})
     // .acsListPath() and .acsListResourceType() method calls, as well as .addNoneOption() processing
     // remain for compatibility reasons until v.2.0.0
-    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
-        Select select = sourceFacade.adaptTo(Select.class);
+    public void accept(SourceFacade source, TargetBuilder target) {
+        Select select = source.adaptTo(Select.class);
         if (ArrayUtils.isNotEmpty(select.options())) {
-            TargetFacade items = targetFacade.appendChild(new TargetFacadeFacadeImpl(DialogConstants.NN_ITEMS));
+            TargetBuilder items = target.appendChild(new TargetBuilderImpl(DialogConstants.NN_ITEMS));
             for (Option option: select.options()) {
-                TargetFacade item = items.appendChild(new TargetFacadeFacadeImpl(option.value()), DialogConstants.NN_ITEM);
+                TargetBuilder item = items.appendChild(new TargetBuilderImpl(option.value()), DialogConstants.NN_ITEM);
                 item.mapProperties(option);
             }
         }
-        TargetFacade dataSourceElement = PluginXmlUtility.appendDataSource(
-                targetFacade,
+        TargetBuilder dataSourceElement = PluginXmlUtility.appendDataSource(
+                target,
                 select.datasource(),
                 select.acsListPath(),
                 select.acsListResourceType());
         if (dataSourceElement != null && select.addNoneOption()) {
-            dataSourceElement.setAttribute(DialogConstants.PN_ADD_NONE, true);
+            dataSourceElement.attribute(DialogConstants.PN_ADD_NONE, true);
         }
     }
 }

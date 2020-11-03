@@ -17,12 +17,11 @@ package com.exadel.aem.toolkit.core.util.writer;
 import javax.xml.transform.Transformer;
 
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import org.w3c.dom.Document;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 import java.lang.reflect.Method;
@@ -62,18 +61,18 @@ class ContentXmlWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, TargetFacade)} abstract method to write down contents
+     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, TargetBuilder)} abstract method to write down contents
      * of {@code .content.xml} file
      * @param componentClass The {@code Class} being processed
      * @param root The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateDomDocument(Class<?> componentClass, TargetFacade root) {
+    void populateDomDocument(Class<?> componentClass, TargetBuilder root) {
         Dialog dialog = componentClass.getDeclaredAnnotation(Dialog.class);
-        root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT);
+        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT);
         root.mapProperties(dialog, Arrays.stream(Dialog.class.getDeclaredMethods())
                 .filter(m -> !fitsInScope(m, getXmlScope())).map(Method::getName).collect(Collectors.toList()));
-        if(dialog.isContainer()) root.setAttribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
+        if(dialog.isContainer()) root.attribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
     }
 
     private static boolean fitsInScope(Method method, XmlScope scope) {

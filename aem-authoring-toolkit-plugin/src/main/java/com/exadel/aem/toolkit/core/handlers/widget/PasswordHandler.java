@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
 import com.exadel.aem.toolkit.core.handlers.Handler;
@@ -27,20 +27,20 @@ import com.exadel.aem.toolkit.core.util.NamingUtil;
  * {@link Handler} implementation used to create markup responsible for {@code Password} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class PasswordHandler implements Handler, BiConsumer<SourceFacade, TargetFacade> {
+class PasswordHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param targetFacade Current XML targetFacade
+     * @param source Current {@code SourceFacade} instance
+     * @param target Current XML targetFacade
      */
     @Override
-    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
-        Password password = sourceFacade.adaptTo(Password.class);
+    public void accept(SourceFacade source, TargetBuilder target) {
+        Password password = source.adaptTo(Password.class);
         if(!password.retype().isEmpty()) {
-            targetFacade.setAttribute(DialogConstants.PN_RETYPE,
-                    sourceFacade.fromValueMap(DialogConstants.PN_PREFIX) +
+            target.attribute(DialogConstants.PN_RETYPE,
+                    source.fromValueMap(DialogConstants.PN_PREFIX) +
                             NamingUtil.getValidFieldName(password.retype()) +
-                            sourceFacade.fromValueMap(DialogConstants.PN_POSTFIX));
+                            source.fromValueMap(DialogConstants.PN_POSTFIX));
         }
     }
 }

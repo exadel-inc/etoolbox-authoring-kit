@@ -19,8 +19,8 @@ import java.lang.reflect.Member;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
-import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.core.TargetBuilderImpl;
 
 import com.exadel.aem.toolkit.core.handlers.assets.dependson.DependsOnHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.AttributesHandler;
@@ -48,29 +48,29 @@ public interface DialogWidget {
      * applied to several widgets, either built-in or user-defined
      * @return {@code BiConsumer<Element, Field>} instance
      */
-    BiConsumer<SourceFacade, TargetFacade> getHandler();
+    BiConsumer<SourceFacade, TargetBuilder> getHandler();
 
     /**
      * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified name
-     * @param targetFacade Parent {@code Element} instance
-     * @param sourceFacade Current {@code Field}
+     * @param target Parent {@code Element} instance
+     * @param source Current {@code Field}
      * @return The new {@code Element} created for the current {@code Field}
      */
-    default TargetFacade appendTo(TargetFacade targetFacade, SourceFacade sourceFacade) {
-        return appendTo(targetFacade, sourceFacade, ((Member) sourceFacade.getSource()).getName());
+    default TargetBuilder appendTo(TargetBuilder target, SourceFacade source) {
+        return appendTo(target, source, ((Member) source.getSource()).getName());
     }
 
     /**
      * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified targetFacade name
-     * @param targetFacade Parent {@code Element} instance
-     * @param sourceFacade Current {@code Field}
+     * @param target Parent {@code Element} instance
+     * @param source Current {@code Field}
      * @param name The node name to store
      * @return The new {@code Element} created for the current {@code Field}
      */
-    default TargetFacade appendTo(TargetFacade targetFacade, SourceFacade sourceFacade, String name) {
-        TargetFacade widgetChildElement = new TargetFacadeFacadeImpl(name);
-        targetFacade.appendChild(widgetChildElement);
-        getHandlerChain().accept(sourceFacade, widgetChildElement);
+    default TargetBuilder appendTo(TargetBuilder target, SourceFacade source, String name) {
+        TargetBuilder widgetChildElement = new TargetBuilderImpl(name);
+        target.appendChild(widgetChildElement);
+        getHandlerChain().accept(source, widgetChildElement);
         return widgetChildElement;
     }
 
@@ -78,8 +78,8 @@ public interface DialogWidget {
      * Generates the chain of handlers to store {@code cq:editConfig} XML markup
      * @return {@code BiConsumer<SourceFacade, Element>} instance
      */
-    default BiConsumer<SourceFacade, TargetFacade> getHandlerChain() {
-        BiConsumer<SourceFacade, TargetFacade> mainChain = new GenericPropertiesHandler()
+    default BiConsumer<SourceFacade, TargetBuilder> getHandlerChain() {
+        BiConsumer<SourceFacade, TargetBuilder> mainChain = new GenericPropertiesHandler()
                 .andThen(new PropertyMappingHandler())
                 .andThen(new AttributesHandler())
                 .andThen(new DialogFieldHandler())

@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
-import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.core.TargetBuilderImpl;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -31,26 +31,26 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * {@link Handler} implementation used to create markup responsible for {@code RadioGroup} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class RadioGroupHandler implements Handler, BiConsumer<SourceFacade, TargetFacade> {
+class RadioGroupHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param targetFacade Current XML targetFacade
+     * @param source Current {@code SourceFacade} instance
+     * @param target Current XML targetFacade
      */
     @Override
     @SuppressWarnings({"deprecation", "squid:S1874"})
     // .acsListPath() and .acsListResourceType() method calls remain for compatibility reasons until v.2.0.0
-    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
-        RadioGroup radioGroup = sourceFacade.adaptTo(RadioGroup.class);
+    public void accept(SourceFacade source, TargetBuilder target) {
+        RadioGroup radioGroup = source.adaptTo(RadioGroup.class);
         if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {
-            TargetFacade items = targetFacade.appendChild(new TargetFacadeFacadeImpl(DialogConstants.NN_ITEMS));
+            TargetBuilder items = target.appendChild(new TargetBuilderImpl(DialogConstants.NN_ITEMS));
             Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));
         }
-        PluginXmlUtility.appendDataSource(targetFacade, radioGroup.datasource(), radioGroup.acsListPath(), radioGroup.acsListResourceType());
+        PluginXmlUtility.appendDataSource(target, radioGroup.datasource(), radioGroup.acsListPath(), radioGroup.acsListResourceType());
     }
 
-    private void renderButton(RadioButton buttonInstance, TargetFacade parentElement) {
-        TargetFacade button = new TargetFacadeFacadeImpl(buttonInstance.value());
+    private void renderButton(RadioButton buttonInstance, TargetBuilder parentElement) {
+        TargetBuilder button = new TargetBuilderImpl(buttonInstance.value());
         parentElement.appendChild(button, DialogConstants.NN_ITEM);
         button.mapProperties(buttonInstance);
     }

@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.core.handlers.widget.common;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
@@ -24,20 +24,20 @@ import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 /**
  * Handler for storing {@link Attribute} properties to a Granite UI widget XML node
  */
-public class AttributesHandler implements BiConsumer<SourceFacade, TargetFacade> {
+public class AttributesHandler implements BiConsumer<SourceFacade, TargetBuilder> {
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param targetFacade Current {@code TargetFacade} instance
+     * @param source Current {@code SourceFacade} instance
+     * @param target Current {@code TargetFacade} instance
      */
     @Override
     @SuppressWarnings({"deprecation", "squid:S1874"})
     // "clas" attribute processing remains for compatibility reasons until v.2.0.0
-    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
-        Attribute attribute = sourceFacade.adaptTo(Attribute.class);
+    public void accept(SourceFacade source, TargetBuilder target) {
+        Attribute attribute = source.adaptTo(Attribute.class);
         if (attribute == null) {
             return;
         }
-        PluginXmlUtility.appendDataAttributes(targetFacade, attribute.data());
+        PluginXmlUtility.appendDataAttributes(target, attribute.data());
     }
 }

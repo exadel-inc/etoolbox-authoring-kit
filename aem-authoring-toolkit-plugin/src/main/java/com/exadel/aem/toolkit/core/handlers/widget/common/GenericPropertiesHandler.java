@@ -16,9 +16,8 @@ package com.exadel.aem.toolkit.core.handlers.widget.common;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
-import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
@@ -29,21 +28,21 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 /**
  * Handler for storing {@link ResourceType} and like properties to a Granite UI widget XML node
  */
-public class GenericPropertiesHandler implements BiConsumer<SourceFacade, TargetFacade> {
+public class GenericPropertiesHandler implements BiConsumer<SourceFacade, TargetBuilder> {
     private static final String RESTYPE_MISSING_EXCEPTION_MESSAGE = "@ResourceType is not present in ";
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param targetFacade Current {@code TargetFacade} instance
+     * @param source Current {@code SourceFacade} instance
+     * @param target Current {@code TargetFacade} instance
      */
     @Override
-    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
-        DialogWidget dialogWidget = DialogWidgets.fromSourceFacade(sourceFacade);
+    public void accept(SourceFacade source, TargetBuilder target) {
+        DialogWidget dialogWidget = DialogWidgets.fromSourceFacade(source);
         if (dialogWidget == null || dialogWidget.getAnnotationClass() == null) {
             return;
         }
-        targetFacade.setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, getResourceType(dialogWidget.getAnnotationClass()));
+        target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, getResourceType(dialogWidget.getAnnotationClass()));
     }
 
     /**

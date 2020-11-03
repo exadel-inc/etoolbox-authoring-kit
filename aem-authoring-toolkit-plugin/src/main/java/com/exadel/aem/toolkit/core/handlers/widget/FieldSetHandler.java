@@ -15,7 +15,7 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
@@ -37,28 +37,28 @@ class FieldSetHandler implements WidgetSetHandler {
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param targetFacade Current XML targetFacade
+     * @param source Current {@code SourceFacade} instance
+     * @param target Current XML targetFacade
      */
     @Override
-    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
+    public void accept(SourceFacade source, TargetBuilder target) {
         // Define the working @FieldSet annotation instance and the fieldset type
-        FieldSet fieldSet = sourceFacade.adaptTo(FieldSet.class);
-        Class<?> fieldSetType = getFieldSetType(sourceFacade.getSource());
+        FieldSet fieldSet = source.adaptTo(FieldSet.class);
+        Class<?> fieldSetType = getFieldSetType(source.getSource());
 
-        List<SourceFacade> sourceFacades = getContainerSourceFacades(targetFacade, sourceFacade, fieldSetType);
+        List<SourceFacade> sources = getContainerSourceFacades(target, source, fieldSetType);
 
-        if(sourceFacades.isEmpty()) {
+        if(sources.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
                     EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName()
             ));
             return;
         }
 
-        sourceFacades.forEach(populated -> populatePrefixPostfix(populated, sourceFacade, fieldSet));
+        sources.forEach(populated -> populatePrefixPostfix(populated, source, fieldSet));
 
-        // append the valid sourceFacades to the container
-        PluginXmlContainerUtility.append(targetFacade, sourceFacades);
+        // append the valid sources to the container
+        PluginXmlContainerUtility.append(target, sources);
     }
 
     private void populatePrefixPostfix(SourceFacade populated, SourceFacade current, FieldSet fieldSet) {

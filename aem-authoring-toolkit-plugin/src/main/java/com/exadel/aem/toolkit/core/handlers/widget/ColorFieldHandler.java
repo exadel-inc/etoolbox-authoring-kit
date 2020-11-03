@@ -21,8 +21,8 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
-import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.core.TargetBuilderImpl;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,32 +34,32 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class ColorFieldHandler implements Handler, BiConsumer<SourceFacade, TargetFacade> {
+class ColorFieldHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
     private static final String NODE_NAME_COLOR = "color";
     private static final String SKIPPED_COLOR_NODE_NAME_SYMBOLS = "^\\w+";
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param targetFacade Current {@code TargetFacade} instance
+     * @param source Current {@code SourceFacade} instance
+     * @param target Current {@code TargetFacade} instance
      */
     @Override
-    public void accept(SourceFacade sourceFacade, TargetFacade targetFacade) {
-        ColorField colorField = sourceFacade.adaptTo(ColorField.class);
+    public void accept(SourceFacade source, TargetBuilder target) {
+        ColorField colorField = source.adaptTo(ColorField.class);
         List<String> validCustomColors = ArrayUtils.isNotEmpty(colorField.customColors())
                 ? Arrays.stream(colorField.customColors()).filter(StringUtils::isNotBlank).collect(Collectors.toList())
                 : Collections.emptyList();
         if (validCustomColors.isEmpty()) {
             return;
         }
-        TargetFacade itemsNode = new TargetFacadeFacadeImpl(DialogConstants.NN_ITEMS);
+        TargetBuilder itemsNode = new TargetBuilderImpl(DialogConstants.NN_ITEMS);
         for (String customColor: validCustomColors) {
-            TargetFacade colorNode = new TargetFacadeFacadeImpl(
+            TargetBuilder colorNode = new TargetBuilderImpl(
                     NODE_NAME_COLOR + customColor.toLowerCase().replace("#", StringUtils.EMPTY))
-                    .setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
+                    .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
                     .setAttributes(Collections.singletonMap(DialogConstants.PN_VALUE, customColor));
             itemsNode.appendChild(colorNode);
         }
-        targetFacade.appendChild(itemsNode);
+        target.appendChild(itemsNode);
     }
 }

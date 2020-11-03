@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import com.exadel.aem.toolkit.core.SourceFacadeImpl;
-import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
+import com.exadel.aem.toolkit.core.TargetBuilderImpl;
 import com.exadel.aem.toolkit.core.util.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +47,7 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 /**
  * The {@link Handler} for a tabbed TouchUI dialog
  */
-public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetFacade> {
+public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder> {
     private static final String DEFAULT_TAB_NAME = "tab";
     private static final String NO_TABS_DEFINED_EXCEPTION_MESSAGE = "No tabs defined for the dialog at ";
 
@@ -58,12 +58,12 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetFacade> 
      * @param parentElement XML document root element
      */
     @Override
-    public void accept(Class<?> componentClass, TargetFacade parentElement) {
+    public void accept(Class<?> componentClass, TargetBuilder parentElement) {
         // Render the generic XML markup for tabs setting
-        TargetFacade tabItemsElement = parentElement.appendChild(new TargetFacadeFacadeImpl(DialogConstants.NN_CONTENT).setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER))
-                .appendChild(new TargetFacadeFacadeImpl(DialogConstants.NN_ITEMS))
-                .appendChild(new TargetFacadeFacadeImpl(DialogConstants.NN_TABS).setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.TABS))
-                .appendChild(new TargetFacadeFacadeImpl(DialogConstants.NN_ITEMS));
+        TargetBuilder tabItemsElement = parentElement.appendChild(new TargetBuilderImpl(DialogConstants.NN_CONTENT).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER))
+                .appendChild(new TargetBuilderImpl(DialogConstants.NN_ITEMS))
+                .appendChild(new TargetBuilderImpl(DialogConstants.NN_TABS).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.TABS))
+                .appendChild(new TargetBuilderImpl(DialogConstants.NN_ITEMS));
 
         // Initialize ignored tabs list for the current class if IgnoreTabs annotation is present.
         // Note that "ignored tabs" setting is not inherited and is for current class only, unlike tabs collection
@@ -145,10 +145,10 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetFacade> 
 
         // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
         // for which a non-existent tab was specified. Handle an InvalidTabException for each of them
-        allSourceFacades.forEach(sourceFacade -> PluginRuntime.context().getExceptionHandler()
+        allSourceFacades.forEach(source -> PluginRuntime.context().getExceptionHandler()
                 .handle(new InvalidTabException(
-                        sourceFacade.adaptTo(PlaceOnTab.class) != null
-                                ? sourceFacade.adaptTo(PlaceOnTab.class).value()
+                        source.adaptTo(PlaceOnTab.class) != null
+                                ? source.adaptTo(PlaceOnTab.class).value()
                                 : StringUtils.EMPTY
                 )));
     }
@@ -184,43 +184,43 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetFacade> 
 
     /**
      * Adds a tab definition to the XML markup
-     * @param targetFacade The {@link TargetFacade} instance to append particular sourceFacades' markup
+     * @param target The {@link TargetBuilder} instance to append particular sources' markup
      * @param tab The {@link Tab} instance to render as a dialog tab
-     * @param sourceFacades The list of {@link Field} instances to render as dialog sourceFacades
+     * @param sources The list of {@link Field} instances to render as dialog sources
      */
-    private void appendTab(TargetFacade targetFacade, Tab tab, List<SourceFacade> sourceFacades) {
-        TargetFacade tabElement = new TargetFacadeFacadeImpl(tab.title())
-                .setAttribute(JcrConstants.PN_TITLE, tab.title())
-                .setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
-        targetFacade.appendChild(tabElement, DEFAULT_TAB_NAME);
+    private void appendTab(TargetBuilder target, Tab tab, List<SourceFacade> sources) {
+        TargetBuilder tabElement = new TargetBuilderImpl(tab.title())
+                .attribute(JcrConstants.PN_TITLE, tab.title())
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
+        target.appendChild(tabElement, DEFAULT_TAB_NAME);
         appendTabAttributes(tabElement, tab);
-        PluginXmlContainerUtility.append(tabElement, sourceFacades);
+        PluginXmlContainerUtility.append(tabElement, sources);
     }
 
     /**
      * Appends tab attributes to a pre-built tab-defining XML element
-     * @param targetFacade {@link TargetFacade} instance representing a TouchUI dialog tab
+     * @param target {@link TargetBuilder} instance representing a TouchUI dialog tab
      * @param tab {@link Tab} annotation that contains settings
      */
-    private void appendTabAttributes(TargetFacade targetFacade, Tab tab){
-        targetFacade.setAttribute(JcrConstants.PN_TITLE, tab.title());
+    private void appendTabAttributes(TargetBuilder target, Tab tab){
+        target.attribute(JcrConstants.PN_TITLE, tab.title());
         Attribute attribute = tab.attribute();
-        targetFacade.mapProperties(attribute);
-        PluginXmlUtility.appendDataAttributes(targetFacade, attribute.data());
+        target.mapProperties(attribute);
+        PluginXmlUtility.appendDataAttributes(target, attribute.data());
     }
 
     /**
      * The predicate to match a {@code SourceFacade} against particular {@code Tab}
-     * @param sourceFacade  {@link SourceFacade} instance to analyze
+     * @param source  {@link SourceFacade} instance to analyze
      * @param tab {@link Tab} annotation to analyze
      * @param isDefaultTab True if the current tab accepts fields for which no tab was specified; otherwise, false
      * @return True or false
      */
-    private static boolean isFieldForTab(SourceFacade sourceFacade, Tab tab, boolean isDefaultTab) {
-        if (sourceFacade.adaptTo(PlaceOnTab.class) == null) {
+    private static boolean isFieldForTab(SourceFacade source, Tab tab, boolean isDefaultTab) {
+        if (source.adaptTo(PlaceOnTab.class) == null) {
             return isDefaultTab;
         }
-        return tab.title().equalsIgnoreCase(sourceFacade.adaptTo(PlaceOnTab.class).value());
+        return tab.title().equalsIgnoreCase(source.adaptTo(PlaceOnTab.class).value());
     }
 
 

@@ -17,7 +17,7 @@ package com.exadel.aem.toolkit.core.handlers.assets.dependson;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import com.exadel.aem.toolkit.core.util.NamingUtil;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.StringUtils;
@@ -35,30 +35,30 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 /**
  * {@link Handler} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
  */
-public class DependsOnTabHandler implements Handler, BiConsumer<TargetFacade, Class<?>> {
+public class DependsOnTabHandler implements Handler, BiConsumer<TargetBuilder, Class<?>> {
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param element Current XML element
+     * @param target Current TargetBuilder
      * @param dialogClass {@code Class} object representing the tab-defining class
      */
     @Override
-    public void accept(TargetFacade element, Class<?> dialogClass) {
+    public void accept(TargetBuilder target, Class<?> dialogClass) {
         if (dialogClass.isAnnotationPresent(DependsOnTab.class)) {
-            handleDependsOnTab(element, dialogClass.getDeclaredAnnotation(DependsOnTab.class));
+            handleDependsOnTab(target, dialogClass.getDeclaredAnnotation(DependsOnTab.class));
         } else if (dialogClass.isAnnotationPresent(DependsOnTabConfig.class)) {
-            handleDependsOnTabConfig(element, dialogClass.getDeclaredAnnotation(DependsOnTabConfig.class));
+            handleDependsOnTabConfig(target, dialogClass.getDeclaredAnnotation(DependsOnTabConfig.class));
         }
     }
 
     /**
-     * Called by {@link DependsOnTabHandler#accept(TargetFacade, Class)} to store particular {@code DependsOnTab} value
+     * Called by {@link DependsOnTabHandler#accept(TargetBuilder, Class)} to store particular {@code DependsOnTab} value
      * in XML markup
-     * @param targetFacade Current XML targetFacade
+     * @param target Current XML targetFacade
      * @param value Current {@link DependsOnTab} value
      */
-    private void handleDependsOnTab(TargetFacade targetFacade, DependsOnTab value) {
-        TargetFacade tabItemsNode = targetFacade.getChild(String.join(DialogConstants.PATH_SEPARATOR,
+    private void handleDependsOnTab(TargetBuilder target, DependsOnTab value) {
+        TargetBuilder tabItemsNode = target.getChild(String.join(DialogConstants.PATH_SEPARATOR,
                 DialogConstants.NN_CONTENT,
                 DialogConstants.NN_ITEMS,
                 DialogConstants.NN_TABS,
@@ -70,9 +70,9 @@ public class DependsOnTabHandler implements Handler, BiConsumer<TargetFacade, Cl
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(DependsOnHandler.EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
         }
-        TargetFacade targetTab = tabItemsNode.getChild(NamingUtil.getValidName(value.tabTitle()));
+        TargetBuilder targetTab = tabItemsNode.getChild(NamingUtil.getValidName(value.tabTitle()));
         if (targetTab != null) {
-            PluginXmlUtility.appendDataAttributes(targetFacade, ImmutableMap.of(
+            PluginXmlUtility.appendDataAttributes(target, ImmutableMap.of(
                     DialogConstants.PN_DEPENDS_ON, value.query(),
                     DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
             ));
@@ -83,12 +83,12 @@ public class DependsOnTabHandler implements Handler, BiConsumer<TargetFacade, Cl
     }
 
     /**
-     * Called by {@link DependsOnTabHandler#accept(TargetFacade, Class)} to store particular {@code DependsOnTab} value
+     * Called by {@link DependsOnTabHandler#accept(TargetBuilder, Class)} to store particular {@code DependsOnTab} value
      * in XML markup
-     * @param targetFacade Current XML targetFacade
+     * @param target Current XML targetFacade
      * @param value Current {@link DependsOnTabConfig} value
      */
-    private void handleDependsOnTabConfig(TargetFacade targetFacade, DependsOnTabConfig value) {
-        Arrays.stream(value.value()).forEach(val -> handleDependsOnTab(targetFacade, val));
+    private void handleDependsOnTabConfig(TargetBuilder target, DependsOnTabConfig value) {
+        Arrays.stream(value.value()).forEach(val -> handleDependsOnTab(target, val));
     }
 }

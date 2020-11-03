@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import com.exadel.aem.toolkit.core.SourceFacadeImpl;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
@@ -80,16 +80,16 @@ public enum DialogWidgets implements DialogWidget {
     BUTTON(Button.class);
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";
-    private static final BiConsumer<SourceFacade, TargetFacade> EMPTY_HANDLER = (componentNode, field) -> {};
+    private static final BiConsumer<SourceFacade, TargetBuilder> EMPTY_HANDLER = (componentNode, field) -> {};
 
     private Class<? extends Annotation> annotation;
-    private BiConsumer<SourceFacade, TargetFacade> handler;
+    private BiConsumer<SourceFacade, TargetBuilder> handler;
 
     DialogWidgets(Class<? extends Annotation> annotation) {
         this.annotation = annotation;
     }
 
-    DialogWidgets(Class<? extends Annotation> annotation, BiConsumer<SourceFacade, TargetFacade> handler) {
+    DialogWidgets(Class<? extends Annotation> annotation, BiConsumer<SourceFacade, TargetBuilder> handler) {
         this(annotation);
         this.handler = handler;
     }
@@ -100,7 +100,7 @@ public enum DialogWidgets implements DialogWidget {
     }
 
     @Override
-    public BiConsumer<SourceFacade, TargetFacade> getHandler() {
+    public BiConsumer<SourceFacade, TargetBuilder> getHandler() {
         return handler != null ? handler : EMPTY_HANDLER;
     }
 
@@ -115,11 +115,11 @@ public enum DialogWidgets implements DialogWidget {
 
     /**
      * Gets a {@link DialogWidgets} bound to this {@code SourceFacade} of a component class, if any
-     * @param sourceFacade {@code SourceFacade} of a component class
+     * @param source {@code SourceFacade} of a component class
      * @return {@code DialogWidget} value, or null
      */
-    public static DialogWidget fromSourceFacade(SourceFacade sourceFacade) {
-        Class<? extends Annotation> fieldAnnotationClass = getWidgetAnnotationClass(sourceFacade);
+    public static DialogWidget fromSourceFacade(SourceFacade source) {
+        Class<? extends Annotation> fieldAnnotationClass = getWidgetAnnotationClass(source);
         if (fieldAnnotationClass == null) {
             return null;
         }
@@ -133,29 +133,29 @@ public enum DialogWidgets implements DialogWidget {
         if (result == null) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(
                     NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE,
-                    ((Member) sourceFacade.getSource()).getName(),
-                    ((Member) sourceFacade.getSource()).getDeclaringClass())));
+                    ((Member) source.getSource()).getName(),
+                    ((Member) source.getSource()).getDeclaringClass())));
         }
         return result;
     }
 
     /**
      * Gets {@code Class} definition of a {@code DialogComponent}-defining annotation of the current {@code Field}
-     * @param sourceFacade {@code SourceFacade} of a component class
+     * @param source {@code SourceFacade} of a component class
      * @return {@code Class} object
      */
-    private static Class<? extends Annotation> getWidgetAnnotationClass(SourceFacade sourceFacade) {
-        // get first in-built component annotation attached to this sourceFacade
+    private static Class<? extends Annotation> getWidgetAnnotationClass(SourceFacade source) {
+        // get first in-built component annotation attached to this source
         Class<? extends Annotation> annotationClass = Arrays.stream(values())
-                .filter(dialogComponent -> isAnnotated(sourceFacade, dialogComponent))
+                .filter(dialogComponent -> isAnnotated(source, dialogComponent))
                 .map(DialogWidgets::getAnnotationClass)
                 .findFirst()
                 .orElse(null);
         if (annotationClass != null) {
             return annotationClass;
         }
-        // if no such annotation, retrieve first custom DialogComponentAnnotation attached to this sourceFacade
-        return PluginReflectionUtility.getFieldAnnotations(sourceFacade)
+        // if no such annotation, retrieve first custom DialogComponentAnnotation attached to this source
+        return PluginReflectionUtility.getFieldAnnotations(source)
                 .filter(DialogWidgets::isCustomDialogWidgetAnnotation)
                 .findFirst()
                 .orElse(null);
@@ -163,13 +163,13 @@ public enum DialogWidgets implements DialogWidget {
 
     /**
      * Gets whether this {@code Field} has the particular {@code DialogComponent}-defining annotation
-     * @param sourceFacade {@code SourceFacade} of a component class
+     * @param source {@code SourceFacade} of a component class
      * @param widget {@code DialogComponent} instance
      * @return True or false
      */
-    private static boolean isAnnotated(SourceFacade sourceFacade, DialogWidgets widget) {
+    private static boolean isAnnotated(SourceFacade source, DialogWidgets widget) {
         return Objects.nonNull(widget.getAnnotationClass())
-                && PluginReflectionUtility.getFieldAnnotations(sourceFacade).anyMatch(fa -> fa.equals(widget.getAnnotationClass()));
+                && PluginReflectionUtility.getFieldAnnotations(source).anyMatch(fa -> fa.equals(widget.getAnnotationClass()));
     }
 
     /**
@@ -197,7 +197,7 @@ public enum DialogWidgets implements DialogWidget {
         }
 
         @Override
-        public BiConsumer<SourceFacade, TargetFacade> getHandler() {
+        public BiConsumer<SourceFacade, TargetBuilder> getHandler() {
             return EMPTY_HANDLER;
         }
     }

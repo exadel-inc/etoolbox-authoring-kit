@@ -16,10 +16,9 @@ package com.exadel.aem.toolkit.test.custom.handler;
 
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 import com.exadel.aem.toolkit.api.handlers.Handles;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
@@ -38,7 +37,7 @@ public class CustomDialogHandler implements DialogHandler {
     }
 
     @Override
-    public void accept(TargetFacade element, Class<?> aClass) {
+    public void accept(TargetBuilder element, Class<?> aClass) {
         visitElements(element, elt -> {
             if (StringUtils.equals(elt.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE), ResourceTypes.MULTIFIELD)
                     && isTopLevelMultifield(elt)) {
@@ -49,7 +48,7 @@ public class CustomDialogHandler implements DialogHandler {
 
     }
 
-    private static void visitElements(TargetFacade root, Consumer<Element> visitor) {
+    private static void visitElements(TargetBuilder root, Consumer<Element> visitor) {
         /*visitor.accept(root);
         if (!root.hasChildNodes()) {
             return;

@@ -19,9 +19,9 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetFacade;
+import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
 import com.exadel.aem.toolkit.core.SourceFacadeImpl;
-import com.exadel.aem.toolkit.core.TargetFacadeFacadeImpl;
+import com.exadel.aem.toolkit.core.TargetBuilderImpl;
 import com.exadel.aem.toolkit.core.util.NamingUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,34 +41,34 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 /**
  * {@link Handler} implementation for storing {@link InplaceEditingConfig} arguments to {@code cq:editConfig} XML node
  */
-public class InplaceEditingHandler implements Handler, BiConsumer<TargetFacade, EditConfig> {
+public class InplaceEditingHandler implements Handler, BiConsumer<TargetBuilder, EditConfig> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param root XML element
      * @param editConfig {@code EditConfig} annotation instance
      */
     @Override
-    public void accept(TargetFacade root, EditConfig editConfig) {
+    public void accept(TargetBuilder root, EditConfig editConfig) {
         if (ArrayUtils.isEmpty(editConfig.inplaceEditing())
                 || (editConfig.inplaceEditing().length == 1 && EditorType.EMPTY.equals(editConfig.inplaceEditing()[0].type()))) {
             return;
         }
-        TargetFacade inplaceEditingNode = new TargetFacadeFacadeImpl(DialogConstants.NN_INPLACE_EDITING)
-                .setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG)
-                .setAttribute(DialogConstants.PN_ACTIVE, true);
+        TargetBuilder inplaceEditingNode = new TargetBuilderImpl(DialogConstants.NN_INPLACE_EDITING)
+                .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG)
+                .attribute(DialogConstants.PN_ACTIVE, true);
         root.appendChild(inplaceEditingNode);
 
         if (editConfig.inplaceEditing().length > 1) {
-            inplaceEditingNode.setAttribute(DialogConstants.PN_EDITOR_TYPE, EditorType.HYBRID.toLowerCase());
+            inplaceEditingNode.attribute(DialogConstants.PN_EDITOR_TYPE, EditorType.HYBRID.toLowerCase());
 
-            TargetFacade childEditorsNode = getChildEditorsNode(editConfig);
+            TargetBuilder childEditorsNode = getChildEditorsNode(editConfig);
             inplaceEditingNode.appendChild(childEditorsNode);
 
-            TargetFacade configNode = getConfigNode(editConfig);
+            TargetBuilder configNode = getConfigNode(editConfig);
             inplaceEditingNode.appendChild(configNode);
         } else {
-            inplaceEditingNode.setAttribute(DialogConstants.PN_EDITOR_TYPE, editConfig.inplaceEditing()[0].type().toLowerCase());
-            TargetFacade configNode = new TargetFacadeFacadeImpl(DialogConstants.NN_CONFIG);
+            inplaceEditingNode.attribute(DialogConstants.PN_EDITOR_TYPE, editConfig.inplaceEditing()[0].type().toLowerCase());
+            TargetBuilder configNode = new TargetBuilderImpl(DialogConstants.NN_CONFIG);
             populateConfigNode(configNode, editConfig.inplaceEditing()[0]);
             inplaceEditingNode.appendChild(configNode);
         }
@@ -79,8 +79,8 @@ public class InplaceEditingHandler implements Handler, BiConsumer<TargetFacade, 
      * @param config {@link EditConfig} annotation instance
      * @return XML {@code Element}
      */
-    private TargetFacade getChildEditorsNode(EditConfig config) {
-        TargetFacade childEditorsNode = new TargetFacadeFacadeImpl(DialogConstants.NN_CHILD_EDITORS);
+    private TargetBuilder getChildEditorsNode(EditConfig config) {
+        TargetBuilder childEditorsNode = new TargetBuilderImpl(DialogConstants.NN_CHILD_EDITORS);
         Arrays.stream(config.inplaceEditing())
                 .map(this::getSingleChildEditorNode)
                 .forEach(childEditorsNode::appendChild);
@@ -92,12 +92,12 @@ public class InplaceEditingHandler implements Handler, BiConsumer<TargetFacade, 
      * @param config {@link InplaceEditingConfig} annotation instance
      * @return XML {@code Element}
      */
-    private TargetFacade getSingleChildEditorNode(InplaceEditingConfig config) {
+    private TargetBuilder getSingleChildEditorNode(InplaceEditingConfig config) {
         Map<String, String> properties = new ImmutableMap.Builder<String, String>()
                 .put(DialogConstants.PN_TITLE, StringUtils.isNotBlank(config.title()) ? config.title() : getConfigName(config))
                 .put(DialogConstants.PN_TYPE, config.type().toLowerCase()).build();
-        return new TargetFacadeFacadeImpl(getConfigName(config))
-            .setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_CHILD_EDITORS_CONFIG)
+        return new TargetBuilderImpl(getConfigName(config))
+            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_CHILD_EDITORS_CONFIG)
             .setAttributes(properties);
     }
 
@@ -107,11 +107,11 @@ public class InplaceEditingHandler implements Handler, BiConsumer<TargetFacade, 
      * @param config {@link EditConfig} annotation instance
      * @return XML {@code Element}
      */
-    private TargetFacade getConfigNode(EditConfig config) {
-        TargetFacade configNode = new TargetFacadeFacadeImpl(DialogConstants.NN_CONFIG);
+    private TargetBuilder getConfigNode(EditConfig config) {
+        TargetBuilder configNode = new TargetBuilderImpl(DialogConstants.NN_CONFIG);
         for (InplaceEditingConfig childConfig : config.inplaceEditing()) {
-            TargetFacade childConfigNode = new TargetFacadeFacadeImpl(getConfigName(childConfig))
-                    .setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG);
+            TargetBuilder childConfigNode = new TargetBuilderImpl(getConfigName(childConfig))
+                    .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG);
             populateConfigNode(childConfigNode, childConfig);
             configNode.appendChild(childConfigNode);
         }
@@ -120,18 +120,18 @@ public class InplaceEditingHandler implements Handler, BiConsumer<TargetFacade, 
 
     /**
      * Sets necessary attributes to {@code cq:InplaceEditingConfig} XML node
-     * @param targetFacade {@code Element} representing config node
+     * @param target {@code Element} representing config node
      * @param config {@link InplaceEditingConfig} annotation instance
      */
-    private void populateConfigNode(TargetFacade targetFacade, InplaceEditingConfig config) {
+    private void populateConfigNode(TargetBuilder target, InplaceEditingConfig config) {
         String propertyName = getValidPropertyName(config.propertyName());
         String textPropertyName = config.textPropertyName().isEmpty()
                 ? propertyName
                 : getValidPropertyName(config.textPropertyName());
-        targetFacade.setAttribute(DialogConstants.PN_EDIT_ELEMENT_QUERY, config.editElementQuery());
-        targetFacade.setAttribute(DialogConstants.PN_PROPERTY_NAME, propertyName);
-        targetFacade.setAttribute(DialogConstants.PN_TEXT_PROPERTY_NAME, textPropertyName);
-        populateRteConfig(targetFacade, config);
+        target.attribute(DialogConstants.PN_EDIT_ELEMENT_QUERY, config.editElementQuery());
+        target.attribute(DialogConstants.PN_PROPERTY_NAME, propertyName);
+        target.attribute(DialogConstants.PN_TEXT_PROPERTY_NAME, textPropertyName);
+        populateRteConfig(target, config);
     }
 
     /**
@@ -149,15 +149,15 @@ public class InplaceEditingHandler implements Handler, BiConsumer<TargetFacade, 
 
     /**
      * Plants necessary attributes and subnodes related to in-place rich text editor to {@code cq:InplaceEditingConfig} XML node
-     * @param targetFacade {@code Element} representing config node
+     * @param target {@code Element} representing config node
      * @param config {@link InplaceEditingConfig} annotation instance
      */
-    private void populateRteConfig(TargetFacade targetFacade, InplaceEditingConfig config) {
+    private void populateRteConfig(TargetBuilder target, InplaceEditingConfig config) {
         SourceFacade referencedRteField = getReferencedRteField(config);
         if (referencedRteField != null && referencedRteField.adaptTo(RichTextEditor.class) != null) {
-            BiConsumer<SourceFacade, TargetFacade> rteHandler = new RichTextEditorHandler(false);
-            new InheritanceHandler(rteHandler).andThen(rteHandler).accept(referencedRteField, targetFacade);
-            targetFacade.mapProperties(referencedRteField.adaptTo(RichTextEditor.class),
+            BiConsumer<SourceFacade, TargetBuilder> rteHandler = new RichTextEditorHandler(false);
+            new InheritanceHandler(rteHandler).andThen(rteHandler).accept(referencedRteField, target);
+            target.mapProperties(referencedRteField.adaptTo(RichTextEditor.class),
                     Collections.singletonList(DialogConstants.PN_USE_FIXED_INLINE_TOOLBAR));
         }
         //new RichTextEditorHandler(false).accept(config.richTextConfig(), targetFacade);
