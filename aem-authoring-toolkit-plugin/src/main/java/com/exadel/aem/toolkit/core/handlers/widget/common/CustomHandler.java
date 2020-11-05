@@ -18,8 +18,8 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.core.handlers.Handler;
@@ -31,14 +31,14 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
  * Handler for storing properties coming from custom annotations and, optionally, processed by custom handlers
  * to a Granite UI widget XML node
  */
-public class CustomHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
+public class CustomHandler implements Handler, BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param source Current {@code SourceFacade} instance
      * @param target Current {@code TargetFacade} instance
      */
     @Override
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         PluginReflectionUtility.getFieldAnnotations(source).filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
                 .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
                 .flatMap(widgetSource -> PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers().stream()

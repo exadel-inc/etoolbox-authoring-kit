@@ -20,10 +20,10 @@ import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
-import com.exadel.aem.toolkit.core.SourceFacadeImpl;
+import com.exadel.aem.toolkit.core.SourceImpl;
 import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
@@ -261,16 +261,16 @@ public class PluginReflectionUtility {
      * @param source The source to analyze
      * @return Stream of annotation objects,
      */
-    public static Stream<Class<? extends Annotation>> getFieldAnnotations(SourceFacade source){
+    public static Stream<Class<? extends Annotation>> getFieldAnnotations(Source source){
         return Arrays.stream(source.adaptTo(Annotation[].class))
                 .map(Annotation::annotationType);
     }
 
-    public static List<SourceFacade> getAllSourceFacades(Class<?> targetClass, List<Predicate<Member>> predicates) {
-        return getAllMembers(targetClass, predicates).stream().map(SourceFacadeImpl::new).collect(Collectors.toList());
+    public static List<Source> getAllSourceFacades(Class<?> targetClass, List<Predicate<Member>> predicates) {
+        return getAllMembers(targetClass, predicates).stream().map(SourceImpl::new).collect(Collectors.toList());
     }
 
-    public static List<SourceFacade> getAllSourceFacades(Class<?> targetClass) {
+    public static List<Source> getAllSourceFacades(Class<?> targetClass) {
         return getAllSourceFacades(targetClass, Collections.emptyList());
     }
 

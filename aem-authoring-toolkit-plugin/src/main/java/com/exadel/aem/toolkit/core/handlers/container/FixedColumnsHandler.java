@@ -16,9 +16,9 @@ package com.exadel.aem.toolkit.core.handlers.container;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.TargetBuilderImpl;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.TargetImpl;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.core.handlers.Handler;
@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 /**
  * The {@link Handler} for a fixed-columns TouchUI dialog.
  */
-public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder> {
+public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Target> {
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
      * to process component-backing Java class and append the results to the XML root node
@@ -37,16 +37,16 @@ public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Target
      * @param target XML document root element
      */
     @Override
-    public void accept(Class<?> componentClass, TargetBuilder target) {
-        TargetBuilder content = new TargetBuilderImpl(DialogConstants.NN_CONTENT)
+    public void accept(Class<?> componentClass, Target target) {
+        Target content = new TargetImpl(DialogConstants.NN_CONTENT)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 
-        TargetBuilder layout = new TargetBuilderImpl(DialogConstants.NN_LAYOUT)
+        Target layout = new TargetImpl(DialogConstants.NN_LAYOUT)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.FIXED_COLUMNS);
 
-        TargetBuilder contentItems = new TargetBuilderImpl(DialogConstants.NN_ITEMS);
+        Target contentItems = new TargetImpl(DialogConstants.NN_ITEMS);
 
-        TargetBuilder contentItemsColumn = new TargetBuilderImpl(
+        Target contentItemsColumn = new TargetImpl(
                 DialogConstants.NN_COLUMN)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 
@@ -57,7 +57,7 @@ public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Target
 
         contentItems.appendChild(contentItemsColumn);
 
-        List<SourceFacade> allSourceFacades = PluginReflectionUtility.getAllSourceFacades(componentClass);
-        PluginXmlContainerUtility.append(contentItemsColumn, allSourceFacades);
+        List<Source> allSources = PluginReflectionUtility.getAllSourceFacades(componentClass);
+        PluginXmlContainerUtility.append(contentItemsColumn, allSources);
     }
 }

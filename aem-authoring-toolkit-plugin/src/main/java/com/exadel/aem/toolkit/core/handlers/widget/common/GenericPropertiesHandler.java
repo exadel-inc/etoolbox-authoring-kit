@@ -15,8 +15,8 @@ package com.exadel.aem.toolkit.core.handlers.widget.common;
 
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 /**
  * Handler for storing {@link ResourceType} and like properties to a Granite UI widget XML node
  */
-public class GenericPropertiesHandler implements BiConsumer<SourceFacade, TargetBuilder> {
+public class GenericPropertiesHandler implements BiConsumer<Source, Target> {
     private static final String RESTYPE_MISSING_EXCEPTION_MESSAGE = "@ResourceType is not present in ";
 
     /**
@@ -37,7 +37,7 @@ public class GenericPropertiesHandler implements BiConsumer<SourceFacade, Target
      * @param target Current {@code TargetFacade} instance
      */
     @Override
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         DialogWidget dialogWidget = DialogWidgets.fromSourceFacade(source);
         if (dialogWidget == null || dialogWidget.getAnnotationClass() == null) {
             return;

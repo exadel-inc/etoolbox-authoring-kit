@@ -28,8 +28,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.TargetBuilderImpl;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
@@ -45,7 +45,7 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * Base class for creating XML representation of AEM component's stored attributes and authoring features
  */
 abstract class PackageEntryWriter {
-    private Transformer transformer;
+    private final Transformer transformer;
 
     /**
      * Basic constructor
@@ -112,7 +112,7 @@ abstract class PackageEntryWriter {
      * @param componentClass The {@code Class} being processed
      * @param target The targetFacade element of DOM {@link Document} to feed data to
      */
-    abstract void populateDomDocument(Class<?> componentClass, TargetBuilder target);
+    abstract void populateDomDocument(Class<?> componentClass, Target target);
 
     /**
      * Wraps DOM document creating with use of a {@link DocumentBuilder} and populating it with data
@@ -120,7 +120,7 @@ abstract class PackageEntryWriter {
      * @return {@link Document} created
      */
     private Document createDomDocument(Class<?> componentClass) throws ParserConfigurationException {
-        TargetBuilder rootElement = new TargetBuilderImpl(DialogConstants.NN_ROOT);
+        Target rootElement = new TargetImpl(DialogConstants.NN_ROOT);
         populateDomDocument(componentClass, rootElement);
         Document document = rootElement.buildXml(PackageWriter.createDocumentBuilder().newDocument());
         writeCommonProperties(componentClass, getXmlScope(), document);

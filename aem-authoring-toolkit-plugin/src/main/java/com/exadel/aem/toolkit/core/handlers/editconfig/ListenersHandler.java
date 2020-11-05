@@ -19,8 +19,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.TargetBuilderImpl;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.TargetImpl;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
@@ -30,21 +30,21 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 /**
  * {@link Handler} implementation for storing {@link Listener} arguments to {@code cq:editConfig} XML node
  */
-public class ListenersHandler implements Handler, BiConsumer<TargetBuilder, EditConfig> {
+public class ListenersHandler implements Handler, BiConsumer<Target, EditConfig> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param root XML element
      * @param editConfig {@code EditConfig} annotation instance
      */
     @Override
-    public void accept(TargetBuilder root, EditConfig editConfig) {
+    public void accept(Target root, EditConfig editConfig) {
         List<Listener> listeners = Arrays.asList(editConfig.listeners());
         if(listeners.isEmpty()){
             return;
         }
         Map<String, String> properties = listeners.stream()
             .collect(Collectors.toMap(Listener::event, Listener::action));
-        root.appendChild(new TargetBuilderImpl(DialogConstants.NN_LISTENERS)
+        root.appendChild(new TargetImpl(DialogConstants.NN_LISTENERS)
                 .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_LISTENERS)
                 .setAttributes(properties));
     }

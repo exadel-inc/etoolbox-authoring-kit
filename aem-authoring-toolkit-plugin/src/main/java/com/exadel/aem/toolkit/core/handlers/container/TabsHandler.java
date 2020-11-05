@@ -25,10 +25,10 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.SourceFacadeImpl;
-import com.exadel.aem.toolkit.core.TargetBuilderImpl;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.SourceImpl;
+import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.util.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +47,7 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 /**
  * The {@link Handler} for a tabbed TouchUI dialog
  */
-public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder> {
+public class TabsHandler implements Handler, BiConsumer<Class<?>, Target> {
     private static final String DEFAULT_TAB_NAME = "tab";
     private static final String NO_TABS_DEFINED_EXCEPTION_MESSAGE = "No tabs defined for the dialog at ";
 
@@ -58,12 +58,12 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder>
      * @param parentElement XML document root element
      */
     @Override
-    public void accept(Class<?> componentClass, TargetBuilder parentElement) {
+    public void accept(Class<?> componentClass, Target parentElement) {
         // Render the generic XML markup for tabs setting
-        TargetBuilder tabItemsElement = parentElement.appendChild(new TargetBuilderImpl(DialogConstants.NN_CONTENT).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER))
-                .appendChild(new TargetBuilderImpl(DialogConstants.NN_ITEMS))
-                .appendChild(new TargetBuilderImpl(DialogConstants.NN_TABS).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.TABS))
-                .appendChild(new TargetBuilderImpl(DialogConstants.NN_ITEMS));
+        Target tabItemsElement = parentElement.appendChild(new TargetImpl(DialogConstants.NN_CONTENT).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER))
+                .appendChild(new TargetImpl(DialogConstants.NN_ITEMS))
+                .appendChild(new TargetImpl(DialogConstants.NN_TABS).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.TABS))
+                .appendChild(new TargetImpl(DialogConstants.NN_ITEMS));
 
         // Initialize ignored tabs list for the current class if IgnoreTabs annotation is present.
         // Note that "ignored tabs" setting is not inherited and is for current class only, unlike tabs collection
@@ -102,10 +102,10 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder>
         }
 
         // Get all *non-nested* fields from superclasses and the current class
-        List<SourceFacade> allSourceFacades = PluginReflectionUtility.getAllSourceFacades(componentClass);
+        List<Source> allSources = PluginReflectionUtility.getAllSourceFacades(componentClass);
 
         // If tabs collection is empty and yet there are fields to be placed, fire an exception and create a default tab
-        if (allTabInstances.isEmpty() && !allSourceFacades.isEmpty()) {
+        if (allTabInstances.isEmpty() && !allSources.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(
                     NO_TABS_DEFINED_EXCEPTION_MESSAGE + componentClass.getSimpleName()
             ));
@@ -126,8 +126,8 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder>
         while (tabInstanceIterator.hasNext()) {
             final boolean isFirstTab = iterationStep++ == 0;
             TabInstance currentTabInstance = tabInstanceIterator.next().getValue();
-            List<SourceFacade> storedCurrentTabFields = currentTabInstance.getFields();
-            List<SourceFacade> moreCurrentTabFields = allSourceFacades.stream()
+            List<Source> storedCurrentTabFields = currentTabInstance.getFields();
+            List<Source> moreCurrentTabFields = allSources.stream()
                     .filter(field -> isFieldForTab(field, currentTabInstance.getTab(), isFirstTab))
                     .collect(Collectors.toList());
             boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
@@ -135,7 +135,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder>
             if (needResort) {
                 storedCurrentTabFields.sort(PluginObjectPredicates::compareByRanking);
             }
-            allSourceFacades.removeAll(moreCurrentTabFields);
+            allSources.removeAll(moreCurrentTabFields);
 
             if (ArrayUtils.contains(ignoredTabs, currentTabInstance.getTab().title())) {
                 continue;
@@ -145,7 +145,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder>
 
         // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
         // for which a non-existent tab was specified. Handle an InvalidTabException for each of them
-        allSourceFacades.forEach(source -> PluginRuntime.context().getExceptionHandler()
+        allSources.forEach(source -> PluginRuntime.context().getExceptionHandler()
                 .handle(new InvalidTabException(
                         source.adaptTo(PlaceOnTab.class) != null
                                 ? source.adaptTo(PlaceOnTab.class).value()
@@ -172,7 +172,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder>
                         tabTitle,
                         new TabInstance(
                                 nestedCls.getAnnotation(Tab.class),
-                                Arrays.stream(nestedCls.getDeclaredFields()).map(SourceFacadeImpl::new).collect(Collectors.toList())));
+                                Arrays.stream(nestedCls.getDeclaredFields()).map(SourceImpl::new).collect(Collectors.toList())));
             });
             if (cls.isAnnotationPresent(Dialog.class)) {
                 Arrays.stream(cls.getAnnotation(Dialog.class).tabs())
@@ -184,12 +184,12 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder>
 
     /**
      * Adds a tab definition to the XML markup
-     * @param target The {@link TargetBuilder} instance to append particular sources' markup
+     * @param target The {@link Target} instance to append particular sources' markup
      * @param tab The {@link Tab} instance to render as a dialog tab
      * @param sources The list of {@link Field} instances to render as dialog sources
      */
-    private void appendTab(TargetBuilder target, Tab tab, List<SourceFacade> sources) {
-        TargetBuilder tabElement = new TargetBuilderImpl(tab.title())
+    private void appendTab(Target target, Tab tab, List<Source> sources) {
+        Target tabElement = new TargetImpl(tab.title())
                 .attribute(JcrConstants.PN_TITLE, tab.title())
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
         target.appendChild(tabElement, DEFAULT_TAB_NAME);
@@ -199,10 +199,10 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder>
 
     /**
      * Appends tab attributes to a pre-built tab-defining XML element
-     * @param target {@link TargetBuilder} instance representing a TouchUI dialog tab
+     * @param target {@link Target} instance representing a TouchUI dialog tab
      * @param tab {@link Tab} annotation that contains settings
      */
-    private void appendTabAttributes(TargetBuilder target, Tab tab){
+    private void appendTabAttributes(Target target, Tab tab){
         target.attribute(JcrConstants.PN_TITLE, tab.title());
         Attribute attribute = tab.attribute();
         target.mapProperties(attribute);
@@ -211,12 +211,12 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder>
 
     /**
      * The predicate to match a {@code SourceFacade} against particular {@code Tab}
-     * @param source  {@link SourceFacade} instance to analyze
+     * @param source  {@link Source} instance to analyze
      * @param tab {@link Tab} annotation to analyze
      * @param isDefaultTab True if the current tab accepts fields for which no tab was specified; otherwise, false
      * @return True or false
      */
-    private static boolean isFieldForTab(SourceFacade source, Tab tab, boolean isDefaultTab) {
+    private static boolean isFieldForTab(Source source, Tab tab, boolean isDefaultTab) {
         if (source.adaptTo(PlaceOnTab.class) == null) {
             return isDefaultTab;
         }
@@ -232,7 +232,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder>
     private static class TabInstance {
         private Tab tab;
 
-        private List<SourceFacade> fields;
+        private List<Source> fields;
 
         /**
          * Creates a new {@code TabInstance} wrapped around a specified {@link Tab} with an empty list of associated fields
@@ -249,7 +249,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder>
          * @param tab {@code Tab} object
          * @param fields List of {@code Field} objects to associate with the current tab
          */
-        private TabInstance(Tab tab, List<SourceFacade> fields) {
+        private TabInstance(Tab tab, List<Source> fields) {
             this.tab = tab;
             this.fields = new LinkedList<>(fields);
         }
@@ -266,7 +266,7 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, TargetBuilder>
          * Gets the stored list of {@link Field}s
          * @return {@code List<Field>} object
          */
-        private List<SourceFacade> getFields() {
+        private List<Source> getFields() {
             return fields;
         }
 

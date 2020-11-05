@@ -16,9 +16,9 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.TargetBuilderImpl;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code Checkbox} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class CheckboxHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
+class CheckboxHandler implements Handler, BiConsumer<Source, Target> {
     private static final String POSTFIX_FOR_ROOT_CHECKBOX = "Checkbox";
 
     /**
@@ -41,7 +41,7 @@ class CheckboxHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder
      * @param target Current {@code TargetFacade} instance
      */
     @Override
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         Checkbox checkbox = source.adaptTo(Checkbox.class);
 
         if (checkbox.sublist()[0] == Object.class) {
@@ -49,10 +49,10 @@ class CheckboxHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder
             setTextAttribute(source, target);
         } else {
             target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST);
-            TargetBuilder itemsElement = new TargetBuilderImpl(DialogConstants.NN_ITEMS);
+            Target itemsElement = new TargetImpl(DialogConstants.NN_ITEMS);
             target.appendChild(itemsElement);
 
-            TargetBuilder checkboxElement = new TargetBuilderImpl(((Member) source.getSource()).getName() + POSTFIX_FOR_ROOT_CHECKBOX)
+            Target checkboxElement = new TargetImpl(((Member) source.getSource()).getName() + POSTFIX_FOR_ROOT_CHECKBOX)
                     .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX);
             checkboxElement.mapProperties(checkbox);
             itemsElement.appendChild(checkboxElement);
@@ -66,13 +66,13 @@ class CheckboxHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder
      * @param source Current {@code SourceFacade} of a component class
      * @param target {@code TargetFacade} instance representing current XML node
      */
-    private void appendNestedCheckBoxList(SourceFacade source, TargetBuilder target) {
-        TargetBuilder sublist = new TargetBuilderImpl(DialogConstants.NN_SUBLIST)
+    private void appendNestedCheckBoxList(Source source, Target target) {
+        Target sublist = new TargetImpl(DialogConstants.NN_SUBLIST)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST);
         sublist.attribute(DialogConstants.PN_DISCONNECTED, source.adaptTo(Checkbox.class).disconnectedSublist());
         target.appendChild(sublist);
 
-        TargetBuilder itemsElement = new TargetBuilderImpl(DialogConstants.NN_ITEMS);
+        Target itemsElement = new TargetImpl(DialogConstants.NN_ITEMS);
         sublist.appendChild(itemsElement);
 
         appendCheckbox(source, itemsElement);
@@ -83,24 +83,24 @@ class CheckboxHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder
      * @param source Current {@code SourceFacade} of a component class
      * @param target {@code TargetFacade} instance representing current XML node
      */
-    private void appendCheckbox(SourceFacade source, TargetBuilder target) {
+    private void appendCheckbox(Source source, Target target) {
         Checkbox checkbox = source.adaptTo(Checkbox.class);
 
         for (Class<?> sublistClass : checkbox.sublist()) {
-            List<SourceFacade> sources = PluginReflectionUtility.getAllSourceFacades(sublistClass).stream()
+            List<Source> sources = PluginReflectionUtility.getAllSourceFacades(sublistClass).stream()
                     .filter(f -> f.adaptTo(Checkbox.class) != null)
                     .collect(Collectors.toList());
 
-            for (SourceFacade innerSourceFacade : sources) {
-                TargetBuilder checkboxElement = new TargetBuilderImpl(((Member) innerSourceFacade.getSource()).getName())
+            for (Source innerSource : sources) {
+                Target checkboxElement = new TargetImpl(((Member) innerSource.getSource()).getName())
                         .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX);
-                checkboxElement.mapProperties(innerSourceFacade.adaptTo(Checkbox.class));
-                setTextAttribute(innerSourceFacade, checkboxElement);
+                checkboxElement.mapProperties(innerSource.adaptTo(Checkbox.class));
+                setTextAttribute(innerSource, checkboxElement);
 
                 target.appendChild(checkboxElement);
 
-                if (innerSourceFacade.adaptTo(Checkbox.class).sublist()[0] != Object.class) {
-                    appendNestedCheckBoxList(innerSourceFacade, checkboxElement);
+                if (innerSource.adaptTo(Checkbox.class).sublist()[0] != Object.class) {
+                    appendNestedCheckBoxList(innerSource, checkboxElement);
                 }
             }
         }
@@ -111,7 +111,7 @@ class CheckboxHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder
      * @param source Current {@code SourceFacade} of a component class
      * @param target {@code TargetFacade} instance representing current XML node
      */
-    private void setTextAttribute(SourceFacade source, TargetBuilder target) {
+    private void setTextAttribute(Source source, Target target) {
         Checkbox checkbox = source.adaptTo(Checkbox.class);
         if (checkbox.text().isEmpty() && source.adaptTo(DialogField.class) != null) {
             target.attribute(DialogConstants.PN_TEXT, source.adaptTo(DialogField.class).label());

@@ -14,8 +14,8 @@
 package com.exadel.aem.toolkit.core.handlers.widget;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
@@ -41,12 +41,12 @@ class FieldSetHandler implements WidgetSetHandler {
      * @param target Current XML targetFacade
      */
     @Override
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         // Define the working @FieldSet annotation instance and the fieldset type
         FieldSet fieldSet = source.adaptTo(FieldSet.class);
         Class<?> fieldSetType = getFieldSetType(source.getSource());
 
-        List<SourceFacade> sources = getContainerSourceFacades(target, source, fieldSetType);
+        List<Source> sources = getContainerSourceFacades(target, source, fieldSetType);
 
         if(sources.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
@@ -61,7 +61,7 @@ class FieldSetHandler implements WidgetSetHandler {
         PluginXmlContainerUtility.append(target, sources);
     }
 
-    private void populatePrefixPostfix(SourceFacade populated, SourceFacade current, FieldSet fieldSet) {
+    private void populatePrefixPostfix(Source populated, Source current, FieldSet fieldSet) {
         if (StringUtils.isNotBlank(fieldSet.namePrefix())){
             populated.addToValueMap(DialogConstants.PN_PREFIX, current.fromValueMap(DialogConstants.PN_PREFIX).toString() +
                     populated.fromValueMap(DialogConstants.PN_PREFIX).toString().substring(2) + NamingUtil.getValidFieldName(fieldSet.namePrefix()));

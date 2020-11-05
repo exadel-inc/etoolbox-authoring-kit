@@ -14,7 +14,7 @@
 
 package com.exadel.aem.toolkit.api.handlers;
 
-public interface SourceFacade {
+public interface Source {
 
     Object fromValueMap(String s);
 

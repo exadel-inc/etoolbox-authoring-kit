@@ -15,9 +15,9 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.TargetBuilderImpl;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
@@ -27,7 +27,7 @@ import java.util.function.BiConsumer;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class AutocompleteHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
+class AutocompleteHandler implements Handler, BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
      *
@@ -35,19 +35,19 @@ class AutocompleteHandler implements Handler, BiConsumer<SourceFacade, TargetBui
      * @param target Current {@code TargetFacade} instance
      */
     @Override
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         Autocomplete autocomplete = source.adaptTo(Autocomplete.class);
-        TargetBuilder datasource = new TargetBuilderImpl(DialogConstants.NN_DATASOURCE)
+        Target datasource = new TargetImpl(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value());
         datasource.mapProperties(autocomplete.datasource());
         target.appendChild(datasource);
 
-        TargetBuilder options = new TargetBuilderImpl(DialogConstants.NN_OPTIONS)
+        Target options = new TargetImpl(DialogConstants.NN_OPTIONS)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value());
         datasource.mapProperties(autocomplete.options());
         target.appendChild(options);
 
-        TargetBuilder values = new TargetBuilderImpl(DialogConstants.NN_VALUES)
+        Target values = new TargetImpl(DialogConstants.NN_VALUES)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value());
         values.mapProperties(autocomplete.values());
         target.appendChild(values);

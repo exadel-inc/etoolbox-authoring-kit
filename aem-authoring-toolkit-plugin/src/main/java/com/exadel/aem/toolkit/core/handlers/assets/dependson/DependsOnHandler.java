@@ -19,8 +19,8 @@ import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnConfig;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnParam;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRefTypes;
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 /**
  * {@link Handler} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
  */
-public class DependsOnHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
+public class DependsOnHandler implements Handler, BiConsumer<Source, Target> {
 
     static final String EMPTY_VALUES_EXCEPTION_MESSAGE = "Non-empty string values required for DependsOn params";
 
@@ -52,7 +52,7 @@ public class DependsOnHandler implements Handler, BiConsumer<SourceFacade, Targe
      * @param source Current {@code Field} instance
      */
     @Override
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         if (source.adaptTo(DependsOn.class) != null) {
             handleDependsOn(source.adaptTo(DependsOn.class), target);
         } else if (source.adaptTo(DependsOnConfig.class) != null) {
@@ -62,11 +62,11 @@ public class DependsOnHandler implements Handler, BiConsumer<SourceFacade, Targe
     }
 
     /**
-     * Called by {@link DependsOnHandler#accept(SourceFacade, TargetBuilder)} to store particular {@code DependsOn} value in XML markup
+     * Called by {@link DependsOnHandler#accept(Source, Target)} to store particular {@code DependsOn} value in XML markup
      * @param target Current XML targetFacade
      * @param value Current {@link DependsOn} value
      */
-    private void handleDependsOn(DependsOn value, TargetBuilder target) {
+    private void handleDependsOn(DependsOn value, Target target) {
         if (StringUtils.isAnyBlank(value.query(), value.action())) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
@@ -79,11 +79,11 @@ public class DependsOnHandler implements Handler, BiConsumer<SourceFacade, Targe
     }
 
     /**
-     * Called by {@link DependsOnHandler#accept(SourceFacade, TargetBuilder)} to store {@code DependsOnConfig} value in XML markup
+     * Called by {@link DependsOnHandler#accept(Source, Target)} to store {@code DependsOnConfig} value in XML markup
      * @param target Current XML targetFacade
      * @param value Current {@link DependsOnConfig} value
      */
-    private void handleDependsOnConfig(DependsOnConfig value, TargetBuilder target) {
+    private void handleDependsOnConfig(DependsOnConfig value, Target target) {
         List<DependsOn> validDeclarations = Arrays.stream(value.value())
                 .filter(dependsOn -> StringUtils.isNoneBlank(dependsOn.action(), dependsOn.query()))
                 .collect(Collectors.toList());
@@ -135,11 +135,11 @@ public class DependsOnHandler implements Handler, BiConsumer<SourceFacade, Targe
     }
 
     /**
-     * Called by {@link DependsOnHandler#accept(SourceFacade, TargetBuilder)} to store particular {@code DependsOnRef} value in XML markup
+     * Called by {@link DependsOnHandler#accept(Source, Target)} to store particular {@code DependsOnRef} value in XML markup
      * @param target Current XML targetFacade
      * @param source Current {@code Field} instance
      */
-    private void handleDependsOnRefValue(SourceFacade source, TargetBuilder target) {
+    private void handleDependsOnRefValue(Source source, Target target) {
         DependsOnRef value = source.adaptTo(DependsOnRef.class);
         if (value == null) {
             return;

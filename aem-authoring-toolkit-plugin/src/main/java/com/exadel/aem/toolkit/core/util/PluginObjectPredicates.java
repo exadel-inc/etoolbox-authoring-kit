@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.core.SourceFacadeImpl;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.core.SourceImpl;
 import org.apache.commons.lang3.ClassUtils;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
@@ -80,7 +80,7 @@ public class PluginObjectPredicates {
      * @param f2 Second comparison member
      * @return Integer value per {@code Comparator#compare(Object, Object)} convention
      */
-    public static int compareByRanking(SourceFacade f1, SourceFacade f2)  {
+    public static int compareByRanking(Source f1, Source f2)  {
         int rank1 = 0;
         int rank2 = 0;
         if (f1.adaptTo(DialogField.class) != null) {
@@ -104,7 +104,7 @@ public class PluginObjectPredicates {
      * @param f2 Second comparison member
      * @return Integer value per {@code Comparator#compare(Object, Object)} convention
      */
-    static int compareByOrigin(SourceFacade f1, SourceFacade f2) {
+    static int compareByOrigin(Source f1, Source f2) {
         Class<?> f1Class = ((Member) f1.getSource()).getDeclaringClass();
         Class<?> f2Class = ((Member) f2.getSource()).getDeclaringClass();
         if (f1Class != f2Class) {
@@ -119,9 +119,9 @@ public class PluginObjectPredicates {
     }
 
     public static int compareDialogMembers(Member f1, Member f2)  {
-        DialogField dialogField1 = new SourceFacadeImpl(f1).adaptTo(DialogField.class);
+        DialogField dialogField1 = new SourceImpl(f1).adaptTo(DialogField.class);
         int rank1 = dialogField1 != null ? dialogField1.ranking() : 0;
-        DialogField dialogField2 = new SourceFacadeImpl(f2).adaptTo(DialogField.class);
+        DialogField dialogField2 = new SourceImpl(f2).adaptTo(DialogField.class);
         int rank2 = dialogField2 != null ? dialogField2.ranking() : 0;
 
         if (rank1 != rank2) {

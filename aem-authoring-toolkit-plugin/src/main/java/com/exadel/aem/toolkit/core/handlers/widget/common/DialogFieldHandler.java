@@ -16,8 +16,8 @@ package com.exadel.aem.toolkit.core.handlers.widget.common;
 import java.lang.reflect.Member;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.util.NamingUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,14 +27,14 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 /**
  * Handler for storing {@link DialogField} properties to a Granite UI widget XML node
  */
-public class DialogFieldHandler implements BiConsumer<SourceFacade, TargetBuilder> {
+public class DialogFieldHandler implements BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param source Current {@code SourceFacade} instance
      * @param target XML targetFacade
      */
     @Override
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         DialogField dialogField = source.adaptTo(DialogField.class);
         if (dialogField == null) {
             return;

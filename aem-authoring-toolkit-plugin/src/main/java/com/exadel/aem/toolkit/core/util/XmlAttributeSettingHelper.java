@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -145,7 +145,7 @@ public class XmlAttributeSettingHelper<T> {
         return this;
     }
 
-    public void setAttribute(TargetBuilder target) {
+    public void setAttribute(Target target) {
         if (!valueTypeIsSupported) {
             return;
         }
@@ -198,7 +198,7 @@ public class XmlAttributeSettingHelper<T> {
      * @param element Element node instance
      * @param value Particular value to be rendered
      */
-    void setAttribute(TargetBuilder element, T value) {
+    void setAttribute(Target element, T value) {
         if (!valueTypeIsSupported) {
             return;
         }
@@ -219,7 +219,7 @@ public class XmlAttributeSettingHelper<T> {
      * @param element Element node instance
      * @param values List of values to be rendered
      */
-    void setAttribute(TargetBuilder element, List<T> values) {
+    void setAttribute(Target element, List<T> values) {
         if (!valueTypeIsSupported || values == null || values.isEmpty()) {
             return;
         }
@@ -241,7 +241,7 @@ public class XmlAttributeSettingHelper<T> {
      * @param element Element node instance
      * @param value String to store as the attribute
      */
-    private void setAttribute(TargetBuilder element, String value) {
+    private void setAttribute(Target element, String value) {
         String oldAttributeValue = element.hasAttribute(name)
                 ? element.getAttribute(name)
                 : "";

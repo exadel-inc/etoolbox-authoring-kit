@@ -15,7 +15,7 @@ package com.exadel.aem.toolkit.core.handlers.editconfig;
 
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
@@ -37,7 +37,7 @@ public class EditConfigHandlingHelper {
      * @param target {@code Element} representing {@code cq:editConfig} XML node
      * @param editConfig {@link EditConfig} instance
      */
-    public static void append(TargetBuilder target, EditConfig editConfig) {
+    public static void append(Target target, EditConfig editConfig) {
         getEditConfigHandlerChain().accept(target, editConfig);
     }
 
@@ -47,7 +47,7 @@ public class EditConfigHandlingHelper {
      * @param target {@code Element} representing {@code cq:editConfig} XML node
      * @param childEditConfig {@link ChildEditConfig} instance
      */
-    public static void append(TargetBuilder target, ChildEditConfig childEditConfig) {
+    public static void append(Target target, ChildEditConfig childEditConfig) {
         // herewith create a "proxied" @EditConfig object out of the provided @ChildEditConfig
         // with "dropTargets" and "listeners" methods of @EditConfig populated with  @ChildEditConfig values
         EditConfig derivedEditConfig = PluginObjectUtility.create(EditConfig.class, ImmutableMap.of(
@@ -61,7 +61,7 @@ public class EditConfigHandlingHelper {
      * Generates the chain of handlers to store {@code cq:editConfig} XML markup
      * @return {@code BiConsumer<Element, EditConfig>} instance
      */
-    private static BiConsumer<TargetBuilder, EditConfig> getEditConfigHandlerChain() {
+    private static BiConsumer<Target, EditConfig> getEditConfigHandlerChain() {
         return new PropertiesHandler()
                 .andThen(new DropTargetsHandler())
                 .andThen(new FormParametersHandler())
@@ -73,7 +73,7 @@ public class EditConfigHandlingHelper {
      * Generates the chain of handlers to store {@code cq:editConfig} XML markup
      * @return {@code BiConsumer<TargetFacade, EditConfig>} instance
      */
-    private static BiConsumer<TargetBuilder, EditConfig> getChildEditConfigHandlerChain() {
+    private static BiConsumer<Target, EditConfig> getChildEditConfigHandlerChain() {
         return new DropTargetsHandler().andThen(new ListenersHandler());
     }
 }

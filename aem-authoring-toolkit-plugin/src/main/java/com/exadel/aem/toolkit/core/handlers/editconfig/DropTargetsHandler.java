@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.TargetBuilderImpl;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.TargetImpl;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
@@ -29,22 +29,22 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 /**
  * {@link Handler} implementation for storing {@link DropTargetConfig} arguments to {@code cq:editConfig} XML node
  */
-public class DropTargetsHandler implements Handler, BiConsumer<TargetBuilder, EditConfig> {
+public class DropTargetsHandler implements Handler, BiConsumer<Target, EditConfig> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param target XML element
      * @param editConfig {@code EditConfig} annotation instance
      */
     @Override
-    public void accept(TargetBuilder target, EditConfig editConfig) {
+    public void accept(Target target, EditConfig editConfig) {
         if(editConfig.dropTargets().length == 0){
             return;
         }
-        TargetBuilder dropTargetsElement = new TargetBuilderImpl(DialogConstants.NN_DROP_TARGETS);
+        Target dropTargetsElement = new TargetImpl(DialogConstants.NN_DROP_TARGETS);
         target.appendChild(dropTargetsElement);
         for (int i = 0; i < editConfig.dropTargets().length; i++) {
             DropTargetConfig dropTargetConfig = editConfig.dropTargets()[i];
-            TargetBuilder currentConfig = new TargetBuilderImpl(dropTargetConfig.nodeName())
+            Target currentConfig = new TargetImpl(dropTargetConfig.nodeName())
                     .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_DROP_TARGET_CONFIG);
             dropTargetsElement.appendChild(currentConfig);
             currentConfig.mapProperties(dropTargetConfig);

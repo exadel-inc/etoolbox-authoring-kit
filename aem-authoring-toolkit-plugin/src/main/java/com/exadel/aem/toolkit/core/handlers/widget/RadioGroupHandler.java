@@ -16,9 +16,9 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.TargetBuilderImpl;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * {@link Handler} implementation used to create markup responsible for {@code RadioGroup} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class RadioGroupHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
+class RadioGroupHandler implements Handler, BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param source Current {@code SourceFacade} instance
@@ -40,17 +40,17 @@ class RadioGroupHandler implements Handler, BiConsumer<SourceFacade, TargetBuild
     @Override
     @SuppressWarnings({"deprecation", "squid:S1874"})
     // .acsListPath() and .acsListResourceType() method calls remain for compatibility reasons until v.2.0.0
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         RadioGroup radioGroup = source.adaptTo(RadioGroup.class);
         if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {
-            TargetBuilder items = target.appendChild(new TargetBuilderImpl(DialogConstants.NN_ITEMS));
+            Target items = target.appendChild(new TargetImpl(DialogConstants.NN_ITEMS));
             Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));
         }
         PluginXmlUtility.appendDataSource(target, radioGroup.datasource(), radioGroup.acsListPath(), radioGroup.acsListResourceType());
     }
 
-    private void renderButton(RadioButton buttonInstance, TargetBuilder parentElement) {
-        TargetBuilder button = new TargetBuilderImpl(buttonInstance.value());
+    private void renderButton(RadioButton buttonInstance, Target parentElement) {
+        Target button = new TargetImpl(buttonInstance.value());
         parentElement.appendChild(button, DialogConstants.NN_ITEM);
         button.mapProperties(buttonInstance);
     }

@@ -17,7 +17,7 @@ package com.exadel.aem.toolkit.core.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.base.CaseFormat;
 
@@ -102,7 +102,7 @@ class NamingHelper {
      * @param context {@code Element} instance to search for existing child nodes
      * @return String value
      */
-    String getUniqueName(String source, String defaultValue, TargetBuilder context) {
+    String getUniqueName(String source, String defaultValue, Target context) {
         String result = getValidName(source, defaultValue);
         if (context == null) {
             return result;

@@ -16,9 +16,9 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.TargetBuilderImpl;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  * {@link Handler} implementation used to create markup responsible for Granite {@code Select} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class SelectHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
+class SelectHandler implements Handler, BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param source Current {@code SourceFacade} instance
@@ -41,16 +41,16 @@ class SelectHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> 
     @SuppressWarnings({"deprecation", "squid:S1874"})
     // .acsListPath() and .acsListResourceType() method calls, as well as .addNoneOption() processing
     // remain for compatibility reasons until v.2.0.0
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         Select select = source.adaptTo(Select.class);
         if (ArrayUtils.isNotEmpty(select.options())) {
-            TargetBuilder items = target.appendChild(new TargetBuilderImpl(DialogConstants.NN_ITEMS));
+            Target items = target.appendChild(new TargetImpl(DialogConstants.NN_ITEMS));
             for (Option option: select.options()) {
-                TargetBuilder item = items.appendChild(new TargetBuilderImpl(option.value()), DialogConstants.NN_ITEM);
+                Target item = items.appendChild(new TargetImpl(option.value()), DialogConstants.NN_ITEM);
                 item.mapProperties(option);
             }
         }
-        TargetBuilder dataSourceElement = PluginXmlUtility.appendDataSource(
+        Target dataSourceElement = PluginXmlUtility.appendDataSource(
                 target,
                 select.datasource(),
                 select.acsListPath(),

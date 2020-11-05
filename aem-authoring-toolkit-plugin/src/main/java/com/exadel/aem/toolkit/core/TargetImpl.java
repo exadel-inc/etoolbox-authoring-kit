@@ -5,7 +5,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.NamingUtil;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
@@ -21,7 +21,7 @@ import java.util.function.BinaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class TargetBuilderImpl implements TargetBuilder {
+public class TargetImpl implements Target {
 
     private static final String ATTRIBUTE_LIST_TEMPLATE = "[%s]";
     private static final String ATTRIBUTE_LIST_SPLIT_PATTERN = "\\s*,\\s*";
@@ -35,10 +35,10 @@ public class TargetBuilderImpl implements TargetBuilder {
 
     private String name;
     private final Map<String, String> valueMap;
-    private TargetBuilder parent;
-    private final List<TargetBuilder> listChildren;
+    private Target parent;
+    private final List<Target> listChildren;
 
-    public TargetBuilderImpl(String name) {
+    public TargetImpl(String name) {
         this.name = name;
         this.valueMap = new HashMap<>();
         this.listChildren = new ArrayList<>();
@@ -46,31 +46,31 @@ public class TargetBuilderImpl implements TargetBuilder {
     }
 
     @Override
-    public TargetBuilder appendChild(TargetBuilder target) {
+    public Target appendChild(Target target) {
         this.listChildren.add(target);
         target.setParent(this);
         return target;
     }
 
     @Override
-    public TargetBuilder appendChild(TargetBuilder target, String defaultName) {
+    public Target appendChild(Target target, String defaultName) {
         target.name(getUniqueName(target.getName(), defaultName, this));
         return appendChild(target);
     }
 
-    private String getUniqueName(String name, String defaultName, TargetBuilder target) {
+    private String getUniqueName(String name, String defaultName, Target target) {
         return NamingUtil.getUniqueName(name, defaultName, target);
     }
 
     @Override
-    public TargetBuilder mapProperties(Object o, List<String> skipped) {
+    public Target mapProperties(Object o, List<String> skipped) {
         if (o instanceof Annotation) {
             mapAnnotationProperties((Annotation) o, this, skipped);
         }
         return this;
     }
 
-    private void mapAnnotationProperties(Annotation annotation, TargetBuilder target, List<String> skipped) {
+    private void mapAnnotationProperties(Annotation annotation, Target target, List<String> skipped) {
         PropertyMapping propMapping = annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class);
         if (propMapping == null) {
             return;
@@ -80,7 +80,7 @@ public class TargetBuilderImpl implements TargetBuilder {
                 ? StringUtils.substringBeforeLast(prefix, DialogConstants.PATH_SEPARATOR)
                 : StringUtils.EMPTY;
 
-        TargetBuilder effectiveElement;
+        Target effectiveElement;
         if (StringUtils.isEmpty(nodePrefix)) {
             effectiveElement = target;
         } else {
@@ -96,16 +96,16 @@ public class TargetBuilderImpl implements TargetBuilder {
 
     }
 
-    private TargetBuilder getOrAddChildElement(TargetBuilder target, String name) {
-        TargetBuilder child = target.getChild(name);
+    private Target getOrAddChildElement(Target target, String name) {
+        Target child = target.getChild(name);
         if (child == null) {
-            return target.appendChild(new TargetBuilderImpl(name));
+            return target.appendChild(new TargetImpl(name));
         } else {
             return child;
         }
     }
 
-    private void populateProperty(Method method, TargetBuilder target, Annotation annotation) {
+    private void populateProperty(Method method, Target target, Annotation annotation) {
         String name = method.getName();
         boolean ignorePrefix = false;
         if (method.isAnnotationPresent(PropertyRendering.class)) {
@@ -145,37 +145,37 @@ public class TargetBuilderImpl implements TargetBuilder {
     }
 
     @Override
-    public TargetBuilder attribute(String name, String value) {
+    public Target attribute(String name, String value) {
         this.valueMap.put(name, value);
         return this;
     }
 
     @Override
-    public TargetBuilder attribute(String name, boolean value) {
+    public Target attribute(String name, boolean value) {
         this.valueMap.put(name, "{Boolean}" + value);
         return this;
     }
 
     @Override
-    public TargetBuilder attribute(String name, long value) {
+    public Target attribute(String name, long value) {
         this.valueMap.put(name, "{Long}" + value);
         return this;
     }
 
     @Override
-    public TargetBuilder attribute(String name, List<String> values) {
+    public Target attribute(String name, List<String> values) {
         this.valueMap.put(name, values.toString());
         return this;
     }
 
     @Override
-    public TargetBuilder setParent(TargetBuilder parent) {
+    public Target setParent(Target parent) {
         this.parent = parent;
         return this;
     }
 
     @Override
-    public TargetBuilder setAttributes(Map<String, String> map) {
+    public Target setAttributes(Map<String, String> map) {
         this.valueMap.putAll(map);
         return this;
     }
@@ -191,7 +191,7 @@ public class TargetBuilderImpl implements TargetBuilder {
     }
 
     @Override
-    public List<TargetBuilder> getListChildren() {
+    public List<Target> getListChildren() {
         return listChildren;
     }
 
@@ -214,7 +214,7 @@ public class TargetBuilderImpl implements TargetBuilder {
     }
 
     @Override
-    public TargetBuilder parent() {
+    public Target parent() {
         return parent;
     }
 
@@ -229,9 +229,9 @@ public class TargetBuilderImpl implements TargetBuilder {
     }
 
     @Override
-    public TargetBuilder getChild(String relPath) {
+    public Target getChild(String relPath) {
         Queue<String> pathChunks = Pattern.compile("/").splitAsStream(relPath).collect(Collectors.toCollection(LinkedList::new));
-        TargetBuilder currentFacade = this;
+        Target currentFacade = this;
         while (!pathChunks.isEmpty()) {
             String currentChunk = pathChunks.poll();
             if (currentChunk.isEmpty() || currentChunk.equals(currentFacade.getName())) {
@@ -246,10 +246,10 @@ public class TargetBuilderImpl implements TargetBuilder {
     }
 
     @Override
-    public TargetBuilder getOrAddChild(String name) {
-        TargetBuilder child = this.getChild(name);
+    public Target getOrAddChild(String name) {
+        Target child = this.getChild(name);
         if (child == null) {
-            return this.appendChild(new TargetBuilderImpl(name));
+            return this.appendChild(new TargetImpl(name));
         }
         return child;
     }

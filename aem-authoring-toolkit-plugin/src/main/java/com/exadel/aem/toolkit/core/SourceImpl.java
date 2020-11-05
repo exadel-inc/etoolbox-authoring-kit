@@ -14,7 +14,7 @@
 
 package com.exadel.aem.toolkit.core;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 import java.lang.annotation.Annotation;
@@ -25,12 +25,12 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SourceFacadeImpl implements SourceFacade {
+public class SourceImpl implements Source {
 
     private final Member member;
     private final Map<String, Object> valueMap;
 
-    public SourceFacadeImpl(Member member) {
+    public SourceImpl(Member member) {
         this.member = member;
         this.valueMap = new HashMap<>();
         this.valueMap.put(DialogConstants.PN_PREFIX, "./");

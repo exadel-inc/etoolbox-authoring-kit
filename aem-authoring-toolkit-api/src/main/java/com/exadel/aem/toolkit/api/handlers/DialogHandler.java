@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
  */
 @Handles(Dialog.class)
 @SuppressWarnings("unused")
-public interface DialogHandler extends BiConsumer<TargetBuilder, Class<?>> {
+public interface DialogHandler extends BiConsumer<Target, Class<?>> {
     /**
      * Identifies this DialogHandler for binding to a specific {@code DialogAnnotation}
      * @return String value, non-blank

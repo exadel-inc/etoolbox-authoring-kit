@@ -18,8 +18,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
@@ -36,7 +36,7 @@ import com.exadel.aem.toolkit.core.util.validation.Validation;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code DatePicker} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class DatePickerHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
+class DatePickerHandler implements Handler, BiConsumer<Source, Target> {
     private static final String INVALID_FORMAT_EXCEPTION_TEMPLATE = "Invalid %s '%s' for @DatePicker field '%s'";
     private static final String INVALID_VALUE_EXCEPTION_TEMPLATE = "Property '%s' of @DatePicker does not correspond to specified valueFormat";
 
@@ -46,7 +46,7 @@ class DatePickerHandler implements Handler, BiConsumer<SourceFacade, TargetBuild
      * @param target Current {@code SourceFacade} instance
      */
     @Override
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         DatePicker datePickerAttribute = source.adaptTo(DatePicker.class);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
 
@@ -95,7 +95,7 @@ class DatePickerHandler implements Handler, BiConsumer<SourceFacade, TargetBuild
      * @param formatter {@link DateTimeFormatter} instance
      */
     private void storeDateValue(
-            TargetBuilder target,
+            Target target,
             String attribute,
             DateTimeValue value,
             DateTimeFormatter formatter

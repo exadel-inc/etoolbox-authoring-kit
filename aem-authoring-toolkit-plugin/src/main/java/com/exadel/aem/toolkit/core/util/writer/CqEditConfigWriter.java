@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.core.util.writer;
 
 import javax.xml.transform.Transformer;
 
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import org.w3c.dom.Document;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
@@ -58,13 +58,13 @@ class CqEditConfigWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, TargetBuilder)} abstract method to write down contents
+     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Target)} abstract method to write down contents
      * of {@code _cq_editConfig.xml} file
      * @param componentClass The {@code Class} being processed
      * @param root The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateDomDocument(Class<?> componentClass, TargetBuilder root) {
+    void populateDomDocument(Class<?> componentClass, Target root) {
         EditConfig editConfig = componentClass.getDeclaredAnnotation(EditConfig.class);
         root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
         EditConfigHandlingHelper.append(root, editConfig);

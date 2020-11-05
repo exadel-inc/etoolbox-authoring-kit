@@ -1,6 +1,6 @@
 package com.exadel.aem.toolkit.core.util;
 
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Target;
 
 public class NamingUtil {
 
@@ -21,7 +21,7 @@ public class NamingUtil {
         return fieldNameHelper.getValidName(name, DialogConstants.NN_FIELD);
     }
 
-    public static String getUniqueName(String name, String defaultValue, TargetBuilder context) {
+    public static String getUniqueName(String name, String defaultValue, Target context) {
         return simpleNameHelper.getUniqueName(name, defaultValue, context);
     }
 

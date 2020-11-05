@@ -19,9 +19,9 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.SourceFacadeImpl;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.SourceImpl;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
@@ -80,16 +80,16 @@ public enum DialogWidgets implements DialogWidget {
     BUTTON(Button.class);
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";
-    private static final BiConsumer<SourceFacade, TargetBuilder> EMPTY_HANDLER = (componentNode, field) -> {};
+    private static final BiConsumer<Source, Target> EMPTY_HANDLER = (componentNode, field) -> {};
 
     private Class<? extends Annotation> annotation;
-    private BiConsumer<SourceFacade, TargetBuilder> handler;
+    private BiConsumer<Source, Target> handler;
 
     DialogWidgets(Class<? extends Annotation> annotation) {
         this.annotation = annotation;
     }
 
-    DialogWidgets(Class<? extends Annotation> annotation, BiConsumer<SourceFacade, TargetBuilder> handler) {
+    DialogWidgets(Class<? extends Annotation> annotation, BiConsumer<Source, Target> handler) {
         this(annotation);
         this.handler = handler;
     }
@@ -100,7 +100,7 @@ public enum DialogWidgets implements DialogWidget {
     }
 
     @Override
-    public BiConsumer<SourceFacade, TargetBuilder> getHandler() {
+    public BiConsumer<Source, Target> getHandler() {
         return handler != null ? handler : EMPTY_HANDLER;
     }
 
@@ -110,7 +110,7 @@ public enum DialogWidgets implements DialogWidget {
      * @return True or false
      */
     public static boolean isPresent(Member member) {
-        return getWidgetAnnotationClass(new SourceFacadeImpl(member)) != null;
+        return getWidgetAnnotationClass(new SourceImpl(member)) != null;
     }
 
     /**
@@ -118,7 +118,7 @@ public enum DialogWidgets implements DialogWidget {
      * @param source {@code SourceFacade} of a component class
      * @return {@code DialogWidget} value, or null
      */
-    public static DialogWidget fromSourceFacade(SourceFacade source) {
+    public static DialogWidget fromSourceFacade(Source source) {
         Class<? extends Annotation> fieldAnnotationClass = getWidgetAnnotationClass(source);
         if (fieldAnnotationClass == null) {
             return null;
@@ -144,7 +144,7 @@ public enum DialogWidgets implements DialogWidget {
      * @param source {@code SourceFacade} of a component class
      * @return {@code Class} object
      */
-    private static Class<? extends Annotation> getWidgetAnnotationClass(SourceFacade source) {
+    private static Class<? extends Annotation> getWidgetAnnotationClass(Source source) {
         // get first in-built component annotation attached to this source
         Class<? extends Annotation> annotationClass = Arrays.stream(values())
                 .filter(dialogComponent -> isAnnotated(source, dialogComponent))
@@ -167,7 +167,7 @@ public enum DialogWidgets implements DialogWidget {
      * @param widget {@code DialogComponent} instance
      * @return True or false
      */
-    private static boolean isAnnotated(SourceFacade source, DialogWidgets widget) {
+    private static boolean isAnnotated(Source source, DialogWidgets widget) {
         return Objects.nonNull(widget.getAnnotationClass())
                 && PluginReflectionUtility.getFieldAnnotations(source).anyMatch(fa -> fa.equals(widget.getAnnotationClass()));
     }
@@ -197,7 +197,7 @@ public enum DialogWidgets implements DialogWidget {
         }
 
         @Override
-        public BiConsumer<SourceFacade, TargetBuilder> getHandler() {
+        public BiConsumer<Source, Target> getHandler() {
             return EMPTY_HANDLER;
         }
     }

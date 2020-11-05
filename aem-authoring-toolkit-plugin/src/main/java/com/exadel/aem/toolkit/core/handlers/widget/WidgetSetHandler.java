@@ -16,8 +16,8 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectPredicates;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  * collections, such as {@link com.exadel.aem.toolkit.api.annotations.widgets.FieldSet}
  * or {@link com.exadel.aem.toolkit.api.annotations.widgets.MultiField}
  */
-interface WidgetSetHandler extends Handler, BiConsumer<SourceFacade, TargetBuilder> {
+interface WidgetSetHandler extends Handler, BiConsumer<Source, Target> {
 
     /**
      * Retrieves the list of fields applicable to the current container, by calling {@link PluginReflectionUtility#getAllSourceFacades(Class)} (Class)}
@@ -48,7 +48,7 @@ interface WidgetSetHandler extends Handler, BiConsumer<SourceFacade, TargetBuild
      * @param containerType {@code Class} representing the type of the container
      * @return {@code List<SourceFacade>} containing renderable fields, or an empty collection
      */
-    default List<SourceFacade> getContainerSourceFacades(TargetBuilder target, SourceFacade source, Class<?> containerType) {
+    default List<Source> getContainerSourceFacades(Target target, Source source, Class<?> containerType) {
         // Extract type of the Java class being the current rendering source
         Class<?> componentType = (Class<?>) target.getClass();
         // Build the collection of ignored fields that may be defined at source level and at nesting class level

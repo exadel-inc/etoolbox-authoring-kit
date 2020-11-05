@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import javax.xml.transform.Transformer;
 
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -62,7 +62,7 @@ class CqDialogWriter extends ContentXmlWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, TargetBuilder)} abstract method to write down contents
+     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Target)} abstract method to write down contents
      * of {@code _cq_dialog.xml} file. To the targetFacade node, several XML building routines are applied in sequence: the predefined
      * dialog container builder, the common properties writer, {@code DependsOn} handlers and any {@code CustomHandler}s defined for
      * this component class
@@ -71,7 +71,7 @@ class CqDialogWriter extends ContentXmlWriter {
      * @param target   The targetFacade element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateDomDocument(Class<?> componentClass, TargetBuilder target) {
+    void populateDomDocument(Class<?> componentClass, Target target) {
         Dialog dialog = componentClass.getDeclaredAnnotation(Dialog.class);
         target.mapProperties(dialog, Arrays.stream(Dialog.class.getDeclaredMethods())
                 .filter(m -> !fitsInScope(m, getXmlScope())).map(Method::getName).collect(Collectors.toList()));

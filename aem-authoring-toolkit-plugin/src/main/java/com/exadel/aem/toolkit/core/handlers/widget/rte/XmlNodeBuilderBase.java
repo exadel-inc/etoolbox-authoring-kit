@@ -13,7 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.rte;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import org.w3c.dom.Element;
 
 import java.util.Arrays;
@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 
 /**
  * Represents a generic builder for a {@code RichTextEditor} configuration XML markup.
- * Required by {@link RichTextEditorHandler#accept(SourceFacade, Element)}
+ * Required by {@link RichTextEditorHandler#accept(Source, Element)}
  */
 abstract class XmlNodeBuilderBase {
     private String name;

@@ -18,8 +18,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.AllowElement;
@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.core.handlers.Handler;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code RichTextEditor} widget functionality
  * within the {@code cq:dialog} and {@code cq:editConfig} XML nodes
  */
-public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
+public class RichTextEditorHandler implements Handler, BiConsumer<Source, Target> {
     private static final String KEYWORD_AUTO = "auto";
 
     private static final String FEATURE_ALL = "*";
@@ -58,7 +58,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
      * @param target Current XML targetFacade
      */
     @Override
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         //accept(source.adaptTo(RichTextEditor.class), targetFacade);
     }
 
@@ -201,7 +201,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
 
     */
 /**
-     * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to facilitate single feature token from the
+     * Called by {@link RichTextEditorHandler#accept(Source, Element)} to facilitate single feature token from the
      * {@link RichTextEditor#features()} or {@link RichTextEditor#fullscreenFeatures()} collection to one or more appropriate
      * {@code XmlNodeBuilder}-s
      * @param featureItem A mutually linked pair consisting of a {@code XmlNodeBuilder} for either {@code features()}
@@ -248,7 +248,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
 
     */
 /**
-     * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to create if necessary and then retrieve
+     * Called by {@link RichTextEditorHandler#accept(Source, Element)} to create if necessary and then retrieve
      * the {@code icons} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
      *//*
@@ -261,7 +261,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
 
     */
 /**
-     * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to create if necessary and then retrieve
+     * Called by {@link RichTextEditorHandler#accept(Source, Element)} to create if necessary and then retrieve
      * the {@code formats} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
      *//*
@@ -276,7 +276,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
 
     */
 /**
-     * Called by {@link RichTextEditorHandler#accept(SourceFacade, Element)} to create if necessary and then retrieve
+     * Called by {@link RichTextEditorHandler#accept(Source, Element)} to create if necessary and then retrieve
      * the {@code specialCharsConfig} node for the RichTextEditor XML markup
      * @return {@code Element} instance representing the required node
      *//*
@@ -372,7 +372,7 @@ public class RichTextEditorHandler implements Handler, BiConsumer<SourceFacade, 
 
     */
 /**
-     * Called by {@link RichTextEditorHandler#accept(SourceFacade, TargetBuilder)} to create and append an XML node representing
+     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create and append an XML node representing
      * {@code htmlRules} to the RichTextEditor XML markup
      * @param element {@code Element} instance representing the RichTextEditor node
      *//*

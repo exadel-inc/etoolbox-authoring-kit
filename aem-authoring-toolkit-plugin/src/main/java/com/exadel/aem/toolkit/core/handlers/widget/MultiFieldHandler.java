@@ -15,9 +15,9 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.util.List;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.TargetBuilderImpl;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.TargetImpl;
 import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
@@ -41,7 +41,7 @@ public class MultiFieldHandler implements WidgetSetHandler {
      * @param target Current {@code TargetFacade} targetFacade
      */
     @Override
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         // Define the working @Multifield annotation instance and the multifield type
         MultiField multiField = source.adaptTo(MultiField.class);
         Class<?> multifieldType = multiField.field();
@@ -50,7 +50,7 @@ public class MultiFieldHandler implements WidgetSetHandler {
         String name = (String) target.deleteAttribute(DialogConstants.PN_NAME);
 
         // Get the filtered members collection for the current container; early return if collection is empty
-        List<SourceFacade> members = getContainerSourceFacades(target, source, multifieldType);
+        List<Source> members = getContainerSourceFacades(target, source, multifieldType);
         if (members.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + multifieldType.getName()
@@ -72,9 +72,9 @@ public class MultiFieldHandler implements WidgetSetHandler {
      * @param target Current XML targetFacade
      * @param name The targetFacade's {@code name} attribute
      */
-    private void render(List<SourceFacade> sources, TargetBuilder target, String name) {
+    private void render(List<Source> sources, Target target, String name) {
         target.attribute(DialogConstants.PN_COMPOSITE, true);
-        TargetBuilder multifieldContainerElement = new TargetBuilderImpl(
+        Target multifieldContainerElement = new TargetImpl(
                 DialogConstants.NN_FIELD).setAttributes(ImmutableMap.of(
                         DialogConstants.PN_NAME, name,
                         DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER
@@ -99,7 +99,7 @@ public class MultiFieldHandler implements WidgetSetHandler {
      * @param source The {@code SourceFacade} instance to render TouchUI widget from
      * @param target Current {@code TargetFacade} targetFacade
      */
-    private void render(SourceFacade source, TargetBuilder target) {
+    private void render(Source source, Target target) {
         DialogWidget widget = DialogWidgets.fromSourceFacade(source);
         if (widget == null) {
             return;

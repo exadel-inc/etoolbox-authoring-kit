@@ -18,9 +18,9 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.SourceFacadeImpl;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.SourceImpl;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
@@ -31,9 +31,9 @@ import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
  * Handler for processing Granite UI widgets features "inherited" by the current component class {@code SourceFacade} from
  * other SourceFacades via {@link Extends} mechanism
  */
-public class InheritanceHandler implements BiConsumer<SourceFacade, TargetBuilder> {
-    private BiConsumer<SourceFacade, TargetBuilder> descendantChain;
-    public InheritanceHandler(BiConsumer<SourceFacade, TargetBuilder> descendantChain) {
+public class InheritanceHandler implements BiConsumer<Source, Target> {
+    private BiConsumer<Source, Target> descendantChain;
+    public InheritanceHandler(BiConsumer<Source, Target> descendantChain) {
         this.descendantChain = descendantChain;
     }
 
@@ -43,9 +43,9 @@ public class InheritanceHandler implements BiConsumer<SourceFacade, TargetBuilde
      * @param target Current {@code TargetFacade} instance
      */
     @Override
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         if (descendantChain == null) return;
-        Deque<SourceFacade> inheritanceTree = getInheritanceTree(source);
+        Deque<Source> inheritanceTree = getInheritanceTree(source);
         while (!inheritanceTree.isEmpty()) {
             descendantChain.accept(inheritanceTree.pollLast(), target); // to render 'ancestors' of context source starting from next handler in chain
         }
@@ -56,8 +56,8 @@ public class InheritanceHandler implements BiConsumer<SourceFacade, TargetBuilde
      * @param source Current {@code SourceFacade} instance
      * @return Ancestral {@code SourceFacade}s, as an ordered sequence
      */
-    private static Deque<SourceFacade> getInheritanceTree(SourceFacade source) {
-        Deque<SourceFacade> result = new LinkedList<>();
+    private static Deque<Source> getInheritanceTree(Source source) {
+        Deque<Source> result = new LinkedList<>();
         DialogWidget referencedComponent = DialogWidgets.fromSourceFacade(source);
         if (referencedComponent == null) {
             return result;
@@ -66,7 +66,7 @@ public class InheritanceHandler implements BiConsumer<SourceFacade, TargetBuilde
         while (extendsAnnotation != null) {
             String referencedFieldName = extendsAnnotation.field().isEmpty() ? ((Member) source.getSource()).getName() : extendsAnnotation.field();
             try {
-                SourceFacade referencedField = new SourceFacadeImpl(extendsAnnotation.value().getDeclaredField(referencedFieldName));
+                Source referencedField = new SourceImpl(extendsAnnotation.value().getDeclaredField(referencedFieldName));
                 if (referencedField.equals(source) || result.contains(referencedField)) { // to avoid circular references
                     break;
                 }

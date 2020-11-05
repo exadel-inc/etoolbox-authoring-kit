@@ -16,8 +16,8 @@ package com.exadel.aem.toolkit.core.handlers.widget.common;
 
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 import com.exadel.aem.toolkit.core.handlers.Handler;
@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.core.handlers.Handler;
 /**
  * Handler for creating ad-hoc {@code Multifield}s for {@link Multiple}-marked dialog fields
  */
-public class MultipleHandler implements Handler, BiConsumer<SourceFacade, TargetBuilder> {
+public class MultipleHandler implements Handler, BiConsumer<Source, Target> {
     private static final String PREFIX_GRANITE = "granite:*";
     private static final String POSTFIX_NESTED = "_nested";
 
@@ -35,7 +35,7 @@ public class MultipleHandler implements Handler, BiConsumer<SourceFacade, Target
      * @param target XML targetFacade
      */
     @Override
-    public void accept(SourceFacade source, TargetBuilder target) {
+    public void accept(Source source, Target target) {
         if (source.adaptTo(Multiple.class) == null) {
             return;
         }

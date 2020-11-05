@@ -18,8 +18,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.TargetBuilderImpl;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.TargetImpl;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.FormParameter;
@@ -29,20 +29,20 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 /**
  * {@link Handler} implementation for storing {@link FormParameter} arguments to {@code cq:editConfig} XML node
  */
-public class FormParametersHandler implements Handler, BiConsumer<TargetBuilder, EditConfig> {
+public class FormParametersHandler implements Handler, BiConsumer<Target, EditConfig> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param root XML element
      * @param editConfig {@code EditConfig} annotation instance
      */
     @Override
-    public void accept(TargetBuilder root, EditConfig editConfig) {
+    public void accept(Target root, EditConfig editConfig) {
         if(editConfig.formParameters().length == 0){
             return;
         }
         Map<String, String> propertiesMap = Arrays.stream(editConfig.formParameters())
             .collect(Collectors.toMap(FormParameter::name, FormParameter::value));
-        TargetBuilder formParametersElement = new TargetBuilderImpl(DialogConstants.NN_FORM_PARAMETERS)
+        Target formParametersElement = new TargetImpl(DialogConstants.NN_FORM_PARAMETERS)
                 .setAttributes(propertiesMap);
         root.appendChild(formParametersElement);
     }

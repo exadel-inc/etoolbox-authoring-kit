@@ -26,8 +26,8 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
-import com.exadel.aem.toolkit.api.handlers.TargetBuilder;
-import com.exadel.aem.toolkit.core.TargetBuilderImpl;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -65,18 +65,18 @@ public class PluginXmlUtility {
      */
     public static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
-    public static void appendDataAttributes(TargetBuilder target, Data[] data) {
+    public static void appendDataAttributes(Target target, Data[] data) {
         if (ArrayUtils.isEmpty(data)) {
             return;
         }
         appendDataAttributes(target, Arrays.stream(data).collect(Collectors.toMap(Data::name, Data::value)));
     }
 
-    public static void appendDataAttributes(TargetBuilder target, Map<String, String> data) {
+    public static void appendDataAttributes(Target target, Map<String, String> data) {
         if (data == null || data.isEmpty()) {
             return;
         }
-        TargetBuilder graniteDataNode = target.getOrAddChild(DialogConstants.NN_DATA);
+        Target graniteDataNode = target.getOrAddChild(DialogConstants.NN_DATA);
         data.entrySet().stream()
                 .filter(entry -> StringUtils.isNotBlank(entry.getKey()))
                 .forEach(entry -> graniteDataNode.attribute(entry.getKey(), entry.getValue()));
@@ -91,10 +91,10 @@ public class PluginXmlUtility {
      * @param acsListResourceType Use this to set {@code sling:resourceType} of data source, other than standard
      * @return Appended {@code datasource} node
      */
-    public static TargetBuilder appendDataSource(TargetBuilder target, DataSource dataSource, String acsListPath, String acsListResourceType) {
+    public static Target appendDataSource(Target target, DataSource dataSource, String acsListPath, String acsListResourceType) {
         Map<String, String> arbitraryProperties = Arrays.stream(dataSource.properties())
                 .collect(Collectors.toMap(Property::name, Property::value));
-        TargetBuilder dataSourceElement = appendDataSource(target, dataSource.path(), dataSource.resourceType(), arbitraryProperties);
+        Target dataSourceElement = appendDataSource(target, dataSource.path(), dataSource.resourceType(), arbitraryProperties);
         if (dataSourceElement == null) {
             dataSourceElement = appendAcsCommonsList(target, acsListPath, acsListResourceType);
         }
@@ -108,12 +108,12 @@ public class PluginXmlUtility {
      * @param resourceType Use this to set {@code sling:resourceType} of data source
      * @return Appended {@code datasource} node, or null if the provided {@code resourceType} is invalid
      */
-    private static TargetBuilder appendDataSource(TargetBuilder target, String path, String resourceType, Map<String, String> properties) {
+    private static Target appendDataSource(Target target, String path, String resourceType, Map<String, String> properties) {
         if (StringUtils.isBlank(resourceType)) {
             return null;
         }
         properties.put(DialogConstants.PN_PATH, path);
-        TargetBuilder dataSourceElement = new TargetBuilderImpl(DialogConstants.NN_DATASOURCE)
+        Target dataSourceElement = new TargetImpl(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
                 .setAttributes(properties);
         return target.appendChild(dataSourceElement);
@@ -126,11 +126,11 @@ public class PluginXmlUtility {
      * @param resourceType Use this to set {@code sling:resourceType} of data source, other than standard
      * @return Appended {@code datasource} node, or null if the provided {@code path} is invalid
      */
-    private static TargetBuilder appendAcsCommonsList(TargetBuilder target, String path, String resourceType) {
+    private static Target appendAcsCommonsList(Target target, String path, String resourceType) {
         if (StringUtils.isBlank(path)) {
             return null;
         }
-        TargetBuilder dataSourceElement = new TargetBuilderImpl(DialogConstants.NN_DATASOURCE)
+        Target dataSourceElement = new TargetImpl(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_PATH, path)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
         target.appendChild(dataSourceElement);
@@ -164,7 +164,7 @@ public class PluginXmlUtility {
         return result;
     }
 
-    public static Document buildXml(TargetBuilder target, Document document) {
+    public static Document buildXml(Target target, Document document) {
         Element root = populateDocument(target, document);
         XML_NAMESPACES.forEach((key, value) -> {
                     if (StringUtils.isNoneBlank(key, value)) root.setAttribute(key, value);
@@ -173,14 +173,14 @@ public class PluginXmlUtility {
         return document;
     }
 
-    private static Element populateDocument(TargetBuilder target, Document document) {
+    private static Element populateDocument(Target target, Document document) {
         Element tmp = document.createElement(target.getName());
         mapProperties(tmp, target);
         target.getListChildren().forEach(child -> tmp.appendChild(populateDocument(child, document)));
         return tmp;
     }
 
-    private static void mapProperties(Element element, TargetBuilder target) {
+    private static void mapProperties(Element element, Target target) {
         for (Map.Entry<String, String> entry : target.getValueMap().entrySet()) {
             element.setAttribute(entry.getKey(), entry.getValue());
         }
