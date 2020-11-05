@@ -18,7 +18,6 @@ import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -44,10 +43,9 @@ class SelectHandler implements Handler, BiConsumer<Source, Target> {
     public void accept(Source source, Target target) {
         Select select = source.adaptTo(Select.class);
         if (ArrayUtils.isNotEmpty(select.options())) {
-            Target items = target.appendChild(new TargetImpl(DialogConstants.NN_ITEMS));
+            Target items = target.child(DialogConstants.NN_ITEMS);
             for (Option option: select.options()) {
-                Target item = items.appendChild(new TargetImpl(option.value()), DialogConstants.NN_ITEM);
-                item.mapProperties(option);
+                items.child().mapProperties(option);
             }
         }
         Target dataSourceElement = PluginXmlUtility.appendDataSource(

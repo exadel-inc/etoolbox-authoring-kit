@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.TargetImpl;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -52,14 +51,11 @@ class ColorFieldHandler implements Handler, BiConsumer<Source, Target> {
         if (validCustomColors.isEmpty()) {
             return;
         }
-        Target itemsNode = new TargetImpl(DialogConstants.NN_ITEMS);
+        Target itemsNode = target.child(DialogConstants.NN_ITEMS);
         for (String customColor: validCustomColors) {
-            Target colorNode = new TargetImpl(
-                    NODE_NAME_COLOR + customColor.toLowerCase().replace("#", StringUtils.EMPTY))
+            itemsNode.child(NODE_NAME_COLOR + customColor.toLowerCase().replace("#", StringUtils.EMPTY))
                     .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
-                    .setAttributes(Collections.singletonMap(DialogConstants.PN_VALUE, customColor));
-            itemsNode.appendChild(colorNode);
+                    .attributes(Collections.singletonMap(DialogConstants.PN_VALUE, customColor));
         }
-        target.appendChild(itemsNode);
     }
 }

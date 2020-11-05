@@ -27,7 +27,6 @@ import javax.xml.xpath.XPathFactory;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -76,7 +75,7 @@ public class PluginXmlUtility {
         if (data == null || data.isEmpty()) {
             return;
         }
-        Target graniteDataNode = target.getOrAddChild(DialogConstants.NN_DATA);
+        Target graniteDataNode = target.child(DialogConstants.NN_DATA);
         data.entrySet().stream()
                 .filter(entry -> StringUtils.isNotBlank(entry.getKey()))
                 .forEach(entry -> graniteDataNode.attribute(entry.getKey(), entry.getValue()));
@@ -113,10 +112,10 @@ public class PluginXmlUtility {
             return null;
         }
         properties.put(DialogConstants.PN_PATH, path);
-        Target dataSourceElement = new TargetImpl(DialogConstants.NN_DATASOURCE)
+
+        return target.child(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
-                .setAttributes(properties);
-        return target.appendChild(dataSourceElement);
+                .attributes(properties);
     }
 
     /**
@@ -130,11 +129,9 @@ public class PluginXmlUtility {
         if (StringUtils.isBlank(path)) {
             return null;
         }
-        Target dataSourceElement = new TargetImpl(DialogConstants.NN_DATASOURCE)
+        return target.child(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_PATH, path)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
-        target.appendChild(dataSourceElement);
-        return dataSourceElement;
     }
 
     /**
@@ -174,14 +171,15 @@ public class PluginXmlUtility {
     }
 
     private static Element populateDocument(Target target, Document document) {
-        Element tmp = document.createElement(target.getName());
+        String name = NamingUtil.getValidName(target.getName());
+        Element tmp = document.createElement(name);
         mapProperties(tmp, target);
-        target.getListChildren().forEach(child -> tmp.appendChild(populateDocument(child, document)));
+        target.listChildren().forEach(child -> tmp.appendChild(populateDocument(child, document)));
         return tmp;
     }
 
     private static void mapProperties(Element element, Target target) {
-        for (Map.Entry<String, String> entry : target.getValueMap().entrySet()) {
+        for (Map.Entry<String, String> entry : target.valueMap().entrySet()) {
             element.setAttribute(entry.getKey(), entry.getValue());
         }
     }

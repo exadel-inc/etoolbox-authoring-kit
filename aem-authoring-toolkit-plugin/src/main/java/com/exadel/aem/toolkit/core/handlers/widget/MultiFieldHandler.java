@@ -17,8 +17,6 @@ import java.util.List;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.TargetImpl;
-import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
@@ -74,12 +72,9 @@ public class MultiFieldHandler implements WidgetSetHandler {
      */
     private void render(List<Source> sources, Target target, String name) {
         target.attribute(DialogConstants.PN_COMPOSITE, true);
-        Target multifieldContainerElement = new TargetImpl(
-                DialogConstants.NN_FIELD).setAttributes(ImmutableMap.of(
-                        DialogConstants.PN_NAME, name,
-                        DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER
-                ));
-        target.appendChild(multifieldContainerElement);
+        Target multifieldContainerElement = target.child(DialogConstants.NN_FIELD)
+                .attribute(DialogConstants.PN_NAME, name)
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 
         // In case there are multiple sources in multifield container, their "name" values must not be preceded
         // with "./" which is by default

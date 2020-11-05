@@ -20,7 +20,6 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.TargetImpl;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
@@ -39,13 +38,13 @@ public class ListenersHandler implements Handler, BiConsumer<Target, EditConfig>
     @Override
     public void accept(Target root, EditConfig editConfig) {
         List<Listener> listeners = Arrays.asList(editConfig.listeners());
-        if(listeners.isEmpty()){
+        if(listeners.isEmpty()) {
             return;
         }
         Map<String, String> properties = listeners.stream()
             .collect(Collectors.toMap(Listener::event, Listener::action));
-        root.appendChild(new TargetImpl(DialogConstants.NN_LISTENERS)
+        root.child(DialogConstants.NN_LISTENERS)
                 .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_LISTENERS)
-                .setAttributes(properties));
+                .attributes(properties);
     }
 }

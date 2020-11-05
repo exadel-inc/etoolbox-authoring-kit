@@ -70,9 +70,9 @@ public class DependsOnTabHandler implements Handler, BiConsumer<Target, Class<?>
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(DependsOnHandler.EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
         }
-        Target targetTab = tabItemsNode.getChild(NamingUtil.getValidName(value.tabTitle()));
+        Target targetTab = tabItemsNode.getChild(value.tabTitle());
         if (targetTab != null) {
-            PluginXmlUtility.appendDataAttributes(target, ImmutableMap.of(
+            PluginXmlUtility.appendDataAttributes(targetTab, ImmutableMap.of(
                     DialogConstants.PN_DEPENDS_ON, value.query(),
                     DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
             ));

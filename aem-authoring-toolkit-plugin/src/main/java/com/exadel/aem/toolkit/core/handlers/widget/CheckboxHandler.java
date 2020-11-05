@@ -18,7 +18,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
@@ -48,14 +47,11 @@ class CheckboxHandler implements Handler, BiConsumer<Source, Target> {
             target.mapProperties(checkbox);
             setTextAttribute(source, target);
         } else {
-            target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST);
-            Target itemsElement = new TargetImpl(DialogConstants.NN_ITEMS);
-            target.appendChild(itemsElement);
-
-            Target checkboxElement = new TargetImpl(((Member) source.getSource()).getName() + POSTFIX_FOR_ROOT_CHECKBOX)
-                    .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX);
-            checkboxElement.mapProperties(checkbox);
-            itemsElement.appendChild(checkboxElement);
+            Target checkboxElement = target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST)
+                    .child(DialogConstants.NN_ITEMS)
+                    .child(((Member) source.getSource()).getName() + POSTFIX_FOR_ROOT_CHECKBOX)
+                    .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX)
+                    .mapProperties(checkbox);
 
             appendNestedCheckBoxList(source, checkboxElement);
         }
@@ -67,13 +63,10 @@ class CheckboxHandler implements Handler, BiConsumer<Source, Target> {
      * @param target {@code TargetFacade} instance representing current XML node
      */
     private void appendNestedCheckBoxList(Source source, Target target) {
-        Target sublist = new TargetImpl(DialogConstants.NN_SUBLIST)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST);
-        sublist.attribute(DialogConstants.PN_DISCONNECTED, source.adaptTo(Checkbox.class).disconnectedSublist());
-        target.appendChild(sublist);
-
-        Target itemsElement = new TargetImpl(DialogConstants.NN_ITEMS);
-        sublist.appendChild(itemsElement);
+        Target itemsElement = target.child(DialogConstants.NN_SUBLIST)
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST)
+                .attribute(DialogConstants.PN_DISCONNECTED, source.adaptTo(Checkbox.class).disconnectedSublist())
+                .child(DialogConstants.NN_ITEMS);
 
         appendCheckbox(source, itemsElement);
     }
@@ -92,12 +85,10 @@ class CheckboxHandler implements Handler, BiConsumer<Source, Target> {
                     .collect(Collectors.toList());
 
             for (Source innerSource : sources) {
-                Target checkboxElement = new TargetImpl(((Member) innerSource.getSource()).getName())
-                        .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX);
-                checkboxElement.mapProperties(innerSource.adaptTo(Checkbox.class));
+                Target checkboxElement = target.child(((Member) innerSource.getSource()).getName())
+                        .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX)
+                        .mapProperties(innerSource.adaptTo(Checkbox.class));
                 setTextAttribute(innerSource, checkboxElement);
-
-                target.appendChild(checkboxElement);
 
                 if (innerSource.adaptTo(Checkbox.class).sublist()[0] != Object.class) {
                     appendNestedCheckBoxList(innerSource, checkboxElement);

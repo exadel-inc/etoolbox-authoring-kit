@@ -9,9 +9,9 @@ import java.util.Map;
 
 public interface Target {
 
-    Target appendChild(Target target);
+    Target child();
 
-    Target appendChild(Target target, String defaultName);
+    Target child(String s);
 
     default Target mapProperties(Object o) {
         return mapProperties(o, Collections.emptyList());
@@ -27,33 +27,23 @@ public interface Target {
 
     Target attribute(String name, List<String> values);
 
-    Target setParent(Target parent);
-
-    Target setAttributes(Map<String, String> map);
+    Target attributes(Map<String, String> map);
 
     boolean hasAttribute(String name);
 
     Object deleteAttribute(String name);
 
-    List<Target> getListChildren();
+    List<Target> listChildren();
 
     String getName();
 
-    void name(String name);
-
-    String getPath();
-
     Target parent();
-
-    boolean hasChildren();
 
     String getAttribute(String name);
 
     Target getChild(String relPath);
 
-    Target getOrAddChild(String name);
-
-    Map<String, String> getValueMap();
+    Map<String, String> valueMap();
 
     Document buildXml(Document document);
 

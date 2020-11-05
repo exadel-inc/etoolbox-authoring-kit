@@ -33,33 +33,34 @@ public class TargetImpl implements Target {
     private static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
 
-    private String name;
+    private final String name;
     private final Map<String, String> valueMap;
-    private Target parent;
+    private final Target parent;
     private final List<Target> listChildren;
 
-    public TargetImpl(String name) {
+    public TargetImpl(String name, Target parent) {
         this.name = name;
+        this.parent = parent;
         this.valueMap = new HashMap<>();
         this.listChildren = new ArrayList<>();
         this.valueMap.put(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
     }
 
     @Override
-    public Target appendChild(Target target) {
-        this.listChildren.add(target);
-        target.setParent(this);
-        return target;
+    public Target child() {
+        Target child = new TargetImpl(NamingUtil.getUniqueName(StringUtils.EMPTY, "item", this), this);
+        this.listChildren.add(child);
+        return child;
     }
 
     @Override
-    public Target appendChild(Target target, String defaultName) {
-        target.name(getUniqueName(target.getName(), defaultName, this));
-        return appendChild(target);
-    }
-
-    private String getUniqueName(String name, String defaultName, Target target) {
-        return NamingUtil.getUniqueName(name, defaultName, target);
+    public Target child(String s) {
+        Target child = this.getChild(s);
+        if (child == null) {
+            child = new TargetImpl(s, this);
+            this.listChildren.add(child);
+        }
+        return child;
     }
 
     @Override
@@ -99,10 +100,9 @@ public class TargetImpl implements Target {
     private Target getOrAddChildElement(Target target, String name) {
         Target child = target.getChild(name);
         if (child == null) {
-            return target.appendChild(new TargetImpl(name));
-        } else {
-            return child;
+            child = new TargetImpl(name, target);
         }
+        return child;
     }
 
     private void populateProperty(Method method, Target target, Annotation annotation) {
@@ -169,13 +169,7 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public Target setParent(Target parent) {
-        this.parent = parent;
-        return this;
-    }
-
-    @Override
-    public Target setAttributes(Map<String, String> map) {
+    public Target attributes(Map<String, String> map) {
         this.valueMap.putAll(map);
         return this;
     }
@@ -191,16 +185,8 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public List<Target> getListChildren() {
+    public List<Target> listChildren() {
         return listChildren;
-    }
-
-    @Override
-    public String getPath() {
-        if (parent == null) {
-            return name;
-        }
-        return parent.getName() + "/" + name;
     }
 
     @Override
@@ -209,18 +195,8 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public void name(String name) {
-        this.name = name;
-    }
-
-    @Override
     public Target parent() {
         return parent;
-    }
-
-    @Override
-    public boolean hasChildren() {
-        return !listChildren.isEmpty();
     }
 
     @Override
@@ -237,7 +213,7 @@ public class TargetImpl implements Target {
             if (currentChunk.isEmpty() || currentChunk.equals(currentFacade.getName())) {
                 return currentFacade;
             }
-            currentFacade = currentFacade.getListChildren().stream().filter(child -> currentChunk.equals(child.getName())).findFirst().orElse(null);
+            currentFacade = currentFacade.listChildren().stream().filter(child -> currentChunk.equals(child.getName())).findFirst().orElse(null);
             if (currentFacade == null) {
                 return null;
             }
@@ -246,16 +222,7 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public Target getOrAddChild(String name) {
-        Target child = this.getChild(name);
-        if (child == null) {
-            return this.appendChild(new TargetImpl(name));
-        }
-        return child;
-    }
-
-    @Override
-    public Map<String, String> getValueMap() {
+    public Map<String, String> valueMap() {
         return valueMap;
     }
 

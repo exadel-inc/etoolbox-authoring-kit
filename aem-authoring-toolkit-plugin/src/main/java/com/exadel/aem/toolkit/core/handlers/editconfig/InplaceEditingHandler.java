@@ -21,7 +21,6 @@ import java.util.function.BiConsumer;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.SourceImpl;
-import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.util.NamingUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,24 +52,20 @@ public class InplaceEditingHandler implements Handler, BiConsumer<Target, EditCo
                 || (editConfig.inplaceEditing().length == 1 && EditorType.EMPTY.equals(editConfig.inplaceEditing()[0].type()))) {
             return;
         }
-        Target inplaceEditingNode = new TargetImpl(DialogConstants.NN_INPLACE_EDITING)
-                .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG)
+        Target inplaceEditingNode = root.child(DialogConstants.NN_INPLACE_EDITING)
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG)
                 .attribute(DialogConstants.PN_ACTIVE, true);
-        root.appendChild(inplaceEditingNode);
 
         if (editConfig.inplaceEditing().length > 1) {
             inplaceEditingNode.attribute(DialogConstants.PN_EDITOR_TYPE, EditorType.HYBRID.toLowerCase());
 
-            Target childEditorsNode = getChildEditorsNode(editConfig);
-            inplaceEditingNode.appendChild(childEditorsNode);
+            getChildEditorsNode(editConfig, inplaceEditingNode);
 
-            Target configNode = getConfigNode(editConfig);
-            inplaceEditingNode.appendChild(configNode);
+            getConfigNode(editConfig, inplaceEditingNode);
         } else {
             inplaceEditingNode.attribute(DialogConstants.PN_EDITOR_TYPE, editConfig.inplaceEditing()[0].type().toLowerCase());
-            Target configNode = new TargetImpl(DialogConstants.NN_CONFIG);
+            Target configNode = inplaceEditingNode.child(DialogConstants.NN_CONFIG);
             populateConfigNode(configNode, editConfig.inplaceEditing()[0]);
-            inplaceEditingNode.appendChild(configNode);
         }
     }
 
@@ -79,12 +74,10 @@ public class InplaceEditingHandler implements Handler, BiConsumer<Target, EditCo
      * @param config {@link EditConfig} annotation instance
      * @return XML {@code Element}
      */
-    private Target getChildEditorsNode(EditConfig config) {
-        Target childEditorsNode = new TargetImpl(DialogConstants.NN_CHILD_EDITORS);
+    private void getChildEditorsNode(EditConfig config, Target target) {
+        Target childEditorsNode = target.child(DialogConstants.NN_CHILD_EDITORS);
         Arrays.stream(config.inplaceEditing())
-                .map(this::getSingleChildEditorNode)
-                .forEach(childEditorsNode::appendChild);
-        return childEditorsNode;
+                .forEach(inplaceEditingConfig -> getSingleChildEditorNode(inplaceEditingConfig, childEditorsNode));
     }
 
     /**
@@ -92,13 +85,13 @@ public class InplaceEditingHandler implements Handler, BiConsumer<Target, EditCo
      * @param config {@link InplaceEditingConfig} annotation instance
      * @return XML {@code Element}
      */
-    private Target getSingleChildEditorNode(InplaceEditingConfig config) {
+    private void getSingleChildEditorNode(InplaceEditingConfig config, Target target) {
         Map<String, String> properties = new ImmutableMap.Builder<String, String>()
                 .put(DialogConstants.PN_TITLE, StringUtils.isNotBlank(config.title()) ? config.title() : getConfigName(config))
                 .put(DialogConstants.PN_TYPE, config.type().toLowerCase()).build();
-        return new TargetImpl(getConfigName(config))
+        target.child(getConfigName(config))
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_CHILD_EDITORS_CONFIG)
-            .setAttributes(properties);
+            .attributes(properties);
     }
 
     /**
@@ -107,13 +100,12 @@ public class InplaceEditingHandler implements Handler, BiConsumer<Target, EditCo
      * @param config {@link EditConfig} annotation instance
      * @return XML {@code Element}
      */
-    private Target getConfigNode(EditConfig config) {
-        Target configNode = new TargetImpl(DialogConstants.NN_CONFIG);
+    private Target getConfigNode(EditConfig config, Target target) {
+        Target configNode = target.child(DialogConstants.NN_CONFIG);
         for (InplaceEditingConfig childConfig : config.inplaceEditing()) {
-            Target childConfigNode = new TargetImpl(getConfigName(childConfig))
+            Target childConfigNode = configNode.child(getConfigName(childConfig))
                     .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG);
             populateConfigNode(childConfigNode, childConfig);
-            configNode.appendChild(childConfigNode);
         }
         return configNode;
     }

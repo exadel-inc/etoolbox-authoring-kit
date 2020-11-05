@@ -37,19 +37,16 @@ class AutocompleteHandler implements Handler, BiConsumer<Source, Target> {
     @Override
     public void accept(Source source, Target target) {
         Autocomplete autocomplete = source.adaptTo(Autocomplete.class);
-        Target datasource = new TargetImpl(DialogConstants.NN_DATASOURCE)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value());
-        datasource.mapProperties(autocomplete.datasource());
-        target.appendChild(datasource);
+        target.child(DialogConstants.NN_DATASOURCE)
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
+                .mapProperties(autocomplete.datasource());
 
-        Target options = new TargetImpl(DialogConstants.NN_OPTIONS)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value());
-        datasource.mapProperties(autocomplete.options());
-        target.appendChild(options);
+        target.child(DialogConstants.NN_OPTIONS)
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
+                .mapProperties(autocomplete.options());
 
-        Target values = new TargetImpl(DialogConstants.NN_VALUES)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value());
-        values.mapProperties(autocomplete.values());
-        target.appendChild(values);
+        target.child(DialogConstants.NN_VALUES)
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
+                .mapProperties(autocomplete.values());
     }
 }

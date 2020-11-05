@@ -21,11 +21,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.TargetImpl;
 
 import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
@@ -52,8 +50,7 @@ public class PluginXmlContainerUtility {
      */
     public static void append(Target container, List<Source> sources) {
         Map<Source, String> managedFields = new LinkedHashMap<>();
-        Target itemsElement = new TargetImpl(DialogConstants.NN_ITEMS);
-        container.appendChild(itemsElement);
+        Target itemsElement = container.child(DialogConstants.NN_ITEMS);
 
         for (Source source : sources) {
             DialogWidget widget = DialogWidgets.fromSourceFacade(source);
@@ -64,7 +61,7 @@ public class PluginXmlContainerUtility {
             managedFields.put(source, newElement.getName());
         }
 
-        if (container.hasChildren()) {
+        if (!container.listChildren().isEmpty()) {
             checkForDuplicateFields(itemsElement, managedFields);
         }
     }
@@ -77,9 +74,7 @@ public class PluginXmlContainerUtility {
      * @param managedFields {@code Map<Field, String>} that matches rendered fields to corresponding element names
      */
     private static void checkForDuplicateFields(Target container, Map<Source, String> managedFields) {
-        List<String> childElementsTagNames = IntStream
-                .range(0, container.getListChildren().size())
-                .mapToObj(index -> container.getListChildren().get(index))
+        List<String> childElementsTagNames = container.listChildren().stream()
                 .map(Target::getName)
                 .collect(Collectors.toList());
         if (childElementsTagNames.size() == new HashSet<>(childElementsTagNames).size()) {

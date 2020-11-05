@@ -43,15 +43,14 @@ class RadioGroupHandler implements Handler, BiConsumer<Source, Target> {
     public void accept(Source source, Target target) {
         RadioGroup radioGroup = source.adaptTo(RadioGroup.class);
         if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {
-            Target items = target.appendChild(new TargetImpl(DialogConstants.NN_ITEMS));
+            Target items = target.child(DialogConstants.NN_ITEMS);
             Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));
         }
         PluginXmlUtility.appendDataSource(target, radioGroup.datasource(), radioGroup.acsListPath(), radioGroup.acsListResourceType());
     }
 
     private void renderButton(RadioButton buttonInstance, Target parentElement) {
-        Target button = new TargetImpl(buttonInstance.value());
-        parentElement.appendChild(button, DialogConstants.NN_ITEM);
-        button.mapProperties(buttonInstance);
+        parentElement.child()
+                .mapProperties(buttonInstance);
     }
 }

@@ -60,10 +60,10 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Target> {
     @Override
     public void accept(Class<?> componentClass, Target parentElement) {
         // Render the generic XML markup for tabs setting
-        Target tabItemsElement = parentElement.appendChild(new TargetImpl(DialogConstants.NN_CONTENT).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER))
-                .appendChild(new TargetImpl(DialogConstants.NN_ITEMS))
-                .appendChild(new TargetImpl(DialogConstants.NN_TABS).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.TABS))
-                .appendChild(new TargetImpl(DialogConstants.NN_ITEMS));
+        Target tabItemsElement = parentElement.child(DialogConstants.NN_CONTENT).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
+                .child(DialogConstants.NN_ITEMS)
+                .child(DialogConstants.NN_TABS).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.TABS)
+                .child(DialogConstants.NN_ITEMS);
 
         // Initialize ignored tabs list for the current class if IgnoreTabs annotation is present.
         // Note that "ignored tabs" setting is not inherited and is for current class only, unlike tabs collection
@@ -189,10 +189,9 @@ public class TabsHandler implements Handler, BiConsumer<Class<?>, Target> {
      * @param sources The list of {@link Field} instances to render as dialog sources
      */
     private void appendTab(Target target, Tab tab, List<Source> sources) {
-        Target tabElement = new TargetImpl(tab.title())
+        Target tabElement = target.child(tab.title())
                 .attribute(JcrConstants.PN_TITLE, tab.title())
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
-        target.appendChild(tabElement, DEFAULT_TAB_NAME);
         appendTabAttributes(tabElement, tab);
         PluginXmlContainerUtility.append(tabElement, sources);
     }

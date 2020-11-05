@@ -120,7 +120,7 @@ abstract class PackageEntryWriter {
      * @return {@link Document} created
      */
     private Document createDomDocument(Class<?> componentClass) throws ParserConfigurationException {
-        Target rootElement = new TargetImpl(DialogConstants.NN_ROOT);
+        Target rootElement = new TargetImpl(DialogConstants.NN_ROOT, null);
         populateDomDocument(componentClass, rootElement);
         Document document = rootElement.buildXml(PackageWriter.createDocumentBuilder().newDocument());
         writeCommonProperties(componentClass, getXmlScope(), document);

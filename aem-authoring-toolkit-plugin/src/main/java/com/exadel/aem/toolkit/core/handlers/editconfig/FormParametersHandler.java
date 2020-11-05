@@ -19,7 +19,6 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.TargetImpl;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.FormParameter;
@@ -42,8 +41,6 @@ public class FormParametersHandler implements Handler, BiConsumer<Target, EditCo
         }
         Map<String, String> propertiesMap = Arrays.stream(editConfig.formParameters())
             .collect(Collectors.toMap(FormParameter::name, FormParameter::value));
-        Target formParametersElement = new TargetImpl(DialogConstants.NN_FORM_PARAMETERS)
-                .setAttributes(propertiesMap);
-        root.appendChild(formParametersElement);
+        root.child(DialogConstants.NN_FORM_PARAMETERS).attributes(propertiesMap);
     }
 }

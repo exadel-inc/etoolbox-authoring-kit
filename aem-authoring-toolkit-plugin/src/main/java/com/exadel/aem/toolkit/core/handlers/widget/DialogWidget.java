@@ -68,8 +68,7 @@ public interface DialogWidget {
      * @return The new {@code Element} created for the current {@code Field}
      */
     default Target appendTo(Target target, Source source, String name) {
-        Target widgetChildElement = new TargetImpl(name);
-        target.appendChild(widgetChildElement);
+        Target widgetChildElement = target.child(name);
         getHandlerChain().accept(source, widgetChildElement);
         return widgetChildElement;
     }

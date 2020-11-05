@@ -14,12 +14,10 @@
 package com.exadel.aem.toolkit.core.handlers.editconfig;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.TargetImpl;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
@@ -40,18 +38,14 @@ public class DropTargetsHandler implements Handler, BiConsumer<Target, EditConfi
         if(editConfig.dropTargets().length == 0){
             return;
         }
-        Target dropTargetsElement = new TargetImpl(DialogConstants.NN_DROP_TARGETS);
-        target.appendChild(dropTargetsElement);
+        Target dropTargetsElement = target.child(DialogConstants.NN_DROP_TARGETS);
         for (int i = 0; i < editConfig.dropTargets().length; i++) {
             DropTargetConfig dropTargetConfig = editConfig.dropTargets()[i];
-            Target currentConfig = new TargetImpl(dropTargetConfig.nodeName())
-                    .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_DROP_TARGET_CONFIG);
-            dropTargetsElement.appendChild(currentConfig);
-            currentConfig.mapProperties(dropTargetConfig);
-            List<String> accept = Arrays.stream(dropTargetConfig.accept()).collect(Collectors.toList());
-            currentConfig.attribute(DialogConstants.PN_ACCEPT, accept);
-            List<String> groups = Arrays.stream(dropTargetConfig.groups()).collect(Collectors.toList());
-            currentConfig.attribute(DialogConstants.PN_GROUPS, groups);
+            dropTargetsElement.child(dropTargetConfig.nodeName())
+                    .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_DROP_TARGET_CONFIG)
+                    .mapProperties(dropTargetConfig)
+                    .attribute(DialogConstants.PN_ACCEPT, Arrays.stream(dropTargetConfig.accept()).collect(Collectors.toList()))
+                    .attribute(DialogConstants.PN_GROUPS, Arrays.stream(dropTargetConfig.groups()).collect(Collectors.toList()));
         }
     }
 }
