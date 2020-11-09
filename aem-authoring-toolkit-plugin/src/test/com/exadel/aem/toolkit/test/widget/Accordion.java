@@ -77,8 +77,7 @@ public class Accordion {
 
     @AccordionWidget(
             title = "Field",
-            disabled = true,
-            panels = {@AccordionPanel(title = "Accordion Widget Panel 1")})
+            panels = {@AccordionPanel(title = "Accordion Widget Panel 1", disabled = true)})
     @PlaceOn("Basic2")
     AccordionExample accordion;
 

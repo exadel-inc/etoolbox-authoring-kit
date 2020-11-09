@@ -30,7 +30,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -104,6 +106,14 @@ class AccordionWidgetHandler implements WidgetSetHandler {
                         JcrConstants.PN_TITLE, accordion.title(),
                         JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
                 ));
+        AccordionPanel accordionPanel = PluginObjectUtility.create(AccordionPanel.class,
+                getAnnotationFields(accordion));
+        Element parentConfig = getXmlUtil().createNodeElement(
+                "parentConfig");
+        List<String> skipedList = new ArrayList<>();
+        skipedList.add("title");
+        getXmlUtil().mapProperties(parentConfig, accordionPanel, skipedList);
+        tabElement.appendChild(parentConfig);
         tabCollectionElement.appendChild(tabElement);
         PluginXmlContainerUtility.append(tabElement, fields);
     }
@@ -113,5 +123,18 @@ class AccordionWidgetHandler implements WidgetSetHandler {
             return isDefaultTab;
         }
         return accordionPanel.title().equalsIgnoreCase(field.getAnnotation(PlaceOn.class).value());
+    }
+
+
+    Map<String, Object> getAnnotationFields(Annotation annotation) {
+        try {
+            Object handler = Proxy.getInvocationHandler(annotation);
+            Field f = handler.getClass().getDeclaredField("memberValues");
+            f.setAccessible(true);
+            return (Map<String, Object>) f.get(handler);
+        } catch (Exception ignored) {
+            //ignored
+        }
+        return new HashMap<String, Object>();
     }
 }

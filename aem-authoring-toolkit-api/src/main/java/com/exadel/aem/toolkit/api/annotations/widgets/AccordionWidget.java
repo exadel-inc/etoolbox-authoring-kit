@@ -70,18 +70,4 @@ public @interface AccordionWidget {
      * @return True or False
      */
     boolean margin() default false;
-
-    /**
-     * True to disable the item; false otherwise.
-     *
-     * @return True or false
-     */
-    boolean disabled() default false;
-
-    /**
-     * True to open the item initially; false otherwise.
-     *
-     * @return True or false
-     */
-    boolean active() default false;
 }

@@ -40,6 +40,7 @@ import java.util.stream.Stream;
 
 
 public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element> {
+
     default void acceptParent(Class<?> componentClass, Element parentElement, Class<? extends Annotation> annotation) {
         String containerName = annotation.equals(Tab.class) ? "tabs" : "accordion";
         String DEFAULT_TAB_NAME = annotation.equals(Tab.class) ? "tab" : "accordion";
@@ -149,12 +150,16 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
             Tab newTab = PluginObjectUtility.create(Tab.class,
                     tab.getAttributes());
             appendTabAttributes(tabElement, newTab);
-        } else {
+        }
+        if (!DEFAULT_TAB_NAME.equals("tab")) {
             AccordionPanel accordionPanel = PluginObjectUtility.create(AccordionPanel.class,
                     tab.getAttributes());
-            List<String> list = new ArrayList<>();
-            list.add("title");
-            getXmlUtil().mapProperties(tabElement, accordionPanel, list);
+            Element parentConfig = getXmlUtil().createNodeElement(
+                    "parentConfig");
+            List<String> skipedList = new ArrayList<>();
+            skipedList.add("title");
+            getXmlUtil().mapProperties(parentConfig, accordionPanel, skipedList);
+            tabElement.appendChild(parentConfig);
         }
         tabCollectionElement.appendChild(tabElement);
         PluginXmlContainerUtility.append(tabElement, fields);
@@ -280,7 +285,6 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
             storedCurrentTabFields.sort(PluginObjectPredicates::compareByRanking);
         }
         allFields.removeAll(moreCurrentTabFields);
-        Pair<List<Field>, List<Field>> finalList = new Pair<>(storedCurrentTabFields, allFields);
-        return finalList;
+        return new Pair<>(storedCurrentTabFields, allFields);
     }
 }
