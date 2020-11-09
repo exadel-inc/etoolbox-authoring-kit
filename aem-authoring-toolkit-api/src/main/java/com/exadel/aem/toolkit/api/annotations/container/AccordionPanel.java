@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 public @interface AccordionPanel {
 
     /**
-     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs (or accordion)/items/<this_accordion>} node
+     * Title of current Accordion Panel
      *
      * @return String value, required
      */
@@ -41,6 +41,7 @@ public @interface AccordionPanel {
 
     /**
      * True to disable the item; false otherwise.
+     * Please use only inside @Dialog annotation
      *
      * @return True or false
      */
@@ -48,6 +49,7 @@ public @interface AccordionPanel {
 
     /**
      * True to open the item initially; false otherwise.
+     * Please use only inside @Dialog annotation
      *
      * @return True or false
      */

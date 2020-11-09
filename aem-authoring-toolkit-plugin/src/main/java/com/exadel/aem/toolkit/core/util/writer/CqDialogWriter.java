@@ -75,10 +75,10 @@ class CqDialogWriter extends ContentXmlWriter {
         root.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.DIALOG);
 
         DialogLayout dialogLayout;
-        if (!ArrayUtils.isEmpty(dialog.accordionTabs())) {
-            dialogLayout = DialogLayout.ACCORDION;
-        } else if (!ArrayUtils.isEmpty(dialog.tabs())) {
+        if (!ArrayUtils.isEmpty(dialog.tabs())) {
             dialogLayout = DialogLayout.TABS;
+        } else if (!ArrayUtils.isEmpty(dialog.accordionTabs())) {
+            dialogLayout = DialogLayout.ACCORDION;
         } else {
             dialogLayout = dialog.layout();
         }

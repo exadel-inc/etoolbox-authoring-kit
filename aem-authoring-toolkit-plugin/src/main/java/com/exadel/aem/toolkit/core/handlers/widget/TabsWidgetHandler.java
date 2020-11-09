@@ -20,13 +20,14 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TabsWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
-import com.exadel.aem.toolkit.core.handlers.container.common.CommonTabUtils;
+import com.exadel.aem.toolkit.core.handlers.container.common.ContainerHandler;
 import com.exadel.aem.toolkit.core.handlers.container.common.TabInstance;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 import com.google.common.collect.ImmutableMap;
+import javafx.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
@@ -78,12 +79,12 @@ public class TabsWidgetHandler implements WidgetSetHandler {
         while (tabInstanceIterator.hasNext()) {
             final boolean isFirstTab = iterationStep++ == 0;
             TabInstance currentTabInstance = tabInstanceIterator.next().getValue();
-            List<List<Field>> tabFields = CommonTabUtils.getStoredCurrentTabFields(allFields, currentTabInstance, isFirstTab);
-            List<Field> storedCurrentTabFields = tabFields.get(0);
-            allFields = tabFields.get(1);
+            Pair<List<Field>, List<Field>> tabFields = ContainerHandler.getStoredCurrentTabFields(allFields, currentTabInstance, isFirstTab);
+            List<Field> storedCurrentTabFields = tabFields.getKey();
+            allFields = tabFields.getValue();
             appendTab(tabItemsElement, currentTabInstance.getTab(), storedCurrentTabFields);
         }
-        CommonTabUtils.handleInvalidTabException(allFields);
+        ContainerHandler.handleInvalidTabException(allFields);
     }
 
     private void appendTab(Element tabCollectionElement, Tab tab, List<Field> fields) {

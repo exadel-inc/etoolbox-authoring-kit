@@ -24,6 +24,7 @@ import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.*;
 import com.google.common.collect.ImmutableMap;
+import javafx.util.Pair;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
@@ -39,7 +40,11 @@ import java.util.stream.Stream;
 
 
 public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element> {
-    default void acceptParent(Class<?> componentClass, Element parentElement, Class<? extends Annotation> annotation, String containerName, String resourceType, String exceptionMessage, String DEFAULT_TAB_NAME) {
+    default void acceptParent(Class<?> componentClass, Element parentElement, Class<? extends Annotation> annotation) {
+        String containerName = annotation.equals(Tab.class) ? "tabs" : "accordion";
+        String DEFAULT_TAB_NAME = annotation.equals(Tab.class) ? "tab" : "accordion";
+        String exceptionMessage = annotation.equals(Tab.class) ? "No tabs defined for the dialog at " : "No accordions defined for the dialog at ";
+        String resourceType = annotation.equals(Tab.class) ? ResourceTypes.TABS : ResourceTypes.ACCORDION;
         Element tabItemsElement = (Element) parentElement.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS))
                 .appendChild(getXmlUtil().createNodeElement(containerName, resourceType))
@@ -129,7 +134,7 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
 
         // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
         // for which a non-existent tab was specified. Handle an InvalidTabException for each of them
-        CommonTabUtils.handleInvalidTabException(allFields);
+        handleInvalidTabException(allFields);
     }
 
     default void appendTab(Element tabCollectionElement, TabContainerInstance tab, List<Field> fields, String DEFAULT_TAB_NAME) {
@@ -232,5 +237,50 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
             return tabTitle.equalsIgnoreCase(field.getAnnotation(PlaceOn.class).value());
         }
         return tabTitle.toString().equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
+    }
+
+    /**
+     * The predicate to match a {@code Field} against particular {@code Tab}
+     *
+     * @param field        {@link Field} instance to analyze
+     * @param tab          {@link Tab} annotation to analyze
+     * @param isDefaultTab True if the current tab accepts fields for which no tab was specified; otherwise, false
+     * @return True or false
+     */
+    static boolean isFieldForTab(Field field, Tab tab, boolean isDefaultTab) {
+        if (!field.isAnnotationPresent(PlaceOnTab.class) && !field.isAnnotationPresent(PlaceOn.class)) {
+            return isDefaultTab;
+        }
+        if (field.isAnnotationPresent(PlaceOn.class)) {
+            return tab.title().equalsIgnoreCase(field.getAnnotation(PlaceOn.class).value());
+        }
+        return tab.title().equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
+    }
+
+    static void handleInvalidTabException(List<Field> allFields) {
+        for (Field field : allFields) {
+            if (field.isAnnotationPresent(PlaceOnTab.class)) {
+                PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(field.getAnnotation(PlaceOnTab.class).value()));
+            } else if (field.isAnnotationPresent(PlaceOn.class)) {
+                PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(field.getAnnotation(PlaceOn.class).value()));
+            } else {
+                PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(StringUtils.EMPTY));
+            }
+        }
+    }
+
+    static Pair<List<Field>, List<Field>> getStoredCurrentTabFields(List<Field> allFields, TabInstance currentTabInstance, final boolean isFirstTab) {
+        List<Field> storedCurrentTabFields = currentTabInstance.getFields();
+        List<Field> moreCurrentTabFields = allFields.stream()
+                .filter(field1 -> isFieldForTab(field1, currentTabInstance.getTab(), isFirstTab))
+                .collect(Collectors.toList());
+        boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
+        storedCurrentTabFields.addAll(moreCurrentTabFields);
+        if (needResort) {
+            storedCurrentTabFields.sort(PluginObjectPredicates::compareByRanking);
+        }
+        allFields.removeAll(moreCurrentTabFields);
+        Pair<List<Field>, List<Field>> finalList = new Pair<>(storedCurrentTabFields, allFields);
+        return finalList;
     }
 }

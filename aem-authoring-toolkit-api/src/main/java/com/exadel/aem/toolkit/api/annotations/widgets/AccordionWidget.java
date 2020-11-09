@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 public @interface AccordionWidget {
 
     /**
-     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs (or accordion)/items/<this_accordion>} node
+     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/<this_accordion>} node
      *
      * @return String value, required
      */
@@ -44,7 +44,7 @@ public @interface AccordionWidget {
      * @return One or more {@code Tab} annotations
      * @see AccordionPanel
      */
-    AccordionPanel[] panels() default {};
+    AccordionPanel[] panels();
 
     /**
      * Whether multiple items can be opened at the same time.

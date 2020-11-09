@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 public @interface TabsWidget {
 
     /**
-     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs (or accordion)/items/<this_tabs>} node
+     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs} node
      *
      * @return String value, required
      */
@@ -44,5 +44,5 @@ public @interface TabsWidget {
      * @return One or more {@code Tab} annotations
      * @see Tab
      */
-    Tab[] tabs() default {};
+    Tab[] tabs();
 }
