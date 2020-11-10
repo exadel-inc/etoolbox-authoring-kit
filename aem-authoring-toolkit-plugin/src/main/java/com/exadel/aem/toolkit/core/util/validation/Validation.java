@@ -87,9 +87,9 @@ public class Validation {
         String restriction = null;
         if (method.isAnnotationPresent(ValueRestriction.class)) {
             restriction = method.getDeclaredAnnotation(ValueRestriction.class).value();
-        } else if (ClassUtils.isAssignable(PluginReflectionUtility.getMethodPlainType(method), Annotation.class)
-                && PluginReflectionUtility.getMethodPlainType(method).isAnnotationPresent(ValueRestriction.class)) {
-            restriction = PluginReflectionUtility.getMethodPlainType(method).getDeclaredAnnotation(ValueRestriction.class).value();
+        } else if (ClassUtils.isAssignable(PluginReflectionUtility.getPlainType(method), Annotation.class)
+                && PluginReflectionUtility.getPlainType(method).isAnnotationPresent(ValueRestriction.class)) {
+            restriction = PluginReflectionUtility.getPlainType(method).getDeclaredAnnotation(ValueRestriction.class).value();
         }
         Validation checker = new Validation(getTestRoutine(restriction));
         checker.reflectedMethod = method;

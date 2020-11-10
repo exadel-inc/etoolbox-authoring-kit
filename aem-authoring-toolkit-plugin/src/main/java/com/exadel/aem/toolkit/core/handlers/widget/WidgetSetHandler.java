@@ -16,16 +16,21 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassField;
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
+import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectPredicates;
@@ -35,7 +40,7 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import static com.exadel.aem.toolkit.core.util.DialogConstants.PN_COMPONENT_CLASS;
 
 /**
- * Mix-in utility class for widget handlers that contains the base logic for {@link Handler}s dealing with widget
+ * Represents base class for widget handlers that contains logic for dealing with widget
  * collections, such as {@link com.exadel.aem.toolkit.api.annotations.widgets.FieldSet}
  * or {@link com.exadel.aem.toolkit.api.annotations.widgets.MultiField}
  */
@@ -50,7 +55,7 @@ interface WidgetSetHandler extends Handler, BiConsumer<Element, Field> {
      * @param containerType {@code Class} representing the type of the container
      * @return {@code List<Field>} containing renderable fields, or an empty collection
      */
-    default List<Field> getContainerFields(Element element, Field field, Class<?> containerType) {
+     static List<Field> getContainerFields(Element element, Field field, Class<?> containerType) {
         // Extract type of the Java class being the current rendering source
         Class<?> componentType = (Class<?>) element.getOwnerDocument().getUserData(PN_COMPONENT_CLASS);
         // Build the collection of ignored fields that may be defined at field level and at nesting class level
@@ -80,5 +85,23 @@ interface WidgetSetHandler extends Handler, BiConsumer<Element, Field> {
         Predicate<Field> nonIgnoredFields = PluginObjectPredicates.getNotIgnoredFieldsPredicate(allIgnoredFields);
         Predicate<Field> dialogFields = DialogWidgets::isPresent;
         return PluginReflectionUtility.getAllFields(containerType, Arrays.asList(nonIgnoredFields, dialogFields));
+    }
+
+    static Class<?> getManagedClass(Field field) {
+        // Extract underlying field's type as is
+        Class<?> result = field.getType().isArray() ? field.getType().getComponentType() : field.getType();
+        // Try to retrieve collection's parameter type
+        if (ClassUtils.isAssignable(result, Collection.class)) {
+            result = PluginReflectionUtility.getPlainType(field, true);
+        }
+        // Switch to directly specified type, if any
+        if (field.getAnnotation(MultiField.class) != null
+            && field.getAnnotation(MultiField.class).field() != _Default.class) {
+            result = field.getAnnotation(MultiField.class).field();
+        } else if (field.getAnnotation(FieldSet.class) != null
+            && field.getAnnotation(FieldSet.class).source() != _Default.class) {
+            result = field.getAnnotation(FieldSet.class).source();
+        }
+        return result;
     }
 }
