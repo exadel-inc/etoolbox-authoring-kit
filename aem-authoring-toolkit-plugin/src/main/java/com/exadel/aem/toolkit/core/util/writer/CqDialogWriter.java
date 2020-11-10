@@ -77,7 +77,7 @@ class CqDialogWriter extends ContentXmlWriter {
         DialogLayout dialogLayout;
         if (!ArrayUtils.isEmpty(dialog.tabs())) {
             dialogLayout = DialogLayout.TABS;
-        } else if (!ArrayUtils.isEmpty(dialog.accordionTabs())) {
+        } else if (!ArrayUtils.isEmpty(dialog.panels())) {
             dialogLayout = DialogLayout.ACCORDION;
         } else {
             dialogLayout = dialog.layout();

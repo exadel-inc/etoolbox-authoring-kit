@@ -40,7 +40,7 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
         description = "Choose a dungeon for your warrior",
         resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
         componentGroup = GroupConstants.COMPONENT_GROUP,
-        accordionTabs = {
+        panels = {
                 @AccordionPanel(title = "Main")
         }
 )

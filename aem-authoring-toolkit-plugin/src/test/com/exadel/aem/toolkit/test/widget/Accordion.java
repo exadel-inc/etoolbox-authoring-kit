@@ -29,7 +29,7 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
         title = "Accordion Test Dialog",
-        accordionTabs = {
+        panels = {
                 @AccordionPanel(title = "Basic", disabled = true),
                 @AccordionPanel(title = "Basic2")
         }

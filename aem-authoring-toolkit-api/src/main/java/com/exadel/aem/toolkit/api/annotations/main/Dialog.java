@@ -176,5 +176,5 @@ public @interface Dialog {
      * @see AccordionPanel
      * @return One or more {@code Accordion} annotations
      */
-    AccordionPanel[] accordionTabs() default {};
+    AccordionPanel[] panels() default {};
 }

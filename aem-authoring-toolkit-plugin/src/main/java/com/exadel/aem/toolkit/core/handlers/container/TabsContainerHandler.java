@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
 /**
  * The {@link Handler} for a tabbed TouchUI dialog
  */
-public class TabsContainerHandler implements ContainerHandler {
+public class TabsContainerHandler extends ContainerHandler {
 
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern

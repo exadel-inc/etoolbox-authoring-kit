@@ -24,7 +24,6 @@ import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.*;
 import com.google.common.collect.ImmutableMap;
-import javafx.util.Pair;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
@@ -39,11 +38,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element> {
+public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, Element> {
 
-    default void acceptParent(Class<?> componentClass, Element parentElement, Class<? extends Annotation> annotation) {
+    protected void acceptParent(Class<?> componentClass, Element parentElement, Class<? extends Annotation> annotation) {
         String containerName = annotation.equals(Tab.class) ? "tabs" : "accordion";
-        String DEFAULT_TAB_NAME = annotation.equals(Tab.class) ? "tab" : "accordion";
+        String defaultTabName = annotation.equals(Tab.class) ? "tab" : "accordion";
         String exceptionMessage = annotation.equals(Tab.class) ? "No tabs defined for the dialog at " : "No accordions defined for the dialog at ";
         String resourceType = annotation.equals(Tab.class) ? ResourceTypes.TABS : ResourceTypes.ACCORDION;
         Element tabItemsElement = (Element) parentElement.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER))
@@ -110,55 +109,33 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
         Iterator<Map.Entry<String, TabContainerInstance>> tabInstanceIterator = allTabInstances.entrySet().iterator();
         int iterationStep = 0;
 
-        while (tabInstanceIterator.hasNext()) {
-            final boolean isFirstTab = iterationStep++ == 0;
-            TabContainerInstance currentTabInstance
-                    = tabInstanceIterator.next().getValue();
-            List<Field> storedCurrentTabFields = new ArrayList<>();
-            for (String key : currentTabInstance.getFields().keySet()) {
-                storedCurrentTabFields.add((Field) currentTabInstance.getFields().get(key));
-            }
-            List<Field> moreCurrentTabFields = allFields.stream()
-                    .filter(field1 -> isFieldForTab(field1, currentTabInstance.getTab(), isFirstTab))
-                    .collect(Collectors.toList());
-            boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
-            storedCurrentTabFields.addAll(moreCurrentTabFields);
-            if (needResort) {
-                storedCurrentTabFields.sort(PluginObjectPredicates::compareByRanking);
-            }
-            allFields.removeAll(moreCurrentTabFields);
-            if (ArrayUtils.contains(ignoredTabs, currentTabInstance.getTab())) {
-                continue;
-            }
-            appendTab(tabItemsElement, currentTabInstance, storedCurrentTabFields, DEFAULT_TAB_NAME);
-        }
+        addTab(tabInstanceIterator, iterationStep, allFields, ignoredTabs, tabItemsElement, defaultTabName);
 
         // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
         // for which a non-existent tab was specified. Handle an InvalidTabException for each of them
         handleInvalidTabException(allFields);
     }
 
-    default void appendTab(Element tabCollectionElement, TabContainerInstance tab, List<Field> fields, String DEFAULT_TAB_NAME) {
-        String nodeName = getXmlUtil().getUniqueName(tab.getTab(), DEFAULT_TAB_NAME, tabCollectionElement);
-        Element tabElement = getXmlUtil().createNodeElement(
+    private static void appendTab(Element tabCollectionElement, TabContainerInstance tab, List<Field> fields, String defaultTabName) {
+        String nodeName = PluginRuntime.context().getXmlUtility().getUniqueName(tab.getTab(), defaultTabName, tabCollectionElement);
+        Element tabElement = PluginRuntime.context().getXmlUtility().createNodeElement(
                 nodeName,
                 ImmutableMap.of(
                         JcrConstants.PN_TITLE, tab.getTab(),
                         JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
                 ));
-        if (DEFAULT_TAB_NAME.equals("tab")) {
+        if (defaultTabName.equals("tab")) {
             Tab newTab = PluginObjectUtility.create(Tab.class,
                     tab.getAttributes());
             appendTabAttributes(tabElement, newTab);
-        }
-        if (!DEFAULT_TAB_NAME.equals("tab")) {
+        } else if (defaultTabName.equals("accordion")) {
             AccordionPanel accordionPanel = PluginObjectUtility.create(AccordionPanel.class,
                     tab.getAttributes());
-            Element parentConfig = getXmlUtil().createNodeElement(
+            Element parentConfig = PluginRuntime.context().getXmlUtility().createNodeElement(
                     "parentConfig");
             List<String> skipedList = new ArrayList<>();
             skipedList.add("title");
-            getXmlUtil().mapProperties(parentConfig, accordionPanel, skipedList);
+            PluginRuntime.context().getXmlUtility().mapProperties(parentConfig, accordionPanel, skipedList);
             tabElement.appendChild(parentConfig);
         }
         tabCollectionElement.appendChild(tabElement);
@@ -171,11 +148,11 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
      * @param tabElement {@link Element} instance representing a TouchUI dialog tab
      * @param tab        {@link Tab} annotation that contains settings
      */
-    default void appendTabAttributes(Element tabElement, Tab tab) {
+    private static void appendTabAttributes(Element tabElement, Tab tab) {
         tabElement.setAttribute(JcrConstants.PN_TITLE, tab.title());
         Attribute attribute = tab.attribute();
-        getXmlUtil().mapProperties(tabElement, attribute);
-        getXmlUtil().appendDataAttributes(tabElement, attribute.data());
+        PluginRuntime.context().getXmlUtility().mapProperties(tabElement, attribute);
+        PluginRuntime.context().getXmlUtility().appendDataAttributes(tabElement, attribute.data());
     }
 
     /**
@@ -185,7 +162,7 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
      * @param classes The {@code Class<?>}-es to search for defined tabs
      * @return Map of entries, each specified by a tab title and containing a {@link TabContainerInstance} aggregate object
      */
-    default Map<String, TabContainerInstance> getTabInstances(List<Class<?>> classes, Class<? extends Annotation> annotation, String containerName) {
+    Map<String, TabContainerInstance> getTabInstances(List<Class<?>> classes, Class<? extends Annotation> annotation, String containerName) {
         Map<String, TabContainerInstance> result = new LinkedHashMap<>();
         Map<String, Object> annotationMap;
         for (Class<?> cls : classes) {
@@ -210,7 +187,7 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
                                 result.put(tab.title(), tabContainerInstance);
                             });
                 } else {
-                    Arrays.stream(cls.getAnnotation(Dialog.class).accordionTabs())
+                    Arrays.stream(cls.getAnnotation(Dialog.class).panels())
                             .forEach(tab -> {
                                 TabContainerInstance tabContainerInstance = new TabContainerInstance(tab.title());
                                 tabContainerInstance.setAttributes(getAnnotationFields(tab));
@@ -222,7 +199,7 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
         return result;
     }
 
-    default Map<String, Object> getAnnotationFields(Annotation annotation) {
+    public static Map<String, Object> getAnnotationFields(Annotation annotation) {
         try {
             Object handler = Proxy.getInvocationHandler(annotation);
             Field f = handler.getClass().getDeclaredField("memberValues");
@@ -231,38 +208,28 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
         } catch (Exception ignored) {
             //ignored
         }
-        return new HashMap<String, Object>();
-    }
-
-    static boolean isFieldForTab(Field field, String tabTitle, boolean isDefaultTab) {
-        if (!field.isAnnotationPresent(PlaceOnTab.class) && !field.isAnnotationPresent(PlaceOn.class)) {
-            return isDefaultTab;
-        }
-        if (field.isAnnotationPresent(PlaceOn.class)) {
-            return tabTitle.equalsIgnoreCase(field.getAnnotation(PlaceOn.class).value());
-        }
-        return tabTitle.toString().equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
+        return new HashMap<>();
     }
 
     /**
      * The predicate to match a {@code Field} against particular {@code Tab}
      *
      * @param field        {@link Field} instance to analyze
-     * @param tab          {@link Tab} annotation to analyze
+     * @param tabTitle     String annotation to analyze
      * @param isDefaultTab True if the current tab accepts fields for which no tab was specified; otherwise, false
      * @return True or false
      */
-    static boolean isFieldForTab(Field field, Tab tab, boolean isDefaultTab) {
+    private static boolean isFieldForTab(Field field, String tabTitle, boolean isDefaultTab) {
         if (!field.isAnnotationPresent(PlaceOnTab.class) && !field.isAnnotationPresent(PlaceOn.class)) {
             return isDefaultTab;
         }
         if (field.isAnnotationPresent(PlaceOn.class)) {
-            return tab.title().equalsIgnoreCase(field.getAnnotation(PlaceOn.class).value());
+            return tabTitle.equalsIgnoreCase(field.getAnnotation(PlaceOn.class).value());
         }
-        return tab.title().equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
+        return tabTitle.equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
     }
 
-    static void handleInvalidTabException(List<Field> allFields) {
+    public static void handleInvalidTabException(List<Field> allFields) {
         for (Field field : allFields) {
             if (field.isAnnotationPresent(PlaceOnTab.class)) {
                 PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(field.getAnnotation(PlaceOnTab.class).value()));
@@ -274,17 +241,28 @@ public interface ContainerHandler extends Handler, BiConsumer<Class<?>, Element>
         }
     }
 
-    static Pair<List<Field>, List<Field>> getStoredCurrentTabFields(List<Field> allFields, TabInstance currentTabInstance, final boolean isFirstTab) {
-        List<Field> storedCurrentTabFields = currentTabInstance.getFields();
-        List<Field> moreCurrentTabFields = allFields.stream()
-                .filter(field1 -> isFieldForTab(field1, currentTabInstance.getTab(), isFirstTab))
-                .collect(Collectors.toList());
-        boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
-        storedCurrentTabFields.addAll(moreCurrentTabFields);
-        if (needResort) {
-            storedCurrentTabFields.sort(PluginObjectPredicates::compareByRanking);
+    public static void addTab(Iterator<Map.Entry<String, TabContainerInstance>> tabInstanceIterator, int iterationStep, List<Field> allFields, String[] ignoredTabs, Element tabItemsElement, String defaultTabName) {
+        while (tabInstanceIterator.hasNext()) {
+            final boolean isFirstTab = iterationStep++ == 0;
+            TabContainerInstance currentTabInstance
+                    = tabInstanceIterator.next().getValue();
+            List<Field> storedCurrentTabFields = new ArrayList<>();
+            for (String key : currentTabInstance.getFields().keySet()) {
+                storedCurrentTabFields.add((Field) currentTabInstance.getFields().get(key));
+            }
+            List<Field> moreCurrentTabFields = allFields.stream()
+                    .filter(field1 -> isFieldForTab(field1, currentTabInstance.getTab(), isFirstTab))
+                    .collect(Collectors.toList());
+            boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
+            storedCurrentTabFields.addAll(moreCurrentTabFields);
+            if (needResort) {
+                storedCurrentTabFields.sort(PluginObjectPredicates::compareByRanking);
+            }
+            allFields.removeAll(moreCurrentTabFields);
+            if (ArrayUtils.contains(ignoredTabs, currentTabInstance.getTab())) {
+                continue;
+            }
+            appendTab(tabItemsElement, currentTabInstance, storedCurrentTabFields, defaultTabName);
         }
-        allFields.removeAll(moreCurrentTabFields);
-        return new Pair<>(storedCurrentTabFields, allFields);
     }
 }
