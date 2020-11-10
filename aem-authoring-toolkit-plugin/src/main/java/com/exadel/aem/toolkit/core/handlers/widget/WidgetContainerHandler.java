@@ -7,6 +7,7 @@ import com.exadel.aem.toolkit.core.handlers.container.common.ContainerHandler;
 import com.exadel.aem.toolkit.core.handlers.container.common.TabContainerInstance;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
@@ -17,8 +18,8 @@ import java.util.*;
 abstract class WidgetContainerHandler implements WidgetSetHandler {
 
     void acceptParent(Element element, Class<? extends Annotation> annotation, Field field) {
-        String defaultTabName = annotation.equals(TabsWidget.class) ? "tab" : "accordion";
-        String exceptionMessage = annotation.equals(TabsWidget.class) ? "No tabs defined for the dialog at " : "No accordions defined for the dialog at ";
+        String defaultTabName = annotation.equals(TabsWidget.class) ? ContainerHandler.TAB : ContainerHandler.ACCORDION;
+        String exceptionMessage = annotation.equals(TabsWidget.class) ? ContainerHandler.TABS_EXCEPTION : ContainerHandler.ACCORDION_EXCEPTON;
         Element tabItemsElement = (Element) element
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
 
@@ -36,11 +37,7 @@ abstract class WidgetContainerHandler implements WidgetSetHandler {
             }
         }
 
-        Iterator<Map.Entry<String, TabContainerInstance>> tabInstanceIterator = tabInstancesFromCurrentClass.entrySet().iterator();
-        int iterationStep = 0;
-        String[] array = {};
-
-        ContainerHandler.addTab(tabInstanceIterator, iterationStep, allFields, array, tabItemsElement, defaultTabName);
+        ContainerHandler.addTab(tabInstancesFromCurrentClass, allFields, ArrayUtils.EMPTY_STRING_ARRAY, tabItemsElement, defaultTabName);
         ContainerHandler.handleInvalidTabException(allFields);
     }
 

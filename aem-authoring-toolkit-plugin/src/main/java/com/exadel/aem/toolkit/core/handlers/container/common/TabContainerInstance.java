@@ -26,7 +26,7 @@ public class TabContainerInstance {
     private Map<String, Object> fields;
 
     /**
-     * Creates a new {@code TabInstanceN} wrapped around a specified  with an empty list of associated fields
+     * Creates a new {@code TabContainerInstance} wrapped around a specified  with an empty list of associated fields
      *
      * @param tab Tab name
      */
@@ -36,7 +36,7 @@ public class TabContainerInstance {
     }
 
     /**
-     * Creates a new {@code TabInstanceN} wrapped around a specified  with a particular list of associated
+     * Creates a new {@code TabContainerInstance} wrapped around a specified  with a particular list of associated
      * fields
      *
      * @param tab    tab name
@@ -52,7 +52,7 @@ public class TabContainerInstance {
      *
      * @return tab name
      */
-    public String getTab() {
+    public String getTitle() {
         return title;
     }
 
@@ -70,10 +70,10 @@ public class TabContainerInstance {
     }
 
     /**
-     * Merges a foreign {@code TabInstanceN} to the current instance, basically by adding other instance's fields
+     * Merges a foreign {@code TabContainerInstance} to the current instance, basically by adding other instance's fields
      * while preserving the same  reference
      *
-     * @param other Foreign {@code TabInstanceN} object
+     * @param other Foreign {@code TabContainerInstance} object
      * @return This instance
      */
     public TabContainerInstance merge(TabContainerInstance other) {

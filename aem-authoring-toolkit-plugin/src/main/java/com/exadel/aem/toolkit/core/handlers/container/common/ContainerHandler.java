@@ -39,12 +39,19 @@ import java.util.stream.Stream;
 
 
 public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, Element> {
+    public static final String ACCORDION = "accordion";
+    private static final String TABS = "tabs";
+    public static final String TAB = "tab";
+    private static final String TITLE = "title";
+    public static final String TABS_EXCEPTION = "No tabs defined for the dialog at ";
+    public static final String ACCORDION_EXCEPTON = "No accordions defined for the dialog at ";
 
     protected void acceptParent(Class<?> componentClass, Element parentElement, Class<? extends Annotation> annotation) {
-        String containerName = annotation.equals(Tab.class) ? "tabs" : "accordion";
-        String defaultTabName = annotation.equals(Tab.class) ? "tab" : "accordion";
-        String exceptionMessage = annotation.equals(Tab.class) ? "No tabs defined for the dialog at " : "No accordions defined for the dialog at ";
+        String containerName = annotation.equals(Tab.class) ? TABS : ACCORDION;
+        String defaultTabName = annotation.equals(Tab.class) ? TAB : ACCORDION;
+        String exceptionMessage = annotation.equals(Tab.class) ? TABS_EXCEPTION : ACCORDION_EXCEPTON;
         String resourceType = annotation.equals(Tab.class) ? ResourceTypes.TABS : ResourceTypes.ACCORDION;
+
         Element tabItemsElement = (Element) parentElement.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER))
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS))
                 .appendChild(getXmlUtil().createNodeElement(containerName, resourceType))
@@ -95,7 +102,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
             PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException(
                     exceptionMessage + componentClass.getSimpleName()
             ));
-            if (containerName.equals("tabs")) {
+            if (containerName.equals(TABS)) {
                 allTabInstances.put(StringUtils.EMPTY, new TabContainerInstance("newTab"));
             }
         }
@@ -106,10 +113,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
         // 2) re-sort the current tab's fields collection with the field ranking comparator
         // 3) remove managed fields from the "all fields" collection
         // 4) render XML markup for the current tab
-        Iterator<Map.Entry<String, TabContainerInstance>> tabInstanceIterator = allTabInstances.entrySet().iterator();
-        int iterationStep = 0;
-
-        addTab(tabInstanceIterator, iterationStep, allFields, ignoredTabs, tabItemsElement, defaultTabName);
+        addTab(allTabInstances, allFields, ignoredTabs, tabItemsElement, defaultTabName);
 
         // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
         // for which a non-existent tab was specified. Handle an InvalidTabException for each of them
@@ -117,24 +121,24 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
     }
 
     private static void appendTab(Element tabCollectionElement, TabContainerInstance tab, List<Field> fields, String defaultTabName) {
-        String nodeName = PluginRuntime.context().getXmlUtility().getUniqueName(tab.getTab(), defaultTabName, tabCollectionElement);
+        String nodeName = PluginRuntime.context().getXmlUtility().getUniqueName(tab.getTitle(), defaultTabName, tabCollectionElement);
         Element tabElement = PluginRuntime.context().getXmlUtility().createNodeElement(
                 nodeName,
                 ImmutableMap.of(
-                        JcrConstants.PN_TITLE, tab.getTab(),
+                        JcrConstants.PN_TITLE, tab.getTitle(),
                         JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
                 ));
-        if (defaultTabName.equals("tab")) {
+        if (defaultTabName.equals(TAB)) {
             Tab newTab = PluginObjectUtility.create(Tab.class,
                     tab.getAttributes());
             appendTabAttributes(tabElement, newTab);
-        } else if (defaultTabName.equals("accordion")) {
+        } else if (defaultTabName.equals(ACCORDION)) {
             AccordionPanel accordionPanel = PluginObjectUtility.create(AccordionPanel.class,
                     tab.getAttributes());
             Element parentConfig = PluginRuntime.context().getXmlUtility().createNodeElement(
                     "parentConfig");
             List<String> skipedList = new ArrayList<>();
-            skipedList.add("title");
+            skipedList.add(TITLE);
             PluginRuntime.context().getXmlUtility().mapProperties(parentConfig, accordionPanel, skipedList);
             tabElement.appendChild(parentConfig);
         }
@@ -162,7 +166,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
      * @param classes The {@code Class<?>}-es to search for defined tabs
      * @return Map of entries, each specified by a tab title and containing a {@link TabContainerInstance} aggregate object
      */
-    Map<String, TabContainerInstance> getTabInstances(List<Class<?>> classes, Class<? extends Annotation> annotation, String containerName) {
+    private Map<String, TabContainerInstance> getTabInstances(List<Class<?>> classes, Class<? extends Annotation> annotation, String containerName) {
         Map<String, TabContainerInstance> result = new LinkedHashMap<>();
         Map<String, Object> annotationMap;
         for (Class<?> cls : classes) {
@@ -173,13 +177,13 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
             for (Class<?> tabClass : tabClasses) {
                 Annotation annotation2 = tabClass.getDeclaredAnnotation(annotation);
                 annotationMap = getAnnotationFields(annotation2);
-                TabContainerInstance tabContainerInstance = new TabContainerInstance(annotationMap.get("title").toString());
+                TabContainerInstance tabContainerInstance = new TabContainerInstance(annotationMap.get(TITLE).toString());
                 tabContainerInstance.setAttributes(annotationMap);
                 Arrays.stream(tabClass.getDeclaredFields()).forEach(field -> tabContainerInstance.setFields(field.getName(), field));
-                result.put(annotationMap.get("title").toString(), tabContainerInstance);
+                result.put(annotationMap.get(TITLE).toString(), tabContainerInstance);
             }
             if (cls.isAnnotationPresent(Dialog.class)) {
-                if (containerName.equals("tabs")) {
+                if (containerName.equals(TABS)) {
                     Arrays.stream(cls.getAnnotation(Dialog.class).tabs())
                             .forEach(tab -> {
                                 TabContainerInstance tabContainerInstance = new TabContainerInstance(tab.title());
@@ -241,7 +245,9 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
         }
     }
 
-    public static void addTab(Iterator<Map.Entry<String, TabContainerInstance>> tabInstanceIterator, int iterationStep, List<Field> allFields, String[] ignoredTabs, Element tabItemsElement, String defaultTabName) {
+    public static void addTab(Map<String, TabContainerInstance> allTabInstances, List<Field> allFields, String[] ignoredTabs, Element tabItemsElement, String defaultTabName) {
+        Iterator<Map.Entry<String, TabContainerInstance>> tabInstanceIterator = allTabInstances.entrySet().iterator();
+        int iterationStep = 0;
         while (tabInstanceIterator.hasNext()) {
             final boolean isFirstTab = iterationStep++ == 0;
             TabContainerInstance currentTabInstance
@@ -251,7 +257,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
                 storedCurrentTabFields.add((Field) currentTabInstance.getFields().get(key));
             }
             List<Field> moreCurrentTabFields = allFields.stream()
-                    .filter(field1 -> isFieldForTab(field1, currentTabInstance.getTab(), isFirstTab))
+                    .filter(field1 -> isFieldForTab(field1, currentTabInstance.getTitle(), isFirstTab))
                     .collect(Collectors.toList());
             boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
             storedCurrentTabFields.addAll(moreCurrentTabFields);
@@ -259,7 +265,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
                 storedCurrentTabFields.sort(PluginObjectPredicates::compareByRanking);
             }
             allFields.removeAll(moreCurrentTabFields);
-            if (ArrayUtils.contains(ignoredTabs, currentTabInstance.getTab())) {
+            if (ArrayUtils.contains(ignoredTabs, currentTabInstance.getTitle())) {
                 continue;
             }
             appendTab(tabItemsElement, currentTabInstance, storedCurrentTabFields, defaultTabName);
