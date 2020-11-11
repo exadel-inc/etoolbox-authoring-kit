@@ -33,7 +33,7 @@ public class TargetImpl implements Target {
     private static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
 
-    private final String name;
+    private String name;
     private final Map<String, String> valueMap;
     private final Target parent;
     private final List<Target> listChildren;
@@ -146,19 +146,19 @@ public class TargetImpl implements Target {
 
     @Override
     public Target attribute(String name, String value) {
-        this.valueMap.put(name, value);
+        if (value != null) this.valueMap.put(name, value);
         return this;
     }
 
     @Override
-    public Target attribute(String name, boolean value) {
-        this.valueMap.put(name, "{Boolean}" + value);
+    public Target attribute(String name, Boolean value) {
+        if (value != null) this.valueMap.put(name, "{Boolean}" + value);
         return this;
     }
 
     @Override
-    public Target attribute(String name, long value) {
-        this.valueMap.put(name, "{Long}" + value);
+    public Target attribute(String name, Long value) {
+        if (value != null) this.valueMap.put(name, "{Long}" + value);
         return this;
     }
 
@@ -195,6 +195,14 @@ public class TargetImpl implements Target {
     }
 
     @Override
+    public Target name(String name, String defaultName) {
+        this.parent.listChildren().remove(this);
+        this.name = NamingUtil.getUniqueName(name, defaultName, this.parent);
+        this.parent.listChildren().add(this);
+        return this;
+    }
+
+    @Override
     public Target parent() {
         return parent;
     }
@@ -210,15 +218,26 @@ public class TargetImpl implements Target {
         Target currentFacade = this;
         while (!pathChunks.isEmpty()) {
             String currentChunk = pathChunks.poll();
-            if (currentChunk.isEmpty() || currentChunk.equals(currentFacade.getName())) {
-                return currentFacade;
-            }
             currentFacade = currentFacade.listChildren().stream().filter(child -> currentChunk.equals(child.getName())).findFirst().orElse(null);
             if (currentFacade == null) {
                 return null;
             }
         }
         return currentFacade;
+    }
+
+    @Override
+    public Target clear() {
+        listChildren.forEach(Target::clear);
+        listChildren.removeIf(Target::isDefault);
+        return this;
+    }
+
+    @Override
+    public boolean isDefault() {
+        return this.valueMap.size() == 1 &&
+                this.valueMap.containsKey(DialogConstants.PN_PRIMARY_TYPE) &&
+                this.listChildren.isEmpty();
     }
 
     @Override
