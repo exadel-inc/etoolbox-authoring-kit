@@ -17,7 +17,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
@@ -39,13 +38,13 @@ class AutocompleteHandler implements Handler, BiConsumer<Source, Target> {
         Autocomplete autocomplete = source.adaptTo(Autocomplete.class);
         target.child(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
-                .mapProperties(autocomplete.datasource());
-
-        target.child(DialogConstants.NN_OPTIONS)
+                .mapProperties(autocomplete.datasource())
+                .parent()
+                .child(DialogConstants.NN_OPTIONS)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
-                .mapProperties(autocomplete.options());
-
-        target.child(DialogConstants.NN_VALUES)
+                .mapProperties(autocomplete.options())
+                .parent()
+                .child(DialogConstants.NN_VALUES)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
                 .mapProperties(autocomplete.values());
     }

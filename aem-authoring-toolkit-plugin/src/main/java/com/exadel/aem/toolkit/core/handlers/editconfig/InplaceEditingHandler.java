@@ -152,7 +152,7 @@ public class InplaceEditingHandler implements Handler, BiConsumer<Target, EditCo
             target.mapProperties(referencedRteField.adaptTo(RichTextEditor.class),
                     Collections.singletonList(DialogConstants.PN_USE_FIXED_INLINE_TOOLBAR));
         }
-        //new RichTextEditorHandler(false).accept(config.richTextConfig(), targetFacade);
+        new RichTextEditorHandler(false).accept(config.richTextConfig(), target);
     }
 
     /**

@@ -45,7 +45,7 @@ class SelectHandler implements Handler, BiConsumer<Source, Target> {
         if (ArrayUtils.isNotEmpty(select.options())) {
             Target items = target.child(DialogConstants.NN_ITEMS);
             for (Option option: select.options()) {
-                items.child().mapProperties(option);
+                items.child().name(option.value(), DialogConstants.NN_ITEM).mapProperties(option);
             }
         }
         Target dataSourceElement = PluginXmlUtility.appendDataSource(
