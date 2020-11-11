@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.core.handlers.widget.rte;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import org.w3c.dom.Element;
 
 import java.util.Arrays;
@@ -22,13 +23,13 @@ import java.util.function.Consumer;
 
 /**
  * Represents a generic builder for a {@code RichTextEditor} configuration XML markup.
- * Required by {@link RichTextEditorHandler#accept(Source, Element)}
+ * Required by {@link RichTextEditorHandler#accept(Source, Target)}
  */
 abstract class XmlNodeBuilderBase {
     private String name;
     private String attributeName;
     private BiPredicate<String, String> filter;
-    private Consumer<Element> postprocessing;
+    private Consumer<Target> postprocessing;
 
     XmlNodeBuilderBase(String tagName, String attributeName) {
         this.name = tagName;
@@ -62,14 +63,14 @@ abstract class XmlNodeBuilderBase {
      * Gets the postprocessing routine for this {@code Builder}
      * @return {@code Consumer<Element>} instance
      */
-    Consumer<Element> getPostprocessing() {
+    Consumer<Target> getPostprocessing() {
         return postprocessing;
     }
 
     /**
      * Sets the postprocessing routine for this {@code Builder}
      */
-    void setPostprocessing(Consumer<Element> postprocessing) {
+    void setPostprocessing(Consumer<Target> postprocessing) {
         this.postprocessing = postprocessing;
     }
 
@@ -108,7 +109,7 @@ abstract class XmlNodeBuilderBase {
      * Creates and returns the configuration XML node
      * @return {@code Element} instance representing the config node
      */
-    abstract Element build();
+    abstract Target build(Target parent);
 
     /**
      * Gets whether this instance has no features set
