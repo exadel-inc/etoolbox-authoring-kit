@@ -28,7 +28,6 @@ import java.util.stream.Stream;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.SourceImpl;
-import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.util.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +47,6 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
  * The {@link Handler} for a tabbed TouchUI dialog
  */
 public class TabsHandler implements Handler, BiConsumer<Class<?>, Target> {
-    private static final String DEFAULT_TAB_NAME = "tab";
     private static final String NO_TABS_DEFINED_EXCEPTION_MESSAGE = "No tabs defined for the dialog at ";
 
     /**

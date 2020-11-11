@@ -18,7 +18,6 @@ import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -51,6 +50,7 @@ class RadioGroupHandler implements Handler, BiConsumer<Source, Target> {
 
     private void renderButton(RadioButton buttonInstance, Target parentElement) {
         parentElement.child()
+                .name(buttonInstance.value(), DialogConstants.NN_ITEM)
                 .mapProperties(buttonInstance);
     }
 }
