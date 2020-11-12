@@ -17,7 +17,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PERSONAL_ACCESS_TOKEN : ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
-          path-to-signatures: 'signatutes/version1/cla.json'
+          path-to-signatures: 'signatures/version1/cla.json'
           path-to-cla-document: 'https://github.com/exadel-inc/aem-authoring-toolkit/blob/master/CLA.md'
           branch: 'cla'
           allowlist: bot*
