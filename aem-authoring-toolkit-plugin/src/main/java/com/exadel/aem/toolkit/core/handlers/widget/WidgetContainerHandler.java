@@ -13,14 +13,17 @@ import org.w3c.dom.Element;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 abstract class WidgetContainerHandler implements WidgetSetHandler {
 
-    private static String defaultTabName;
+
 
     void acceptParent(Element element, Class<? extends Annotation> annotation, Field field) {
-        defaultTabName = annotation.equals(TabsWidget.class) ? ContainerHandler.TAB : ContainerHandler.ACCORDION;
+        String defaultTabName = annotation.equals(TabsWidget.class) ? ContainerHandler.TAB : ContainerHandler.ACCORDION;
         String exceptionMessage = annotation.equals(TabsWidget.class) ? ContainerHandler.TABS_EXCEPTION : ContainerHandler.ACCORDION_EXCEPTON;
         Element tabItemsElement = (Element) element
                 .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
@@ -39,10 +42,16 @@ abstract class WidgetContainerHandler implements WidgetSetHandler {
             }
         }
 
-        ContainerHandler.addTabs(tabInstancesFromCurrentClass, allFields, ArrayUtils.EMPTY_STRING_ARRAY, tabItemsElement);
+        ContainerHandler.addTabs(tabInstancesFromCurrentClass, allFields, ArrayUtils.EMPTY_STRING_ARRAY, tabItemsElement, defaultTabName);
         ContainerHandler.handleInvalidTabException(allFields);
     }
 
+    /**
+     * Get all tabs from current class.
+     *
+     * @param annotation {@link Class<? extends Annotation>} searching annotation
+     * @param field   Current {@code Field} instance
+     */
     private Map<String, TabContainerInstance> getInstancesFromCurrentClass(Class<? extends Annotation> annotation, Field field) {
         Map<String, TabContainerInstance> tabInstancesFromCurrentClass = new LinkedHashMap<>();
         if (field.isAnnotationPresent(annotation)) {

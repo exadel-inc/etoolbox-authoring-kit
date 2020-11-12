@@ -45,11 +45,10 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
     private static final String TITLE = "title";
     public static final String TABS_EXCEPTION = "No tabs defined for the dialog at ";
     public static final String ACCORDION_EXCEPTON = "No accordions defined for the dialog at ";
-    private static String defaultTabName;
 
     protected void acceptParent(Class<?> componentClass, Element parentElement, Class<? extends Annotation> annotation) {
         String containerName = annotation.equals(Tab.class) ? TABS : ACCORDION;
-        defaultTabName = annotation.equals(Tab.class) ? TAB : ACCORDION;
+        String defaultTabName = annotation.equals(Tab.class) ? TAB : ACCORDION;
         String exceptionMessage = annotation.equals(Tab.class) ? TABS_EXCEPTION : ACCORDION_EXCEPTON;
         String resourceType = annotation.equals(Tab.class) ? ResourceTypes.TABS : ResourceTypes.ACCORDION;
 
@@ -90,7 +89,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
         }
 
         // Render XML markup for all existing tabs
-        addTabs(allTabInstances, allFields, ignoredTabs, tabItemsElement);
+        addTabs(allTabInstances, allFields, ignoredTabs, tabItemsElement, defaultTabName);
 
         // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
         // for which a non-existent tab was specified. Handle an InvalidTabException for each of them
@@ -102,8 +101,9 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
      *
      * @param tabCollectionElement {@link Element} instance representing a TouchUI dialog tab
      * @param tab                  {@link Tab} annotation that contains settings
+     * @param defaultTabName {@link String} name of current container tab
      */
-    private static void appendTab(Element tabCollectionElement, TabContainerInstance tab, List<Field> fields) {
+    private static void appendTab(Element tabCollectionElement, TabContainerInstance tab, List<Field> fields, String defaultTabName) {
         String nodeName = PluginRuntime.context().getXmlUtility().getUniqueName(tab.getTitle(), defaultTabName, tabCollectionElement);
         Element tabElement = PluginRuntime.context().getXmlUtility().createNodeElement(
                 nodeName,
@@ -243,8 +243,9 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
      * @param allFields       {@link List<Field>} All *non-nested* fields from superclasses and the current class
      * @param ignoredTabs     {@link String[]} Array of ignored tabs for the current class
      * @param tabItemsElement {@link Element} instance representing a TouchUI dialog tab
+     * @param defaultTabName {@link String} name of current container tab
      */
-    public static void addTabs(Map<String, TabContainerInstance> allTabInstances, List<Field> allFields, String[] ignoredTabs, Element tabItemsElement) {
+    public static void addTabs(Map<String, TabContainerInstance> allTabInstances, List<Field> allFields, String[] ignoredTabs, Element tabItemsElement, String defaultTabName) {
         // Iterate tab registry, from the first ever defined tab to the last
         // Within the iteration loop, we
         // 1) add fields from the "all fields" collection that are applicable to the current tab, to the tab's field collection
@@ -273,7 +274,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
             if (ArrayUtils.contains(ignoredTabs, currentTabInstance.getTitle())) {
                 continue;
             }
-            appendTab(tabItemsElement, currentTabInstance, storedCurrentTabFields);
+            appendTab(tabItemsElement, currentTabInstance, storedCurrentTabFields, defaultTabName);
         }
     }
 
