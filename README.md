@@ -228,7 +228,7 @@ To define array of `@AccordionPanel` within `@Dialog` or `@AccordionWidget` anno
 @Dialog(
     name = "test-component",
     title = "test-component-dialog",
-    accordionTabs = {
+    panels = {
         @AccordionPanel(title = "First accordionPanel")
     }
 )
