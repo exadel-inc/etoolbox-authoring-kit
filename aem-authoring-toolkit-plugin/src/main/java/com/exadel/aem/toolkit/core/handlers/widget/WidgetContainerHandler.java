@@ -20,8 +20,6 @@ import java.util.Map;
 
 abstract class WidgetContainerHandler implements WidgetSetHandler {
 
-
-
     void acceptParent(Element element, Class<? extends Annotation> annotation, Field field) {
         String defaultTabName = annotation.equals(TabsWidget.class) ? ContainerHandler.TAB : ContainerHandler.ACCORDION;
         String exceptionMessage = annotation.equals(TabsWidget.class) ? ContainerHandler.TABS_EXCEPTION : ContainerHandler.ACCORDION_EXCEPTON;
@@ -50,7 +48,7 @@ abstract class WidgetContainerHandler implements WidgetSetHandler {
      * Get all tabs from current class.
      *
      * @param annotation {@link Class<? extends Annotation>} searching annotation
-     * @param field   Current {@code Field} instance
+     * @param field      Current {@code Field} instance
      */
     private Map<String, TabContainerInstance> getInstancesFromCurrentClass(Class<? extends Annotation> annotation, Field field) {
         Map<String, TabContainerInstance> tabInstancesFromCurrentClass = new LinkedHashMap<>();

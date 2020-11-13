@@ -65,7 +65,7 @@ public class TabContainerInstance {
         return fields;
     }
 
-    public void setFields(String name, Object value) {
+    void setFields(String name, Object value) {
         this.fields.put(name, value);
     }
 
@@ -76,15 +76,23 @@ public class TabContainerInstance {
      * @param other Foreign {@code TabContainerInstance} object
      * @return This instance
      */
-    public TabContainerInstance merge(TabContainerInstance other) {
+    TabContainerInstance merge(TabContainerInstance other) {
         this.fields.putAll(other.getFields());
         return this;
     }
 
+    /**
+     * Set attributes for current tab
+     */
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes.putAll(attributes);
     }
 
+    /**
+     * Get current tab attributes
+     *
+     * @return attributes
+     */
     public Map<String, Object> getAttributes() {
         return attributes;
     }

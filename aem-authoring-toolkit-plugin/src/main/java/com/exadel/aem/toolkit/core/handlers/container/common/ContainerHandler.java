@@ -224,6 +224,11 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
         return tabTitle.equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
     }
 
+    /**
+     * Handle an InvalidTabException for fields for which a non-existent tab was specified
+     *
+     * @param allFields {@link List<Field>} all stored dialog fields
+     */
     public static void handleInvalidTabException(List<Field> allFields) {
         for (Field field : allFields) {
             if (field.isAnnotationPresent(PlaceOnTab.class)) {
