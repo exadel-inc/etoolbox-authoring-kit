@@ -29,7 +29,7 @@ abstract class WidgetContainerHandler implements WidgetSetHandler {
         Map<String, TabContainerInstance> tabInstancesFromCurrentClass = getInstancesFromCurrentClass(annotation, field);
 
         Class<?> tabsType = field.getType();
-        List<Field> allFields = getContainerFields(element, field, tabsType);
+        List<Field> allFields = WidgetSetHandler.getContainerFields(element, field, tabsType);
 
         if (tabInstancesFromCurrentClass.isEmpty() && !allFields.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
