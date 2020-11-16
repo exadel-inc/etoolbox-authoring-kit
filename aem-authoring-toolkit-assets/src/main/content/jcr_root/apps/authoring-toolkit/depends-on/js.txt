@@ -13,6 +13,7 @@ js/dependsOnQueryProcessor.js
 js/dependsOnQueryObserver.js
 
 # Accessors
+js/accessors/dependsOnCoralNoWrapperFieldsAccessor.js
 js/accessors/dependsOnCoralSwitcherAccessors.js
 js/accessors/dependsOnCoralRTEAccessor.js
 js/accessors/dependsOnCQFileUploadAccessor.js

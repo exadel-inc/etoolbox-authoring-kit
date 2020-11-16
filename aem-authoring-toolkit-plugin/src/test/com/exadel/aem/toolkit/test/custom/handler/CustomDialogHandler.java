@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
@@ -26,6 +27,7 @@ import org.w3c.dom.Node;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 
+@Handles(before = CustomProcessingHandler.class, after = CustomWidgetHandler.class)
 @SuppressWarnings("unused")
 public class CustomDialogHandler implements DialogHandler {
 
@@ -38,7 +40,7 @@ public class CustomDialogHandler implements DialogHandler {
     public void accept(Element element, Class<?> aClass) {
         visitElements(element, elt -> {
             if (StringUtils.equals(elt.getAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY), ResourceTypes.MULTIFIELD)
-                && isTopLevelMultifield(elt)) {
+                    && isTopLevelMultifield(elt)) {
                 elt.setAttribute("multifieldSpecial", "This is added to top-level Multifields");
             }
         });

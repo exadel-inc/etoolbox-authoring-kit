@@ -20,9 +20,9 @@ import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
-import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 
-@HandlesWidgets(MultiField.class)
+@Handles(value = MultiField.class, before = CustomMultifieldHandler.class, after = CustomProcessingHandler.class)
 @SuppressWarnings("unused")
 public class CustomMultifieldHandler implements DialogWidgetHandler {
     @Override

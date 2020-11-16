@@ -46,11 +46,11 @@ class FieldSetHandler implements WidgetSetHandler {
     // the processing of deprecated "IgnoreField" annotation remains for compatibility reasons until v.2.0.0
     public void accept(Element element, Field field) {
         // Define the working @FieldSet annotation instance and the fieldset type
+        Class<?> fieldSetType = WidgetSetHandler.getManagedClass(field);
         FieldSet fieldSet = field.getDeclaredAnnotation(FieldSet.class);
-        Class<?> fieldSetType = field.getType();
 
         // Get the filtered fields collection for the current container; early return if collection is empty
-        List<Field> fields = getContainerFields(element, field, fieldSetType);
+        List<Field> fields = WidgetSetHandler.getContainerFields(element, field, fieldSetType);
 
         // COMPATIBILITY: retrieve and process list of fields marked with a legacy "IgnoreField" annotation
         // to be removed after v.2.0.0
