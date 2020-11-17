@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +34,7 @@ import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
  * {@link Handler} implementation used to create markup responsible for Granite {@code FieldSet} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class FieldSetHandler implements WidgetSetHandler {
+class FieldSetHandler implements WidgetHandlerUtils, Handler, BiConsumer<Element, Field> {
     private static final String EMPTY_FIELDSET_EXCEPTION_MESSAGE = "No valid fields found in fieldset class ";
 
     /**
@@ -46,11 +47,11 @@ class FieldSetHandler implements WidgetSetHandler {
     // the processing of deprecated "IgnoreField" annotation remains for compatibility reasons until v.2.0.0
     public void accept(Element element, Field field) {
         // Define the working @FieldSet annotation instance and the fieldset type
-        Class<?> fieldSetType = WidgetSetHandler.getManagedClass(field);
+        Class<?> fieldSetType = WidgetHandlerUtils.getManagedClass(field);
         FieldSet fieldSet = field.getDeclaredAnnotation(FieldSet.class);
 
         // Get the filtered fields collection for the current container; early return if collection is empty
-        List<Field> fields = WidgetSetHandler.getContainerFields(element, field, fieldSetType);
+        List<Field> fields = WidgetHandlerUtils.getContainerFields(element, field, fieldSetType);
 
         // COMPATIBILITY: retrieve and process list of fields marked with a legacy "IgnoreField" annotation
         // to be removed after v.2.0.0

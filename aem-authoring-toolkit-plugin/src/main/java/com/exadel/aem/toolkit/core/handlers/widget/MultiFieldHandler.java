@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.w3c.dom.Element;
@@ -31,7 +32,7 @@ import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
  * within the {@code cq:dialog} XML node
  */
-public class MultiFieldHandler implements WidgetSetHandler {
+public class MultiFieldHandler implements WidgetHandlerUtils, Handler, BiConsumer<Element, Field> {
     private static final String EMPTY_MULTIFIELD_EXCEPTION_MESSAGE = "No valid fields found in multifield class ";
 
     /**
@@ -42,14 +43,14 @@ public class MultiFieldHandler implements WidgetSetHandler {
     @Override
     public void accept(Element element, Field field) {
         // Define the working @Multifield annotation instance and the multifield type
-        Class<?> multifieldType = WidgetSetHandler.getManagedClass(field);
+        Class<?> multifieldType = WidgetHandlerUtils.getManagedClass(field);
 
         // Modify the element's attributes for multifield mode
         String name = element.getAttribute(DialogConstants.PN_NAME);
         element.removeAttribute(DialogConstants.PN_NAME);
 
         // Get the filtered fields collection for the current container; early return if collection is empty
-        List<Field> fields = WidgetSetHandler.getContainerFields(element, field, multifieldType);
+        List<Field> fields = WidgetHandlerUtils.getContainerFields(element, field, multifieldType);
         if (fields.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + multifieldType.getName()

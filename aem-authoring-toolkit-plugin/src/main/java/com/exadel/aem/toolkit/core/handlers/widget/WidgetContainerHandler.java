@@ -3,6 +3,7 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.TabsWidget;
 import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.handlers.container.common.ContainerHandler;
 import com.exadel.aem.toolkit.core.handlers.container.common.TabContainerInstance;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
@@ -17,8 +18,9 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
-abstract class WidgetContainerHandler implements WidgetSetHandler {
+abstract class WidgetContainerHandler implements Handler, BiConsumer<Element, Field>, WidgetHandlerUtils {
 
     void acceptParent(Element element, Class<? extends Annotation> annotation, Field field) {
         String defaultTabName = annotation.equals(TabsWidget.class) ? ContainerHandler.TAB : ContainerHandler.ACCORDION;
@@ -29,7 +31,7 @@ abstract class WidgetContainerHandler implements WidgetSetHandler {
         Map<String, TabContainerInstance> tabInstancesFromCurrentClass = getInstancesFromCurrentClass(annotation, field);
 
         Class<?> tabsType = field.getType();
-        List<Field> allFields = WidgetSetHandler.getContainerFields(element, field, tabsType);
+        List<Field> allFields = WidgetHandlerUtils.getContainerFields(element, field, tabsType);
 
         if (tabInstancesFromCurrentClass.isEmpty() && !allFields.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
