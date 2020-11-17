@@ -14,8 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.widgets;
 
 import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
-import com.exadel.aem.toolkit.api.annotations.container.AccordionVariant;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.container.enums.AccordionVariant;
 import com.exadel.aem.toolkit.api.annotations.meta.*;
 
 import java.lang.annotation.ElementType;

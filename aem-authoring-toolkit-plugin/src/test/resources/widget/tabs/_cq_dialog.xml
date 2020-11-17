@@ -26,7 +26,12 @@
                                     disabled="{Boolean}false"
                                     renderHidden="{Boolean}false"
                                     required="{Boolean}false"/>
-                            <tabsField jcr:primaryType="nt:unstructured" title="innerTabs"
+                            <tabsField jcr:primaryType="nt:unstructured"
+                                       title="innerTabs"
+                                       margin="{Boolean}false"
+                                       maximized="{Boolean}false"
+                                       variant="horizontal"
+                                       size="M"
                                        sling:resourceType="granite/ui/components/coral/foundation/tabs">
                                 <items jcr:primaryType="nt:unstructured">
                                     <firstInner jcr:primaryType="nt:unstructured"
