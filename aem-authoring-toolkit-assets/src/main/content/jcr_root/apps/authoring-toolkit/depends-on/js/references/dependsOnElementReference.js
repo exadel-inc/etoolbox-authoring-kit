@@ -16,7 +16,7 @@
          * Returns existing adapter if instance already created
          * */
         constructor($el) {
-            let instance = $el.data('dependsonsubject');
+            const instance = $el.data('dependsonsubject');
             if (instance) return instance;
 
             super(`$ref${ELEMENT_REF_SQ.next()}`);
@@ -121,7 +121,7 @@
          * Remove references that are detached
          * */
         static actualize() {
-            for (let i = 0; i < refs.length ; ++i) {
+            for (let i = 0; i < refs.length; ++i) {
                 const ref = refs[i];
                 if (ref.isOutdated()) {
                     ref.remove();
@@ -131,5 +131,4 @@
         }
     }
     ns.ElementReferenceRegistry = ElementReferenceRegistry;
-
 })(document, Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

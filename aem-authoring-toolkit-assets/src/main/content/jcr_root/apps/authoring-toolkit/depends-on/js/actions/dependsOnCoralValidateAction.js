@@ -37,8 +37,8 @@
         const instances = $el.data(ns.QueryObserver.DATA_STORE);
         const validateInstances = (instances || []).filter((observer) => observer.action === ACTION_NAME);
 
-        let resultMsg = undefined;
-        for (let validate of validateInstances) {
+        let resultMsg;
+        for (const validate of validateInstances) {
             const res = validate.data._validationResult;
             const invalidCls = validate.data.cls || DEFAULT_INVALID_CLASS;
             invalidCls && $el.toggleClass(invalidCls, !!res);
@@ -50,9 +50,9 @@
     let dependsOnValidatorRegistered = false;
     // Register validator in registry only if acton is used
     function register() {
-        const foundationRegistry = $(window).adaptTo("foundation-registry");
+        const foundationRegistry = $(window).adaptTo('foundation-registry');
         // Make target 'validatable'
-        foundationRegistry.register("foundation.validation.selector", {
+        foundationRegistry.register('foundation.validation.selector', {
             submittable: TARGET_SEL,
             candidate: TARGET_SEL + ':not([disabled])',
             exclusion: '[data-dependson][hidden] *'
@@ -67,7 +67,7 @@
 
     // Action itself
     // Provide validator result
-    ns.ActionRegistry.register(ACTION_NAME,function (result, payload) {
+    ns.ActionRegistry.register(ACTION_NAME, function (result, payload) {
         if (!dependsOnValidatorRegistered) register();
 
         if (typeof result === 'string') {
