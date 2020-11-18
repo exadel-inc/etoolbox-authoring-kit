@@ -1,10 +1,13 @@
 package com.exadel.aem.toolkit.api.handlers;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 
 public interface Target {
@@ -48,6 +51,14 @@ public interface Target {
     Target clear();
 
     boolean isDefault();
+
+    void setLegacyField(Field legacyField);
+
+    Field getLegacyField();
+
+    void setLegacyHandlers(BiConsumer<Element, Field> handlers);
+
+    List<BiConsumer<Element, Field>> getLegacyHandlers();
 
     Map<String, String> valueMap();
 
