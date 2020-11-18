@@ -48,7 +48,7 @@ public class MultiFieldHandler implements WidgetSetHandler {
         String name = (String) target.deleteAttribute(DialogConstants.PN_NAME);
 
         // Get the filtered members collection for the current container; early return if collection is empty
-        List<Source> members = getContainerSourceFacades(target, source, multifieldType);
+        List<Source> members = getContainerSourceFacades(source, multifieldType);
         if (members.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + multifieldType.getName()
