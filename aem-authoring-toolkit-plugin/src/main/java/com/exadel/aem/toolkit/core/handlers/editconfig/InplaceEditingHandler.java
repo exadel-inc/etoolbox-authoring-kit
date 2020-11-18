@@ -104,7 +104,7 @@ public class InplaceEditingHandler implements Handler, BiConsumer<Target, EditCo
         Target configNode = target.child(DialogConstants.NN_CONFIG);
         for (InplaceEditingConfig childConfig : config.inplaceEditing()) {
             Target childConfigNode = configNode.child(getConfigName(childConfig))
-                    .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG);
+                    .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG);
             populateConfigNode(childConfigNode, childConfig);
         }
         return configNode;
