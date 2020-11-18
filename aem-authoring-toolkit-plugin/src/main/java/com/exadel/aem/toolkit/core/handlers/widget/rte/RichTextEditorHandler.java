@@ -146,6 +146,9 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Source, Target
         // build htmlLinkRules node and append to root target, if needed
         populateHtmlLinkRules(target);
         target.clear();
+        if (!rtePlugins.isDefault()) {
+            rtePlugins.child(DialogConstants.NN_STYLES);
+        }
     }
 
 /**
@@ -155,11 +158,6 @@ public class RichTextEditorHandler implements Handler, BiConsumer<Source, Target
      * @param child {@code Element} instance representing child node
      * @return {@code Element} instance representing the appended node
      */
-
-    private Target appendNotDefaultChild(Target parent, Target child) {
-        return null;
-    }
-
 
 /**
      * Called by {@link RichTextEditorHandler#accept(Source, Target)} to facilitate single feature token from the

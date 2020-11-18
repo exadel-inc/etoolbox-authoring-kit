@@ -41,11 +41,11 @@ class AutocompleteHandler implements Handler, BiConsumer<Source, Target> {
                 .mapProperties(autocomplete.datasource())
                 .parent()
                 .child(DialogConstants.NN_OPTIONS)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.options().annotationType().getAnnotation(ResourceType.class).value())
                 .mapProperties(autocomplete.options())
                 .parent()
                 .child(DialogConstants.NN_VALUES)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.values().annotationType().getAnnotation(ResourceType.class).value())
                 .mapProperties(autocomplete.values());
     }
 }
