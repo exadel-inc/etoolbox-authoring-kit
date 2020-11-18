@@ -11,10 +11,10 @@
     "eslint-plugin-promise": "^4.2.1"
   },
   "directories": {
-    "doc": "docs"
+    "doc": "src/main/content/jcr_root/apps/authoring-toolkit/depends-on/docs"
   },
   "scripts": {
-    "lint": "eslint **/*.js"
+    "lint": "eslint src/main/content/jcr_root/apps/**/*.js"
   },
   "license": "Apache-2.0",
   "repository": "https://github.com/exadel-inc/aem-authoring-toolkit/tree/master/aem-authoring-toolkit-assets/src/main/content/jcr_root/apps/authoring-toolkit/depends-on"
