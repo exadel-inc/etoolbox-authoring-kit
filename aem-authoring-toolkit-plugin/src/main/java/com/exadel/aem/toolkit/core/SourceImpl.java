@@ -29,6 +29,7 @@ public class SourceImpl implements Source {
 
     private final Member member;
     private final Map<String, Object> valueMap;
+    private Class<?> processedClass;
 
     public SourceImpl(Member member) {
         this.member = member;
@@ -78,6 +79,16 @@ public class SourceImpl implements Source {
     @Override
     public Member getSource() {
         return member;
+    }
+
+    @Override
+    public Class<?> getProcessedClass() {
+        return this.processedClass;
+    }
+
+    @Override
+    public void setProcessedClass(Class<?> processedClass) {
+        this.processedClass = processedClass;
     }
 
     private Object findValue(String name) {
