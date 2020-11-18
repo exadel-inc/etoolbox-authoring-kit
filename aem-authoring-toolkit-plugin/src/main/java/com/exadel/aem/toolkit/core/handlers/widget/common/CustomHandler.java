@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -34,8 +35,8 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 public class CustomHandler implements Handler, BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current {@code TargetFacade} instance
+     * @param source Current {@code Source} instance
+     * @param target Current {@code Target} instance
      */
     @Override
     public void accept(Source source, Target target) {
@@ -51,5 +52,15 @@ public class CustomHandler implements Handler, BiConsumer<Source, Target> {
 
         Arrays.stream(source.adaptTo(Property[].class))
                 .forEach(p -> target.attribute(NamingUtil.getValidFieldName(p.name()), p.value()));
+
+        PluginReflectionUtility.getFieldAnnotations(source).filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
+                .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
+                .flatMap(widgetSource -> PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlersLegacy().stream()
+                        .filter(handler -> widgetSource.equals(handler.getName())))
+                .forEach(handler -> {target.setLegacyHandlers(handler); target.setLegacyField((Field) source.getSource());});
+
+        PluginRuntime.context().getReflectionUtility()
+                .getCustomDialogWidgetHandlersLegacy(PluginReflectionUtility.getFieldAnnotations(source).collect(Collectors.toList()))
+                .forEach(handler -> {target.setLegacyHandlers(handler); target.setLegacyField((Field) source.getSource());});
     }
 }

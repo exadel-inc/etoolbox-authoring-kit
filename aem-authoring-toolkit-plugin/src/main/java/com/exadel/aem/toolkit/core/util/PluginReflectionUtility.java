@@ -17,10 +17,7 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
-import com.exadel.aem.toolkit.api.handlers.DialogHandler;
-import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
-import com.exadel.aem.toolkit.api.handlers.Handles;
-import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.*;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.core.SourceImpl;
@@ -62,8 +59,10 @@ public class PluginReflectionUtility {
     private org.reflections.Reflections reflections;
 
     private List<DialogWidgetHandler> customDialogWidgetHandlers;
+    private List<DialogWidgetHandlerLegacy> customDialogWidgetHandlersLegacy;
 
     private List<DialogHandler> customDialogHandlers;
+    private List<DialogHandlerLegacy> customDialogHandlersLegacy;
 
     private Map<String, Validator> validators;
 
@@ -98,6 +97,14 @@ public class PluginReflectionUtility {
         return newInstance;
     }
 
+    public List<DialogWidgetHandlerLegacy> getCustomDialogWidgetHandlersLegacy() {
+        if (customDialogWidgetHandlersLegacy != null) {
+            return customDialogWidgetHandlersLegacy;
+        }
+        customDialogWidgetHandlersLegacy = getHandlers(DialogWidgetHandlerLegacy.class);
+        return customDialogWidgetHandlersLegacy;
+    }
+
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
      * scope of the plugin
@@ -121,6 +128,19 @@ public class PluginReflectionUtility {
         return getCustomDialogWidgetHandlers(Collections.singletonList(annotationClass));
     }
 
+    public List<DialogWidgetHandlerLegacy> getCustomDialogWidgetHandlersLegacy(List<Class<? extends Annotation>> annotationClasses) {
+        if (annotationClasses == null) {
+            return Collections.emptyList();
+        }
+        return getCustomDialogWidgetHandlersLegacy().stream()
+                .filter(handler -> handler.getClass().isAnnotationPresent(Handles.class))
+                .filter(handler -> {
+                    Class<?>[] handled = handler.getClass().getDeclaredAnnotation(Handles.class).value();
+                    return annotationClasses.stream().anyMatch(annotationClass -> ArrayUtils.contains(handled, annotationClass));
+                })
+                .collect(Collectors.toList());
+    }
+
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
      * scope of the plugin matching the specified widget annotation
@@ -138,6 +158,14 @@ public class PluginReflectionUtility {
                     return annotationClasses.stream().anyMatch(annotationClass -> ArrayUtils.contains(handled, annotationClass));
                 })
                 .collect(Collectors.toList());
+    }
+
+    public List<DialogHandlerLegacy> getCustomDialogHandlersLegacy() {
+        if (customDialogHandlersLegacy != null) {
+            return customDialogHandlersLegacy;
+        }
+        customDialogHandlersLegacy = getHandlers(DialogHandlerLegacy.class);
+        return customDialogHandlersLegacy;
     }
 
     /**

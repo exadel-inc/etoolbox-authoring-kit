@@ -13,10 +13,13 @@ import com.exadel.aem.toolkit.core.util.XmlAttributeSettingHelper;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -37,6 +40,8 @@ public class TargetImpl implements Target {
     private final Map<String, String> valueMap;
     private final Target parent;
     private final List<Target> listChildren;
+    private Field legacyField;
+    private final List<BiConsumer<Element, Field>> legacyHandler = new ArrayList<>();
 
     public TargetImpl(String name, Target parent) {
         this.name = name;
@@ -238,6 +243,24 @@ public class TargetImpl implements Target {
         return this.valueMap.size() == 1 &&
                 this.valueMap.containsKey(DialogConstants.PN_PRIMARY_TYPE) &&
                 this.listChildren.isEmpty();
+    }
+
+    public void setLegacyField(Field legacyField) {
+        this.legacyField = legacyField;
+    }
+
+    public Field getLegacyField() {
+        return legacyField;
+    }
+
+    @Override
+    public void setLegacyHandlers(BiConsumer<Element, Field> handlers) {
+        this.legacyHandler.add(handlers);
+    }
+
+    @Override
+    public List<BiConsumer<Element, Field>>getLegacyHandlers() {
+        return this.legacyHandler;
     }
 
     @Override

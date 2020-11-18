@@ -173,6 +173,9 @@ public class PluginXmlUtility {
     private static Element populateDocument(Target target, Document document) {
         String name = NamingUtil.getValidName(target.getName());
         Element tmp = document.createElement(name);
+        if (target.getLegacyField() != null && target.getLegacyHandlers() != null) {
+            target.getLegacyHandlers().forEach(handler-> handler.accept(tmp, target.getLegacyField()));
+        }
         mapProperties(tmp, target);
         target.listChildren().forEach(child -> tmp.appendChild(populateDocument(child, document)));
         return tmp;
