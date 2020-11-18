@@ -43,14 +43,13 @@ interface WidgetSetHandler extends Handler, BiConsumer<Source, Target> {
      * Retrieves the list of fields applicable to the current container, by calling {@link PluginReflectionUtility#getAllSourceFacades(Class)} (Class)}
      * with additional predicates that allow to sort out the fields set to be ignored at source level and at nesting class
      * level, and then sort out the non-widget fields
-     * @param target Current {@code targetFacade} instance
-     * @param source Current {@code SourceFacade} instance
+     * @param source Current {@code Source} instance
      * @param containerType {@code Class} representing the type of the container
      * @return {@code List<SourceFacade>} containing renderable fields, or an empty collection
      */
-    default List<Source> getContainerSourceFacades(Target target, Source source, Class<?> containerType) {
+    default List<Source> getContainerSourceFacades(Source source, Class<?> containerType) {
         // Extract type of the Java class being the current rendering source
-        Class<?> componentType = (Class<?>) target.getClass();
+        Class<?> componentType = source.getProcessedClass();
         // Build the collection of ignored fields that may be defined at source level and at nesting class level
         // (apart from those defined for the container class itself)
         Stream<ClassMember> classLevelIgnoredFields = componentType != null && componentType.isAnnotationPresent(IgnoreFields.class)

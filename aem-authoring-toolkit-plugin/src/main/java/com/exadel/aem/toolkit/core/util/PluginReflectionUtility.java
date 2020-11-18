@@ -295,7 +295,9 @@ public class PluginReflectionUtility {
     }
 
     public static List<Source> getAllSourceFacades(Class<?> targetClass, List<Predicate<Member>> predicates) {
-        return getAllMembers(targetClass, predicates).stream().map(SourceImpl::new).collect(Collectors.toList());
+        List<Source> sources = getAllMembers(targetClass, predicates).stream().map(SourceImpl::new).collect(Collectors.toList());
+        sources.forEach(source -> source.setProcessedClass(targetClass));
+        return sources;
     }
 
     public static List<Source> getAllSourceFacades(Class<?> targetClass) {
