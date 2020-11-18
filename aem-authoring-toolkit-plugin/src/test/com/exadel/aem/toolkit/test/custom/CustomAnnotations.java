@@ -20,7 +20,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomProcessingAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 
 @Dialog(
         name = "test-component",
@@ -40,11 +39,6 @@ public class CustomAnnotations {
     String testCustomAnnotationDefault;
 
     @DialogField
-    @CustomWidgetAnnotationAuto(customField = "Custom!")
-    String testCustomAnnotationAuto;
-
-    @DialogField
     @TextField
-    @CustomWidgetAnnotationAuto
     String testCustomAnnotationAutoDefault;
 }
