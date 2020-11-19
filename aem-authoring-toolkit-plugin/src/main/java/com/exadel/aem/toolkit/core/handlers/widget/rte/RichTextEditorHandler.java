@@ -31,6 +31,7 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.core.util.validation.CharactersObjectValidator;
+import com.exadel.aem.toolkit.core.util.validation.Validation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
@@ -220,6 +221,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
 
     private void getFormatNode(Target parent) {
         Target formats = parent.child(DialogConstants.NN_FORMATS).attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION);
+        Arrays.stream(rteAnnotation.formats()).forEach(paragraphFormat -> Validation.forType(paragraphFormat.annotationType()).test(paragraphFormat));
         Arrays.stream(rteAnnotation.formats()).forEach(paragraphFormat ->
                 formats.child(paragraphFormat.tag())
                         .mapProperties(paragraphFormat));
@@ -241,6 +243,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         Annotation[] validCharactersAnnotations = Arrays.stream(rteAnnotation.specialCharacters())
                 .map(validator::getFilteredInstance)
                 .toArray(Annotation[]::new);
+        Arrays.stream(validCharactersAnnotations).forEach(annotation -> Validation.forType(annotation.annotationType()).test(annotation));
         Arrays.stream(validCharactersAnnotations).forEach(annotation ->
                 charsConfigNode.child(childNodeNameProvider.apply(annotation)).mapProperties(annotation));
     }
