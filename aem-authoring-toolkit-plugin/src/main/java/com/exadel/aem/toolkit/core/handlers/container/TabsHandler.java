@@ -40,13 +40,12 @@ import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 /**
  * The {@link Handler} for a tabbed TouchUI dialog
  */
-public class TabsHandler implements Handler, BiConsumer<Class<?>, Target> {
+public class TabsHandler implements BiConsumer<Class<?>, Target> {
     private static final String NO_TABS_DEFINED_EXCEPTION_MESSAGE = "No tabs defined for the dialog at ";
 
     /**

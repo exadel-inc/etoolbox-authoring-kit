@@ -22,13 +22,12 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.FormParameter;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
  * {@link Handler} implementation for storing {@link FormParameter} arguments to {@code cq:editConfig} XML node
  */
-public class FormParametersHandler implements Handler, BiConsumer<Target, EditConfig> {
+public class FormParametersHandler implements BiConsumer<Target, EditConfig> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param root XML element

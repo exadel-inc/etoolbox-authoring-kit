@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.util.NamingUtil;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.ImmutableMap;
@@ -28,14 +27,13 @@ import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTabConfig;
 import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
  * {@link Handler} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
  */
-public class DependsOnTabHandler implements Handler, BiConsumer<Target, Class<?>> {
+public class DependsOnTabHandler implements BiConsumer<Target, Class<?>> {
 
     /**
      * Processes the user-defined data and writes it to XML entity

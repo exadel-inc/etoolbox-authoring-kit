@@ -26,7 +26,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
@@ -36,7 +35,7 @@ import com.exadel.aem.toolkit.core.util.validation.Validation;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code DatePicker} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class DatePickerHandler implements Handler, BiConsumer<Source, Target> {
+class DatePickerHandler implements BiConsumer<Source, Target> {
     private static final String INVALID_FORMAT_EXCEPTION_TEMPLATE = "Invalid %s '%s' for @DatePicker field '%s'";
     private static final String INVALID_VALUE_EXCEPTION_TEMPLATE = "Property '%s' of @DatePicker does not correspond to specified valueFormat";
 

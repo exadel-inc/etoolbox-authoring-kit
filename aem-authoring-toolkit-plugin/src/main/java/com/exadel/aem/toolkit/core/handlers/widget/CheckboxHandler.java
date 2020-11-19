@@ -18,7 +18,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 
@@ -31,7 +30,7 @@ import java.util.stream.Collectors;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code Checkbox} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class CheckboxHandler implements Handler, BiConsumer<Source, Target> {
+class CheckboxHandler implements BiConsumer<Source, Target> {
     private static final String POSTFIX_FOR_ROOT_CHECKBOX = "Checkbox";
 
     /**

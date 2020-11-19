@@ -20,14 +20,13 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class ImageUploadHandler implements Handler, BiConsumer<Source, Target> {
+class ImageUploadHandler implements BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param source Current {@code SourceFacade} instance

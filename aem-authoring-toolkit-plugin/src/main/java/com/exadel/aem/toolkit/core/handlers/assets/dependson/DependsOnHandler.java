@@ -22,7 +22,6 @@ import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRefTypes
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
@@ -40,7 +39,7 @@ import java.util.stream.Collectors;
 /**
  * {@link Handler} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
  */
-public class DependsOnHandler implements Handler, BiConsumer<Source, Target> {
+public class DependsOnHandler implements BiConsumer<Source, Target> {
 
     static final String EMPTY_VALUES_EXCEPTION_MESSAGE = "Non-empty string values required for DependsOn params";
 

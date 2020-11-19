@@ -19,7 +19,6 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.NamingUtil;
 
@@ -27,7 +26,7 @@ import com.exadel.aem.toolkit.core.util.NamingUtil;
  * {@link Handler} implementation used to create markup responsible for {@code Password} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class PasswordHandler implements Handler, BiConsumer<Source, Target> {
+class PasswordHandler implements BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param source Current {@code SourceFacade} instance

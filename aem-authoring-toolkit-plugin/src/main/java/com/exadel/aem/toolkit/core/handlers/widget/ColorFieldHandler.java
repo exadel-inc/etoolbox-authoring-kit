@@ -26,14 +26,13 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class ColorFieldHandler implements Handler, BiConsumer<Source, Target> {
+class ColorFieldHandler implements BiConsumer<Source, Target> {
     private static final String NODE_NAME_COLOR = "color";
     private static final String SKIPPED_COLOR_NODE_NAME_SYMBOLS = "^\\w+";
 

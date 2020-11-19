@@ -18,7 +18,6 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectPredicates;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
@@ -37,7 +36,7 @@ import java.util.stream.Stream;
  * collections, such as {@link com.exadel.aem.toolkit.api.annotations.widgets.FieldSet}
  * or {@link com.exadel.aem.toolkit.api.annotations.widgets.MultiField}
  */
-interface WidgetSetHandler extends Handler, BiConsumer<Source, Target> {
+interface WidgetSetHandler extends BiConsumer<Source, Target> {
 
     /**
      * Retrieves the list of fields applicable to the current container, by calling {@link PluginReflectionUtility#getAllSourceFacades(Class)} (Class)}

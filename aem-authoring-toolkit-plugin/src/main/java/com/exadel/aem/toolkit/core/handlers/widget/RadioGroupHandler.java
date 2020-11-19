@@ -23,14 +23,13 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
  * {@link Handler} implementation used to create markup responsible for {@code RadioGroup} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class RadioGroupHandler implements Handler, BiConsumer<Source, Target> {
+class RadioGroupHandler implements BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param source Current {@code SourceFacade} instance

@@ -20,12 +20,11 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 
 /**
  * Handler for creating ad-hoc {@code Multifield}s for {@link Multiple}-marked dialog fields
  */
-public class MultipleHandler implements Handler, BiConsumer<Source, Target> {
+public class MultipleHandler implements BiConsumer<Source, Target> {
     private static final String PREFIX_GRANITE = "granite:*";
     private static final String POSTFIX_NESTED = "_nested";
 

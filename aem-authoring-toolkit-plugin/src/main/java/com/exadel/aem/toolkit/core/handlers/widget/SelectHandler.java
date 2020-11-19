@@ -23,14 +23,13 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite {@code Select} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class SelectHandler implements Handler, BiConsumer<Source, Target> {
+class SelectHandler implements BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param source Current {@code SourceFacade} instance

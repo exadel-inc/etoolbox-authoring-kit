@@ -31,7 +31,6 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.core.exceptions.ReflectionException;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.InheritanceHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
@@ -40,7 +39,7 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 /**
  * {@link Handler} implementation for storing {@link InplaceEditingConfig} arguments to {@code cq:editConfig} XML node
  */
-public class InplaceEditingHandler implements Handler, BiConsumer<Target, EditConfig> {
+public class InplaceEditingHandler implements BiConsumer<Target, EditConfig> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param root XML element

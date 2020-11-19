@@ -20,7 +20,6 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
@@ -28,7 +27,7 @@ import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 /**
  * The {@link Handler} for a fixed-columns TouchUI dialog.
  */
-public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Target> {
+public class FixedColumnsHandler implements BiConsumer<Class<?>, Target> {
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
      * to process component-backing Java class and append the results to the XML root node

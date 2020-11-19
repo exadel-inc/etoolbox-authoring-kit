@@ -34,13 +34,11 @@ import com.exadel.aem.toolkit.core.util.validation.CharactersObjectValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import com.exadel.aem.toolkit.core.handlers.Handler;
-
 /**
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code RichTextEditor} widget functionality
  * within the {@code cq:dialog} and {@code cq:editConfig} XML nodes
  */
-public class RichTextEditorHandler implements Handler, BiConsumer<Source, Target> {
+public class RichTextEditorHandler implements BiConsumer<Source, Target> {
     private static final String KEYWORD_AUTO = "auto";
 
     private static final String FEATURE_ALL = "*";

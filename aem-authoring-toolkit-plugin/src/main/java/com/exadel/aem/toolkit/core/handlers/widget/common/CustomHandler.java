@@ -23,7 +23,6 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.NamingUtil;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
@@ -32,7 +31,7 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
  * Handler for storing properties coming from custom annotations and, optionally, processed by custom handlers
  * to a Granite UI widget XML node
  */
-public class CustomHandler implements Handler, BiConsumer<Source, Target> {
+public class CustomHandler implements BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param source Current {@code Source} instance
