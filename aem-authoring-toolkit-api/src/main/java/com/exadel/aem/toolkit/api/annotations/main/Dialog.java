@@ -172,7 +172,7 @@ public @interface Dialog {
     Tab[] tabs() default {};
 
     /**
-     * For the tabbed TouchUI dialog layout, enumerates the tabs to be rendered
+     * For the tabbed TouchUI dialog layout, enumerates the panels to be rendered
      * @see AccordionPanel
      * @return One or more {@code Accordion} annotations
      */
