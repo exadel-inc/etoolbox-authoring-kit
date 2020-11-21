@@ -85,7 +85,7 @@ public class MultiFieldHandler implements WidgetSetHandler {
                 source.addToValueMap(DialogConstants.PN_PREFIX, prefix.substring(2));
             }
         });
-        PluginXmlContainerUtility.append(multifieldContainerElement, sources);
+        PluginXmlContainerUtility.append(sources, multifieldContainerElement);
     }
 
     /**

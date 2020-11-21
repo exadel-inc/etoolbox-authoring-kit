@@ -46,6 +46,6 @@ public class FixedColumnsHandler implements BiConsumer<Class<?>, Target> {
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 
         List<Source> allSources = PluginReflectionUtility.getAllSourceFacades(componentClass);
-        PluginXmlContainerUtility.append(contentItemsColumn, allSources);
+        PluginXmlContainerUtility.append(allSources, contentItemsColumn);
     }
 }

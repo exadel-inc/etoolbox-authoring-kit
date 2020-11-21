@@ -57,7 +57,7 @@ class FieldSetHandler implements WidgetSetHandler {
         sources.forEach(populated -> populatePrefixPostfix(populated, source, fieldSet));
 
         // append the valid sources to the container
-        PluginXmlContainerUtility.append(target, sources);
+        PluginXmlContainerUtility.append(sources, target);
     }
 
     private void populatePrefixPostfix(Source populated, Source current, FieldSet fieldSet) {

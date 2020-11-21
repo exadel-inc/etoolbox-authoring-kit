@@ -45,10 +45,10 @@ public class PluginXmlContainerUtility {
 
     /**
      * Processes the specified {@link Member}s and appends the generated XML markup to the specified container element
-     * @param container {@code TargetFacade} definition of a pre-defined widget container
      * @param sources List of {@code Member}s of a component's Java class
+     * @param container {@link Target} definition of a pre-defined widget container
      */
-    public static void append(Target container, List<Source> sources) {
+    public static void append(List<Source> sources, Target container) {
         Map<Source, String> managedFields = new LinkedHashMap<>();
         Target itemsElement = container.child(DialogConstants.NN_ITEMS);
 

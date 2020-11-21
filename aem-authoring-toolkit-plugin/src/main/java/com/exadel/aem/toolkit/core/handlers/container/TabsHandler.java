@@ -137,7 +137,7 @@ public class TabsHandler implements BiConsumer<Class<?>, Target> {
             if (ArrayUtils.contains(ignoredTabs, currentTabInstance.getTab().title())) {
                 continue;
             }
-            appendTab(tabItemsElement, currentTabInstance.getTab(), storedCurrentTabFields);
+            appendTab(currentTabInstance.getTab(), storedCurrentTabFields, tabItemsElement);
         }
 
         // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
@@ -181,24 +181,24 @@ public class TabsHandler implements BiConsumer<Class<?>, Target> {
 
     /**
      * Adds a tab definition to the XML markup
-     * @param target The {@link Target} instance to append particular sources' markup
      * @param tab The {@link Tab} instance to render as a dialog tab
      * @param sources The list of {@link Field} instances to render as dialog sources
+     * @param target The {@link Target} instance to append particular sources' markup
      */
-    private void appendTab(Target target, Tab tab, List<Source> sources) {
+    private void appendTab(Tab tab, List<Source> sources, Target target) {
         Target tabElement = target.child(tab.title())
                 .attribute(JcrConstants.PN_TITLE, tab.title())
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
-        appendTabAttributes(tabElement, tab);
-        PluginXmlContainerUtility.append(tabElement, sources);
+        appendTabAttributes(tab, tabElement);
+        PluginXmlContainerUtility.append(sources, tabElement);
     }
 
     /**
      * Appends tab attributes to a pre-built tab-defining XML element
-     * @param target {@link Target} instance representing a TouchUI dialog tab
      * @param tab {@link Tab} annotation that contains settings
+     * @param target {@link Target} instance representing a TouchUI dialog tab
      */
-    private void appendTabAttributes(Target target, Tab tab){
+    private void appendTabAttributes(Tab tab, Target target){
         target.attribute(JcrConstants.PN_TITLE, tab.title());
         Attribute attribute = tab.attribute();
         target.mapProperties(attribute);
@@ -226,9 +226,9 @@ public class TabsHandler implements BiConsumer<Class<?>, Target> {
      * @see TabsHandler#getTabInstances(List)
      */
     private static class TabInstance {
-        private Tab tab;
+        private final Tab tab;
 
-        private List<Source> fields;
+        private final List<Source> fields;
 
         /**
          * Creates a new {@code TabInstance} wrapped around a specified {@link Tab} with an empty list of associated fields
