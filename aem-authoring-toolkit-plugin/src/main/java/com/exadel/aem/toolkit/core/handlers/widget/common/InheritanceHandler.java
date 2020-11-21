@@ -18,9 +18,9 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.core.SourceFacadeImpl;
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.SourceImpl;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
@@ -31,43 +31,43 @@ import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
  * Handler for processing Granite UI widgets features "inherited" by the current component class {@code SourceFacade} from
  * other SourceFacades via {@link Extends} mechanism
  */
-public class InheritanceHandler implements BiConsumer<SourceFacade, Element> {
-    private BiConsumer<SourceFacade, Element> descendantChain;
-    public InheritanceHandler(BiConsumer<SourceFacade, Element> descendantChain) {
+public class InheritanceHandler implements BiConsumer<Source, Target> {
+    private final BiConsumer<Source, Target> descendantChain;
+    public InheritanceHandler(BiConsumer<Source, Target> descendantChain) {
         this.descendantChain = descendantChain;
     }
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element XML element
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
+    public void accept(Source source, Target target) {
         if (descendantChain == null) return;
-        Deque<SourceFacade> inheritanceTree = getInheritanceTree(sourceFacade);
+        Deque<Source> inheritanceTree = getInheritanceTree(source);
         while (!inheritanceTree.isEmpty()) {
-            descendantChain.accept(inheritanceTree.pollLast(), element); // to render 'ancestors' of context sourceFacade starting from next handler in chain
+            descendantChain.accept(inheritanceTree.pollLast(), target); // to render 'ancestors' of context source starting from next handler in chain
         }
     }
 
     /**
-     * Builds the inheritance sequence for the current {@code Field}
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @return Ancestral {@code SourceFacade}s, as an ordered sequence
+     * Builds the inheritance sequence for the current {@link Source}
+     * @param source Current {@link Target} instance
+     * @return Ancestral {@link Target}s, as an ordered sequence
      */
-    private static Deque<SourceFacade> getInheritanceTree(SourceFacade sourceFacade) {
-        Deque<SourceFacade> result = new LinkedList<>();
-        DialogWidget referencedComponent = DialogWidgets.fromSourceFacade(sourceFacade);
+    private static Deque<Source> getInheritanceTree(Source source) {
+        Deque<Source> result = new LinkedList<>();
+        DialogWidget referencedComponent = DialogWidgets.fromSourceFacade(source);
         if (referencedComponent == null) {
             return result;
         }
-        Extends extendsAnnotation = sourceFacade.adaptTo(Extends.class);
+        Extends extendsAnnotation = source.adaptTo(Extends.class);
         while (extendsAnnotation != null) {
-            String referencedFieldName = extendsAnnotation.field().isEmpty() ? ((Member) sourceFacade.getSource()).getName() : extendsAnnotation.field();
+            String referencedFieldName = extendsAnnotation.field().isEmpty() ? ((Member) source.getSource()).getName() : extendsAnnotation.field();
             try {
-                SourceFacade referencedField = new SourceFacadeImpl(extendsAnnotation.value().getDeclaredField(referencedFieldName));
-                if (referencedField.equals(sourceFacade) || result.contains(referencedField)) { // to avoid circular references
+                Source referencedField = new SourceImpl(extendsAnnotation.value().getDeclaredField(referencedFieldName));
+                if (referencedField.equals(source) || result.contains(referencedField)) { // to avoid circular references
                     break;
                 }
                 if (referencedComponent.equals(DialogWidgets.fromSourceFacade(referencedField))) { // to avoid mixing up props of different components

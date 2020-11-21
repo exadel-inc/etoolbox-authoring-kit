@@ -18,8 +18,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 
 import com.exadel.aem.toolkit.core.handlers.assets.dependson.DependsOnHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.AttributesHandler;
@@ -29,11 +29,10 @@ import com.exadel.aem.toolkit.core.handlers.widget.common.GenericPropertiesHandl
 import com.exadel.aem.toolkit.core.handlers.widget.common.InheritanceHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.MultipleHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.PropertyMappingHandler;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 /**
  * Represents an abstraction of a built-in or a custom dialog widget that has a widget annotation attached.
- * This one is used to assemble a chain of handlers to store XML markup required to implement particular Granite UI
+ * This one is used to assemble a chain of handlers to store markup required to implement particular Granite UI
  * interface element
  */
 public interface DialogWidget {
@@ -46,40 +45,39 @@ public interface DialogWidget {
     /**
      * Gets a "built-in" handler routine specific this widget. Not to me mixed up with a "custom" handler that can be
      * applied to several widgets, either built-in or user-defined
-     * @return {@code BiConsumer<Element, Field>} instance
+     * @return {@code BiConsumer<Source, Target>} instance
      */
-    BiConsumer<SourceFacade, Element> getHandler();
+    BiConsumer<Source, Target> getHandler();
 
     /**
-     * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified name
-     * @param element Parent {@code Element} instance
-     * @param sourceFacade Current {@code Field}
-     * @return The new {@code Element} created for the current {@code Field}
+     * Appends Granite UI markup based on the current {@link Source} to the parent node with the specified name
+     * @param source Current {@link Source}
+     * @param target Parent {@link Target} instance
+     * @return Populated {@link Target} by the current {@link Source}
      */
-    default Element appendTo(Element element, SourceFacade sourceFacade) {
-        return appendTo(element, sourceFacade, ((Member) sourceFacade.getSource()).getName());
+    default Target appendTo(Source source, Target target) {
+        return appendTo(source, target, ((Member) source.getSource()).getName());
     }
 
     /**
-     * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified element name
-     * @param element Parent {@code Element} instance
-     * @param sourceFacade Current {@code Field}
+     * Appends Granite UI markup based on the current {@link Source} to the parent node with the specified name
+     * @param source Current {@link Source}
+     * @param target Parent {@link Target} instance
      * @param name The node name to store
-     * @return The new {@code Element} created for the current {@code Field}
+     * @return Populated {@link Target} by the current {@link Source}
      */
-    default Element appendTo(Element element, SourceFacade sourceFacade, String name) {
-        Element widgetChildElement = PluginRuntime.context().getXmlUtility().createNodeElement(name);
-        element.appendChild(widgetChildElement);
-        getHandlerChain().accept(sourceFacade, widgetChildElement);
+    default Target appendTo(Source source, Target target, String name) {
+        Target widgetChildElement = target.child(name);
+        getHandlerChain().accept(source, widgetChildElement);
         return widgetChildElement;
     }
 
     /**
-     * Generates the chain of handlers to store {@code cq:editConfig} XML markup
-     * @return {@code BiConsumer<SourceFacade, Element>} instance
+     * Generates the chain of handlers to store widget's markup
+     * @return {@code BiConsumer<Source, Target>} instance
      */
-    default BiConsumer<SourceFacade, Element> getHandlerChain() {
-        BiConsumer<SourceFacade, Element> mainChain = new GenericPropertiesHandler()
+    default BiConsumer<Source, Target> getHandlerChain() {
+        BiConsumer<Source, Target> mainChain = new GenericPropertiesHandler()
                 .andThen(new PropertyMappingHandler())
                 .andThen(new AttributesHandler())
                 .andThen(new DialogFieldHandler())

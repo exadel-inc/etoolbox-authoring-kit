@@ -14,20 +14,18 @@
 
 package com.exadel.aem.toolkit.test.custom.handler;
 
-import java.lang.reflect.Field;
+import com.exadel.aem.toolkit.api.handlers.*;
 
-import com.exadel.aem.toolkit.api.handlers.Handles;
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import org.w3c.dom.Element;
-
-import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
+import org.w3c.dom.Element;
+
+import java.lang.reflect.Field;
 
 @SuppressWarnings("unused")
 @Handles(before = CustomWidgetHandler.class, after = CustomWidgetHandler.class)
-public class CustomWidgetHandler implements DialogWidgetHandler {
+public class CustomWidgetHandler implements DialogWidgetHandlerLegacy {
     @Injected
     @SuppressWarnings("UnusedDeclaration")
     private RuntimeContext runtimeContext;
@@ -38,8 +36,8 @@ public class CustomWidgetHandler implements DialogWidgetHandler {
     }
 
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
-        CustomWidgetAnnotation testCustomAnnotation = sourceFacade.adaptTo(CustomWidgetAnnotation.class);
-        runtimeContext.getXmlUtility().setAttribute(element, "customField", testCustomAnnotation.customField());
+    public void accept(Element element, Field field) {
+        CustomWidgetAnnotation testCustomAnnotation = field.getDeclaredAnnotation(CustomWidgetAnnotation.class);
+        element.setAttribute("customField", testCustomAnnotation.customField());
     }
 }

@@ -15,9 +15,9 @@ package com.exadel.aem.toolkit.core.handlers.widget.common;
 
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
@@ -26,23 +26,23 @@ import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 /**
- * Handler for storing {@link ResourceType} and like properties to a Granite UI widget XML node
+ * Handler for storing {@link ResourceType} and like properties to a Granite UI widget node
  */
-public class GenericPropertiesHandler implements BiConsumer<SourceFacade, Element> {
+public class GenericPropertiesHandler implements BiConsumer<Source, Target> {
     private static final String RESTYPE_MISSING_EXCEPTION_MESSAGE = "@ResourceType is not present in ";
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element XML element
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
-        DialogWidget dialogWidget = DialogWidgets.fromSourceFacade(sourceFacade);
+    public void accept(Source source, Target target) {
+        DialogWidget dialogWidget = DialogWidgets.fromSourceFacade(source);
         if (dialogWidget == null || dialogWidget.getAnnotationClass() == null) {
             return;
         }
-        element.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, getResourceType(dialogWidget.getAnnotationClass()));
+        target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, getResourceType(dialogWidget.getAnnotationClass()));
     }
 
     /**

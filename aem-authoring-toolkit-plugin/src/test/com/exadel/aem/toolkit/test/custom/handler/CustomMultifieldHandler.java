@@ -14,10 +14,8 @@
 
 package com.exadel.aem.toolkit.test.custom.handler;
 
-import java.lang.reflect.Field;
-
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
@@ -32,7 +30,7 @@ public class CustomMultifieldHandler implements DialogWidgetHandler {
     }
 
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
-        element.setAttribute("multifieldSpecial", "This is added to Multifields");
+    public void accept(Source source, Target element) {
+        element.attribute("multifieldSpecial", "This is added to Multifields");
     }
 }

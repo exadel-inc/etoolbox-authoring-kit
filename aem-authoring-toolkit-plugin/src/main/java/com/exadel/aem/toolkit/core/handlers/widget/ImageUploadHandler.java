@@ -15,30 +15,29 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * {@link Handler} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
- * within the {@code cq:dialog} XML node
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
+ * within the {@code cq:dialog} node
  */
-class ImageUploadHandler implements Handler, BiConsumer<SourceFacade, Element> {
+class ImageUploadHandler implements BiConsumer<Source, Target> {
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element Current XML element
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     @SuppressWarnings({"deprecation", "squid:S1874"}) // the "clas" property is to remain for compatibility reasons until v.2.0.0
-    public void accept(SourceFacade sourceFacade, Element element) {
-        ImageUpload imageUpload = sourceFacade.adaptTo(ImageUpload.class);
+    public void accept(Source source, Target target) {
+        ImageUpload imageUpload = source.adaptTo(ImageUpload.class);
         if (StringUtils.isNotBlank(imageUpload.clas())) {
-            element.setAttribute(DialogConstants.PN_CLASS, imageUpload.clas());
+            target.attribute(DialogConstants.PN_CLASS, imageUpload.clas());
         }
     }
 }

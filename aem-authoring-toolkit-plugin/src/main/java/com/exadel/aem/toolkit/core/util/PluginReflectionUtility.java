@@ -17,13 +17,10 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
-import com.exadel.aem.toolkit.api.handlers.DialogHandler;
-import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
-import com.exadel.aem.toolkit.api.handlers.Handles;
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.*;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
-import com.exadel.aem.toolkit.core.SourceFacadeImpl;
+import com.exadel.aem.toolkit.core.SourceImpl;
 import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
@@ -62,8 +59,10 @@ public class PluginReflectionUtility {
     private org.reflections.Reflections reflections;
 
     private List<DialogWidgetHandler> customDialogWidgetHandlers;
+    private List<DialogWidgetHandlerLegacy> customDialogWidgetHandlersLegacy;
 
     private List<DialogHandler> customDialogHandlers;
+    private List<DialogHandlerLegacy> customDialogHandlersLegacy;
 
     private Map<String, Validator> validators;
 
@@ -98,6 +97,14 @@ public class PluginReflectionUtility {
         return newInstance;
     }
 
+    public List<DialogWidgetHandlerLegacy> getCustomDialogWidgetHandlersLegacy() {
+        if (customDialogWidgetHandlersLegacy != null) {
+            return customDialogWidgetHandlersLegacy;
+        }
+        customDialogWidgetHandlersLegacy = getHandlers(DialogWidgetHandlerLegacy.class);
+        return customDialogWidgetHandlersLegacy;
+    }
+
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
      * scope of the plugin
@@ -121,6 +128,19 @@ public class PluginReflectionUtility {
         return getCustomDialogWidgetHandlers(Collections.singletonList(annotationClass));
     }
 
+    public List<DialogWidgetHandlerLegacy> getCustomDialogWidgetHandlersLegacy(List<Class<? extends Annotation>> annotationClasses) {
+        if (annotationClasses == null) {
+            return Collections.emptyList();
+        }
+        return getCustomDialogWidgetHandlersLegacy().stream()
+                .filter(handler -> handler.getClass().isAnnotationPresent(Handles.class))
+                .filter(handler -> {
+                    Class<?>[] handled = handler.getClass().getDeclaredAnnotation(Handles.class).value();
+                    return annotationClasses.stream().anyMatch(annotationClass -> ArrayUtils.contains(handled, annotationClass));
+                })
+                .collect(Collectors.toList());
+    }
+
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
      * scope of the plugin matching the specified widget annotation
@@ -138,6 +158,14 @@ public class PluginReflectionUtility {
                     return annotationClasses.stream().anyMatch(annotationClass -> ArrayUtils.contains(handled, annotationClass));
                 })
                 .collect(Collectors.toList());
+    }
+
+    public List<DialogHandlerLegacy> getCustomDialogHandlersLegacy() {
+        if (customDialogHandlersLegacy != null) {
+            return customDialogHandlersLegacy;
+        }
+        customDialogHandlersLegacy = getHandlers(DialogHandlerLegacy.class);
+        return customDialogHandlersLegacy;
     }
 
     /**
@@ -258,19 +286,21 @@ public class PluginReflectionUtility {
 
     /**
      * Retrieves annotations of a {@code Field} instance as a sequential {@code Stream}
-     * @param sourceFacade The sourceFacade to analyze
+     * @param source The source to analyze
      * @return Stream of annotation objects,
      */
-    public static Stream<Class<? extends Annotation>> getFieldAnnotations(SourceFacade sourceFacade){
-        return Arrays.stream(sourceFacade.adaptTo(Annotation[].class))
+    public static Stream<Class<? extends Annotation>> getFieldAnnotations(Source source){
+        return Arrays.stream(source.adaptTo(Annotation[].class))
                 .map(Annotation::annotationType);
     }
 
-    public static List<SourceFacade> getAllSourceFacades(Class<?> targetClass, List<Predicate<Member>> predicates) {
-        return getAllMembers(targetClass, predicates).stream().map(SourceFacadeImpl::new).collect(Collectors.toList());
+    public static List<Source> getAllSourceFacades(Class<?> targetClass, List<Predicate<Member>> predicates) {
+        List<Source> sources = getAllMembers(targetClass, predicates).stream().map(SourceImpl::new).collect(Collectors.toList());
+        sources.forEach(source -> source.setProcessedClass(targetClass));
+        return sources;
     }
 
-    public static List<SourceFacade> getAllSourceFacades(Class<?> targetClass) {
+    public static List<Source> getAllSourceFacades(Class<?> targetClass) {
         return getAllSourceFacades(targetClass, Collections.emptyList());
     }
 

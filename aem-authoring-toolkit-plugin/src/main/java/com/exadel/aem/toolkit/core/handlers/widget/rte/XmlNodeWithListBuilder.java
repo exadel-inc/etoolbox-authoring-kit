@@ -16,22 +16,20 @@ package com.exadel.aem.toolkit.core.handlers.widget.rte;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.w3c.dom.Element;
-
-import com.exadel.aem.toolkit.api.runtime.XmlUtility;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.api.handlers.Target;
 
 /**
- * Used to build XML nodes for flat-string array feature representations within RichTextEditor config XML, such as
+ * Used to build XML nodes for flat-string array feature representations within RichTextEditor config, such as
  * {@code features} or {@code table} node
  */
 class XmlNodeWithListBuilder extends XmlNodeBuilderBase {
-    private List<String> argumentList;
+    private final List<String> argumentList;
     private XmlTreeWithListsBuilder childBuilder;
 
     XmlTreeWithListsBuilder getChildBuilder() {
         return childBuilder;
     }
+
     void setChildBuilder(XmlTreeWithListsBuilder childBuilder) {
         this.childBuilder = childBuilder;
     }
@@ -43,7 +41,7 @@ class XmlNodeWithListBuilder extends XmlNodeBuilderBase {
 
     @Override
     public void store(String pluginId, String feature) {
-        if (getFilter() != null && !getFilter().test(pluginId,feature)) {
+        if (getFilter() != null && !getFilter().test(pluginId, feature)) {
             return;
         }
         argumentList.add(feature);
@@ -55,12 +53,14 @@ class XmlNodeWithListBuilder extends XmlNodeBuilderBase {
     }
 
     @Override
-    Element build() {
-        XmlUtility xmlUtil = PluginRuntime.context().getXmlUtility();
-        Element result = xmlUtil.createNodeElement(getName());
-        xmlUtil.setAttribute(result, getAttributeName(), argumentList);
-        if (childBuilder != null) xmlUtil.appendNonemptyChildElement(result, childBuilder.build());
-        if (getPostprocessing() != null) getPostprocessing().accept(result);
-        return result;
+    Target build(Target parent) {
+        if (!isEmpty()) {
+            Target result = parent.child(getName());
+            result.attribute(getAttributeName(), argumentList.toString().replace(" ", ""));
+            if (childBuilder != null) childBuilder.build(result);
+            if (getPostprocessing() != null) getPostprocessing().accept(result);
+            return result;
+        }
+        return null;
     }
 }

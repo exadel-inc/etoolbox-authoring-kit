@@ -16,13 +16,11 @@ package com.exadel.aem.toolkit.test.custom.handler;
 
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
@@ -37,33 +35,31 @@ public class CustomDialogHandler implements DialogHandler {
     }
 
     @Override
-    public void accept(Element element, Class<?> aClass) {
+    public void accept(Target element, Class<?> aClass) {
         visitElements(element, elt -> {
-            if (StringUtils.equals(elt.getAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY), ResourceTypes.MULTIFIELD)
+            if (StringUtils.equals(elt.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE), ResourceTypes.MULTIFIELD)
                     && isTopLevelMultifield(elt)) {
-                elt.setAttribute("multifieldSpecial", "This is added to top-level Multifields");
+                elt.attribute("multifieldSpecial", "This is added to top-level Multifields");
             }
         });
-        element.getFirstChild();
+        //element.getFirstChild();
 
     }
 
-    private static void visitElements(Element root, Consumer<Element> visitor) {
+    private static void visitElements(Target root, Consumer<Target> visitor) {
         visitor.accept(root);
-        if (!root.hasChildNodes()) {
+        if (root.listChildren().isEmpty()) {
             return;
         }
-        IntStream.range(0, root.getChildNodes().getLength())
-                .mapToObj(pos -> (Element) root.getChildNodes().item(pos))
+        root.listChildren()
                 .forEach(elt -> visitElements(elt, visitor));
     }
 
-    private static boolean isTopLevelMultifield(Element element) {
-        String resourceType = Optional.ofNullable(element.getParentNode())
-                .map(Node::getParentNode)
-                .map(Node::getParentNode)
-                .map(node -> node.getAttributes().getNamedItem(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY))
-                .map(Node::getNodeValue)
+    private static boolean isTopLevelMultifield(Target element) {
+        String resourceType = Optional.ofNullable(element.parent())
+                .map(Target::parent)
+                .map(Target::parent)
+                .map(node -> node.valueMap().get(DialogConstants.PN_SLING_RESOURCE_TYPE))
                 .orElse(StringUtils.EMPTY);
         return !resourceType.equals(ResourceTypes.MULTIFIELD);
     }

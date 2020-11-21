@@ -17,25 +17,24 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 /**
- * Handler for storing sets of generic widget properties to a Granite UI widget XML node
+ * Handler for storing sets of generic widget properties to a Granite UI widget node
  */
-public class PropertyMappingHandler implements BiConsumer<SourceFacade, Element> {
+public class PropertyMappingHandler implements BiConsumer<Source, Target> {
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param sourceFacade Current {@code SourceFacade} instance
-     * @param element XML element
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
-        Arrays.stream(sourceFacade.adaptTo(Annotation[].class))
+    public void accept(Source source, Target target) {
+        Arrays.stream(source.adaptTo(Annotation[].class))
                 .filter(a -> a.annotationType().isAnnotationPresent(PropertyMapping.class))
-                .forEach(a -> PluginRuntime.context().getXmlUtility().mapProperties(element, a));
+                .forEach(target::mapProperties);
     }
 }

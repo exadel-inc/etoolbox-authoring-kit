@@ -16,13 +16,12 @@ package com.exadel.aem.toolkit.core.handlers.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
-import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectPredicates;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
-import org.w3c.dom.Element;
 
 import java.lang.reflect.Member;
 import java.util.Arrays;
@@ -32,28 +31,25 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.exadel.aem.toolkit.core.util.DialogConstants.PN_COMPONENT_CLASS;
-
 /**
- * Mix-in utility class for widget handlers that contains the base logic for {@link Handler}s dealing with widget
+ * Mix-in utility class for widget handlers that contains the base logic for {@code BiConsumer<Source, Target>} dealing with widget
  * collections, such as {@link com.exadel.aem.toolkit.api.annotations.widgets.FieldSet}
  * or {@link com.exadel.aem.toolkit.api.annotations.widgets.MultiField}
  */
-interface WidgetSetHandler extends Handler, BiConsumer<SourceFacade, Element> {
+interface WidgetSetHandler extends BiConsumer<Source, Target> {
 
     /**
      * Retrieves the list of fields applicable to the current container, by calling {@link PluginReflectionUtility#getAllSourceFacades(Class)} (Class)}
-     * with additional predicates that allow to sort out the fields set to be ignored at sourceFacade level and at nesting class
+     * with additional predicates that allow to sort out the fields set to be ignored at source level and at nesting class
      * level, and then sort out the non-widget fields
-     * @param element Current XML element
-     * @param sourceFacade Current {@code SourceFacade} instance
+     * @param source Current {@link Source} instance
      * @param containerType {@code Class} representing the type of the container
-     * @return {@code List<SourceFacade>} containing renderable fields, or an empty collection
+     * @return {@code List<Source>} containing renderable fields, or an empty collection
      */
-    default List<SourceFacade> getContainerSourceFacades(Element element, SourceFacade sourceFacade, Class<?> containerType) {
+    default List<Source> getContainerSourceFacades(Source source, Class<?> containerType) {
         // Extract type of the Java class being the current rendering source
-        Class<?> componentType = (Class<?>) element.getOwnerDocument().getUserData(PN_COMPONENT_CLASS);
-        // Build the collection of ignored fields that may be defined at sourceFacade level and at nesting class level
+        Class<?> componentType = source.getProcessedClass();
+        // Build the collection of ignored fields that may be defined at source level and at nesting class level
         // (apart from those defined for the container class itself)
         Stream<ClassMember> classLevelIgnoredFields = componentType != null && componentType.isAnnotationPresent(IgnoreFields.class)
                 ? Arrays.stream(componentType.getAnnotation(IgnoreFields.class).value())
@@ -62,8 +58,8 @@ interface WidgetSetHandler extends Handler, BiConsumer<SourceFacade, Element> {
                         DialogConstants.PN_SOURCE_CLASS,
                         componentType))
                 : Stream.empty();
-        Stream<ClassMember> fieldLevelIgnoredFields = sourceFacade.adaptTo(IgnoreFields.class) != null
-                ? Arrays.stream(sourceFacade.adaptTo(IgnoreFields.class).value())
+        Stream<ClassMember> fieldLevelIgnoredFields = source.adaptTo(IgnoreFields.class) != null
+                ? Arrays.stream(source.adaptTo(IgnoreFields.class).value())
                 .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
                         ClassMember.class,
                         DialogConstants.PN_SOURCE_CLASS,
@@ -76,7 +72,7 @@ interface WidgetSetHandler extends Handler, BiConsumer<SourceFacade, Element> {
 
         // Create filters to sort out ignored fields (apart from those defined for the container class)
         // and to banish non-widget fields
-        // Return the filtered sourceFacade list
+        // Return the filtered source list
         Predicate<Member> nonIgnoredFields = PluginObjectPredicates.getNotIgnoredMembersPredicate(allIgnoredFields);
         Predicate<Member> dialogFields = DialogWidgets::isPresent;
         return PluginReflectionUtility.getAllSourceFacades(containerType, Arrays.asList(nonIgnoredFields, dialogFields));

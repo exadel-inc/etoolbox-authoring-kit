@@ -15,14 +15,12 @@ package com.exadel.aem.toolkit.api.handlers;
 
 import java.util.function.BiConsumer;
 
-import org.w3c.dom.Element;
-
 /**
  * Abstraction of handler class to process custom dialog widget logic.
  * Serves as the marker interface for creating and enumerating handlers instances
  */
 @SuppressWarnings("unused")
-public interface DialogWidgetHandler extends BiConsumer<SourceFacade, Element> {
+public interface DialogWidgetHandler extends BiConsumer<Source, Target> {
     /**
      * Identifies this DialogWidgetHandler for binding to a specific {@code DialogWidgetAnnotation}
      * @return String value, non-blank

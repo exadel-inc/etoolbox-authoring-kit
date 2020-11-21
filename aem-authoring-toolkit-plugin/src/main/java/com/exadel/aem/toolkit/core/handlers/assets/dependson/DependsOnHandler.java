@@ -19,16 +19,15 @@ import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnConfig;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnParam;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRefTypes;
-import com.exadel.aem.toolkit.api.handlers.SourceFacade;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Element;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,35 +37,35 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
- * {@link Handler} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
  */
-public class DependsOnHandler implements Handler, BiConsumer<SourceFacade, Element> {
+public class DependsOnHandler implements BiConsumer<Source, Target> {
 
     static final String EMPTY_VALUES_EXCEPTION_MESSAGE = "Non-empty string values required for DependsOn params";
 
     private static final String TERM_SEPARATOR = "-";
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param element Current XML element
-     * @param sourceFacade Current {@code Field} instance
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
-    public void accept(SourceFacade sourceFacade, Element element) {
-        if (sourceFacade.adaptTo(DependsOn.class) != null) {
-            handleDependsOn(sourceFacade.adaptTo(DependsOn.class), element);
-        } else if (sourceFacade.adaptTo(DependsOnConfig.class) != null) {
-            handleDependsOnConfig(sourceFacade.adaptTo(DependsOnConfig.class), element);
+    public void accept(Source source, Target target) {
+        if (source.adaptTo(DependsOn.class) != null) {
+            handleDependsOn(source.adaptTo(DependsOn.class), target);
+        } else if (source.adaptTo(DependsOnConfig.class) != null) {
+            handleDependsOnConfig(source.adaptTo(DependsOnConfig.class), target);
         }
-        handleDependsOnRefValue(sourceFacade, element);
+        handleDependsOnRefValue(source, target);
     }
 
     /**
-     * Called by {@link DependsOnHandler#accept(SourceFacade, Element)} to store particular {@code DependsOn} value in XML markup
-     * @param element Current XML element
+     * Called by {@link DependsOnHandler#accept(Source, Target)} to store particular {@code DependsOn} value in {@link Target}
      * @param value Current {@link DependsOn} value
+     * @param target Current {@link Target} instance
      */
-    private void handleDependsOn(DependsOn value, Element element) {
+    private void handleDependsOn(DependsOn value, Target target) {
         if (StringUtils.isAnyBlank(value.query(), value.action())) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
@@ -75,15 +74,15 @@ public class DependsOnHandler implements Handler, BiConsumer<SourceFacade, Eleme
         valueMap.put(DialogConstants.PN_DEPENDS_ON, value.query());
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, value.action());
         valueMap.putAll(buildParamsMap(value, 0));
-        getXmlUtil().appendDataAttributes(element, valueMap);
+        PluginXmlUtility.appendDataAttributes(target, valueMap);
     }
 
     /**
-     * Called by {@link DependsOnHandler#accept(SourceFacade, Element)} to store {@code DependsOnConfig} value in XML markup
-     * @param element Current XML element
+     * Called by {@link DependsOnHandler#accept(Source, Target)} to store {@code DependsOnConfig} value in {@link Target}
      * @param value Current {@link DependsOnConfig} value
+     * @param target Current {@link Target} instance
      */
-    private void handleDependsOnConfig(DependsOnConfig value, Element element) {
+    private void handleDependsOnConfig(DependsOnConfig value, Target target) {
         List<DependsOn> validDeclarations = Arrays.stream(value.value())
                 .filter(dependsOn -> StringUtils.isNoneBlank(dependsOn.action(), dependsOn.query()))
                 .collect(Collectors.toList());
@@ -109,7 +108,7 @@ public class DependsOnHandler implements Handler, BiConsumer<SourceFacade, Eleme
                 .map(dependsOn -> DependsOnHandler.buildParamsMap(dependsOn, counter.merge(dependsOn.action(), 1, Integer::sum) - 1))
                 .forEach(valueMap::putAll);
 
-        getXmlUtil().appendDataAttributes(element, valueMap);
+        PluginXmlUtility.appendDataAttributes(target, valueMap);
     }
 
     /**
@@ -135,19 +134,19 @@ public class DependsOnHandler implements Handler, BiConsumer<SourceFacade, Eleme
     }
 
     /**
-     * Called by {@link DependsOnHandler#accept(SourceFacade, Element)} to store particular {@code DependsOnRef} value in XML markup
-     * @param element Current XML element
-     * @param sourceFacade Current {@code Field} instance
+     * Called by {@link DependsOnHandler#accept(Source, Target)} to store particular {@code DependsOnRef} value in {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
-    private void handleDependsOnRefValue(SourceFacade sourceFacade, Element element) {
-        DependsOnRef value = sourceFacade.adaptTo(DependsOnRef.class);
+    private void handleDependsOnRefValue(Source source, Target target) {
+        DependsOnRef value = source.adaptTo(DependsOnRef.class);
         if (value == null) {
             return;
         }
 
         String dependsOnRefName = value.name();
         if (StringUtils.isBlank(dependsOnRefName)) {
-            dependsOnRefName = ((Member) sourceFacade.getSource()).getName();
+            dependsOnRefName = ((Member) source.getSource()).getName();
         }
 
         Map<String, String> valueMap = Maps.newHashMap();
@@ -158,6 +157,6 @@ public class DependsOnHandler implements Handler, BiConsumer<SourceFacade, Eleme
         if (value.lazy()) {
             valueMap.put(DialogConstants.PN_DEPENDS_ON_REFLAZY, StringUtils.EMPTY);
         }
-        getXmlUtil().appendDataAttributes(element, valueMap);
+        PluginXmlUtility.appendDataAttributes(target, valueMap);
     }
 }
