@@ -29,17 +29,17 @@ import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * {@link Handler} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
- * within the {@code cq:dialog} XML node
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
+ * within the {@code cq:dialog} node
  */
 class ColorFieldHandler implements BiConsumer<Source, Target> {
     private static final String NODE_NAME_COLOR = "color";
     private static final String SKIPPED_COLOR_NODE_NAME_SYMBOLS = "^\\w+";
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current {@code TargetFacade} instance
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     public void accept(Source source, Target target) {
@@ -52,7 +52,7 @@ class ColorFieldHandler implements BiConsumer<Source, Target> {
         }
         Target itemsNode = target.child(DialogConstants.NN_ITEMS);
         for (String customColor: validCustomColors) {
-            itemsNode.child(NODE_NAME_COLOR + customColor.toLowerCase().replace("#", StringUtils.EMPTY))
+            itemsNode.child(NODE_NAME_COLOR + customColor.toLowerCase().replace(SKIPPED_COLOR_NODE_NAME_SYMBOLS, StringUtils.EMPTY))
                     .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
                     .attributes(Collections.singletonMap(DialogConstants.PN_VALUE, customColor));
         }

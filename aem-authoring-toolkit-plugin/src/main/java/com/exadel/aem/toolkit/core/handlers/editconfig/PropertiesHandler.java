@@ -22,16 +22,16 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfigLayout;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * {@link Handler} implementation for storing {@link EditConfig} properties to {@code cq:editConfig} XML node
+ * {@code BiConsumer<EditConfig, Target>} implementation for storing {@link EditConfig} properties to {@code cq:editConfig} node
  */
-public class PropertiesHandler implements BiConsumer<Target, EditConfig> {
+public class PropertiesHandler implements BiConsumer<EditConfig, Target> {
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param root XML element
+     * Processes the user-defined data and writes it to {@link Target}
      * @param editConfig {@code EditConfig} annotation instance
+     * @param root Current {@link Target} instance
      */
     @Override
-    public void accept(Target root, EditConfig editConfig) {
+    public void accept(EditConfig editConfig, Target root) {
         root.mapProperties(editConfig);
         EditConfigLayout dialogLayout = editConfig.dialogLayout();
         if (dialogLayout != EditConfigLayout.DEFAULT) {

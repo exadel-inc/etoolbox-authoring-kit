@@ -23,14 +23,14 @@ import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * {@link Handler} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
- * within the {@code cq:dialog} XML node
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
+ * within the {@code cq:dialog} node
  */
 class ImageUploadHandler implements BiConsumer<Source, Target> {
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current XML targetFacade
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     @SuppressWarnings({"deprecation", "squid:S1874"}) // the "clas" property is to remain for compatibility reasons until v.2.0.0

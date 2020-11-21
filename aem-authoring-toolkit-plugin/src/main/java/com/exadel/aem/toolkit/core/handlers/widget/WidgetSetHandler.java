@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Mix-in utility class for widget handlers that contains the base logic for {@link Handler}s dealing with widget
+ * Mix-in utility class for widget handlers that contains the base logic for {@code BiConsumer<Source, Target>} dealing with widget
  * collections, such as {@link com.exadel.aem.toolkit.api.annotations.widgets.FieldSet}
  * or {@link com.exadel.aem.toolkit.api.annotations.widgets.MultiField}
  */
@@ -42,9 +42,9 @@ interface WidgetSetHandler extends BiConsumer<Source, Target> {
      * Retrieves the list of fields applicable to the current container, by calling {@link PluginReflectionUtility#getAllSourceFacades(Class)} (Class)}
      * with additional predicates that allow to sort out the fields set to be ignored at source level and at nesting class
      * level, and then sort out the non-widget fields
-     * @param source Current {@code Source} instance
+     * @param source Current {@link Source} instance
      * @param containerType {@code Class} representing the type of the container
-     * @return {@code List<SourceFacade>} containing renderable fields, or an empty collection
+     * @return {@code List<Source>} containing renderable fields, or an empty collection
      */
     default List<Source> getContainerSourceFacades(Source source, Class<?> containerType) {
         // Extract type of the Java class being the current rendering source

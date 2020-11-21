@@ -28,16 +28,16 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * {@link Handler} implementation used to create markup responsible for Granite {@code FieldSet} widget functionality
- * within the {@code cq:dialog} XML node
+ * {@link WidgetSetHandler} implementation used to create markup responsible for Granite {@code FieldSet} widget functionality
+ * within the {@code cq:dialog} node
  */
 class FieldSetHandler implements WidgetSetHandler {
     private static final String EMPTY_FIELDSET_EXCEPTION_MESSAGE = "No valid fields found in fieldset class ";
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current XML targetFacade
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     public void accept(Source source, Target target) {

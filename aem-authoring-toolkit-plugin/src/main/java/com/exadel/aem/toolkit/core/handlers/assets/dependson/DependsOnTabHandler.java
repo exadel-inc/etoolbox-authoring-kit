@@ -31,31 +31,31 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * {@link Handler} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
  */
 public class DependsOnTabHandler implements BiConsumer<Target, Class<?>> {
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param target Current TargetBuilder
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param target Current {@link Target} instance
      * @param dialogClass {@code Class} object representing the tab-defining class
      */
     @Override
     public void accept(Target target, Class<?> dialogClass) {
         if (dialogClass.isAnnotationPresent(DependsOnTab.class)) {
-            handleDependsOnTab(target, dialogClass.getDeclaredAnnotation(DependsOnTab.class));
+            handleDependsOnTab(dialogClass.getDeclaredAnnotation(DependsOnTab.class), target);
         } else if (dialogClass.isAnnotationPresent(DependsOnTabConfig.class)) {
-            handleDependsOnTabConfig(target, dialogClass.getDeclaredAnnotation(DependsOnTabConfig.class));
+            handleDependsOnTabConfig(dialogClass.getDeclaredAnnotation(DependsOnTabConfig.class), target);
         }
     }
 
     /**
      * Called by {@link DependsOnTabHandler#accept(Target, Class)} to store particular {@code DependsOnTab} value
      * in XML markup
-     * @param target Current XML targetFacade
      * @param value Current {@link DependsOnTab} value
+     * @param target Current {@link Target} instance
      */
-    private void handleDependsOnTab(Target target, DependsOnTab value) {
+    private void handleDependsOnTab(DependsOnTab value, Target target) {
         Target tabItemsNode = target.getChild(String.join(DialogConstants.PATH_SEPARATOR,
                 DialogConstants.NN_CONTENT,
                 DialogConstants.NN_ITEMS,
@@ -83,10 +83,10 @@ public class DependsOnTabHandler implements BiConsumer<Target, Class<?>> {
     /**
      * Called by {@link DependsOnTabHandler#accept(Target, Class)} to store particular {@code DependsOnTab} value
      * in XML markup
-     * @param target Current XML targetFacade
      * @param value Current {@link DependsOnTabConfig} value
+     * @param target Current {@link Target} instance
      */
-    private void handleDependsOnTabConfig(Target target, DependsOnTabConfig value) {
-        Arrays.stream(value.value()).forEach(val -> handleDependsOnTab(target, val));
+    private void handleDependsOnTabConfig(DependsOnTabConfig value, Target target) {
+        Arrays.stream(value.value()).forEach(val -> handleDependsOnTab(val, target));
     }
 }

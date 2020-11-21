@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.core.handlers.widget.common.PropertyMappingHandler
 
 /**
  * Represents an abstraction of a built-in or a custom dialog widget that has a widget annotation attached.
- * This one is used to assemble a chain of handlers to store XML markup required to implement particular Granite UI
+ * This one is used to assemble a chain of handlers to store markup required to implement particular Granite UI
  * interface element
  */
 public interface DialogWidget {
@@ -45,36 +45,36 @@ public interface DialogWidget {
     /**
      * Gets a "built-in" handler routine specific this widget. Not to me mixed up with a "custom" handler that can be
      * applied to several widgets, either built-in or user-defined
-     * @return {@code BiConsumer<Element, Field>} instance
+     * @return {@code BiConsumer<Source, Target>} instance
      */
     BiConsumer<Source, Target> getHandler();
 
     /**
-     * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified name
-     * @param target Parent {@code Element} instance
-     * @param source Current {@code Field}
-     * @return The new {@code Element} created for the current {@code Field}
+     * Appends Granite UI markup based on the current {@link Source} to the parent node with the specified name
+     * @param source Current {@link Source}
+     * @param target Parent {@link Target} instance
+     * @return Populated {@link Target} by the current {@link Source}
      */
-    default Target appendTo(Target target, Source source) {
-        return appendTo(target, source, ((Member) source.getSource()).getName());
+    default Target appendTo(Source source, Target target) {
+        return appendTo(source, target, ((Member) source.getSource()).getName());
     }
 
     /**
-     * Appends Granite UI markup based on the current {@code Field} to the parent XML node with the specified targetFacade name
-     * @param target Parent {@code Element} instance
-     * @param source Current {@code Field}
+     * Appends Granite UI markup based on the current {@link Source} to the parent node with the specified name
+     * @param source Current {@link Source}
+     * @param target Parent {@link Target} instance
      * @param name The node name to store
-     * @return The new {@code Element} created for the current {@code Field}
+     * @return Populated {@link Target} by the current {@link Source}
      */
-    default Target appendTo(Target target, Source source, String name) {
+    default Target appendTo(Source source, Target target, String name) {
         Target widgetChildElement = target.child(name);
         getHandlerChain().accept(source, widgetChildElement);
         return widgetChildElement;
     }
 
     /**
-     * Generates the chain of handlers to store {@code cq:editConfig} XML markup
-     * @return {@code BiConsumer<SourceFacade, Element>} instance
+     * Generates the chain of handlers to store widget's markup
+     * @return {@code BiConsumer<Source, Target>} instance
      */
     default BiConsumer<Source, Target> getHandlerChain() {
         BiConsumer<Source, Target> mainChain = new GenericPropertiesHandler()

@@ -37,7 +37,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
- * {@link Handler} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
  */
 public class DependsOnHandler implements BiConsumer<Source, Target> {
 
@@ -46,9 +46,9 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     private static final String TERM_SEPARATOR = "-";
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param target Current XML targetFacade
-     * @param source Current {@code Field} instance
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     public void accept(Source source, Target target) {
@@ -61,9 +61,9 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Called by {@link DependsOnHandler#accept(Source, Target)} to store particular {@code DependsOn} value in XML markup
-     * @param target Current XML targetFacade
+     * Called by {@link DependsOnHandler#accept(Source, Target)} to store particular {@code DependsOn} value in {@link Target}
      * @param value Current {@link DependsOn} value
+     * @param target Current {@link Target} instance
      */
     private void handleDependsOn(DependsOn value, Target target) {
         if (StringUtils.isAnyBlank(value.query(), value.action())) {
@@ -78,9 +78,9 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Called by {@link DependsOnHandler#accept(Source, Target)} to store {@code DependsOnConfig} value in XML markup
-     * @param target Current XML targetFacade
+     * Called by {@link DependsOnHandler#accept(Source, Target)} to store {@code DependsOnConfig} value in {@link Target}
      * @param value Current {@link DependsOnConfig} value
+     * @param target Current {@link Target} instance
      */
     private void handleDependsOnConfig(DependsOnConfig value, Target target) {
         List<DependsOn> validDeclarations = Arrays.stream(value.value())
@@ -134,9 +134,9 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Called by {@link DependsOnHandler#accept(Source, Target)} to store particular {@code DependsOnRef} value in XML markup
-     * @param target Current XML targetFacade
-     * @param source Current {@code Field} instance
+     * Called by {@link DependsOnHandler#accept(Source, Target)} to store particular {@code DependsOnRef} value in {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     private void handleDependsOnRefValue(Source source, Target target) {
         DependsOnRef value = source.adaptTo(DependsOnRef.class);

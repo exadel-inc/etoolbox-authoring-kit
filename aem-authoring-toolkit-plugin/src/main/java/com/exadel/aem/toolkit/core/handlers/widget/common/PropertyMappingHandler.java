@@ -23,13 +23,13 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 
 /**
- * Handler for storing sets of generic widget properties to a Granite UI widget XML node
+ * Handler for storing sets of generic widget properties to a Granite UI widget node
  */
 public class PropertyMappingHandler implements BiConsumer<Source, Target> {
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current {@code TargetFacade} instance
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     public void accept(Source source, Target target) {

@@ -22,15 +22,14 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 import java.util.function.BiConsumer;
 
 /**
- * {@link Handler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
- * within the {@code cq:dialog} XML node
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
+ * within the {@code cq:dialog} node
  */
 class AutocompleteHandler implements BiConsumer<Source, Target> {
     /**
-     * Processes the user-defined data and writes it to XML entity
-     *
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current {@code TargetFacade} instance
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     public void accept(Source source, Target target) {

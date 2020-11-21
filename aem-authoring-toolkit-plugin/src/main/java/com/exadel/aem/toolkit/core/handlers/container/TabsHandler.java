@@ -43,20 +43,20 @@ import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 /**
- * The {@link Handler} for a tabbed TouchUI dialog
+ * The {@code BiConsumer<Class<?>, Target>} implementation for a tabbed TouchUI dialog
  */
 public class TabsHandler implements BiConsumer<Class<?>, Target> {
     private static final String NO_TABS_DEFINED_EXCEPTION_MESSAGE = "No tabs defined for the dialog at ";
 
     /**
-     * Implements {@code BiConsumer<Class<?>, Element>} pattern
+     * Implements {@code BiConsumer<Class<?>, Target>} pattern
      * to process component-backing Java class and append the results to the XML root node
      * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param parentElement XML document root element
+     * @param parentElement Current {@link Target} instance
      */
     @Override
     public void accept(Class<?> componentClass, Target parentElement) {
-        // Render the generic XML markup for tabs setting
+        // Render the generic markup for tabs setting
         Target tabItemsElement = parentElement.child(DialogConstants.NN_CONTENT).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
                 .child(DialogConstants.NN_ITEMS)
                 .child(DialogConstants.NN_TABS).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.TABS)
@@ -243,7 +243,7 @@ public class TabsHandler implements BiConsumer<Class<?>, Target> {
          * Creates a new {@code TabInstance} wrapped around a specified {@link Tab} with a particular list of associated
          * fields
          * @param tab {@code Tab} object
-         * @param fields List of {@code Field} objects to associate with the current tab
+         * @param fields List of {@link Source} objects to associate with the current tab
          */
         private TabInstance(Tab tab, List<Source> fields) {
             this.tab = tab;

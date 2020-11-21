@@ -25,16 +25,16 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.FormParameter;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * {@link Handler} implementation for storing {@link FormParameter} arguments to {@code cq:editConfig} XML node
+ * {@code BiConsumer<EditConfig, Target>} implementation for storing {@link FormParameter} arguments to {@code cq:editConfig} XML node
  */
-public class FormParametersHandler implements BiConsumer<Target, EditConfig> {
+public class FormParametersHandler implements BiConsumer<EditConfig, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param root XML element
      * @param editConfig {@code EditConfig} annotation instance
+     * @param root Current {@link Target} instance
      */
     @Override
-    public void accept(Target root, EditConfig editConfig) {
+    public void accept(EditConfig editConfig, Target root) {
         if(editConfig.formParameters().length == 0){
             return;
         }

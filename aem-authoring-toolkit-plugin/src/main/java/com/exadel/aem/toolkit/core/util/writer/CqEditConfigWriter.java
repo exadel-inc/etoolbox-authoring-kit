@@ -67,6 +67,6 @@ class CqEditConfigWriter extends PackageEntryWriter {
     void populateDomDocument(Class<?> componentClass, Target root) {
         EditConfig editConfig = componentClass.getDeclaredAnnotation(EditConfig.class);
         root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
-        EditConfigHandlingHelper.append(root, editConfig);
+        EditConfigHandlingHelper.append(editConfig, root);
     }
 }

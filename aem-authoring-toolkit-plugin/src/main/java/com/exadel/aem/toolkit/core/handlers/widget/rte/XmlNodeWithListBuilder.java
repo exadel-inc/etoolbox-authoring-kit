@@ -19,11 +19,11 @@ import java.util.List;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 /**
- * Used to build XML nodes for flat-string array feature representations within RichTextEditor config XML, such as
+ * Used to build XML nodes for flat-string array feature representations within RichTextEditor config, such as
  * {@code features} or {@code table} node
  */
 class XmlNodeWithListBuilder extends XmlNodeBuilderBase {
-    private List<String> argumentList;
+    private final List<String> argumentList;
     private XmlTreeWithListsBuilder childBuilder;
 
     XmlTreeWithListsBuilder getChildBuilder() {

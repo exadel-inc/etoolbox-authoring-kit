@@ -32,17 +32,17 @@ import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.validation.Validation;
 
 /**
- * {@link Handler} implementation used to create markup responsible for Granite UI {@code DatePicker} widget functionality
- * within the {@code cq:dialog} XML node
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code DatePicker} widget functionality
+ * within the {@code cq:dialog} node
  */
 class DatePickerHandler implements BiConsumer<Source, Target> {
     private static final String INVALID_FORMAT_EXCEPTION_TEMPLATE = "Invalid %s '%s' for @DatePicker field '%s'";
     private static final String INVALID_VALUE_EXCEPTION_TEMPLATE = "Property '%s' of @DatePicker does not correspond to specified valueFormat";
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current {@code SourceFacade} instance
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     public void accept(Source source, Target target) {
@@ -87,8 +87,8 @@ class DatePickerHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Writes formatted {@link DateTimeValue} attribute to XML node
-     * @param target XML {@code TargetFacade} to store data in
+     * Writes formatted {@link DateTimeValue} attribute to node
+     * @param target {@link Target} to store data in
      * @param attribute Name of date-preserving attribute
      * @param value The {@code DateTimeValue} to store
      * @param formatter {@link DateTimeFormatter} instance

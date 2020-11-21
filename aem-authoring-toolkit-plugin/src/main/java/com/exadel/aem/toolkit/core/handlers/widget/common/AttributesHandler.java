@@ -22,13 +22,13 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 
 /**
- * Handler for storing {@link Attribute} properties to a Granite UI widget XML node
+ * Handler for storing {@link Attribute} properties to a Granite UI widget node
  */
 public class AttributesHandler implements BiConsumer<Source, Target> {
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current {@code TargetFacade} instance
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     @SuppressWarnings({"deprecation", "squid:S1874"})

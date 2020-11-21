@@ -82,7 +82,7 @@ public enum DialogWidgets implements DialogWidget {
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";
     private static final BiConsumer<Source, Target> EMPTY_HANDLER = (componentNode, field) -> {};
 
-    private Class<? extends Annotation> annotation;
+    private final Class<? extends Annotation> annotation;
     private BiConsumer<Source, Target> handler;
 
     DialogWidgets(Class<? extends Annotation> annotation) {
@@ -114,8 +114,8 @@ public enum DialogWidgets implements DialogWidget {
     }
 
     /**
-     * Gets a {@link DialogWidgets} bound to this {@code SourceFacade} of a component class, if any
-     * @param source {@code SourceFacade} of a component class
+     * Gets a {@link DialogWidgets} bound to this {@link Source} of a component class, if any
+     * @param source {@link Source} of a component class
      * @return {@code DialogWidget} value, or null
      */
     public static DialogWidget fromSourceFacade(Source source) {
@@ -140,8 +140,8 @@ public enum DialogWidgets implements DialogWidget {
     }
 
     /**
-     * Gets {@code Class} definition of a {@code DialogComponent}-defining annotation of the current {@code Field}
-     * @param source {@code SourceFacade} of a component class
+     * Gets {@code Class} definition of a {@code DialogComponent}-defining annotation of the current {@link Source}
+     * @param source {@link Source} of a component class
      * @return {@code Class} object
      */
     private static Class<? extends Annotation> getWidgetAnnotationClass(Source source) {
@@ -162,9 +162,9 @@ public enum DialogWidgets implements DialogWidget {
     }
 
     /**
-     * Gets whether this {@code Field} has the particular {@code DialogComponent}-defining annotation
-     * @param source {@code SourceFacade} of a component class
-     * @param widget {@code DialogComponent} instance
+     * Gets whether this {@link Source} has the particular {@code DialogComponent}-defining annotation
+     * @param source {@link Source} of a component class
+     * @param widget {@link DialogWidgets} instance
      * @return True or false
      */
     private static boolean isAnnotated(Source source, DialogWidgets widget) {
@@ -185,7 +185,7 @@ public enum DialogWidgets implements DialogWidget {
      * Implements {@link DialogWidget} to expose a custom dialog annotation attached to a field with no built-in annotation
      */
     private static class CustomDialogWidget implements DialogWidget {
-        private Class<? extends Annotation> annotationClass;
+        private final Class<? extends Annotation> annotationClass;
 
         CustomDialogWidget(Class<? extends Annotation> annotationClass) {
             this.annotationClass = annotationClass;

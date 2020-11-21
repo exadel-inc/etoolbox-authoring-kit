@@ -25,13 +25,13 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * Handler for storing {@link DialogField} properties to a Granite UI widget XML node
+ * Handler for storing {@link DialogField} properties to a Granite UI widget node
  */
 public class DialogFieldHandler implements BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target XML targetFacade
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     public void accept(Source source, Target target) {

@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 
 /**
  * Contains methods to generate and trigger the chain of handlers to store {@code cq:editConfig}
- * and {@code cq:childEditConfig} XML markup
+ * and {@code cq:childEditConfig} markup
  */
 public class EditConfigHandlingHelper {
     private static final String METHOD_DROP_TARGETS = "dropTargets";
@@ -34,34 +34,34 @@ public class EditConfigHandlingHelper {
 
     /**
      * Builds in-place editing markup for the current component based on the set of component class fields
-     * @param target {@code Element} representing {@code cq:editConfig} XML node
      * @param editConfig {@link EditConfig} instance
+     * @param target {@link Target} representing {@code cq:editConfig} node
      */
-    public static void append(Target target, EditConfig editConfig) {
-        getEditConfigHandlerChain().accept(target, editConfig);
+    public static void append(EditConfig editConfig, Target target) {
+        getEditConfigHandlerChain().accept(editConfig, target);
     }
 
     /**
      * Builds in-place editing markup for the <i>children</i> of the current component based on the set
      * of component class fields
-     * @param target {@code Element} representing {@code cq:editConfig} XML node
      * @param childEditConfig {@link ChildEditConfig} instance
+     * @param target {@link Target} representing {@code cq:editConfig} node
      */
-    public static void append(Target target, ChildEditConfig childEditConfig) {
+    public static void append(ChildEditConfig childEditConfig, Target target) {
         // herewith create a "proxied" @EditConfig object out of the provided @ChildEditConfig
         // with "dropTargets" and "listeners" methods of @EditConfig populated with  @ChildEditConfig values
         EditConfig derivedEditConfig = PluginObjectUtility.create(EditConfig.class, ImmutableMap.of(
                 METHOD_DROP_TARGETS, childEditConfig.dropTargets(),
                 METHOD_LISTENERS, childEditConfig.listeners()
         ));
-        getChildEditConfigHandlerChain().accept(target, derivedEditConfig);
+        getChildEditConfigHandlerChain().accept(derivedEditConfig, target);
     }
 
     /**
-     * Generates the chain of handlers to store {@code cq:editConfig} XML markup
-     * @return {@code BiConsumer<Element, EditConfig>} instance
+     * Generates the chain of handlers to store {@code cq:editConfig} markup
+     * @return {@code BiConsumer<EditConfig, Target>} instance
      */
-    private static BiConsumer<Target, EditConfig> getEditConfigHandlerChain() {
+    private static BiConsumer<EditConfig, Target> getEditConfigHandlerChain() {
         return new PropertiesHandler()
                 .andThen(new DropTargetsHandler())
                 .andThen(new FormParametersHandler())
@@ -70,10 +70,10 @@ public class EditConfigHandlingHelper {
     }
 
     /**
-     * Generates the chain of handlers to store {@code cq:editConfig} XML markup
-     * @return {@code BiConsumer<TargetFacade, EditConfig>} instance
+     * Generates the chain of handlers to store {@code cq:editConfig} markup
+     * @return {@code BiConsumer<EditConfig, Target>} instance
      */
-    private static BiConsumer<Target, EditConfig> getChildEditConfigHandlerChain() {
+    private static BiConsumer<EditConfig, Target> getChildEditConfigHandlerChain() {
         return new DropTargetsHandler().andThen(new ListenersHandler());
     }
 }

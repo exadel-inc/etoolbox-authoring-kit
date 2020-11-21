@@ -27,16 +27,16 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
- * {@link Handler} implementation used to create markup responsible for Granite UI {@code Checkbox} widget functionality
- * within the {@code cq:dialog} XML node
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code Checkbox} widget functionality
+ * within the {@code cq:dialog} node
  */
 class CheckboxHandler implements BiConsumer<Source, Target> {
     private static final String POSTFIX_FOR_ROOT_CHECKBOX = "Checkbox";
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current {@code TargetFacade} instance
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     public void accept(Source source, Target target) {
@@ -58,8 +58,8 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
 
     /**
      * Creates and appends markup correspondent to a Granite UI nested {@code Checkbox} structure
-     * @param source Current {@code SourceFacade} of a component class
-     * @param target {@code TargetFacade} instance representing current XML node
+     * @param source Current {@link Source} of a component class
+     * @param target {@link Target} instance representing current node
      */
     private void appendNestedCheckBoxList(Source source, Target target) {
         Target itemsElement = target.child(DialogConstants.NN_SUBLIST)
@@ -72,8 +72,8 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
 
     /**
      * Creates and appends single Granite UI {@code Checkbox} markup to the current XML node
-     * @param source Current {@code SourceFacade} of a component class
-     * @param target {@code TargetFacade} instance representing current XML node
+     * @param source Current {@link Source} of a component class
+     * @param target {@link Target} instance representing current node
      */
     private void appendCheckbox(Source source, Target target) {
         Checkbox checkbox = source.adaptTo(Checkbox.class);
@@ -98,8 +98,8 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
 
     /**
      * Decides which property of the current field to use as the {@code text} attribute of checkbox node and populates it
-     * @param source Current {@code SourceFacade} of a component class
-     * @param target {@code TargetFacade} instance representing current XML node
+     * @param source Current {@link Source} of a component class
+     * @param target {@link Target} instance representing current node
      */
     private void setTextAttribute(Source source, Target target) {
         Checkbox checkbox = source.adaptTo(Checkbox.class);

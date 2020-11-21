@@ -15,19 +15,18 @@ package com.exadel.aem.toolkit.core.handlers.widget.rte;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import org.w3c.dom.Element;
 
 import java.util.Arrays;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
 /**
- * Represents a generic builder for a {@code RichTextEditor} configuration XML markup.
+ * Represents a generic builder for a {@code RichTextEditor} configuration markup.
  * Required by {@link RichTextEditorHandler#accept(Source, Target)}
  */
 abstract class XmlNodeBuilderBase {
     private String name;
-    private String attributeName;
+    private final String attributeName;
     private BiPredicate<String, String> filter;
     private Consumer<Target> postprocessing;
 

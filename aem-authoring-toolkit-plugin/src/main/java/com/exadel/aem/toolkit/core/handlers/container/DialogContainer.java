@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.core.util.writer.PackageWriter;
 
 /**
- * Represents dialog XML markup builder for either fixed-columns or tabbed TouchUI dialog. Typically applied to by
+ * Represents dialog builder for either fixed-columns or tabbed TouchUI dialog. Typically applied to by
  * the implementation of {@code ContentXmlWriter} to populate markup elements produced by the set of component class
  * fields to the overall dialog markup
  */
@@ -30,7 +30,7 @@ public enum DialogContainer {
     FIXED_COLUMNS(new FixedColumnsHandler()),
     TABS(new TabsHandler());
 
-    private BiConsumer<Class<?>, Target> handler;
+    private final BiConsumer<Class<?>, Target> handler;
 
     DialogContainer(BiConsumer<Class<?>, Target> handler) {
         this.handler = handler;
@@ -40,7 +40,7 @@ public enum DialogContainer {
      * Called via {@link PackageWriter} to build dialog markup based on the set
      * of component class fields
      * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param target XML document root element
+     * @param target Current {@link Target} instance
      */
     public void build(Class<?> componentClass, Target target){
         handler.accept(componentClass, target);

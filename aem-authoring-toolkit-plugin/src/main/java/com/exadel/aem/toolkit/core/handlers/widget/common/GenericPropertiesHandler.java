@@ -26,15 +26,15 @@ import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 /**
- * Handler for storing {@link ResourceType} and like properties to a Granite UI widget XML node
+ * Handler for storing {@link ResourceType} and like properties to a Granite UI widget node
  */
 public class GenericPropertiesHandler implements BiConsumer<Source, Target> {
     private static final String RESTYPE_MISSING_EXCEPTION_MESSAGE = "@ResourceType is not present in ";
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current {@code TargetFacade} instance
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     public void accept(Source source, Target target) {

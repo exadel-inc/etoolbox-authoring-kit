@@ -26,14 +26,14 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * {@link Handler} implementation used to create markup responsible for Granite {@code Select} widget functionality
- * within the {@code cq:dialog} XML node
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite {@code Select} widget functionality
+ * within the {@code cq:dialog} node
  */
 class SelectHandler implements BiConsumer<Source, Target> {
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current XML targetFacade
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     @SuppressWarnings({"deprecation", "squid:S1874"})

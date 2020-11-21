@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.core.handlers.widget.rte;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.*;
 import java.util.regex.Pattern;
@@ -36,7 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 /**
- * {@link Handler} implementation used to create markup responsible for Granite UI {@code RichTextEditor} widget functionality
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code RichTextEditor} widget functionality
  * within the {@code cq:dialog} and {@code cq:editConfig} XML nodes
  */
 public class RichTextEditorHandler implements BiConsumer<Source, Target> {
@@ -52,7 +51,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
     private static final String MALFORMED_TOKEN_EXCEPTION_MESSAGE = "Malformed feature token in @RichTextEditor";
 
     private RichTextEditor rteAnnotation;
-    private boolean renderDialogFullScreenNode;
+    private final boolean renderDialogFullScreenNode;
 
     public RichTextEditorHandler() {
         this(true);
@@ -150,15 +149,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         }
     }
 
-/**
-     * Appends non-empty child XML node to a parent node. If same-named child node exists, merges attributes of the
-     * provided child with those of the existing child with use of the default merging routine
-     * @param parent {@code Element} instance representing parent node
-     * @param child {@code Element} instance representing child node
-     * @return {@code Element} instance representing the appended node
-     */
-
-/**
+    /**
      * Called by {@link RichTextEditorHandler#accept(Source, Target)} to facilitate single feature token from the
      * {@link RichTextEditor#features()} or {@link RichTextEditor#fullscreenFeatures()} collection to one or more appropriate
      * {@code XmlNodeBuilder}-s
@@ -249,12 +240,10 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
     }
 
 
-/**
-     * Called by {@link RichTextEditorHandler#appendElement(Target, String, Consumer)} to create as required and then
-     * populate with attributes the {@code styles} node
+    /**
+     * Populates with attributes the {@code styles} node
      * @param parent The routine to generate {@code styles} node and append it to the overall RTE markup
      */
-
     private void populateStylesNode(Target parent) {
         Target styles = parent.child(DialogConstants.NN_STYLES).attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION);
         if (!featureExists(RteFeatures.Popovers.STYLES::equals)) {
@@ -264,12 +253,10 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
                 styles.child(style.cssName()).mapProperties(style));
     }
 
-/**
-     * Called by {@link RichTextEditorHandler#appendElement(Target, String, Consumer)} to create as required and then
-     * populate with attributes the {@code htmlPasteRules} node
+    /**
+     * Populates with attributes the {@code htmlPasteRules} node
      * @param parent The routine to generate {@code htmlPasteRules} node and append it to the overall RTE markup
      */
-
     private void populatePasteRulesNode(Target parent){
         HtmlPasteRules rules = this.rteAnnotation.htmlPasteRules();
         Target edit = parent.child(DialogConstants.NN_EDIT);
@@ -300,8 +287,8 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         }
     }
 
-/**
-     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create and append an XML node representing
+    /**
+     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create and append an node representing
      * {@code htmlRules} to the RichTextEditor XML markup
      * @param parent {@code Target} instance representing the RichTextEditor node
      */
@@ -323,42 +310,20 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
                 .attribute(DialogConstants.PN_TARGET_INTERNAL, rules.targetInternal().toString());
     }
 
-/**
-     * The {@code BiFunction} used to merge feature token sets in XML nodes attributes to rule out repeating same features
-     * as they come from different sets, although it is OK if the same feature token is planted twice deliberately in
-     * the same set
-     * @param array0 String representing a multitude of feature tokens
-     * @param array1 String representing a multitude of feature tokens
-     * @return String representing the merged feature token set
-     */
-
-    private static String mergeFeatureAttributes(String array0, String array1) {
-        if (!PluginXmlUtility.ATTRIBUTE_LIST_PATTERN.matcher(array0).matches() || !PluginXmlUtility.ATTRIBUTE_LIST_PATTERN.matcher(array1).matches()) {
-            return PluginXmlUtility.DEFAULT_ATTRIBUTE_MERGER.apply(array0, array1);
-        }
-        List<String> result = new LinkedList<>(Arrays.asList(getNestedTokens(array0)));
-        Arrays.stream(getNestedTokens(array1))
-                .forEach(token -> {if(!result.contains(token)) result.add(token);}); // not using Set<> here because of repeating tokens, such as separators
-        return String.format(PluginXmlUtility.ATTRIBUTE_LIST_TEMPLATE, String.join(RteFeatures.FEATURE_SEPARATOR, result));
-    }
-
-/**
-     * Called by {@link RichTextEditorHandler#mergeFeatureAttributes(String, String)} to extract tokens within a
-     * {@code [feature#token, feature#token2]} unit
+    /**
+     * Extracts tokens within a {@code [feature#token, feature#token2]} unit
      * @param array String representing a multitude of feature tokens
      * @return {@code String[]} array with the extracted feature tokens
      */
-
     private static String[] getNestedTokens(String array) {
         return StringUtils.strip(array, PluginXmlUtility.ATTRIBUTE_LIST_SURROUND).split(PluginXmlUtility.ATTRIBUTE_LIST_SPLIT_PATTERN);
     }
 
-/**
+    /**
      * Gets whether a certain feature exists in the feature set
      * @param matcher Feature token predicate
      * @return True or false
      */
-
     private boolean featureExists(Predicate<String> matcher) {
         return Stream.concat(Arrays.stream(rteAnnotation.features()), Arrays.stream(rteAnnotation.fullscreenFeatures()))
                 .flatMap(s -> Arrays.stream(s.split(PluginXmlUtility.ATTRIBUTE_LIST_SPLIT_PATTERN)))

@@ -24,16 +24,16 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * {@link Handler} implementation for storing {@link DropTargetConfig} arguments to {@code cq:editConfig} XML node
+ * {@code BiConsumer<Target, EditConfig>} implementation for storing {@link DropTargetConfig} arguments to {@code cq:editConfig} node
  */
-public class DropTargetsHandler implements BiConsumer<Target, EditConfig> {
+public class DropTargetsHandler implements BiConsumer<EditConfig, Target> {
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param target XML element
+     * Processes the user-defined data and writes it to {@code Target}
      * @param editConfig {@code EditConfig} annotation instance
+     * @param target Current {@link Target} instance
      */
     @Override
-    public void accept(Target target, EditConfig editConfig) {
+    public void accept(EditConfig editConfig, Target target) {
         if(editConfig.dropTargets().length == 0){
             return;
         }

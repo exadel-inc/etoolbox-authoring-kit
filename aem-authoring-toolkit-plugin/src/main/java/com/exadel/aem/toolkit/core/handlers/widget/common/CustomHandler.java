@@ -29,13 +29,13 @@ import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 
 /**
  * Handler for storing properties coming from custom annotations and, optionally, processed by custom handlers
- * to a Granite UI widget XML node
+ * to a Granite UI widget node
  */
 public class CustomHandler implements BiConsumer<Source, Target> {
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code Source} instance
-     * @param target Current {@code Target} instance
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     public void accept(Source source, Target target) {

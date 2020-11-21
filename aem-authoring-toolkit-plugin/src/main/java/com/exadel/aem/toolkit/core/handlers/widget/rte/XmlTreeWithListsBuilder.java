@@ -24,14 +24,14 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Used to build XML nodes for feature representations with nested XML nodes within RichTextEditor config XML, such as
+ * Used to build nodes for feature representations with nested XML nodes within RichTextEditor config XML, such as
  * {@code plugins} node
  */
 class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
     private static final String FEATURE_SEPARATOR = ":";
 
-    private Map<String, Set<String>> argumentTree;
-    private boolean addPluginIdsToFeatures;
+    private final Map<String, Set<String>> argumentTree;
+    private final boolean addPluginIdsToFeatures;
 
     XmlTreeWithListsBuilder(
             String tagName,

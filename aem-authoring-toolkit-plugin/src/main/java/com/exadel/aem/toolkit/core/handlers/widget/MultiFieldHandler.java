@@ -26,16 +26,16 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 
 /**
- * {@link Handler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
- * within the {@code cq:dialog} XML node
+ * {@link WidgetSetHandler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
+ * within the {@code cq:dialog} node
  */
 public class MultiFieldHandler implements WidgetSetHandler {
     private static final String EMPTY_MULTIFIELD_EXCEPTION_MESSAGE = "No valid fields found in multifield class ";
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current {@code TargetFacade} targetFacade
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     public void accept(Source source, Target target) {
@@ -65,8 +65,8 @@ public class MultiFieldHandler implements WidgetSetHandler {
 
     /**
      * Renders multiple widgets as XML nodes within the current multifield container
-     * @param sources The collection of {@code SourceFacade} instances to render TouchUI widgets from
-     * @param target Current XML targetFacade
+     * @param sources The collection of {@link Source} instances to render TouchUI widgets from
+     * @param target Current {@link Target} instance
      * @param name The targetFacade's {@code name} attribute
      */
     private void render(List<Source> sources, Target target, String name) {
@@ -90,14 +90,14 @@ public class MultiFieldHandler implements WidgetSetHandler {
 
     /**
      * Renders a single widget within the current multifield container
-     * @param source The {@code SourceFacade} instance to render TouchUI widget from
-     * @param target Current {@code TargetFacade} targetFacade
+     * @param source The {@link Source} instance to render TouchUI widget from
+     * @param target Current {@link Source} instance
      */
     private void render(Source source, Target target) {
         DialogWidget widget = DialogWidgets.fromSourceFacade(source);
         if (widget == null) {
             return;
         }
-        widget.appendTo(target, source, DialogConstants.NN_FIELD);
+        widget.appendTo(source, target, DialogConstants.NN_FIELD);
     }
 }

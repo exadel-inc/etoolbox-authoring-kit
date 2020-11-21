@@ -32,15 +32,15 @@ import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
  * other SourceFacades via {@link Extends} mechanism
  */
 public class InheritanceHandler implements BiConsumer<Source, Target> {
-    private BiConsumer<Source, Target> descendantChain;
+    private final BiConsumer<Source, Target> descendantChain;
     public InheritanceHandler(BiConsumer<Source, Target> descendantChain) {
         this.descendantChain = descendantChain;
     }
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current {@code TargetFacade} instance
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
     public void accept(Source source, Target target) {
@@ -52,9 +52,9 @@ public class InheritanceHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Builds the inheritance sequence for the current {@code Field}
-     * @param source Current {@code SourceFacade} instance
-     * @return Ancestral {@code SourceFacade}s, as an ordered sequence
+     * Builds the inheritance sequence for the current {@link Source}
+     * @param source Current {@link Target} instance
+     * @return Ancestral {@link Target}s, as an ordered sequence
      */
     private static Deque<Source> getInheritanceTree(Source source) {
         Deque<Source> result = new LinkedList<>();

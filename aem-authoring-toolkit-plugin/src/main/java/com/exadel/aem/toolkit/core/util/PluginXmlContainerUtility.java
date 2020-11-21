@@ -57,7 +57,7 @@ public class PluginXmlContainerUtility {
             if (widget == null) {
                 continue;
             }
-            Target newElement = widget.appendTo(itemsElement, source);
+            Target newElement = widget.appendTo(source, itemsElement);
             managedFields.put(source, newElement.getName());
         }
 
