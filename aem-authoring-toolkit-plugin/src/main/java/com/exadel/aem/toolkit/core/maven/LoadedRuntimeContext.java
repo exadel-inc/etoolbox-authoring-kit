@@ -41,6 +41,11 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
         return exceptionHandler;
     }
 
+    @Override
+    public PluginXmlUtility getXmlUtility() {
+        return xmlUtility;
+    }
+
 
     /**
      * Accumulates data and performs necessary routines for creating the functional ("loaded") {@link PluginRuntimeContext}
@@ -103,6 +108,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
             LoadedRuntimeContext result = new LoadedRuntimeContext();
             result.pluginReflections = PluginReflectionUtility.fromCodeScope(classPathElements, packageBase);
             result.exceptionHandler = ExceptionHandlers.forSetting(terminateOn);
+            result.xmlUtility = new PluginXmlUtility();
             this.onComplete.accept(result);
         }
 

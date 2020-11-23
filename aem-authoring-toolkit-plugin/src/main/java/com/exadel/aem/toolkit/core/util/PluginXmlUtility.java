@@ -59,7 +59,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
 import com.exadel.aem.toolkit.core.exceptions.ReflectionException;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.validation.Validation;
 
 /**
@@ -86,51 +85,7 @@ public class PluginXmlUtility implements XmlUtility {
      */
     public static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
-
     private Document document;
-    private String namePrefix = DialogConstants.RELATIVE_PATH_PREFIX;
-
-    private XmlNamingHelper fieldNameHelper = XmlNamingHelper.forFieldName(this);
-    private XmlNamingHelper simpleNameHelper = XmlNamingHelper.forSimpleName(this);
-    private XmlNamingHelper namespaceNameHelper = XmlNamingHelper.forNamespaceAndName(this);
-
-    /**
-     * Initializes new {@link Document} instance shipped with the root element
-     * @param builder {@link DocumentBuilder} to create new XML document
-     * @param componentClass {@code Class} instance representing source object for this document
-     * @return Root {@link Element}
-     */
-    public Element newDocumentRoot(DocumentBuilder builder, Class<?> componentClass) {
-        document = builder.newDocument();
-        document.setUserData(DialogConstants.PN_COMPONENT_CLASS, componentClass, null);
-        Element rootElement = createNodeElement(DialogConstants.NN_ROOT, XML_NAMESPACES);
-        document.appendChild(rootElement);
-        return rootElement;
-    }
-
-    /**
-     * Retrieves current {@link Document} that is involved in {@code createNodeElement} routines
-     * @return {@code Document} instance
-     */
-    public Document getCurrentDocument() {
-        return document;
-    }
-
-    /**
-     * Retrieves name prefix added to all {@code Element}s' tag names in current context
-     * @return Prefix as a string, default is "./"
-     */
-    public String getNamePrefix() {
-        return this.namePrefix;
-    }
-
-    /**
-     * Sets name prefix added to all Elements' tag names in current context
-     * @param namePrefix String value
-     */
-    public void setNamePrefix(String namePrefix) {
-        this.namePrefix = namePrefix;
-    }
 
     @Override
     public Element createNodeElement(String name, String nodeType, Map<String, String> properties, String resourceType) {
@@ -140,7 +95,7 @@ public class PluginXmlUtility implements XmlUtility {
         }
         element.setAttribute(DialogConstants.PN_PRIMARY_TYPE, nodeType);
         if (resourceType != null) {
-            element.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, resourceType);
+            element.setAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType);
         }
         if (properties != null) {
             properties.forEach((key, value) -> {
@@ -212,22 +167,22 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public String getValidName(String name) {
-        return namespaceNameHelper.getValidName(name, DialogConstants.NN_ITEM);
+        return NamingUtil.getValidName(name, DialogConstants.NN_ITEM);
     }
 
     @Override
     public String getValidSimpleName(String name) {
-        return simpleNameHelper.getValidName(name, DialogConstants.NN_ITEM);
+        return NamingUtil.getValidName(name, DialogConstants.NN_ITEM);
     }
 
     @Override
     public String getValidFieldName(String name) {
-        return fieldNameHelper.getValidName(name, DialogConstants.NN_FIELD);
+        return NamingUtil.getValidName(name, DialogConstants.NN_FIELD);
     }
 
     @Override
     public String getUniqueName(String name, String defaultValue, Element context) {
-        return simpleNameHelper.getUniqueName(name, defaultValue, context);
+        return NamingUtil.getUniqueName(name, defaultValue, context);
     }
 
     @Override
@@ -351,25 +306,6 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     /**
-     * Sets value of a particular {@code Property} to an {@code Element} node
-     * @param element Element node
-     * @param path Contains relative path and property name
-     * @param value Value of the property
-     */
-    public void mapProperty(Element element, String path, String value) {
-        String prefix = path.contains(DialogConstants.PATH_SEPARATOR)
-                ? StringUtils.substringBeforeLast(path, DialogConstants.PATH_SEPARATOR)
-                : StringUtils.EMPTY;
-        String name = path.contains(DialogConstants.PATH_SEPARATOR)
-                ? StringUtils.substringAfterLast(path, DialogConstants.PATH_SEPARATOR)
-                : path;
-
-        Element effectiveElement = getRequiredElement(element, prefix);
-        effectiveElement.setAttribute(getValidFieldName(name), value);
-
-    }
-
-    /**
      * Sets value of a particular {@code Annotation} property to an {@code Element} node
      * @param method {@code Method} instance representing a property of an annotation
      * @param element Element node
@@ -430,23 +366,6 @@ public class PluginXmlUtility implements XmlUtility {
             return true;
         }
         return Arrays.asList(method.getAnnotation(PropertyScope.class).value()).contains(scope);
-    }
-
-    /**
-     * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
-     * Appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
-     * or a child node
-     * If child node with same name already exists, it is updated with attribute values of the newcomer node
-     * @param parent Routine than provides Element to serve as parent
-     * @param child Element to serve as child
-     * @param attributeMerger Function that manages an existing attribute value and a new one
-     *                        in case when a new value is set to an existing {@code Element}
-     */
-    public void appendNonemptyChildElement(Supplier<Element> parent, Element child, BinaryOperator<String> attributeMerger) {
-        if (isBlankElement(child)) {
-            return;
-        }
-        appendNonemptyChildElement(parent.get(), child, attributeMerger);
     }
 
     @Override
@@ -580,7 +499,7 @@ public class PluginXmlUtility implements XmlUtility {
      * @param xPath String xPath representation
      * @return List of {@code Element}s, or an empty list
      */
-    public List<Element> getElementNodes(String xPath) {
+    public static List<Element> getElementNodes(String xPath, Document document) {
         XPath xPathInstance = XPathFactory.newInstance().newXPath();
         List<Element> result = new ArrayList<>();
         try {

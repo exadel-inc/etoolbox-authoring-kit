@@ -22,9 +22,6 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.NamingUtil;
 import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 import org.apache.commons.lang3.StringUtils;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -43,7 +40,7 @@ class FieldSetHandler implements WidgetSetHandler {
     public void accept(Source source, Target target) {
         // Define the working @FieldSet annotation instance and the fieldset type
         FieldSet fieldSet = source.adaptTo(FieldSet.class);
-        Class<?> fieldSetType = getFieldSetType(source.getSource());
+        Class<?> fieldSetType = WidgetSetHandler.getManagedClass(source);
 
         List<Source> sources = getContainerSourceFacades(source, fieldSetType);
 
@@ -69,11 +66,5 @@ class FieldSetHandler implements WidgetSetHandler {
             populated.addToValueMap(DialogConstants.PN_POSTFIX, fieldSet.namePostfix() + populated.fromValueMap(DialogConstants.PN_POSTFIX) +
                     current.fromValueMap(DialogConstants.PN_POSTFIX).toString());
         }
-    }
-
-    private Class<?> getFieldSetType(Object member) {
-        return member instanceof Field
-                ? ((Field) member).getType()
-                : ((Method) member).getReturnType();
     }
 }

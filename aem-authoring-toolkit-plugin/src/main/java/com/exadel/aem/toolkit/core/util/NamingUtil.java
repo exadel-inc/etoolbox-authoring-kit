@@ -2,6 +2,8 @@ package com.exadel.aem.toolkit.core.util;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
 
+import org.w3c.dom.Element;
+
 public class NamingUtil {
 
 
@@ -13,6 +15,10 @@ public class NamingUtil {
         return namespaceNameHelper.getValidName(name, DialogConstants.NN_ITEM);
     }
 
+    public static String getValidName(String name, String defaultName) {
+        return namespaceNameHelper.getValidName(name, defaultName);
+    }
+
     public static String getValidSimpleName(String name) {
         return simpleNameHelper.getValidName(name, DialogConstants.NN_ITEM);
     }
@@ -22,6 +28,10 @@ public class NamingUtil {
     }
 
     public static String getUniqueName(String name, String defaultValue, Target context) {
+        return simpleNameHelper.getUniqueName(name, defaultValue, context);
+    }
+
+    public static String getUniqueName(String name, String defaultValue, Element context) {
         return simpleNameHelper.getUniqueName(name, defaultValue, context);
     }
 

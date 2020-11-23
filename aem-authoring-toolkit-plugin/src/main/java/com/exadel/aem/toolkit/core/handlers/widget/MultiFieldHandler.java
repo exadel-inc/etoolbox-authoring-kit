@@ -40,8 +40,7 @@ public class MultiFieldHandler implements WidgetSetHandler {
     @Override
     public void accept(Source source, Target target) {
         // Define the working @Multifield annotation instance and the multifield type
-        MultiField multiField = source.adaptTo(MultiField.class);
-        Class<?> multifieldType = multiField.field();
+        Class<?> multifieldType = WidgetSetHandler.getManagedClass(source);
 
         // Modify the targetFacade's attributes for multifield mode
         String name = (String) target.deleteAttribute(DialogConstants.PN_NAME);

@@ -28,4 +28,7 @@ public interface PluginRuntimeContext extends RuntimeContext {
      * @return {@code PluginReflectionUtility} initialized for this context
      */
     PluginReflectionUtility getReflectionUtility();
+
+    @Override
+    PluginXmlUtility getXmlUtility();
 }

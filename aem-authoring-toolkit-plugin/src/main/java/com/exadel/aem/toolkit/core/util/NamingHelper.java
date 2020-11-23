@@ -18,8 +18,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
+
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.base.CaseFormat;
+import org.w3c.dom.Element;
 
 /**
  * Helper class for creating standard compliant names for XML entities designed to work together
@@ -109,6 +113,18 @@ class NamingHelper {
         }
         int index = 1;
         while (context.getChild(result) != null) {
+            result = NODE_NAME_INDEX_PATTERN.matcher(result).replaceFirst(String.valueOf(index++));
+        }
+        return result;
+    }
+
+    String getUniqueName(String source, String defaultValue, Element context) {
+        String result = getValidName(source, defaultValue);
+        if (context == null) {
+            return result;
+        }
+        int index = 1;
+        while (PluginRuntime.context().getXmlUtility().getChildElement(context, result) != null) {
             result = NODE_NAME_INDEX_PATTERN.matcher(result).replaceFirst(String.valueOf(index++));
         }
         return result;

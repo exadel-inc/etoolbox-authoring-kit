@@ -182,9 +182,9 @@ public class XmlAttributeSettingHelper<T> {
                         .map(this::cast)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
-                //setAttribute(element, invocationResultList);
+                setAttribute(element, invocationResultList);
             } else {
-                //setAttribute(element, cast(invocationResult));
+                setAttribute(element, cast(invocationResult));
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
@@ -246,6 +246,51 @@ public class XmlAttributeSettingHelper<T> {
                 ? element.getAttribute(name)
                 : "";
         element.attribute(name, valueMerger.apply(oldAttributeValue, value));
+    }
+
+    void setAttribute(Element element, T value) {
+        if (!valueTypeIsSupported) {
+            return;
+        }
+        String stringifiedValue = value != null ? value.toString() : StringUtils.EMPTY;
+
+        if (!isValid(stringifiedValue)) {
+            element.removeAttribute(name);
+            return;
+        }
+
+        setAttribute(element, valueType.equals(String.class)
+            ? stringifiedValue
+            : String.format(TYPE_TOKEN_TEMPLATE, valueType.getSimpleName(), stringifiedValue));
+    }
+
+    void setAttribute(Element element, List<T> values) {
+        if (!valueTypeIsSupported || values == null || values.isEmpty()) {
+            return;
+        }
+        String valueString = values.stream()
+            .map(Object::toString)
+            .filter(this::isValid)
+            .map(s -> s.startsWith(RteFeatures.BEGIN_POPOVER) && s.endsWith(RteFeatures.END_POPOVER) ? STRING_ESCAPE + s : s)
+            .collect(Collectors.joining(RteFeatures.FEATURE_SEPARATOR));
+        if (valueString.isEmpty()) {
+            return;
+        }
+        setAttribute(element, valueType.equals(String.class)
+            ? String.format(PluginXmlUtility.ATTRIBUTE_LIST_TEMPLATE, valueString)
+            : String.format(TYPE_TOKEN_ARRAY_TEMPLATE, valueType.getSimpleName(), valueString));
+    }
+
+    /**
+     * Sets String-casted attribute value to an {@code Element} node
+     * @param element Element node instance
+     * @param value String to store as the attribute
+     */
+    private void setAttribute(Element element, String value) {
+        String oldAttributeValue = element.hasAttribute(name)
+            ? element.getAttribute(name)
+            : "";
+        element.setAttribute(name, valueMerger.apply(oldAttributeValue, value));
     }
 
     /**

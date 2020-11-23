@@ -10,4 +10,9 @@ public interface RuntimeContext {
      * @return {@code ExceptionHandler} initialized for this context
      */
     ExceptionHandler getExceptionHandler();
+    /**
+     * Provides the reference to the active {@link XmlUtility} instance
+     * @return {@code XmlUtility} initialized for this context
+     */
+    XmlUtility getXmlUtility();
 }

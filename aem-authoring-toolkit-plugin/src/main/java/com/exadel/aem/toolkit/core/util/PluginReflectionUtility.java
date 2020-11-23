@@ -19,7 +19,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.MalformedParameterizedTypeException;
 import java.lang.reflect.Member;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -40,6 +39,14 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
+import com.exadel.aem.toolkit.api.handlers.DialogHandlerLegacy;
+import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandlerLegacy;
+
+import com.exadel.aem.toolkit.api.handlers.Source;
+
+import com.exadel.aem.toolkit.core.SourceImpl;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -482,6 +489,68 @@ public class PluginReflectionUtility {
             }
         }
         return finalList;
+    }
+
+    /**
+     * Retrieves the type represented by the provided class member. If the member is designed to provide a single object,
+     * its type is returned. But if the member represents an array, type of array's element is returned
+     *
+     * @param member The class member to analyze
+     * @return Appropriate {@code Class} instance
+     */
+    public static Class<?> getPlainType(Member member) {
+        return getPlainType(member, false);
+    }
+
+    /**
+     * Retrieves the type represented by the provided class member. If the member is designed to provide a single object,
+     * its type is returned. If the member represents an array, type of array's element is returned.
+     * If {@code extractGeneric} flag is set to true, the represented value is examined for being a parametrized
+     * collection, and if so, collection's parameter type is turned
+     *
+     * @param member The class member to analyze
+     * @return Appropriate {@code Class} instance
+     */
+    public static Class<?> getPlainType(Member member, boolean extractParamType) {
+        Class<?> result;
+        if (member instanceof Field) {
+            result = ((Field) member).getType();
+        } else {
+            result = ((Method) member).getReturnType();
+        }
+        if (result.isArray()) {
+            result = result.getComponentType();
+        }
+        if (extractParamType && ClassUtils.isAssignable(result, Collection.class)) {
+            return getGenericType(member, result);
+        }
+        return result;
+    }
+
+    /**
+     * Retrieves the underlying parameter type of the class member provided. If the member is an array or a collection.
+     * the item (parameter) type is returned; otherwise, the mere member type is returned
+     *
+     * @param member The class member to analyze
+     * @param defaultValue The value to return if parameter type extraction fails
+     * @return Appropriate {@code Class} instance
+     */
+    private static Class<?> getGenericType(Member member, Class<?> defaultValue) {
+        try {
+            ParameterizedType fieldGenericType;
+            if (member instanceof Field) {
+                fieldGenericType = (ParameterizedType) ((Field) member).getGenericType();
+            } else {
+                fieldGenericType = (ParameterizedType) ((Method) member).getGenericReturnType();
+            }
+            Type[] typeArguments = fieldGenericType.getActualTypeArguments();
+            if (ArrayUtils.isEmpty(typeArguments)) {
+                return defaultValue;
+            }
+            return (Class<?>) typeArguments[0];
+        } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
+            return defaultValue;
+        }
     }
 
 }
