@@ -507,7 +507,9 @@ Used to produce text inputs in TouchUI dialogs. Exposes properties as described 
 
 #### Fields grouping and multiplying
 ##### @FieldSet
-Used to logically group a number of different fields as described in [Adobe's Granite UI manual on FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html). This goal is achieved by an external or a nested class that encapsulates grouping fields. Then a *\<OtherClass>*-typed field is declared, and `@FieldSet` annotation is added. 
+Used to logically group a number of different fields as described in [Adobe's Granite UI manual on FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html). This goal is achieved by an external or a nested class that encapsulates grouping fields. Then an *\<OtherClass>*-typed field is declared, and `@FieldSet` annotation is added. 
+
+The `@FieldSet` will guess the kind of group of widgets to render through the type of the underlying field. But you may as well specify some particular type by setting the *source* property.
 
 Hierarchy of classes is honored (so that a *FieldSet*-producing class may extend another class from same or even foreign scope. Proper field order within a fieldset can be guaranteed by use of *ranking* values (see chapter on `@DialogField` above). 
 
@@ -516,8 +518,8 @@ Names of fields added to a FieldSet may share a common prefix specified in *name
 If you do not need a margin around the fieldset added by default, add `@Attribute(className="u-coral-noMargin")`
 ```java
 public class DialogWithFieldSet {
-    @FieldSet(title = "Field set example", namePrefix="fs-")
-    private FieldSetExample fieldSet;
+    @FieldSet(title = "Field set example", namePrefix="fs-") // you could as well specify type of FieldSet other
+    private FieldSetExample fieldSet;                        // that FieldSetExample via 'source' property
  
     static class FieldSetExample extends ParentFieldSetExample {
         // Constructors are omitted
@@ -545,7 +547,9 @@ public class DialogWithFieldSet {
 }
 ```
 ##### @MultiField
-Used to facilitate multiple (repeating) instances of same fields or same groups if fields as described in [Adobe's Granite UI manual on MultiField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html). The logic of the component relies on the presence of a nested class encapsulating one or more fields to be repeated. Reference to that class is passed to `@MultiField`'s *field* property. See below how it works for a single field repetition, and for a subset of fields multiplied.
+Used to facilitate multiple (repeating) instances of same fields or same groups if fields as described in [Adobe's Granite UI manual on MultiField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html). The logic of the component relies on the presence of a nested class encapsulating one or more fields to be repeated. Reference to that class is passed to `@MultiField`'s *field* property. Same as for `@FieldSet`, if you omit this value, it is guessed from the underlying field type, be it a *SomePlainType* or a *Collection\<WithTypeParameter>*.  
+
+See below how it works for a single field repetition, and for a subset of fields multiplied.
 ###### Simple multi field
 ```java
 
@@ -1087,6 +1091,7 @@ Note that, in this particular case, only "https:" will be stored to webProtocols
 #### Custom Properties
 ##### Custom properties for fields
 If you need some attributes with plain values added to a dialog field, this can be achieved without creating a custom annotation and handler. Just add `@Properties` annotation to a field in your Java class and populate it with properties you need.
+Relative path can be defined via *name* in such a way that the substring before the ultimate `/` represents path, and the substring after the ultimate `/` represents property name.
 ```java
 
 @Dialog(name = "componentName")
@@ -1098,7 +1103,12 @@ public class CustomPropertiesDialog {
         @Property(name = "stringAttr", value = "Hello World"),
         // this way you create a Long-typed JCR attribute. Attributes of other JCR-supported types
         // are stored similarly
-        @Property(name = "numericAttr", value = "{Long}42")
+        @Property(name = "numericAttr", value = "{Long}42"),
+        // this will produce the String-typed JCR attribute "attr1" into the subnode "element1"  with value "Inside"
+        @Property(name = "element1/attr1", value = "Inside"),
+        // this will produce the String-typed JCR attribute "stringAttr" into the supernode of field1 with value "Outside"
+        @Property(name = "../stringAttr", value = "Outside")
+
     })
     String field1;
 
@@ -1107,7 +1117,9 @@ public class CustomPropertiesDialog {
     @TextField
     @Property(name = "stringAttr", value = "Hello World")
     @Property(name = "numericAttr", value = "{Long}42")
-    String field1;
+    @Property(name = "element1/attr1", value = "Inside")
+    @Property(name = "../stringAttr", value = "Outside")
+String field1;
 }
 ```
 ##### Custom properties for in-place editing configurations

@@ -23,6 +23,7 @@ import com.exadel.aem.toolkit.test.widget.AlertWidget;
 import com.exadel.aem.toolkit.test.widget.ButtonWidget;
 import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
 import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
+import com.exadel.aem.toolkit.test.widget.FieldSetWidget;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
 import com.exadel.aem.toolkit.test.widget.HeadingWidget;
 import com.exadel.aem.toolkit.test.widget.HiddenWidget;
@@ -76,6 +77,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testDatePicker() {
         test(DatePickerWidget.class);
+    }
+
+    @Test
+    public void testFieldSet() {
+        test(FieldSetWidget.class);
     }
 
     @Test

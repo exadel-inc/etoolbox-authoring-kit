@@ -14,47 +14,58 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
-import java.util.List;
-
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
+import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "MultiField Widget Dialog",
+        title = "FieldSet Widget Dialog",
         layout = DialogLayout.FIXED_COLUMNS
 )
 @SuppressWarnings("unused")
-public class MultiFieldWidget {
+public class FieldSetWidget {
     @DialogField(
-            label="Multifield 1",
-            description = "Multifield definition with source class specified"
+            label="Fieldset 1",
+            description = "Fieldset definition with source class specified"
     )
-    @MultiField(field = MultiFieldContainer.class)
-    String multiField1;
+    @FieldSet(source = SampleFieldSet.class)
+    String fieldSet1;
 
     @DialogField(
-        label="Multifield 2",
-        description = "Multifield definition with implicit source class"
+        label="Fieldset 2",
+        description = "Fieldset definition with implicit source class"
     )
-    @MultiField
-    MultiFieldContainer multiField2;
+    @FieldSet(namePrefix = "second_")
+    SampleFieldSetDescendant fieldSet2;
 
-    @DialogField(
-        label="Multifield 3",
-        description = "Multifield definition with collection-typed source"
-    )
-    @MultiField
-    List<MultiFieldContainer> multiField3;
-
-    private static class MultiFieldContainer {
-        @DialogField
+    private static class SampleFieldSet {
+        @DialogField(
+            label = "Field 1 Label",
+            description = "Field 1 description"
+        )
         @TextField
-        String dialogItem;
+        String textField;
+
+        @DialogField(
+            label = "Field 2 Label",
+            description = "Field 2 description"
+        )
+        @Checkbox
+        String checkboxField;
+    }
+
+    private static class SampleFieldSetDescendant extends SampleFieldSet {
+        @DialogField(
+            label = "Field 3 Label",
+            description = "Field 3 description"
+        )
+        @TextField
+        String extraField;
     }
 }

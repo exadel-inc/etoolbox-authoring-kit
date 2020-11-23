@@ -30,6 +30,8 @@ import java.lang.annotation.Repeatable;
 public @interface Property {
     /**
      * Indicates the attribute name
+     * Relative path can be defined in such a way that the substring before the ultimate `/`
+     * represents path, and the substring after the ultimate `/` represents property name.
      * @return String value, non-blank
      */
     String name();

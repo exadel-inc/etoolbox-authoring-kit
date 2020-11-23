@@ -24,6 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
  * Used to set up
@@ -36,6 +37,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @PropertyMapping
 @SuppressWarnings("unused")
 public @interface FieldSet {
+
     /**
      * When set to a non-blank string, maps to the 'title' attribute of the current TouchUI dialog component.
      * Used to define title displayed above the FieldSet in TouchUI dialog
@@ -43,6 +45,7 @@ public @interface FieldSet {
      */
     @PropertyRendering(name = JcrConstants.PN_TITLE)
     String title() default "";
+
     /**
      * Used to define string prefix for names of all fields in the FieldSet
      * @return String value
@@ -56,4 +59,11 @@ public @interface FieldSet {
      */
     @IgnorePropertyMapping
     String namePostfix() default "";
+
+    /**
+     * When set, defines the source for the fields used to compose the current {@code FieldSet}. If skipped,
+     * the type of underlying {@code Field} is considered
+     * @return Valid class referenced, or the {@link _Default} pseudo-reference
+     */
+    Class<?> source() default _Default.class;
 }

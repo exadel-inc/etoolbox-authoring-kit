@@ -13,17 +13,34 @@
  */
 package com.exadel.aem.toolkit.core.util;
 
-import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.meta.Validator;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
-import com.exadel.aem.toolkit.api.handlers.*;
-import com.exadel.aem.toolkit.api.runtime.Injected;
-import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
-import com.exadel.aem.toolkit.core.SourceImpl;
-import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
+import java.io.File;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.MalformedParameterizedTypeException;
+import java.lang.reflect.Member;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,24 +49,21 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
-import java.io.File;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.meta.Validator;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
+import com.exadel.aem.toolkit.api.handlers.DialogHandler;
+import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.runtime.Injected;
+import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
+import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
 
 /**
- * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields are marked with
+ * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields
+ * are marked with
  */
 public class PluginReflectionUtility {
     private static final String PACKAGE_BASE_WILDCARD = ".*";
@@ -72,9 +86,10 @@ public class PluginReflectionUtility {
     /**
      * Used to initialize {@code PluginReflectionUtility} instance based on list of available classpath entries in the
      * scope of this Maven plugin
-     * @param elements List of classpath elements to be used in reflection routines
+     *
+     * @param elements    List of classpath elements to be used in reflection routines
      * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
-     *                      If not specified, all available components will be processed
+     *                    If not specified, all available components will be processed
      * @return {@link PluginReflectionUtility} instance
      */
     public static PluginReflectionUtility fromCodeScope(List<String> elements, String packageBase) {
@@ -184,6 +199,7 @@ public class PluginReflectionUtility {
     /**
      * Initializes as necessary and returns collection of {@code Validator}s defined within the Compile
      * scope of the AEM Authoring Toolkit Maven plugin
+     *
      * @return {@code List<Validator>} of instances
      */
     public Map<String, Validator> getValidators() {
@@ -201,6 +217,7 @@ public class PluginReflectionUtility {
      * Returns list of {@code @Dialog}-annotated classes within the Compile scope the plugin is operating in, to
      * determine which of the component folders to process.
      * If {@code componentsPath} is set for this instance, classes are tested to be under that path
+     *
      * @return {@code List<Class>} of instances
      */
     public List<Class<?>> getComponentClasses() {
@@ -212,6 +229,7 @@ public class PluginReflectionUtility {
     /**
      * Gets generic list of handler instances invoked from all available derivatives of specified handler {@code Class}.
      * Each is supplied with a reference to {@link PluginRuntimeContext} as required
+     *
      * @param handlerClass {@code Class} object
      * @param <T> Expected handler type
      * @return {@link List<T>} of instances
@@ -237,6 +255,7 @@ public class PluginReflectionUtility {
     /**
      * Creates new instance object of a handler {@code Class} and populates {@link RuntimeContext} instance to
      * every field annotated with {@link Injected}
+     *
      * @param handlerClass The handler class to instantiate
      * @param <T> Instance type
      * @return New handler instance
@@ -388,7 +407,6 @@ public class PluginReflectionUtility {
         Collections.reverse(result);
         return result;
     }
-
 
     /**
      * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set

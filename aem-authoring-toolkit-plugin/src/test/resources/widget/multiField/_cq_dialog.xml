@@ -15,10 +15,10 @@
             <column jcr:primaryType="nt:unstructured"
                     sling:resourceType="granite/ui/components/coral/foundation/container">
                 <items jcr:primaryType="nt:unstructured">
-                    <multiField jcr:primaryType="nt:unstructured"
+                    <multiField1 jcr:primaryType="nt:unstructured"
                                 sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
-                                fieldLabel="Multifield Label"
-                                fieldDescription="Multifield Description"
+                                fieldLabel="Multifield 1"
+                                fieldDescription="Multifield definition with source class specified"
                                 disabled="{Boolean}false"
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}false"
@@ -29,7 +29,37 @@
                                disabled="{Boolean}false"
                                renderHidden="{Boolean}false"
                                required="{Boolean}false"/>
-                    </multiField>
+                    </multiField1>
+                    <multiField2 jcr:primaryType="nt:unstructured"
+                                 sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                 fieldLabel="Multifield 2"
+                                 fieldDescription="Multifield definition with implicit source class"
+                                 disabled="{Boolean}false"
+                                 renderHidden="{Boolean}false"
+                                 required="{Boolean}false"
+                                 multifieldSpecial="This is added to Multifields">
+                        <field jcr:primaryType="nt:unstructured"
+                               sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                               name="./dialogItem"
+                               disabled="{Boolean}false"
+                               renderHidden="{Boolean}false"
+                               required="{Boolean}false"/>
+                    </multiField2>
+                    <multiField3 jcr:primaryType="nt:unstructured"
+                                 sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                 fieldLabel="Multifield 3"
+                                 fieldDescription="Multifield definition with collection-typed source"
+                                 disabled="{Boolean}false"
+                                 renderHidden="{Boolean}false"
+                                 required="{Boolean}false"
+                                 multifieldSpecial="This is added to Multifields">
+                        <field jcr:primaryType="nt:unstructured"
+                               sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                               name="./dialogItem"
+                               disabled="{Boolean}false"
+                               renderHidden="{Boolean}false"
+                               required="{Boolean}false"/>
+                    </multiField3>
                 </items>
             </column>
         </items>
