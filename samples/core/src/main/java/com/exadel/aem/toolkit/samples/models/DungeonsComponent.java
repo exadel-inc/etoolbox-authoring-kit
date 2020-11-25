@@ -66,7 +66,7 @@ public class DungeonsComponent extends ParentSelectComponent {
     @PlaceOn("Main")
     private String dungeonRules;
 
-    @AccordionWidget(title = LABEL_DUNGEON_SELECT, panels = {@AccordionPanel(title = LABEL_DUNGEON_SELECT)})
+    @AccordionWidget(name = LABEL_DUNGEON_SELECT, panels = {@AccordionPanel(title = LABEL_DUNGEON_SELECT)})
     @PlaceOn("Main")
     DungeonSelect dungeon;
 

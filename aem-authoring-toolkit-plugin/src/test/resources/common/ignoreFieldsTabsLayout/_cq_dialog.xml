@@ -20,7 +20,7 @@
                                     required="{Boolean}false"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
                             <tabsField jcr:primaryType="nt:unstructured"
-                                       title="innerTabs"
+                                       name="innerTabs"
                                        margin="{Boolean}false"
                                        maximized="{Boolean}false"
                                        variant="horizontal"
@@ -49,7 +49,7 @@
                                             <accordion jcr:primaryType="nt:unstructured"
                                                        margin="{Boolean}false"
                                                        multiple="{Boolean}false"
-                                                       title="Field 2 on the inner Tab"
+                                                       name="Field 2 on the inner Tab"
                                                        variant="default"
                                                        sling:resourceType="granite/ui/components/coral/foundation/accordion">
                                                 <items jcr:primaryType="nt:unstructured">

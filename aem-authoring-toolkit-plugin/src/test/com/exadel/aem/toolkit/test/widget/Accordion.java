@@ -76,7 +76,7 @@ public class Accordion {
     String buttonField;
 
     @AccordionWidget(
-            title = "Field",
+        name = "Field",
             panels = {@AccordionPanel(title = "Accordion Widget Panel 1", disabled = true)})
     @PlaceOn("Basic2")
     AccordionExample accordion;

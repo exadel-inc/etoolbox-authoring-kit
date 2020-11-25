@@ -31,11 +31,11 @@ import java.lang.annotation.Target;
 public @interface AccordionWidget {
 
     /**
-     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/<this_accordion>} node
+     * Name of current accordion widget
      *
      * @return String value, required
      */
-    String title();
+    String name();
 
     /**
      * For the tabbed TouchUI dialog layout, enumerates the accordion panels to be rendered

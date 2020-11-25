@@ -45,7 +45,7 @@ public class Tabs {
     String field1;
 
     @TabsWidget(
-            title = "innerTabs",
+        name = "innerTabs",
             tabs = {
                     @Tab(title = "First Inner"),
                     @Tab(title = "Second Inner")
@@ -60,7 +60,7 @@ public class Tabs {
         @PlaceOn("First Inner")
         String innerFieldInTab;
 
-        @AccordionWidget(title = "Field 2 on the inner Tab", panels = {@AccordionPanel(title = "First Panel")})
+        @AccordionWidget(name = "Field 2 on the inner Tab", panels = {@AccordionPanel(title = "First Panel")})
         @PlaceOn("Second Inner")
         AccordionExample accordion;
 

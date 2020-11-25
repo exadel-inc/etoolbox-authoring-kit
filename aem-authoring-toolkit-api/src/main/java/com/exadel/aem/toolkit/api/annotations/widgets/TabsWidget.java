@@ -36,10 +36,10 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 public @interface TabsWidget {
 
     /**
-     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs} node
+     * Name of current tabs widget
      * @return String value, required
      */
-    String title();
+    String name();
 
     /**
      * The orientation of the tabs.
