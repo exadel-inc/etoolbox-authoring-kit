@@ -13,13 +13,14 @@
  */
 package com.exadel.aem.toolkit.core.handlers.container;
 
+import org.w3c.dom.Element;
+
 import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.handlers.container.common.ContainerHandler;
-import org.w3c.dom.Element;
 
 /**
- * The {@link Handler} for a tabbed TouchUI dialog
+ * The {@link Handler} for a accordion-shaped TouchUI dialog
  */
 public class AccordionContainerHandler extends ContainerHandler {
 

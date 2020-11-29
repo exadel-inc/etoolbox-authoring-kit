@@ -27,7 +27,9 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 
-
+/**
+ * Used to set up tabs container widget inside dialog
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TABS)
@@ -84,7 +86,7 @@ public @interface TabsWidget {
     String trackingWidgetName() default "";
 
     /**
-     * For the tabbed TouchUI dialog layout, enumerates the tabs to be rendered
+     * Enumerates the tabs to be rendered within this container
      * @return One or more {@code Tab} annotations
      * @see Tab
      */

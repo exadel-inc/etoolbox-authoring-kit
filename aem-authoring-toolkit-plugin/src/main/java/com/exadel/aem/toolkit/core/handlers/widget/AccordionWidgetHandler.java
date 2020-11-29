@@ -13,11 +13,12 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
-import com.exadel.aem.toolkit.core.handlers.Handler;
+import java.lang.reflect.Field;
+
 import org.w3c.dom.Element;
 
-import java.lang.reflect.Field;
+import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
+import com.exadel.aem.toolkit.core.handlers.Handler;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite {@code Accordion} widget functionality
@@ -27,7 +28,6 @@ class AccordionWidgetHandler extends WidgetContainerHandler {
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     *
      * @param element Current XML element
      * @param field   Current {@code Field} instance
      */

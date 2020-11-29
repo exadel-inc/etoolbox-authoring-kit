@@ -17,40 +17,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Represents an aggregate of Tab or Accordion instance and a list of fields designed to be rendered within this tab.
- * Used to compose a sorted "tab registry" for a component class
+ * Represents an aggregate of Tab or Accordion instance and a list of fields designed to be rendered within this container element.
+ * Used to compose a sorted "container element registry" for a component class
  */
-public class TabContainerInstance {
+public class ContainerInfo {
     private String title;
     private Map<String, Object> attributes = new HashMap<>();
     private Map<String, Object> fields;
 
     /**
-     * Creates a new {@code TabContainerInstance} wrapped around a specified  with an empty list of associated fields
-     *
-     * @param tab Tab name
+     * Creates a new {@code ContainerInfo} wrapped around a specified  with an empty list of associated fields
+     * @param containerElement Container element name
      */
-    public TabContainerInstance(String tab) {
-        this.title = tab;
+    public ContainerInfo(String containerElement) {
+        this.title = containerElement;
         this.fields = new HashMap<>();
     }
 
     /**
-     * Creates a new {@code TabContainerInstance} wrapped around a specified  with a particular list of associated
-     * fields
-     *
-     * @param tab    tab name
-     * @param fields List of objects (fields) to associate with the current tab, stored in map
-     */
-    public TabContainerInstance(String tab, Map<String, Object> fields) {
-        this.title = tab;
-        this.fields = new HashMap<>(fields);
-    }
-
-    /**
-     * Get current tab name
-     *
-     * @return tab name
+     * Get current container element name
+     * @return container element name
      */
     public String getTitle() {
         return title;
@@ -58,7 +44,6 @@ public class TabContainerInstance {
 
     /**
      * Gets the stored list of fields
-     *
      * @return {@code Map<String, Object>} object
      */
     public Map<String, Object> getFields() {
@@ -70,30 +55,26 @@ public class TabContainerInstance {
     }
 
     /**
-     * Merges a foreign {@code TabContainerInstance} to the current instance, basically by adding other instance's fields
+     * Merges a foreign {@code ContainerInfo} to the current instance, basically by adding other instance's fields
      * while preserving the same  reference
-     *
-     * @param other Foreign {@code TabContainerInstance} object
+     * @param other Foreign {@code ContainerInfo} object
      * @return This instance
      */
-    TabContainerInstance merge(TabContainerInstance other) {
+    ContainerInfo merge(ContainerInfo other) {
         this.fields.putAll(other.getFields());
         return this;
     }
-
     /**
-     * Set attributes for current tab
-     */
-    public void setAttributes(Map<String, Object> attributes) {
-        this.attributes.putAll(attributes);
-    }
-
-    /**
-     * Get current tab attributes
-     *
+     * Get current container element attributes
      * @return attributes
      */
     public Map<String, Object> getAttributes() {
         return attributes;
+    }
+    /**
+     * Set attributes for current container element
+     */
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes.putAll(attributes);
     }
 }

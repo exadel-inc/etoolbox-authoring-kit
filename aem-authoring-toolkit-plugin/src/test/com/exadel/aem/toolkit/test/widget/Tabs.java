@@ -28,14 +28,14 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
-        name = DEFAULT_COMPONENT_NAME,
-        title = "Tabs Test Dialog",
-        layout = DialogLayout.TABS,
-        tabs = {
-                @Tab(title = "First tab"),
-                @Tab(title = "Second tab"),
-                @Tab(title = "Third tab")
-        }
+    name = DEFAULT_COMPONENT_NAME,
+    title = "Tabs Test Dialog",
+    layout = DialogLayout.TABS,
+    tabs = {
+        @Tab(title = "First tab"),
+        @Tab(title = "Second tab"),
+        @Tab(title = "Third tab")
+    }
 )
 @SuppressWarnings("unused")
 public class Tabs {
@@ -46,10 +46,10 @@ public class Tabs {
 
     @TabsWidget(
         name = "innerTabs",
-            tabs = {
-                    @Tab(title = "First Inner"),
-                    @Tab(title = "Second Inner")
-            })
+        tabs = {
+            @Tab(title = "First Inner"),
+            @Tab(title = "Second Inner")
+        })
     @PlaceOn("First tab")
     TabsExample tabsField;
 

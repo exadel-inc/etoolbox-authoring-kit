@@ -21,8 +21,8 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
@@ -150,8 +150,8 @@ public @interface Dialog {
 
     /**
      * Used to specify TouchUI dialog layout
-     * @see DialogLayout
      * @return One of the FIXED_COLUMNS and TABS values
+     * @see DialogLayout
      */
     @IgnorePropertyMapping
     DialogLayout layout() default DialogLayout.FIXED_COLUMNS;
@@ -166,15 +166,15 @@ public @interface Dialog {
 
     /**
      * For the tabbed TouchUI dialog layout, enumerates the tabs to be rendered
+     * @return Zero or more {@code Tab} annotations
      * @see Tab
-     * @return One or more {@code Tab} annotations
      */
     Tab[] tabs() default {};
 
     /**
      * For the tabbed TouchUI dialog layout, enumerates the panels to be rendered
+     * @return Zero or more {@code AccordionPanel} annotations
      * @see AccordionPanel
-     * @return One or more {@code Accordion} annotations
      */
     AccordionPanel[] panels() default {};
 }
