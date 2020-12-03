@@ -50,13 +50,13 @@ public @interface AccordionWidget {
     AccordionPanel[] panels();
 
     /**
-     * Sets whether multiple items can be opened at the same time.
+     * Sets whether multiple items can be opened at the same time
      * @return True or False
      */
     boolean multiple() default false;
 
     /**
-     * Determines the styling of this Accordion.
+     * Determines the styling of this Accordion
      * @return One of {@code AccordionVariant} values
      * @see AccordionVariant
      */
@@ -64,7 +64,7 @@ public @interface AccordionWidget {
     AccordionVariant variant() default AccordionVariant.DEFAULT;
 
     /**
-     * Put vertical margin to the root element.
+     * Put vertical margin to the root element
      * @return True or False
      */
     boolean margin() default false;

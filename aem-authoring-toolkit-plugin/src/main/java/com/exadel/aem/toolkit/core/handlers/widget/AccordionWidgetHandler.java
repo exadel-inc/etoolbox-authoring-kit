@@ -19,6 +19,7 @@ import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.core.handlers.container.common.WidgetContainerHandler;
 
 /**
  * {@link Handler} implementation used to create markup responsible for Granite {@code Accordion} widget functionality

@@ -16,11 +16,9 @@ package com.exadel.aem.toolkit.core.handlers.container.common;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,6 +30,8 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import com.google.common.collect.ImmutableMap;
 
@@ -55,6 +55,8 @@ import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 
 
 public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, Element> {
+    private static final Logger LOG = LoggerFactory.getLogger(ContainerHandler.class);
+
     public static final String ACCORDION = "accordion";
     private static final String TABS = "tabs";
     public static final String TAB = "tab";
@@ -85,9 +87,9 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
                 tab.getAttributes());
             Element parentConfig = PluginRuntime.context().getXmlUtility().createNodeElement(
                 "parentConfig");
-            List<String> skipedList = new ArrayList<>();
-            skipedList.add(TITLE);
-            PluginRuntime.context().getXmlUtility().mapProperties(parentConfig, accordionPanel, skipedList);
+            List<String> skippedList = new ArrayList<>();
+            skippedList.add(TITLE);
+            PluginRuntime.context().getXmlUtility().mapProperties(parentConfig, accordionPanel, skippedList);
             tabElement.appendChild(parentConfig);
         }
         tabCollectionElement.appendChild(tabElement);
@@ -95,8 +97,8 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
     }
     /**
      * Render XML markup for all existing tabs
-     * @param allTabInstances {@link Map<String, ContainerInfo >} Map where we store names of tabs as keys and all its fields as values
-     * @param allFields       {@link List<Field>} All *non-nested* fields from superclasses and the current class
+     * @param allTabInstances {@code Map<String, ContainerInfo >} Map where we store names of tabs as keys and all its fields as values
+     * @param allFields       {@code List<Field>} All *non-nested* fields from superclasses and the current class
      * @param ignoredTabs     {@link String[]} Array of ignored tabs for the current class
      * @param tabItemsElement {@link Element} instance representing a TouchUI dialog tab
      * @param defaultTabName  {@link String} name of current container tab
@@ -119,7 +121,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
                 storedCurrentTabFields.add((Field) currentTabInstance.getFields().get(key));
             }
             List<Field> moreCurrentTabFields = allFields.stream()
-                .filter(field1 -> isFieldForTab(field1, currentTabInstance.getTitle(), isFirstTab))
+                .filter(field -> isFieldForTab(field, currentTabInstance.getTitle(), isFirstTab))
                 .collect(Collectors.toList());
             boolean needResort = !storedCurrentTabFields.isEmpty() && !moreCurrentTabFields.isEmpty();
             storedCurrentTabFields.addAll(moreCurrentTabFields);
@@ -196,23 +198,6 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
     }
 
     /**
-     * Method returning all properties stored in annotation as a map.
-     * @param annotation {@link Annotation} instance to analyze
-     * @return {@link Map<String, Object>}
-     */
-    public static Map<String, Object> getAnnotationFields(Annotation annotation) {
-        try {
-            Object handler = Proxy.getInvocationHandler(annotation);
-            Field f = handler.getClass().getDeclaredField("memberValues");
-            f.setAccessible(true);
-            return (Map<String, Object>) f.get(handler);
-        } catch (Exception ignored) {
-            //ignored
-        }
-        return new HashMap<>();
-    }
-
-    /**
      * The predicate to match a {@code Field} against particular {@code Tab}
      * @param field        {@link Field} instance to analyze
      * @param tabTitle     String annotation to analyze
@@ -231,7 +216,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
 
     /**
      * Handle an InvalidTabException for fields for which a non-existent tab was specified
-     * @param allFields {@link List<Field>} all stored dialog fields
+     * @param allFields {@code List<Field>} all stored dialog fields
      */
     public static void handleInvalidTabException(List<Field> allFields) {
         for (Field field : allFields) {
@@ -255,44 +240,57 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
     private Map<String, ContainerInfo> getTabInstances(List<Class<?>> classes, Class<? extends Annotation> annotation, String containerName) {
         Map<String, ContainerInfo> result = new LinkedHashMap<>();
         Map<String, Object> annotationMap;
-        for (Class<?> cls : classes) {
-            List<Class<?>> tabClasses = Arrays.stream(cls.getDeclaredClasses())
-                .filter(nestedCls -> nestedCls.isAnnotationPresent(annotation))
-                .collect(Collectors.toList());
-            Collections.reverse(tabClasses);
-            for (Class<?> tabClass : tabClasses) {
-                Annotation annotation2 = tabClass.getDeclaredAnnotation(annotation);
-                annotationMap = getAnnotationFields(annotation2);
-                ContainerInfo containerInfo = new ContainerInfo(annotationMap.get(TITLE).toString());
-                containerInfo.setAttributes(annotationMap);
-                Arrays.stream(tabClass.getDeclaredFields()).forEach(field -> containerInfo.setFields(field.getName(), field));
-                result.put(annotationMap.get(TITLE).toString(), containerInfo);
-            }
-            if (cls.isAnnotationPresent(Dialog.class)) {
-                if (containerName.equals(TABS)) {
-                    Arrays.stream(cls.getAnnotation(Dialog.class).tabs())
-                        .forEach(tab -> {
-                            ContainerInfo containerInfo = new ContainerInfo(tab.title());
-                            containerInfo.setAttributes(getAnnotationFields(tab));
-                            result.put(tab.title(), containerInfo);
-                        });
-                } else {
-                    Arrays.stream(cls.getAnnotation(Dialog.class).panels())
-                        .forEach(tab -> {
-                            ContainerInfo containerInfo = new ContainerInfo(tab.title());
-                            containerInfo.setAttributes(getAnnotationFields(tab));
-                            result.put(tab.title(), containerInfo);
-                        });
+        try {
+            for (Class<?> cls : classes) {
+                List<Class<?>> tabClasses = Arrays.stream(cls.getDeclaredClasses())
+                    .filter(nestedCls -> nestedCls.isAnnotationPresent(annotation))
+                    .collect(Collectors.toList());
+                Collections.reverse(tabClasses);
+                for (Class<?> tabClass : tabClasses) {
+                    Annotation annotation2 = tabClass.getDeclaredAnnotation(annotation);
+                    annotationMap = PluginObjectUtility.getAnnotationFields(annotation2);
+                    ContainerInfo containerInfo = new ContainerInfo(annotationMap.get(TITLE).toString());
+                    containerInfo.setAttributes(annotationMap);
+                    Arrays.stream(tabClass.getDeclaredFields()).forEach(field -> containerInfo.setFields(field.getName(), field));
+                    result.put(annotationMap.get(TITLE).toString(), containerInfo);
+                }
+                if (cls.isAnnotationPresent(Dialog.class)) {
+                    if (containerName.equals(TABS)) {
+                        Arrays.stream(cls.getAnnotation(Dialog.class).tabs())
+                            .forEach(tab -> {
+                                ContainerInfo containerInfo = new ContainerInfo(tab.title());
+                                try {
+                                    containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(tab));
+                                    result.put(tab.title(), containerInfo);
+                                } catch (IllegalAccessException | NoSuchFieldException exception) {
+                                    LOG.error(exception.getMessage());
+                                }
+
+                            });
+                    } else {
+                        Arrays.stream(cls.getAnnotation(Dialog.class).panels())
+                            .forEach(tab -> {
+                                ContainerInfo containerInfo = new ContainerInfo(tab.title());
+                                try {
+                                    containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(tab));
+                                    result.put(tab.title(), containerInfo);
+                                } catch (IllegalAccessException | NoSuchFieldException exception) {
+                                    LOG.error(exception.getMessage());
+                                }
+                            });
+                    }
                 }
             }
+        } catch (IllegalAccessException | NoSuchFieldException exception) {
+            LOG.error(exception.getMessage());
         }
         return result;
     }
     /**
      * Compose the "overall" registry of tabs
-     * @param tabInstancesFromCurrentClass {@link Map<String, ContainerInfo >} Map where names of tabs
+     * @param tabInstancesFromCurrentClass {@code Map<String, ContainerInfo >} Map where names of tabs
      *                                     from current class are stored as keys and all its fields as values
-     * @param tabInstancesFromSuperClasses {@link Map<String, ContainerInfo >} Map where names of tabs
+     * @param tabInstancesFromSuperClasses {@code Map<String, ContainerInfo >} Map where names of tabs
      *                                     from super classes are stored as keys and all their fields as values
      * @return {@code Map<String,TabContainerInstance>} map containing all tabs
      */

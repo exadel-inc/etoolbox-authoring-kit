@@ -19,7 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * In multi-tab TouchUI Dialog setup, used to specify on which tab or accordion panel a dialog field is placed
+ * In multi-tab or multi-panel TouchUI Dialog setup, used to specify on which tab or accordion panel a dialog field is placed
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

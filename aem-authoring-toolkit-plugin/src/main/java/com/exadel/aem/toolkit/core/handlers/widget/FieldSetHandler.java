@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.IgnoreField;
 import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.core.handlers.container.common.WidgetContainerHandler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
@@ -34,41 +35,41 @@ import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
  * {@link Handler} implementation used to create markup responsible for Granite {@code FieldSet} widget functionality
  * within the {@code cq:dialog} XML node
  */
-class FieldSetHandler implements WidgetHandlerUtils, Handler, BiConsumer<Element, Field> {
+class FieldSetHandler implements Handler, BiConsumer<Element, Field> {
     private static final String EMPTY_FIELDSET_EXCEPTION_MESSAGE = "No valid fields found in fieldset class ";
 
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * @param field   Current {@code Field} instance
      */
     @Override
     @SuppressWarnings({"deprecation", "squid:S1874"})
     // the processing of deprecated "IgnoreField" annotation remains for compatibility reasons until v.2.0.0
     public void accept(Element element, Field field) {
         // Define the working @FieldSet annotation instance and the fieldset type
-        Class<?> fieldSetType = WidgetHandlerUtils.getManagedClass(field);
+        Class<?> fieldSetType = WidgetContainerHandler.getManagedClass(field);
         FieldSet fieldSet = field.getDeclaredAnnotation(FieldSet.class);
 
         // Get the filtered fields collection for the current container; early return if collection is empty
-        List<Field> fields = WidgetHandlerUtils.getContainerFields(element, field, fieldSetType);
+        List<Field> fields = WidgetContainerHandler.getContainerFields(element, field, fieldSetType);
 
         // COMPATIBILITY: retrieve and process list of fields marked with a legacy "IgnoreField" annotation
         // to be removed after v.2.0.0
         List<Field> legacyIgnoredFields = PluginReflectionUtility.getAllFields(
-                fieldSetType,
-                Collections.singletonList(f -> f.isAnnotationPresent(IgnoreField.class)));
+            fieldSetType,
+            Collections.singletonList(f -> f.isAnnotationPresent(IgnoreField.class)));
         if (!legacyIgnoredFields.isEmpty()) {
             fields = fields.stream()
-                    .filter(f -> legacyIgnoredFields.stream()
-                            .anyMatch(ignoredField -> !f.getName().equals(ignoredField.getName())))
-                    .collect(Collectors.toList());
+                .filter(f -> legacyIgnoredFields.stream()
+                    .anyMatch(ignoredField -> !f.getName().equals(ignoredField.getName())))
+                .collect(Collectors.toList());
         }
         // end of compatibility block
 
-        if(fields.isEmpty()) {
+        if (fields.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
-                    EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName()
+                EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName()
             ));
             return;
         }

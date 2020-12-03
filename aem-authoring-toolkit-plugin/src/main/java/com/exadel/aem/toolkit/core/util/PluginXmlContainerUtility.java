@@ -55,7 +55,7 @@ public class PluginXmlContainerUtility {
         container.appendChild(itemsElement);
 
         for (Field field : fields) {
-            DialogWidget widget = DialogWidgets.fromField(field); //here
+            DialogWidget widget = DialogWidgets.fromField(field);
             if (widget == null) {
                 continue;
             }

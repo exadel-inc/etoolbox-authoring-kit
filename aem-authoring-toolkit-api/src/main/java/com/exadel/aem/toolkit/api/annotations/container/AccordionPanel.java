@@ -41,15 +41,15 @@ public @interface AccordionPanel {
     String title();
 
     /**
-     * True to disable the item; false otherwise.
-     * Please use only inside @Dialog annotation
+     * True to disable the item; false otherwise
+     * This will take effect only for an AccordionPanel specified inside a @Dialog annotation
      * @return True or false
      */
     boolean disabled() default false;
 
     /**
-     * True to open the item initially; false otherwise.
-     * Please use only inside @Dialog annotation
+     * True to open the item initially; false otherwise
+     * This will take effect only for an AccordionPanel specified inside a @Dialog annotation
      * @return True or false
      */
     boolean active() default false;

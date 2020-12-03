@@ -13,8 +13,6 @@
  */
 package com.exadel.aem.toolkit.api.annotations.container.enums;
 
-import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
-
 /**
  * Contains possible values of {@link com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget#variant()} property
  */

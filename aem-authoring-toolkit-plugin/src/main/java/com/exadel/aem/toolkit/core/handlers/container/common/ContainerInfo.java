@@ -21,9 +21,9 @@ import java.util.Map;
  * Used to compose a sorted "container element registry" for a component class
  */
 public class ContainerInfo {
-    private String title;
-    private Map<String, Object> attributes = new HashMap<>();
-    private Map<String, Object> fields;
+    private final String title;
+    private final Map<String, Object> attributes;
+    private final Map<String, Object> fields;
 
     /**
      * Creates a new {@code ContainerInfo} wrapped around a specified  with an empty list of associated fields
@@ -32,6 +32,7 @@ public class ContainerInfo {
     public ContainerInfo(String containerElement) {
         this.title = containerElement;
         this.fields = new HashMap<>();
+        this.attributes = new HashMap<>();
     }
 
     /**

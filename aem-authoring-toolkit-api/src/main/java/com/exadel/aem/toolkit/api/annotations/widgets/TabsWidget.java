@@ -44,7 +44,7 @@ public @interface TabsWidget {
     String name();
 
     /**
-     * The orientation of the tabs.
+     * The orientation of the tabs
      * @return One of {@code TabsOrientation} values
      * @see TabsOrientation
      */
@@ -52,7 +52,7 @@ public @interface TabsWidget {
     TabsOrientation variant() default TabsOrientation.HORIZONTAL;
 
     /**
-     * The size of the tabs.
+     * The size of the tabs
      * @return One of {@code TabsSize} values
      * @see TabsSize
      */
@@ -60,26 +60,26 @@ public @interface TabsWidget {
     TabsSize size() default TabsSize.M;
 
     /**
-     * Put vertical margin to the root element.
+     * Put vertical margin to the root element
      * @return True or false
      */
     boolean margin() default false;
 
     /**
-     * Make the element maximized to fill the available space.
+     * Make the element maximized to fill the available space
      * @return True or false
      */
     boolean maximized() default false;
 
     /**
-     * The name of the feature that the interaction takes place.
+     * The name of the feature that the interaction takes place
      * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">
      * @return String value
      */
     String trackingFeature() default "";
 
     /**
-     * The name of the widget.
+     * The name of the widget
      * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">
      * @return String value
      */

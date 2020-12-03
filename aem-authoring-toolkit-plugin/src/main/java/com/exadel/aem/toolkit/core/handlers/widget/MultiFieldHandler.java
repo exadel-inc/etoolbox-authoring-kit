@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableMap;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.core.handlers.container.common.WidgetContainerHandler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
@@ -32,34 +33,34 @@ import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
  * {@link Handler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
  * within the {@code cq:dialog} XML node
  */
-public class MultiFieldHandler implements WidgetHandlerUtils, Handler, BiConsumer<Element, Field> {
+public class MultiFieldHandler implements Handler, BiConsumer<Element, Field> {
     private static final String EMPTY_MULTIFIELD_EXCEPTION_MESSAGE = "No valid fields found in multifield class ";
 
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * @param field   Current {@code Field} instance
      */
     @Override
     public void accept(Element element, Field field) {
         // Define the working @Multifield annotation instance and the multifield type
-        Class<?> multifieldType = WidgetHandlerUtils.getManagedClass(field);
+        Class<?> multifieldType = WidgetContainerHandler.getManagedClass(field);
 
         // Modify the element's attributes for multifield mode
         String name = element.getAttribute(DialogConstants.PN_NAME);
         element.removeAttribute(DialogConstants.PN_NAME);
 
         // Get the filtered fields collection for the current container; early return if collection is empty
-        List<Field> fields = WidgetHandlerUtils.getContainerFields(element, field, multifieldType);
+        List<Field> fields = WidgetContainerHandler.getContainerFields(element, field, multifieldType);
         if (fields.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
-                    EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + multifieldType.getName()
+                EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + multifieldType.getName()
             ));
             return;
         }
 
         // Render separately the multiple-field and the single-field modes of multifield
-        if (fields.size() > 1){
+        if (fields.size() > 1) {
             render(element, name, fields);
         } else {
             render(element, fields.get(0));
@@ -69,17 +70,17 @@ public class MultiFieldHandler implements WidgetHandlerUtils, Handler, BiConsume
     /**
      * Renders multiple widgets as XML nodes within the current multifield container
      * @param element Current XML element
-     * @param name The element's {@code name} attribute
-     * @param fields The collection of {@code Field} instances to render TouchUI widgets from
+     * @param name    The element's {@code name} attribute
+     * @param fields  The collection of {@code Field} instances to render TouchUI widgets from
      */
     private void render(Element element, String name, List<Field> fields) {
         getXmlUtil().setAttribute(element, DialogConstants.PN_COMPOSITE, true);
         Element multifieldContainerElement = PluginRuntime.context().getXmlUtility().createNodeElement(
-                DialogConstants.NN_FIELD,
-                ImmutableMap.of(
-                        DialogConstants.PN_NAME, name,
-                        JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
-                ));
+            DialogConstants.NN_FIELD,
+            ImmutableMap.of(
+                DialogConstants.PN_NAME, name,
+                JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
+            ));
         element.appendChild(multifieldContainerElement);
 
         // In case there are multiple fields in multifield container, their "name" values must not be preceded
@@ -88,8 +89,8 @@ public class MultiFieldHandler implements WidgetHandlerUtils, Handler, BiConsume
         // That is why we must alter the default name prefix for the ongoing set of fields
         String previousNamePrefix = getXmlUtil().getNamePrefix();
         getXmlUtil().setNamePrefix(previousNamePrefix.startsWith(DialogConstants.RELATIVE_PATH_PREFIX)
-                ? previousNamePrefix.substring(2)
-                : previousNamePrefix);
+            ? previousNamePrefix.substring(2)
+            : previousNamePrefix);
 
         PluginXmlContainerUtility.append(multifieldContainerElement, fields);
 
@@ -100,7 +101,7 @@ public class MultiFieldHandler implements WidgetHandlerUtils, Handler, BiConsume
     /**
      * Renders a single widget within the current multifield container
      * @param element Current XML element
-     * @param field The {@code Field} instance to render TouchUI widget from
+     * @param field   The {@code Field} instance to render TouchUI widget from
      */
     private void render(Element element, Field field) {
         DialogWidget widget = DialogWidgets.fromField(field);
