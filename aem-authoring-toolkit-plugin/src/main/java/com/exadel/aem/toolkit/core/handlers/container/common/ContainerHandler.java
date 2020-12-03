@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.core.handlers.container.common;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -262,7 +263,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
                                 try {
                                     containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(tab));
                                     result.put(tab.title(), containerInfo);
-                                } catch (IllegalAccessException | NoSuchFieldException exception) {
+                                } catch (IllegalAccessException | InvocationTargetException exception) {
                                     LOG.error(exception.getMessage());
                                 }
 
@@ -274,14 +275,14 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
                                 try {
                                     containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(tab));
                                     result.put(tab.title(), containerInfo);
-                                } catch (IllegalAccessException | NoSuchFieldException exception) {
+                                } catch (IllegalAccessException | InvocationTargetException exception) {
                                     LOG.error(exception.getMessage());
                                 }
                             });
                     }
                 }
             }
-        } catch (IllegalAccessException | NoSuchFieldException exception) {
+        } catch (IllegalAccessException | InvocationTargetException exception) {
             LOG.error(exception.getMessage());
         }
         return result;

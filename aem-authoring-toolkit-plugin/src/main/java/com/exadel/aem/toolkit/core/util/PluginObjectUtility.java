@@ -15,7 +15,6 @@
 package com.exadel.aem.toolkit.core.util;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -107,11 +106,13 @@ public class PluginObjectUtility {
     }
 
 
-    public static Map<String, Object> getAnnotationFields(Annotation annotation) throws NoSuchFieldException, IllegalAccessException {
-        Object handler = Proxy.getInvocationHandler(annotation);
-        Field f = handler.getClass().getDeclaredField("memberValues");
-        f.setAccessible(true);
-        return (Map<String, Object>) f.get(handler);
+    public static Map<String, Object> getAnnotationFields(Annotation annotation) throws IllegalAccessException, InvocationTargetException {
+        Map<String, Object> result = new HashMap<>();
+        for (Method method : annotation.annotationType().getDeclaredMethods()) {
+            Object value = method.invoke(annotation, (Object[]) null);
+            result.put(method.getName(), value);
+        }
+        return result;
     }
 
 

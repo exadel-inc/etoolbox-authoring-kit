@@ -2,6 +2,7 @@ package com.exadel.aem.toolkit.core.handlers.container.common;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -98,7 +99,7 @@ public abstract class WidgetContainerHandler implements Handler, BiConsumer<Elem
                     try {
                         containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(tab));
                         tabInstancesFromCurrentClass.put(tab.title(), containerInfo);
-                    } catch (IllegalAccessException | NoSuchFieldException exception) {
+                    } catch (IllegalAccessException | InvocationTargetException exception) {
                         LOG.error(exception.getMessage());
                     }
                 });
@@ -109,7 +110,7 @@ public abstract class WidgetContainerHandler implements Handler, BiConsumer<Elem
                     try {
                         containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(tab));
                         tabInstancesFromCurrentClass.put(tab.title(), containerInfo);
-                    } catch (IllegalAccessException | NoSuchFieldException exception) {
+                    } catch (IllegalAccessException | InvocationTargetException exception) {
                         LOG.error(exception.getMessage());
                     }
                 });
