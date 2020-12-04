@@ -31,6 +31,7 @@ public class DialogConstants {
     public static final String ATTRIBUTE_PREFIX = "@";
     public static final String PARENT_PATH_INDICATOR = "..";
 
+    public static final String NN_ACCORDION = "accordion";
     public static final String NN_ALLOW_BASICS = "allowBasics";
     public static final String NN_CHARS = "chars";
     public static final String NN_CHILD_EDITORS = "cq:childEditors";
@@ -63,6 +64,7 @@ public class DialogConstants {
     public static final String NN_MISCTOOLS = "misctools";
     public static final String NN_OPTIONS = "options";
     public static final String NN_PARAFORMAT = "paraformat";
+    public static final String NN_PARENT_CONFIG = "parentConfig";
     public static final String NN_POPOVERS = "popovers";
     public static final String NN_ROOT = "jcr:root";
     public static final String NN_RTE_PLUGINS = "rtePlugins";
@@ -70,7 +72,7 @@ public class DialogConstants {
     public static final String NN_STYLES = "styles";
     public static final String NN_SUBLIST = "sublist";
     public static final String NN_TABS = "tabs";
-    public static final String NN_ACCORDION = "accordion";
+    public static final String NN_TAB = "tab";
     public static final String NN_TABLE = "table";
     public static final String NN_TABLE_EDIT_OPTIONS = "tableEditOptions";
     public static final String NN_TARGET_CONFIG = "targetConfig";

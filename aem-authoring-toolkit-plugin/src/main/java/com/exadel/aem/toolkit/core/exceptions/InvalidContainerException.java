@@ -14,19 +14,25 @@
 
 package com.exadel.aem.toolkit.core.exceptions;
 
+import com.exadel.aem.toolkit.core.util.DialogConstants;
+
 /**
  * Represents the plugin-specific exception thrown when there is no possibility to operate a particular tab
  * (the tab with such name does not exists, or there are no tabs in the current setup)
  */
-public class InvalidTabException extends RuntimeException {
+public class InvalidContainerException extends RuntimeException {
     private static final String TABS_NOT_DEFINED_MESSAGE = "No tabs defined for the current component";
     private static final String TAB_NOT_DEFINED_MESSAGE_TEMPLATE = "Tab \"%s\" is not defined";
+    private static final String ACCORDION_PANEL_NOT_DEFINED_MESSAGE_TEMPLATE = "Accordion Panel \"%s\" is not defined";
 
-    public InvalidTabException() {
+    public InvalidContainerException() {
         super(TABS_NOT_DEFINED_MESSAGE);
     }
 
-    public InvalidTabException(String tabTitle) {
-        super(String.format(TAB_NOT_DEFINED_MESSAGE_TEMPLATE, tabTitle));
+    public InvalidContainerException(String tabTitle, String containerName) {
+        super(containerName.equals(DialogConstants.NN_TABS) ?
+            String.format(TAB_NOT_DEFINED_MESSAGE_TEMPLATE, tabTitle) :
+            String.format(ACCORDION_PANEL_NOT_DEFINED_MESSAGE_TEMPLATE, tabTitle));
+
     }
 }

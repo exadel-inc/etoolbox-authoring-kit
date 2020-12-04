@@ -27,10 +27,10 @@ public class ContainerInfo {
 
     /**
      * Creates a new {@code ContainerInfo} wrapped around a specified  with an empty list of associated fields
-     * @param containerElement Container element name
+     * @param containerElementTitle Container element name
      */
-    public ContainerInfo(String containerElement) {
-        this.title = containerElement;
+    ContainerInfo(String containerElementTitle) {
+        this.title = containerElementTitle;
         this.fields = new HashMap<>();
         this.attributes = new HashMap<>();
     }
@@ -51,7 +51,7 @@ public class ContainerInfo {
         return fields;
     }
 
-    void setFields(String name, Object value) {
+    void setField(String name, Object value) {
         this.fields.put(name, value);
     }
 

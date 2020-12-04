@@ -83,40 +83,42 @@ public abstract class WidgetContainerHandler implements Handler, BiConsumer<Elem
     }
 
     /**
-     * Get all tabs from current class
-     * @param annotation {@code Class <? extends Annotation>} searching annotation
-     * @param field      Current {@code Field} instance
+     * Get all container item instances from current class
+     * @param annotationClass {@code Class <? extends Annotation>} searching annotationClass
+     * @param field           Current {@code Field} instance
      */
-    private Map<String, ContainerInfo> getInstancesFromCurrentClass(Class<? extends Annotation> annotation, Field field) {
-        Map<String, ContainerInfo> tabInstancesFromCurrentClass = new LinkedHashMap<>();
-        if (!field.isAnnotationPresent(annotation)) {
-            return tabInstancesFromCurrentClass;
+    private Map<String, ContainerInfo> getInstancesFromCurrentClass(Class<? extends Annotation> annotationClass, Field field) {
+        Map<String, ContainerInfo> containerItemInstancesFromCurrentClass = new LinkedHashMap<>();
+        if (!field.isAnnotationPresent(annotationClass)) {
+            return containerItemInstancesFromCurrentClass;
         }
-        if (annotation.equals(TabsWidget.class)) {
+        if (annotationClass.equals(TabsWidget.class)) {
             Arrays.stream(field.getAnnotation(TabsWidget.class).tabs())
                 .forEach(tab -> {
                     ContainerInfo containerInfo = new ContainerInfo(tab.title());
                     try {
                         containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(tab));
-                        tabInstancesFromCurrentClass.put(tab.title(), containerInfo);
+                        containerItemInstancesFromCurrentClass.put(tab.title(), containerInfo);
                     } catch (IllegalAccessException | InvocationTargetException exception) {
                         LOG.error(exception.getMessage());
                     }
                 });
-        } else if (annotation.equals(AccordionWidget.class)) {
+        } else if (annotationClass.equals(AccordionWidget.class)) {
             Arrays.stream(field.getAnnotation(AccordionWidget.class).panels())
-                .forEach(tab -> {
-                    ContainerInfo containerInfo = new ContainerInfo(tab.title());
+                .forEach(accordionPanel -> {
+                    ContainerInfo containerInfo = new ContainerInfo(accordionPanel.title());
                     try {
-                        containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(tab));
-                        tabInstancesFromCurrentClass.put(tab.title(), containerInfo);
+                        containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(accordionPanel));
+                        containerItemInstancesFromCurrentClass.put(accordionPanel.title(), containerInfo);
                     } catch (IllegalAccessException | InvocationTargetException exception) {
                         LOG.error(exception.getMessage());
                     }
                 });
         }
-        return tabInstancesFromCurrentClass;
+        return containerItemInstancesFromCurrentClass;
     }
+
+
     public static Class<?> getManagedClass(Field field) {
         // Extract underlying field's type as is
         Class<?> result = field.getType().isArray() ? field.getType().getComponentType() : field.getType();
@@ -134,27 +136,35 @@ public abstract class WidgetContainerHandler implements Handler, BiConsumer<Elem
         }
         return result;
     }
-    public void acceptParent(Element element, Class<? extends Annotation> containerClass, Field field) {
-        String defaultTabName = containerClass.equals(TabsWidget.class) ? ContainerHandler.TAB : ContainerHandler.ACCORDION;
-        String exceptionMessage = containerClass.equals(TabsWidget.class) ? ContainerHandler.TABS_EXCEPTION : ContainerHandler.ACCORDION_EXCEPTON;
-        Element tabItemsElement = (Element) element
+
+    /**
+     * Processes the user-defined data and writes it to XML entity
+     * @param element         Current XML element
+     * @param annotationClass class of container
+     * @param field           Current {@code Field} instance
+     */
+    protected void acceptParent(Element element, Class<? extends Annotation> annotationClass, Field field) {
+        String defaultContainerItemName = annotationClass.equals(TabsWidget.class) ? DialogConstants.NN_TAB : DialogConstants.NN_ACCORDION;
+        String containerName = annotationClass.equals(TabsWidget.class) ? DialogConstants.NN_TABS : DialogConstants.NN_ACCORDION;
+        String exceptionMessage = annotationClass.equals(TabsWidget.class) ? ContainerHandler.TABS_EXCEPTION : ContainerHandler.ACCORDION_EXCEPTION;
+        Element containerTabItemsElement = (Element) element
             .appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
 
-        Map<String, ContainerInfo> tabInstancesFromCurrentClass = getInstancesFromCurrentClass(containerClass, field);
+        Map<String, ContainerInfo> containerItemInstancesFromCurrentClass = getInstancesFromCurrentClass(annotationClass, field);
 
-        Class<?> tabsType = field.getType();
-        List<Field> allFields = getContainerFields(element, field, tabsType);
+        Class<?> containerType = field.getType();
+        List<Field> allFields = getContainerFields(element, field, containerType);
 
-        if (tabInstancesFromCurrentClass.isEmpty() && !allFields.isEmpty()) {
+        if (containerItemInstancesFromCurrentClass.isEmpty() && !allFields.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
-                exceptionMessage + tabsType.getName()
+                exceptionMessage + containerType.getName()
             ));
-            if (containerClass.equals(TabsWidget.class)) {
-                tabInstancesFromCurrentClass.put(StringUtils.EMPTY, new ContainerInfo("newTab"));
+            if (annotationClass.equals(TabsWidget.class)) {
+                containerItemInstancesFromCurrentClass.put(StringUtils.EMPTY, new ContainerInfo("Untitled"));
             }
         }
 
-        ContainerHandler.addTabs(tabInstancesFromCurrentClass, allFields, ArrayUtils.EMPTY_STRING_ARRAY, tabItemsElement, defaultTabName);
-        ContainerHandler.handleInvalidTabException(allFields);
+        ContainerHandler.addContainerElements(containerItemInstancesFromCurrentClass, allFields, ArrayUtils.EMPTY_STRING_ARRAY, containerTabItemsElement, defaultContainerItemName);
+        ContainerHandler.handleInvalidContainerItemException(allFields, containerName);
     }
 }

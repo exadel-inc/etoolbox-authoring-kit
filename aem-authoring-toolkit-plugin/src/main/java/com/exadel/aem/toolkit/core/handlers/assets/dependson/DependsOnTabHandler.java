@@ -24,7 +24,7 @@ import com.google.common.collect.ImmutableMap;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTabConfig;
-import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
+import com.exadel.aem.toolkit.core.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
@@ -37,7 +37,7 @@ public class DependsOnTabHandler implements Handler, BiConsumer<Element, Class<?
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param element Current XML element
+     * @param element     Current XML element
      * @param dialogClass {@code Class} object representing the tab-defining class
      */
     @Override
@@ -53,16 +53,16 @@ public class DependsOnTabHandler implements Handler, BiConsumer<Element, Class<?
      * Called by {@link DependsOnTabHandler#accept(Element, Class)} to store particular {@code DependsOnTab} value
      * in XML markup
      * @param element Current XML element
-     * @param value Current {@link DependsOnTab} value
+     * @param value   Current {@link DependsOnTab} value
      */
     private void handleDependsOnTab(Element element, DependsOnTab value) {
         Element tabItemsNode = getXmlUtil().getChildElement(element, String.join(DialogConstants.PATH_SEPARATOR,
-                DialogConstants.NN_CONTENT,
-                DialogConstants.NN_ITEMS,
-                DialogConstants.NN_TABS,
-                DialogConstants.NN_ITEMS));
+            DialogConstants.NN_CONTENT,
+            DialogConstants.NN_ITEMS,
+            DialogConstants.NN_TABS,
+            DialogConstants.NN_ITEMS));
         if (tabItemsNode == null) {
-            PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException());
+            PluginRuntime.context().getExceptionHandler().handle(new InvalidContainerException());
             return;
         } else if (StringUtils.isAnyBlank(value.tabTitle(), value.query())) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(DependsOnHandler.EMPTY_VALUES_EXCEPTION_MESSAGE));
@@ -71,12 +71,12 @@ public class DependsOnTabHandler implements Handler, BiConsumer<Element, Class<?
         Element targetTab = getXmlUtil().getChildElement(tabItemsNode, getXmlUtil().getValidName(value.tabTitle()));
         if (targetTab != null) {
             getXmlUtil().appendDataAttributes(targetTab, ImmutableMap.of(
-                    DialogConstants.PN_DEPENDS_ON, value.query(),
-                    DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
+                DialogConstants.PN_DEPENDS_ON, value.query(),
+                DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
             ));
         } else {
             PluginRuntime.context().getExceptionHandler()
-                    .handle(new InvalidTabException(value.tabTitle()));
+                .handle(new InvalidContainerException(value.tabTitle(), DialogConstants.NN_TABS));
         }
     }
 
@@ -84,7 +84,7 @@ public class DependsOnTabHandler implements Handler, BiConsumer<Element, Class<?
      * Called by {@link DependsOnTabHandler#accept(Element, Class)} to store particular {@code DependsOnTab} value
      * in XML markup
      * @param element Current XML element
-     * @param value Current {@link DependsOnTabConfig} value
+     * @param value   Current {@link DependsOnTabConfig} value
      */
     private void handleDependsOnTabConfig(Element element, DependsOnTabConfig value) {
         Arrays.stream(value.value()).forEach(val -> handleDependsOnTab(element, val));

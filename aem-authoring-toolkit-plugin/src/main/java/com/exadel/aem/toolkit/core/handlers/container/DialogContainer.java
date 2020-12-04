@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.core.util.writer.PackageWriter;
 
 /**
- * Represents dialog XML markup builder for either fixed-columns or tabbed TouchUI dialog. Typically applied to by
+ * Represents dialog XML markup builder for either fixed-columns, tabbed or accordion-shaped TouchUI dialog. Typically applied to by
  * the implementation of {@code ContentXmlWriter} to populate markup elements produced by the set of component class
  * fields to the overall dialog markup
  */
@@ -50,7 +50,7 @@ public enum DialogContainer {
     /**
      * Returns the {@code DialogContainer} instance for the particular layout
      * @param layout {@link DialogLayout} to match this container
-     * @return {@code DialogContainer} for either fixed-columns or tabbed layout
+     * @return {@code DialogContainer} for either fixed-columns, tabbed or accordion-shaped layout
      */
     public static DialogContainer getContainer(DialogLayout layout){
         return EnumUtils.getEnumMap(DialogContainer.class).get(layout.name());
