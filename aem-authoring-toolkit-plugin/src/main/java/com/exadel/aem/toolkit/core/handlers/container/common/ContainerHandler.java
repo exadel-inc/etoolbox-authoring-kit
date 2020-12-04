@@ -148,7 +148,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
 
     /**
      * Handle an InvalidContainerException for fields for which a non-existent tab or accordion panel was specified
-     * @param allFields {@code List<Field>} all stored dialog fields
+     * @param allFields     {@code List<Field>} all stored dialog fields
      * @param containerName {@link String} name of current container
      */
     static void handleInvalidContainerItemException(List<Field> allFields, String containerName) {
@@ -179,6 +179,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
         }
         return containerItemTitle.equalsIgnoreCase(field.getAnnotation(PlaceOnTab.class).value());
     }
+
     /**
      * Compose the "overall" registry of container items
      * @param containerItemInstancesFromCurrentClass {@code Map<String, ContainerInfo >} Map where names of container items
@@ -209,6 +210,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
                     LinkedHashMap::new));
         }
     }
+
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
      * to process component-backing Java class and append the results to the XML root node
@@ -263,6 +265,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
         // for which a non-existent tab or accordion panel was specified. Handle an InvalidContainerItemException for each of them.
         handleInvalidContainerItemException(allFields, containerName);
     }
+
     /**
      * Retrieves a collection of container items derived from the specified hierarchical collection of classes. Calls to this
      * method are used to compile a "container item registry" consisting of all container items from the current class and/or its superclasses
@@ -289,35 +292,45 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
                     result.put(annotationMap.get(DialogConstants.PN_TITLE).toString(), containerInfo);
                 }
                 if (cls.isAnnotationPresent(Dialog.class)) {
-                    if (containerName.equals(DialogConstants.NN_TABS)) {
-                        Arrays.stream(cls.getAnnotation(Dialog.class).tabs())
-                            .forEach(tab -> {
-                                ContainerInfo containerInfo = new ContainerInfo(tab.title());
-                                try {
-                                    containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(tab));
-                                    result.put(tab.title(), containerInfo);
-                                } catch (IllegalAccessException | InvocationTargetException exception) {
-                                    LOG.error(exception.getMessage());
-                                }
-
-                            });
-                    } else {
-                        Arrays.stream(cls.getAnnotation(Dialog.class).panels())
-                            .forEach(accordionPanel -> {
-                                ContainerInfo containerInfo = new ContainerInfo(accordionPanel.title());
-                                try {
-                                    containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(accordionPanel));
-                                    result.put(accordionPanel.title(), containerInfo);
-                                } catch (IllegalAccessException | InvocationTargetException exception) {
-                                    LOG.error(exception.getMessage());
-                                }
-                            });
-                    }
+                    getCurrentDialogContainerElements(result, containerName, cls);
                 }
             }
         } catch (IllegalAccessException | InvocationTargetException exception) {
             LOG.error(exception.getMessage());
         }
         return result;
+    }
+
+    /**
+     * Put all tabs or accordion panes from current Dialog to result Map
+     * @param {@code        Map<String,ContainerInfo>} map containing all container items
+     * @param containerName The name of current container
+     * @param {@code        Class<?>} current class that contains container elements
+     */
+    private void getCurrentDialogContainerElements(Map<String, ContainerInfo> result, String containerName, Class<?> cls) {
+        if (containerName.equals(DialogConstants.NN_TABS)) {
+            Arrays.stream(cls.getAnnotation(Dialog.class).tabs())
+                .forEach(tab -> {
+                    ContainerInfo containerInfo = new ContainerInfo(tab.title());
+                    try {
+                        containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(tab));
+                        result.put(tab.title(), containerInfo);
+                    } catch (IllegalAccessException | InvocationTargetException exception) {
+                        LOG.error(exception.getMessage());
+                    }
+
+                });
+        } else {
+            Arrays.stream(cls.getAnnotation(Dialog.class).panels())
+                .forEach(accordionPanel -> {
+                    ContainerInfo containerInfo = new ContainerInfo(accordionPanel.title());
+                    try {
+                        containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(accordionPanel));
+                        result.put(accordionPanel.title(), containerInfo);
+                    } catch (IllegalAccessException | InvocationTargetException exception) {
+                        LOG.error(exception.getMessage());
+                    }
+                });
+        }
     }
 }
