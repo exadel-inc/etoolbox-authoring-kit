@@ -292,7 +292,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
                     result.put(annotationMap.get(DialogConstants.PN_TITLE).toString(), containerInfo);
                 }
                 if (cls.isAnnotationPresent(Dialog.class)) {
-                    getCurrentDialogContainerElements(result, containerName, cls);
+                    getCurrentDialogContainerElements(result, cls);
                 }
             }
         } catch (IllegalAccessException | InvocationTargetException exception) {
@@ -303,34 +303,31 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
 
     /**
      * Put all tabs or accordion panes from current Dialog to result Map
-     * @param {@code        Map<String,ContainerInfo>} map containing all container items
-     * @param containerName The name of current container
-     * @param {@code        Class<?>} current class that contains container elements
+     * @param result {@code Map<String,ContainerInfo>} map containing all container items
+     * @param cls    {@code Class<?>} current class that contains container elements
      */
-    private void getCurrentDialogContainerElements(Map<String, ContainerInfo> result, String containerName, Class<?> cls) {
-        if (containerName.equals(DialogConstants.NN_TABS)) {
-            Arrays.stream(cls.getAnnotation(Dialog.class).tabs())
-                .forEach(tab -> {
-                    ContainerInfo containerInfo = new ContainerInfo(tab.title());
-                    try {
-                        containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(tab));
-                        result.put(tab.title(), containerInfo);
-                    } catch (IllegalAccessException | InvocationTargetException exception) {
-                        LOG.error(exception.getMessage());
-                    }
-
-                });
-        } else {
-            Arrays.stream(cls.getAnnotation(Dialog.class).panels())
-                .forEach(accordionPanel -> {
-                    ContainerInfo containerInfo = new ContainerInfo(accordionPanel.title());
-                    try {
-                        containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(accordionPanel));
-                        result.put(accordionPanel.title(), containerInfo);
-                    } catch (IllegalAccessException | InvocationTargetException exception) {
-                        LOG.error(exception.getMessage());
-                    }
-                });
+    private void getCurrentDialogContainerElements(Map<String, ContainerInfo> result, Class<?> cls) {
+        try {
+            Map<String, Object> map = PluginObjectUtility.getAnnotationFields(cls.getDeclaredAnnotation(Dialog.class));
+            List<Object> list = new ArrayList<>();
+            List<Object> panelsAndTabs = Stream.concat(Stream.of(map.get(DialogConstants.NN_PANELS)), Stream.of(map.get(DialogConstants.NN_TABS))).collect(Collectors.toList());
+            for (Object o : panelsAndTabs) {
+                Object[] objects = (Object[]) o;
+                list.addAll(Arrays.asList(objects));
+            }
+            list.forEach(item -> {
+                try {
+                    Map<String, Object> fields = PluginObjectUtility.getAnnotationFields((Annotation) item);
+                    String title = (String) fields.get(DialogConstants.PN_TITLE);
+                    ContainerInfo containerInfo = new ContainerInfo(title);
+                    containerInfo.setAttributes(fields);
+                    result.put(title, containerInfo);
+                } catch (IllegalAccessException | InvocationTargetException exception) {
+                    LOG.error(exception.getMessage());
+                }
+            });
+        } catch (IllegalAccessException | InvocationTargetException exception) {
+            LOG.error(exception.getMessage());
         }
     }
 }

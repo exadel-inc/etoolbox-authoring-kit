@@ -63,6 +63,7 @@ public class DialogConstants {
     public static final String NN_LISTS = "lists";
     public static final String NN_MISCTOOLS = "misctools";
     public static final String NN_OPTIONS = "options";
+    public static final String NN_PANELS = "panels";
     public static final String NN_PARAFORMAT = "paraformat";
     public static final String NN_PARENT_CONFIG = "parentConfig";
     public static final String NN_POPOVERS = "popovers";
