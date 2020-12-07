@@ -302,7 +302,7 @@ public abstract class ContainerHandler implements Handler, BiConsumer<Class<?>, 
     }
 
     /**
-     * Put all tabs or accordion panes from current Dialog to result Map
+     * Put all tabs or accordion panels from current Dialog to result Map
      * @param result {@code Map<String,ContainerInfo>} map containing all container items
      * @param cls    {@code Class<?>} current class that contains container elements
      */
