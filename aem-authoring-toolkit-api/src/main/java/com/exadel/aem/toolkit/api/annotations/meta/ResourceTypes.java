@@ -36,6 +36,7 @@ public class ResourceTypes {
     public static final String FIXED_COLUMNS = "granite/ui/components/coral/foundation/fixedcolumns";
     public static final String HEADING = "granite/ui/components/coral/foundation/heading";
     public static final String HIDDEN = "granite/ui/components/coral/foundation/form/hidden";
+    public static final String HYPERLINK = "granite/ui/components/coral/foundation/hyperlink";
     public static final String MULTIFIELD = "granite/ui/components/coral/foundation/form/multifield";
     public static final String NESTED_CHECKBOX_LIST = "granite/ui/components/coral/foundation/form/nestedcheckboxlist";
     public static final String NUMBERFIELD = "granite/ui/components/coral/foundation/form/numberfield";
