@@ -39,6 +39,7 @@ import com.exadel.aem.toolkit.test.widget.SelectWidget;
 import com.exadel.aem.toolkit.test.widget.Tabs;
 import com.exadel.aem.toolkit.test.widget.TagFieldWidget;
 import com.exadel.aem.toolkit.test.widget.TextAreaWidget;
+import com.exadel.aem.toolkit.test.widget.TextWidget;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.RESOURCE_FOLDER_WIDGET;
 
@@ -132,6 +133,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testSelect() {
         test(SelectWidget.class);
+    }
+
+    @Test
+    public void testText() {
+        test(TextWidget.class);
     }
 
     @Test
