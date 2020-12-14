@@ -20,6 +20,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.HYPERLINK)
 @PropertyMapping
+@SuppressWarnings("unused")
 public @interface Hyperlink {
 
     /**
