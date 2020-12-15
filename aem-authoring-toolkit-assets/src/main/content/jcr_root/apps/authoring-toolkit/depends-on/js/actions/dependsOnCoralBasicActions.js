@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.2
+ * @version 2.2.3
  *
  * DependsOn Coral 3 Basic Actions
  *
@@ -20,7 +20,7 @@
      * Find related tab panel
      * */
     function getTabPanel($element) {
-        return $element.closest('coral-panel[role="tabpanel"]');
+        return $element.closest('coral-panelstack > coral-panel');
     }
 
     /**
