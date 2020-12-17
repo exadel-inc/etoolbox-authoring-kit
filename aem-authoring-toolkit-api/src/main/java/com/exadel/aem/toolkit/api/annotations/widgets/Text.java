@@ -21,7 +21,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @SuppressWarnings("unused")
 public @interface Text {
     /**
-     * Maps to the text of the component of this TouchUI dialog component's node.
+     * Maps to the text of the component of this TouchUI dialog component's node
+     * @return String value
      */
     String text();
 }
