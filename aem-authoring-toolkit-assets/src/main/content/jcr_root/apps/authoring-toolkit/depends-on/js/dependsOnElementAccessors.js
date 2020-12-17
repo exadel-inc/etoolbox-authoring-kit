@@ -16,7 +16,7 @@
         preferableType: 'string',
         findTarget: function ($el) {
             if ($el.length > 1) {
-                console.warn(`[DependsOn]: requested reference with multiple targets, the first target is used.`, $el);
+                console.warn('[DependsOn]: requested reference with multiple targets, the first target is used.', $el);
             }
             return $el.first();
         },
@@ -69,10 +69,12 @@
     };
 
     function validate(accessorDescriptor) {
-        if (!accessorDescriptor)
+        if (!accessorDescriptor) {
             throw new Error('[DependsOn] Can not register ElementAccessor. No accessor descriptor specified');
-        if (typeof accessorDescriptor.selector !== 'string')
+        }
+        if (typeof accessorDescriptor.selector !== 'string') {
             throw new Error('[DependsOn] Can not register ElementAccessor. Descriptor.selector should exist and be type of string');
+        }
     }
 
     class ElementAccessors {
@@ -89,6 +91,7 @@
         static getValue($el) {
             return ElementAccessors._findAccessorHandler($el, 'get')($el);
         }
+
         /**
          * Get preferable type to cast for $el
          * @param {JQuery} $el - target element
@@ -97,6 +100,7 @@
         static getPreferableType($el) {
             return ElementAccessors._findAccessorHandler($el, 'preferableType');
         }
+
         /**
          * Set $el value
          * @param {JQuery} $el - target element
@@ -106,6 +110,7 @@
         static setValue($el, value, notify = true) {
             ElementAccessors._findAccessorHandler($el, 'set')($el, value, notify);
         }
+
         /**
          * Set required state of the $el
          * @param {JQuery} $el - target element
@@ -114,6 +119,7 @@
         static setRequired($el, value) {
             ElementAccessors._findAccessorHandler($el, 'required')($el, value);
         }
+
         /**
          * Set required state of the $el
          * @param {JQuery} $el - target element
@@ -122,6 +128,7 @@
         static setVisibility($el, value) {
             ElementAccessors._findAccessorHandler($el, 'visibility')($el, value);
         }
+
         /**
          * Set disabled state of the $el
          * @param {JQuery} $el - target element
@@ -171,6 +178,7 @@
                 api.updateUI();
             }
         }
+
         /**
          * Clear validity
          * Exclude all child submittables from validation cache.
@@ -199,12 +207,13 @@
             }
             return ElementAccessors.DEFAULT_ACCESSOR;
         }
+
         static _findAccessorHandler($el, type) {
             const accessor = ElementAccessors._findAccessor($el, type);
             return (typeof accessor[type] === 'function') ? accessor[type].bind(accessor) : accessor[type];
         }
     }
-    ElementAccessors.noop = function() {};
+    ElementAccessors.noop = function () {};
 
     ns.ElementAccessors = ElementAccessors;
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

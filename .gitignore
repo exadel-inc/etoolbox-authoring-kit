@@ -74,3 +74,6 @@ buildNumber.properties
 ### IntelliJ ###
 .idea/
 *.iml
+
+### UI ###
+node_modules/

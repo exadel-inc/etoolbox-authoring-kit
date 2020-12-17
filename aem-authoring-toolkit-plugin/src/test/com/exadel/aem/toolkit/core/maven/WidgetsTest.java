@@ -27,6 +27,7 @@ import com.exadel.aem.toolkit.test.widget.FieldSetWidget;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
 import com.exadel.aem.toolkit.test.widget.HeadingWidget;
 import com.exadel.aem.toolkit.test.widget.HiddenWidget;
+import com.exadel.aem.toolkit.test.widget.HyperlinkWidget;
 import com.exadel.aem.toolkit.test.widget.ImageUploadWidget;
 import com.exadel.aem.toolkit.test.widget.MultiFieldWidget;
 import com.exadel.aem.toolkit.test.widget.MultipleAnnotatedWidget;
@@ -98,6 +99,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testHidden() {
         test(HiddenWidget.class);
+    }
+
+    @Test
+    public void testHyperlink() {
+        test(HyperlinkWidget.class);
     }
 
     @Test

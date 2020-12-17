@@ -9,7 +9,7 @@
 
     ns.ElementAccessors.registerAccessor({
         selector: `${HEADING_SELECTOR}`,
-        get: function($el) {
+        get: function ($el) {
             return $el.text() || '';
         },
         set: function ($el, value, notify) {

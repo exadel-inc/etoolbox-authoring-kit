@@ -49,6 +49,7 @@
             query && console.warn('[DependsOn]: can not execute "fetch", query should be a string');
             return;
         }
+        const $el = this.$el;
         // If empty string then just set empty string
         if (query === '') {
             DependsOn.ElementAccessors.setValue($el, '');
@@ -60,9 +61,8 @@
             postfix: '.json'
         }, config);
 
-        const $el = this.$el;
         // Processing and resolving path and property
-        const {name, path} = parsePathString(query);
+        const { name, path } = parsePathString(query);
         const basePath = DependsOn.getDialogPath($el);
         const resourcePath = resolvePath(path, basePath, config.postfix);
 
@@ -112,7 +112,6 @@
         const _postfix = resPath.endsWith(postfix) ? '' : postfix;
         return resPath.replace(END_PATH_TERM_REGEX, _postfix);
     }
-
 
     /**
      * Resolve ../ and remove ./ path parts.

@@ -21,10 +21,13 @@ import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
+import com.exadel.aem.toolkit.api.annotations.widgets.hyperlink.Hyperlink;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
@@ -34,14 +37,14 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 
 @Dialog(
-        name = "content/dungeons-component",
-        title = "Dungeons Component",
-        description = "Choose a dungeon for your warrior",
-        resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
-        componentGroup = GroupConstants.COMPONENT_GROUP,
-        tabs = {
-                @Tab(title = ParentSelectComponent.TAB_MAIN)
-        }
+    name = "content/dungeons-component",
+    title = "Dungeons Component",
+    description = "Choose a dungeon for your warrior",
+    resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
+    componentGroup = GroupConstants.COMPONENT_GROUP,
+    tabs = {
+        @Tab(title = ParentSelectComponent.TAB_MAIN)
+    }
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class DungeonsComponent extends ParentSelectComponent {
@@ -56,19 +59,28 @@ public class DungeonsComponent extends ParentSelectComponent {
     @DialogField(label = LABEL_DUNGEON_RULES)
     @Extends(value = WarriorDescriptionComponent.class, field = "description")
     @RichTextEditor(
-            features = {
-                    RteFeatures.SEPARATOR,
-                    RteFeatures.LISTS_ORDERED,
-                    RteFeatures.LISTS_UNORDERED
-            })
+        features = {
+            RteFeatures.SEPARATOR,
+            RteFeatures.LISTS_ORDERED,
+            RteFeatures.LISTS_UNORDERED
+        })
     @ValueMapValue
     private String dungeonRules;
 
+    @DependsOn(query = "@dungeon === '1'")
+    @Hyperlink(href = "https://media.graphcms.com/BmLxDCt5SaSHWx4rt6xy", text = "Dungeon profile image", target = "_blank")
+    private String profileLink;
+
+    @DependsOn(query = "@dungeon === '2'")
+    @Hyperlink(href = "https://cg4.cgsociety.org/uploads/images/medium/penemenn-ice-valley-1-11885220-8day.jpg", text = "Dungeon profile image", target = "_blank")
+    private String profileLink2;
+
     @DialogField(label = LABEL_DUNGEON_SELECT)
     @Select(options = {
-            @Option(text = "Rotten swamps", value = "1"),
-            @Option(text = "Ice valley", value = "2")
+        @Option(text = "Rotten swamps", value = "1"),
+        @Option(text = "Ice valley", value = "2")
     })
+    @DependsOnRef(name = "dungeon")
     @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
     @Default(values = "1")
     @ValueMapValue

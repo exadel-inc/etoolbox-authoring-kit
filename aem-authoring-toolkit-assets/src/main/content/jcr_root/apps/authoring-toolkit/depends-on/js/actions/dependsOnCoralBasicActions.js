@@ -38,7 +38,6 @@
         ns.ElementAccessors.setVisibility(this.$el, state);
     });
 
-
     /**
      * Change visibility of tab-panel and related tab-control
      * query type: boolean
@@ -53,12 +52,11 @@
 
         const targetTab = this.$tabControl[0];
         if (targetTab && targetTab.selected && !state) {
-            let tabs = targetTab.parentNode.items.getAll();
+            const tabs = targetTab.parentNode.items.getAll();
             tabs.find((tab) => !tab.hidden).selected = true;
             // Last tab is automatically deselected
         }
     });
-
 
     /**
      * Change require marker of the field

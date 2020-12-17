@@ -12,7 +12,7 @@
      * */
     ns.createSequence = function () {
         let index = 1;
-        return {next: () => index++};
+        return { next: () => index++ };
     };
 
     /**
@@ -32,7 +32,8 @@
     ns.isEqual = function isEqual(a, b) {
         if (a === b) return true;
         if (typeof a !== typeof b) return false;
-        if (a !== a && b !== b) return true; // Both are NaNs
+        // eslint-disable-next-line no-self-compare -- check that both are NaNs
+        if (a !== a && b !== b) return true;
         if (Array.isArray(a) && Array.isArray(b)) {
             return a.length === b.length && a.every((val, i) => isEqual(val, b[i]));
         }
@@ -40,7 +41,7 @@
             const keysA = Object.keys(a);
             const keysB = Object.keys(b);
             if (keysA.length !== keysB.length) return false;
-            return keysA.every(key => isEqual(a[key], b[key]));
+            return keysA.every((key) => isEqual(a[key], b[key]));
         }
         return false;
     };
@@ -110,7 +111,7 @@
         return attrs.reduce((data, attr) => {
             const name = attr.name.slice(prefix.length, attr.name.length - suffix.length);
             if (name) data[name] = attr.value;
-            return data
+            return data;
         }, {});
     };
 
@@ -129,7 +130,7 @@
      * */
     ns.getDialogPath = function (item) {
         return item.closest('form.cq-dialog').attr('action');
-    }
+    };
 
     /**
      * Check if the passed value is an object
@@ -138,7 +139,7 @@
      * */
     ns.isObject = function (value) {
         return value !== null && typeof value === 'object';
-    }
+    };
 
     /**
      * Attempts to parse a string value into JSON object
@@ -151,7 +152,7 @@
         } catch (e) {
             return {};
         }
-    }
+    };
 
     /**
      * Parse function string to a real function.
@@ -163,7 +164,7 @@
         if (typeof exp === 'function') return exp;
         let fn = defaultFn;
         try {
-            fn = (new Function(`return ${exp}`))(); //NOSONAR: not a javascript:S3523 case, real evaluation should be done
+            fn = (new Function(`return ${exp}`))(); // NOSONAR: not a javascript:S3523 case, real evaluation should be done
         } catch (e) {
             console.error(`[DependsOn]: can not process function '${exp}': `, e);
         }
@@ -172,6 +173,5 @@
             return defaultFn;
         }
         return fn;
-    }
-
+    };
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
