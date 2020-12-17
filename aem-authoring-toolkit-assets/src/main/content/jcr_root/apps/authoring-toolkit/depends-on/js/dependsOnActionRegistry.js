@@ -12,7 +12,6 @@
     const actionRegistryMap = {};
 
     class ActionRegistry {
-
         /**
          * Default action name
          * */
@@ -70,7 +69,8 @@
             if (actionRegistryMap[sanitizedName]) {
                 console.warn(`[DependsOn]: Action ${sanitizedName} was overridden by ${actionFn}`);
             }
-            return actionRegistryMap[sanitizedName] = actionFn;
+            actionRegistryMap[sanitizedName] = actionFn;
+            return actionFn;
         }
     }
 
