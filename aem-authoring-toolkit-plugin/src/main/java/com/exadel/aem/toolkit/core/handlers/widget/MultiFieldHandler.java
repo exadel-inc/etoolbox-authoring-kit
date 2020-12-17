@@ -21,7 +21,6 @@ import org.w3c.dom.Element;
 import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
@@ -43,15 +42,14 @@ public class MultiFieldHandler implements WidgetSetHandler {
     @Override
     public void accept(Element element, Field field) {
         // Define the working @Multifield annotation instance and the multifield type
-        MultiField multiField = field.getDeclaredAnnotation(MultiField.class);
-        Class<?> multifieldType = multiField.field();
+        Class<?> multifieldType = WidgetSetHandler.getManagedClass(field);
 
         // Modify the element's attributes for multifield mode
         String name = element.getAttribute(DialogConstants.PN_NAME);
         element.removeAttribute(DialogConstants.PN_NAME);
 
         // Get the filtered fields collection for the current container; early return if collection is empty
-        List<Field> fields = getContainerFields(element, field, multifieldType);
+        List<Field> fields = WidgetSetHandler.getContainerFields(element, field, multifieldType);
         if (fields.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + multifieldType.getName()

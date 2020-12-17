@@ -20,7 +20,7 @@
      * Find related tab panel
      * */
     function getTabPanel($element) {
-        return $element.closest('coral-panel[role="tabpanel"]');
+        return $element.closest('coral-panelstack > coral-panel');
     }
 
     /**
@@ -61,7 +61,7 @@
 
         const targetTab = this.$tabControl[0];
         if (targetTab && targetTab.selected && !state) {
-            let tabs = targetTab.parentNode.items.getAll();
+            const tabs = targetTab.parentNode.items.getAll();
             tabs.find((tab) => !tab.hidden).selected = true;
             // Last tab is automatically deselected
         }

@@ -26,7 +26,7 @@
             ns.ElementAccessors.DEFAULT_ACCESSOR.disabled($el, val);
 
             $el.find(':input, button').each(function () {
-                    this.disabled = val;
+                this.disabled = val;
             });
         }
     });

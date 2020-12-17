@@ -14,11 +14,14 @@
     const accessorsList = [];
     const DEFAULT_ACCESSOR = {
         preferableType: 'string',
-        findTarget: ($el) => {
+        findTarget: function ($el) {
             if ($el.length > 1) {
-                console.warn(`[DependsOn]: requested reference with multiple targets, the first target is used.`, $el);
+                console.warn('[DependsOn]: requested reference with multiple targets, the first target is used.', $el);
             }
             return $el.first();
+        },
+        findWrapper: function ($el) {
+            return $el.closest(FIELD_WRAPPER);
         },
         get: function ($el) {
             return $el.val() || '';
@@ -41,7 +44,7 @@
         },
         visibility: function ($el, state) {
             $el.attr('hidden', state ? null : 'true');
-            $el.closest(FIELD_WRAPPER)
+            ns.ElementAccessors.findWrapper($el)
                 .attr('hidden', state ? null : 'true')
                 .attr('data-dependson-controllable', 'true');
             // Force update validity if the field is hidden
@@ -53,6 +56,7 @@
         },
         disabled: function ($el, state) {
             $el.attr('disabled', state ? 'true' : null);
+            ns.ElementAccessors.findWrapper($el).attr('disabled', state ? 'true' : null);
 
             const fieldAPI = $el.adaptTo('foundation-field');
             // Try to disable field by foundation api
@@ -68,10 +72,12 @@
     };
 
     function validate(accessorDescriptor) {
-        if (!accessorDescriptor)
+        if (!accessorDescriptor) {
             throw new Error('[DependsOn] Can not register ElementAccessor. No accessor descriptor specified');
-        if (typeof accessorDescriptor.selector !== 'string')
+        }
+        if (typeof accessorDescriptor.selector !== 'string') {
             throw new Error('[DependsOn] Can not register ElementAccessor. Descriptor.selector should exist and be type of string');
+        }
     }
 
     class ElementAccessors {
@@ -136,12 +142,21 @@
         }
 
         /**
-         * Find "DependsOn controllable" target
+         * Find target element to be used as accessors root
          * @param {JQuery} $el - target element
          * @returns {JQuery}
          * */
         static findTarget($el) {
             return ElementAccessors._findAccessorHandler($el, 'findTarget')($el);
+        }
+
+        /**
+         * Find element wrapper
+         * @param {JQuery} $el - target element
+         * @returns {JQuery}
+         * */
+        static findWrapper($el) {
+            return ElementAccessors._findAccessorHandler($el, 'findWrapper')($el);
         }
 
         /**
@@ -190,7 +205,7 @@
          * @param {boolean} required - required state
          * */
         static setLabelRequired($el, required) {
-            const $label = $el.closest(FIELD_WRAPPER).find(FIELD_LABEL);
+            const $label = ns.ElementAccessors.findWrapper($el).find(FIELD_LABEL);
             ns.toggleAsterisk($label, required);
         }
 
@@ -209,7 +224,7 @@
             return (typeof accessor[type] === 'function') ? accessor[type].bind(accessor) : accessor[type];
         }
     }
-    ElementAccessors.noop = function() {};
+    ElementAccessors.noop = function () {};
 
     ns.ElementAccessors = ElementAccessors;
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

@@ -20,7 +20,7 @@ public class TestConstants {
     private TestConstants() {
     }
 
-    public static final String EXPECTED_CONTENT_ROOT_PATH = "src\\test\\resources";
+    public static final String CONTENT_ROOT_PATH = "src/test/resources";
 
     public static final String RESOURCE_FOLDER_COMMON = "common";
     public static final String RESOURCE_FOLDER_COMPONENT = "component";

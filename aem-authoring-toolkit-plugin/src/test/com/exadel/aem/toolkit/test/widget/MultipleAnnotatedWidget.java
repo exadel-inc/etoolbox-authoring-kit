@@ -14,6 +14,8 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
+import java.util.List;
+
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
@@ -64,12 +66,12 @@ public class MultipleAnnotatedWidget {
     @FieldSet(namePrefix = "my")
     @Multiple
     @Property(name="customProperty", value = "custom value")
-    private NestedFieldSet nestedFieldSet;
+    private List<NestedFieldSet> nestedFieldSet;
 
     @DialogField(
             label = "Nested Multifield"
     )
-    @MultiField(field = NestedFieldSet.class)
+    @MultiField
     @Multiple
     @DependsOnRef
     @Property(name="customProperty", value = "custom value")

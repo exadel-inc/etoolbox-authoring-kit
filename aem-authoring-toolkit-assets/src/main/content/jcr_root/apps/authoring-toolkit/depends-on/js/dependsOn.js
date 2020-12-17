@@ -38,7 +38,7 @@
 
     // Track new component initialization
     $document.off('foundation-contentloaded.dependsOn')
-        .on('foundation-contentloaded.dependsOn', (e) => ns.initialize(e && e.target || document));
+        .on('foundation-contentloaded.dependsOn', (e) => ns.initialize((e && e.target) || document));
 
     // Track reference field changes
     const handleChange = ns.ElementReferenceRegistry.handleChange;
