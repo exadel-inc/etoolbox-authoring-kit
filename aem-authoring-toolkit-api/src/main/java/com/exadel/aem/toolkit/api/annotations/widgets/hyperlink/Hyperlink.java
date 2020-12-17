@@ -24,13 +24,13 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 public @interface Hyperlink {
 
     /**
-     * Maps to the href attribute of this TouchUI dialog component's node.
+     * Maps to the href attribute of this TouchUI dialog component's node
      * @return String value
      */
     String href();
 
     /**
-     * Maps to the body text of the element of this TouchUI dialog component's node.
+     * Maps to the body text of the element of this TouchUI dialog component's node
      * @return String value
      */
     String text();
@@ -43,13 +43,13 @@ public @interface Hyperlink {
     String hrefI18n() default "";
 
     /**
-     * Maps to the rel attribute of this TouchUI dialog component's node.
+     * Maps to the rel attribute of this TouchUI dialog component's node
      * @return String value
      */
     String rel() default "";
 
     /**
-     * Maps to the target attribute of this TouchUI dialog component's node.
+     * Maps to the target attribute of this TouchUI dialog component's node
      * @return String value
      */
     String target() default "";
@@ -63,7 +63,7 @@ public @interface Hyperlink {
     boolean hideText() default false;
 
     /**
-     * Maps to the x-cq-linkchecker attribute of this TouchUI dialog component's node.
+     * Maps to the x-cq-linkchecker attribute of this TouchUI dialog component's node
      * @return One of {@code HyperlinkLinkchecker} values
      * @see HyperlinkLinkchecker
      */
@@ -71,13 +71,13 @@ public @interface Hyperlink {
     HyperlinkLinkchecker xCqLinkchecker() default HyperlinkLinkchecker.NONE;
 
     /**
-     * Maps to the icon name. e.g. “search” of this TouchUI dialog component's node.
+     * Maps to the icon name. e.g. “search” of this TouchUI dialog component's node
      * @return String value
      */
     String icon() default "";
 
     /**
-     * Maps to the size of the icon of this TouchUI dialog component's node.
+     * Maps to the size of the icon of this TouchUI dialog component's node
      * @return One of {@code HyperlinkIconSize} values
      * @see HyperlinkIconSize
      */
