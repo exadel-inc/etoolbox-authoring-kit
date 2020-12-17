@@ -67,12 +67,10 @@ public class DungeonsComponent extends ParentSelectComponent {
     @ValueMapValue
     private String dungeonRules;
 
-    @DialogField(label = LABEL_DUNGEON_SELECT)
     @DependsOn(query = "@dungeon === '1'")
     @Hyperlink(href = "https://media.graphcms.com/BmLxDCt5SaSHWx4rt6xy", text = "Dungeon profile image", target = "_blank")
     private String profileLink;
 
-    @DialogField(label = LABEL_DUNGEON_SELECT)
     @DependsOn(query = "@dungeon === '2'")
     @Hyperlink(href = "https://cg4.cgsociety.org/uploads/images/medium/penemenn-ice-valley-1-11885220-8day.jpg", text = "Dungeon profile image", target = "_blank")
     private String profileLink2;

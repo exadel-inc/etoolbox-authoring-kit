@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 
 /**
  * Used to set up
- * <a href="https://helpx.adobe.com/experience-manager/6-3/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html">
+ * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html">
  * Hyperlink is a component to represent a HTML hyperlink (<a>) in TouchUI dialog
  */
 @Target(ElementType.FIELD)
