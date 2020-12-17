@@ -6,7 +6,7 @@
  * */
 (function ($, ns) {
     const NO_WRAPPER_FIELDS_SELECTOR =
-        '.coral-Form-fieldset, input[type=hidden], .coral-Heading, .coral3-Alert, .coral3-Button';
+        '.coral-Form-fieldset, input[type=hidden], .coral-Heading, .coral3-Alert, .coral3-Button, a.coral-Link';
 
     ns.ElementAccessors.registerAccessor({
         selector: NO_WRAPPER_FIELDS_SELECTOR,
