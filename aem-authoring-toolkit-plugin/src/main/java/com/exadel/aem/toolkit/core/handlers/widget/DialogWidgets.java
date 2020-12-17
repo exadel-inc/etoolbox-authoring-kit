@@ -69,7 +69,7 @@ public enum DialogWidgets implements DialogWidget {
     DATE_PICKER(DatePicker.class, new DatePickerHandler()),
     FILE_UPLOAD(FileUpload.class),
     IMAGE_UPLOAD(ImageUpload.class, new ImageUploadHandler()),
-    TEXT(Text.class),
+    TEXT(Text.class, new TextHandler()),
     TEXT_AREA(TextArea.class),
     RICH_TEXT_EDITOR(RichTextEditor.class, new RichTextEditorHandler()),
     HIDDEN(Hidden.class),

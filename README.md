@@ -501,7 +501,7 @@ public class MyDialogWithDropdown {
 ###### @Switch
 Used to render on-off toggle switches in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Switch](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/switch/index.html).
 ###### @Text
-Used to render text component that is rendered as <span> in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Text](https://helpx.adobe.com/experience-manager/6-3/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html).
+Used to render text component that is rendered as <span> in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Text](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html).
 ###### @TextArea
 Used to render textarea HTML inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on TextArea](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textarea/index.html).
 ###### @TextField

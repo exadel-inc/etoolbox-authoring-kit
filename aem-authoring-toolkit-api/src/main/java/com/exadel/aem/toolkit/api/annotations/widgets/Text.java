@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 
 /**
  * Used to set up
- * https://helpx.adobe.com/experience-manager/6-3/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html
+ * https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html
  * A generic text component that is rendered as <span> in TouchUI dialog
  */
 @Target(ElementType.FIELD)
@@ -37,5 +37,5 @@ public @interface Text {
      * Maps to the text of the component of this TouchUI dialog component's node
      * @return String value
      */
-    String text();
+    String value();
 }

@@ -29,8 +29,6 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
 @SuppressWarnings("unused")
 public class TextWidget {
     @DialogField(label = "Valid Text")
-    @Text(
-        text = "TEXT"
-    )
+    @Text("TEXT")
     String text1;
 }
