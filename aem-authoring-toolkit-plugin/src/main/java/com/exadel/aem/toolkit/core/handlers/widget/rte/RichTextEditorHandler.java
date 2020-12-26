@@ -134,17 +134,17 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         getSpecialCharactersNode(rtePlugins.child(DialogConstants.NN_MISCTOOLS));
         populatePasteRulesNode(rtePlugins);
         populateStylesNode(rtePlugins.child(DialogConstants.NN_STYLES).attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION));
-        if (rtePlugins.getChild(DialogConstants.NN_UNDO) != null)
+        if (rtePlugins.hasChild(DialogConstants.NN_UNDO))
             rtePlugins.child(DialogConstants.NN_UNDO).attribute(DialogConstants.PN_MAX_UNDO_STEPS, rteAnnotation.maxUndoSteps());
         if (rteAnnotation.tabSize() != 4)
             rtePlugins.child(DialogConstants.NN_KEYS).attribute(DialogConstants.PN_TAB_SIZE, rteAnnotation.tabSize());
-        if (rtePlugins.getChild(DialogConstants.NN_LISTS) != null)
+        if (rtePlugins.hasChild(DialogConstants.NN_LISTS))
             rtePlugins.child(DialogConstants.NN_LISTS).attribute(DialogConstants.PN_INDENT_SIZE, rteAnnotation.indentSize());
 
         // build htmlLinkRules node and append to root target, if needed
         populateHtmlLinkRules(target);
-        target.clear();
-        if (!rtePlugins.isDefault()) {
+        clearEmpty(target);
+        if (!isEmpty(rtePlugins)) {
             rtePlugins.child(DialogConstants.NN_STYLES);
         }
     }
@@ -282,7 +282,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         }
         htmlPasteRulesNode.attribute(DialogConstants.PN_ALLOW_BLOCK_TAGS,  rules.allowedBlockTags().length == 0 ? null : Arrays.asList(rules.allowedBlockTags()).toString().replace(" ", ""))
                 .attribute(DialogConstants.PN_FALLBACK_BLOCK_TAG, rules.fallbackBlockTag().isEmpty() ? null : rules.fallbackBlockTag());
-        if (!htmlPasteRulesNode.isDefault()) {
+        if (!isEmpty(htmlPasteRulesNode)) {
             edit.attribute(DialogConstants.PN_DEFAULT_PASTE_MODE, rteAnnotation.defaultPasteMode().toString().toLowerCase());
         }
     }
@@ -328,5 +328,16 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         return Stream.concat(Arrays.stream(rteAnnotation.features()), Arrays.stream(rteAnnotation.fullscreenFeatures()))
                 .flatMap(s -> Arrays.stream(s.split(PluginXmlUtility.ATTRIBUTE_LIST_SPLIT_PATTERN)))
                 .anyMatch(matcher);
+    }
+
+    private boolean isEmpty(Target target) {
+        return target.getValueMap().size() == 1 &&
+            target.getValueMap().containsKey(DialogConstants.PN_PRIMARY_TYPE) &&
+            target.listChildren().isEmpty();
+    }
+
+    private void clearEmpty(Target target) {
+        target.listChildren().forEach(this::clearEmpty);
+        target.listChildren().removeIf(this::isEmpty);
     }
 }

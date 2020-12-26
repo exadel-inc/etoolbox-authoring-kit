@@ -39,7 +39,7 @@ public class DialogFieldHandler implements BiConsumer<Source, Target> {
         if (dialogField == null) {
             return;
         }
-        String name = ((Member) source.getSource()).getName();
+        String name = source.getName();
         if (StringUtils.isNotBlank(dialogField.name())) {
             name = !DialogConstants.PATH_SEPARATOR.equals(dialogField.name()) && !DialogConstants.RELATIVE_PATH_PREFIX.equals(dialogField.name())
                 ? NamingUtil.getValidFieldName(dialogField.name())

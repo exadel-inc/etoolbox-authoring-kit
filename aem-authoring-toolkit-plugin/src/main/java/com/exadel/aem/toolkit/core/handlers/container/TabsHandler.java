@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.SourceImpl;
+import com.exadel.aem.toolkit.core.source.SourceFieldImpl;
 import com.exadel.aem.toolkit.core.util.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -169,7 +169,7 @@ public class TabsHandler implements BiConsumer<Class<?>, Target> {
                         tabTitle,
                         new TabInstance(
                                 nestedCls.getAnnotation(Tab.class),
-                                Arrays.stream(nestedCls.getDeclaredFields()).map(SourceImpl::new).collect(Collectors.toList())));
+                                Arrays.stream(nestedCls.getDeclaredFields()).map(field -> new SourceFieldImpl(field, nestedCls)).collect(Collectors.toList())));
             });
             if (cls.isAnnotationPresent(Dialog.class)) {
                 Arrays.stream(cls.getAnnotation(Dialog.class).tabs())

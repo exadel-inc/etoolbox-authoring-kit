@@ -22,9 +22,9 @@ public interface Source {
 
     <T> T adaptTo(Class<T> t);
 
-    Object getSource();
-
     Class<?> getProcessedClass();
 
-    void setProcessedClass(Class<?> processedClass);
+    String getName();
+
+    Class<?> getContainerClass();
 }

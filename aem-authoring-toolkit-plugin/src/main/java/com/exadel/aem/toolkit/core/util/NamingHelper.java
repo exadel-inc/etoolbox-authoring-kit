@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
 
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.base.CaseFormat;
@@ -112,7 +111,7 @@ class NamingHelper {
             return result;
         }
         int index = 1;
-        while (context.getChild(result) != null) {
+        while (context.hasChild(result)) {
             result = NODE_NAME_INDEX_PATTERN.matcher(result).replaceFirst(String.valueOf(index++));
         }
         return result;

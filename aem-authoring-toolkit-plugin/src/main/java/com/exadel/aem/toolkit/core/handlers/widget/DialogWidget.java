@@ -56,7 +56,7 @@ public interface DialogWidget {
      * @return Populated {@link Target} by the current {@link Source}
      */
     default Target appendTo(Source source, Target target) {
-        return appendTo(source, target, ((Member) source.getSource()).getName());
+        return appendTo(source, target, source.getName());
     }
 
     /**

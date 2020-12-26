@@ -146,7 +146,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
 
         String dependsOnRefName = value.name();
         if (StringUtils.isBlank(dependsOnRefName)) {
-            dependsOnRefName = ((Member) source.getSource()).getName();
+            dependsOnRefName = source.getName();
         }
 
         Map<String, String> valueMap = Maps.newHashMap();

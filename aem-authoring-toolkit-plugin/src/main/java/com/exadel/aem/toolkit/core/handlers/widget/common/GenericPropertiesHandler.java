@@ -38,7 +38,7 @@ public class GenericPropertiesHandler implements BiConsumer<Source, Target> {
      */
     @Override
     public void accept(Source source, Target target) {
-        DialogWidget dialogWidget = DialogWidgets.fromSourceFacade(source);
+        DialogWidget dialogWidget = DialogWidgets.fromSource(source);
         if (dialogWidget == null || dialogWidget.getAnnotationClass() == null) {
             return;
         }

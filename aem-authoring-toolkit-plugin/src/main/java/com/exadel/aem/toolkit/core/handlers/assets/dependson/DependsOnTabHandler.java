@@ -35,6 +35,12 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
  */
 public class DependsOnTabHandler implements BiConsumer<Target, Class<?>> {
 
+    private static final String TAB_ITEMS_NODE_PATH = String.join(DialogConstants.PATH_SEPARATOR,
+        DialogConstants.NN_CONTENT,
+        DialogConstants.NN_ITEMS,
+        DialogConstants.NN_TABS,
+        DialogConstants.NN_ITEMS);
+
     /**
      * Processes the user-defined data and writes it to {@link Target}
      * @param target Current {@link Target} instance
@@ -56,21 +62,15 @@ public class DependsOnTabHandler implements BiConsumer<Target, Class<?>> {
      * @param target Current {@link Target} instance
      */
     private void handleDependsOnTab(DependsOnTab value, Target target) {
-        Target tabItemsNode = target.getChild(String.join(DialogConstants.PATH_SEPARATOR,
-                DialogConstants.NN_CONTENT,
-                DialogConstants.NN_ITEMS,
-                DialogConstants.NN_TABS,
-                DialogConstants.NN_ITEMS));
-        if (tabItemsNode == null) {
+        if (!target.hasChild(TAB_ITEMS_NODE_PATH)) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException());
             return;
         } else if (StringUtils.isAnyBlank(value.tabTitle(), value.query())) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(DependsOnHandler.EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
         }
-        Target targetTab = tabItemsNode.getChild(value.tabTitle());
-        if (targetTab != null) {
-            PluginXmlUtility.appendDataAttributes(targetTab, ImmutableMap.of(
+        if (target.hasChild(TAB_ITEMS_NODE_PATH + "/" + value.tabTitle())) {
+            PluginXmlUtility.appendDataAttributes(target.child(TAB_ITEMS_NODE_PATH + "/" + value.tabTitle()), ImmutableMap.of(
                     DialogConstants.PN_DEPENDS_ON, value.query(),
                     DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
             ));

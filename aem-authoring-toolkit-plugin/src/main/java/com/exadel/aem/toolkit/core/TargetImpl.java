@@ -27,13 +27,10 @@ import com.exadel.aem.toolkit.core.util.XmlAttributeSettingHelper;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -49,20 +46,19 @@ public class TargetImpl implements Target {
      */
     private static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
-
     private String name;
     private final Map<String, String> valueMap;
     private final Target parent;
     private final List<Target> listChildren;
-    private Field legacyField;
-    private final List<BiConsumer<Element, Field>> legacyHandler = new ArrayList<>();
 
     public TargetImpl(String name, Target parent) {
         this.name = name;
         this.parent = parent;
         this.valueMap = new HashMap<>();
-        this.listChildren = new ArrayList<>();
+        this.listChildren = new LinkedList<>();
         this.valueMap.put(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
+        /*this.valueMap.put(DialogConstants.PN_PREFIX, "");
+        this.valueMap.put(DialogConstants.PN_POSTFIX, "");*/
     }
 
     @Override
@@ -83,84 +79,9 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public Target mapProperties(Object o, List<String> skipped) {
-        if (o instanceof Annotation) {
-            mapAnnotationProperties((Annotation) o, this, skipped);
-        }
+    public Target mapProperties(Annotation annotation, List<String> skipped) {
+        mapAnnotationProperties(annotation, this, skipped);
         return this;
-    }
-
-    private void mapAnnotationProperties(Annotation annotation, Target target, List<String> skipped) {
-        PropertyMapping propMapping = annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class);
-        if (propMapping == null) {
-            return;
-        }
-        String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
-        String nodePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
-                ? StringUtils.substringBeforeLast(prefix, DialogConstants.PATH_SEPARATOR)
-                : StringUtils.EMPTY;
-
-        Target effectiveElement;
-        if (StringUtils.isEmpty(nodePrefix)) {
-            effectiveElement = target;
-        } else {
-            effectiveElement = Pattern.compile(DialogConstants.PATH_SEPARATOR)
-                    .splitAsStream(nodePrefix)
-                    .reduce(target, this::getOrAddChildElement, (prev, next) -> next);
-        }
-        Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .filter(m -> ArrayUtils.isEmpty(propMapping.mappings()) || ArrayUtils.contains(propMapping.mappings(), m.getName()))
-                .filter(m -> !m.isAnnotationPresent(IgnorePropertyMapping.class))
-                .filter(m -> !skipped.contains(m.getName()))
-                .forEach(m -> populateProperty(m, effectiveElement, annotation));
-
-    }
-
-    private Target getOrAddChildElement(Target target, String name) {
-        Target child = target.getChild(name);
-        if (child == null) {
-            child = new TargetImpl(name, target);
-        }
-        return child;
-    }
-
-    private void populateProperty(Method method, Target target, Annotation annotation) {
-        String name = method.getName();
-        boolean ignorePrefix = false;
-        if (method.isAnnotationPresent(PropertyRendering.class)) {
-            PropertyRendering propertyRendering = method.getAnnotation(PropertyRendering.class);
-            name = StringUtils.defaultIfBlank(propertyRendering.name(), name);
-            ignorePrefix = propertyRendering.ignorePrefix();
-        } else if (method.isAnnotationPresent(PropertyName.class)) {
-            PropertyName propertyName = method.getAnnotation(PropertyName.class);
-            name = propertyName.value();
-            ignorePrefix = propertyName.ignorePrefix();
-        }
-        String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
-        String namePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
-                ? StringUtils.substringAfterLast(prefix, DialogConstants.PATH_SEPARATOR)
-                : prefix;
-        if (!ignorePrefix && StringUtils.isNotBlank(prefix)) {
-            name = namePrefix + name;
-        }
-        BinaryOperator<String> merger = this::mergeStringAttributes;
-        XmlAttributeSettingHelper.forMethod(annotation, method)
-                .withName(name)
-                .withMerger(merger)
-                .setAttribute(target);
-    }
-
-    private String mergeStringAttributes(String first, String second) {
-        if (!ATTRIBUTE_LIST_PATTERN.matcher(first).matches() || !ATTRIBUTE_LIST_PATTERN.matcher(second).matches()) {
-            return DEFAULT_ATTRIBUTE_MERGER.apply(first, second);
-        }
-        Set<String> result = new HashSet<>(Arrays.asList(StringUtils
-                .strip(first, ATTRIBUTE_LIST_SURROUND)
-                .split(ATTRIBUTE_LIST_SPLIT_PATTERN)));
-        result.addAll(new HashSet<>(Arrays.asList(StringUtils
-                .strip(second, ATTRIBUTE_LIST_SURROUND)
-                .split(ATTRIBUTE_LIST_SPLIT_PATTERN))));
-        return String.format(ATTRIBUTE_LIST_TEMPLATE, String.join(RteFeatures.FEATURE_SEPARATOR, result));
     }
 
     @Override
@@ -188,9 +109,41 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public Target attributes(Map<String, String> map) {
-        this.valueMap.putAll(map);
+    public Target attributes(Map<String, Object> map) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (Long.class.equals(entry.getValue().getClass())) {
+                this.attribute(entry.getKey(), (Long) entry.getValue());
+            }
+            if (String.class.equals(entry.getValue().getClass())) {
+                this.attribute(entry.getKey(), (String) entry.getValue());
+            }
+            if (Boolean.class.equals(entry.getValue().getClass())) {
+                this.attribute(entry.getKey(), (Boolean) entry.getValue());
+            }
+        }
         return this;
+    }
+
+    @Override
+    public void updatePrefix(String prefix) {
+        String currentPrefix = this.valueMap.get(DialogConstants.PN_PREFIX);
+        this.valueMap.put(DialogConstants.PN_PREFIX, currentPrefix + prefix);
+    }
+
+    @Override
+    public void updatePostfix(String postfix) {
+        String currentPostfix = this.valueMap.get(DialogConstants.PN_POSTFIX);
+        this.valueMap.put(DialogConstants.PN_POSTFIX, postfix + currentPostfix);
+    }
+
+    @Override
+    public String getPrefix() {
+        return this.valueMap.get(DialogConstants.PN_PREFIX);
+    }
+
+    @Override
+    public String getPostfix() {
+        return this.valueMap.get(DialogConstants.PN_POSTFIX);
     }
 
     @Override
@@ -199,8 +152,12 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public Object deleteAttribute(String name) {
-        return this.valueMap.remove(name);
+    public void delete() {
+        this.parent.listChildren().remove(this);
+    }
+    @Override
+    public void deleteAttribute(String name) {
+        this.valueMap.remove(name);
     }
 
     @Override
@@ -227,58 +184,17 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public String getAttribute(String name) {
-        return valueMap.get(name);
+    public <T> T getAttribute(String name, Class<T> tClass) {
+        return tClass.cast(valueMap.get(name));
     }
 
     @Override
-    public Target getChild(String relPath) {
-        Queue<String> pathChunks = Pattern.compile("/").splitAsStream(relPath).collect(Collectors.toCollection(LinkedList::new));
-        Target currentFacade = this;
-        while (!pathChunks.isEmpty()) {
-            String currentChunk = pathChunks.poll();
-            currentFacade = currentFacade.listChildren().stream().filter(child -> currentChunk.equals(child.getName())).findFirst().orElse(null);
-            if (currentFacade == null) {
-                return null;
-            }
-        }
-        return currentFacade;
+    public boolean hasChild(String relPath) {
+        return getChild(relPath) != null;
     }
 
     @Override
-    public Target clear() {
-        listChildren.forEach(Target::clear);
-        listChildren.removeIf(Target::isDefault);
-        return this;
-    }
-
-    @Override
-    public boolean isDefault() {
-        return this.valueMap.size() == 1 &&
-                this.valueMap.containsKey(DialogConstants.PN_PRIMARY_TYPE) &&
-                this.listChildren.isEmpty();
-    }
-
-    public void setLegacyField(Field legacyField) {
-        this.legacyField = legacyField;
-    }
-
-    public Field getLegacyField() {
-        return legacyField;
-    }
-
-    @Override
-    public void setLegacyHandlers(BiConsumer<Element, Field> handlers) {
-        this.legacyHandler.add(handlers);
-    }
-
-    @Override
-    public List<BiConsumer<Element, Field>>getLegacyHandlers() {
-        return this.legacyHandler;
-    }
-
-    @Override
-    public Map<String, String> valueMap() {
+    public Map<String, String> getValueMap() {
         return valueMap;
     }
 
@@ -287,8 +203,81 @@ public class TargetImpl implements Target {
         return PluginXmlUtility.buildXml(this, document);
     }
 
-    @Override
-    public String buildJson() {
-        return null;
+    private Target getChild(String relPath) {
+        Queue<String> pathChunks = Pattern.compile("/").splitAsStream(relPath).collect(Collectors.toCollection(LinkedList::new));
+        Target currentChild = this;
+        while (!pathChunks.isEmpty()) {
+            String currentChunk = pathChunks.poll();
+            currentChild = currentChild.listChildren().stream().filter(child -> currentChunk.equals(child.getName())).findFirst().orElse(null);
+            if (currentChild == null) {
+                return null;
+            }
+        }
+        return currentChild;
+    }
+
+    private void populateProperty(Method method, Target target, Annotation annotation) {
+        String name = method.getName();
+        boolean ignorePrefix = false;
+        if (method.isAnnotationPresent(PropertyRendering.class)) {
+            PropertyRendering propertyRendering = method.getAnnotation(PropertyRendering.class);
+            name = StringUtils.defaultIfBlank(propertyRendering.name(), name);
+            ignorePrefix = propertyRendering.ignorePrefix();
+        } else if (method.isAnnotationPresent(PropertyName.class)) {
+            PropertyName propertyName = method.getAnnotation(PropertyName.class);
+            name = propertyName.value();
+            ignorePrefix = propertyName.ignorePrefix();
+        }
+        String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
+        String namePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
+            ? StringUtils.substringAfterLast(prefix, DialogConstants.PATH_SEPARATOR)
+            : prefix;
+        if (!ignorePrefix && StringUtils.isNotBlank(prefix)) {
+            name = namePrefix + name;
+        }
+        BinaryOperator<String> merger = this::mergeStringAttributes;
+        XmlAttributeSettingHelper.forMethod(annotation, method)
+            .withName(name)
+            .withMerger(merger)
+            .setAttribute(target);
+    }
+
+    private String mergeStringAttributes(String first, String second) {
+        if (!ATTRIBUTE_LIST_PATTERN.matcher(first).matches() || !ATTRIBUTE_LIST_PATTERN.matcher(second).matches()) {
+            return DEFAULT_ATTRIBUTE_MERGER.apply(first, second);
+        }
+        Set<String> result = new HashSet<>(Arrays.asList(StringUtils
+            .strip(first, ATTRIBUTE_LIST_SURROUND)
+            .split(ATTRIBUTE_LIST_SPLIT_PATTERN)));
+        result.addAll(new HashSet<>(Arrays.asList(StringUtils
+            .strip(second, ATTRIBUTE_LIST_SURROUND)
+            .split(ATTRIBUTE_LIST_SPLIT_PATTERN))));
+        return String.format(ATTRIBUTE_LIST_TEMPLATE, String.join(RteFeatures.FEATURE_SEPARATOR, result));
+    }
+
+    private void mapAnnotationProperties(Annotation annotation, Target target, List<String> skipped) {
+        PropertyMapping propMapping = annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class);
+        if (propMapping == null) {
+            return;
+        }
+        String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
+        String nodePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
+            ? StringUtils.substringBeforeLast(prefix, DialogConstants.PATH_SEPARATOR)
+            : StringUtils.EMPTY;
+
+        Target effectiveElement;
+        if (StringUtils.isEmpty(nodePrefix)) {
+            effectiveElement = target;
+        } else {
+            effectiveElement = Pattern.compile(DialogConstants.PATH_SEPARATOR)
+                .splitAsStream(nodePrefix)
+                .reduce(target, Target::child, (prev, next) -> next);
+        }
+        Arrays.stream(annotation.annotationType().getDeclaredMethods())
+            .filter(m -> ArrayUtils.isEmpty(propMapping.mappings()) || ArrayUtils.contains(propMapping.mappings(), m.getName()))
+            .filter(m -> !m.isAnnotationPresent(IgnorePropertyMapping.class))
+            .filter(m -> !skipped.contains(m.getName()))
+            .forEach(m -> populateProperty(m, effectiveElement, annotation));
+
     }
 }

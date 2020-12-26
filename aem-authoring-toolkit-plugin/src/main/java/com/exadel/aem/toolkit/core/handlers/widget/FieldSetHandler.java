@@ -40,9 +40,9 @@ class FieldSetHandler implements WidgetSetHandler {
     public void accept(Source source, Target target) {
         // Define the working @FieldSet annotation instance and the fieldset type
         FieldSet fieldSet = source.adaptTo(FieldSet.class);
-        Class<?> fieldSetType = WidgetSetHandler.getManagedClass(source);
+        Class<?> fieldSetType = source.getContainerClass();
 
-        List<Source> sources = getContainerSourceFacades(source, fieldSetType);
+        List<Source> sources = getContainerSource(source, fieldSetType);
 
         if(sources.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(

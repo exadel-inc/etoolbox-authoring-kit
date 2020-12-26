@@ -13,14 +13,13 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
-import java.lang.reflect.Member;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.SourceImpl;
+import com.exadel.aem.toolkit.core.source.SourceBase;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
@@ -58,19 +57,19 @@ public class InheritanceHandler implements BiConsumer<Source, Target> {
      */
     private static Deque<Source> getInheritanceTree(Source source) {
         Deque<Source> result = new LinkedList<>();
-        DialogWidget referencedComponent = DialogWidgets.fromSourceFacade(source);
+        DialogWidget referencedComponent = DialogWidgets.fromSource(source);
         if (referencedComponent == null) {
             return result;
         }
         Extends extendsAnnotation = source.adaptTo(Extends.class);
         while (extendsAnnotation != null) {
-            String referencedFieldName = extendsAnnotation.field().isEmpty() ? ((Member) source.getSource()).getName() : extendsAnnotation.field();
+            String referencedFieldName = extendsAnnotation.field().isEmpty() ? source.getName() : extendsAnnotation.field();
             try {
-                Source referencedField = new SourceImpl(extendsAnnotation.value().getDeclaredField(referencedFieldName));
+                Source referencedField = SourceBase.fromMember(extendsAnnotation.value().getDeclaredField(referencedFieldName), extendsAnnotation.value());
                 if (referencedField.equals(source) || result.contains(referencedField)) { // to avoid circular references
                     break;
                 }
-                if (referencedComponent.equals(DialogWidgets.fromSourceFacade(referencedField))) { // to avoid mixing up props of different components
+                if (referencedComponent.equals(DialogWidgets.fromSource(referencedField))) { // to avoid mixing up props of different components
                     result.add(referencedField);
                 }
                 extendsAnnotation = referencedField.adaptTo(Extends.class);

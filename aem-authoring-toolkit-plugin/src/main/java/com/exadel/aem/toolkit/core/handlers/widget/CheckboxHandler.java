@@ -21,7 +21,6 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 
-import java.lang.reflect.Member;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -48,7 +47,7 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
         } else {
             Target checkboxElement = target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST)
                     .child(DialogConstants.NN_ITEMS)
-                    .child(((Member) source.getSource()).getName() + POSTFIX_FOR_ROOT_CHECKBOX)
+                    .child(source.getName() + POSTFIX_FOR_ROOT_CHECKBOX)
                     .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX)
                     .mapProperties(checkbox);
 
@@ -84,7 +83,7 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
                     .collect(Collectors.toList());
 
             for (Source innerSource : sources) {
-                Target checkboxElement = target.child(((Member) innerSource.getSource()).getName())
+                Target checkboxElement = target.child(innerSource.getName())
                         .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX)
                         .mapProperties(innerSource.adaptTo(Checkbox.class));
                 setTextAttribute(innerSource, checkboxElement);
@@ -106,7 +105,7 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
         if (checkbox.text().isEmpty() && source.adaptTo(DialogField.class) != null) {
             target.attribute(DialogConstants.PN_TEXT, source.adaptTo(DialogField.class).label());
         } else if (checkbox.text().isEmpty()) {
-            target.attribute(DialogConstants.PN_TEXT, ((Member) source.getSource()).getName());
+            target.attribute(DialogConstants.PN_TEXT, source.getName());
         }
     }
 }

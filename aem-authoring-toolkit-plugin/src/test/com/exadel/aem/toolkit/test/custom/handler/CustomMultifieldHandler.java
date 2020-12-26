@@ -24,10 +24,6 @@ import com.exadel.aem.toolkit.api.handlers.Handles;
 @Handles(value = MultiField.class, before = CustomMultifieldHandler.class, after = CustomProcessingHandler.class)
 @SuppressWarnings("unused")
 public class CustomMultifieldHandler implements DialogWidgetHandler {
-    @Override
-    public String getName() {
-        return "customMultifieldHandler";
-    }
 
     @Override
     public void accept(Source source, Target element) {

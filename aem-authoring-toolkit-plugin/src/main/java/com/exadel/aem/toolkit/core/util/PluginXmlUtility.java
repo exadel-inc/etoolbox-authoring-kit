@@ -29,7 +29,6 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -699,7 +698,7 @@ public class PluginXmlUtility implements XmlUtility {
      * @return Appended {@code datasource} node
      */
     public static Target appendDataSource(Target target, DataSource dataSource, String acsListPath, String acsListResourceType) {
-        Map<String, String> arbitraryProperties = Arrays.stream(dataSource.properties())
+        Map<String, Object> arbitraryProperties = Arrays.stream(dataSource.properties())
                 .collect(Collectors.toMap(Property::name, Property::value));
         Target dataSourceElement = appendDataSource(target, dataSource.path(), dataSource.resourceType(), arbitraryProperties);
         if (dataSourceElement == null) {
@@ -715,7 +714,7 @@ public class PluginXmlUtility implements XmlUtility {
      * @param resourceType Use this to set {@code sling:resourceType} of data source
      * @return Appended {@code datasource} node, or null if the provided {@code resourceType} is invalid
      */
-    private static Target appendDataSource(Target target, String path, String resourceType, Map<String, String> properties) {
+    private static Target appendDataSource(Target target, String path, String resourceType, Map<String, Object> properties) {
         if (StringUtils.isBlank(resourceType)) {
             return null;
         }
@@ -754,16 +753,13 @@ public class PluginXmlUtility implements XmlUtility {
     private static Element populateDocument(Target target, Document document) {
         String name = NamingUtil.getValidName(target.getName());
         Element tmp = document.createElement(name);
-        if (target.getLegacyField() != null && target.getLegacyHandlers() != null) {
-            target.getLegacyHandlers().forEach(handler-> handler.accept(tmp, target.getLegacyField()));
-        }
         mapProperties(tmp, target);
         target.listChildren().forEach(child -> tmp.appendChild(populateDocument(child, document)));
         return tmp;
     }
 
     private static void mapProperties(Element element, Target target) {
-        for (Map.Entry<String, String> entry : target.valueMap().entrySet()) {
+        for (Map.Entry<String, String> entry : target.getValueMap().entrySet()) {
             element.setAttribute(entry.getKey(), entry.getValue());
         }
     }

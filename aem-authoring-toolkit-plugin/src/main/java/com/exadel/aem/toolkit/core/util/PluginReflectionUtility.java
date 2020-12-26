@@ -41,12 +41,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
-import com.exadel.aem.toolkit.api.handlers.DialogHandlerLegacy;
-import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandlerLegacy;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 
-import com.exadel.aem.toolkit.core.SourceImpl;
+import com.exadel.aem.toolkit.core.source.SourceBase;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -80,10 +78,8 @@ public class PluginReflectionUtility {
     private org.reflections.Reflections reflections;
 
     private List<DialogWidgetHandler> customDialogWidgetHandlers;
-    private List<DialogWidgetHandlerLegacy> customDialogWidgetHandlersLegacy;
 
     private List<DialogHandler> customDialogHandlers;
-    private List<DialogHandlerLegacy> customDialogHandlersLegacy;
 
     private Map<String, Validator> validators;
 
@@ -118,15 +114,6 @@ public class PluginReflectionUtility {
                 PACKAGE_BASE_WILDCARD);
         return newInstance;
     }
-
-    public List<DialogWidgetHandlerLegacy> getCustomDialogWidgetHandlersLegacy() {
-        if (customDialogWidgetHandlersLegacy != null) {
-            return customDialogWidgetHandlersLegacy;
-        }
-        customDialogWidgetHandlersLegacy = getHandlers(DialogWidgetHandlerLegacy.class);
-        return customDialogWidgetHandlersLegacy;
-    }
-
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
      * scope of the plugin
@@ -150,19 +137,6 @@ public class PluginReflectionUtility {
         return getCustomDialogWidgetHandlers(Collections.singletonList(annotationClass));
     }
 
-    public List<DialogWidgetHandlerLegacy> getCustomDialogWidgetHandlersLegacy(List<Class<? extends Annotation>> annotationClasses) {
-        if (annotationClasses == null) {
-            return Collections.emptyList();
-        }
-        return getCustomDialogWidgetHandlersLegacy().stream()
-                .filter(handler -> handler.getClass().isAnnotationPresent(Handles.class))
-                .filter(handler -> {
-                    Class<?>[] handled = handler.getClass().getDeclaredAnnotation(Handles.class).value();
-                    return annotationClasses.stream().anyMatch(annotationClass -> ArrayUtils.contains(handled, annotationClass));
-                })
-                .collect(Collectors.toList());
-    }
-
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
      * scope of the plugin matching the specified widget annotation
@@ -180,14 +154,6 @@ public class PluginReflectionUtility {
                     return annotationClasses.stream().anyMatch(annotationClass -> ArrayUtils.contains(handled, annotationClass));
                 })
                 .collect(Collectors.toList());
-    }
-
-    public List<DialogHandlerLegacy> getCustomDialogHandlersLegacy() {
-        if (customDialogHandlersLegacy != null) {
-            return customDialogHandlersLegacy;
-        }
-        customDialogHandlersLegacy = getHandlers(DialogHandlerLegacy.class);
-        return customDialogHandlersLegacy;
     }
 
     /**
@@ -321,9 +287,8 @@ public class PluginReflectionUtility {
     }
 
     public static List<Source> getAllSourceFacades(Class<?> targetClass, List<Predicate<Member>> predicates) {
-        List<Source> sources = getAllMembers(targetClass, predicates).stream().map(SourceImpl::new).collect(Collectors.toList());
-        sources.forEach(source -> source.setProcessedClass(targetClass));
-        return sources;
+        return getAllMembers(targetClass, predicates).stream()
+            .map(member -> SourceBase.fromMember(member, targetClass)).collect(Collectors.toList());
     }
 
     public static List<Source> getAllSourceFacades(Class<?> targetClass) {
@@ -492,57 +457,34 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Retrieves the type represented by the provided class member. If the member is designed to provide a single object,
-     * its type is returned. But if the member represents an array, type of array's element is returned
+     * Retrieves the type represented by the provided class method. If the method is designed to provide a single object,
+     * its type is returned. But if the method represents an array, type of array's element is returned
      *
-     * @param member The class member to analyze
+     * @param method The class method to analyze
      * @return Appropriate {@code Class} instance
      */
-    public static Class<?> getPlainType(Member member) {
-        return getPlainType(member, false);
-    }
-
-    /**
-     * Retrieves the type represented by the provided class member. If the member is designed to provide a single object,
-     * its type is returned. If the member represents an array, type of array's element is returned.
-     * If {@code extractGeneric} flag is set to true, the represented value is examined for being a parametrized
-     * collection, and if so, collection's parameter type is turned
-     *
-     * @param member The class member to analyze
-     * @return Appropriate {@code Class} instance
-     */
-    public static Class<?> getPlainType(Member member, boolean extractParamType) {
-        Class<?> result;
-        if (member instanceof Field) {
-            result = ((Field) member).getType();
-        } else {
-            result = ((Method) member).getReturnType();
-        }
+    public static Class<?> getPlainMethodType(Method method) {
+        Class<?> result = method.getReturnType();
         if (result.isArray()) {
             result = result.getComponentType();
         }
-        if (extractParamType && ClassUtils.isAssignable(result, Collection.class)) {
-            return getGenericType(member, result);
+        if (ClassUtils.isAssignable(result, Collection.class)) {
+            return getGenericType(method, result);
         }
         return result;
     }
 
     /**
-     * Retrieves the underlying parameter type of the class member provided. If the member is an array or a collection.
-     * the item (parameter) type is returned; otherwise, the mere member type is returned
+     * Retrieves the underlying parameter type of the class method provided. If the method is an array or a collection.
+     * the item (parameter) type is returned; otherwise, the mere method type is returned
      *
-     * @param member The class member to analyze
+     * @param method The class method to analyze
      * @param defaultValue The value to return if parameter type extraction fails
      * @return Appropriate {@code Class} instance
      */
-    private static Class<?> getGenericType(Member member, Class<?> defaultValue) {
+    private static Class<?> getGenericType(Method method, Class<?> defaultValue) {
         try {
-            ParameterizedType fieldGenericType;
-            if (member instanceof Field) {
-                fieldGenericType = (ParameterizedType) ((Field) member).getGenericType();
-            } else {
-                fieldGenericType = (ParameterizedType) ((Method) member).getGenericReturnType();
-            }
+            ParameterizedType fieldGenericType = (ParameterizedType) method.getGenericReturnType();
             Type[] typeArguments = fieldGenericType.getActualTypeArguments();
             if (ArrayUtils.isEmpty(typeArguments)) {
                 return defaultValue;

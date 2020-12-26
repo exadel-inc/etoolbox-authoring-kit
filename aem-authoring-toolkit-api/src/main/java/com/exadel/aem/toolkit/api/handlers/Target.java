@@ -13,14 +13,12 @@
  */
 package com.exadel.aem.toolkit.api.handlers;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import java.lang.reflect.Field;
+import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
+
+import org.w3c.dom.Document;
 
 
 public interface Target {
@@ -29,11 +27,11 @@ public interface Target {
 
     Target child(String s);
 
-    default Target mapProperties(Object o) {
-        return mapProperties(o, Collections.emptyList());
+    default Target mapProperties(Annotation annotation) {
+        return mapProperties(annotation, Collections.emptyList());
     }
 
-    Target mapProperties(Object o, List<String> skipped);
+    Target mapProperties(Annotation annotation, List<String> skipped);
 
     Target attribute(String name, String value);
 
@@ -43,11 +41,21 @@ public interface Target {
 
     Target attribute(String name, List<String> values);
 
-    Target attributes(Map<String, String> map);
+    Target attributes(Map<String, Object> map);
+
+    void updatePrefix(String prefix);
+
+    void updatePostfix(String postfix);
+
+    String getPrefix();
+
+    String getPostfix();
+
+    void delete();
+
+    void deleteAttribute(String name);
 
     boolean hasAttribute(String name);
-
-    Object deleteAttribute(String name);
 
     List<Target> listChildren();
 
@@ -57,25 +65,11 @@ public interface Target {
 
     Target parent();
 
-    String getAttribute(String name);
+    <T> T getAttribute(String name, Class<T> tClass);
 
-    Target getChild(String relPath);
+    boolean hasChild(String relPath);
 
-    Target clear();
-
-    boolean isDefault();
-
-    void setLegacyField(Field legacyField);
-
-    Field getLegacyField();
-
-    void setLegacyHandlers(BiConsumer<Element, Field> handlers);
-
-    List<BiConsumer<Element, Field>> getLegacyHandlers();
-
-    Map<String, String> valueMap();
+    Map<String, String> getValueMap();
 
     Document buildXml(Document document);
-
-    String buildJson();
 }

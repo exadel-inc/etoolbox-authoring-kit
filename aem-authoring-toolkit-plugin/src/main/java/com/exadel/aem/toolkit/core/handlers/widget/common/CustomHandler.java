@@ -13,7 +13,6 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -39,11 +38,6 @@ public class CustomHandler implements BiConsumer<Source, Target> {
      */
     @Override
     public void accept(Source source, Target target) {
-        PluginReflectionUtility.getFieldAnnotations(source).filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
-                .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
-                .flatMap(widgetSource -> PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers().stream()
-                        .filter(handler -> widgetSource.equals(handler.getName())))
-                .forEach(handler -> handler.accept(source, target));
 
         PluginRuntime.context().getReflectionUtility()
                 .getCustomDialogWidgetHandlers(PluginReflectionUtility.getFieldAnnotations(source).collect(Collectors.toList()))
@@ -51,15 +45,5 @@ public class CustomHandler implements BiConsumer<Source, Target> {
 
         Arrays.stream(source.adaptTo(Property[].class))
                 .forEach(p -> target.attribute(NamingUtil.getValidFieldName(p.name()), p.value()));
-
-        PluginReflectionUtility.getFieldAnnotations(source).filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
-                .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
-                .flatMap(widgetSource -> PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlersLegacy().stream()
-                        .filter(handler -> widgetSource.equals(handler.getName())))
-                .forEach(handler -> {target.setLegacyHandlers(handler); target.setLegacyField((Field) source.getSource());});
-
-        PluginRuntime.context().getReflectionUtility()
-                .getCustomDialogWidgetHandlersLegacy(PluginReflectionUtility.getFieldAnnotations(source).collect(Collectors.toList()))
-                .forEach(handler -> {target.setLegacyHandlers(handler); target.setLegacyField((Field) source.getSource());});
     }
 }

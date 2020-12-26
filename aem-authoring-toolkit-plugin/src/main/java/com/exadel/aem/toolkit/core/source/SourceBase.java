@@ -12,27 +12,32 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core;
+package com.exadel.aem.toolkit.core.source;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+
+import org.apache.commons.lang3.ClassUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SourceImpl implements Source {
+public abstract class SourceBase implements Source {
 
-    private final Member member;
     private final Map<String, Object> valueMap;
-    private Class<?> processedClass;
+    private final Class<?> processedClass;
 
-    public SourceImpl(Member member) {
-        this.member = member;
+    SourceBase(Class<?> processedClass) {
+        this.processedClass = processedClass;
         this.valueMap = new HashMap<>();
         this.valueMap.put(DialogConstants.PN_PREFIX, "./");
         this.valueMap.put(DialogConstants.PN_POSTFIX, "");
@@ -50,7 +55,7 @@ public class SourceImpl implements Source {
 
     @Override
     public <T> T adaptTo(Class<T> target) {
-        if (target == null || member == null) {
+        if (target == null) {
             return null;
         }
         if (target.isAnnotation()) {
@@ -77,19 +82,32 @@ public class SourceImpl implements Source {
     }
 
     @Override
-    public Member getSource() {
-        return member;
-    }
-
-    @Override
     public Class<?> getProcessedClass() {
         return this.processedClass;
     }
 
     @Override
-    public void setProcessedClass(Class<?> processedClass) {
-        this.processedClass = processedClass;
+    public Class<?> getContainerClass() {
+        // Extract underlying source's type as is
+        Class<?> result = getSourceType();
+        // Try to retrieve collection's parameter type
+        if (ClassUtils.isAssignable(result, Collection.class)) {
+            result = getPlainType();
+        }
+        // Switch to directly specified type, if any
+        if (getDeclaredAnnotation(MultiField.class) != null
+            && getDeclaredAnnotation(MultiField.class).field() != _Default.class) {
+            result = getDeclaredAnnotation(MultiField.class).field();
+        } else if (getDeclaredAnnotation(FieldSet.class) != null
+            && getDeclaredAnnotation(FieldSet.class).source() != _Default.class) {
+            result = getDeclaredAnnotation(FieldSet.class).source();
+        }
+        return result;
     }
+
+    abstract Class<?> getPlainType();
+
+    abstract Class<?> getSourceType();
 
     private Object findValue(String name) {
         for (Annotation annotation : getDeclaredAnnotations()) {
@@ -103,21 +121,15 @@ public class SourceImpl implements Source {
         return null;
     }
 
-    private Annotation[] getDeclaredAnnotations() {
-        return  member instanceof Field
-                ? ((Field) member).getDeclaredAnnotations()
-                : ((Method) member).getDeclaredAnnotations();
-    }
+    abstract Annotation[] getDeclaredAnnotations();
 
-    private <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
-        return  member instanceof Field
-                ? ((Field) member).getDeclaredAnnotation(annotationClass)
-                : ((Method) member).getDeclaredAnnotation(annotationClass);
-    }
+    abstract <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass);
 
-    private <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass) {
-        return  member instanceof Field
-                ? ((Field) member).getAnnotationsByType(annotationClass)
-                : ((Method) member).getAnnotationsByType(annotationClass);
+    abstract <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass);
+
+    public static Source fromMember(Member member, Class<?> processedClass) {
+        return member instanceof Field
+            ? new SourceFieldImpl((Field) member, processedClass)
+            : new SourceMethodImpl((Method) member, processedClass);
     }
 }

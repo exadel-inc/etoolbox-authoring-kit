@@ -53,7 +53,7 @@ public class PluginXmlContainerUtility {
         Target itemsElement = container.child(DialogConstants.NN_ITEMS);
 
         for (Source source : sources) {
-            DialogWidget widget = DialogWidgets.fromSourceFacade(source);
+            DialogWidget widget = DialogWidgets.fromSource(source);
             if (widget == null) {
                 continue;
             }
@@ -109,8 +109,8 @@ public class PluginXmlContainerUtility {
                 .getExceptionHandler()
                 .handle(new InvalidFieldContainerException(String.format(
                         DUPLICATE_FIELDS_MESSAGE_TEMPLATE,
-                        ((Member) sameNameFieldsByOrigin.getLast().getSource()).getName(),
-                        ((Member) sameNameFieldsByOrigin.getLast().getSource()).getDeclaringClass().getSimpleName(),
-                        ((Member) sameNameFields.getLast().getSource()).getDeclaringClass().getSimpleName())));
+                        sameNameFieldsByOrigin.getLast().getName(),
+                        sameNameFieldsByOrigin.getLast().getProcessedClass().getSimpleName(),
+                        sameNameFields.getLast().getProcessedClass().getSimpleName())));
     }
 }

@@ -15,16 +15,14 @@ package com.exadel.aem.toolkit.core.handlers.editconfig;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.SourceImpl;
+import com.exadel.aem.toolkit.core.source.SourceBase;
 import com.exadel.aem.toolkit.core.util.NamingUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
@@ -85,12 +83,10 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
      * @param target Current {@link Target} instance
      */
     private void getSingleChildEditorNode(InplaceEditingConfig config, Target target) {
-        Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-                .put(DialogConstants.PN_TITLE, StringUtils.isNotBlank(config.title()) ? config.title() : getConfigName(config))
-                .put(DialogConstants.PN_TYPE, config.type().toLowerCase()).build();
         target.child(getConfigName(config))
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_CHILD_EDITORS_CONFIG)
-            .attributes(properties);
+            .attribute(DialogConstants.PN_TITLE, StringUtils.isNotBlank(config.title()) ? config.title() : getConfigName(config))
+            .attribute(DialogConstants.PN_TYPE, config.type().toLowerCase());
     }
 
     /**
@@ -166,7 +162,7 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
             return null;
         }
         try {
-            return new SourceImpl(config.richText().value().getDeclaredField(config.richText().field()));
+            return SourceBase.fromMember(config.richText().value().getDeclaredField(config.richText().field()), config.richText().value());
         } catch (NoSuchFieldException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
                     config.richText().value(),

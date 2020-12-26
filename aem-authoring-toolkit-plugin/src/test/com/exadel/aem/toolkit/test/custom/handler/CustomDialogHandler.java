@@ -20,24 +20,21 @@ import java.util.function.Consumer;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 
-@Handles(before = CustomProcessingHandler.class, after = CustomWidgetHandler.class)
+@Handles(before = CustomProcessingHandler.class, after = CustomWidgetHandler.class, value = CustomDialogAnnotation.class)
 @SuppressWarnings("unused")
 public class CustomDialogHandler implements DialogHandler {
 
     @Override
-    public String getName() {
-        return "customDialogProcessing";
-    }
-
-    @Override
-    public void accept(Target element, Class<?> aClass) {
+    public void accept(Class<?> aClass, Target element) {
         visitElements(element, elt -> {
-            if (StringUtils.equals(elt.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE), ResourceTypes.MULTIFIELD)
+            if (StringUtils.equals(elt.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, String.class), ResourceTypes.MULTIFIELD)
                     && isTopLevelMultifield(elt)) {
                 elt.attribute("multifieldSpecial", "This is added to top-level Multifields");
             }
@@ -55,11 +52,11 @@ public class CustomDialogHandler implements DialogHandler {
                 .forEach(elt -> visitElements(elt, visitor));
     }
 
-    private static boolean isTopLevelMultifield(Target element) {
-        String resourceType = Optional.ofNullable(element.parent())
+    private static boolean isTopLevelMultifield(Target target) {
+        String resourceType = Optional.ofNullable(target.parent())
                 .map(Target::parent)
                 .map(Target::parent)
-                .map(node -> node.valueMap().get(DialogConstants.PN_SLING_RESOURCE_TYPE))
+                .map(node -> node.getValueMap().get(DialogConstants.PN_SLING_RESOURCE_TYPE))
                 .orElse(StringUtils.EMPTY);
         return !resourceType.equals(ResourceTypes.MULTIFIELD);
     }

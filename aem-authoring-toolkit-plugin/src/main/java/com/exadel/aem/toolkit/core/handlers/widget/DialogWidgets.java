@@ -21,7 +21,7 @@ import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.SourceImpl;
+import com.exadel.aem.toolkit.core.source.SourceBase;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
@@ -110,7 +110,7 @@ public enum DialogWidgets implements DialogWidget {
      * @return True or false
      */
     public static boolean isPresent(Member member) {
-        return getWidgetAnnotationClass(new SourceImpl(member)) != null;
+        return getWidgetAnnotationClass(SourceBase.fromMember(member, null)) != null;
     }
 
     /**
@@ -118,7 +118,7 @@ public enum DialogWidgets implements DialogWidget {
      * @param source {@link Source} of a component class
      * @return {@code DialogWidget} value, or null
      */
-    public static DialogWidget fromSourceFacade(Source source) {
+    public static DialogWidget fromSource(Source source) {
         Class<? extends Annotation> fieldAnnotationClass = getWidgetAnnotationClass(source);
         if (fieldAnnotationClass == null) {
             return null;
@@ -133,8 +133,8 @@ public enum DialogWidgets implements DialogWidget {
         if (result == null) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(
                     NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE,
-                    ((Member) source.getSource()).getName(),
-                    ((Member) source.getSource()).getDeclaringClass())));
+                    source.getName(),
+                    source.getProcessedClass())));
         }
         return result;
     }

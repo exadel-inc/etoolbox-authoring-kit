@@ -38,7 +38,7 @@ public class FormParametersHandler implements BiConsumer<EditConfig, Target> {
         if(editConfig.formParameters().length == 0){
             return;
         }
-        Map<String, String> propertiesMap = Arrays.stream(editConfig.formParameters())
+        Map<String, Object> propertiesMap = Arrays.stream(editConfig.formParameters())
             .collect(Collectors.toMap(FormParameter::name, FormParameter::value));
         root.child(DialogConstants.NN_FORM_PARAMETERS).attributes(propertiesMap);
     }

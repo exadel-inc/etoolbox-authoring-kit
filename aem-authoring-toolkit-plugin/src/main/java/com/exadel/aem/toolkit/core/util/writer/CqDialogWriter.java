@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import javax.xml.transform.Transformer;
 
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import org.apache.commons.lang3.ArrayUtils;
@@ -88,7 +89,7 @@ class CqDialogWriter extends ContentXmlWriter {
         PluginRuntime.context().getReflectionUtility().getCustomDialogHandlers().stream()
                 .filter(handler -> customAnnotations.stream()
                         .anyMatch(annotation -> customAnnotationMatchesHandler(annotation, handler)))
-                .forEach(handler -> handler.accept(target, componentClass));
+                .forEach(handler -> handler.accept(componentClass, target));
     }
 
     /**
@@ -124,7 +125,8 @@ class CqDialogWriter extends ContentXmlWriter {
      * @return True if the two arguments are "matching" via their properties, otherwise, false
      */
     private static boolean customAnnotationMatchesHandler(DialogAnnotation annotation, DialogHandler handler) {
-        return StringUtils.equals(annotation.source(), handler.getName());
+        return Arrays.stream(handler.getClass().getDeclaredAnnotation(Handles.class).value())
+            .anyMatch(aClass -> aClass.equals(annotation.getClass()));
     }
 
     private static boolean fitsInScope(Method method, XmlScope scope) {

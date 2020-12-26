@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.core.SourceImpl;
+import com.exadel.aem.toolkit.core.source.SourceBase;
 import org.apache.commons.lang3.ClassUtils;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
@@ -105,8 +105,8 @@ public class PluginObjectPredicates {
      * @return Integer value per {@code Comparator#compare(Object, Object)} convention
      */
     static int compareByOrigin(Source f1, Source f2) {
-        Class<?> f1Class = ((Member) f1.getSource()).getDeclaringClass();
-        Class<?> f2Class = ((Member) f2.getSource()).getDeclaringClass();
+        Class<?> f1Class = f1.getProcessedClass();
+        Class<?> f2Class = f2.getProcessedClass();
         if (f1Class != f2Class) {
             if (ClassUtils.isAssignable(f1Class, f2Class)) {
                 return 1;
@@ -119,9 +119,9 @@ public class PluginObjectPredicates {
     }
 
     public static int compareDialogMembers(Member f1, Member f2)  {
-        DialogField dialogField1 = new SourceImpl(f1).adaptTo(DialogField.class);
+        DialogField dialogField1 = SourceBase.fromMember(f1, null).adaptTo(DialogField.class);
         int rank1 = dialogField1 != null ? dialogField1.ranking() : 0;
-        DialogField dialogField2 = new SourceImpl(f2).adaptTo(DialogField.class);
+        DialogField dialogField2 = SourceBase.fromMember(f2, null).adaptTo(DialogField.class);
         int rank2 = dialogField2 != null ? dialogField2.ranking() : 0;
 
         if (rank1 != rank2) {

@@ -15,24 +15,16 @@
 package com.exadel.aem.toolkit.core.handlers.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
-import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
-import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectPredicates;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 
-import org.apache.commons.lang3.ClassUtils;
-
-import java.lang.reflect.Field;
 import java.lang.reflect.Member;
-import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
@@ -54,7 +46,7 @@ interface WidgetSetHandler extends BiConsumer<Source, Target> {
      * @param containerType {@code Class} representing the type of the container
      * @return {@code List<Source>} containing renderable fields, or an empty collection
      */
-    default List<Source> getContainerSourceFacades(Source source, Class<?> containerType) {
+    default List<Source> getContainerSource(Source source, Class<?> containerType) {
         // Extract type of the Java class being the current rendering source
         Class<?> componentType = source.getProcessedClass();
         // Build the collection of ignored fields that may be defined at source level and at nesting class level
@@ -84,29 +76,5 @@ interface WidgetSetHandler extends BiConsumer<Source, Target> {
         Predicate<Member> nonIgnoredFields = PluginObjectPredicates.getNotIgnoredMembersPredicate(allIgnoredFields);
         Predicate<Member> dialogFields = DialogWidgets::isPresent;
         return PluginReflectionUtility.getAllSourceFacades(containerType, Arrays.asList(nonIgnoredFields, dialogFields));
-    }
-
-    static Class<?> getManagedClass(Source source) {
-        // Extract underlying source's type as is
-        Class<?> result = getSourceType(source.getSource());
-        // Try to retrieve collection's parameter type
-        if (ClassUtils.isAssignable(result, Collection.class)) {
-            result = PluginReflectionUtility.getPlainType((Member) source.getSource(), true);
-        }
-        // Switch to directly specified type, if any
-        if (source.adaptTo(MultiField.class) != null
-            && source.adaptTo(MultiField.class).field() != _Default.class) {
-            result = source.adaptTo(MultiField.class).field();
-        } else if (source.adaptTo(FieldSet.class) != null
-            && source.adaptTo(FieldSet.class).source() != _Default.class) {
-            result = source.adaptTo(FieldSet.class).source();
-        }
-        return result;
-    }
-
-    static Class<?> getSourceType(Object member) {
-        return member instanceof Field
-            ? ((Field) member).getType().isArray() ? ((Field) member).getType().getComponentType() : ((Field) member).getType()
-            : ((Method) member).getReturnType();
     }
 }

@@ -243,7 +243,7 @@ public class XmlAttributeSettingHelper<T> {
      */
     private void setAttribute(Target element, String value) {
         String oldAttributeValue = element.hasAttribute(name)
-                ? element.getAttribute(name)
+                ? element.getAttribute(name, String.class)
                 : "";
         element.attribute(name, valueMerger.apply(oldAttributeValue, value));
     }
@@ -363,7 +363,7 @@ public class XmlAttributeSettingHelper<T> {
      * @return Object type
      */
     private static Class<?> getMethodWrappedType(Method method) {
-        Class<?> effectiveType = PluginReflectionUtility.getPlainType(method);
+        Class<?> effectiveType = PluginReflectionUtility.getPlainMethodType(method);
         if (effectiveType.isEnum()) {
             return String.class;
         }

@@ -40,7 +40,7 @@ public class ListenersHandler implements BiConsumer<EditConfig, Target> {
         if(listeners.isEmpty()) {
             return;
         }
-        Map<String, String> properties = listeners.stream()
+        Map<String, Object> properties = listeners.stream()
             .collect(Collectors.toMap(Listener::event, Listener::action));
         root.child(DialogConstants.NN_LISTENERS)
                 .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_LISTENERS)

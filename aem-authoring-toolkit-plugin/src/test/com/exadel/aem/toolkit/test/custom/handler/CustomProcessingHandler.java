@@ -24,10 +24,6 @@ import com.exadel.aem.toolkit.test.custom.annotation.CustomProcessingAnnotation;
 @Handles(value = CustomProcessingAnnotation.class, before = CustomMultifieldHandler.class, after = CustomWidgetHandler.class)
 @SuppressWarnings("unused")
 public class CustomProcessingHandler implements DialogWidgetHandler {
-    @Override
-    public String getName() {
-        return "testCustomProcessing";
-    }
 
     @Override
     public void accept(Source source, Target element) {
