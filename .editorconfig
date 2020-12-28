@@ -22,3 +22,6 @@ ij_java_blank_lines_around_method_in_interface = 0
 ij_javascript_blank_lines_around_method = 0
 ij_javascript_blank_lines_around_class = 0
 ij_javascript_keep_simple_methods_in_one_line = true
+
+[*.json]
+indent_size = 2

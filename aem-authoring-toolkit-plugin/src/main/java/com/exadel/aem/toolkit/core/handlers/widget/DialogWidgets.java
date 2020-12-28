@@ -34,6 +34,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
 import com.exadel.aem.toolkit.api.annotations.widgets.TabsWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
+import com.exadel.aem.toolkit.api.annotations.widgets.Text;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
@@ -41,6 +42,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
+import com.exadel.aem.toolkit.api.annotations.widgets.hyperlink.Hyperlink;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
@@ -70,9 +72,11 @@ public enum DialogWidgets implements DialogWidget {
     DATE_PICKER(DatePicker.class, new DatePickerHandler()),
     FILE_UPLOAD(FileUpload.class),
     IMAGE_UPLOAD(ImageUpload.class, new ImageUploadHandler()),
+    TEXT(Text.class),
     TEXT_AREA(TextArea.class),
     RICH_TEXT_EDITOR(RichTextEditor.class, new RichTextEditorHandler()),
     HIDDEN(Hidden.class),
+    HYPERLINK(Hyperlink.class),
     AUTOCOMPLETE(Autocomplete.class, new AutocompleteHandler()),
     PASSWORD(Password.class, new PasswordHandler()),
     HEADING(Heading.class),

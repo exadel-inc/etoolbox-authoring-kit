@@ -81,6 +81,11 @@ public class WidgetsTest extends DefaultTestBase {
     }
 
     @Test
+    public void testHyperlink() {
+        test(HyperlinkWidget.class);
+    }
+
+    @Test
     public void testImageUpload() {
         test(ImageUploadWidget.class);
     }
@@ -113,6 +118,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testSelect() {
         test(SelectWidget.class);
+    }
+
+    @Test
+    public void testText() {
+        test(TextWidget.class);
     }
 
     @Test

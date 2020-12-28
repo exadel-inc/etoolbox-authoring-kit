@@ -89,7 +89,7 @@
          * @returns cached value
          * */
         get value() {
-            if (!this.hasOwnProperty('_value')) {
+            if (!Object.prototype.hasOwnProperty.call(this, '_value')) {
                 return (this._value = this.getReferenceValue());
             }
             return this._value;

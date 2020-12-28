@@ -19,7 +19,7 @@
     ns.ElementAccessors.registerAccessor({
         selector: `${RTE_CONTAINER} ${RTE_EDITOR_SELECTOR}, ${RTE_CONTAINER} ${RTE_INPUT_SELECTOR}`,
         preferableType: 'string',
-        get: function($el) {
+        get: function ($el) {
             return $el.closest(RTE_CONTAINER).find(RTE_INPUT_SELECTOR).val() || '';
         },
         set: function ($el, value, notify) {
@@ -39,7 +39,7 @@
         required: function ($el, val) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
             const $rteInput = $rteContainer.find(RTE_INPUT_SELECTOR);
-            $rteInput.each(function () {this.required = !!val;});
+            $rteInput.each(function () { this.required = !!val; });
             $rteContainer.find(RTE_EDITOR_SELECTOR).attr('aria-required', !!val);
             ns.ElementAccessors.updateValidity($rteInput, true);
         },
