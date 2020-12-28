@@ -14,8 +14,6 @@
 
 package com.exadel.aem.toolkit.samples.models;
 
-import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
@@ -25,7 +23,8 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -38,22 +37,16 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.Default;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 @Dialog(
-        name = "content/dungeons-component",
-        title = "Dungeons Component",
-        description = "Choose a dungeon for your warrior",
-        resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
-        componentGroup = GroupConstants.COMPONENT_GROUP,
-        panels = {
-                @AccordionPanel(title = "Main")
-        }
+    name = "content/dungeons-component",
+    title = "Dungeons Component",
+    description = "Choose a dungeon for your warrior",
+    resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
+    componentGroup = GroupConstants.COMPONENT_GROUP,
+    panels = {
+        @AccordionPanel(title = "Main")
+    }
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class DungeonsComponent extends ParentSelectComponent {
@@ -68,11 +61,11 @@ public class DungeonsComponent extends ParentSelectComponent {
     @DialogField(label = LABEL_DUNGEON_RULES)
     @Extends(value = WarriorDescriptionComponent.class, field = "description")
     @RichTextEditor(
-            features = {
-                    RteFeatures.SEPARATOR,
-                    RteFeatures.LISTS_ORDERED,
-                    RteFeatures.LISTS_UNORDERED
-            })
+        features = {
+            RteFeatures.SEPARATOR,
+            RteFeatures.LISTS_ORDERED,
+            RteFeatures.LISTS_UNORDERED
+        })
     @ValueMapValue
     @PlaceOn("Main")
     private String dungeonRules;
