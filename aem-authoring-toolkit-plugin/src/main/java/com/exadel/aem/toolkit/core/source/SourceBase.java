@@ -18,39 +18,21 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 import org.apache.commons.lang3.ClassUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class SourceBase implements Source {
 
-    private final Map<String, Object> valueMap;
     private final Class<?> processedClass;
 
     SourceBase(Class<?> processedClass) {
         this.processedClass = processedClass;
-        this.valueMap = new HashMap<>();
-        this.valueMap.put(DialogConstants.PN_PREFIX, "./");
-        this.valueMap.put(DialogConstants.PN_POSTFIX, "");
-    }
-
-    @Override
-    public Object fromValueMap(String key) {
-        return valueMap.get(key);
-    }
-
-    @Override
-    public Object addToValueMap(String key, String value) {
-        return valueMap.put(key, value);
     }
 
     @Override
@@ -68,17 +50,7 @@ public abstract class SourceBase implements Source {
                 return target.cast(getAnnotationsByType((Class<? extends Annotation>) target.getComponentType()));
             }
         }
-        T result;
-        try {
-            result = target.getConstructor().newInstance();
-            for (Field resultField : target.getFields()) {
-                resultField.setAccessible(true);
-                resultField.set(result, findValue(resultField.getName()));
-            }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            return null;
-        }
-        return result;
+        return null;
     }
 
     @Override
@@ -108,18 +80,6 @@ public abstract class SourceBase implements Source {
     abstract Class<?> getPlainType();
 
     abstract Class<?> getSourceType();
-
-    private Object findValue(String name) {
-        for (Annotation annotation : getDeclaredAnnotations()) {
-            try {
-                Method annotationMethod = annotation.annotationType().getMethod(name);
-                return annotationMethod.invoke(annotation, new Object[0]);
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                continue;
-            }
-        }
-        return null;
-    }
 
     abstract Annotation[] getDeclaredAnnotations();
 

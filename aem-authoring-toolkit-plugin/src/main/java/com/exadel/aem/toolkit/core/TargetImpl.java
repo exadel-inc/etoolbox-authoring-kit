@@ -126,24 +126,34 @@ public class TargetImpl implements Target {
 
     @Override
     public void updatePrefix(String prefix) {
-        String currentPrefix = this.valueMap.get(DialogConstants.PN_PREFIX);
-        this.valueMap.put(DialogConstants.PN_PREFIX, currentPrefix + prefix);
+        this.valueMap.put(DialogConstants.PN_PREFIX, prefix);
     }
 
     @Override
     public void updatePostfix(String postfix) {
-        String currentPostfix = this.valueMap.get(DialogConstants.PN_POSTFIX);
-        this.valueMap.put(DialogConstants.PN_POSTFIX, postfix + currentPostfix);
+        this.valueMap.put(DialogConstants.PN_POSTFIX, postfix);
     }
 
     @Override
     public String getPrefix() {
-        return this.valueMap.get(DialogConstants.PN_PREFIX);
+        if (this.parent == null) {
+            return StringUtils.EMPTY;
+        }
+        String prefix = this.valueMap.get(DialogConstants.PN_PREFIX) == null
+            ? StringUtils.EMPTY
+            : this.valueMap.get(DialogConstants.PN_PREFIX);
+        return this.parent.getPrefix() + prefix;
     }
 
     @Override
     public String getPostfix() {
-        return this.valueMap.get(DialogConstants.PN_POSTFIX);
+        if (this.parent == null) {
+            return StringUtils.EMPTY;
+        }
+        String postfix = this.valueMap.get(DialogConstants.PN_POSTFIX) == null
+            ? StringUtils.EMPTY
+            : this.valueMap.get(DialogConstants.PN_POSTFIX);
+        return postfix + this.parent.getPostfix();
     }
 
     @Override

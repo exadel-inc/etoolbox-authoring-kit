@@ -759,6 +759,8 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     private static void mapProperties(Element element, Target target) {
+        target.deleteAttribute(DialogConstants.PN_PREFIX);
+        target.deleteAttribute(DialogConstants.PN_POSTFIX);
         for (Map.Entry<String, String> entry : target.getValueMap().entrySet()) {
             element.setAttribute(entry.getKey(), entry.getValue());
         }

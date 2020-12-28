@@ -13,9 +13,9 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
-import java.lang.reflect.Member;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.util.NamingUtil;
@@ -45,13 +45,18 @@ public class DialogFieldHandler implements BiConsumer<Source, Target> {
                 ? NamingUtil.getValidFieldName(dialogField.name())
                 : DialogConstants.RELATIVE_PATH_PREFIX;
         }
-        String prefix = (String) source.fromValueMap(DialogConstants.PN_PREFIX);
+        String prefix = target.getPrefix();
+
+        if (!ResourceTypes.MULTIFIELD.equals(target.parent().parent().parent().getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, String.class))) {
+            prefix = DialogConstants.RELATIVE_PATH_PREFIX + prefix;
+        }
+
         if (StringUtils.isNotBlank(prefix)
                 && !(prefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.equals(DialogConstants.RELATIVE_PATH_PREFIX))
                 && !(prefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.startsWith(DialogConstants.PARENT_PATH_PREFIX))) {
             name = prefix + name;
         }
-        name = name + source.fromValueMap(DialogConstants.PN_POSTFIX);
+        name = name + target.getPostfix();
         target.attribute(DialogConstants.PN_NAME, name);
     }
 }

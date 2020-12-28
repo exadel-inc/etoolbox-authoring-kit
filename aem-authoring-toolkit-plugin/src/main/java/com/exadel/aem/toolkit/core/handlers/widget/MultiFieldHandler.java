@@ -78,12 +78,6 @@ public class MultiFieldHandler implements WidgetSetHandler {
         // with "./" which is by default
         // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
         // That is why we must alter the default name prefix for the ongoing set of sources
-        sources.forEach(source -> {
-            String prefix = (String) source.fromValueMap(DialogConstants.PN_PREFIX);
-            if (prefix.startsWith(DialogConstants.RELATIVE_PATH_PREFIX)) {
-                source.addToValueMap(DialogConstants.PN_PREFIX, prefix.substring(2));
-            }
-        });
         PluginXmlContainerUtility.append(sources, multifieldContainerElement);
     }
 

@@ -51,20 +51,11 @@ class FieldSetHandler implements WidgetSetHandler {
             return;
         }
 
-        sources.forEach(populated -> populatePrefixPostfix(populated, source, fieldSet));
-
+        if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
+            target.updatePrefix(NamingUtil.getValidFieldName(fieldSet.namePrefix()));
+        }
+        target.updatePostfix(fieldSet.namePostfix());
         // append the valid sources to the container
         PluginXmlContainerUtility.append(sources, target);
-    }
-
-    private void populatePrefixPostfix(Source populated, Source current, FieldSet fieldSet) {
-        if (StringUtils.isNotBlank(fieldSet.namePrefix())){
-            populated.addToValueMap(DialogConstants.PN_PREFIX, current.fromValueMap(DialogConstants.PN_PREFIX).toString() +
-                    populated.fromValueMap(DialogConstants.PN_PREFIX).toString().substring(2) + NamingUtil.getValidFieldName(fieldSet.namePrefix()));
-        }
-        if (StringUtils.isNotBlank(fieldSet.namePostfix())) {
-            populated.addToValueMap(DialogConstants.PN_POSTFIX, fieldSet.namePostfix() + populated.fromValueMap(DialogConstants.PN_POSTFIX) +
-                    current.fromValueMap(DialogConstants.PN_POSTFIX).toString());
-        }
     }
 }
