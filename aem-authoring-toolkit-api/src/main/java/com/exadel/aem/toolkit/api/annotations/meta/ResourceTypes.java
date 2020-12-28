@@ -49,8 +49,10 @@ public class ResourceTypes {
     public static final String TABS = "granite/ui/components/coral/foundation/tabs";
     public static final String TAG = "cq/gui/components/coral/common/form/tagfield";
     public static final String TAGS = "cq/gui/components/common/datasources/tags";
+    public static final String TEXT = "granite/ui/components/coral/foundation/text";
     public static final String TEXTAREA = "granite/ui/components/coral/foundation/form/textarea";
     public static final String TEXTFIELD = "granite/ui/components/coral/foundation/form/textfield";
 
-    private ResourceTypes() {}
+    private ResourceTypes() {
+    }
 }
