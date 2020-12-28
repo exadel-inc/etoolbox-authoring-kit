@@ -191,7 +191,7 @@ public class Dialog {
 ```
 (Note the `layout = DialogLayout.TABS` assignment. This is to specify that the dialog *must* display fields encapsulated in nested classes per corresponding tabs. If `layout` is skipped, or set to its default `FIXED_COLUMNS` value, tabs will not show and only "immediate" fields of the basic class will be displayed).
 
-The other way of laying out tabs is to define array of `@Tab` within `@Dialog` annotation. Then, to settle a field to a certain tab you will need  to add `@PlaceOnTab` annotation to this particular field.  The values of `@PlaceOnTab` must correspond to the *title* value of the desired tab. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that tab title is specified everywhere in the very same format, no extra spaces, etc.
+The other way of laying out tabs is to define array of `@Tab` within `@Dialog` annotation. Then, to settle a field to a certain tab you will need  to add `@PlaceOn` annotation to this particular field.  The values of `@PlaceOn` must correspond to the *title* value of the desired tab. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that tab title is specified everywhere in the very same format, no extra spaces, etc.
 ```java
 @Dialog(
     name = "test-component",
@@ -206,24 +206,59 @@ The other way of laying out tabs is to define array of `@Tab` within `@Dialog` a
 public class TestTabs {
     @DialogField(label = "Field on the first tab")
     @TextField
-    @PlaceOnTab("First tab")
+    @PlaceOn("First tab")
     String field1;
  
     @DialogField(label = "Field on the second tab")
     @TextField
-    @PlaceOnTab("Second tab")
+    @PlaceOn("Second tab")
     String field2;
  
     @DialogField(description = "Field on the third tab")
     @TextField
-    @PlaceOnTab("Third tab")
+    @PlaceOn("Third tab")
     String field3;
 }
 ```
+
+### @Accordion annotation
+
+To define array of `@AccordionPanel` within `@Dialog` or `@AccordionWidget` annotation. Then, to settle a field to a certain accordionPanel you will need  to add `@PlaceOn` annotation to this particular field.  The values of `@PlaceOn` must correspond to the *title* value of the desired accordionPanel. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that panel title is specified everywhere in the very same format, no extra spaces, etc.
+```java
+@Dialog(
+    name = "test-component",
+    title = "test-component-dialog",
+    panels = {
+        @AccordionPanel(title = "First accordionPanel")
+    }
+)
+public class TestAccordion {
+    @DialogField(label = "Field on the first tab")
+    @TextField
+    @PlaceOn("First accordionPanel")
+    String field1;
+
+    @AccordionWidget(
+        panels = {
+            @AccordionPanel(title = "Accordion Widget Panel")
+        }
+    )
+    AccordionExample accordionExample;
+
+    static class AccordionExample {
+          @PlaceOn("Accordion Widget Panel")
+          @DialogField
+          @TextField
+          String field6;
+    }
+}
+```
+
+
 #### Tabs inheritance
 In *AEM Authoring Toolkit*, if a Java class annotated with `@Dialog` extends another class where potential dialog fields exist, these fields also become the part of the dialog. This may sound inobvious, because Java itself doesn't have the notion of field inheritance while AEM entities have (see _overlaying_).
 
-Same way, tabs defined in a superclass are "inherited" by the subclass, and the `PlaceOnTab` instructions are in effect.
+Same way, tabs defined in a superclass are "inherited" by the subclass, and the `PlaceOn` instructions are in effect.
 
 If you do not want to have some "inherited" tabs in yor dialog, add the `@IgnoreTabs` annotation as follows:
 ```java
@@ -243,6 +278,7 @@ public class TestTabsExtension { /* ... */}
 Note that `@IgnoreTabs` setting is *not* inherited, unlike fields themselves, and works only for the class where it was specified. 
 
 See also: [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it) 
+
 
  
 ### Fields annotations
@@ -1240,7 +1276,7 @@ public class DependsOnSample {
     @DialogField
     @FieldSet(title = "Conditional fieldset")
     @DependsOn(query = "@ref", action = "someAction", params = {@DependsOnParam(name = "param", value = "paramValue")} )
-    @PlaceOnTab(TAB_ADDITIONAL_TOPICS)
+    @PlaceOn(TAB_ADDITIONAL_TOPICS)
     private SomeFieldsetDefinitionClass fieldsetDefinitionClass;
 }
 ``` 
