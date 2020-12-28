@@ -37,6 +37,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Text;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
+import com.exadel.aem.toolkit.api.annotations.widgets.anchorbutton.AnchorButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
@@ -83,7 +84,8 @@ public enum DialogWidgets implements DialogWidget {
     ALERT(Alert.class),
     BUTTON(Button.class),
     ACCORDION(AccordionWidget.class, new AccordionWidgetHandler()),
-    TABS(TabsWidget.class, new TabsWidgetHandler());
+    TABS(TabsWidget.class, new TabsWidgetHandler()),
+    ANCHOR_BUTTON(AnchorButton.class);
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";
     private static final BiConsumer<Element, Field> EMPTY_HANDLER = (componentNode, field) -> {
