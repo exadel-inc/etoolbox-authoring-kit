@@ -13,29 +13,25 @@
  */
 package com.exadel.aem.toolkit.core.handlers.container;
 
-import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.core.handlers.Handler;
-import com.exadel.aem.toolkit.core.handlers.container.common.ContainerHandler;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
 import org.w3c.dom.Element;
 
+import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
+import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.core.handlers.container.common.ContainerHandler;
+
 /**
- * The {@link Handler} for a tabbed TouchUI dialog
+ * The {@link Handler} for a accordion-shaped TouchUI dialog
  */
-public class AccordionContainerHandler implements ContainerHandler {
-    private static final String DEFAULT_TAB_NAME = "accordion";
-    private static final String NO_TABS_DEFINED_EXCEPTION_MESSAGE = "No accordions defined for the dialog at ";
+public class AccordionContainerHandler extends ContainerHandler {
 
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
      * to process component-backing Java class and append the results to the XML root node
-     *
      * @param componentClass {@code Class<?>} instance used as the source of markup
      * @param parentElement  XML document root element
      */
     @Override
     public void accept(Class<?> componentClass, Element parentElement) {
-        acceptParent(componentClass, parentElement, AccordionPanel.class, DialogConstants.NN_ACCORDION, ResourceTypes.ACCORDION, NO_TABS_DEFINED_EXCEPTION_MESSAGE, DEFAULT_TAB_NAME);
+        acceptParent(componentClass, parentElement, AccordionPanel.class);
     }
 }

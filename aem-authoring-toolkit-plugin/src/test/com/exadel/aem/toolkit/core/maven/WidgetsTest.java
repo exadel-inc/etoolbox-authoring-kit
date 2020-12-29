@@ -14,11 +14,12 @@
 
 package com.exadel.aem.toolkit.core.maven;
 
+import com.exadel.aem.toolkit.test.widget.*;
+import org.junit.Test;
+
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
 import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
-import com.exadel.aem.toolkit.test.widget.*;
-import org.junit.Test;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.RESOURCE_FOLDER_WIDGET;
 
@@ -60,6 +61,11 @@ public class WidgetsTest extends DefaultTestBase {
     }
 
     @Test
+    public void testFieldSet() {
+        test(FieldSetWidget.class);
+    }
+
+    @Test
     public void testFileUpload() {
         test(FileUploadWidget.class);
     }
@@ -72,6 +78,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testHidden() {
         test(HiddenWidget.class);
+    }
+
+    @Test
+    public void testHyperlink() {
+        test(HyperlinkWidget.class);
     }
 
     @Test
@@ -107,6 +118,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testSelect() {
         test(SelectWidget.class);
+    }
+
+    @Test
+    public void testText() {
+        test(TextWidget.class);
     }
 
     @Test

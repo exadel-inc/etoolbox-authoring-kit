@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.2
+ * @version 2.2.3
  *
  * DependsOn Coral 3 Basic Actions
  *
@@ -20,7 +20,7 @@
      * Find related tab panel
      * */
     function getTabPanel($element) {
-        return $element.closest('coral-panel[role="tabpanel"]');
+        return $element.closest('coral-panelstack > coral-panel');
     }
 
     /**
@@ -38,7 +38,6 @@
         ns.ElementAccessors.setVisibility(this.$el, state);
     });
 
-
     /**
      * Change visibility of tab-panel and related tab-control
      * query type: boolean
@@ -53,12 +52,11 @@
 
         const targetTab = this.$tabControl[0];
         if (targetTab && targetTab.selected && !state) {
-            let tabs = targetTab.parentNode.items.getAll();
+            const tabs = targetTab.parentNode.items.getAll();
             tabs.find((tab) => !tab.hidden).selected = true;
             // Last tab is automatically deselected
         }
     });
-
 
     /**
      * Change require marker of the field

@@ -13,17 +13,23 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.container.enums.TabsOrientation;
+import com.exadel.aem.toolkit.api.annotations.container.enums.TabsSize;
+import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 
+/**
+ * Used to set up tabs container widget inside dialog
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TABS)
@@ -32,17 +38,57 @@ import java.lang.annotation.Target;
 public @interface TabsWidget {
 
     /**
-     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs (or accordion)/items/<this_tabs>} node
-     *
+     * Name of current tabs widget
      * @return String value, required
      */
-    String title();
+    String name();
 
     /**
-     * For the tabbed TouchUI dialog layout, enumerates the tabs to be rendered
-     *
+     * Determines the orientation of the tabs
+     * @return One of {@code TabsOrientation} values
+     * @see TabsOrientation
+     */
+    @EnumValue(transformation = StringTransformation.LOWERCASE)
+    TabsOrientation variant() default TabsOrientation.HORIZONTAL;
+
+    /**
+     * Determines the size of the tabs
+     * @return One of {@code TabsSize} values
+     * @see TabsSize
+     */
+    @EnumValue
+    TabsSize size() default TabsSize.M;
+
+    /**
+     * Put vertical margin to the root element
+     * @return True or false
+     */
+    boolean margin() default false;
+
+    /**
+     * Make the element maximized to fill the available space
+     * @return True or false
+     */
+    boolean maximized() default false;
+
+    /**
+     * Determines the name of the feature that the interaction takes place
+     * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">
+     * @return String value
+     */
+    String trackingFeature() default "";
+
+    /**
+     * Determines the name of the widget
+     * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">
+     * @return String value
+     */
+    String trackingWidgetName() default "";
+
+    /**
+     * Enumerates the tabs to be rendered within this container
      * @return One or more {@code Tab} annotations
      * @see Tab
      */
-    Tab[] tabs() default {};
+    Tab[] tabs();
 }

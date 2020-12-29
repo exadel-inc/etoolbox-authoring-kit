@@ -14,6 +14,8 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
+import java.util.List;
+
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -30,11 +32,25 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_N
 @SuppressWarnings("unused")
 public class MultiFieldWidget {
     @DialogField(
-            label="Multifield Label",
-            description = "Multifield Description"
+            label="Multifield 1",
+            description = "Multifield definition with source class specified"
     )
     @MultiField(field = MultiFieldContainer.class)
-    String multiField;
+    String multiField1;
+
+    @DialogField(
+        label="Multifield 2",
+        description = "Multifield definition with implicit source class"
+    )
+    @MultiField
+    MultiFieldContainer multiField2;
+
+    @DialogField(
+        label="Multifield 3",
+        description = "Multifield definition with collection-typed source"
+    )
+    @MultiField
+    List<MultiFieldContainer> multiField3;
 
     private static class MultiFieldContainer {
         @DialogField

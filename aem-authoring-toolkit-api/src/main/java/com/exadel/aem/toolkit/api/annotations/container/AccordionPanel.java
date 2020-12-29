@@ -13,12 +13,14 @@
  */
 package com.exadel.aem.toolkit.api.annotations.container;
 
-import com.exadel.aem.toolkit.api.annotations.meta.*;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 
 /**
  * Used to set up
@@ -33,22 +35,19 @@ import java.lang.annotation.Target;
 public @interface AccordionPanel {
 
     /**
-     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs (or accordion)/items/<this_accordion>} node
-     *
+     * Title of current Accordion Panel
      * @return String value, required
      */
     String title();
 
     /**
-     * True to disable the item; false otherwise.
-     *
+     * True to disable the item; false otherwise
      * @return True or false
      */
     boolean disabled() default false;
 
     /**
-     * True to open the item initially; false otherwise.
-     *
+     * True to open the item initially; false otherwise
      * @return True or false
      */
     boolean active() default false;

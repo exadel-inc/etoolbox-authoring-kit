@@ -15,6 +15,7 @@
             this.refs = [];
             this.name = name;
             this.$context = $context;
+            this.onChange = this.update.bind(this);
 
             this.updateRefList();
         }
@@ -27,11 +28,6 @@
             delete this.refs;
             delete this.$context;
         }
-
-        /**
-         * Child reference changed
-         * */
-        onChange = () => { this.update(); };
 
         /**
          * Get current element value
@@ -75,7 +71,7 @@
          * Returns existing if it is already registered
          * */
         static register(name, $context) {
-            for (let ref of refs) {
+            for (const ref of refs) {
                 if (ref.is(name, $context)) return ref;
             }
             const newRef = new GroupReference(name, $context);
@@ -105,5 +101,4 @@
         }
     }
     ns.GroupReferenceRegistry = GroupReferenceRegistry;
-
 })(document, Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

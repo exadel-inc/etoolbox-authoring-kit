@@ -14,10 +14,10 @@
             const element = $el[0];
             const length = element ? element.items.length : 0;
             const isEmpty = !element || !length;
-            return  {
+            return {
                 length,
                 isEmpty
             };
-        },
+        }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

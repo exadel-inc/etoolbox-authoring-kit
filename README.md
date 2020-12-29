@@ -191,7 +191,7 @@ public class Dialog {
 ```
 (Note the `layout = DialogLayout.TABS` assignment. This is to specify that the dialog *must* display fields encapsulated in nested classes per corresponding tabs. If `layout` is skipped, or set to its default `FIXED_COLUMNS` value, tabs will not show and only "immediate" fields of the basic class will be displayed).
 
-The other way of laying out tabs is to define array of `@Tab` within `@Dialog` annotation. Then, to settle a field to a certain tab you will need  to add `@PlaceOnTab` annotation to this particular field.  The values of `@PlaceOnTab` must correspond to the *title* value of the desired tab. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that tab title is specified everywhere in the very same format, no extra spaces, etc.
+The other way of laying out tabs is to define array of `@Tab` within `@Dialog` annotation. Then, to settle a field to a certain tab you will need  to add `@PlaceOn` annotation to this particular field.  The values of `@PlaceOn` must correspond to the *title* value of the desired tab. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that tab title is specified everywhere in the very same format, no extra spaces, etc.
 ```java
 @Dialog(
     name = "test-component",
@@ -206,29 +206,29 @@ The other way of laying out tabs is to define array of `@Tab` within `@Dialog` a
 public class TestTabs {
     @DialogField(label = "Field on the first tab")
     @TextField
-    @PlaceOnTab("First tab")
+    @PlaceOn("First tab")
     String field1;
  
     @DialogField(label = "Field on the second tab")
     @TextField
-    @PlaceOnTab("Second tab")
+    @PlaceOn("Second tab")
     String field2;
  
     @DialogField(description = "Field on the third tab")
     @TextField
-    @PlaceOnTab("Third tab")
+    @PlaceOn("Third tab")
     String field3;
 }
 ```
 
 ### @Accordion annotation
 
-To define array of `@AccordionPanel` within `@Dialog` or `@AccordionWidget` annotation. Then, to settle a field to a certain accordionPanel you will need  to add `@PlaceOn` annotation to this particular field.  The values of `@PlaceOn` must correspond to the *title* value of the desired accordionPanel. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that tab title is specified everywhere in the very same format, no extra spaces, etc.
+To define array of `@AccordionPanel` within `@Dialog` or `@AccordionWidget` annotation. Then, to settle a field to a certain accordionPanel you will need  to add `@PlaceOn` annotation to this particular field.  The values of `@PlaceOn` must correspond to the *title* value of the desired accordionPanel. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that panel title is specified everywhere in the very same format, no extra spaces, etc.
 ```java
 @Dialog(
     name = "test-component",
     title = "test-component-dialog",
-    accordionTabs = {
+    panels = {
         @AccordionPanel(title = "First accordionPanel")
     }
 )
@@ -258,7 +258,7 @@ public class TestAccordion {
 #### Tabs inheritance
 In *AEM Authoring Toolkit*, if a Java class annotated with `@Dialog` extends another class where potential dialog fields exist, these fields also become the part of the dialog. This may sound inobvious, because Java itself doesn't have the notion of field inheritance while AEM entities have (see _overlaying_).
 
-Same way, tabs defined in a superclass are "inherited" by the subclass, and the `PlaceOnTab` instructions are in effect.
+Same way, tabs defined in a superclass are "inherited" by the subclass, and the `PlaceOn` instructions are in effect.
 
 If you do not want to have some "inherited" tabs in yor dialog, add the `@IgnoreTabs` annotation as follows:
 ```java
@@ -447,6 +447,8 @@ public class DialogWithHeading {
 ```
 ###### @Hidden
 Used to render hidden inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hidden](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/hidden/index.html).
+###### @Hyperlink
+Used to represent a HTML hyperlinks (<a>) in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hyperlink](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html).
 ###### @NumberField
 Used to render inputs for storing numbers in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on NumberField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/numberfield/index.html).
 
@@ -536,6 +538,8 @@ public class MyDialogWithDropdown {
 
 ###### @Switch
 Used to render on-off toggle switches in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Switch](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/switch/index.html).
+###### @Text
+Used to render text component that is rendered as <span> in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Text](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html).
 ###### @TextArea
 Used to render textarea HTML inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on TextArea](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textarea/index.html).
 ###### @TextField
@@ -543,7 +547,9 @@ Used to produce text inputs in TouchUI dialogs. Exposes properties as described 
 
 #### Fields grouping and multiplying
 ##### @FieldSet
-Used to logically group a number of different fields as described in [Adobe's Granite UI manual on FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html). This goal is achieved by an external or a nested class that encapsulates grouping fields. Then a *\<OtherClass>*-typed field is declared, and `@FieldSet` annotation is added. 
+Used to logically group a number of different fields as described in [Adobe's Granite UI manual on FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html). This goal is achieved by an external or a nested class that encapsulates grouping fields. Then an *\<OtherClass>*-typed field is declared, and `@FieldSet` annotation is added. 
+
+The `@FieldSet` will guess the kind of group of widgets to render through the type of the underlying field. But you may as well specify some particular type by setting the *source* property.
 
 Hierarchy of classes is honored (so that a *FieldSet*-producing class may extend another class from same or even foreign scope. Proper field order within a fieldset can be guaranteed by use of *ranking* values (see chapter on `@DialogField` above). 
 
@@ -552,8 +558,8 @@ Names of fields added to a FieldSet may share a common prefix specified in *name
 If you do not need a margin around the fieldset added by default, add `@Attribute(className="u-coral-noMargin")`
 ```java
 public class DialogWithFieldSet {
-    @FieldSet(title = "Field set example", namePrefix="fs-")
-    private FieldSetExample fieldSet;
+    @FieldSet(title = "Field set example", namePrefix="fs-") // you could as well specify type of FieldSet other
+    private FieldSetExample fieldSet;                        // that FieldSetExample via 'source' property
  
     static class FieldSetExample extends ParentFieldSetExample {
         // Constructors are omitted
@@ -581,7 +587,9 @@ public class DialogWithFieldSet {
 }
 ```
 ##### @MultiField
-Used to facilitate multiple (repeating) instances of same fields or same groups if fields as described in [Adobe's Granite UI manual on MultiField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html). The logic of the component relies on the presence of a nested class encapsulating one or more fields to be repeated. Reference to that class is passed to `@MultiField`'s *field* property. See below how it works for a single field repetition, and for a subset of fields multiplied.
+Used to facilitate multiple (repeating) instances of same fields or same groups if fields as described in [Adobe's Granite UI manual on MultiField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html). The logic of the component relies on the presence of a nested class encapsulating one or more fields to be repeated. Reference to that class is passed to `@MultiField`'s *field* property. Same as for `@FieldSet`, if you omit this value, it is guessed from the underlying field type, be it a *SomePlainType* or a *Collection\<WithTypeParameter>*.  
+
+See below how it works for a single field repetition, and for a subset of fields multiplied.
 ###### Simple multi field
 ```java
 
@@ -1268,7 +1276,7 @@ public class DependsOnSample {
     @DialogField
     @FieldSet(title = "Conditional fieldset")
     @DependsOn(query = "@ref", action = "someAction", params = {@DependsOnParam(name = "param", value = "paramValue")} )
-    @PlaceOnTab(TAB_ADDITIONAL_TOPICS)
+    @PlaceOn(TAB_ADDITIONAL_TOPICS)
     private SomeFieldsetDefinitionClass fieldsetDefinitionClass;
 }
 ``` 

@@ -13,17 +13,22 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets;
 
-import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
-import com.exadel.aem.toolkit.api.annotations.container.AccordionVariant;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
-import com.exadel.aem.toolkit.api.annotations.meta.*;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.container.enums.AccordionVariant;
+import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 
+/**
+ * Used to set up accordion container widget inside dialog
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.ACCORDION)
@@ -32,32 +37,26 @@ import java.lang.annotation.Target;
 public @interface AccordionWidget {
 
     /**
-     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs (or accordion)/items/<this_accordion>} node
-     *
+     * Name of current accordion widget
      * @return String value, required
      */
-    String title();
+    String name();
 
     /**
-     * For the tabbed TouchUI dialog layout, enumerates the accordion panels to be rendered
-     *
-     * @return One or more {@code Tab} annotations
+     * For the accordion-shaped TouchUI dialog layout, enumerates the accordion panels to be rendered
+     * @return One or more {@code AccordionPanel} annotations
      * @see AccordionPanel
      */
-    AccordionPanel[] panels() default {};
+    AccordionPanel[] panels();
 
     /**
-     * Whether multiple items can be opened at the same time.
-     *
+     * Sets whether multiple items can be opened at the same time
      * @return True or False
      */
     boolean multiple() default false;
 
     /**
-     * The variant of the accordion.
-     * The default look and feel.Quiet variant with minimal borders.
-     * Large variant, typically used inside a navigation rail since it does not have borders on the sides.
-     *
+     * Determines the styling of this Accordion
      * @return One of {@code AccordionVariant} values
      * @see AccordionVariant
      */
@@ -65,23 +64,8 @@ public @interface AccordionWidget {
     AccordionVariant variant() default AccordionVariant.DEFAULT;
 
     /**
-     * Put vertical margin to the root element.
-     *
+     * Put vertical margin to the root element
      * @return True or False
      */
     boolean margin() default false;
-
-    /**
-     * True to disable the item; false otherwise.
-     *
-     * @return True or false
-     */
-    boolean disabled() default false;
-
-    /**
-     * True to open the item initially; false otherwise.
-     *
-     * @return True or false
-     */
-    boolean active() default false;
 }

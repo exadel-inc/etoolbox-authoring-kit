@@ -14,19 +14,6 @@
 
 package com.exadel.aem.toolkit.samples.models;
 
-import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
-import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
-import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
@@ -34,15 +21,32 @@ import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
+import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
+import com.exadel.aem.toolkit.api.annotations.widgets.hyperlink.Hyperlink;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
+import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
+import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
+import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.samples.constants.GroupConstants;
+
 @Dialog(
-        name = "content/dungeons-component",
-        title = "Dungeons Component",
-        description = "Choose a dungeon for your warrior",
-        resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
-        componentGroup = GroupConstants.COMPONENT_GROUP,
-        accordionTabs = {
-                @AccordionPanel(title = "Main")
-        }
+    name = "content/dungeons-component",
+    title = "Dungeons Component",
+    description = "Choose a dungeon for your warrior",
+    resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
+    componentGroup = GroupConstants.COMPONENT_GROUP,
+    panels = {
+        @AccordionPanel(title = "Main")
+    }
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class DungeonsComponent extends ParentSelectComponent {
@@ -57,25 +61,34 @@ public class DungeonsComponent extends ParentSelectComponent {
     @DialogField(label = LABEL_DUNGEON_RULES)
     @Extends(value = WarriorDescriptionComponent.class, field = "description")
     @RichTextEditor(
-            features = {
-                    RteFeatures.SEPARATOR,
-                    RteFeatures.LISTS_ORDERED,
-                    RteFeatures.LISTS_UNORDERED
-            })
+        features = {
+            RteFeatures.SEPARATOR,
+            RteFeatures.LISTS_ORDERED,
+            RteFeatures.LISTS_UNORDERED
+        })
     @ValueMapValue
     @PlaceOn("Main")
     private String dungeonRules;
 
-    @AccordionWidget(title = LABEL_DUNGEON_SELECT, panels = {@AccordionPanel(title = LABEL_DUNGEON_SELECT)})
+    @DependsOn(query = "@dungeon === '1'")
+    @Hyperlink(href = "https://media.graphcms.com/BmLxDCt5SaSHWx4rt6xy", text = "Dungeon profile image", target = "_blank")
+    private String profileLink;
+
+    @DependsOn(query = "@dungeon === '2'")
+    @Hyperlink(href = "https://cg4.cgsociety.org/uploads/images/medium/penemenn-ice-valley-1-11885220-8day.jpg", text = "Dungeon profile image", target = "_blank")
+    private String profileLink2;
+
+    @AccordionWidget(name = LABEL_DUNGEON_SELECT, panels = {@AccordionPanel(title = LABEL_DUNGEON_SELECT)})
     @PlaceOn("Main")
     DungeonSelect dungeon;
 
     static class DungeonSelect {
         @Select(options = {
-                @Option(text = "Rotten swamps", value = "1"),
-                @Option(text = "Ice valley", value = "2")
+            @Option(text = "Rotten swamps", value = "1"),
+            @Option(text = "Ice valley", value = "2")
         })
         @DialogField(label = LABEL_DUNGEON_SELECT)
+        @DependsOnRef(name = "dungeon")
         @Default(values = "1")
         @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
         @ValueMapValue
@@ -83,7 +96,6 @@ public class DungeonsComponent extends ParentSelectComponent {
         String dungeonsSelect;
 
     }
-
 
     public String getDungeonRules() {
         return StringUtils.defaultIfBlank(dungeonRules, DEFAULT_RULES);

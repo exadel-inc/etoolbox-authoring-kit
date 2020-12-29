@@ -17,68 +17,42 @@
                     <basic
                             jcr:primaryType="nt:unstructured"
                             jcr:title="Basic"
-                            disabled="{Boolean}true"
-                            active="{Boolean}false"
                             sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <parentConfig jcr:primaryType="nt:unstructured"
+                                      disabled="{Boolean}true"
+                                      active="{Boolean}false"/>
                         <items jcr:primaryType="nt:unstructured">
-                            <buttonField1 jcr:primaryType="nt:unstructured"
-                                          sling:resourceType="granite/ui/components/coral/foundation/button"
-                                          type="submit"
-                                          disabled="{Boolean}false"
-                                          autocomplete="on"
-                                          formId="test-form"
-                                          text="test-text"
-                                          text_commentI18n="test-comment"
-                                          hideText="{Boolean}true"
-                                          active="{Boolean}true"
-                                          icon="search"
-                                          iconSize="L"
-                                          size="L"
-                                          block="{Boolean}true"
-                                          variant="primary"
-                                          command="shift+s"
-                                          trackingElement="test-element"
-                                          trackingFeature="test-feature"
-                            />
+                            <field1 jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./field1"
+                                    disabled="{Boolean}false"
+                                    fieldLabel="Field 1"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"/>
                         </items>
                     </basic>
                     <basic2
                             jcr:primaryType="nt:unstructured"
                             jcr:title="Basic2"
-                            disabled="{Boolean}false"
-                            active="{Boolean}false"
                             sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <parentConfig jcr:primaryType="nt:unstructured"
+                                      disabled="{Boolean}false"
+                                      active="{Boolean}false"/>
                         <items jcr:primaryType="nt:unstructured">
-                            <buttonField jcr:primaryType="nt:unstructured"
-                                         sling:resourceType="granite/ui/components/coral/foundation/button"
-                                         type="submit"
-                                         disabled="{Boolean}false"
-                                         autocomplete="on"
-                                         formId="test-form"
-                                         text="test-text"
-                                         text_commentI18n="test-comment"
-                                         hideText="{Boolean}true"
-                                         active="{Boolean}true"
-                                         icon="search"
-                                         iconSize="L"
-                                         size="L"
-                                         block="{Boolean}true"
-                                         variant="primary"
-                                         command="shift+s"
-                                         trackingElement="test-element"
-                                         trackingFeature="test-feature"/>
                             <accordion jcr:primaryType="nt:unstructured"
                                        margin="{Boolean}false"
                                        multiple="{Boolean}false"
-                                       disabled="{Boolean}true"
-                                       active="{Boolean}false"
-                                       title="Field"
+                                       name="Field"
                                        variant="default"
                                        sling:resourceType="granite/ui/components/coral/foundation/accordion">
                                 <items jcr:primaryType="nt:unstructured">
                                     <accordionWidgetPanel1 jcr:primaryType="nt:unstructured"
                                                            sling:resourceType="granite/ui/components/coral/foundation/container"
                                                            jcr:title="Accordion Widget Panel 1">
+                                        <parentConfig
+                                                jcr:primaryType="nt:unstructured"
+                                                disabled="{Boolean}true"
+                                                active="{Boolean}false"/>
                                         <items jcr:primaryType="nt:unstructured">
                                             <field6 disabled="{Boolean}false" jcr:primaryType="nt:unstructured"
                                                     name="./field6"

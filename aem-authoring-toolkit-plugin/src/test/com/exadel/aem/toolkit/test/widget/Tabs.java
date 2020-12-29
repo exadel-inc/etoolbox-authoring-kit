@@ -28,14 +28,14 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
-        name = DEFAULT_COMPONENT_NAME,
-        title = "Tabs Test Dialog",
-        layout = DialogLayout.TABS,
-        tabs = {
-                @Tab(title = "First tab"),
-                @Tab(title = "Second tab"),
-                @Tab(title = "Third tab")
-        }
+    name = DEFAULT_COMPONENT_NAME,
+    title = "Tabs Test Dialog",
+    layout = DialogLayout.TABS,
+    tabs = {
+        @Tab(title = "First tab"),
+        @Tab(title = "Second tab"),
+        @Tab(title = "Third tab")
+    }
 )
 @SuppressWarnings("unused")
 public class Tabs {
@@ -45,11 +45,11 @@ public class Tabs {
     String field1;
 
     @TabsWidget(
-            title = "innerTabs",
-            tabs = {
-                    @Tab(title = "First Inner"),
-                    @Tab(title = "Second Inner")
-            })
+        name = "innerTabs",
+        tabs = {
+            @Tab(title = "First Inner"),
+            @Tab(title = "Second Inner")
+        })
     @PlaceOn("First tab")
     TabsExample tabsField;
 
@@ -60,7 +60,7 @@ public class Tabs {
         @PlaceOn("First Inner")
         String innerFieldInTab;
 
-        @AccordionWidget(title = "Field 2 on the inner Tab", panels = {@AccordionPanel(title = "First Panel")})
+        @AccordionWidget(name = "Field 2 on the inner Tab", panels = {@AccordionPanel(title = "First Panel")})
         @PlaceOn("Second Inner")
         AccordionExample accordion;
 
