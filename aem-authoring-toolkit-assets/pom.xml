@@ -50,7 +50,8 @@
 
     <profiles>
 
-        <profile><id>deploy</id>
+        <profile>
+            <id>deploy</id>
             <build>
                 <plugins>
                     <plugin>
@@ -61,18 +62,13 @@
             </build>
         </profile>
 
-        <profile><id>install-assets</id>
+        <profile>
+            <id>install-assets</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>com.day.jcr.vault</groupId>
                         <artifactId>content-package-maven-plugin</artifactId>
-                        <executions>
-                            <execution><id>build-assets</id>
-                                <phase>install</phase>
-                                <goals><goal>install</goal></goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
