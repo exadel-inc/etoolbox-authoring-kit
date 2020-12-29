@@ -19,16 +19,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * In multi-tab TouchUI Dialog setup, used to specify on which tab a dialog field is placed
- * @deprecated Use {@link PlaceOn} instead
+ * In multi-tab or multi-panel TouchUI Dialog setup, used to specify on which tab or accordion panel a dialog field is placed
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
 @SuppressWarnings("unused")
-public @interface PlaceOnTab {
+public @interface PlaceOn {
     /**
-     * String equal to appropriate {@link Tab#title()} value
+     * String equal to appropriate {@link AccordionPanel#title()} value or {@link Tab #title()}
+     *
      * @return String value
      */
     String value();

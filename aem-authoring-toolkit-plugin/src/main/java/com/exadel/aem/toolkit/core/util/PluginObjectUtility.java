@@ -43,26 +43,27 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
  * value conversions for the sake of proper dialog markup rendering
  */
 public class PluginObjectUtility {
-    private PluginObjectUtility() {}
+    private PluginObjectUtility() {
+    }
 
     /**
      * Creates in runtime a {@code <T extends Annotation>}-typed annotation-like proxy object to mimic the behavior of
      * an actual annotation. Values to annotation methods are provided as a {@code Map<String, Object>} collection
-     * @param type Target annotation type
+     * @param type   Target annotation type
      * @param values Values that map to the target annotation's fields
-     * @param <T> Particular type of the annotation facade
+     * @param <T>    Particular type of the annotation facade
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
     public static <T extends Annotation> T create(Class<T> type, Map<String, Object> values) {
         Map<String, BiFunction<Annotation, Object[], Object>> methods = new HashMap<>();
         Arrays.stream(type.getDeclaredMethods())
-                .forEach(method -> {
-                    BiFunction<Annotation, Object[], Object> methodFunction =  (src, args) ->
-                            values != null && values.containsKey(method.getName())
-                                    ? values.get(method.getName())
-                                    : method.getDefaultValue();
-                    methods.put(method.getName(), methodFunction);
-                });
+            .forEach(method -> {
+                BiFunction<Annotation, Object[], Object> methodFunction = (src, args) ->
+                    values != null && values.containsKey(method.getName())
+                        ? values.get(method.getName())
+                        : method.getDefaultValue();
+                methods.put(method.getName(), methodFunction);
+            });
         return modify(null, type, methods);
     }
 
@@ -71,20 +72,20 @@ public class PluginObjectUtility {
      * set to a non-default value, others voided
      * This method is used to render the same {@code Annotation} object differently (like two or more different sets of values)
      * depending on the values specified
-     * @param source {@code Annotation} instance to produce a facade for
-     * @param type Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
+     * @param source       {@code Annotation} instance to produce a facade for
+     * @param type         Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
      * @param voidedFields The fields to be voided, a list of non-blank Strings
-     * @param <T> Particular type of the annotation facade
+     * @param <T>          Particular type of the annotation facade
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
     public static <T extends Annotation> T filter(Annotation source, Class<T> type, List<String> voidedFields) {
         Map<String, BiFunction<Annotation, Object[], Object>> methods = new HashMap<>();
         if (voidedFields != null) {
             voidedFields.stream()
-                    .map(methodName -> getMethodInstance(type, methodName))
-                    .filter(Objects::nonNull)
-                    .forEach(method -> methods.put(method.getName(),
-                            (annotation, args) -> method.getReturnType().equals(String.class) ? StringUtils.EMPTY : 0L));
+                .map(methodName -> getMethodInstance(type, methodName))
+                .filter(Objects::nonNull)
+                .forEach(method -> methods.put(method.getName(),
+                    (annotation, args) -> method.getReturnType().equals(String.class) ? StringUtils.EMPTY : 0L));
         }
         return modify(source, type, methods);
     }
@@ -93,38 +94,49 @@ public class PluginObjectUtility {
      * Creates in runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with the new value
      * for the given property that will be assigned in case the current value equals to this property's default
      * @param source {@code Annotation} instance to produce a facade for
-     * @param type Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
-     * @param name String representing the method to check for default value, non-blank
-     * @param value The value to use in case the method above returns its default
-     * @param <T> Particular type of the annotation facade
-     * @param <R> Return type of a fallback method / methods
+     * @param type   Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
+     * @param name   String representing the method to check for default value, non-blank
+     * @param value  The value to use in case the method above returns its default
+     * @param <T>    Particular type of the annotation facade
+     * @param <R>    Return type of a fallback method / methods
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
     public static <T extends Annotation, R> T modifyIfDefault(Annotation source, Class<T> type, String name, R value) {
         return modifyIfDefault(source, type, Collections.singletonMap(name, value));
     }
 
+
+    public static Map<String, Object> getAnnotationFields(Annotation annotation) throws IllegalAccessException, InvocationTargetException {
+        Map<String, Object> result = new HashMap<>();
+        for (Method method : annotation.annotationType().getDeclaredMethods()) {
+            Object value = method.invoke(annotation, (Object[]) null);
+            result.put(method.getName(), value);
+        }
+        return result;
+    }
+
+
     /**
      * Creates in runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with new values
      * for the given properties (specified in {@code method name -> value} map that will be used in case these methods
      * return default values
-     * @param source {@code Annotation} instance to produce a facade for
-     * @param type Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
+     * @param source         {@code Annotation} instance to produce a facade for
+     * @param type           Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
      * @param fallbackValues {@code Map<String, Object>} representing values to be returned by the annotation methods
-     *                                                  whether they have now their default values
-     * @param <T> Particular type of the annotation facade
-     * @param <R> Return type of a fallback method / methods
+     *                       whether they have now their default values
+     * @param <T>            Particular type of the annotation facade
+     * @param <R>            Return type of a fallback method / methods
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
     private static <T extends Annotation, R> T modifyIfDefault(Annotation source, Class<T> type, Map<String, R> fallbackValues) {
         Map<String, BiFunction<Annotation, Object[], Object>> methods = new HashMap<>();
         if (fallbackValues != null) {
             fallbackValues.keySet().stream()
-                    .map(methodName -> getMethodInstance(type, methodName))
-                    .filter(Objects::nonNull)
-                    .filter(method -> !PluginReflectionUtility.annotationPropertyIsNotDefault(source, method))
-                    .forEach(method -> methods.put(method.getName(),
-                            (annotation, args) -> fallbackValues.get(method.getName())));
+                .map(methodName -> getMethodInstance(type, methodName))
+                .filter(Objects::nonNull)
+                .filter(method -> !PluginReflectionUtility.annotationPropertyIsNotDefault(source, method))
+                .forEach(method -> methods.put(method.getName(),
+                    (annotation, args) -> fallbackValues.get(method.getName())));
         }
         return modify(source, type, methods);
     }
@@ -148,17 +160,17 @@ public class PluginObjectUtility {
 
     /**
      * Extends an object in runtime by casting it to an extension interface and applying additional methods
-     * @param value Source object, typically final or one coming from outside the user scope
+     * @param value        Source object, typically final or one coming from outside the user scope
      * @param modification {@code Class} object representing an interface that {@code value} implements,
-     *                                        or an extending interface of such
-     * @param methods {@code Map<String, Function>} of named routines that represent the new and/or modified methods
-     *                                             that {@code value} must expose. Each routine accepts a source object,
-     *                                             and a variadic array of {@code Object}-typed arguments
-     * @param <T> The {@code Class} of the source object
-     * @param <U> The interface exposing modified methods that the {@code value} implements, or an interface bearing
-     *           newly added methods that extends one of the interfaces implemented by {@code value}
-     * @param <R> The return type of extension methods. Must be fallen back to {@code Object} type of a narrower generic
-     *           type in case returns are to be differently typed
+     *                     or an extending interface of such
+     * @param methods      {@code Map<String, Function>} of named routines that represent the new and/or modified methods
+     *                     that {@code value} must expose. Each routine accepts a source object,
+     *                     and a variadic array of {@code Object}-typed arguments
+     * @param <T>          The {@code Class} of the source object
+     * @param <U>          The interface exposing modified methods that the {@code value} implements, or an interface bearing
+     *                     newly added methods that extends one of the interfaces implemented by {@code value}
+     * @param <R>          The return type of extension methods. Must be fallen back to {@code Object} type of a narrower generic
+     *                     type in case returns are to be differently typed
      * @return The {@code <U>}-typed extension object, or else null if {@code modification} is null, or else
      * the {@code methods} map is empty
      */
@@ -174,15 +186,15 @@ public class PluginObjectUtility {
             }
         }
         Object result = Proxy.newProxyInstance(modification.getClassLoader(),
-                new Class[] {modification},
-                new ExtensionInvocationHandler<>(value, modification, methods));
+            new Class[]{modification},
+            new ExtensionInvocationHandler<>(value, modification, methods));
         return modification.cast(result);
     }
 
     /**
      * Wraps up extracting method from an {@code Annotation} signature by name, with {@link NoSuchMethodException} handled
      * @param annotationType Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
-     * @param name Method name, non-blank String expected
+     * @param name           Method name, non-blank String expected
      * @return The {@link Method} instance, or null
      */
     private static Method getMethodInstance(Class<? extends Annotation> annotationType, String name) {
@@ -210,10 +222,10 @@ public class PluginObjectUtility {
 
         /**
          * Class constructor
-         * @param source The object to extend
+         * @param source           The object to extend
          * @param extensionMethods {@code Map} composed of extension method names, String-typed,
          *                         and the extension routines, each a function accepting a source object, and
-         *                                    a variadic array of Object-typed arguments
+         *                         a variadic array of Object-typed arguments
          */
         private ExtensionInvocationHandler(T source, Class<U> targetType, Map<String, BiFunction<T, Object[], R>> extensionMethods) {
             this.source = source;
@@ -236,8 +248,8 @@ public class PluginObjectUtility {
                 return source != null ? method.invoke(source, args) : null;
             } catch (IllegalAccessException | InvocationTargetException e) {
                 PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
-                        String.format(INVOCATION_EXCEPTION_MESSAGE_TEMPLATE, method.getName(), proxy),
-                        e));
+                    String.format(INVOCATION_EXCEPTION_MESSAGE_TEMPLATE, method.getName(), proxy),
+                    e));
             }
             return null;
         }

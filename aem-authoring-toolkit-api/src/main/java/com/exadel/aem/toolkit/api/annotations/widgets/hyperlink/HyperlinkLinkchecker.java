@@ -11,11 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.main;
+package com.exadel.aem.toolkit.api.annotations.widgets.hyperlink;
 
 /**
- * Enumerates available AEM TouchUI dialog layouts
+ * Contains possible values of {@link Hyperlink#xCqLinkchecker()} ()} property
  */
-public enum DialogLayout {
-    FIXED_COLUMNS, TABS, ACCORDION
+@SuppressWarnings("unused")
+public enum HyperlinkLinkchecker {
+    NONE, SKIP, VALID
 }
