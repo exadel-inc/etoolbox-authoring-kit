@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Content-Package-Roots: /etc/packages/authoring-toolkit
+Content-Package-Type: content
+Content-Package-Id: com.exadel.aem:aem-authoring-toolkit-assets:2.0.0-SNAPSHOT
+Content-Package-Description: AEM Authoring Toolkit - Assets Package
+

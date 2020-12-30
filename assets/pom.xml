@@ -8,8 +8,11 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <name>${project.prettyName} Assets (Client Libraries)</name>
     <artifactId>aem-authoring-toolkit-assets</artifactId>
+
+    <name>${project.prettyName} Assets Package</name>
+    <description>AEM Authoring Toolkit package containing provided UI and binary assets. This is the host for subsidiary "apps" and "content" packages</description>
+
     <packaging>content-package</packaging>
 
     <properties>
@@ -17,7 +20,6 @@
     </properties>
 
     <build>
-        <sourceDirectory>src/main/content/jcr_root/apps/authoring-toolkit/depends-on/js</sourceDirectory>
         <resources>
             <resource>
                 <directory>src/main/content/jcr_root</directory>
@@ -34,12 +36,43 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>com.day.jcr.vault</groupId>
                 <artifactId>content-package-maven-plugin</artifactId>
+                <configuration>
+                    <properties>
+                        <description>${project.description}</description>
+                    </properties>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-nested-packages</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/src/main/content/jcr_root/etc/packages/authoring-toolkit</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.parent.basedir}/ui.apps/target</directory>
+                                    <includes>
+                                        <include>*.zip</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${project.parent.basedir}/ui.content/target</directory>
+                                    <includes>
+                                        <include>*.zip</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
