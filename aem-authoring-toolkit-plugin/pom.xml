@@ -10,8 +10,10 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <name>${project.prettyName} Maven Plugin</name>
     <artifactId>aem-authoring-toolkit-plugin</artifactId>
+
+    <name>${project.prettyName} Maven Plugin</name>
+    <description>Presents Maven plugin for creating Adobe Granite markup for AEM from Java source code</description>
     <packaging>maven-plugin</packaging>
 
     <properties>

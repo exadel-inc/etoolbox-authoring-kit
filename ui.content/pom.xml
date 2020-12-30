@@ -8,8 +8,11 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <name>${project.prettyName} UI Content</name>
     <artifactId>aem-authoring-toolkit-ui.content</artifactId>
+
+    <name>${project.prettyName} UI Content</name>
+    <description>AEM Authoring Toolkit assets designed for the /content section of AEM instance</description>
+
     <packaging>content-package</packaging>
 
     <properties>
@@ -35,6 +38,11 @@
             <plugin>
                 <groupId>com.day.jcr.vault</groupId>
                 <artifactId>content-package-maven-plugin</artifactId>
+                <configuration>
+                    <properties>
+                        <description>${project.description}</description>
+                    </properties>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

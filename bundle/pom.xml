@@ -8,8 +8,11 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <name>${project.prettyName} Bundle</name>
     <artifactId>aem-authoring-toolkit-bundle</artifactId>
+
+    <name>${project.prettyName} Bundle</name>
+    <description>Contains AEM Authoring Toolkit classes and interfaces intended for use within an OSGi container</description>
+
     <packaging>jar</packaging>
 
     <properties>
@@ -24,9 +27,19 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Sling-Model-Packages>com.exadel.aem.toolkit.models</Sling-Model-Packages>
+                        <Sling-Model-Packages>com.exadel.aem.toolkit.bundle.models</Sling-Model-Packages>
+                        <Export-Package>com.exadel.aem.toolkit.bundle.*</Export-Package>
                     </instructions>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-metadata</id>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -47,7 +60,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <outputDirectory>../aem-authoring-toolkit-assets/src/main/content/jcr_root/apps/authoring-toolkit/install</outputDirectory>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>

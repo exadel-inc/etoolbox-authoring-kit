@@ -10,8 +10,11 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <name>${project.prettyName} API</name>
     <artifactId>aem-authoring-toolkit-api</artifactId>
+
+    <name>${project.prettyName} API</name>
+    <description>Contains AEM Authoring Toolkit classes and interfaces needed to build Adobe Granite markup for AEM from Java source code</description>
+
     <packaging>jar</packaging>
 
     <properties>
