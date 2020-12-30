@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="nt:folder"
+          jcr:description="AEM Authoring Toolkit - Content">
+    <thumbnail.png/>
+    <filter jcr:primaryType="nt:unstructured">
+        <f0 jcr:primaryType="nt:unstructured"
+            mode="replace"
+            root="/content/authoring-toolkit"
+            rules="[]"/>
+    </filter>
+    <screenshots jcr:primaryType="nt:unstructured"/>
+</jcr:root>
