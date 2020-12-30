@@ -1249,7 +1249,7 @@ DependsOn uses data attributes for fetching expected configuration.
 To define data attribute from JCR use _granite:data_ sub-node under the widget node.
 **AEM Authoring Toolkit** provides a set of annotations to use DependsOn from Java code.
 
-(see more in [DependsOn Readme](./aem-authoring-toolkit-assets/src/main/content/jcr_root/apps/authoring-toolkit/depends-on/README.md))
+(see more in [DependsOn Readme](./ui.apps/src/main/content/jcr_root/apps/authoring-toolkit/depends-on/README.md))
 
 ##### DependsOn annotations 
 
