@@ -30,7 +30,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.target.TargetImpl;
+import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;

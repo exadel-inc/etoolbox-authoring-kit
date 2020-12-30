@@ -18,7 +18,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.w3c.dom.Document;
 
@@ -58,6 +60,8 @@ public interface Target {
     String getPrefix();
 
     String getPostfix();
+
+    Stream<Target> stream(Predicate<Target> predicate);
 
     void delete();
 
