@@ -50,7 +50,7 @@ public class PluginXmlContainerUtility {
      */
     public static void append(List<Source> sources, Target container) {
         Map<Source, String> managedFields = new LinkedHashMap<>();
-        Target itemsElement = container.child(DialogConstants.NN_ITEMS);
+        Target itemsElement = container.getOrCreate(DialogConstants.NN_ITEMS);
 
         for (Source source : sources) {
             DialogWidget widget = DialogWidgets.fromSource(source);

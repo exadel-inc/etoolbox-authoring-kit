@@ -22,13 +22,22 @@ import java.util.function.BiConsumer;
  * Abstraction of handler class to process custom dialog widget logic.
  * Serves as the marker interface for creating and enumerating handlers instances
  */
-@SuppressWarnings("unused")
 public interface DialogWidgetHandler extends BiConsumer<Element, Field> {
+
+    /**
+     * Identifies this DialogWidgetHandler for binding to a specific {@code DialogWidgetAnnotation}
+     * @return String value, non-blank
+     */
+    @Deprecated
+    default String getName() {
+        return "";
+    }
 
     default void accept(Source source, Target target) {
 
     }
 
+    @Deprecated
     default void accept(Element element, Field field) {
 
     }

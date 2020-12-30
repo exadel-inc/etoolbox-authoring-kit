@@ -15,17 +15,23 @@ package com.exadel.aem.toolkit.api.handlers;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.w3c.dom.Document;
 
 
 public interface Target {
 
-    Target child();
+    Target create(String s);
 
-    Target child(String s);
+    Target create(Supplier<String> s);
+
+    Target getOrCreate(String s);
+
+    Target get(String s);
 
     default Target mapProperties(Annotation annotation) {
         return mapProperties(annotation, Collections.emptyList());
@@ -35,17 +41,19 @@ public interface Target {
 
     Target attribute(String name, String value);
 
-    Target attribute(String name, Boolean value);
+    Target attribute(String name, boolean value);
 
-    Target attribute(String name, Long value);
+    Target attribute(String name, long value);
 
-    Target attribute(String name, List<String> values);
+    Target attribute(String name, double value);
+
+    Target attribute(String name, Date value);
 
     Target attributes(Map<String, Object> map);
 
-    void updatePrefix(String prefix);
+    Target setPrefix(String prefix);
 
-    void updatePostfix(String postfix);
+    Target setPostfix(String postfix);
 
     String getPrefix();
 
@@ -61,8 +69,6 @@ public interface Target {
 
     String getName();
 
-    Target name(String name, String defaultName);
-
     Target parent();
 
     <T> T getAttribute(String name, Class<T> tClass);
@@ -70,6 +76,10 @@ public interface Target {
     boolean hasChild(String relPath);
 
     Map<String, String> getValueMap();
+
+    void setSource(Source source);
+
+    Source getSource();
 
     Document buildXml(Document document);
 }

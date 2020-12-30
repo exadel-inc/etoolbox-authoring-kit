@@ -70,7 +70,7 @@ public class DependsOnTabHandler implements BiConsumer<Target, Class<?>> {
             return;
         }
         if (target.hasChild(TAB_ITEMS_NODE_PATH + "/" + value.tabTitle())) {
-            PluginXmlUtility.appendDataAttributes(target.child(TAB_ITEMS_NODE_PATH + "/" + value.tabTitle()), ImmutableMap.of(
+            PluginXmlUtility.appendDataAttributes(target.getOrCreate(TAB_ITEMS_NODE_PATH + "/" + value.tabTitle()), ImmutableMap.of(
                     DialogConstants.PN_DEPENDS_ON, value.query(),
                     DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
             ));

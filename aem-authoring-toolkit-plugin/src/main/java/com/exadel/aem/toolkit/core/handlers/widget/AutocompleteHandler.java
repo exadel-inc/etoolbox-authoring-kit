@@ -34,15 +34,15 @@ class AutocompleteHandler implements BiConsumer<Source, Target> {
     @Override
     public void accept(Source source, Target target) {
         Autocomplete autocomplete = source.adaptTo(Autocomplete.class);
-        target.child(DialogConstants.NN_DATASOURCE)
+        target.getOrCreate(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
                 .mapProperties(autocomplete.datasource())
                 .parent()
-                .child(DialogConstants.NN_OPTIONS)
+                .getOrCreate(DialogConstants.NN_OPTIONS)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.options().annotationType().getAnnotation(ResourceType.class).value())
                 .mapProperties(autocomplete.options())
                 .parent()
-                .child(DialogConstants.NN_VALUES)
+                .getOrCreate(DialogConstants.NN_VALUES)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.values().annotationType().getAnnotation(ResourceType.class).value())
                 .mapProperties(autocomplete.values());
     }

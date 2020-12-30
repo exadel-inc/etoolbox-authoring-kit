@@ -47,7 +47,7 @@ public class DialogFieldHandler implements BiConsumer<Source, Target> {
         }
         String prefix = target.getPrefix();
 
-        if (!ResourceTypes.MULTIFIELD.equals(target.parent().parent().parent().getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, String.class))) {
+        if (!ResourceTypes.MULTIFIELD.equals(target.get("../../..").getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, String.class))) {
             prefix = DialogConstants.RELATIVE_PATH_PREFIX + prefix;
         }
 

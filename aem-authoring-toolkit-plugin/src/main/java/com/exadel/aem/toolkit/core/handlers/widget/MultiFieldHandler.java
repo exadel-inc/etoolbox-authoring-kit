@@ -70,7 +70,7 @@ public class MultiFieldHandler implements WidgetSetHandler {
      */
     private void render(List<Source> sources, Target target, String name) {
         target.attribute(DialogConstants.PN_COMPOSITE, true);
-        Target multifieldContainerElement = target.child(DialogConstants.NN_FIELD)
+        Target multifieldContainerElement = target.getOrCreate(DialogConstants.NN_FIELD)
                 .attribute(DialogConstants.PN_NAME, name)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 

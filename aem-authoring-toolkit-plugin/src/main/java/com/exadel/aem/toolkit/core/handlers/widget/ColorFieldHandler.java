@@ -50,9 +50,9 @@ class ColorFieldHandler implements BiConsumer<Source, Target> {
         if (validCustomColors.isEmpty()) {
             return;
         }
-        Target itemsNode = target.child(DialogConstants.NN_ITEMS);
+        Target itemsNode = target.getOrCreate(DialogConstants.NN_ITEMS);
         for (String customColor: validCustomColors) {
-            itemsNode.child(NODE_NAME_COLOR + customColor.toLowerCase().replace(SKIPPED_COLOR_NODE_NAME_SYMBOLS, StringUtils.EMPTY))
+            itemsNode.getOrCreate(NODE_NAME_COLOR + customColor.toLowerCase().replace(SKIPPED_COLOR_NODE_NAME_SYMBOLS, StringUtils.EMPTY))
                     .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
                     .attributes(Collections.singletonMap(DialogConstants.PN_VALUE, customColor));
         }

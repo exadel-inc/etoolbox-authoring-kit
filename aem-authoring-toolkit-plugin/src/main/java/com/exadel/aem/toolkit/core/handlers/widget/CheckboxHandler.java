@@ -46,8 +46,8 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
             setTextAttribute(source, target);
         } else {
             Target checkboxElement = target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST)
-                    .child(DialogConstants.NN_ITEMS)
-                    .child(source.getName() + POSTFIX_FOR_ROOT_CHECKBOX)
+                    .getOrCreate(DialogConstants.NN_ITEMS)
+                    .getOrCreate(source.getName() + POSTFIX_FOR_ROOT_CHECKBOX)
                     .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX)
                     .mapProperties(checkbox);
 
@@ -61,10 +61,10 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
      * @param target {@link Target} instance representing current node
      */
     private void appendNestedCheckBoxList(Source source, Target target) {
-        Target itemsElement = target.child(DialogConstants.NN_SUBLIST)
+        Target itemsElement = target.getOrCreate(DialogConstants.NN_SUBLIST)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST)
                 .attribute(DialogConstants.PN_DISCONNECTED, source.adaptTo(Checkbox.class).disconnectedSublist())
-                .child(DialogConstants.NN_ITEMS);
+                .getOrCreate(DialogConstants.NN_ITEMS);
 
         appendCheckbox(source, itemsElement);
     }
@@ -83,7 +83,7 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
                     .collect(Collectors.toList());
 
             for (Source innerSource : sources) {
-                Target checkboxElement = target.child(innerSource.getName())
+                Target checkboxElement = target.getOrCreate(innerSource.getName())
                         .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX)
                         .mapProperties(innerSource.adaptTo(Checkbox.class));
                 setTextAttribute(innerSource, checkboxElement);

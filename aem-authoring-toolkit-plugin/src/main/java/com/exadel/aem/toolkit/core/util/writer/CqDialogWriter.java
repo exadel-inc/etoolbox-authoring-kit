@@ -98,7 +98,7 @@ class CqDialogWriter extends ContentXmlWriter {
      * @param componentClass The {@code Class} being processed
      * @return List of values, empty or non-empty
      */
-    private static List<DialogAnnotation> getCustomDialogAnnotations(Class<?> componentClass) {
+    public static List<DialogAnnotation> getCustomDialogAnnotations(Class<?> componentClass) {
         return Arrays.stream(componentClass.getDeclaredAnnotations())
                 .filter(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class) != null)
                 .map(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class))

@@ -49,7 +49,7 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
                 || (editConfig.inplaceEditing().length == 1 && EditorType.EMPTY.equals(editConfig.inplaceEditing()[0].type()))) {
             return;
         }
-        Target inplaceEditingNode = root.child(DialogConstants.NN_INPLACE_EDITING)
+        Target inplaceEditingNode = root.getOrCreate(DialogConstants.NN_INPLACE_EDITING)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG)
                 .attribute(DialogConstants.PN_ACTIVE, true);
 
@@ -61,7 +61,7 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
             getConfigNode(editConfig, inplaceEditingNode);
         } else {
             inplaceEditingNode.attribute(DialogConstants.PN_EDITOR_TYPE, editConfig.inplaceEditing()[0].type().toLowerCase());
-            Target configNode = inplaceEditingNode.child(DialogConstants.NN_CONFIG);
+            Target configNode = inplaceEditingNode.getOrCreate(DialogConstants.NN_CONFIG);
             populateConfigNode(editConfig.inplaceEditing()[0], configNode);
         }
     }
@@ -72,7 +72,7 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
      * @param target Current {@link Target} instance
      */
     private void getChildEditorsNode(EditConfig config, Target target) {
-        Target childEditorsNode = target.child(DialogConstants.NN_CHILD_EDITORS);
+        Target childEditorsNode = target.getOrCreate(DialogConstants.NN_CHILD_EDITORS);
         Arrays.stream(config.inplaceEditing())
                 .forEach(inplaceEditingConfig -> getSingleChildEditorNode(inplaceEditingConfig, childEditorsNode));
     }
@@ -83,7 +83,7 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
      * @param target Current {@link Target} instance
      */
     private void getSingleChildEditorNode(InplaceEditingConfig config, Target target) {
-        target.child(getConfigName(config))
+        target.getOrCreate(getConfigName(config))
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_CHILD_EDITORS_CONFIG)
             .attribute(DialogConstants.PN_TITLE, StringUtils.isNotBlank(config.title()) ? config.title() : getConfigName(config))
             .attribute(DialogConstants.PN_TYPE, config.type().toLowerCase());
@@ -96,9 +96,9 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
      * @param target Current {@link Target} instance
      */
     private void getConfigNode(EditConfig config, Target target) {
-        Target configNode = target.child(DialogConstants.NN_CONFIG);
+        Target configNode = target.getOrCreate(DialogConstants.NN_CONFIG);
         for (InplaceEditingConfig childConfig : config.inplaceEditing()) {
-            Target childConfigNode = configNode.child(getConfigName(childConfig))
+            Target childConfigNode = configNode.getOrCreate(getConfigName(childConfig))
                     .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG);
             populateConfigNode(childConfig, childConfigNode);
         }

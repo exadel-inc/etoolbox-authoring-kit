@@ -57,10 +57,10 @@ public class TabsHandler implements BiConsumer<Class<?>, Target> {
     @Override
     public void accept(Class<?> componentClass, Target parentElement) {
         // Render the generic markup for tabs setting
-        Target tabItemsElement = parentElement.child(DialogConstants.NN_CONTENT).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
-                .child(DialogConstants.NN_ITEMS)
-                .child(DialogConstants.NN_TABS).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.TABS)
-                .child(DialogConstants.NN_ITEMS);
+        Target tabItemsElement = parentElement.getOrCreate(DialogConstants.NN_CONTENT).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
+                .getOrCreate(DialogConstants.NN_ITEMS)
+                .getOrCreate(DialogConstants.NN_TABS).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.TABS)
+                .getOrCreate(DialogConstants.NN_ITEMS);
 
         // Initialize ignored tabs list for the current class if IgnoreTabs annotation is present.
         // Note that "ignored tabs" setting is not inherited and is for current class only, unlike tabs collection
@@ -186,7 +186,7 @@ public class TabsHandler implements BiConsumer<Class<?>, Target> {
      * @param target The {@link Target} instance to append particular sources' markup
      */
     private void appendTab(Tab tab, List<Source> sources, Target target) {
-        Target tabElement = target.child(tab.title())
+        Target tabElement = target.getOrCreate(tab.title())
                 .attribute(JcrConstants.PN_TITLE, tab.title())
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
         appendTabAttributes(tab, tabElement);

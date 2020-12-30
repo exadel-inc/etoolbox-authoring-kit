@@ -13,18 +13,19 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
-import java.util.Arrays;
+import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
+import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
+import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-
-import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.NamingUtil;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+
+import org.w3c.dom.Element;
 
 /**
  * Handler for storing properties coming from custom annotations and, optionally, processed by custom handlers
@@ -40,10 +41,27 @@ public class CustomHandler implements BiConsumer<Source, Target> {
     public void accept(Source source, Target target) {
 
         PluginRuntime.context().getReflectionUtility()
-                .getCustomDialogWidgetHandlers(PluginReflectionUtility.getFieldAnnotations(source).collect(Collectors.toList()))
-                .forEach(handler -> handler.accept(source, target));
+            .getCustomDialogWidgetHandlers(PluginReflectionUtility.getFieldAnnotations(source).collect(Collectors.toList()))
+            .forEach(handler -> handler.accept(source, target));
 
-        Arrays.stream(source.adaptTo(Property[].class))
-                .forEach(p -> target.attribute(NamingUtil.getValidFieldName(p.name()), p.value()));
+        acceptLegacyHandlers(source, target);
+    }
+
+    private void acceptLegacyHandlers(Source source, Target target) {
+        if (PluginReflectionUtility.getFieldAnnotations(source).anyMatch(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))) {
+            target.setSource(source);
+        }
+
+        try {
+            for (DialogWidgetHandler handler : PluginRuntime.context().getReflectionUtility()
+                .getCustomDialogWidgetHandlers(PluginReflectionUtility.getFieldAnnotations(source).collect(Collectors.toList()))) {
+                if (!handler.getClass().getMethod("accept", Element.class, Field.class).isDefault()) {
+                    target.setSource(source);
+                }
+            }
+        } catch (NoSuchMethodException ignored) {
+            //ignored
+        }
+
     }
 }

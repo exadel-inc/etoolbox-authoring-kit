@@ -55,7 +55,7 @@ class XmlNodeWithListBuilder extends XmlNodeBuilderBase {
     @Override
     Target build(Target parent) {
         if (!isEmpty()) {
-            Target result = parent.child(getName());
+            Target result = parent.getOrCreate(getName());
             result.attribute(getAttributeName(), argumentList.toString().replace(" ", ""));
             if (childBuilder != null) childBuilder.build(result);
             if (getPostprocessing() != null) getPostprocessing().accept(result);

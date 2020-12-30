@@ -28,8 +28,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.TargetImpl;
+import com.exadel.aem.toolkit.core.target.TargetImpl;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
@@ -40,6 +41,8 @@ import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+
+import static com.exadel.aem.toolkit.core.util.writer.CqDialogWriter.getCustomDialogAnnotations;
 
 /**
  * Base class for creating XML representation of AEM component's stored attributes and authoring features
@@ -124,6 +127,7 @@ abstract class PackageEntryWriter {
         populateDomDocument(componentClass, rootElement);
         Document document = rootElement.buildXml(PackageWriter.createDocumentBuilder().newDocument());
         writeCommonProperties(componentClass, getXmlScope(), document);
+        if (XmlScope.CQ_DIALOG.equals(getXmlScope())) acceptLegacyHandlers(document.getDocumentElement(), componentClass);
         return document;
     }
 
@@ -147,5 +151,13 @@ abstract class PackageEntryWriter {
      */
     private static void writeCommonProperty(CommonProperty property, List<Element> targets) {
         targets.forEach(target -> target.setAttribute(property.name(), property.value()));
+    }
+
+    private static void acceptLegacyHandlers(Element element, Class<?> cls) {
+        List<DialogAnnotation> customAnnotations = getCustomDialogAnnotations(cls);
+        PluginRuntime.context().getReflectionUtility().getCustomDialogHandlers().stream()
+            .filter(handler -> customAnnotations.stream()
+                .anyMatch(annotation -> StringUtils.equals(annotation.source(), handler.getName())))
+            .forEach(handler -> handler.accept(element, cls));
     }
 }

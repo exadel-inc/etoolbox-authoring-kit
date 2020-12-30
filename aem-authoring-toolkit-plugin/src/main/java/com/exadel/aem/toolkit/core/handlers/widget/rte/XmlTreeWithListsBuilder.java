@@ -81,7 +81,7 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
     }
     @Override
     Target build(Target parent) {
-        Target result = parent.child(getName());
+        Target result = parent.getOrCreate(getName());
         argumentTree.forEach((pluginId, features) -> createChildNode(result, pluginId, features));
         return result;
     }
@@ -92,7 +92,7 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
      * @param features Feature identifiers
      */
     private void createChildNode(Target parent, String pluginId, Set<String> features) {
-        Target node = parent.child(pluginId);
+        Target node = parent.getOrCreate(pluginId);
         List<String> valueList = features.stream()
                 // if 'addPluginIdsToFeatures' flag is set, each entry must be brought andThen 'plugin#feature' format
                 // unless it is already preserved in this format or is in 'plugin:feature:feature' format (like e.g. 'paraformat' button)

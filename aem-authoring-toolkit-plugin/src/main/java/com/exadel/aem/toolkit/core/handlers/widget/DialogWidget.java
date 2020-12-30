@@ -15,7 +15,6 @@
 package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Member;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -28,6 +27,7 @@ import com.exadel.aem.toolkit.core.handlers.widget.common.DialogFieldHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.GenericPropertiesHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.InheritanceHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.MultipleHandler;
+import com.exadel.aem.toolkit.core.handlers.widget.common.PropertyHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.PropertyMappingHandler;
 
 /**
@@ -67,7 +67,7 @@ public interface DialogWidget {
      * @return Populated {@link Target} by the current {@link Source}
      */
     default Target appendTo(Source source, Target target, String name) {
-        Target widgetChildElement = target.child(name);
+        Target widgetChildElement = target.getOrCreate(name);
         getHandlerChain().accept(source, widgetChildElement);
         return widgetChildElement;
     }
@@ -84,6 +84,7 @@ public interface DialogWidget {
                 .andThen(getHandler())
                 .andThen(new DependsOnHandler())
                 .andThen(new CustomHandler())
+                .andThen(new PropertyHandler())
                 .andThen(new MultipleHandler());
         return new InheritanceHandler(mainChain).andThen(mainChain);
     }

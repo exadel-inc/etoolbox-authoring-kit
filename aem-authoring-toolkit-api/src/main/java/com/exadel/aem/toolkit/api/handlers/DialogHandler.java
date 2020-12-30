@@ -24,13 +24,22 @@ import org.w3c.dom.Element;
  * Serves as the marker interface for creating and enumerating handlers instances
  */
 @Handles(Dialog.class)
-@SuppressWarnings("unused")
 public interface DialogHandler extends BiConsumer<Element, Class<?>> {
+
+    /**
+     * Identifies this DialogHandler for binding to a specific {@code DialogAnnotation}
+     * @return String value, non-blank
+     */
+    @Deprecated
+    default String getName() {
+        return "";
+    }
 
     default void accept(Class<?> cls, Target target) {
 
     }
 
+    @Deprecated
     default void accept(Element element, Class<?> cls) {
 
     }

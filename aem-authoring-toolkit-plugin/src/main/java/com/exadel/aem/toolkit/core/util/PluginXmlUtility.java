@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.core.util;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +35,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
@@ -682,7 +684,7 @@ public class PluginXmlUtility implements XmlUtility {
         if (data == null || data.isEmpty()) {
             return;
         }
-        Target graniteDataNode = target.child(DialogConstants.NN_DATA);
+        Target graniteDataNode = target.getOrCreate(DialogConstants.NN_DATA);
         data.entrySet().stream()
                 .filter(entry -> StringUtils.isNotBlank(entry.getKey()))
                 .forEach(entry -> graniteDataNode.attribute(entry.getKey(), entry.getValue()));
@@ -720,7 +722,7 @@ public class PluginXmlUtility implements XmlUtility {
         }
         properties.put(DialogConstants.PN_PATH, path);
 
-        return target.child(DialogConstants.NN_DATASOURCE)
+        return target.getOrCreate(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
                 .attributes(properties);
     }
@@ -736,7 +738,7 @@ public class PluginXmlUtility implements XmlUtility {
         if (StringUtils.isBlank(path)) {
             return null;
         }
-        return target.child(DialogConstants.NN_DATASOURCE)
+        return target.getOrCreate(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_PATH, path)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
     }
@@ -753,16 +755,31 @@ public class PluginXmlUtility implements XmlUtility {
     private static Element populateDocument(Target target, Document document) {
         String name = NamingUtil.getValidName(target.getName());
         Element tmp = document.createElement(name);
-        mapProperties(tmp, target);
+        acceptLegacyHandlers(target, tmp);
+        mapProperties(target, tmp);
         target.listChildren().forEach(child -> tmp.appendChild(populateDocument(child, document)));
         return tmp;
     }
 
-    private static void mapProperties(Element element, Target target) {
+    private static void mapProperties(Target target, Element element) {
         target.deleteAttribute(DialogConstants.PN_PREFIX);
         target.deleteAttribute(DialogConstants.PN_POSTFIX);
         for (Map.Entry<String, String> entry : target.getValueMap().entrySet()) {
             element.setAttribute(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private static void acceptLegacyHandlers(Target target, Element element) {
+        if (target.getSource() != null) {
+            PluginReflectionUtility.getFieldAnnotations(target.getSource()).filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
+                .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
+                .flatMap(widgetSource -> PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers().stream()
+                    .filter(handler -> widgetSource.equals(handler.getName())))
+                .forEach(handler -> handler.accept(element, target.getSource().adaptTo(Field.class)));
+
+            PluginRuntime.context().getReflectionUtility()
+                .getCustomDialogWidgetHandlers(PluginReflectionUtility.getFieldAnnotations(target.getSource()).collect(Collectors.toList()))
+                .forEach(handler -> handler.accept(element, target.getSource().adaptTo(Field.class)));
         }
     }
 }
