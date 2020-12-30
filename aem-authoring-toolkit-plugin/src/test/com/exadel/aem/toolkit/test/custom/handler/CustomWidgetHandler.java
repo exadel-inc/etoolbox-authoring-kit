@@ -26,6 +26,12 @@ import java.lang.reflect.Field;
 @SuppressWarnings("unused")
 @Handles(before = CustomWidgetHandler.class, after = CustomWidgetHandler.class)
 public class CustomWidgetHandler implements DialogWidgetHandler {
+
+    @Override
+    public String getName() {
+        return "testCustomAnnotation";
+    }
+
     @Injected
     @SuppressWarnings("UnusedDeclaration")
     private RuntimeContext runtimeContext;

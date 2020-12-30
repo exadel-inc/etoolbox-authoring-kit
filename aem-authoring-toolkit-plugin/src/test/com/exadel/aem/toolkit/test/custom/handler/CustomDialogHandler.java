@@ -27,9 +27,21 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 
+import org.w3c.dom.Element;
+
 @Handles(before = CustomProcessingHandler.class, after = CustomWidgetHandler.class, value = CustomDialogAnnotation.class)
 @SuppressWarnings("unused")
 public class CustomDialogHandler implements DialogHandler {
+
+    @Override
+    public String getName() {
+        return "customDialogProcessing";
+    }
+
+    @Override
+    public void accept(Element element, Class<?> cls) {
+        element.setAttribute(cls.getSimpleName(), cls.getSimpleName());
+    }
 
     @Override
     public void accept(Class<?> aClass, Target element) {

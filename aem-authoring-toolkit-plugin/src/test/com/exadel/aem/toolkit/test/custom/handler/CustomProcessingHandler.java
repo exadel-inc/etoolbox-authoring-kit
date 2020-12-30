@@ -26,6 +26,11 @@ import com.exadel.aem.toolkit.test.custom.annotation.CustomProcessingAnnotation;
 public class CustomProcessingHandler implements DialogWidgetHandler {
 
     @Override
+    public String getName() {
+        return "testCustomProcessing";
+    }
+
+    @Override
     public void accept(Source source, Target element) {
         element.attribute("customProcessing", "turned on");
     }
