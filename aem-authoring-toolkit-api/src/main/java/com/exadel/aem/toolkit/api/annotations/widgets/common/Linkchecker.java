@@ -11,12 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets.hyperlink;
+package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 /**
- * Contains possible values of {@link Hyperlink#iconSize()} property
+ * Contains possible values of {@code xCqLinkchecker} property
  */
 @SuppressWarnings("unused")
-public enum HyperlinkIconSize {
-    XS, S, M, L
+public enum Linkchecker {
+    NONE, SKIP, VALID
 }

@@ -11,43 +11,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets.hyperlink;
+package com.exadel.aem.toolkit.api.annotations.widgets.anchorbutton;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizeConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariantConstants;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.Linkchecker;
 
 /**
  * Used to set up
- * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html">
- * Hyperlink is a component to represent a HTML hyperlink (<a>) in TouchUI dialog
+ * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html">
+ * AnchorButton is a component to represent a standard HTML hyperlink (<a>), but to look like a button in TouchUI dialog
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@ResourceType(ResourceTypes.HYPERLINK)
+@ResourceType(ResourceTypes.ANCHOR_BUTTON)
 @PropertyMapping
-@SuppressWarnings("unused")
-public @interface Hyperlink {
-
+public @interface AnchorButton {
     /**
      * Maps to the href attribute of this TouchUI dialog component's node
      * @return String value
      */
     String href();
-
-    /**
-     * Maps to the body text of the element of this TouchUI dialog component's node
-     * @return String value
-     */
-    String text();
 
     /**
      * Maps to the href attribute of this TouchUI dialog component's node.
@@ -57,10 +51,10 @@ public @interface Hyperlink {
     String hrefI18n() default "";
 
     /**
-     * Maps to the rel attribute of this TouchUI dialog component's node
+     * Maps to the body text of the element of this TouchUI dialog component's node
      * @return String value
      */
-    String rel() default "";
+    String text();
 
     /**
      * Maps to the target attribute of this TouchUI dialog component's node
@@ -96,4 +90,41 @@ public @interface Hyperlink {
      * @see ElementSizeConstants
      */
     String iconSize() default ElementSizeConstants.SMALL;
+
+    /**
+     * Maps to the size of the button of this TouchUI dialog component's node
+     * @return One of {@code Size} values
+     * @see Size
+     */
+    @EnumValue
+    Size size() default Size.M;
+
+    /**
+     * Maps to the 'block' attribute of this TouchUI dialog component's node.
+     * Used to ensure the button is rendered as a block element
+     * @return True or false
+     */
+    boolean block() default false;
+
+    /**
+     * Maps to the 'variant' attribute of this TouchUI dialog component's node.
+     * Used to define button variant
+     * @return One of {@code ButtonVariant} values
+     * @see com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariantConstants
+     */
+    String variant() default ElementVariantConstants.PRIMARY;
+
+    /**
+     * When set to a non-blank string, maps to the 'command' attribute of this TouchUI dialog component's node.
+     * Used to define keyboard shortcut for the action. Overrides 'actionConfigName' value
+     * @return String value, non-blank
+     */
+    String command() default "";
+
+    /**
+     * When set to a non-blank string, maps to the 'actionConfigName' attribute of this TouchUI dialog component's node.
+     * Used to define standard definitions of command, icon and text
+     * @return String value, non-blank
+     */
+    String actionConfigName() default "";
 }

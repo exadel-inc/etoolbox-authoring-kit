@@ -11,12 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets.hyperlink;
+package com.exadel.aem.toolkit.api.annotations.widgets.anchorbutton;
 
 /**
- * Contains possible values of {@link Hyperlink#xCqLinkchecker()} ()} property
+ * Contains possible values of {@link AnchorButton#size()} property
  */
-@SuppressWarnings("unused")
-public enum HyperlinkLinkchecker {
-    NONE, SKIP, VALID
+public enum Size {
+    M, L
 }

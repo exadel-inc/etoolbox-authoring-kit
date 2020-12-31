@@ -449,6 +449,8 @@ public class DialogWithHeading {
 Used to render hidden inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hidden](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/hidden/index.html).
 ###### @Hyperlink
 Used to represent a HTML hyperlinks (<a>) in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hyperlink](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html).
+###### @AnchorButton
+AnchorButton is a component to represent a standard HTML hyperlink (<a>), but to look like a button in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on AnchorButton](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html).
 ###### @NumberField
 Used to render inputs for storing numbers in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on NumberField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/numberfield/index.html).
 
