@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.widgets.anchorbutton;
 /**
  * Contains possible values of {@link AnchorButton#size()} property
  */
-@SuppressWarnings("unused")
 public enum Size {
     M, L
 }

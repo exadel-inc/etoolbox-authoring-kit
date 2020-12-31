@@ -18,11 +18,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizeConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Linkchecker;
 
 /**
  * Used to set up
@@ -78,10 +79,10 @@ public @interface Hyperlink {
     /**
      * Maps to the x-cq-linkchecker attribute of this TouchUI dialog component's node
      * @return One of {@code HyperlinkLinkchecker} values
-     * @see HyperlinkLinkchecker
+     * @see Linkchecker
      */
     @PropertyRendering(ignoreValues = "NONE")
-    HyperlinkLinkchecker xCqLinkchecker() default HyperlinkLinkchecker.NONE;
+    Linkchecker xCqLinkchecker() default Linkchecker.NONE;
 
     /**
      * Maps to the icon name. e.g. “search” of this TouchUI dialog component's node
@@ -91,9 +92,8 @@ public @interface Hyperlink {
 
     /**
      * Maps to the size of the icon of this TouchUI dialog component's node
-     * @return One of {@code HyperlinkIconSize} values
-     * @see HyperlinkIconSize
+     * @return String value, non-blank
+     * @see ElementSizeConstants
      */
-    @EnumValue
-    HyperlinkIconSize iconSize() default HyperlinkIconSize.S;
+    String iconSize() default ElementSizeConstants.SMALL;
 }
