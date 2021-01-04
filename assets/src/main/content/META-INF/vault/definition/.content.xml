@@ -3,19 +3,15 @@
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           jcr:primaryType="vlt:PackageDefinition"
-          jcr:description="AEM Authoring Toolkit - Assets (DependsOn clientlibs)"
+          jcr:description="AEM Authoring Toolkit - Assets Package"
           group="com.exadel.aem"
           name="aem-authoring-toolkit-assets"
-          version="1.2.1">
+          version="2.0.0-SNAPSHOT">
     <thumbnail.png/>
     <filter jcr:primaryType="nt:unstructured">
         <f0 jcr:primaryType="nt:unstructured"
             mode="replace"
-            root="/apps/authoring-toolkit/depends-on"
-            rules="[]"/>
-        <f1 jcr:primaryType="nt:unstructured"
-            mode="replace"
-            root="/apps/authoring-toolkit/depends-on-injector"
+            root="/etc/packages/authoring-toolkit"
             rules="[]"/>
     </filter>
     <screenshots jcr:primaryType="nt:unstructured"/>
