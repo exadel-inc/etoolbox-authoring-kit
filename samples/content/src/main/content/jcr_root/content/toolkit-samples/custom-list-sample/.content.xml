@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content jcr:primaryType="cq:PageContent"
+                 cq:template="/conf/authoring-toolkit/settings/wcm/templates/custom-list"
+                 jcr:title="Coral Icons"
+                 jcr:description="Shows an example of AEM Custom List"
+                 itemResourceType="/apps/authoring-toolkit/custom-lists/components/content/genericItem"
+                 sling:resourceType="aem-custom-lists/components/structure/page">
+        <list jcr:primaryType="nt:unstructured"
+              sling:resourceType="wcm/foundation/components/responsivegrid">
+            <list_item_1 jcr:primaryType="nt:unstructured"
+                         jcr:title="Add"
+                         value="add"
+                         sling:resourceType="aem-custom-lists/components/content/itemWrapper"/>
+            <list_item_2 jcr:primaryType="nt:unstructured"
+                         jcr:title="Square Brackets"
+                         value="bracketsSquare"
+                         sling:resourceType="aem-custom-lists/components/content/itemWrapper"/>
+            <list_item_3 jcr:primaryType="nt:unstructured"
+                         jcr:title="Share file"
+                         value="fileShare"
+                         sling:resourceType="aem-custom-lists/components/content/itemWrapper"/>
+            <list_item_4 jcr:primaryType="nt:unstructured"
+                         jcr:title="Delete Filter"
+                         value="filterDelete"
+                         sling:resourceType="aem-custom-lists/components/content/itemWrapper"/>
+        </list>
+    </jcr:content>
+</jcr:root>

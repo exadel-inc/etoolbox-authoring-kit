@@ -28,6 +28,10 @@
                 <configuration>
                     <instructions>
                         <Sling-Model-Packages>com.exadel.aem.toolkit.bundle.models</Sling-Model-Packages>
+                        <Sling-Model-Packages>
+                            com.exadel.aem.toolkit.bundle.models,
+                            com.exadel.aem.toolkit.bundle.customlists.models
+                        </Sling-Model-Packages>
                         <Export-Package>com.exadel.aem.toolkit.bundle.*</Export-Package>
                     </instructions>
                 </configuration>
@@ -93,12 +97,36 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.wcm</groupId>
+            <artifactId>io.wcm.testing.aem-mock.junit4</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.testing.sling-mock-oak</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
@@ -111,6 +139,11 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.aem</groupId>
+            <artifactId>uber-jar</artifactId>
+            <classifier>apis</classifier>
         </dependency>
     </dependencies>
 
