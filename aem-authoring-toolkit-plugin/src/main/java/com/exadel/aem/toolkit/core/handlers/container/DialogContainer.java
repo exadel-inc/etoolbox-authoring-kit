@@ -28,7 +28,8 @@ import com.exadel.aem.toolkit.core.util.writer.PackageWriter;
  */
 public enum DialogContainer {
     FIXED_COLUMNS(new FixedColumnsHandler()),
-    TABS(new TabsHandler());
+    ACCORDION(new AccordionContainerHandler()),
+    TABS(new TabsContainerHandler());
 
     private final BiConsumer<Class<?>, Target> handler;
 
@@ -49,7 +50,7 @@ public enum DialogContainer {
     /**
      * Returns the {@code DialogContainer} instance for the particular layout
      * @param layout {@link DialogLayout} to match this container
-     * @return {@code DialogContainer} for either fixed-columns or tabbed layout
+     * @return {@code DialogContainer} for either fixed-columns, tabbed or accordion-shaped layout
      */
     public static DialogContainer getContainer(DialogLayout layout){
         return EnumUtils.getEnumMap(DialogContainer.class).get(layout.name());

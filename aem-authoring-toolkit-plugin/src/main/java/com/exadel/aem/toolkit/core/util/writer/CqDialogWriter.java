@@ -54,7 +54,6 @@ class CqDialogWriter extends ContentXmlWriter {
 
     /**
      * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
-     *
      * @return {@link XmlScope} value
      */
     @Override
@@ -78,8 +77,15 @@ class CqDialogWriter extends ContentXmlWriter {
                 .filter(m -> !fitsInScope(m, getXmlScope())).map(Method::getName).collect(Collectors.toList()));
         target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
 
-        DialogLayout dialogLayout = ArrayUtils.isEmpty(dialog.tabs()) ? dialog.layout() : DialogLayout.TABS;
-        DialogContainer.getContainer(dialogLayout).build(componentClass, target);
+        DialogLayout dialogLayout;
+        if (!ArrayUtils.isEmpty(dialog.tabs())) {
+            dialogLayout = DialogLayout.TABS;
+        } else if (!ArrayUtils.isEmpty(dialog.panels())) {
+            dialogLayout = DialogLayout.ACCORDION;
+        } else {
+            dialogLayout = dialog.layout();
+        }
+        DialogContainer.getContainer(dialogLayout).build(componentClass, root);
 
         new DependsOnTabHandler().accept(target, componentClass);
         if (!classHasCustomDialogAnnotation(componentClass)) {
