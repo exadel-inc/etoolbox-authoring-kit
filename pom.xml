@@ -62,7 +62,7 @@
 
     <modules>
         <module>aem-authoring-toolkit-api</module>
-        <module>bundle</module>
+        <module>core</module>
         <module>ui.apps</module>
         <module>ui.content</module>
         <module>assets</module>
