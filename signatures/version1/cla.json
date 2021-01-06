@@ -1,3 +1,12 @@
 {
-   "signedContributors": []
+  "signedContributors": [
+    {
+      "name": "liubou-masiuk",
+      "id": 54947899,
+      "comment_id": 755375984,
+      "created_at": "2021-01-06T15:43:15Z",
+      "repoId": 206580735,
+      "pullRequestNo": 117
+    }
+  ]
 }
