@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured">
+    <aem-custom-lists jcr:primaryType="nt:unstructured"
+                      jcr:title="AEM Custom Lists"
+                      id="aem-custom-lists_view"
+                      target="_blank">
+        <card jcr:primaryType="nt:unstructured"
+                  jcr:title="AEM Custom List"
+                  jcr:description="Create AEM list"
+                  order="2000"
+                  sling:orderBefore="forms"
+                  href="/aem-custom-lists.html"
+                  id="cq-aem-custom-lists"
+                  icon="viewList"
+                  sling:resourceType="crx/core/components/welcome/tool">
+        </card>
+    </aem-custom-lists>
+</jcr:root>
