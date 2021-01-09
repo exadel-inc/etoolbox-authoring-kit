@@ -51,8 +51,8 @@ class FieldSetHandler implements WidgetSetHandler {
         }
 
         if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
-            target.setPrefix(NamingUtil.getValidFieldName(fieldSet.namePrefix()))
-                .setPostfix(fieldSet.namePostfix());
+            target.prefix(NamingUtil.getValidFieldName(fieldSet.namePrefix()))
+                .postfix(fieldSet.namePostfix());
         }
         // append the valid sources to the container
         PluginXmlContainerUtility.append(sources, target);

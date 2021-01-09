@@ -165,13 +165,13 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public Target setPrefix(String prefix) {
+    public Target prefix(String prefix) {
         this.valueMap.put(DialogConstants.PN_PREFIX, prefix);
         return this;
     }
 
     @Override
-    public Target setPostfix(String postfix) {
+    public Target postfix(String postfix) {
         this.valueMap.put(DialogConstants.PN_POSTFIX, postfix);
         return this;
     }
@@ -199,17 +199,8 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public Stream<Target> stream(Predicate<Target> predicate) {
-        Stream<Target> targetStream = Stream.of(this);
-        List<Target> list = this.listChildren.stream().filter(predicate).collect(Collectors.toList());
-        for (Target target : list) {
-            targetStream = Stream.concat(targetStream, target.stream(predicate));
-        }
-        return targetStream;
-    }
-    @Override
     public boolean hasAttribute(String name) {
-        return valueMap.containsKey(name);
+        return this.valueMap.containsKey(name);
     }
 
     @Override

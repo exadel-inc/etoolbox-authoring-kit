@@ -13,14 +13,15 @@
  */
 package com.exadel.aem.toolkit.core.handlers.container;
 
+import com.exadel.aem.toolkit.api.handlers.Target;
+
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.handlers.container.common.ContainerHandler;
 
 /**
- * The {@link Handler} for a tabbed TouchUI dialog
+ * The {@code Handler} for a tabbed TouchUI dialog
  */
 public class TabsContainerHandler extends ContainerHandler {
 
@@ -31,7 +32,7 @@ public class TabsContainerHandler extends ContainerHandler {
      * @param parentElement  XML document root element
      */
     @Override
-    public void accept(Class<?> componentClass, Element parentElement) {
+    public void accept(Class<?> componentClass, Target parentElement) {
         acceptParent(componentClass, parentElement, Tab.class);
     }
 }

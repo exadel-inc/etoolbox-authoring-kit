@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.ImmutableMap;
@@ -25,7 +26,6 @@ import com.google.common.collect.ImmutableMap;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTabConfig;
-import com.exadel.aem.toolkit.core.exceptions.InvalidTabException;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
@@ -63,7 +63,7 @@ public class DependsOnTabHandler implements BiConsumer<Target, Class<?>> {
      */
     private void handleDependsOnTab(DependsOnTab value, Target target) {
         if (!target.hasChild(TAB_ITEMS_NODE_PATH)) {
-            PluginRuntime.context().getExceptionHandler().handle(new InvalidTabException());
+            PluginRuntime.context().getExceptionHandler().handle(new InvalidContainerException());
             return;
         } else if (StringUtils.isAnyBlank(value.tabTitle(), value.query())) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(DependsOnHandler.EMPTY_VALUES_EXCEPTION_MESSAGE));
@@ -76,7 +76,7 @@ public class DependsOnTabHandler implements BiConsumer<Target, Class<?>> {
             ));
         } else {
             PluginRuntime.context().getExceptionHandler()
-                    .handle(new InvalidTabException(value.tabTitle()));
+                    .handle(new InvalidContainerException());
         }
     }
 

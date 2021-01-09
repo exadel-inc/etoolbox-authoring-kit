@@ -125,7 +125,7 @@ public enum DialogWidgets implements DialogWidget {
 
     /**
      * Gets a {@link DialogWidgets} bound to this {@code Field} of a component class, if any
-     * @param field {@code Field} of a component class
+     * @param source Current {@link Source} instance
      * @return {@code DialogWidget} value, or null
      */
     public static DialogWidget fromSource(Source source) {

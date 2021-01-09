@@ -85,7 +85,7 @@ class CqDialogWriter extends ContentXmlWriter {
         } else {
             dialogLayout = dialog.layout();
         }
-        DialogContainer.getContainer(dialogLayout).build(componentClass, root);
+        DialogContainer.getContainer(dialogLayout).build(componentClass, target);
 
         new DependsOnTabHandler().accept(target, componentClass);
         if (!classHasCustomDialogAnnotation(componentClass)) {
