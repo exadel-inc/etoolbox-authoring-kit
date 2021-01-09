@@ -53,15 +53,13 @@ public interface Target {
 
     Target attributes(Map<String, Object> map);
 
-    Target setPrefix(String prefix);
+    Target prefix(String prefix);
 
-    Target setPostfix(String postfix);
+    Target postfix(String postfix);
 
     String getPrefix();
 
     String getPostfix();
-
-    Stream<Target> stream(Predicate<Target> predicate);
 
     void delete();
 
