@@ -54,36 +54,35 @@ public class TestXmlWriterHelper {
         return compare(actualFiles, expectedFiles, pathToExpectedFiles.toString());
     }
 
-    private static List<PackageEntryWriter> getWriters(Class dialogClass) {
+    private static List<PackageEntryWriter> getWriters(Class<?> dialogClass) {
         List<PackageEntryWriter> writers = new ArrayList<>();
         try {
-            DocumentBuilder documentBuilder = PackageWriter.createDocumentBuilder();
             Transformer transformer = PackageWriter.createTransformer();
-            writers.add(new ContentXmlWriter(documentBuilder, transformer));
-            writers.add(new CqDialogWriter(documentBuilder, transformer));
+            writers.add(new ContentXmlWriter(transformer));
+            writers.add(new CqDialogWriter(transformer));
             if (dialogClass.isAnnotationPresent(EditConfig.class)) {
-                writers.add(new CqEditConfigWriter(documentBuilder, transformer));
+                writers.add(new CqEditConfigWriter(transformer));
             }
             if (dialogClass.isAnnotationPresent(ChildEditConfig.class)) {
-                writers.add(new CqChildEditConfigWriter(documentBuilder, transformer));
+                writers.add(new CqChildEditConfigWriter(transformer));
             }
             if (dialogClass.isAnnotationPresent(HtmlTag.class)) {
-                writers.add(new CqHtmlTagWriter(documentBuilder, transformer));
+                writers.add(new CqHtmlTagWriter(transformer));
             }
-        } catch (ParserConfigurationException | TransformerConfigurationException e) {
+        } catch (TransformerConfigurationException e) {
             LOG.error(e.getMessage());
         }
 
         return writers;
     }
 
-    private static Map<String, String> getActualFiles(Class dialogClass, List<PackageEntryWriter> writers) {
+    private static Map<String, String> getActualFiles(Class<?> dialogClass, List<PackageEntryWriter> writers) {
         Map<String, String> actualFiles = new HashMap<>();
         writers.forEach(packageEntryWriter -> {
             try (StringWriter stringWriter = new StringWriter()){
                 packageEntryWriter.writeXml(dialogClass, stringWriter);
                 actualFiles.put(packageEntryWriter.getXmlScope().toString(), stringWriter.toString());
-            } catch (IOException ex) {
+            } catch (IOException | ParserConfigurationException ex) {
                 LOG.error("Could not implement test writer", ex);
             }
         });

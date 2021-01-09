@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
  * Used to define common properties of TouchUI <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html">
  * Dialog field</a>
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping
 @SuppressWarnings("unused")

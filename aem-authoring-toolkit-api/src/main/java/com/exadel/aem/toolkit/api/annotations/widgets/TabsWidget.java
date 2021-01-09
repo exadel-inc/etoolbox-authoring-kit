@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 /**
  * Used to set up tabs container widget inside dialog
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TABS)
 @PropertyMapping
