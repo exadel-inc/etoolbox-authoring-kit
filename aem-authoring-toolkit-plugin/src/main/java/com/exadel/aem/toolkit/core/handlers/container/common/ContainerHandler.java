@@ -17,6 +17,7 @@ package com.exadel.aem.toolkit.core.handlers.container.common;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,20 +29,11 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.exadel.aem.toolkit.api.handlers.Source;
-
-import com.exadel.aem.toolkit.api.handlers.Target;
-
-import com.exadel.aem.toolkit.core.util.NamingUtil;
-
-import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
-import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
@@ -52,13 +44,18 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.core.source.SourceBase;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.NamingUtil;
 import com.exadel.aem.toolkit.core.util.PluginObjectPredicates;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
+import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 
 
 public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
@@ -115,7 +112,8 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
                 = containerItemInstanceIterator.next().getValue();
             List<Source> storedCurrentContainerItemFields = new ArrayList<>();
             for (String key : currentContainerItemInstance.getFields().keySet()) {
-                storedCurrentContainerItemFields.add((Source) currentContainerItemInstance.getFields().get(key));
+                Member member = (Member) currentContainerItemInstance.getFields().get(key);
+                storedCurrentContainerItemFields.add(SourceBase.fromMember(member, member.getDeclaringClass()));
             }
             List<Source> moreCurrentContainerItemFields = allFields.stream()
                 .filter(field -> isFieldForContainerItem(field, currentContainerItemInstance.getTitle(), isFirstContainerItem))

@@ -17,18 +17,19 @@ package com.exadel.aem.toolkit.core.handlers.assets.dependson;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.exceptions.InvalidContainerException;
-import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTabConfig;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.NamingUtil;
+import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
@@ -69,14 +70,14 @@ public class DependsOnTabHandler implements BiConsumer<Target, Class<?>> {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(DependsOnHandler.EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
         }
-        if (target.hasChild(TAB_ITEMS_NODE_PATH + "/" + value.tabTitle())) {
-            PluginXmlUtility.appendDataAttributes(target.getOrCreate(TAB_ITEMS_NODE_PATH + "/" + value.tabTitle()), ImmutableMap.of(
+        if (target.hasChild(TAB_ITEMS_NODE_PATH + "/" + NamingUtil.getValidName(value.tabTitle()))) {
+            PluginXmlUtility.appendDataAttributes(target.get(TAB_ITEMS_NODE_PATH + "/" + NamingUtil.getValidName(value.tabTitle())), ImmutableMap.of(
                     DialogConstants.PN_DEPENDS_ON, value.query(),
                     DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
             ));
         } else {
             PluginRuntime.context().getExceptionHandler()
-                    .handle(new InvalidContainerException());
+                    .handle(new InvalidContainerException(value.tabTitle(), DialogConstants.NN_TABS));
         }
     }
 
