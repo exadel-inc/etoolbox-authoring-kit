@@ -14,11 +14,9 @@
 package com.exadel.aem.toolkit.api.annotations.widgets.select;
 
 /**
- * Contains values defining the {@code Select} widget display mode
- * @see Select#variant()
+ * Contains possible values of {@link Select#variant()} property
  */
 @SuppressWarnings("unused")
 public enum SelectVariant {
-    DEFAULT,
-    QUICK
+    DEFAULT, QUICK
 }

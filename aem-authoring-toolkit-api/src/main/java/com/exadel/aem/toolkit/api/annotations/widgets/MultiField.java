@@ -22,14 +22,13 @@ import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html">
  * Multifield element</a> in TouchUI dialog
  */
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.MULTIFIELD)
 @PropertyMapping
@@ -40,5 +39,5 @@ public @interface MultiField {
      * @return Reference to a class
      */
     @IgnorePropertyMapping
-    Class<?> field() default _Default.class;
+    Class field();
 }

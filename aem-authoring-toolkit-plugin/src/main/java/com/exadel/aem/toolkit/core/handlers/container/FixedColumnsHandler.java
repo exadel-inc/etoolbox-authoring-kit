@@ -13,39 +13,52 @@
  */
 package com.exadel.aem.toolkit.core.handlers.container;
 
+import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.handlers.Target;
+import org.w3c.dom.Element;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
-import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 
 /**
- * The {@code BiConsumer<Class<?>, Target>} implementation for a fixed-columns TouchUI dialog.
+ * The {@link Handler} for a fixed-columns TouchUI dialog.
  */
-public class FixedColumnsHandler implements BiConsumer<Class<?>, Target> {
+public class FixedColumnsHandler implements Handler, BiConsumer<Class<?>, Element> {
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
-     * to process component-backing Java class and append the results to the {@link Target} root node
+     * to process component-backing Java class and append the results to the XML root node
      * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param target Current {@link Target} instance
+     * @param parentElement XML document root element
      */
     @Override
-    public void accept(Class<?> componentClass, Target target) {
-        Target contentItemsColumn = target.getOrCreate(DialogConstants.NN_CONTENT)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
-                .getOrCreate(DialogConstants.NN_LAYOUT)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.FIXED_COLUMNS)
-                .parent()
-                .getOrCreate(DialogConstants.NN_ITEMS)
-                .getOrCreate(DialogConstants.NN_COLUMN)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
+    public void accept(Class<?> componentClass, Element parentElement) {
+        Element content = getXmlUtil().createNodeElement(DialogConstants.NN_CONTENT, ResourceTypes.CONTAINER);
 
-        List<Source> allSources = PluginReflectionUtility.getAllSourceFacades(componentClass);
-        PluginXmlContainerUtility.append(allSources, contentItemsColumn);
+        Element layout = getXmlUtil().createNodeElement(
+                DialogConstants.NN_LAYOUT,
+                Collections.singletonMap(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.FIXED_COLUMNS)
+        );
+        Element contentItems = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
+
+        Element contentItemsColumn = getXmlUtil().createNodeElement(
+                DialogConstants.NN_COLUMN,
+                Collections.singletonMap(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER)
+        );
+
+        parentElement.appendChild(content);
+
+        content.appendChild(layout);
+        content.appendChild(contentItems);
+
+        contentItems.appendChild(contentItemsColumn);
+
+        List<Field> allFields = PluginReflectionUtility.getAllFields(componentClass);
+        Handler.appendToContainer(contentItemsColumn, allFields);
     }
 }

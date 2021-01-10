@@ -18,28 +18,30 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import com.exadel.aem.toolkit.api.handlers.Target;
+import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.FormParameter;
+import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * {@code BiConsumer<EditConfig, Target>} implementation for storing {@link FormParameter} arguments to {@code cq:editConfig} XML node
+ * {@link Handler} implementation for storing {@link FormParameter} arguments to {@code cq:editConfig} XML node
  */
-public class FormParametersHandler implements BiConsumer<EditConfig, Target> {
+public class FormParametersHandler implements Handler, BiConsumer<Element, EditConfig> {
     /**
      * Processes the user-defined data and writes it to XML entity
+     * @param root XML element
      * @param editConfig {@code EditConfig} annotation instance
-     * @param root Current {@link Target} instance
      */
     @Override
-    public void accept(EditConfig editConfig, Target root) {
+    public void accept(Element root, EditConfig editConfig) {
         if(editConfig.formParameters().length == 0){
             return;
         }
-        Map<String, Object> propertiesMap = Arrays.stream(editConfig.formParameters())
+        Map<String, String> propertiesMap = Arrays.stream(editConfig.formParameters())
             .collect(Collectors.toMap(FormParameter::name, FormParameter::value));
-        root.getOrCreate(DialogConstants.NN_FORM_PARAMETERS).attributes(propertiesMap);
+        Element formParametersElement = getXmlUtil().createNodeElement(DialogConstants.NN_FORM_PARAMETERS, propertiesMap);
+        root.appendChild(formParametersElement);
     }
 }

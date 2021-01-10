@@ -13,54 +13,55 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
+import java.lang.reflect.Field;
 import java.time.DateTimeException;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.handlers.Target;
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
+import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.core.util.validation.Validation;
 
 /**
- * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code DatePicker} widget functionality
- * within the {@code cq:dialog} node
+ * {@link Handler} implementation used to create markup responsible for Granite UI {@code DatePicker} widget functionality
+ * within the {@code cq:dialog} XML node
  */
-class DatePickerHandler implements BiConsumer<Source, Target> {
+class DatePickerHandler implements Handler, BiConsumer<Element, Field> {
     private static final String INVALID_FORMAT_EXCEPTION_TEMPLATE = "Invalid %s '%s' for @DatePicker field '%s'";
     private static final String INVALID_VALUE_EXCEPTION_TEMPLATE = "Property '%s' of @DatePicker does not correspond to specified valueFormat";
 
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Processes the user-defined data and writes it to XML entity
+     * @param element Current XML element
+     * @param field Current {@code Field} instance
      */
     @Override
-    public void accept(Source source, Target target) {
-        DatePicker datePickerAttribute = source.adaptTo(DatePicker.class);
+    public void accept(Element element, Field field) {
+        DatePicker datePickerAttribute = field.getAnnotationsByType(DatePicker.class)[0];
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
 
         // check specified typeHint, report if invalid
         if (datePickerAttribute.typeHint() == TypeHint.STRING) {
-            target.attribute(DialogConstants.PN_TYPE_HINT, datePickerAttribute.typeHint().toString());
+            element.setAttribute(DialogConstants.PN_TYPE_HINT, datePickerAttribute.typeHint().toString());
         } else if (datePickerAttribute.typeHint() != TypeHint.NONE) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(
                     INVALID_FORMAT_EXCEPTION_TEMPLATE,
                     "typeHint",
                     datePickerAttribute.typeHint(),
-                    target.getName()));
+                    element.getTagName()));
             return;
         }
-        // for a String-storing source, check and process specified valueFormat, report if invalid
+        // for a String-storing field, check and process specified valueFormat, report if invalid
         if (datePickerAttribute.typeHint() == TypeHint.STRING
             && !StringUtils.isEmpty(datePickerAttribute.valueFormat())) {
             try {
@@ -77,24 +78,24 @@ class DatePickerHandler implements BiConsumer<Source, Target> {
                         INVALID_FORMAT_EXCEPTION_TEMPLATE,
                         "valueFormat",
                         datePickerAttribute.valueFormat(),
-                        target.getName()));
+                        element.getTagName()));
                 return;
             }
         }
         // store values with specified or default formatting
-        storeDateValue(target, DialogConstants.PN_MIN_DATE, datePickerAttribute.minDate(), dateTimeFormatter);
-        storeDateValue(target, DialogConstants.PN_MAX_DATE, datePickerAttribute.maxDate(), dateTimeFormatter);
+        storeDateValue(element, DialogConstants.PN_MIN_DATE, datePickerAttribute.minDate(), dateTimeFormatter);
+        storeDateValue(element, DialogConstants.PN_MAX_DATE, datePickerAttribute.maxDate(), dateTimeFormatter);
     }
 
     /**
-     * Writes formatted {@link DateTimeValue} attribute to node
-     * @param target {@link Target} to store data in
+     * Writes formatted {@link DateTimeValue} attribute to XML node
+     * @param element XML {@code Element} to store data in
      * @param attribute Name of date-preserving attribute
      * @param value The {@code DateTimeValue} to store
      * @param formatter {@link DateTimeFormatter} instance
      */
     private void storeDateValue(
-            Target target,
+            Element element,
             String attribute,
             DateTimeValue value,
             DateTimeFormatter formatter
@@ -103,7 +104,7 @@ class DatePickerHandler implements BiConsumer<Source, Target> {
             return;
         }
         try {
-            target.attribute(attribute, formatter.format(Objects.requireNonNull(PluginObjectUtility.getDateTimeInstance(value))));
+            getXmlUtil().setAttribute(element, attribute, formatter.format(Objects.requireNonNull(PluginObjectUtility.getDateTimeInstance(value))));
         } catch (DateTimeException | NullPointerException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(
                     INVALID_VALUE_EXCEPTION_TEMPLATE,

@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/radiogroup/index.html">
  * RadioGroup element</a> in TouchUI dialog
  */
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.RADIOGROUP)
 @PropertyMapping

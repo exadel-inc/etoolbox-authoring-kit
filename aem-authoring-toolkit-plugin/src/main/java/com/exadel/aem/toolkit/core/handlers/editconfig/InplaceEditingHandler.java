@@ -13,111 +13,118 @@
  */
 package com.exadel.aem.toolkit.core.handlers.editconfig;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.source.SourceBase;
-import com.exadel.aem.toolkit.core.util.NamingUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Element;
+import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.core.exceptions.ReflectionException;
+import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.InheritanceHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * {@code BiConsumer<EditConfig, Target>} implementation for storing {@link InplaceEditingConfig} arguments to {@code cq:editConfig} XML node
+ * {@link Handler} implementation for storing {@link InplaceEditingConfig} arguments to {@code cq:editConfig} XML node
  */
-public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
+public class InplaceEditingHandler implements Handler, BiConsumer<Element, EditConfig> {
     /**
      * Processes the user-defined data and writes it to XML entity
+     * @param root XML element
      * @param editConfig {@code EditConfig} annotation instance
-     * @param root Current {@link Target} instance
      */
     @Override
-    public void accept(EditConfig editConfig, Target root) {
+    public void accept(Element root, EditConfig editConfig) {
         if (ArrayUtils.isEmpty(editConfig.inplaceEditing())
                 || (editConfig.inplaceEditing().length == 1 && EditorType.EMPTY.equals(editConfig.inplaceEditing()[0].type()))) {
             return;
         }
-        Target inplaceEditingNode = root.getOrCreate(DialogConstants.NN_INPLACE_EDITING)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG)
-                .attribute(DialogConstants.PN_ACTIVE, true);
+        Element inplaceEditingNode = getXmlUtil().createNodeElement(DialogConstants.NN_INPLACE_EDITING, DialogConstants.NT_INPLACE_EDITING_CONFIG);
+        getXmlUtil().setAttribute(inplaceEditingNode, DialogConstants.PN_ACTIVE, true);
+        root.appendChild(inplaceEditingNode);
 
         if (editConfig.inplaceEditing().length > 1) {
-            inplaceEditingNode.attribute(DialogConstants.PN_EDITOR_TYPE, EditorType.HYBRID.toLowerCase());
+            inplaceEditingNode.setAttribute(DialogConstants.PN_EDITOR_TYPE, EditorType.HYBRID.toLowerCase());
 
-            getChildEditorsNode(editConfig, inplaceEditingNode);
+            Element childEditorsNode = getChildEditorsNode(editConfig);
+            inplaceEditingNode.appendChild(childEditorsNode);
 
-            getConfigNode(editConfig, inplaceEditingNode);
+            Element configNode = getConfigNode(editConfig);
+            inplaceEditingNode.appendChild(configNode);
         } else {
-            inplaceEditingNode.attribute(DialogConstants.PN_EDITOR_TYPE, editConfig.inplaceEditing()[0].type().toLowerCase());
-            Target configNode = inplaceEditingNode.getOrCreate(DialogConstants.NN_CONFIG);
-            populateConfigNode(editConfig.inplaceEditing()[0], configNode);
+            inplaceEditingNode.setAttribute(DialogConstants.PN_EDITOR_TYPE, editConfig.inplaceEditing()[0].type().toLowerCase());
+            Element configNode = getXmlUtil().createNodeElement(DialogConstants.NN_CONFIG);
+            populateConfigNode(configNode, editConfig.inplaceEditing()[0]);
+            inplaceEditingNode.appendChild(configNode);
         }
     }
 
     /**
-     * Populate {@code cq:childEditors} node containing one or more {@code cq:ChildEditorConfig} subnodes
+     * Generates and returns new {@code cq:childEditors} XML node containing one or more {@code cq:ChildEditorConfig} subnodes
      * @param config {@link EditConfig} annotation instance
-     * @param target Current {@link Target} instance
+     * @return XML {@code Element}
      */
-    private void getChildEditorsNode(EditConfig config, Target target) {
-        Target childEditorsNode = target.getOrCreate(DialogConstants.NN_CHILD_EDITORS);
+    private Element getChildEditorsNode(EditConfig config) {
+        Element childEditorsNode = getXmlUtil().createNodeElement(DialogConstants.NN_CHILD_EDITORS);
         Arrays.stream(config.inplaceEditing())
-                .forEach(inplaceEditingConfig -> getSingleChildEditorNode(inplaceEditingConfig, childEditorsNode));
+                .map(this::getSingleChildEditorNode)
+                .forEach(childEditorsNode::appendChild);
+        return childEditorsNode;
     }
 
     /**
-     * Populate {@code cq:ChildEditorConfig} node
+     * Generates and returns new {@code cq:ChildEditorConfig} XML node
      * @param config {@link InplaceEditingConfig} annotation instance
-     * @param target Current {@link Target} instance
+     * @return XML {@code Element}
      */
-    private void getSingleChildEditorNode(InplaceEditingConfig config, Target target) {
-        target.getOrCreate(getConfigName(config))
-            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_CHILD_EDITORS_CONFIG)
-            .attribute(DialogConstants.PN_TITLE, StringUtils.isNotBlank(config.title()) ? config.title() : getConfigName(config))
-            .attribute(DialogConstants.PN_TYPE, config.type().toLowerCase());
+    private Element getSingleChildEditorNode(InplaceEditingConfig config) {
+        Map<String, String> properties = new ImmutableMap.Builder<String, String>()
+                .put(DialogConstants.PN_TITLE, StringUtils.isNotBlank(config.title()) ? config.title() : getConfigName(config))
+                .put(DialogConstants.PN_TYPE, config.type().toLowerCase()).build();
+        return getXmlUtil().createNodeElement(getConfigName(config), DialogConstants.NT_CHILD_EDITORS_CONFIG, properties);
     }
 
     /**
-     * Generates node containing one or more {@code cq:InplaceEditingConfig} subnodes
+     * Generates and returns new {@code config} XML node  containing one or more {@code cq:InplaceEditingConfig} subnodes
      * for use with {@code cq:inplaceEditing} markup
      * @param config {@link EditConfig} annotation instance
-     * @param target Current {@link Target} instance
+     * @return XML {@code Element}
      */
-    private void getConfigNode(EditConfig config, Target target) {
-        Target configNode = target.getOrCreate(DialogConstants.NN_CONFIG);
+    private Element getConfigNode(EditConfig config) {
+        Element configNode = getXmlUtil().createNodeElement(DialogConstants.NN_CONFIG);
         for (InplaceEditingConfig childConfig : config.inplaceEditing()) {
-            Target childConfigNode = configNode.getOrCreate(getConfigName(childConfig))
-                    .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG);
-            populateConfigNode(childConfig, childConfigNode);
+            Element childConfigNode = getXmlUtil().createNodeElement(getConfigName(childConfig), DialogConstants.NT_INPLACE_EDITING_CONFIG);
+            populateConfigNode(childConfigNode, childConfig);
+            configNode.appendChild(childConfigNode);
         }
+        return configNode;
     }
 
     /**
      * Sets necessary attributes to {@code cq:InplaceEditingConfig} XML node
+     * @param element {@code Element} representing config node
      * @param config {@link InplaceEditingConfig} annotation instance
-     * @param target {@link Target} representing config node
      */
-    private void populateConfigNode(InplaceEditingConfig config, Target target) {
+    private void populateConfigNode(Element element, InplaceEditingConfig config) {
         String propertyName = getValidPropertyName(config.propertyName());
         String textPropertyName = config.textPropertyName().isEmpty()
                 ? propertyName
                 : getValidPropertyName(config.textPropertyName());
-        target.attribute(DialogConstants.PN_EDIT_ELEMENT_QUERY, config.editElementQuery())
-                .attribute(DialogConstants.PN_PROPERTY_NAME, propertyName)
-                .attribute(DialogConstants.PN_TEXT_PROPERTY_NAME, textPropertyName);
-        populateRteConfig(config, target);
+        element.setAttribute(DialogConstants.PN_EDIT_ELEMENT_QUERY, config.editElementQuery());
+        element.setAttribute(DialogConstants.PN_PROPERTY_NAME, propertyName);
+        element.setAttribute(DialogConstants.PN_TEXT_PROPERTY_NAME, textPropertyName);
+        populateRteConfig(element, config);
     }
 
     /**
@@ -126,7 +133,7 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
      * @return Converted standard-compliant name
      */
     private String getValidPropertyName(String rawName) {
-        String propertyName = NamingUtil.getValidFieldName(rawName);
+        String propertyName = getXmlUtil().getValidFieldName(rawName);
         if (propertyName.startsWith(DialogConstants.PARENT_PATH_PREFIX)) {
             return propertyName;
         }
@@ -135,18 +142,19 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
 
     /**
      * Plants necessary attributes and subnodes related to in-place rich text editor to {@code cq:InplaceEditingConfig} XML node
+     * @param element {@code Element} representing config node
      * @param config {@link InplaceEditingConfig} annotation instance
-     * @param target {@link Target} representing config node
      */
-    private void populateRteConfig(InplaceEditingConfig config, Target target) {
-        Source referencedRteField = getReferencedRteField(config);
-        if (referencedRteField != null && referencedRteField.adaptTo(RichTextEditor.class) != null) {
-            BiConsumer<Source, Target> rteHandler = new RichTextEditorHandler(false);
-            new InheritanceHandler(rteHandler).andThen(rteHandler).accept(referencedRteField, target);
-            target.mapProperties(referencedRteField.adaptTo(RichTextEditor.class),
+    private void populateRteConfig(Element element, InplaceEditingConfig config) {
+        Field referencedRteField = getReferencedRteField(config);
+        if (referencedRteField != null && referencedRteField.getAnnotation(RichTextEditor.class) != null) {
+            BiConsumer<Element, Field> rteHandler = new RichTextEditorHandler(false);
+            new InheritanceHandler(rteHandler).andThen(rteHandler).accept(element, referencedRteField);
+            getXmlUtil().mapProperties(element,
+                    referencedRteField.getAnnotation(RichTextEditor.class),
                     Collections.singletonList(DialogConstants.PN_USE_FIXED_INLINE_TOOLBAR));
         }
-        new RichTextEditorHandler(false).accept(config.richTextConfig(), target);
+        new RichTextEditorHandler(false).accept(element, config.richTextConfig());
     }
 
     /**
@@ -155,14 +163,14 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
      * @param config {@link InplaceEditingConfig} annotation instance
      * @return {@code Field} instance
      */
-    private static Source getReferencedRteField(InplaceEditingConfig config) {
+    private static Field getReferencedRteField(InplaceEditingConfig config) {
         if (config.richText().value().equals(Object.class)
                 && StringUtils.isBlank(config.richText().field())) {
             // richText attribute not specified, which is a valid case
             return null;
         }
         try {
-            return SourceBase.fromMember(config.richText().value().getDeclaredField(config.richText().field()), config.richText().value());
+            return config.richText().value().getDeclaredField(config.richText().field());
         } catch (NoSuchFieldException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
                     config.richText().value(),

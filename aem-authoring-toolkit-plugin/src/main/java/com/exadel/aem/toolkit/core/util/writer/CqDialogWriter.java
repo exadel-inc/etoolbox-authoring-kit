@@ -42,10 +42,11 @@ class CqDialogWriter extends PackageEntryWriter {
 
     /**
      * Basic constructor
-     *
+     * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
+     *                                               of this writer
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
      */
-    CqDialogWriter(Transformer transformer, XmlScope scope) {
+    CqDialogWriter(DocumentBuilder documentBuilder, Transformer transformer, XmlScope scope) {
         super(documentBuilder, transformer);
         this.scope = scope;
     }
@@ -71,13 +72,12 @@ class CqDialogWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Target)} abstract method to write down contents
-     * of {@code _cq_dialog.xml} file. To the targetFacade node, several XML building routines are applied in sequence: the predefined
+     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Element)} abstract method to write down contents
+     * of {@code _cq_dialog.xml} file. To the root node, several XML building routines are applied in sequence: the predefined
      * dialog container builder, the common properties writer, {@code DependsOn} handlers and any {@code CustomHandler}s defined for
      * this component class
-     *
      * @param componentClass The {@code Class} being processed
-     * @param target   The targetFacade element of DOM {@link Document} to feed data to
+     * @param root The root element of DOM {@link Document} to feed data to
      */
     @Override
     void populateDomDocument(Class<?> componentClass, Element root) {

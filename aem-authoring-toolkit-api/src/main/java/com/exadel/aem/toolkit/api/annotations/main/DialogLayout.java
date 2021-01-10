@@ -17,5 +17,5 @@ package com.exadel.aem.toolkit.api.annotations.main;
  * Enumerates available AEM TouchUI dialog layouts
  */
 public enum DialogLayout {
-    FIXED_COLUMNS, TABS, ACCORDION
+    FIXED_COLUMNS,TABS
 }

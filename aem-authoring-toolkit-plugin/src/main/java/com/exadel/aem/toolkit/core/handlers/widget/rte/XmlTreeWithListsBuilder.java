@@ -20,18 +20,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.exadel.aem.toolkit.api.handlers.Target;
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Element;
+
+import com.exadel.aem.toolkit.api.runtime.XmlUtility;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 
 /**
- * Used to build nodes for feature representations with nested XML nodes within RichTextEditor config XML, such as
+ * Used to build XML nodes for feature representations with nested XML nodes within RichTextEditor config XML, such as
  * {@code plugins} node
  */
 class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
     private static final String FEATURE_SEPARATOR = ":";
 
-    private final Map<String, Set<String>> argumentTree;
-    private final boolean addPluginIdsToFeatures;
+    private Map<String, Set<String>> argumentTree;
+    private boolean addPluginIdsToFeatures;
+    private XmlUtility xmlUtil;
 
     XmlTreeWithListsBuilder(
             String tagName,
@@ -41,6 +45,7 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
         super(tagName, attributeName);
         this.argumentTree = new HashMap<>();
         this.addPluginIdsToFeatures = addPluginIdsToFeatures;
+        this.xmlUtil = PluginRuntime.context().getXmlUtility();
     }
     XmlTreeWithListsBuilder(
             String tagName,
@@ -54,6 +59,7 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
         this.addPluginIdsToFeatures = sample.addPluginIdsToFeatures;
         this.setPostprocessing(sample.getPostprocessing());
         this.argumentTree = new HashMap<>();
+        this.xmlUtil = PluginRuntime.context().getXmlUtility();
     }
 
     @Override
@@ -80,9 +86,9 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
         return argumentTree.isEmpty();
     }
     @Override
-    Target build(Target parent) {
-        Target result = parent.getOrCreate(getName());
-        argumentTree.forEach((pluginId, features) -> createChildNode(result, pluginId, features));
+    Element build() {
+        Element result = xmlUtil.createNodeElement(getName());
+        argumentTree.forEach((pluginId, features) -> result.appendChild(createChildNode(pluginId, features)));
         return result;
     }
 
@@ -90,9 +96,10 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
      * Creates a nested XML node within the tree-like XML config
      * @param pluginId RTE Plugin name
      * @param features Feature identifiers
+     * @return {@code Element} instance representing the nested config node
      */
-    private void createChildNode(Target parent, String pluginId, Set<String> features) {
-        Target node = parent.getOrCreate(pluginId);
+    private Element createChildNode(String pluginId, Set<String> features) {
+        Element node = xmlUtil.createNodeElement(pluginId);
         List<String> valueList = features.stream()
                 // if 'addPluginIdsToFeatures' flag is set, each entry must be brought andThen 'plugin#feature' format
                 // unless it is already preserved in this format or is in 'plugin:feature:feature' format (like e.g. 'paraformat' button)
@@ -101,10 +108,11 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
                         : value)
                 .collect(Collectors.toList());
         if (valueList.size() > 1) {
-            node.attribute(getAttributeName(), valueList.toString().replace(" ", ""));
+            xmlUtil.setAttribute(node, getAttributeName(), valueList);
         } else {
-            node.attribute(getAttributeName(), valueList.get(0));
+            xmlUtil.setAttribute(node, getAttributeName(), valueList.get(0));
         }
         if (getPostprocessing() != null) getPostprocessing().accept(node);
+        return node;
     }
 }

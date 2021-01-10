@@ -15,10 +15,6 @@
 package com.exadel.aem.toolkit.core.exceptions.handlers;
 
 import java.util.List;
-import java.util.Optional;
-
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.core.exceptions.PluginException;
 
@@ -29,15 +25,10 @@ import com.exadel.aem.toolkit.core.exceptions.PluginException;
  * falls back to {@code PermissiveExceptionHandler} behavior
  */
 class SelectiveExceptionHandler extends PermissiveExceptionHandler {
-    private static final String EXCEPTION_TOKEN_ALL = "all";
-    private static final String EXCEPTION_WILDCARD = "*";
-    private static final String INVERSION_SIGN = "!";
-    private static final String PACKAGE_POSTFIX = ".*";
+    private List<String> criticalExceptions;
 
-    private List<String> exceptionTokens;
-
-    SelectiveExceptionHandler(List<String> exceptionTokens) {
-        this.exceptionTokens = exceptionTokens;
+    SelectiveExceptionHandler(List<String> criticalExceptions) {
+        this.criticalExceptions = criticalExceptions;
     }
 
     /**
@@ -48,54 +39,14 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
      */
     @Override
     public void handle(String message, Exception cause) {
-        if (shouldTerminateOn(cause.getClass())) {
+        if (haltsOn(cause.getClass())) {
             throw new PluginException(cause);
         }
         super.handle(message, cause);
     }
 
     @Override
-    public boolean shouldTerminateOn(Class<? extends Exception> exceptionType) {
-        for (String exceptionToken : exceptionTokens) {
-            Optional<Boolean> result = isMatch(exceptionType,
-                    StringUtils.strip(exceptionToken, INVERSION_SIGN),
-                    exceptionToken.startsWith(INVERSION_SIGN));
-            if (result.isPresent()) {
-                return result.get();
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Called from {@link SelectiveExceptionHandler#shouldTerminateOn(Class)} to decide whether the exception class provided
-     * matches the exception token (string values defining an exception or a set of exceptions) and, if so, what verdict
-     * ("terminate" or "pass") should be made
-     * @param exceptionType {@code Class<?>} reference pointing to the particular Exception
-     * @param exceptionToken String representing the particular exception token
-     * @param inverse Boolean value saying whether the inversion sign is present in the match
-     * @return {@code Optional} value saying the exception does match the token, if non-empty. Then, the internal boolean
-     * value represents the verdict
-     */
-    private Optional<Boolean> isMatch(Class<? extends Exception> exceptionType, String exceptionToken, boolean inverse) {
-        if (StringUtils.equalsAnyIgnoreCase(exceptionToken, EXCEPTION_TOKEN_ALL, EXCEPTION_WILDCARD)) {
-            return !inverse ? Optional.of(true) : Optional.empty();
-        }
-        if (exceptionToken.endsWith(PACKAGE_POSTFIX)) {
-            if (exceptionType.getName().startsWith(StringUtils.strip(exceptionToken, PACKAGE_POSTFIX))) {
-                return Optional.of(!inverse);
-            } else {
-                return Optional.empty();
-            }
-        }
-        try {
-            Class<?> managedClass = Class.forName(exceptionToken);
-            if (ClassUtils.isAssignable(exceptionType, managedClass)) {
-                return Optional.of(!inverse);
-            }
-        } catch (ClassNotFoundException exception) {
-            LOG.warn("Could not recognize exception class: {}", exceptionToken);
-        }
-        return Optional.empty();
+    public boolean haltsOn(Class<? extends Exception> exceptionType) {
+        return criticalExceptions.stream().anyMatch(exName -> exceptionType.getName().equalsIgnoreCase(exName));
     }
 }

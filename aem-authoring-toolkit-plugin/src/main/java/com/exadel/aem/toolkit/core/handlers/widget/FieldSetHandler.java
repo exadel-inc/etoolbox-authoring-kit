@@ -13,48 +13,54 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
-import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
-import com.exadel.aem.toolkit.core.util.NamingUtil;
-import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
-import org.apache.commons.lang3.StringUtils;
+import java.lang.reflect.Field;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Element;
+
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+
 /**
- * {@link WidgetSetHandler} implementation used to create markup responsible for Granite {@code FieldSet} widget functionality
- * within the {@code cq:dialog} node
+ * {@link Handler} implementation used to create markup responsible for Granite {@code FieldSet} widget functionality
+ * within the {@code cq:dialog} XML node
  */
 class FieldSetHandler implements WidgetSetHandler {
     private static final String EMPTY_FIELDSET_EXCEPTION_MESSAGE = "No valid fields found in fieldset class ";
 
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Processes the user-defined data and writes it to XML entity
+     * @param element Current XML element
+     * @param field Current {@code Field} instance
      */
     @Override
-    public void accept(Source source, Target target) {
+    public void accept(Element element, Field field) {
         // Define the working @FieldSet annotation instance and the fieldset type
-        FieldSet fieldSet = source.adaptTo(FieldSet.class);
-        Class<?> fieldSetType = source.getContainerClass();
+        FieldSet fieldSet = field.getDeclaredAnnotation(FieldSet.class);
+        Class<?> fieldSetType = field.getType();
 
-        List<Source> sources = getContainerSource(source, fieldSetType);
-
-        if(sources.isEmpty()) {
-            PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
+        // Get the filtered fields collection for the current container; early return if collection is empty
+        List<Field> fields = getContainerFields(element, field, fieldSetType);
+        if(fields.isEmpty()) {
+            PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
                     EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName()
             ));
             return;
         }
 
+        // Cache existing name prefix and set updated name prefix with the parameter of the FieldSet annotation as needed
+        String previousNamePrefix = getXmlUtil().getNamePrefix();
         if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
-            target.prefix(NamingUtil.getValidFieldName(fieldSet.namePrefix()))
-                .postfix(fieldSet.namePostfix());
+            getXmlUtil().setNamePrefix(previousNamePrefix + getXmlUtil().getValidFieldName(fieldSet.namePrefix()));
         }
-        // append the valid sources to the container
-        PluginXmlContainerUtility.append(sources, target);
+
+        // append the valid fields to the container
+        Handler.appendToContainer(element, fields);
+
+        // Restore the name prefix
+        getXmlUtil().setNamePrefix(previousNamePrefix);
     }
 }

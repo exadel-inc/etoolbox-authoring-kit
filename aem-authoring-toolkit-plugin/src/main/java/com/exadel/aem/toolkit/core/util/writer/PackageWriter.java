@@ -21,10 +21,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -147,16 +144,17 @@ public class PackageWriter implements AutoCloseable {
     private static PackageWriter forFileSystem(String projectName, FileSystem fileSystem, String componentsBasePath) {
         List<PackageEntryWriter> writers;
         try {
+            DocumentBuilder documentBuilder = createDocumentBuilder();
             Transformer transformer = createTransformer();
             writers = Arrays.asList(
-                    new ContentXmlWriter(transformer),
-                    new CqDialogWriter(transformer, XmlScope.CQ_DIALOG),
-                    new CqDialogWriter(transformer, XmlScope.CQ_DESIGN_DIALOG),
-                    new CqEditConfigWriter(transformer),
-                    new CqChildEditConfigWriter(transformer),
-                    new CqHtmlTagWriter(transformer)
+                    new ContentXmlWriter(documentBuilder, transformer),
+                    new CqDialogWriter(documentBuilder, transformer, XmlScope.CQ_DIALOG),
+                    new CqDialogWriter(documentBuilder, transformer, XmlScope.CQ_DESIGN_DIALOG),
+                    new CqEditConfigWriter(documentBuilder, transformer),
+                    new CqChildEditConfigWriter(documentBuilder, transformer),
+                    new CqHtmlTagWriter(documentBuilder, transformer)
             );
-        } catch (TransformerConfigurationException e) {
+        } catch (ParserConfigurationException | TransformerConfigurationException e) {
             // exceptions caught here are due to possible XXE security vulnerabilities, so no further handling
             throw new PluginException(CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE + projectName, e);
         }

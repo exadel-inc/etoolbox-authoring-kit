@@ -13,50 +13,43 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
+import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.util.NamingUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * Handler for storing {@link DialogField} properties to a Granite UI widget node
+ * Handler for storing {@link DialogField} properties to a Granite UI widget XML node
  */
-public class DialogFieldHandler implements BiConsumer<Source, Target> {
+public class DialogFieldHandler implements BiConsumer<Element, Field> {
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * @param element XML element
+     * @param field Current {@code Field} instance
      */
     @Override
-    public void accept(Source source, Target target) {
-        DialogField dialogField = source.adaptTo(DialogField.class);
-        if (dialogField == null) {
+    public void accept(Element element, Field field) {
+        if (!field.isAnnotationPresent(DialogField.class)) {
             return;
         }
-        String name = source.getName();
-        if (StringUtils.isNotBlank(dialogField.name())) {
+        DialogField dialogField = field.getAnnotation(DialogField.class);
+        String name = field.getName();
+        if(StringUtils.isNotBlank(dialogField.name())){
             name = !DialogConstants.PATH_SEPARATOR.equals(dialogField.name()) && !DialogConstants.RELATIVE_PATH_PREFIX.equals(dialogField.name())
-                ? NamingUtil.getValidFieldName(dialogField.name())
+                ? PluginRuntime.context().getXmlUtility().getValidFieldName(dialogField.name())
                 : DialogConstants.RELATIVE_PATH_PREFIX;
         }
-        String prefix = target.getPrefix();
-
-        if (!ResourceTypes.MULTIFIELD.equals(target.get("../../..").getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, String.class))) {
-            prefix = DialogConstants.RELATIVE_PATH_PREFIX + prefix;
+        String namePrefix = PluginRuntime.context().getXmlUtility().getNamePrefix();
+        if(StringUtils.isNotBlank(namePrefix)
+                && !(namePrefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.equals(DialogConstants.RELATIVE_PATH_PREFIX))
+                && !(namePrefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.startsWith(DialogConstants.PARENT_PATH_PREFIX))) {
+            name = namePrefix + name;
         }
-
-        if (StringUtils.isNotBlank(prefix)
-                && !(prefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.equals(DialogConstants.RELATIVE_PATH_PREFIX))
-                && !(prefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.startsWith(DialogConstants.PARENT_PATH_PREFIX))) {
-            name = prefix + name;
-        }
-        name = name + target.getPostfix();
-        target.attribute(DialogConstants.PN_NAME, name);
+        element.setAttribute(DialogConstants.PN_NAME, name);
     }
 }

@@ -22,8 +22,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 
 /**
  * Defines settings for rendering a specific value of an annotation to an XML attribute, such as, the name of the attribute,
- * and whether to render attribute with a particular value or not (typically, blank strings and values which are default
- * according to Adobe specifications don't need to be explicitly set and hence rendered)
+ * and whether to render attribute with a particular value or not (typically, blank strings and values whcih are default
+ * according to Adobe specifications don't need to be explicitly set and therefore rendered)
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -35,6 +35,7 @@ public @interface PropertyRendering {
      */
     String name() default "";
 
+
     /**
      * When set to true, allows to override prefix set for this field name
      * (in. e.g. a {@link FieldSet} annotation)
@@ -44,7 +45,7 @@ public @interface PropertyRendering {
 
     /**
      * When set, indicates that if a user-provided value matches one of the defined strings, the attribute will not
-     * be rendered (used to omit meaningless defaults from XML markup)
+     * be rendered (used to omit meaningless defauls from XML markup)
      * @return String value, or an array of strings
      */
     String[] ignoreValues() default {};

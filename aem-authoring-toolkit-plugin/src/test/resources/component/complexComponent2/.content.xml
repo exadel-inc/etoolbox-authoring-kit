@@ -3,6 +3,6 @@
     jcr:description="Test component description"
     jcr:primaryType="cq:Component"
     jcr:title="Test Component"
-    sling:resourceSuperType="test/component/supertype"
+    sling:resourceSuperType="TestComponentSuperType"
     componentGroup="Test Component Group"
     disableTargeting="{Boolean}true"/>

@@ -14,12 +14,15 @@
 
 package com.exadel.aem.toolkit.core.util.writer;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 
-import com.exadel.aem.toolkit.api.handlers.Target;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
@@ -30,10 +33,12 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 class CqHtmlTagWriter extends PackageEntryWriter {
     /**
      * Basic constructor
+     * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
+     *                                               of this writer
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
      */
-    CqHtmlTagWriter(Transformer transformer) {
-        super(transformer);
+    CqHtmlTagWriter(DocumentBuilder documentBuilder, Transformer transformer) {
+        super(documentBuilder, transformer);
     }
 
     /**
@@ -56,15 +61,16 @@ class CqHtmlTagWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Target)} abstract method to write down contents
+     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Element)} abstract method to write down contents
      * of {@code _cq_htmlTag.xml} file
      * @param componentClass The {@code Class} being processed
-     * @param root The root element to feed data to
+     * @param root The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateDomDocument(Class<?> componentClass, Target root) {
+    void populateDomDocument(Class<?> componentClass, Element root)  {
         HtmlTag htmlTag = componentClass.getDeclaredAnnotation(HtmlTag.class);
-        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
-        root.mapProperties(htmlTag);
+        root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
+        PluginRuntime.context().getXmlUtility().mapProperties(root, htmlTag);
+        writeCommonProperties(componentClass, XmlScope.CQ_HTML_TAG);
     }
 }

@@ -176,7 +176,7 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_6;
         }
 )
 @SuppressWarnings("unused")
-public class ComplexComponent1 extends ComplexComponent1Parent {
+public class ComplexComponent1 {
     private static final String PREFIX_FIRST_PRIMARY_DIALOG = "primary1";
     private static final String PREFIX_SECOND_PRIMARY_DIALOG = "primary2";
     private static final String PREFIX_THIRD_PRIMARY_DIALOG = "primary3";
@@ -238,7 +238,7 @@ public class ComplexComponent1 extends ComplexComponent1Parent {
     private String thirdField;
 
     @DialogField
-    @FieldSet(namePrefix = PREFIX_FIRST_PRIMARY_DIALOG, namePostfix = "postfix")
+    @FieldSet(namePrefix = PREFIX_FIRST_PRIMARY_DIALOG)
     @PlaceOnTab(LABEL_TAB_2)
     private SampleFieldsetBase2 firstPrimaryDialog;
 
@@ -310,15 +310,4 @@ public class ComplexComponent1 extends ComplexComponent1Parent {
     @FieldSet
     @PlaceOnTab(LABEL_TAB_6)
     private SampleFieldsetBase3 sampleFieldSet;
-}
-
-@Dialog(
-        name = TestConstants.DEFAULT_COMPONENT_NAME + "-parent",
-        title = TestConstants.DEFAULT_COMPONENT_TITLE,
-        tabs = {
-                @Tab(title = LABEL_TAB_3),
-                @Tab(title = LABEL_TAB_2)
-        }
-)
-abstract class ComplexComponent1Parent {
 }

@@ -14,20 +14,19 @@
 
 package com.exadel.aem.toolkit.core.util.writer;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
-import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.annotations.main.Component;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.lang.annotation.Annotation;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing component-wide attributes (writes data to the
@@ -36,10 +35,12 @@ import java.util.stream.Collectors;
 class ContentXmlWriter extends PackageEntryWriter {
     /**
      * Basic constructor
+     * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
+     *                                               of this writer
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
      */
-    ContentXmlWriter(Transformer transformer) {
-        super(transformer);
+    ContentXmlWriter(DocumentBuilder documentBuilder, Transformer transformer) {
+        super(documentBuilder, transformer);
     }
 
     /**
@@ -63,24 +64,23 @@ class ContentXmlWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Target)} abstract method to write down contents
+     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Element)} abstract method to write down contents
      * of {@code .content.xml} file
      * @param componentClass The {@code Class} being processed
      * @param root The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateDomDocument(Class<?> componentClass, Target root) {
-        Dialog dialog = componentClass.getDeclaredAnnotation(Dialog.class);
-        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT);
-        root.mapProperties(dialog, Arrays.stream(Dialog.class.getDeclaredMethods())
-                .filter(m -> !fitsInScope(m, getXmlScope())).map(Method::getName).collect(Collectors.toList()));
-        if(dialog.isContainer()) root.attribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
-    }
-
-    private static boolean fitsInScope(Method method, XmlScope scope) {
-        if (!method.isAnnotationPresent(PropertyScope.class)) {
-            return true;
+    void populateDomDocument(Class<?> componentClass, Element root) {
+        Annotation annotation = componentClass.getDeclaredAnnotation(Component.class);
+        if (annotation == null) {
+            annotation = componentClass.getDeclaredAnnotation(Dialog.class);
         }
-        return Arrays.asList(method.getAnnotation(PropertyScope.class).value()).contains(scope);
+        root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT);
+        PluginRuntime.context().getXmlUtility().mapProperties(root, annotation, XmlScope.COMPONENT);
+        if (annotation instanceof Component && ((Component) annotation).isContainer()
+            || annotation instanceof Dialog && ((Dialog) annotation).isContainer()) {
+            root.setAttribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
+        }
+        writeCommonProperties(componentClass, XmlScope.COMPONENT);
     }
 }

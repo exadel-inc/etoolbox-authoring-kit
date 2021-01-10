@@ -14,11 +14,9 @@
 
 package com.exadel.aem.toolkit.core.maven;
 
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.internal.matchers.ThrowableMessageMatcher;
 import org.junit.rules.ExpectedException;
 
 import com.exadel.aem.toolkit.core.exceptions.ValidationException;
@@ -59,10 +57,7 @@ public class ValidationsTest extends ExceptionsTestBase {
     @Test
     public void testPositiveNumberValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
-        exceptionRule.expect(CoreMatchers.anyOf(
-            ThrowableMessageMatcher.hasMessage(CoreMatchers.containsString("'0' provided")),
-            ThrowableMessageMatcher.hasMessage(CoreMatchers.containsString("'-99' provided"))
-        ));
+        exceptionRule.expectMessage("'0' provided");
         test(ValidationTestCases.InvalidTextAreaDialog.class);
     }
 

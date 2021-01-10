@@ -13,37 +13,39 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
-import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
-import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
-
+import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
 
+import org.w3c.dom.Element;
+
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
+import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
+
 /**
- * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
- * within the {@code cq:dialog} node
+ * {@link Handler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
+ * within the {@code cq:dialog} XML node
  */
-class AutocompleteHandler implements BiConsumer<Source, Target> {
+class AutocompleteHandler implements Handler, BiConsumer<Element, Field> {
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Processes the user-defined data and writes it to XML entity
+     * @param element Current XML element
+     * @param field Current {@code Field} instance
      */
     @Override
-    public void accept(Source source, Target target) {
-        Autocomplete autocomplete = source.adaptTo(Autocomplete.class);
-        target.getOrCreate(DialogConstants.NN_DATASOURCE)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
-                .mapProperties(autocomplete.datasource())
-                .parent()
-                .getOrCreate(DialogConstants.NN_OPTIONS)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.options().annotationType().getAnnotation(ResourceType.class).value())
-                .mapProperties(autocomplete.options())
-                .parent()
-                .getOrCreate(DialogConstants.NN_VALUES)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.values().annotationType().getAnnotation(ResourceType.class).value())
-                .mapProperties(autocomplete.values());
+    public void accept(Element element, Field field) {
+        Autocomplete autocomplete = field.getDeclaredAnnotation(Autocomplete.class);
+        Element datasource = getXmlUtil().createNodeElement(DialogConstants.NN_DATASOURCE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value());
+        getXmlUtil().mapProperties(datasource, autocomplete.datasource());
+        element.appendChild(datasource);
+
+        Element options = getXmlUtil().createNodeElement(DialogConstants.NN_OPTIONS, autocomplete.options().annotationType().getAnnotation(ResourceType.class).value());
+        getXmlUtil().mapProperties(options, autocomplete.options());
+        element.appendChild(options);
+
+        Element values = getXmlUtil().createNodeElement(DialogConstants.NN_VALUES, autocomplete.values().annotationType().getAnnotation(ResourceType.class).value());
+        getXmlUtil().mapProperties(values, autocomplete.values());
+        element.appendChild(values);
     }
 }

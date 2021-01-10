@@ -13,84 +13,100 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
-import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.handlers.Target;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
+import org.w3c.dom.Element;
+import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.core.exceptions.InvalidFieldContainerException;
+import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
+import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
-import com.exadel.aem.toolkit.core.util.PluginXmlContainerUtility;
 
 /**
- * {@link WidgetSetHandler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
- * within the {@code cq:dialog} node
+ * {@link Handler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
+ * within the {@code cq:dialog} XML node
  */
 public class MultiFieldHandler implements WidgetSetHandler {
     private static final String EMPTY_MULTIFIELD_EXCEPTION_MESSAGE = "No valid fields found in multifield class ";
 
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Processes the user-defined data and writes it to XML entity
+     * @param element Current XML element
+     * @param field Current {@code Field} instance
      */
     @Override
-    public void accept(Source source, Target target) {
+    public void accept(Element element, Field field) {
         // Define the working @Multifield annotation instance and the multifield type
-        Class<?> multifieldType = source.getContainerClass();
+        MultiField multiField = field.getDeclaredAnnotation(MultiField.class);
+        Class<?> multifieldType = multiField.field();
 
-        // Modify the targetFacade's attributes for multifield mode
-        String name = target.getAttribute(DialogConstants.PN_NAME, String.class);
-        target.deleteAttribute(DialogConstants.PN_NAME);
+        // Modify the element's attributes for multifield mode
+        String name = element.getAttribute(DialogConstants.PN_NAME);
+        element.removeAttribute(DialogConstants.PN_NAME);
 
-        // Get the filtered members collection for the current container; early return if collection is empty
-        List<Source> members = getContainerSource(source, multifieldType);
-        if (members.isEmpty()) {
-            PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
+        // Get the filtered fields collection for the current container; early return if collection is empty
+        List<Field> fields = getContainerFields(element, field, multifieldType);
+        if (fields.isEmpty()) {
+            PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + multifieldType.getName()
             ));
             return;
         }
 
-        // Render separately the multiple-source and the single-source modes of multifield
-        if (members.size() > 1){
-            render(members, target, name);
+        // Render separately the multiple-field and the single-field modes of multifield
+        if (fields.size() > 1){
+            render(element, name, fields);
         } else {
-            render(members.get(0), target);
+            render(element, fields.get(0));
         }
     }
 
     /**
      * Renders multiple widgets as XML nodes within the current multifield container
-     * @param sources The collection of {@link Source} instances to render TouchUI widgets from
-     * @param target Current {@link Target} instance
-     * @param name The targetFacade's {@code name} attribute
+     * @param element Current XML element
+     * @param name The element's {@code name} attribute
+     * @param fields The collection of {@code Field} instances to render TouchUI widgets from
      */
-    private void render(List<Source> sources, Target target, String name) {
-        target.attribute(DialogConstants.PN_COMPOSITE, true);
-        Target multifieldContainerElement = target.getOrCreate(DialogConstants.NN_FIELD)
-                .attribute(DialogConstants.PN_NAME, name)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
+    private void render(Element element, String name, List<Field> fields) {
+        getXmlUtil().setAttribute(element, DialogConstants.PN_COMPOSITE, true);
+        Element multifieldContainerElement = PluginRuntime.context().getXmlUtility().createNodeElement(
+                DialogConstants.NN_FIELD,
+                ImmutableMap.of(
+                        DialogConstants.PN_NAME, name,
+                        JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.CONTAINER
+                ));
+        element.appendChild(multifieldContainerElement);
 
-        // In case there are multiple sources in multifield container, their "name" values must not be preceded
+        // In case there are multiple fields in multifield container, their "name" values must not be preceded
         // with "./" which is by default
         // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
-        // That is why we must alter the default name prefix for the ongoing set of sources
-        PluginXmlContainerUtility.append(sources, multifieldContainerElement);
+        // That is why we must alter the default name prefix for the ongoing set of fields
+        String previousNamePrefix = getXmlUtil().getNamePrefix();
+        getXmlUtil().setNamePrefix(previousNamePrefix.startsWith(DialogConstants.RELATIVE_PATH_PREFIX)
+                ? previousNamePrefix.substring(2)
+                : previousNamePrefix);
+
+        Handler.appendToContainer(multifieldContainerElement, fields);
+
+        // Restore the name prefix
+        getXmlUtil().setNamePrefix(previousNamePrefix);
     }
 
     /**
      * Renders a single widget within the current multifield container
-     * @param source The {@link Source} instance to render TouchUI widget from
-     * @param target Current {@link Source} instance
+     * @param element Current XML element
+     * @param field The {@code Field} instance to render TouchUI widget from
      */
-    private void render(Source source, Target target) {
-        DialogWidget widget = DialogWidgets.fromSource(source);
+    private void render(Element element, Field field) {
+        DialogWidget widget = DialogWidgets.fromField(field);
         if (widget == null) {
             return;
         }
-        widget.appendTo(source, target, DialogConstants.NN_FIELD);
+        widget.appendTo(element, field, DialogConstants.NN_FIELD);
     }
 }

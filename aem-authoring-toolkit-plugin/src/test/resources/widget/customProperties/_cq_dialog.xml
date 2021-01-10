@@ -14,18 +14,16 @@
         <layout jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
         <items jcr:primaryType="nt:unstructured">
             <column jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
-                <items jcr:primaryType="nt:unstructured"
-                       emptyValueProperty="">
+                <items jcr:primaryType="nt:unstructured">
                     <field jcr:primaryType="nt:unstructured"
                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                            name="./field"
                            disabled="{Boolean}false"
                            renderHidden="{Boolean}false"
                            required="{Boolean}false"
-                           simpleProperty="value">
-                        <ad jcr:primaryType="nt:unstructured"
-                            wrongFieldName="non-latin символы"/>
-                    </field>
+                           emptyValueProperty=""
+                           simpleProperty="value"
+                           wrongFieldName="non-latin символы"/>
                 </items>
             </column>
         </items>

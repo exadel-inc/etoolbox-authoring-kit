@@ -17,7 +17,6 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
 /**
  * Contains common string constants used for size setup
  */
-@SuppressWarnings("unused")
 public class ElementSizeConstants {
     public static final String EXTRA_SMALL = "XS";
     public static final String SMALL = "S";

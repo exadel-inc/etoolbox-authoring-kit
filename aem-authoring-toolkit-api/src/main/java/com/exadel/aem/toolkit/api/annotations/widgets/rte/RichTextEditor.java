@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/rich-text-editor.html">
  * RichTextEditor</a> in TouchUI dialog and/or in-place editing configuration
  */
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.RICHTEXT)
 @PropertyMapping(mappings = {"useFixedInlineToolbar"})

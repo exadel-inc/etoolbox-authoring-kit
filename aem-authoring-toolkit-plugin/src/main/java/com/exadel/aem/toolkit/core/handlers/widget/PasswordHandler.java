@@ -13,33 +13,31 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
+import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.handlers.Target;
+import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
+import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
-import com.exadel.aem.toolkit.core.util.NamingUtil;
 
 /**
- * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for {@code Password} widget functionality
- * within the {@code cq:dialog} node
+ * {@link Handler} implementation used to create markup responsible for {@code Password} widget functionality
+ * within the {@code cq:dialog} XML node
  */
-class PasswordHandler implements BiConsumer<Source, Target> {
+class PasswordHandler implements Handler, BiConsumer<Element, Field> {
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Processes the user-defined data and writes it to XML entity
+     * @param element Current XML element
+     * @param field Current {@code Field} instance
      */
     @Override
-    public void accept(Source source, Target target) {
-        Password password = source.adaptTo(Password.class);
-        if(!password.retype().isEmpty()) {
-            target.attribute(DialogConstants.PN_RETYPE,
-                    DialogConstants.RELATIVE_PATH_PREFIX + target.getPrefix() +
-                            NamingUtil.getValidFieldName(password.retype()) +
-                            target.getPostfix());
+    public void accept(Element element, Field field) {
+        Password password = field.getDeclaredAnnotation(Password.class);
+        if(!password.retype().isEmpty()){
+            element.setAttribute(DialogConstants.PN_RETYPE,
+                    getXmlUtil().getNamePrefix() + getXmlUtil().getValidFieldName(password.retype()));
         }
     }
 }

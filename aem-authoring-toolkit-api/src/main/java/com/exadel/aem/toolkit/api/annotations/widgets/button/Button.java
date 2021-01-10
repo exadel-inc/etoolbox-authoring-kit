@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariantConst
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/button/index.html">
  * Button element</a> in TouchUI dialog
  */
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.BUTTON)
 @PropertyMapping

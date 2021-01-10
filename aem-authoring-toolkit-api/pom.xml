@@ -7,14 +7,11 @@
     <parent>
         <artifactId>aem-authoring-toolkit</artifactId>
         <groupId>com.exadel.aem</groupId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>1.1.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>aem-authoring-toolkit-api</artifactId>
-
     <name>${project.prettyName} API</name>
-    <description>Contains AEM Authoring Toolkit classes and interfaces needed to build Adobe Granite markup for AEM from Java source code</description>
-
+    <artifactId>aem-authoring-toolkit-api</artifactId>
     <packaging>jar</packaging>
 
     <properties>
@@ -27,10 +24,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -52,8 +45,7 @@
 
     <profiles>
 
-        <profile>
-            <id>test</id>
+        <profile><id>test</id>
             <build>
                 <plugins>
                     <plugin>
@@ -64,13 +56,12 @@
             </build>
         </profile>
 
-        <profile>
-            <id>deploy</id>
+        <profile><id>deploy</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
+                        <artifactId>maven-source-plugin</artifactId>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -78,7 +69,7 @@
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
+                        <artifactId>maven-gpg-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>

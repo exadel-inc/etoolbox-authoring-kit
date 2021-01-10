@@ -13,36 +13,36 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
+import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
+import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.core.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.core.handlers.widget.DialogWidget;
-import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.core.handlers.widget.DialogWidgets;
 
 /**
- * Handler for storing {@link ResourceType} and like properties to a Granite UI widget node
+ * Handler for storing {@link ResourceType} and like properties to a Granite UI widget XML node
  */
-public class GenericPropertiesHandler implements BiConsumer<Source, Target> {
+public class GenericPropertiesHandler implements BiConsumer<Element, Field> {
     private static final String RESTYPE_MISSING_EXCEPTION_MESSAGE = "@ResourceType is not present in ";
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * @param element XML element
+     * @param field Current {@code Field} instance
      */
     @Override
-    public void accept(Source source, Target target) {
-        DialogWidget dialogWidget = DialogWidgets.fromSource(source);
+    public void accept(Element element, Field field) {
+        DialogWidget dialogWidget = DialogWidgets.fromField(field);
         if (dialogWidget == null || dialogWidget.getAnnotationClass() == null) {
             return;
         }
-        target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, getResourceType(dialogWidget.getAnnotationClass()));
+        element.setAttribute(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, getResourceType(dialogWidget.getAnnotationClass()));
     }
 
     /**
@@ -51,7 +51,7 @@ public class GenericPropertiesHandler implements BiConsumer<Source, Target> {
      * @return String representing the resource type
      */
     private String getResourceType(Class<?> value) {
-        if(!value.isAnnotationPresent(ResourceType.class)) {
+        if(!value.isAnnotationPresent(ResourceType.class)){
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
                     RESTYPE_MISSING_EXCEPTION_MESSAGE + value.getName()));
             return null;

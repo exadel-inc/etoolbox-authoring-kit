@@ -23,7 +23,6 @@ import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
-import com.exadel.aem.toolkit.api.handlers.Target;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +30,6 @@ import org.w3c.dom.Element;
 import com.google.common.base.CaseFormat;
 
 import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
-import com.exadel.aem.toolkit.api.annotations.meta.IgnoreValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
@@ -44,7 +42,7 @@ import com.exadel.aem.toolkit.core.util.validation.Validation;
  * @see com.exadel.aem.toolkit.api.runtime.XmlUtility#setAttribute(Element, String, Annotation, BinaryOperator)
  * @param <T> Type of value to be rendered as XML attribute
  */
-public class XmlAttributeSettingHelper<T> {
+class XmlAttributeSettingHelper<T> {
     private static final String TYPE_TOKEN_TEMPLATE = "{%s}%s";
     private static final String TYPE_TOKEN_ARRAY_TEMPLATE = "{%s}[%s]";
     private static final String STRING_ESCAPE = "\\";
@@ -79,8 +77,7 @@ public class XmlAttributeSettingHelper<T> {
      * @param method Method representing target annotation's property
      * @return New {@code XmlAttributeSettingHelper} instance
      */
-    @SuppressWarnings({"deprecation", "squid:S1874"}) // IgnoreValue processing remains for compatibility reasons until v.2.0.0
-    public static XmlAttributeSettingHelper forMethod(Annotation annotation, Method method) {
+    static XmlAttributeSettingHelper forMethod(Annotation annotation, Method method) {
         XmlAttributeSettingHelper attributeSetter = new XmlAttributeSettingHelper<>(getMethodWrappedType(method));
         if (!fits(method)) {
             return attributeSetter;
@@ -99,10 +96,7 @@ public class XmlAttributeSettingHelper<T> {
             PropertyRendering propertyRendering = method.getAnnotation(PropertyRendering.class);
             attributeSetter.ignoredValues = propertyRendering.ignoreValues();
             attributeSetter.blankValuesAllowed = propertyRendering.allowBlank();
-        } else if (method.isAnnotationPresent(IgnoreValue.class)) {
-            attributeSetter.ignoredValues = new String[] {method.getAnnotation(IgnoreValue.class).value()};
         }
-
         if (PluginReflectionUtility.annotationPropertyIsNotDefault(annotation, method)) {
             attributeSetter.validationChecker = Validation.forMethod(method);
         }
@@ -130,7 +124,7 @@ public class XmlAttributeSettingHelper<T> {
      * @param name Provisional name
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    public XmlAttributeSettingHelper<T> withName(String name) {
+    XmlAttributeSettingHelper<T> withName(String name) {
         this.name = name;
         return this;
     }
@@ -140,31 +134,9 @@ public class XmlAttributeSettingHelper<T> {
      * @param merger Function that manages an existing attribute value and a new one (whether to keep only one of them or combine/merge)
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    public XmlAttributeSettingHelper<T> withMerger(BinaryOperator<String> merger) {
+    XmlAttributeSettingHelper<T> withMerger(BinaryOperator<String> merger) {
         this.valueMerger = merger;
         return this;
-    }
-
-    public void setAttribute(Target target) {
-        if (!valueTypeIsSupported) {
-            return;
-        }
-        try {
-            Object invocationResult = method.invoke(annotation);
-            if (method.getReturnType().isArray()) {
-                List<T> invocationResultList = Arrays.stream(castToArray(invocationResult))
-                        .map(this::cast)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-                setAttribute(target, invocationResultList);
-            } else {
-                setAttribute(target, cast(invocationResult));
-            }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
-                    String.format(REFLECTION_EXCEPTION_MESSAGE_TEMPLATE, method.getName(), annotation.annotationType().getSimpleName()),
-                    e));
-        }
     }
 
     /**
@@ -198,14 +170,14 @@ public class XmlAttributeSettingHelper<T> {
      * @param element Element node instance
      * @param value Particular value to be rendered
      */
-    void setAttribute(Target element, T value) {
+    void setAttribute(Element element, T value) {
         if (!valueTypeIsSupported) {
             return;
         }
         String stringifiedValue = value != null ? value.toString() : StringUtils.EMPTY;
 
         if (!isValid(stringifiedValue)) {
-            element.deleteAttribute(name);
+            element.removeAttribute(name);
             return;
         }
 
@@ -219,7 +191,7 @@ public class XmlAttributeSettingHelper<T> {
      * @param element Element node instance
      * @param values List of values to be rendered
      */
-    void setAttribute(Target element, List<T> values) {
+    void setAttribute(Element element, List<T> values) {
         if (!valueTypeIsSupported || values == null || values.isEmpty()) {
             return;
         }
@@ -241,55 +213,10 @@ public class XmlAttributeSettingHelper<T> {
      * @param element Element node instance
      * @param value String to store as the attribute
      */
-    private void setAttribute(Target element, String value) {
-        String oldAttributeValue = element.hasAttribute(name)
-                ? element.getAttribute(name, String.class)
-                : "";
-        element.attribute(name, valueMerger.apply(oldAttributeValue, value));
-    }
-
-    void setAttribute(Element element, T value) {
-        if (!valueTypeIsSupported) {
-            return;
-        }
-        String stringifiedValue = value != null ? value.toString() : StringUtils.EMPTY;
-
-        if (!isValid(stringifiedValue)) {
-            element.removeAttribute(name);
-            return;
-        }
-
-        setAttribute(element, valueType.equals(String.class)
-            ? stringifiedValue
-            : String.format(TYPE_TOKEN_TEMPLATE, valueType.getSimpleName(), stringifiedValue));
-    }
-
-    void setAttribute(Element element, List<T> values) {
-        if (!valueTypeIsSupported || values == null || values.isEmpty()) {
-            return;
-        }
-        String valueString = values.stream()
-            .map(Object::toString)
-            .filter(this::isValid)
-            .map(s -> s.startsWith(RteFeatures.BEGIN_POPOVER) && s.endsWith(RteFeatures.END_POPOVER) ? STRING_ESCAPE + s : s)
-            .collect(Collectors.joining(RteFeatures.FEATURE_SEPARATOR));
-        if (valueString.isEmpty()) {
-            return;
-        }
-        setAttribute(element, valueType.equals(String.class)
-            ? String.format(PluginXmlUtility.ATTRIBUTE_LIST_TEMPLATE, valueString)
-            : String.format(TYPE_TOKEN_ARRAY_TEMPLATE, valueType.getSimpleName(), valueString));
-    }
-
-    /**
-     * Sets String-casted attribute value to an {@code Element} node
-     * @param element Element node instance
-     * @param value String to store as the attribute
-     */
     private void setAttribute(Element element, String value) {
         String oldAttributeValue = element.hasAttribute(name)
-            ? element.getAttribute(name)
-            : "";
+                ? element.getAttribute(name)
+                : "";
         element.setAttribute(name, valueMerger.apply(oldAttributeValue, value));
     }
 
@@ -363,7 +290,7 @@ public class XmlAttributeSettingHelper<T> {
      * @return Object type
      */
     private static Class<?> getMethodWrappedType(Method method) {
-        Class<?> effectiveType = PluginReflectionUtility.getPlainMethodType(method);
+        Class<?> effectiveType = PluginReflectionUtility.getMethodPlainType(method);
         if (effectiveType.isEnum()) {
             return String.class;
         }

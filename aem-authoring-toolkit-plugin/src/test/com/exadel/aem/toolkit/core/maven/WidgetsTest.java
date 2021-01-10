@@ -19,20 +19,15 @@ import org.junit.Test;
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
 import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
-import com.exadel.aem.toolkit.test.widget.Accordion;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
-import com.exadel.aem.toolkit.test.widget.AnchorButtonWidget;
 import com.exadel.aem.toolkit.test.widget.ButtonWidget;
 import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
 import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
-import com.exadel.aem.toolkit.test.widget.FieldSetWidget;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
 import com.exadel.aem.toolkit.test.widget.HeadingWidget;
 import com.exadel.aem.toolkit.test.widget.HiddenWidget;
-import com.exadel.aem.toolkit.test.widget.HyperlinkWidget;
 import com.exadel.aem.toolkit.test.widget.ImageUploadWidget;
 import com.exadel.aem.toolkit.test.widget.MultiFieldWidget;
-import com.exadel.aem.toolkit.test.widget.MultipleAnnotatedWidget;
 import com.exadel.aem.toolkit.test.widget.NestedCheckboxListWidget;
 import com.exadel.aem.toolkit.test.widget.NumberFieldWidget;
 import com.exadel.aem.toolkit.test.widget.PasswordWidget;
@@ -42,7 +37,6 @@ import com.exadel.aem.toolkit.test.widget.SelectWidget;
 import com.exadel.aem.toolkit.test.widget.Tabs;
 import com.exadel.aem.toolkit.test.widget.TagFieldWidget;
 import com.exadel.aem.toolkit.test.widget.TextAreaWidget;
-import com.exadel.aem.toolkit.test.widget.TextWidget;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.RESOURCE_FOLDER_WIDGET;
 
@@ -56,11 +50,6 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testAttributes() {
         test(AttributesAnnotation.class, RESOURCE_FOLDER_WIDGET, "graniteAttributes");
-    }
-
-    @Test
-    public void testAnchorButton() {
-        test(AnchorButtonWidget.class);
     }
 
     @Test
@@ -89,11 +78,6 @@ public class WidgetsTest extends DefaultTestBase {
     }
 
     @Test
-    public void testFieldSet() {
-        test(FieldSetWidget.class);
-    }
-
-    @Test
     public void testFileUpload() {
         test(FileUploadWidget.class);
     }
@@ -106,11 +90,6 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testHidden() {
         test(HiddenWidget.class);
-    }
-
-    @Test
-    public void testHyperlink() {
-        test(HyperlinkWidget.class);
     }
 
     @Test
@@ -149,11 +128,6 @@ public class WidgetsTest extends DefaultTestBase {
     }
 
     @Test
-    public void testText() {
-        test(TextWidget.class);
-    }
-
-    @Test
     public void testTextArea() {
         test(TextAreaWidget.class);
     }
@@ -171,15 +145,5 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testTagField() {
         test(TagFieldWidget.class);
-    }
-
-    @Test
-    public void testWidgetAnnotatedWithMultiple() {
-        test(MultipleAnnotatedWidget.class, RESOURCE_FOLDER_WIDGET, "multiple");
-    }
-
-    @Test
-    public void testAccordion() {
-        test(Accordion.class, RESOURCE_FOLDER_WIDGET, "accordion");
     }
 }

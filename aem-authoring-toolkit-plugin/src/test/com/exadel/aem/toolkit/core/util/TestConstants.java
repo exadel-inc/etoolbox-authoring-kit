@@ -20,7 +20,7 @@ public class TestConstants {
     private TestConstants() {
     }
 
-    public static final String CONTENT_ROOT_PATH = "src/test/resources";
+    public static final String EXPECTED_CONTENT_ROOT_PATH = "src\\test\\resources";
 
     public static final String RESOURCE_FOLDER_COMMON = "common";
     public static final String RESOURCE_FOLDER_COMPONENT = "component";
@@ -38,7 +38,6 @@ public class TestConstants {
     public static final String DEFAULT_COMPONENT_TITLE = "Test Component";
     public static final String DEFAULT_COMPONENT_DESCRIPTION = "Test component description";
     public static final String DEFAULT_COMPONENT_GROUP = "Test Component Group";
-    public static final String DEFAULT_COMPONENT_SUPERTYPE = "test/component/supertype";
 
     public static final String LABEL_TAB_0 = "Zeroth tab";
     public static final String LABEL_TAB_1 = "First tab";

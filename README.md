@@ -10,7 +10,7 @@ Resulting dialogs and editors are compliant with the newest facilities of AEM 6.
 As the Toolkit was developed, thorough comparative investigation of Coral v.2 and Coral v.3 has been carried out, their features and drawbacks tested, so that backward compatibility is preserved to a highest degree.
 
 ***
-> Practice to use AEM Authoring Toolkit with our sandbox project under [_samples_](/samples/README.md)  
+> Practice to use AEM Authoring Toolkit with our sandbox project under [_aem-authoring-toolkit-samples_](/aem-authoring-toolkit-samples/README.md)  
 >
 ***
 
@@ -23,8 +23,7 @@ As the Toolkit was developed, thorough comparative investigation of Coral v.2 an
    - [Fields annotations](#fields-annotations)
        - [@DialogField](#dialogfield) 
        - [Widget annotations A-Z](#widget-annotations-a-z)
-       - [Fields grouping and multiplying](#fields-grouping-and-multiplying)
-       - [Common attributes of felds](#common-attributes-of-fields)
+       - [Field grouping and multiplying](#field-grouping-and-multiplying)
        - [Implementing RichTextEditor](#implementing-richtexteditor)
    - [Altering field's decoration tag with @HtmlTag](#altering-fields-decoration-tag-with-htmltag)
    - [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it)
@@ -36,11 +35,9 @@ As the Toolkit was developed, thorough comparative investigation of Coral v.2 an
     - [Custom annotations and handlers](#custom-annotations-and-handlers)
     - [Custom properties](#custom-properties)
     - [Debugging custom logic](#debugging-custom-logic)
-5. [Plugin settings](#plugin-settings)
-    - [terminateOn setting](#terminateon-setting)
-6. [Extra features and assets](#extra-features-and-assets)
+5. [Extra features and assets](#extra-features-and-assets)
     - [DependsOn](#dependson)   
-7. [Samples](#samples) 
+6. [Samples](#samples) 
 
 ***
 
@@ -97,9 +94,8 @@ Feel free to clone the project sources and run ```mvn clean install``` from the 
         <componentsPathBase>jcr_root/apps/projectName/components</componentsPathBase>
         <!-- OPTIONAL: specify root package for component classes --> 
         <componentsReferenceBase>com.acme.project.samples</componentsReferenceBase>
-        <!-- OPTIONAL: specify list of exceptions, comma-separated, that would cause 
-             this plugin to terminate the build process. 
-             See section "terminateOn setting" below -->
+        <!-- OPTIONAL: specify list of exceptions, comma-separated, that would cause this plugin to terminate
+            the build process. 'ALL' and 'NONE' may be specified as well. -->
         <terminateOn>ALL</terminateOn>
     </configuration>
 </plugin>
@@ -191,7 +187,7 @@ public class Dialog {
 ```
 (Note the `layout = DialogLayout.TABS` assignment. This is to specify that the dialog *must* display fields encapsulated in nested classes per corresponding tabs. If `layout` is skipped, or set to its default `FIXED_COLUMNS` value, tabs will not show and only "immediate" fields of the basic class will be displayed).
 
-The other way of laying out tabs is to define array of `@Tab` within `@Dialog` annotation. Then, to settle a field to a certain tab you will need  to add `@PlaceOn` annotation to this particular field.  The values of `@PlaceOn` must correspond to the *title* value of the desired tab. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that tab title is specified everywhere in the very same format, no extra spaces, etc.
+The other way of laying out tabs is to define array of `@Tab` within `@Dialog` annotation. Then, to settle a field to a certain tab you will need  to add `@PlaceOnTab` annotation to this particular field.  The values of `@PlaceOnTab` must correspond to the *title* value of the desired tab. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that tab title is specified everywhere in the very same format, no extra spaces, etc.
 ```java
 @Dialog(
     name = "test-component",
@@ -206,59 +202,24 @@ The other way of laying out tabs is to define array of `@Tab` within `@Dialog` a
 public class TestTabs {
     @DialogField(label = "Field on the first tab")
     @TextField
-    @PlaceOn("First tab")
+    @PlaceOnTab("First tab")
     String field1;
  
     @DialogField(label = "Field on the second tab")
     @TextField
-    @PlaceOn("Second tab")
+    @PlaceOnTab("Second tab")
     String field2;
  
     @DialogField(description = "Field on the third tab")
     @TextField
-    @PlaceOn("Third tab")
+    @PlaceOnTab("Third tab")
     String field3;
 }
 ```
-
-### @Accordion annotation
-
-To define array of `@AccordionPanel` within `@Dialog` or `@AccordionWidget` annotation. Then, to settle a field to a certain accordionPanel you will need  to add `@PlaceOn` annotation to this particular field.  The values of `@PlaceOn` must correspond to the *title* value of the desired accordionPanel. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that panel title is specified everywhere in the very same format, no extra spaces, etc.
-```java
-@Dialog(
-    name = "test-component",
-    title = "test-component-dialog",
-    panels = {
-        @AccordionPanel(title = "First accordionPanel")
-    }
-)
-public class TestAccordion {
-    @DialogField(label = "Field on the first tab")
-    @TextField
-    @PlaceOn("First accordionPanel")
-    String field1;
-
-    @AccordionWidget(
-        panels = {
-            @AccordionPanel(title = "Accordion Widget Panel")
-        }
-    )
-    AccordionExample accordionExample;
-
-    static class AccordionExample {
-          @PlaceOn("Accordion Widget Panel")
-          @DialogField
-          @TextField
-          String field6;
-    }
-}
-```
-
-
 #### Tabs inheritance
 In *AEM Authoring Toolkit*, if a Java class annotated with `@Dialog` extends another class where potential dialog fields exist, these fields also become the part of the dialog. This may sound inobvious, because Java itself doesn't have the notion of field inheritance while AEM entities have (see _overlaying_).
 
-Same way, tabs defined in a superclass are "inherited" by the subclass, and the `PlaceOn` instructions are in effect.
+Same way, tabs defined in a superclass are "inherited" by the subclass, and the `PlaceOnTab` instructions are in effect.
 
 If you do not want to have some "inherited" tabs in yor dialog, add the `@IgnoreTabs` annotation as follows:
 ```java
@@ -278,7 +239,6 @@ public class TestTabsExtension { /* ... */}
 Note that `@IgnoreTabs` setting is *not* inherited, unlike fields themselves, and works only for the class where it was specified. 
 
 See also: [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it) 
-
 
  
 ### Fields annotations
@@ -447,10 +407,6 @@ public class DialogWithHeading {
 ```
 ###### @Hidden
 Used to render hidden inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hidden](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/hidden/index.html).
-###### @Hyperlink
-Used to represent a HTML hyperlinks (<a>) in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hyperlink](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html).
-###### @AnchorButton
-AnchorButton is a component to represent a standard HTML hyperlink (<a>), but to look like a button in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on AnchorButton](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html).
 ###### @NumberField
 Used to render inputs for storing numbers in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on NumberField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/numberfield/index.html).
 
@@ -540,18 +496,14 @@ public class MyDialogWithDropdown {
 
 ###### @Switch
 Used to render on-off toggle switches in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Switch](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/switch/index.html).
-###### @Text
-Used to render text component that is rendered as <span> in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Text](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html).
 ###### @TextArea
 Used to render textarea HTML inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on TextArea](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textarea/index.html).
 ###### @TextField
 Used to produce text inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on TextField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textfield/index.html).
 
-#### Fields grouping and multiplying
+#### Field grouping and multiplying
 ##### @FieldSet
-Used to logically group a number of different fields as described in [Adobe's Granite UI manual on FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html). This goal is achieved by an external or a nested class that encapsulates grouping fields. Then an *\<OtherClass>*-typed field is declared, and `@FieldSet` annotation is added. 
-
-The `@FieldSet` will guess the kind of group of widgets to render through the type of the underlying field. But you may as well specify some particular type by setting the *source* property.
+Used to logically group a number of different fields as described in [Adobe's Granite UI manual on FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html). This goal is achieved by an external or a nested class that encapsulates grouping fields. Then a *\<OtherClass>*-typed field is declared, and `@FieldSet` annotation is added. 
 
 Hierarchy of classes is honored (so that a *FieldSet*-producing class may extend another class from same or even foreign scope. Proper field order within a fieldset can be guaranteed by use of *ranking* values (see chapter on `@DialogField` above). 
 
@@ -560,8 +512,8 @@ Names of fields added to a FieldSet may share a common prefix specified in *name
 If you do not need a margin around the fieldset added by default, add `@Attribute(className="u-coral-noMargin")`
 ```java
 public class DialogWithFieldSet {
-    @FieldSet(title = "Field set example", namePrefix="fs-") // you could as well specify type of FieldSet other
-    private FieldSetExample fieldSet;                        // that FieldSetExample via 'source' property
+    @FieldSet(title = "Field set example", namePrefix="fs-")
+    private FieldSetExample fieldSet;
  
     static class FieldSetExample extends ParentFieldSetExample {
         // Constructors are omitted
@@ -589,9 +541,7 @@ public class DialogWithFieldSet {
 }
 ```
 ##### @MultiField
-Used to facilitate multiple (repeating) instances of same fields or same groups if fields as described in [Adobe's Granite UI manual on MultiField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html). The logic of the component relies on the presence of a nested class encapsulating one or more fields to be repeated. Reference to that class is passed to `@MultiField`'s *field* property. Same as for `@FieldSet`, if you omit this value, it is guessed from the underlying field type, be it a *SomePlainType* or a *Collection\<WithTypeParameter>*.  
-
-See below how it works for a single field repetition, and for a subset of fields multiplied.
+Used to facilitate multiple (repeating) instances of same fields or same groups if fields as described in [Adobe's Granite UI manual on MultiField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html). The logic of the component relies on the presence of a nested class encapsulating one or more fields to be repeated. Reference to that class is passed to `@MultiField`'s *field* property. See below how it works for a single field repetition, and for a subset of fields multiplied.
 ###### Simple multi field
 ```java
 
@@ -627,15 +577,7 @@ public class CompositeMultiFieldDialog {
 }
 ```
 Note that the inheritance of class(-es) encapsulating multifield items works here the same way as for the `@FieldSet`.   
-
-##### @Multiple
-The easiest way to create a *Multifield* is with the `@Multiple` annotation. Just add it to the Java class field where a widget annotation is already present. A *simple multifield* containing this particular widget will be created on the fly. 
-
-If you, on the other hand, add `@Multiple` to a field marked with `@Fieldset`, a *composite multifield* will be created (much like the one you could have adding `@Multifield` annotation itself). Moreover, you can add `@Multiple` to a mere `@Multifield`-marked field and enjoy a sort of "multifield of multifields".
-
-Please note, however, that `@Multiple` is primarily designed for easy, "quick give me a multifield out of my single widget without creating a nested class" cases. For more complicated cases, it lacks tweaking capablities that `@Multifield` itself presents. 
-
-#### Common attributes of fields
+##### Fields common attributes
 Components TouchUI dialogs honor the concept of [global HTML attributes](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/docs/server/commonattrs.html) added to rendered HTML tags. To set them via AEM-Dialog-Plugin, you use the @Attribute annotation.
 ```java
 public class DialogWithHtmlAttributes {
@@ -1051,13 +993,7 @@ public class CustomStructureDialog {
 ...the `@CustomDialog` annotation will result in *greeting* and *test* attributes being added to the *\<cq:dialog>* node of TouchUI markup (first from the auto-mapping, and second because of handler routine).
 
 There's another option for `@PropertyMapping`, and this is to specify its _prefix_ value. If *prefix* is set to simple literal, like *"cq:"*, all of the auto-mapped attribute names will be prepended with this. Yet if the prefix is a relative path, like *"granite:data/"*, all of the auto-mapped attributes will go to the specifically created sub-node (particularly useful for creating *granite:data* nodes for TouchUI tweaks).
-
-`@Handles` annotation is used to specify one or more TouchUI dialog widgets annotations for a handler. It has 'before()' and 'after()' attributes that you can define if you need one handler to be called before (or after) another. If you don't define before(after) attribute or define the same handler class as you can see below it will mean that this position will be ignored.
-```java
-@Handles(value = MultiField.class, before = CustomMultifieldHandler.class, after = CustomProcessingHandler.class)
-public class CustomMultifieldHandler implements DialogWidgetHandler {}
-   ```
-
+   
 #### Runtime methods for custom handlers
 If you define in your handler class a field of type `RuntimeContext` marked with `@Injected` annotation, the link to the global *RuntimeContext* object will be injected by the Maven plugin. It allows to engage a number of utility methods and techniques, such as those of the [`XmlUtility`](aem-authoring-toolkit-api/src/main/java/com/exadel/aem/toolkit/api/runtime/XmlUtility.java) interface. Of special interest are the methods `.createNodeElement()` with overloads for creating nodes with specific *jcr:primaryType*, *sling:resourceType* and other attributes, `.appendChild()` with overloads for appending or merging a newcomer node to a set of existing child nodes of a local root, and `.setAttribute()` with overloads for populating previously created node with generic-typed annotation values, optionally validated and then optionally fallen back to defaults.   
 
@@ -1133,7 +1069,6 @@ Note that, in this particular case, only "https:" will be stored to webProtocols
 #### Custom Properties
 ##### Custom properties for fields
 If you need some attributes with plain values added to a dialog field, this can be achieved without creating a custom annotation and handler. Just add `@Properties` annotation to a field in your Java class and populate it with properties you need.
-Relative path can be defined via *name* in such a way that the substring before the ultimate `/` represents path, and the substring after the ultimate `/` represents property name.
 ```java
 
 @Dialog(name = "componentName")
@@ -1145,12 +1080,7 @@ public class CustomPropertiesDialog {
         @Property(name = "stringAttr", value = "Hello World"),
         // this way you create a Long-typed JCR attribute. Attributes of other JCR-supported types
         // are stored similarly
-        @Property(name = "numericAttr", value = "{Long}42"),
-        // this will produce the String-typed JCR attribute "attr1" into the subnode "element1"  with value "Inside"
-        @Property(name = "element1/attr1", value = "Inside"),
-        // this will produce the String-typed JCR attribute "stringAttr" into the supernode of field1 with value "Outside"
-        @Property(name = "../stringAttr", value = "Outside")
-
+        @Property(name = "numericAttr", value = "{Long}42")
     })
     String field1;
 
@@ -1159,9 +1089,7 @@ public class CustomPropertiesDialog {
     @TextField
     @Property(name = "stringAttr", value = "Hello World")
     @Property(name = "numericAttr", value = "{Long}42")
-    @Property(name = "element1/attr1", value = "Inside")
-    @Property(name = "../stringAttr", value = "Outside")
-String field1;
+    String field1;
 }
 ```
 ##### Custom properties for in-place editing configurations
@@ -1225,23 +1153,6 @@ mvnDebug clean install -PautoInstallPackage
 ```
 Afterwards you can set breakpoints in your IDE, start a debugging session and connect to the build process. Default port is 8000.
 
-## Plugin settings
-#### "terminateOn" setting
-
-Specifies the list of exceptions, comma-separated, that would cause this plugin to terminate
-the build process. 
-
-Each item may present:
- - a particular exception, by its fully qualified name like `java.io.IOException`. When a singular exception is specified, all subclasses of the provided class also count;
- - or a package where multiple exceptions reside, like `com.exadel.aem.plugin.exceptions.*`.
- 
-Apart from this, you may specify the values `all` (alias `*`) and `none`.
-If an exception or a group of exceptions must be explicitly neglected, `!` should be prepended to the item.
-
-Exception patterns are considered in order. Earlier patterns are applied before later patterns. For example, if `java.*, !java.lang.RuntimeException` provided, and a `NullPointerException` is thrown, the second ("negated") pattern will have no effect since any exception originating from the `java` package has already been accounted by the first pattern. That is why, if you need to define a scope of exceptions that would cause termination but need to explicitly exclude some items from that scope, put "negated" patterns in the first place. 
-
-It is also considered a good practice to end the enumeration with a default "fallback" pattern, typically `*`, if there are exclusions on the list. So, `<terminateOn>!java.lang.NullPointerException, !com.exadel.aem.plugin.exceptions.*,java.lang.RuntimeException</terminateOn>`, or `<terminateOn>!java.lang.RuntimeException, !iava.io.IOException, *</terminateOn>` would be some good samples.
-
 ## Extra features and assets
 ### DependsOn
 
@@ -1251,7 +1162,7 @@ DependsOn uses data attributes for fetching expected configuration.
 To define data attribute from JCR use _granite:data_ sub-node under the widget node.
 **AEM Authoring Toolkit** provides a set of annotations to use DependsOn from Java code.
 
-(see more in [DependsOn Readme](./ui.apps/src/main/content/jcr_root/apps/authoring-toolkit/depends-on/README.md))
+(see more in [DependsOn Readme](./aem-authoring-toolkit-assets/src/main/content/jcr_root/apps/authoring-toolkit/depends-on/README.md))
 
 ##### DependsOn annotations 
 
@@ -1278,15 +1189,15 @@ public class DependsOnSample {
     @DialogField
     @FieldSet(title = "Conditional fieldset")
     @DependsOn(query = "@ref", action = "someAction", params = {@DependsOnParam(name = "param", value = "paramValue")} )
-    @PlaceOn(TAB_ADDITIONAL_TOPICS)
+    @PlaceOnTab(TAB_ADDITIONAL_TOPICS)
     private SomeFieldsetDefinitionClass fieldsetDefinitionClass;
 }
 ``` 
 
-#### Samples
+## Samples
 
-Examples of how to use AEM Authoring Toolkit API and DependsOn library are presented in a separate [AAT Samples](samples) module.
+Examples of use AEM Authoring Toolkit API and DependsOn library are presented in a separate [AAT Samples](./aem-authoring-toolkit-samples) module.
 
-Run `mvn clean install -P install-samples` from the root folder of [AAT Samples](samples) to __install__ the sample project.
+Run `mvn clean install -P install-samples` from the root folder of [AAT Samples](./aem-authoring-toolkit-samples) to __install__ a sample project.
 
-To directly find necessary annotations or specific use of these annotations, read [AAT Samples Readme](samples/README.md).
+To directly find necessary annotations or specific use of these annotations, read [AAT Samples Readme](./aem-authoring-toolkit-samples/README.md).

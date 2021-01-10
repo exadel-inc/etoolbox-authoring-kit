@@ -15,15 +15,15 @@
 package com.exadel.aem.toolkit.test.component;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.ParagraphFormat;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
+import com.exadel.aem.toolkit.test.custom.CustomAnnotationAutomapping;
 
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
 import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_TITLE;
@@ -42,7 +42,10 @@ public class ValidationTestCases {
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     @SuppressWarnings("unused")
     public static class InvalidImageUploadDialog {
-        @ImageUpload(sizeLimit = -99)
+        @ImageUpload(
+                title="Invalid Image Upload",
+                sizeLimit = -99
+        )
         String image;
     }
 
@@ -86,7 +89,7 @@ public class ValidationTestCases {
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     @SuppressWarnings("unused")
     public static class InvalidCustomAnnotationDialog {
-        @CustomWidgetAnnotationAuto(customColor = "yellow")
+        @CustomAnnotationAutomapping(customColor = "yellow")
         String custom;
     }
 
