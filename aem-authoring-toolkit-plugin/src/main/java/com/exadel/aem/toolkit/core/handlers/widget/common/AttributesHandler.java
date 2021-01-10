@@ -13,29 +13,31 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget.common;
 
-import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
 
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
+import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 
 /**
- * Handler for storing {@link Attribute} properties to a Granite UI widget XML node
+ * Handler for storing {@link Attribute} properties to a Granite UI widget node
  */
-public class AttributesHandler implements BiConsumer<Element, Field> {
+public class AttributesHandler implements BiConsumer<Source, Target> {
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param element XML element
-     * @param field Current {@code Field} instance
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        if(!field.isAnnotationPresent(Attribute.class)){
+    @SuppressWarnings({"deprecation", "squid:S1874"})
+    // "clas" attribute processing remains for compatibility reasons until v.2.0.0
+    public void accept(Source source, Target target) {
+        Attribute attribute = source.adaptTo(Attribute.class);
+        if (attribute == null) {
             return;
         }
-        Attribute attribute = field.getAnnotation(Attribute.class);
-        PluginRuntime.context().getXmlUtility().appendDataAttributes(element, attribute.data());
+        PluginXmlUtility.appendDataAttributes(target, attribute.data());
     }
 }

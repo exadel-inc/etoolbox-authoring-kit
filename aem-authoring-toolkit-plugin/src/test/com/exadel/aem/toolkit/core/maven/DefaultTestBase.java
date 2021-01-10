@@ -52,7 +52,11 @@ public abstract class DefaultTestBase {
                 TestConstants.API_MODULE_TARGET,
                 TestConstants.PLUGIN_MODULE_TEST_TARGET
         );
-        PluginRuntime.initialize(classpathElements, StringUtils.EMPTY, getExceptionSetting());
+        PluginRuntime.contextBuilder()
+                .classPathElements(classpathElements)
+                .packageBase(StringUtils.EMPTY)
+                .terminateOn(getExceptionSetting())
+                .build();
     }
 
     void test(Class<?> testable) {
@@ -70,7 +74,7 @@ public abstract class DefaultTestBase {
     }
 
     void test(Class<?> testable, String... pathElements) {
-        Path pathToExpectedContent = Paths.get(TestConstants.EXPECTED_CONTENT_ROOT_PATH, pathElements);
+        Path pathToExpectedContent = Paths.get(TestConstants.CONTENT_ROOT_PATH, pathElements).toAbsolutePath();
         try {
             Assert.assertTrue(TestXmlWriterHelper.doTest(testable.getName(), pathToExpectedContent));
         } catch (ClassNotFoundException ex) {

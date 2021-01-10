@@ -18,6 +18,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
  * Contains common strings used to define {@code variant} property of a dialog widget when referring
  * display/design variant of an interactive element
  */
+@SuppressWarnings("unused")
 public class ElementVariantConstants {
     public static final String PRIMARY = "primary";
     public static final String SECONDARY = "secondary";

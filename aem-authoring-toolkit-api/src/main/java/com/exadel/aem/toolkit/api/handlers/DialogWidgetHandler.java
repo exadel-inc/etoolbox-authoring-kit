@@ -13,20 +13,32 @@
  */
 package com.exadel.aem.toolkit.api.handlers;
 
+import org.w3c.dom.Element;
+
 import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
-
-import org.w3c.dom.Element;
 
 /**
  * Abstraction of handler class to process custom dialog widget logic.
  * Serves as the marker interface for creating and enumerating handlers instances
  */
-@SuppressWarnings("unused")
 public interface DialogWidgetHandler extends BiConsumer<Element, Field> {
+
     /**
      * Identifies this DialogWidgetHandler for binding to a specific {@code DialogWidgetAnnotation}
      * @return String value, non-blank
      */
-    String getName();
+    @Deprecated
+    default String getName() {
+        return "";
+    }
+
+    default void accept(Source source, Target target) {
+
+    }
+
+    @Deprecated
+    default void accept(Element element, Field field) {
+
+    }
 }

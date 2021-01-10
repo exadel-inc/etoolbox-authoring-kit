@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/apps/authoring-toolkit/depends-on"/>
+    <filter root="/apps/authoring-toolkit/depends-on-injector"/>
+    <filter root="/apps/authoring-toolkit/install"/>
+    <filter root="/apps/authoring-toolkit/hotfixes-1.2.1"/>
+</workspaceFilter>

@@ -30,13 +30,25 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
+import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
+import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 
 public class TestXmlWriterHelper {
     private static final Logger LOG = LoggerFactory.getLogger(TestXmlWriterHelper.class);
-
-    private static final String EXCEPTION_MESSAGE_TEMPLATE = "Can't choose view for %s";
 
     private TestXmlWriterHelper() {
     }
@@ -56,15 +68,14 @@ public class TestXmlWriterHelper {
     private static List<PackageEntryWriter> getWriters() {
         List<PackageEntryWriter> writers = new ArrayList<>();
         try {
-            DocumentBuilder documentBuilder = PackageWriter.createDocumentBuilder();
             Transformer transformer = PackageWriter.createTransformer();
-            writers.add(new ContentXmlWriter(documentBuilder, transformer));
-            writers.add(new CqDialogWriter(documentBuilder, transformer, XmlScope.CQ_DIALOG));
-            writers.add(new CqDialogWriter(documentBuilder, transformer, XmlScope.CQ_DESIGN_DIALOG));
-            writers.add(new CqEditConfigWriter(documentBuilder, transformer));
-            writers.add(new CqChildEditConfigWriter(documentBuilder, transformer));
-            writers.add(new CqHtmlTagWriter(documentBuilder, transformer));
-        } catch (ParserConfigurationException | TransformerConfigurationException e) {
+            writers.add(new ContentXmlWriter(transformer));
+            writers.add(new CqDialogWriter(transformer, XmlScope.CQ_DIALOG));
+            writers.add(new CqDialogWriter(transformer, XmlScope.CQ_DESIGN_DIALOG));
+            writers.add(new CqEditConfigWriter(transformer));
+            writers.add(new CqChildEditConfigWriter(transformer));
+            writers.add(new CqHtmlTagWriter(transformer));
+        } catch (TransformerConfigurationException e) {
             LOG.error(e.getMessage());
         }
 
@@ -84,8 +95,6 @@ public class TestXmlWriterHelper {
                 }
                 List<Class<?>> processedClasses = views.stream().filter(packageEntryWriter::isProcessed).collect(Collectors.toList());
                 if (processedClasses.size() > 1) {
-                    PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
-                            String.format(EXCEPTION_MESSAGE_TEMPLATE, packageEntryWriter.getXmlScope())));
                     return;
                 }
                 if (processedClasses.isEmpty()) {
@@ -93,7 +102,7 @@ public class TestXmlWriterHelper {
                 }
                 packageEntryWriter.writeXml(processedClasses.get(0), stringWriter);
                 actualFiles.put(packageEntryWriter.getXmlScope().toString(), stringWriter.toString());
-            } catch (IOException ex) {
+            } catch (IOException | ParserConfigurationException ex) {
                 LOG.error("Could not implement test writer", ex);
             }
         });
@@ -103,7 +112,6 @@ public class TestXmlWriterHelper {
     private static void writeContent(PackageEntryWriter writer, StringWriter stringWriter, List<Class<?>> views) {
         List<Class<?>> processedClasses = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
         if (processedClasses.size() > 2) {
-            PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(EXCEPTION_MESSAGE_TEMPLATE, writer.getXmlScope())));
             return;
         }
         if (processedClasses.size() == 2) {

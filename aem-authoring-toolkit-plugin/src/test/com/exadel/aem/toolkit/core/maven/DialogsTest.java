@@ -17,13 +17,13 @@ package com.exadel.aem.toolkit.core.maven;
 import com.exadel.aem.toolkit.test.mvc.component.ClassicModel;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
 import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
 import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
-import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
 
 public class DialogsTest extends DefaultTestBase {
     @Test

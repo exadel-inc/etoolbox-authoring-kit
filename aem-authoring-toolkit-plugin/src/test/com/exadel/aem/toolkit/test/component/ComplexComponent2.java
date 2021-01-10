@@ -58,10 +58,10 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_7;
         title = TestConstants.DEFAULT_COMPONENT_TITLE,
         description = TestConstants.DEFAULT_COMPONENT_DESCRIPTION,
         componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
-        layout = DialogLayout.TABS,
+        resourceSuperType = TestConstants.DEFAULT_COMPONENT_SUPERTYPE,
         disableTargeting = true,
-        resourceSuperType = "TestComponentSuperType",
         extraClientlibs = "cq.common.wcm",
+        layout = DialogLayout.TABS,
         tabs = {
                 @Tab(title = LABEL_TAB_1),
                 @Tab(title = LABEL_TAB_2),
@@ -240,7 +240,7 @@ public class ComplexComponent2 {
 
     @DialogField()
     @Attribute(data = {@Data(name = "feed-dialog", value = "2")})
-    @FieldSet(namePrefix = FEED_2_1, title = "Feed")
+    @FieldSet(namePrefix = FEED_2_1, title = "Feed", namePostfix = "/postfix")
     @PlaceOnTab(LABEL_TAB_4)
     private FeedFieldSet feed;
 
@@ -287,7 +287,7 @@ public class ComplexComponent2 {
     private boolean videoElementEnable;
 
     @DialogField
-    @FieldSet(title = VIDEO_ELEMENT_LABEL)
+    @FieldSet(title = VIDEO_ELEMENT_LABEL, namePrefix = "pre", namePostfix = "fix")
     @PlaceOnTab(LABEL_TAB_5)
     private VideoElementFieldSet videoElement;
 
@@ -387,6 +387,10 @@ public class ComplexComponent2 {
         @Property(name = "property", value = "video_resource_prop")
         @Property(name = "property1", value = "video_resource_prop1")
         private String videoResource;
+
+        @DialogField
+        @FieldSet(namePrefix = "fix", namePostfix = "post")
+        private SampleFieldsetBase2 firstPrimaryDialog;
     }
 
     private static class FeedFieldSet {

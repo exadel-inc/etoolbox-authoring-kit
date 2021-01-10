@@ -14,7 +14,16 @@
 
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.PluginObjectPredicates;
+import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
+import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
+
+import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -22,62 +31,50 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.w3c.dom.Element;
-
-import com.exadel.aem.toolkit.api.annotations.main.ClassField;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
-import com.exadel.aem.toolkit.core.handlers.Handler;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
-import com.exadel.aem.toolkit.core.util.PluginObjectUtility;
-import com.exadel.aem.toolkit.core.util.PluginReflectionUtility;
-
-import static com.exadel.aem.toolkit.core.util.DialogConstants.PN_COMPONENT_CLASS;
-
 /**
- * Mix-in utility class for widget handlers that contains the base logic for {@link Handler}s dealing with widget
+ * Mix-in utility class for widget handlers that contains the base logic for {@code BiConsumer<Source, Target>} dealing with widget
  * collections, such as {@link com.exadel.aem.toolkit.api.annotations.widgets.FieldSet}
  * or {@link com.exadel.aem.toolkit.api.annotations.widgets.MultiField}
  */
-interface WidgetSetHandler extends Handler, BiConsumer<Element, Field> {
+interface WidgetSetHandler extends BiConsumer<Source, Target> {
 
     /**
-     * Retrieves the list of fields applicable to the current container, by calling {@link PluginReflectionUtility#getAllFields(Class)}
-     * with additional predicates that allow to sort out the fields set to be ignored at field level and at nesting class
+     * Retrieves the list of fields applicable to the current container, by calling {@link PluginReflectionUtility#getAllSourceFacades(Class)} (Class)}
+     * with additional predicates that allow to sort out the fields set to be ignored at source level and at nesting class
      * level, and then sort out the non-widget fields
-     * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * @param source Current {@link Source} instance
      * @param containerType {@code Class} representing the type of the container
-     * @return {@code List<Field>} containing renderable fields, or an empty collection
+     * @return {@code List<Source>} containing renderable fields, or an empty collection
      */
-    default List<Field> getContainerFields(Element element, Field field, Class<?> containerType) {
+    default List<Source> getContainerSource(Source source, Class<?> containerType) {
         // Extract type of the Java class being the current rendering source
-        Class<?> componentType = (Class<?>) element.getOwnerDocument().getUserData(PN_COMPONENT_CLASS);
-        // Build the collection of ignored fields that may be defined at field level and at nesting class level
+        Class<?> componentType = source.getProcessedClass();
+        // Build the collection of ignored fields that may be defined at source level and at nesting class level
         // (apart from those defined for the container class itself)
-        Stream<ClassField> classLevelIgnoredFields = componentType != null && componentType.isAnnotationPresent(IgnoreFields.class)
+        Stream<ClassMember> classLevelIgnoredFields = componentType != null && componentType.isAnnotationPresent(IgnoreFields.class)
                 ? Arrays.stream(componentType.getAnnotation(IgnoreFields.class).value())
                 .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
-                        ClassField.class,
+                        ClassMember.class,
                         DialogConstants.PN_SOURCE_CLASS,
                         componentType))
                 : Stream.empty();
-        Stream<ClassField> fieldLevelIgnoredFields = field.isAnnotationPresent(IgnoreFields.class)
-                ? Arrays.stream(field.getAnnotation(IgnoreFields.class).value())
+        Stream<ClassMember> fieldLevelIgnoredFields = source.adaptTo(IgnoreFields.class) != null
+                ? Arrays.stream(source.adaptTo(IgnoreFields.class).value())
                 .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
-                        ClassField.class,
+                        ClassMember.class,
                         DialogConstants.PN_SOURCE_CLASS,
                         containerType))
                 : Stream.empty();
-        List<ClassField> allIgnoredFields = Stream.concat(classLevelIgnoredFields, fieldLevelIgnoredFields)
-                .filter(classField -> PluginReflectionUtility.getAllSuperClasses(containerType).stream()
+        List<ClassMember> allIgnoredFields = Stream.concat(classLevelIgnoredFields, fieldLevelIgnoredFields)
+                .filter(classField -> PluginReflectionUtility.getClassHierarchy(containerType).stream()
                         .anyMatch(superclass -> superclass.equals(classField.source())))
                 .collect(Collectors.toList());
 
         // Create filters to sort out ignored fields (apart from those defined for the container class)
         // and to banish non-widget fields
-        // Return the filtered field list
-        Predicate<Field> nonIgnoredFields = PluginReflectionUtility.Predicates.getNotIgnoredFieldsPredicate(allIgnoredFields);
-        Predicate<Field> dialogFields = DialogWidgets::isPresent;
-        return PluginReflectionUtility.getAllFields(containerType, Arrays.asList(nonIgnoredFields, dialogFields));
+        // Return the filtered source list
+        Predicate<Member> nonIgnoredFields = PluginObjectPredicates.getNotIgnoredMembersPredicate(allIgnoredFields);
+        Predicate<Member> dialogFields = DialogWidgets::isPresent;
+        return PluginReflectionUtility.getAllSourceFacades(containerType, Arrays.asList(nonIgnoredFields, dialogFields));
     }
 }

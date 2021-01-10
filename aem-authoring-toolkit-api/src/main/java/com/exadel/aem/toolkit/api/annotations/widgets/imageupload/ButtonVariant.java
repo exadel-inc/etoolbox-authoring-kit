@@ -18,8 +18,12 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariantConst
 
 /**
  * Contains possible values of {@link ImageUpload#buttonVariant()} property
+ *
+ * @deprecated Will be removed starting from version 2.0.0
+ *
  */
-@SuppressWarnings("unused")
+@Deprecated
+@SuppressWarnings({"squid:S1133", "unused"})
 public enum ButtonVariant {
     SECONDARY (ElementVariantConstants.SECONDARY),
     QUIET(ElementVariantConstants.QUIET);

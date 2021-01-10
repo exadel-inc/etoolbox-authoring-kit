@@ -13,44 +13,42 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.ArrayUtils;
-import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * {@link Handler} implementation used to create markup responsible for {@code RadioGroup} widget functionality
- * within the {@code cq:dialog} XML node
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for {@code RadioGroup} widget functionality
+ * within the {@code cq:dialog} node
  */
-class RadioGroupHandler implements Handler, BiConsumer<Element, Field> {
+class RadioGroupHandler implements BiConsumer<Source, Target> {
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
-    @SuppressWarnings({"deprecation", "squid:S1874"}) // .acsListPath() and .acsListResourceType() method calls left for backward compatibility
-    public void accept(Element element, Field field) {
-        RadioGroup radioGroup = field.getDeclaredAnnotation(RadioGroup.class);
+    @SuppressWarnings({"deprecation", "squid:S1874"})
+    // .acsListPath() and .acsListResourceType() method calls remain for compatibility reasons until v.2.0.0
+    public void accept(Source source, Target target) {
+        RadioGroup radioGroup = source.adaptTo(RadioGroup.class);
         if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {
-            Element items = (Element) element.appendChild(getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS));
+            Target items = target.getOrCreate(DialogConstants.NN_ITEMS);
             Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));
         }
-        getXmlUtil().appendDataSource(element, radioGroup.datasource(), radioGroup.acsListPath(), radioGroup.acsListResourceType());
+        PluginXmlUtility.appendDataSource(target, radioGroup.datasource(), radioGroup.acsListPath(), radioGroup.acsListResourceType());
     }
 
-    private void renderButton(RadioButton buttonInstance, Element parentElement) {
-        Element xmlItem = getXmlUtil().createNodeElement(getXmlUtil().getUniqueName(buttonInstance.value(),
-                DialogConstants.NN_ITEM,
-                parentElement));
-        parentElement.appendChild(xmlItem);
-        getXmlUtil().mapProperties(xmlItem, buttonInstance);
+    private void renderButton(RadioButton buttonInstance, Target parentElement) {
+        parentElement.create(buttonInstance.value())
+                .mapProperties(buttonInstance);
     }
 }

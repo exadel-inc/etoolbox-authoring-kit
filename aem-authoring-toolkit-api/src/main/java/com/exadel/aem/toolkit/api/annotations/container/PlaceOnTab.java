@@ -20,9 +20,11 @@ import java.lang.annotation.Target;
 
 /**
  * In multi-tab TouchUI Dialog setup, used to specify on which tab a dialog field is placed
+ * @deprecated Use {@link PlaceOn} instead
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated
 @SuppressWarnings("unused")
 public @interface PlaceOnTab {
     /**

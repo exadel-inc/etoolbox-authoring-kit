@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/heading/index.html">
  * Heading element</a> in TouchUI dialog
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.HEADING)
 @PropertyMapping
@@ -38,7 +38,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 public @interface Heading {
     /**
      * Maps to the 'level' attribute of this TouchUI dialog component's node.
-     * Number that corresponds to the header tag level (<h1> to <h6>)
+     * Number that corresponds to the header tag level {@code <h1>} to {@code <h6>}
      * @return Long value
      */
     @ValueRestriction(value = ValueRestrictions.POSITIVE)
