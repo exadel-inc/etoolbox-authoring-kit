@@ -22,7 +22,7 @@
         order: 'before COPY',
         isNonMulti: true,
         condition: function (editable) {
-            return editable.type === ns.ACL.Utils.WRAPPER_RES_TYPE;
+            return editable.type === ns.ACL.WRAPPER_RES_TYPE;
         },
         handler: function (editable) {
             const config = editable.dom.find(CONFIG_SELECTOR);

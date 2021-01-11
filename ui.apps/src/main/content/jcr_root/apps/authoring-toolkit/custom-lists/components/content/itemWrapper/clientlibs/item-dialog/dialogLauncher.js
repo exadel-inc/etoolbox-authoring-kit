@@ -17,7 +17,7 @@
 
     const APPS_REGEXP = /^\/(apps\/)?/;
 
-    Granite.ACL = Granite.ACL || {};
+    ns.ACL = ns.ACL || {};
 
     ns.ACL.WRAPPER_RES_TYPE = 'authoring-toolkit/custom-lists/components/content/itemWrapper';
 

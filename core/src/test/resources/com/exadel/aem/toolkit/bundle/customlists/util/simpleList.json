@@ -5,7 +5,7 @@
     "jcr:title": "Simple List Page",
     "cq:template": "/conf/aem-custom-lists/settings/wcm/templates/custom-list",
     "itemResourceType": "/apps/aem-custom-lists/components/content/genericItem",
-    "sling:resourceType": "aem-custom-lists/components/structure/page",
+    "sling:resourceType": "aem-custom-lists/components/structure/page-custom-list",
     "option": "existingComponent",
     "list": {
       "jcr:primaryType": "nt:unstructured",
