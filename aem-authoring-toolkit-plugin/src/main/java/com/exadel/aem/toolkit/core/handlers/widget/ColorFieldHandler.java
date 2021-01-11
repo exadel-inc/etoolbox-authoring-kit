@@ -14,51 +14,47 @@
 
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
-import com.exadel.aem.toolkit.core.handlers.Handler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
- * {@link Handler} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
- * within the {@code cq:dialog} XML node
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
+ * within the {@code cq:dialog} node
  */
-class ColorFieldHandler implements Handler, BiConsumer<Element, Field> {
+class ColorFieldHandler implements BiConsumer<Source, Target> {
     private static final String NODE_NAME_COLOR = "color";
     private static final String SKIPPED_COLOR_NODE_NAME_SYMBOLS = "^\\w+";
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param element Current XML element
-     * @param field Current {@code Field} instance
+     * Processes the user-defined data and writes it to {@link Target}
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        ColorField colorField = field.getDeclaredAnnotation(ColorField.class);
+    public void accept(Source source, Target target) {
+        ColorField colorField = source.adaptTo(ColorField.class);
         List<String> validCustomColors = ArrayUtils.isNotEmpty(colorField.customColors())
                 ? Arrays.stream(colorField.customColors()).filter(StringUtils::isNotBlank).collect(Collectors.toList())
                 : Collections.emptyList();
         if (validCustomColors.isEmpty()) {
             return;
         }
-        Element itemsNode = getXmlUtil().createNodeElement(DialogConstants.NN_ITEMS);
+        Target itemsNode = target.getOrCreate(DialogConstants.NN_ITEMS);
         for (String customColor: validCustomColors) {
-            Element colorNode = getXmlUtil().createNodeElement(
-                    NODE_NAME_COLOR + customColor.toLowerCase().replaceAll(SKIPPED_COLOR_NODE_NAME_SYMBOLS, StringUtils.EMPTY),
-                    DialogConstants.NT_UNSTRUCTURED,
-                    Collections.singletonMap(DialogConstants.PN_VALUE, customColor));
-            itemsNode.appendChild(colorNode);
+            itemsNode.getOrCreate(NODE_NAME_COLOR + customColor.toLowerCase().replace(SKIPPED_COLOR_NODE_NAME_SYMBOLS, StringUtils.EMPTY))
+                    .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
+                    .attributes(Collections.singletonMap(DialogConstants.PN_VALUE, customColor));
         }
-        element.appendChild(itemsNode);
     }
 }

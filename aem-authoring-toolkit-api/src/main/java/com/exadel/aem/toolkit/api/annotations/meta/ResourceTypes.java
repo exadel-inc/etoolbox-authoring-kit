@@ -22,6 +22,7 @@ public class ResourceTypes {
     public static final String ACCORDION = "granite/ui/components/coral/foundation/accordion";
     public static final String ACS_LIST = "acs-commons/components/utilities/genericlist/datasource";
     public static final String ALERT = "granite/ui/components/coral/foundation/alert";
+    public static final String ANCHOR_BUTTON = "granite/ui/components/coral/foundation/anchorbutton";
     public static final String AUTOCOMPLETE = "granite/ui/components/coral/foundation/form/autocomplete";
     public static final String AUTOCOMPLETE_LIST = "granite/ui/components/coral/foundation/form/autocomplete/list";
     public static final String AUTOCOMPLETE_TAG = "granite/ui/components/coral/foundation/form/autocomplete/tags";

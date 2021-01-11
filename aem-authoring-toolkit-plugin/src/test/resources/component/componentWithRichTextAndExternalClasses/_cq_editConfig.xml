@@ -58,7 +58,7 @@
                         features="[subscript,superscript]"/>
                     <links
                         jcr:primaryType="nt:unstructured"
-                        features="[unlink,modifylink]"/>
+                        features="[modifylink,unlink]"/>
                     <styles jcr:primaryType="nt:unstructured"/>
                 </rtePlugins>
             </description>

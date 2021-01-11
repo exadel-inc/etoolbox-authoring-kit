@@ -449,6 +449,8 @@ public class DialogWithHeading {
 Used to render hidden inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hidden](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/hidden/index.html).
 ###### @Hyperlink
 Used to represent a HTML hyperlinks (<a>) in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hyperlink](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html).
+###### @AnchorButton
+AnchorButton is a component to represent a standard HTML hyperlink (<a>), but to look like a button in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on AnchorButton](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html).
 ###### @NumberField
 Used to render inputs for storing numbers in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on NumberField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/numberfield/index.html).
 
@@ -1249,7 +1251,7 @@ DependsOn uses data attributes for fetching expected configuration.
 To define data attribute from JCR use _granite:data_ sub-node under the widget node.
 **AEM Authoring Toolkit** provides a set of annotations to use DependsOn from Java code.
 
-(see more in [DependsOn Readme](./aem-authoring-toolkit-assets/src/main/content/jcr_root/apps/authoring-toolkit/depends-on/README.md))
+(see more in [DependsOn Readme](./ui.apps/src/main/content/jcr_root/apps/authoring-toolkit/depends-on/README.md))
 
 ##### DependsOn annotations 
 

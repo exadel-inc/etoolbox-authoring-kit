@@ -62,7 +62,7 @@
                                             features="[subscript,superscript]"/>
                                     <links
                                             jcr:primaryType="nt:unstructured"
-                                            features="[unlink,modifylink]"/>
+                                            features="[modifylink,unlink]"/>
                                     <styles jcr:primaryType="nt:unstructured"/>
                                 </rtePlugins>
                             </secondField>
@@ -120,7 +120,7 @@
                                             fieldLabel="Label to first primary field"
                                             mimeTypes="[image]"
                                             multiple="{Boolean}false"
-                                            name="./primary1First_Field_Primary_Field"
+                                            name="./primary1First_Field_Primary_Fieldpostfix"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
                                             text="Upload"
@@ -133,7 +133,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="Description to second primary field"
                                             fieldLabel="Label to second primary field"
-                                            name="./primary1Second_Field_Primary_Field"
+                                            name="./primary1Second_Field_Primary_Fieldpostfix"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"/>
                                     <title
@@ -142,7 +142,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="title's description"
                                             fieldLabel="title's label"
-                                            name="./primary1title"
+                                            name="./primary1titlepostfix"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"/>
                                     <description
@@ -151,7 +151,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="Description"
                                             fieldLabel="Description's label"
-                                            name="./primary1description"
+                                            name="./primary1descriptionpostfix"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
                                             useFixedInlineToolbar="{Boolean}true">
@@ -174,7 +174,7 @@
                                                     features="[subscript,superscript]"/>
                                             <links
                                                     jcr:primaryType="nt:unstructured"
-                                                    features="[unlink,modifylink]"/>
+                                                    features="[modifylink,unlink]"/>
                                             <styles jcr:primaryType="nt:unstructured"/>
                                         </rtePlugins>
                                     </description>
@@ -186,7 +186,7 @@
                                             fieldDescription="Field enable description"
                                             fieldLabel="Field enable label"
                                             ignoreData="{Boolean}false"
-                                            name="./primary1fieldEnable"
+                                            name="./primary1fieldEnablepostfix"
                                             offText="Off"
                                             onText="On"
                                             renderHidden="{Boolean}false"
@@ -199,7 +199,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="Description for the reference field."
                                             fieldLabel="reference name"
-                                            name="./primary1reference_name"
+                                            name="./primary1reference_namepostfix"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
                                             vertical="{Boolean}true">
@@ -221,7 +221,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="Description for first field"
                                             fieldLabel="Label to first field"
-                                            name="./primary1first_field"
+                                            name="./primary1first_fieldpostfix"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"/>
                                     <secondField
@@ -230,7 +230,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="Description for second field"
                                             fieldLabel="Label to second field"
-                                            name="./primary1second_field"
+                                            name="./primary1second_fieldpostfix"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}true"
                                             rootPath="/"/>
@@ -242,7 +242,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="Description for third field"
                                             fieldLabel="Label to third field"
-                                            name="./primary1third_field"
+                                            name="./primary1third_fieldpostfix"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}false"
                                             text="Label to third field"
@@ -322,7 +322,7 @@
                                                     features="[subscript,superscript]"/>
                                             <links
                                                     jcr:primaryType="nt:unstructured"
-                                                    features="[unlink,modifylink]"/>
+                                                    features="[modifylink,unlink]"/>
                                             <styles jcr:primaryType="nt:unstructured"/>
                                         </rtePlugins>
                                     </description>
@@ -470,7 +470,7 @@
                                                     features="[subscript,superscript]"/>
                                             <links
                                                     jcr:primaryType="nt:unstructured"
-                                                    features="[unlink,modifylink]"/>
+                                                    features="[modifylink,unlink]"/>
                                             <styles jcr:primaryType="nt:unstructured"/>
                                         </rtePlugins>
                                     </description>
@@ -616,7 +616,7 @@
                                                     features="[subscript,superscript]"/>
                                             <links
                                                     jcr:primaryType="nt:unstructured"
-                                                    features="[unlink,modifylink]"/>
+                                                    features="[modifylink,unlink]"/>
                                             <styles jcr:primaryType="nt:unstructured"/>
                                         </rtePlugins>
                                     </description>
@@ -757,7 +757,7 @@
                                                     features="[subscript,superscript]"/>
                                             <links
                                                     jcr:primaryType="nt:unstructured"
-                                                    features="[unlink,modifylink]"/>
+                                                    features="[modifylink,unlink]"/>
                                             <styles jcr:primaryType="nt:unstructured"/>
                                         </rtePlugins>
                                     </description>

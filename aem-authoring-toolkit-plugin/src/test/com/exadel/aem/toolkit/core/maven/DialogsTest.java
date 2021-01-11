@@ -18,7 +18,6 @@ import org.junit.Test;
 
 import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
 import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
-import com.exadel.aem.toolkit.test.component.CompatibilityTestComponent;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
 import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
@@ -59,10 +58,5 @@ public class DialogsTest extends DefaultTestBase {
     @Test
     public void testChildEditConfig() {
         test(ChildEditConfigAnnotation.class);
-    }
-
-    @Test
-    public void testBackwardCompatibilityFeatures() {
-        test(CompatibilityTestComponent.class);
     }
 }
