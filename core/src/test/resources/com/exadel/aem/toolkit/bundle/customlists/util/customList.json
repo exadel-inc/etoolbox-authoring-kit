@@ -3,7 +3,7 @@
   "jcr:content": {
     "jcr:primaryType": "cq:PageContent",
     "jcr:title": "Custom List Page",
-    "cq:template": "/conf/aem-custom-lists/settings/wcm/templates/custom-list",
+    "cq:template": "/conf/authoring-toolkit/settings/wcm/templates/custom-list",
     "itemResourceType": "/apps/aem-custom-lists/components/content/customItem",
     "sling:resourceType": "aem-custom-lists/components/structure/page-custom-list",
     "list": {

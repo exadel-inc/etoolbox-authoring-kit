@@ -59,7 +59,7 @@ import static com.day.cq.wcm.api.NameConstants.NT_PAGE;
     }
 )
 public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
-    private static final String TEMPLATE = "/conf/aem-custom-lists/settings/wcm/templates/custom-list";
+    private static final String TEMPLATE = "/conf/authoring-toolkit/settings/wcm/templates/custom-list";
     private static final String PATH = "path";
     private static final String OFFSET = "offset";
     private static final String LIMIT = "limit";
