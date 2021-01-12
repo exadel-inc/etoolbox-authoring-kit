@@ -1281,9 +1281,36 @@ public class DependsOnSample {
     @PlaceOn(TAB_ADDITIONAL_TOPICS)
     private SomeFieldsetDefinitionClass fieldsetDefinitionClass;
 }
-``` 
+```
+### Custom Lists
+AEM Custom Lists provide a flexible way to create, store and retrieve lists of structured items.
+A Custom List consists of a number of items, the item's structure and authoring dialog can be defined by an arbitrary AEM component (a.k.a. Item Component).
+Each list is a page, which means that it can be placed anywhere in the content structure; lists can be created, edited, localized and published via TouchUI interface.
 
-#### Samples
+
+#### Using custom lists:
+
+###### Creating a new list
+Custom lists can be viewed and created either from Sites Console, or from Custom Lists Console (Tools -> AEM Custom Lists -> AEM Custom List (todo: change to agreed naming)). Click Create -> Custom List and specify list's Title, Name and Item Component.
+
+In order to add a new Item Component to the dropdown, change this component's group to "**acl-item-component**". "Generic Item" component is provided out-of-the box and consists of "jcr:title" and "value" fields.
+
+###### Editing lists
+AEM custom lists can are edited similarly to any other page. List's Item Component can be changed in Page Properties.
+
+###### Retrieving lists' content programmatically
+[CustomListsHelper](core/src/main/java/com/exadel/aem/toolkit/bundle/customlists/util/CustomListsHelper.java) is a helper class that provides an ability to retrieve any list by its path. The resulting list items can be adapted to an arbitrary model class and collected into a List or a Map.
+
+```java
+   List<ItemModel> models = CustomListsHelper.getAsCustomList(resolver, "/content/myList", ItemModel.class);
+```
+See more examples in [CustomListsHelperTest](core/src/test/java/com/exadel/aem/toolkit/bundle/customlists/util/CustomListsHelperTest.java)
+
+###### Populating dropdown items from a datasource.
+AEM Custom Lists can be used as a source for @Datasource (or any other datasource)
+(todo: add an example of @Datasource + ACL)
+
+## Samples
 
 Examples of how to use AEM Authoring Toolkit API and DependsOn library are presented in a separate [AAT Samples](samples) module.
 
