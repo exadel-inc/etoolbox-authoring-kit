@@ -14,19 +14,20 @@
 
 package com.exadel.aem.toolkit.core.util.writer;
 
-import javax.xml.transform.Transformer;
-
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import org.w3c.dom.Document;
-
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
-
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import javax.xml.transform.Transformer;
+
+import org.w3c.dom.Document;
+
+import com.exadel.aem.toolkit.api.annotations.main.Component;
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing component-wide attributes (writes data to the
@@ -53,11 +54,12 @@ class ContentXmlWriter extends PackageEntryWriter {
     /**
      * Gets whether current {@code Class} is eligible for populating {@code .content.xml} structure
      * @param componentClass The {@code Class} under consideration
-     * @return True if current {@code Class} is annotated with {@link Dialog}; otherwise, false
+     * @return True if current {@code Class} is annotated with {@link Dialog} or {@link Component}; otherwise, false
      */
     @Override
     boolean isProcessed(Class<?> componentClass) {
-        return componentClass.isAnnotationPresent(Dialog.class);
+        return componentClass.isAnnotationPresent(Dialog.class) ||
+            componentClass.isAnnotationPresent(Component.class);
     }
 
     /**
@@ -68,11 +70,17 @@ class ContentXmlWriter extends PackageEntryWriter {
      */
     @Override
     void populateDomDocument(Class<?> componentClass, Target root) {
-        Dialog dialog = componentClass.getDeclaredAnnotation(Dialog.class);
+        Annotation annotation = componentClass.getDeclaredAnnotation(Component.class);
+        if (annotation == null) {
+            annotation = componentClass.getDeclaredAnnotation(Dialog.class);
+        }
         root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT);
-        root.mapProperties(dialog, Arrays.stream(Dialog.class.getDeclaredMethods())
+        root.mapProperties(annotation, Arrays.stream(Dialog.class.getDeclaredMethods())
                 .filter(m -> !fitsInScope(m, getXmlScope())).map(Method::getName).collect(Collectors.toList()));
-        if(dialog.isContainer()) root.attribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
+        if (annotation instanceof Component && ((Component) annotation).isContainer()
+            || annotation instanceof Dialog && ((Dialog) annotation).isContainer()) {
+            root.attribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
+        }
     }
 
     private static boolean fitsInScope(Method method, XmlScope scope) {
