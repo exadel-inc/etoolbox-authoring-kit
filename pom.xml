@@ -344,6 +344,15 @@
         </profile>
     </profiles>
 
+    <repositories>
+        <repository>
+            <id>adobe</id>
+            <name>Adobe Public Repository</name>
+            <url>http://repo.adobe.com/nexus/content/groups/public</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+
     <pluginRepositories>
 		<pluginRepository>
 			<id>adobe</id>
