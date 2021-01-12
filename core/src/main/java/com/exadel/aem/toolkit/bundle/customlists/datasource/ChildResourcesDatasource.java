@@ -34,6 +34,7 @@ import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import javax.annotation.Nonnull;
 import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 import java.util.ArrayList;
@@ -70,7 +71,7 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
     private transient ExpressionResolver expressionResolver;
 
     @Override
-    protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) {
+    protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) {
         ResourceResolver resolver = request.getResourceResolver();
 
         SlingScriptHelper sling = getScriptHelper(request);
@@ -114,6 +115,7 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
                 }), offset, limit);
 
                 return new TransformIterator(it, o -> new ResourceWrapper((Resource) o) {
+                    @Nonnull
                     @Override
                     public String getResourceType() {
                         return itemRT;
