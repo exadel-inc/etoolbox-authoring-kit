@@ -40,10 +40,12 @@ import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.exceptions.InvalidContainerException;
@@ -237,10 +239,10 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         // Retrieve superclasses of the current class, from top of the hierarchy to the most immediate ancestor,
         // populate container item registry and store fields that are within @Tab or @AccordionPanel-marked nested classes
         // (because we will not have access to them later)
-        Map<String, ContainerInfo> containerItemInstancesFromSuperClasses = getContainerElements(PluginReflectionUtility.getClassHierarchy(componentClass, false), annotationClass, containerName);
+        Map<String, ContainerInfo> containerItemInstancesFromSuperClasses = getContainerElements(PluginReflectionUtility.getClassHierarchy(componentClass, false), annotationClass, parentElement.getAttribute(DialogConstants.PN_SCOPE, String.class));
 
         // Retrieve tabs or accordions of the current class same way
-        Map<String, ContainerInfo> containerItemsInstancesFromCurrentClass = getContainerElements(Collections.singletonList(componentClass), annotationClass, containerName);
+        Map<String, ContainerInfo> containerItemsInstancesFromCurrentClass = getContainerElements(Collections.singletonList(componentClass), annotationClass, parentElement.getAttribute(DialogConstants.PN_SCOPE, String.class));
 
         // Compose the "overall" registry of tabs or accordions.
         Map<String, ContainerInfo> allContainerItemInstances = getAllContainerItemInstances(containerItemsInstancesFromCurrentClass, containerItemInstancesFromSuperClasses);
@@ -269,10 +271,10 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * method are used to compile a "container item registry" consisting of all container items from the current class and/or its superclasses
      * @param classes         The {@code Class<?>}-es to search for defined container items
      * @param annotationClass The annotationClass are searching for
-     * @param containerName   The name of current container
+     * @param scope   Current xml scope
      * @return Map of entries, each specified by a container item title and containing a {@link ContainerInfo} aggregate object
      */
-    private Map<String, ContainerInfo> getContainerElements(List<Class<?>> classes, Class<? extends Annotation> annotationClass, String containerName) {
+    private Map<String, ContainerInfo> getContainerElements(List<Class<?>> classes, Class<? extends Annotation> annotationClass, String scope) {
         Map<String, ContainerInfo> result = new LinkedHashMap<>();
         Map<String, Object> annotationMap;
         try {
@@ -289,8 +291,8 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
                     Arrays.stream(containerItemClass.getDeclaredFields()).forEach(field -> containerInfo.setField(field.getName(), field));
                     result.put(annotationMap.get(DialogConstants.PN_TITLE).toString(), containerInfo);
                 }
-                if (cls.isAnnotationPresent(Dialog.class)) {
-                    getCurrentDialogContainerElements(result, cls);
+                if (cls.isAnnotationPresent(Dialog.class) || cls.isAnnotationPresent(DesignDialog.class)) {
+                    getCurrentDialogContainerElements(result, cls, scope);
                 }
             }
         } catch (IllegalAccessException | InvocationTargetException exception) {
@@ -304,9 +306,15 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param result {@code Map<String,ContainerInfo>} map containing all container items
      * @param cls    {@code Class<?>} current class that contains container elements
      */
-    private void getCurrentDialogContainerElements(Map<String, ContainerInfo> result, Class<?> cls) {
+    private void getCurrentDialogContainerElements(Map<String, ContainerInfo> result, Class<?> cls, String scope) {
         try {
-            Map<String, Object> map = PluginObjectUtility.getAnnotationFields(cls.getDeclaredAnnotation(Dialog.class));
+
+            Map<String, Object> map;
+            if (XmlScope.CQ_DIALOG.toString().equals(scope)) {
+                map = PluginObjectUtility.getAnnotationFields(cls.getDeclaredAnnotation(Dialog.class));
+            } else {
+                map = PluginObjectUtility.getAnnotationFields(cls.getDeclaredAnnotation(DesignDialog.class));
+            }
             List<Object> list = new ArrayList<>();
             List<Object> panelsAndTabs = Stream.concat(Stream.of(map.get(DialogConstants.NN_PANELS)), Stream.of(map.get(DialogConstants.NN_TABS))).collect(Collectors.toList());
             for (Object o : panelsAndTabs) {
