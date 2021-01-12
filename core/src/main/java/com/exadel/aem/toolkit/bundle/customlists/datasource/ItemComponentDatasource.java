@@ -25,7 +25,6 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
-import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Component;
 
 import javax.servlet.Servlet;
@@ -48,6 +47,7 @@ import static javax.jcr.query.Query.JCR_SQL2;
         "sling.servlet.methods=" + HttpConstants.METHOD_GET
     }
 )
+@SuppressWarnings("PackageAccessibility")
 public class ItemComponentDatasource extends SlingSafeMethodsServlet {
     private static final String SELECT_STATEMENT = "SELECT * FROM [cq:Component] AS s WHERE ISDESCENDANTNODE(s,'/apps') AND [componentGroup] = 'acl-item-component'";
 
@@ -55,7 +55,7 @@ public class ItemComponentDatasource extends SlingSafeMethodsServlet {
     private static final String TEXT = "text";
 
     @Override
-    protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) {
+    protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) {
         ResourceResolver resolver = request.getResourceResolver();
         Iterator<Resource> resources = resolver.findResources(SELECT_STATEMENT, JCR_SQL2);
         List<Resource> actualList = new ArrayList<>();

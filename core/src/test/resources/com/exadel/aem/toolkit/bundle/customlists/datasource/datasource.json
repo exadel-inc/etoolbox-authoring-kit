@@ -1,7 +1,7 @@
 {
   "datasource": {
     "jcr:primaryType": "nt:unstructured",
-    "sling:resourceType": "aem-custom-lists/datasources/list",
+    "sling:resourceType": "authoring-toolkit/custom-lists/datasource/list",
     "itemResourceType": "cq/gui/components/coral/admin/page/row",
     "limit": "${empty requestPathInfo.selectors[1] ? &quot;41&quot; : requestPathInfo.selectors[1] + 1}",
     "offset": "${requestPathInfo.selectors[0]}",

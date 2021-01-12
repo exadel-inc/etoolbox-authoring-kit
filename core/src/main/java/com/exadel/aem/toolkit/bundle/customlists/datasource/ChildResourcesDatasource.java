@@ -31,7 +31,6 @@ import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.scripting.SlingScriptHelper;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
-import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -49,7 +48,7 @@ import static com.day.cq.wcm.api.NameConstants.NT_PAGE;
 
 /**
  * Retrieves all child pages under the current root path, which are either custom lists themselves,
- * or forders that may contain lists inside. The result is then limited by 'offset' and 'limit' parameter values.
+ * or folders that may contain lists inside. The result is then limited by 'offset' and 'limit' parameter values.
  */
 @Component(
     service = Servlet.class,
@@ -71,7 +70,7 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
     private transient ExpressionResolver expressionResolver;
 
     @Override
-    protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) {
+    protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) {
         ResourceResolver resolver = request.getResourceResolver();
 
         SlingScriptHelper sling = getScriptHelper(request);
@@ -115,7 +114,6 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
                 }), offset, limit);
 
                 return new TransformIterator(it, o -> new ResourceWrapper((Resource) o) {
-                    @NotNull
                     @Override
                     public String getResourceType() {
                         return itemRT;
