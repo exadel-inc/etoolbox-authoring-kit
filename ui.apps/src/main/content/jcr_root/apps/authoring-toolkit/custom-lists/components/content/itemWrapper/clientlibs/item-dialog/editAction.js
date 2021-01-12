@@ -27,7 +27,7 @@
         handler: function (editable) {
             const config = editable.dom.find(CONFIG_SELECTOR);
             const itemPath = config.attr(DIALOG_PATH_ATTR);
-            itemPath && ns.ACL.Dialog.launchReferenceDialog(editable, itemPath);
+            itemPath && ns.ACL.launchReferenceDialog(editable, itemPath);
         }
     };
 
