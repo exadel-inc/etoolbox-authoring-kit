@@ -354,13 +354,13 @@
     </repositories>
 
     <pluginRepositories>
-		<pluginRepository>
-			<id>adobe</id>
-			<name>Adobe Public Repository</name>
-			<url>http://repo.adobe.com/nexus/content/groups/public/</url>
-			<layout>default</layout>
-		</pluginRepository>
-	</pluginRepositories>
+        <pluginRepository>
+            <id>adobe</id>
+            <name>Adobe Public Repository</name>
+            <url>http://repo.adobe.com/nexus/content/groups/public/</url>
+            <layout>default</layout>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencyManagement>
         <dependencies>
