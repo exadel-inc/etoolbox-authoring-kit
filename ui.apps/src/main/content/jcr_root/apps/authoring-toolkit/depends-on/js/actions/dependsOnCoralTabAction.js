@@ -1,5 +1,5 @@
 /**
- * @author Alexey Stsefanovich (ala'n)
+ * @author Yana Bernatskaya (YanaBr), Alexey Stsefanovich (ala'n)
  * @version 2.5.0
  *
  * DependsOn Coral 3 Tabs Actions
