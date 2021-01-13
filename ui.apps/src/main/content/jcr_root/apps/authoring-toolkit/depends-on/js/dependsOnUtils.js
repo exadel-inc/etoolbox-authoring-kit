@@ -69,25 +69,21 @@
     };
 
     /**
-     * Find element by provided selector. Use back-forward search:
-     * First part of selector will be used to find closest element
-     * If the second part after '|>' provided will search back element by second part of selector inside of closest parent
-     * founded on the previous state.
-     * If 'this' passed as a sel $root will be returned
-     * If sel is not provided then result will be $(document).
+     * Find 'scope' element by provided selector. Use back-forward search:
+     * First part of the selector will be used to find the closest element (base)
+     * If the second part after '|>' is provided,
+     * function will search element by the second part of the selector inside the base element.
+     * If 'this' is passed as the first part of the selector, $root will be returned.
+     * If the selector is not provided then the result will be $(document).
      *
      * @param {JQuery} $root
-     * @param {string} sel
+     * @param {string} selector
      * */
-    ns.findBaseElement = function ($root, sel) {
-        if (!sel) return $(document.body);
-        if (sel.trim() === 'this') return $root;
-        const selParts = sel.split('|>');
-        if (selParts.length > 1) {
-            return $root.closest(selParts[0].trim()).find(selParts[1].trim());
-        } else {
-            return $root.closest(sel.trim());
-        }
+    ns.findScope = function ($root, selector) {
+        if (!(selector || '').trim()) return $(document.body);
+        const [parent, child] = selector.split('|>').map((term) => term.trim());
+        const $base = (parent === 'this') ? $root : $root.parent().closest(parent);
+        return child ? $base.find(child) : $base;
     };
 
     /**
