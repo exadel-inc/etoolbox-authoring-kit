@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
-import com.exadel.aem.toolkit.test.mvc.component1.ClassicModel;
+import com.exadel.aem.toolkit.test.mvc.component1.ComplexModel;
 
 public class DialogsTest extends DefaultTestBase {
     @Test
@@ -63,6 +63,6 @@ public class DialogsTest extends DefaultTestBase {
 
     @Test
     public void testMVC() {
-        test(ClassicModel.class, "mvc/component1");
+        test(ComplexModel.class, "mvc/component1");
     }
 }
