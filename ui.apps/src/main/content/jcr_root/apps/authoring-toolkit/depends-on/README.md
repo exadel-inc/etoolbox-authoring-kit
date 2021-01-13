@@ -153,22 +153,23 @@ Then reference will be accessible in the query using @ or @@ symbol and referenc
 
 ###### Using semicolon in DependsOn query 
 
-DependsOn Query is considered as single expression. 
-In case you working with DependsOn directly, semicolon(`;`) symbols should be escaped (`\;`).
-```html
-  <input data-dependson="@field === '\;'"/>
-```
+DependsOn query is always treated as a single JavaScript expression, and never as multiple statements in one line. 
+Semicolon symbols (`;`) within a DependsOn query must be escaped. 
 
-Toolkit annotations escape semicons authomatically:
+If you add a query via a Java annotation semicolons escaped automatically:
 ```java
 class MyComponent { 
     @DependsOn(query = "@field === ';'") 
     private String field1;
 }
 ```
+But if you write directly to XML or HTML you should escape them by hand:
+```xml
+<granite:data dependson="@field === '\;'"></granite:data>
+```
 
-Single DependsOn Query are still an expresion,
-in case multiple expressions needs to be executed - function call should be used.
+If you actually need to execute several JavaScript statements within a DependsOn, 
+you can do this by wrapping them in a function call:
 ```java
 class MyComponent {
     @DependsOn(query = "function(){ var a = @field1 + @field2; return a * a < 4; }()")
@@ -176,7 +177,7 @@ class MyComponent {
 }
 ```
 
-*Note:* it is better to move complex condition into standalone clientlibrary:
+Mind that it is still better to move complex structures to a standalone client library
 ```javascript
   // project-clientlib.js
   window.MyUtils = window.MyUtils || {};
