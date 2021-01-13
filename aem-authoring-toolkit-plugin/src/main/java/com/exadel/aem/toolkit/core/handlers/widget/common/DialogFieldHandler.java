@@ -15,19 +15,23 @@ package com.exadel.aem.toolkit.core.handlers.widget.common;
 
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.util.NamingUtil;
 import org.apache.commons.lang3.StringUtils;
 
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.NamingUtil;
+import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 
 /**
  * Handler for storing {@link DialogField} properties to a Granite UI widget node
  */
 public class DialogFieldHandler implements BiConsumer<Source, Target> {
+
+    private static final String PATH_TO_MULTIFIELD_ROOT = "../../..";
+
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param source Current {@link Source} instance
@@ -39,7 +43,7 @@ public class DialogFieldHandler implements BiConsumer<Source, Target> {
         if (dialogField == null) {
             return;
         }
-        String name = source.getName();
+        String name = PluginXmlUtility.deleteGetFromName(source.getName());
         if (StringUtils.isNotBlank(dialogField.name())) {
             name = !DialogConstants.PATH_SEPARATOR.equals(dialogField.name()) && !DialogConstants.RELATIVE_PATH_PREFIX.equals(dialogField.name())
                 ? NamingUtil.getValidFieldName(dialogField.name())
@@ -47,7 +51,7 @@ public class DialogFieldHandler implements BiConsumer<Source, Target> {
         }
         String prefix = target.getPrefix();
 
-        if (!ResourceTypes.MULTIFIELD.equals(target.get("../../..").getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, String.class))) {
+        if (!ResourceTypes.MULTIFIELD.equals(target.get(PATH_TO_MULTIFIELD_ROOT).getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, String.class))) {
             prefix = DialogConstants.RELATIVE_PATH_PREFIX + prefix;
         }
 

@@ -19,7 +19,6 @@ import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-
 import com.exadel.aem.toolkit.core.handlers.assets.dependson.DependsOnHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.AttributesHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.CustomHandler;
@@ -29,6 +28,7 @@ import com.exadel.aem.toolkit.core.handlers.widget.common.InheritanceHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.MultipleHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.PropertyHandler;
 import com.exadel.aem.toolkit.core.handlers.widget.common.PropertyMappingHandler;
+import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 
 /**
  * Represents an abstraction of a built-in or a custom dialog widget that has a widget annotation attached.
@@ -67,7 +67,7 @@ public interface DialogWidget {
      * @return Populated {@link Target} by the current {@link Source}
      */
     default Target appendTo(Source source, Target target, String name) {
-        Target widgetChildElement = target.getOrCreate(name);
+        Target widgetChildElement = target.getOrCreate(PluginXmlUtility.deleteGetFromName(name));
         getHandlerChain().accept(source, widgetChildElement);
         return widgetChildElement;
     }
