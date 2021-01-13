@@ -2,7 +2,7 @@
 
 Authors _Alexey Stsefanovich (ala'n)_ and _Yana Bernatskaya (YanaBr)_
 
-Version _2.4.1_
+Version _2.5.0_
 
 DependsOn Plugin is a clientlib that executes defined action on dependent fields.
 
@@ -156,14 +156,14 @@ Then reference will be accessible in the query using @ or @@ symbol and referenc
 DependsOn query is always treated as a single JavaScript expression, and never as multiple statements in one line.
 Semicolon symbols (`;`) within a DependsOn query must be escaped.
 
-If you add a query via a Java annotation semicolons escaped automatically:
+If you add a query via a Java annotation, semicolons will be escaped automatically:
 ```java
 class MyComponent {
     @DependsOn(query = "@field === ';'")
     private String field1;
 }
 ```
-But if you write directly to XML or HTML you should escape them by hand:
+But, if you write directly to XML or HTML, you should escape them by hand:
 ```xml
 <granite:data dependson="@field === '\\;'"></granite:data>
 ```
