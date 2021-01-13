@@ -39,7 +39,8 @@ import static com.day.cq.commons.jcr.JcrConstants.NT_UNSTRUCTURED;
 import static javax.jcr.query.Query.JCR_SQL2;
 
 /**
- * Retrieves all components that have acl-item-component group
+ * Servlet that implements {@code datasource} pattern for populating a TouchUI {@code select} widget
+ * with item components that have acl-item-component group
  */
 @Component(
     service = Servlet.class,
@@ -54,6 +55,13 @@ public class ItemComponentDatasource extends SlingSafeMethodsServlet {
     private static final String VALUE = "value";
     private static final String TEXT = "text";
 
+    /**
+     * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest}
+     * a {@code datasource} object filled with item components that have acl-item-component group
+     *
+     * @param request  {@code SlingHttpServletRequest} instance
+     * @param response {@code SlingHttpServletResponse} instance
+     */
     @Override
     protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) {
         ResourceResolver resolver = request.getResourceResolver();

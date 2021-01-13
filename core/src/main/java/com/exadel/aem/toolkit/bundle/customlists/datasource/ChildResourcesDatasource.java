@@ -48,8 +48,9 @@ import static com.day.cq.wcm.api.NameConstants.NN_TEMPLATE;
 import static com.day.cq.wcm.api.NameConstants.NT_PAGE;
 
 /**
- * Retrieves all child pages under the current root path, which are either custom lists themselves,
- * or folders that may contain lists inside. The result is then limited by 'offset' and 'limit' parameter values.
+ * Servlet that implements {@code datasource} pattern for populating a Custom Lists Console
+ * with all child pages under the current root path, which are either custom lists themselves,
+ * or folders that may contain lists inside
  */
 @Component(
     service = Servlet.class,
@@ -70,40 +71,49 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
     @Reference
     private transient ExpressionResolver expressionResolver;
 
+    /**
+     * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest}
+     * a {@code datasource} object filled with all child pages under the current root path, which are either
+     * custom lists themselves, or folders that may contain lists inside.
+     * The result is then limited by 'offset' and 'limit' parameter values.
+     *
+     * @param request  {@code SlingHttpServletRequest} instance
+     * @param response {@code SlingHttpServletResponse} instance
+     */
     @Override
     protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) {
         ResourceResolver resolver = request.getResourceResolver();
 
-        SlingScriptHelper sling = getScriptHelper(request);
-        DataSource ds = EmptyDataSource.instance();
+        DataSource dataSource = EmptyDataSource.instance();
 
-        if (sling != null) {
-            ExpressionHelper ex = new ExpressionHelper(expressionResolver, request);
+        if (getScriptHelper(request) != null) {
+            ExpressionHelper expressionHelper = new ExpressionHelper(expressionResolver, request);
             Config dsCfg = new Config(request.getResource().getChild(Config.DATASOURCE));
 
-            String parentPath = ex.getString(dsCfg.get(PATH, String.class));
-            Integer offset = ex.get(dsCfg.get(OFFSET, String.class), Integer.class);
-            Integer limit = ex.get(dsCfg.get(LIMIT, String.class), Integer.class);
+            String parentPath = expressionHelper.getString(dsCfg.get(PATH, String.class));
+            Integer offset = expressionHelper.get(dsCfg.get(OFFSET, String.class), Integer.class);
+            Integer limit = expressionHelper.get(dsCfg.get(LIMIT, String.class), Integer.class);
+            String itemRT = dsCfg.get(ITEM_RESOURCE_TYPE, String.class);
 
             Resource parent = parentPath != null ? resolver.getResource(parentPath) : null;
-
             if (parent != null) {
-                String itemRT = dsCfg.get(ITEM_RESOURCE_TYPE, String.class);
-
-                Iterator<Resource> children = parent.listChildren();
-                Iterator<Resource> resources = getValidChildren(children, resolver).iterator();
-
-                ds = createDataSource(resources, offset, limit, itemRT);
+                Iterator<Resource> resources = getValidChildren(resolver, parent.listChildren()).iterator();
+                dataSource = createDataSource(resources, offset, limit, itemRT);
             }
         }
-        request.setAttribute(DataSource.class.getName(), ds);
+        request.setAttribute(DataSource.class.getName(), dataSource);
     }
 
-    private static SlingScriptHelper getScriptHelper(ServletRequest request) {
-        SlingBindings bindings = (SlingBindings) request.getAttribute(SlingBindings.class.getName());
-        return bindings.getSling();
-    }
-
+    /**
+     * Creates a {@code datasource} limited by 'offset' and 'limit' parameter values
+     * from {@code Iterator<Resource>} instance
+     *
+     * @param resources {@code Iterator<Resource>} instance of valid child pages
+     * @param offset    the integer number of items that should be skipped
+     * @param limit     the integer number of items that should be included
+     * @param itemRT    resource type of items
+     * @return {@code DataSource} object
+     */
     private DataSource createDataSource(Iterator<Resource> resources, Integer offset, Integer limit, String itemRT) {
         return new AbstractDataSource() {
             @SuppressWarnings("unchecked")
@@ -125,10 +135,18 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
         };
     }
 
-    private List<Resource> getValidChildren(Iterator<Resource> parent, ResourceResolver resolver) {
+    /**
+     * Retrieves the list of item resources, which are either custom lists themselves, or folders
+     * that may contain lists inside
+     *
+     * @param resolver an instance of ResourceResolver
+     * @param children {@code Iterator<Resource>} instance used as the source of markup
+     * @return a list of {@link Resource}s
+     */
+    private List<Resource> getValidChildren(ResourceResolver resolver, Iterator<Resource> children) {
         List<Resource> resources = new ArrayList<>();
-        while (parent.hasNext()) {
-            Resource child = parent.next();
+        while (children.hasNext()) {
+            Resource child = children.next();
             Resource childParameters = resolver.getResource(child.getPath() + PATH_TO_JCR_CONTENT);
             if (childParameters != null) {
                 String template = childParameters.getValueMap().get(NN_TEMPLATE, String.class);
@@ -136,15 +154,38 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
                     resources.add(child);
                 }
             }
-            Iterator<Resource> children = child.listChildren();
-            while (children.hasNext()) {
-                String primaryType = children.next().getValueMap().get(JCR_PRIMARYTYPE, String.class);
-                if (primaryType != null && (primaryType.equals(NT_PAGE) || primaryType.equals(NT_FOLDER))) {
-                    resources.add(child);
-                    break;
-                }
+            resources.addAll(getValidChildren(child));
+        }
+        return resources;
+    }
+
+    /**
+     * Retrieves the list of item resources, which are either pages, or folders that may contain lists inside
+     *
+     * @param child {@code Resource} instance used as the source of markup
+     * @return a list of {@link Resource}s
+     */
+    private List<Resource> getValidChildren(Resource child) {
+        List<Resource> resources = new ArrayList<>();
+        Iterator<Resource> children = child.listChildren();
+        while (children.hasNext()) {
+            String primaryType = children.next().getValueMap().get(JCR_PRIMARYTYPE, String.class);
+            if (primaryType != null && (primaryType.equals(NT_PAGE) || primaryType.equals(NT_FOLDER))) {
+                resources.add(child);
+                break;
             }
         }
         return resources;
+    }
+
+    /**
+     * Gets {@code request} sling script helper
+     *
+     * @param request {@code ServletRequest} instance
+     * @return {@code SlingScriptHelper} instance
+     */
+    private static SlingScriptHelper getScriptHelper(ServletRequest request) {
+        SlingBindings bindings = (SlingBindings) request.getAttribute(SlingBindings.class.getName());
+        return bindings.getSling();
     }
 }
