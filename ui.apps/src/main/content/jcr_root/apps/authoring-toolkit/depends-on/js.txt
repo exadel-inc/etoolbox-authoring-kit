@@ -1,7 +1,6 @@
 # Core Handlers
 js/dependsOnUtils.js
 js/utils/dependsOnRequestCache.js
-js/utils/dependsOnTabsControl.js
 
 js/dependsOnElementAccessors.js
 js/references/dependsOnObservedReference.js
@@ -31,6 +30,7 @@ js/accessors/dependsOnCoralNumberInputAccessor.js
 js/actions/dependsOnCoralBasicActions.js
 js/actions/dependsOnCoralValidateAction.js
 js/actions/dependsOnFetchAction.js
+js/actions/dependsOnCoralTabAction.js
 
 # Init
 js/dependsOn.js

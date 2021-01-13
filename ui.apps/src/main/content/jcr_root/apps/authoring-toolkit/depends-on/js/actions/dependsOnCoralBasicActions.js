@@ -6,7 +6,6 @@
  *
  * Defined actions:
  * - visibility - set field visibility (also hide form field wrapper)
- * - tab-visibility - set visibility of tab-panel and related tab-control
  * - required - set the require marker of the field
  * - readonly - set readonly state of field
  * - disabled - set disabled state of field
@@ -22,27 +21,6 @@
      * */
     ns.ActionRegistry.register('visibility', function setVisibility(state) {
         ns.ElementAccessors.setVisibility(this.$el, state);
-    });
-
-    /**
-     * Change visibility of tab-panel and related tab-control
-     * query type: boolean
-     * */
-    ns.ActionRegistry.register('tab-visibility', function setTabVisibility(state) {
-        this.$tabPanel = this.$tabPanel || ns.TabsControl.getTabPanel(this.$el);
-        this.$tabControl = this.$tabControl || ns.TabsControl.getTabControl(this.$tabPanel);
-
-        this.$el.attr('hidden', state ? null : 'true'); // If current target is tab
-        this.$tabPanel.attr('hidden', state ? null : 'true');
-        this.$tabControl.attr('hidden', state ? null : 'true');
-
-        const targetTab = this.$tabControl[0];
-        if (targetTab && targetTab.selected && !state) {
-            const tabs = targetTab.parentNode.items.getAll();
-            tabs.find((tab) => !tab.hidden).selected = true;
-            // Last tab is automatically deselected
-        }
-        ns.TabsControl.tabChildrenVisibility(this.$tabPanel, state);
     });
 
     /**
