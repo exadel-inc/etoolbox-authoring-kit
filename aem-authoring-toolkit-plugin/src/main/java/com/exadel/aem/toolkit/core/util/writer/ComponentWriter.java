@@ -28,14 +28,14 @@ import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 /**
  * Class that encapsulates steps taken by MVC pattern
  */
-public class ComponentFacade {
+public class ComponentWriter {
 
     private static final String EXCEPTION_MESSAGE_TEMPLATE = "Can't choose view for %s";
 
     private final List<PackageEntryWriter> writers;
     private final List<Class<?>> views;
 
-    public ComponentFacade(List<PackageEntryWriter> writers, Class<?> componentClass) {
+    public ComponentWriter(Class<?> componentClass, List<PackageEntryWriter> writers) {
         this.writers = writers;
         this.views = new LinkedList<>(Collections.singletonList(componentClass));
         Optional.ofNullable(componentClass.getAnnotation(Component.class))
@@ -47,39 +47,28 @@ public class ComponentFacade {
      * @param path Current {@code Path} instance
      */
     public void write(Path path) {
-        writers.forEach(writer -> {
+        for (PackageEntryWriter writer : writers) {
             if (writer instanceof ContentXmlWriter) {
-                writeContent(writer, path);
+                writeContentXml(writer, path);
                 return;
             }
-            List<Class<?>> processedClasses = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
-            if (processedClasses.size() > 1) {
+            List<Class<?>> processedViews = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
+            if (processedViews.size() > 1) {
                 PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(EXCEPTION_MESSAGE_TEMPLATE, writer.getXmlScope())));
+            }
+            if (processedViews.isEmpty()) {
                 return;
             }
-            if (processedClasses.isEmpty()) {
-                return;
-            }
-            writer.writeXml(processedClasses.get(0), path);
-        });
+            writer.writeXml(processedViews.get(0), path);
+        }
     }
 
-    private void writeContent(PackageEntryWriter writer, Path path) {
+    private void writeContentXml(PackageEntryWriter writer, Path path) {
         List<Class<?>> processedClasses = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
-        if (processedClasses.size() > 2) {
+        if (processedClasses.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(EXCEPTION_MESSAGE_TEMPLATE, writer.getXmlScope())));
             return;
         }
-        if (processedClasses.size() == 2) {
-            if (processedClasses.get(0).getDeclaredAnnotation(Component.class) != null) {
-                writer.writeXml(processedClasses.get(0), path);
-            } else {
-                writer.writeXml(processedClasses.get(1), path);
-            }
-            return;
-        }
-        if (!processedClasses.isEmpty()) {
-            writer.writeXml(processedClasses.get(0), path);
-        }
+        writer.writeXml(processedClasses.get(0), path);
     }
 }
