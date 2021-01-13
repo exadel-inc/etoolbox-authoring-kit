@@ -192,18 +192,18 @@ public class PluginReflectionUtility {
      * @return {@code List<Class>} of instances
      */
     public List<Class<?>> getComponentClasses() {
-        List<Class<?>> dialogClasses = reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
+        List<Class<?>> classesAnnotatedWithDialog = reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
             .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
             .collect(Collectors.toList());
-        List<Class<?>> componentClasses = reflections.getTypesAnnotatedWith(Component.class, true).stream()
+        List<Class<?>> classesAnnotatedWithComponent = reflections.getTypesAnnotatedWith(Component.class, true).stream()
             .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
             .collect(Collectors.toList());
 
-        List<Class<?>> classesOfComponent = new ArrayList<>();
-        componentClasses.forEach(cls -> classesOfComponent.addAll(Arrays.asList(cls.getAnnotation(Component.class).views())));
-        componentClasses.addAll(dialogClasses.stream().filter(cls -> !classesOfComponent.contains(cls)).collect(Collectors.toList()));
+        List<Class<?>> componentViews = new ArrayList<>();
+        classesAnnotatedWithComponent.forEach(cls -> componentViews.addAll(Arrays.asList(cls.getAnnotation(Component.class).views())));
+        classesAnnotatedWithComponent.addAll(classesAnnotatedWithDialog.stream().filter(cls -> !componentViews.contains(cls)).collect(Collectors.toList()));
 
-        return componentClasses;
+        return classesAnnotatedWithComponent;
     }
 
     /**
