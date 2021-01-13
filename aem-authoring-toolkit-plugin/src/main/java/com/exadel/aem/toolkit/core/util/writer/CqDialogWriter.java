@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import javax.xml.transform.Transformer;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
@@ -89,15 +90,15 @@ class CqDialogWriter extends PackageEntryWriter {
      */
     @Override
     void populateDomDocument(Class<?> componentClass, Target target) {
-        Annotation dialog = XmlScope.CQ_DIALOG.equals(scope) ? componentClass.getDeclaredAnnotation(Dialog.class)
+        Annotation dialog = XmlScope.CQ_DIALOG.equals(scope)
+            ? componentClass.getDeclaredAnnotation(Dialog.class)
             : componentClass.getDeclaredAnnotation(DesignDialog.class);
-        target.mapProperties(dialog, getSkippedProperties());
-        target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
+        target.mapProperties(dialog, getSkippedProperties())
+            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG)
+            .scope(scope);
 
         DialogLayout dialogLayout = getLayout(dialog);
-        target.attribute(DialogConstants.PN_SCOPE, scope.toString());
         DialogContainer.getContainer(dialogLayout).build(componentClass, target);
-        target.deleteAttribute(DialogConstants.PN_SCOPE);
 
         new DependsOnTabHandler().accept(target, componentClass);
         if (!classHasCustomDialogAnnotation(componentClass)) {
@@ -115,28 +116,25 @@ class CqDialogWriter extends PackageEntryWriter {
             .filter(m -> !fitsInScope(m, getXmlScope())).map(Method::getName).collect(Collectors.toList());
     }
 
-    private DialogLayout getLayout(Annotation annotation) {
-        DialogLayout dialogLayout;
+    private static DialogLayout getLayout(Annotation annotation) {
         if (annotation instanceof Dialog) {
             Dialog dialog = ((Dialog) annotation);
             if (!ArrayUtils.isEmpty(dialog.tabs())) {
-                dialogLayout = DialogLayout.TABS;
-            } else if (!ArrayUtils.isEmpty(dialog.panels())) {
-                dialogLayout = DialogLayout.ACCORDION;
-            } else {
-                dialogLayout = dialog.layout();
+                return DialogLayout.TABS;
             }
-        } else {
-            DesignDialog dialog = ((DesignDialog) annotation);
-            if (!ArrayUtils.isEmpty(dialog.tabs())) {
-                dialogLayout = DialogLayout.TABS;
-            } else if (!ArrayUtils.isEmpty(dialog.panels())) {
-                dialogLayout = DialogLayout.ACCORDION;
-            } else {
-                dialogLayout = dialog.layout();
+            if (!ArrayUtils.isEmpty(dialog.panels())) {
+                return DialogLayout.ACCORDION;
             }
+            return dialog.layout();
         }
-        return dialogLayout;
+        DesignDialog dialog = ((DesignDialog) annotation);
+        if (!ArrayUtils.isEmpty(dialog.tabs())) {
+            return DialogLayout.TABS;
+        }
+        if (!ArrayUtils.isEmpty(dialog.panels())) {
+            return DialogLayout.ACCORDION;
+        }
+        return dialog.layout();
     }
 
     /**
@@ -172,8 +170,12 @@ class CqDialogWriter extends PackageEntryWriter {
      * @return True if the two arguments are "matching" via their properties, otherwise, false
      */
     private static boolean customAnnotationMatchesHandler(DialogAnnotation annotation, DialogHandler handler) {
-        return Arrays.stream(handler.getClass().getDeclaredAnnotation(Handles.class).value())
-            .anyMatch(aClass -> aClass.equals(annotation.getClass()));
+        if (handler.getClass().isAnnotationPresent(Handles.class)) {
+            return Arrays.stream(handler.getClass().getDeclaredAnnotation(Handles.class).value())
+                .anyMatch(aClass -> aClass.equals(annotation.getClass()));
+        } else {
+            return StringUtils.equals(annotation.source(), handler.getName());
+        }
     }
 
     private static boolean fitsInScope(Method method, XmlScope scope) {

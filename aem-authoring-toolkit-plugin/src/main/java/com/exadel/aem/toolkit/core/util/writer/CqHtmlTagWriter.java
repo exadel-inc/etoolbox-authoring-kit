@@ -16,10 +16,9 @@ package com.exadel.aem.toolkit.core.util.writer;
 
 import javax.xml.transform.Transformer;
 
-import com.exadel.aem.toolkit.api.handlers.Target;
-
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
@@ -64,7 +63,8 @@ class CqHtmlTagWriter extends PackageEntryWriter {
     @Override
     void populateDomDocument(Class<?> componentClass, Target root) {
         HtmlTag htmlTag = componentClass.getDeclaredAnnotation(HtmlTag.class);
-        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
-        root.mapProperties(htmlTag);
+        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
+            .mapProperties(htmlTag)
+            .scope(getXmlScope());
     }
 }

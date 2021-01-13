@@ -106,7 +106,7 @@ public class PackageWriter implements AutoCloseable {
             PluginRuntime.context().getExceptionHandler().handle(new UnknownComponentException(componentPath));
             return;
         }
-        new ComponentFacade(writers, componentClass).write(componentPath);
+        new ComponentWriter(componentClass, writers).write(componentPath);
     }
 
     /**

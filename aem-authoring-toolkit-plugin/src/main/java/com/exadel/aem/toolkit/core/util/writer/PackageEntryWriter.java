@@ -28,19 +28,19 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.TargetImpl;
-import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperties;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
+import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 
 import static com.exadel.aem.toolkit.core.util.writer.CqDialogWriter.getCustomDialogAnnotations;
 
@@ -124,8 +124,10 @@ abstract class PackageEntryWriter {
      */
     private Document createDomDocument(Class<?> componentClass) throws ParserConfigurationException {
         Target rootElement = new TargetImpl(DialogConstants.NN_ROOT, null);
+        Document document = PackageWriter.createDocumentBuilder().newDocument();
+        PluginRuntime.context().getXmlUtility().setDocument(document);
         populateDomDocument(componentClass, rootElement);
-        Document document = rootElement.buildXml(PackageWriter.createDocumentBuilder().newDocument());
+        document = rootElement.buildXml(document);
         writeCommonProperties(componentClass, getXmlScope(), document);
         if (XmlScope.CQ_DIALOG.equals(getXmlScope())) acceptLegacyHandlers(document.getDocumentElement(), componentClass);
         return document;
