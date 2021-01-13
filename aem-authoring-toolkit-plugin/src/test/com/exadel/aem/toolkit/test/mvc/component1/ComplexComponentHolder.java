@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.test.mvc.component1.views.HtmlTagView;
 
 @Component(
     path = TestConstants.DEFAULT_COMPONENT_NAME,
-    title = ComplexModel.COMPONENT_TITLE,
+    title = ComplexComponentHolder.COMPONENT_TITLE,
     description = "test component",
     componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
     resourceSuperType = "resource/super/type",
@@ -35,6 +35,6 @@ import com.exadel.aem.toolkit.test.mvc.component1.views.HtmlTagView;
         ChildEditConfigView.class
     }
 )
-public class ComplexModel {
+public class ComplexComponentHolder {
     public static final String COMPONENT_TITLE = "Test Component";
 }

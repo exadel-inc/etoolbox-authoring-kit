@@ -103,7 +103,7 @@ public class DesignDialogView implements Addition, Addition2 {
     @DialogField(ranking = 200)
     @TextField
     @PlaceOn(LABEL_TAB_3)
-    String dropdown2() {
+    String getDropdown2() {
         return null;
     }
 
@@ -125,13 +125,13 @@ interface Addition {
         @Option(text = "5 star", value = "5")
     }, emptyText = "Select rating")
     @PlaceOn(LABEL_TAB_3)
-    default String dropdown() {
+    default String getDropdown() {
         return null;
     }
 }
 
 interface Addition2 {
-    
+
     @DialogField(ranking = 300)
     @TextField(value = "text")
     @PlaceOn(LABEL_TAB_3)
