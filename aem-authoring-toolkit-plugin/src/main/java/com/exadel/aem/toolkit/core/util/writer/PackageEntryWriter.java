@@ -64,9 +64,6 @@ abstract class PackageEntryWriter {
      * @param componentPath {@link Path} representing a file within a file system to write data to
      */
     void writeXml(Class<?> componentClass, Path componentPath) {
-        if (!isProcessed(componentClass)) {
-            return;
-        }
         try (Writer writer = Files.newBufferedWriter(componentPath.resolve(getXmlScope().toString()), StandardOpenOption.CREATE)) {
             if (getXmlScope() != XmlScope.COMPONENT) {
                 // markup can be stored by hand in a _cq_dialog/.content.xml structure instead of _cq_dialog.xml file
