@@ -239,10 +239,10 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         // Retrieve superclasses of the current class, from top of the hierarchy to the most immediate ancestor,
         // populate container item registry and store fields that are within @Tab or @AccordionPanel-marked nested classes
         // (because we will not have access to them later)
-        Map<String, ContainerInfo> containerItemInstancesFromSuperClasses = getContainerElements(PluginReflectionUtility.getClassHierarchy(componentClass, false), annotationClass, parentElement.getAttribute(DialogConstants.PN_SCOPE, String.class));
+        Map<String, ContainerInfo> containerItemInstancesFromSuperClasses = getContainerElements(PluginReflectionUtility.getClassHierarchy(componentClass, false), annotationClass, parentElement.getScope());
 
         // Retrieve tabs or accordions of the current class same way
-        Map<String, ContainerInfo> containerItemsInstancesFromCurrentClass = getContainerElements(Collections.singletonList(componentClass), annotationClass, parentElement.getAttribute(DialogConstants.PN_SCOPE, String.class));
+        Map<String, ContainerInfo> containerItemsInstancesFromCurrentClass = getContainerElements(Collections.singletonList(componentClass), annotationClass, parentElement.getScope());
 
         // Compose the "overall" registry of tabs or accordions.
         Map<String, ContainerInfo> allContainerItemInstances = getAllContainerItemInstances(containerItemsInstancesFromCurrentClass, containerItemInstancesFromSuperClasses);
@@ -271,10 +271,10 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * method are used to compile a "container item registry" consisting of all container items from the current class and/or its superclasses
      * @param classes         The {@code Class<?>}-es to search for defined container items
      * @param annotationClass The annotationClass are searching for
-     * @param scope   Current xml scope
+     * @param scope           Current XML scope
      * @return Map of entries, each specified by a container item title and containing a {@link ContainerInfo} aggregate object
      */
-    private Map<String, ContainerInfo> getContainerElements(List<Class<?>> classes, Class<? extends Annotation> annotationClass, String scope) {
+    private Map<String, ContainerInfo> getContainerElements(List<Class<?>> classes, Class<? extends Annotation> annotationClass, XmlScope scope) {
         Map<String, ContainerInfo> result = new LinkedHashMap<>();
         Map<String, Object> annotationMap;
         try {
@@ -306,11 +306,11 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param result {@code Map<String,ContainerInfo>} map containing all container items
      * @param cls    {@code Class<?>} current class that contains container elements
      */
-    private void getCurrentDialogContainerElements(Map<String, ContainerInfo> result, Class<?> cls, String scope) {
+    private void getCurrentDialogContainerElements(Map<String, ContainerInfo> result, Class<?> cls, XmlScope scope) {
         try {
 
             Map<String, Object> map;
-            if (XmlScope.CQ_DIALOG.toString().equals(scope)) {
+            if (XmlScope.CQ_DIALOG.equals(scope)) {
                 map = PluginObjectUtility.getAnnotationFields(cls.getDeclaredAnnotation(Dialog.class));
             } else {
                 map = PluginObjectUtility.getAnnotationFields(cls.getDeclaredAnnotation(DesignDialog.class));
