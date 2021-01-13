@@ -1,12 +1,13 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.2.2
+ * @version 2.5.0
  *
  * CQ Coral3 based FileUpload accessor
  * */
 (function ($, ns) {
-    const SELECTOR = '.cq-FileUpload.coral3-FileUpload';
+    const SELECTOR = '.cq-FileUpload, .coral3-FileUpload';
     const FILEUPLOAD_FILE_REFERENCE = '[data-cq-fileupload-parameter="filereference"]';
+    const FILEUPLOAD_INPUT_SELECTOR = '.coral3-FileUpload-input';
 
     ns.ElementAccessors.registerAccessor({
         selector: SELECTOR,
@@ -17,6 +18,10 @@
         // set: function ($el, value) {
         //     return $el.find(FILEUPLOAD_FILE_REFERENCE).val(value);
         // },
+        visibility: function ($el, state) {
+            $el.find(FILEUPLOAD_INPUT_SELECTOR).attr('type', state ? 'file' : 'hidden');
+            ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($el, state);
+        },
         disabled: function ($el, val) {
             ns.ElementAccessors.DEFAULT_ACCESSOR.disabled($el, val);
 
