@@ -18,11 +18,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import org.w3c.dom.Document;
+
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 
 
 public interface Target {
@@ -56,6 +56,10 @@ public interface Target {
     Target prefix(String prefix);
 
     Target postfix(String postfix);
+
+    Target scope(XmlScope scope);
+
+    XmlScope getScope();
 
     String getPrefix();
 
