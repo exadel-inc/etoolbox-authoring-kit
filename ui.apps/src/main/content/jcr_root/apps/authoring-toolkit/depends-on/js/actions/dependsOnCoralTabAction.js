@@ -28,7 +28,7 @@
      */
     function tabChildrenVisibility($tabPanel, state) {
         $tabPanel.find('.coral-Form-field').each((index, el) => {
-            DependsOn.ElementAccessors.setVisibility($(el), state);
+            ns.ElementAccessors.setVisibility($(el), state);
         });
     }
 
