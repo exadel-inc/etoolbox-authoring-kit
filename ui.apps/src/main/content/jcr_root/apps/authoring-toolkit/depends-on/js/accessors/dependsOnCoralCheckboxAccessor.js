@@ -1,6 +1,6 @@
 /**
  * @author Yana Bernatskaya (YanaBr)
- * @version 2.2.4
+ * @version 2.5.0
  *
  * Coral 3 Checkbox accessor
  * */

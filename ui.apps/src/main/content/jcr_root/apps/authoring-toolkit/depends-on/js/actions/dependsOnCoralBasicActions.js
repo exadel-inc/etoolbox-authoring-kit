@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
- * @version 2.2.4
+ * @version 2.5.0
  *
  * DependsOn Coral 3 Basic Actions
  *
@@ -17,29 +17,6 @@
     'use strict';
 
     /**
-     * Find related tab panel
-     * */
-    function getTabPanel($element) {
-        return $element.closest('coral-panelstack > coral-panel');
-    }
-
-    /**
-     * Find related tab control
-     * */
-    function getTabControl($tabPanel) {
-        return $tabPanel.closest('coral-tabview').find('coral-tablist > coral-tab').eq($tabPanel.index());
-    }
-
-    /**
-     * Toggle visibility of every field on the tab
-     */
-    function tabChildrenVisibility($tabPanel, state) {
-        $tabPanel.find('.coral-Form-field').each((index, el) => {
-            ns.ElementAccessors.setVisibility($(el), state);
-        });
-    }
-
-    /**
      * Change visibility of field and form field wrapper
      * query type: boolean
      * */
@@ -52,8 +29,8 @@
      * query type: boolean
      * */
     ns.ActionRegistry.register('tab-visibility', function setTabVisibility(state) {
-        this.$tabPanel = this.$tabPanel || getTabPanel(this.$el);
-        this.$tabControl = this.$tabControl || getTabControl(this.$tabPanel);
+        this.$tabPanel = this.$tabPanel || ns.TabsControl.getTabPanel(this.$el);
+        this.$tabControl = this.$tabControl || ns.TabsControl.getTabControl(this.$tabPanel);
 
         this.$el.attr('hidden', state ? null : 'true'); // If current target is tab
         this.$tabPanel.attr('hidden', state ? null : 'true');
@@ -65,7 +42,7 @@
             tabs.find((tab) => !tab.hidden).selected = true;
             // Last tab is automatically deselected
         }
-        tabChildrenVisibility(this.$tabPanel, state);
+        ns.TabsControl.tabChildrenVisibility(this.$tabPanel, state);
     });
 
     /**

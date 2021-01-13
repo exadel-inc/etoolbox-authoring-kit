@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.4.1
+ * @version 2.5.0
  *
  * Coral 3 RTE accessor
  * */

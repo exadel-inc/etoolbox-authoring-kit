@@ -1,6 +1,6 @@
 /**
  * @author Bernatskaya Yana (YanaBr)
- * @version 2.2.3
+ * @version 2.5.0
  *
  * Coral 3 PathField accessor
  * */

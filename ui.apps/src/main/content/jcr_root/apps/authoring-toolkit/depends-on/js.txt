@@ -1,6 +1,7 @@
 # Core Handlers
 js/dependsOnUtils.js
 js/utils/dependsOnRequestCache.js
+js/utils/dependsOnTabsControl.js
 
 js/dependsOnElementAccessors.js
 js/references/dependsOnObservedReference.js
@@ -24,7 +25,7 @@ js/accessors/dependsOnCoralAlertAccessor.js
 js/accessors/dependsOnCoralPathFieldAccessor.js
 js/accessors/dependsOnCoralColorFieldAccessor.js
 js/accessors/dependsOnCoralDatePickerAccessor.js
-js/accessors/dependsOnCoralNumberInputAcessor.js
+js/accessors/dependsOnCoralNumberInputAccessor.js
 
 # Actions
 js/actions/dependsOnCoralBasicActions.js

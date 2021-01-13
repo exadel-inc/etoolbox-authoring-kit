@@ -1,6 +1,6 @@
 /**
  * @author Bernatskaya Yana (YanaBr)
- * @version 2.2.4
+ * @version 2.5.0
  *
  * Coral3 fixes
  * */
