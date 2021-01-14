@@ -14,10 +14,32 @@
 
 package com.exadel.aem.toolkit.core;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+import java.util.function.BinaryOperator;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Document;
+
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -25,20 +47,6 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 import com.exadel.aem.toolkit.core.util.NamingUtil;
 import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.core.util.XmlAttributeSettingHelper;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Document;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.function.BinaryOperator;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TargetImpl implements Target {
 
@@ -60,6 +68,7 @@ public class TargetImpl implements Target {
     private final Map<String, String> valueMap;
     private final Target parent;
     private final List<Target> listChildren;
+    private XmlScope scope;
     private Source source;
 
     public TargetImpl(String name, Target parent) {
@@ -67,6 +76,7 @@ public class TargetImpl implements Target {
         this.parent = parent;
         this.valueMap = new HashMap<>();
         this.listChildren = new LinkedList<>();
+        this.scope = parent == null ? null : parent.getScope();
         this.valueMap.put(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
     }
 
@@ -174,6 +184,17 @@ public class TargetImpl implements Target {
     public Target postfix(String postfix) {
         this.valueMap.put(DialogConstants.PN_POSTFIX, postfix);
         return this;
+    }
+
+    @Override
+    public Target scope(XmlScope scope) {
+        this.scope = scope;
+        return this;
+    }
+
+    @Override
+    public XmlScope getScope() {
+        return scope;
     }
 
     @Override

@@ -143,6 +143,7 @@ public class DialogConstants {
     public static final String PN_RENDER_HIDDEN = "renderHidden";
     public static final String PN_REQUIRED = "required";
     public static final String PN_RETYPE = "retype";
+    public static final String PN_SCOPE = "scope";
     public static final String PN_SELECTED = "selected";
     public static final String PN_SLING_RESOURCE_TYPE = "sling:resourceType";
     public static final String PN_SOURCE_CLASS = "source";

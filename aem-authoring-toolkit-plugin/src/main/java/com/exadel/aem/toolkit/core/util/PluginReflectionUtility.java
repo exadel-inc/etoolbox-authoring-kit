@@ -40,12 +40,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
-
-import com.exadel.aem.toolkit.api.handlers.Source;
-
-import com.exadel.aem.toolkit.core.source.SourceBase;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,17 +48,21 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
+import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
+import com.exadel.aem.toolkit.core.source.SourceBase;
 
 /**
  * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields
@@ -194,9 +192,18 @@ public class PluginReflectionUtility {
      * @return {@code List<Class>} of instances
      */
     public List<Class<?>> getComponentClasses() {
-        return reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
-                .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
-                .collect(Collectors.toList());
+        List<Class<?>> classesAnnotatedWithDialog = reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
+            .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
+            .collect(Collectors.toList());
+        List<Class<?>> classesAnnotatedWithComponent = reflections.getTypesAnnotatedWith(Component.class, true).stream()
+            .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
+            .collect(Collectors.toList());
+
+        List<Class<?>> componentViews = new ArrayList<>();
+        classesAnnotatedWithComponent.forEach(cls -> componentViews.addAll(Arrays.asList(cls.getAnnotation(Component.class).views())));
+        classesAnnotatedWithComponent.addAll(classesAnnotatedWithDialog.stream().filter(cls -> !componentViews.contains(cls)).collect(Collectors.toList()));
+
+        return classesAnnotatedWithComponent;
     }
 
     /**
@@ -316,8 +323,8 @@ public class PluginReflectionUtility {
 
         for (Class<?> classEntry : getClassHierarchy(targetClass)) {
             Stream<Member> classMembersStream = targetClass.isInterface()
-                    ? Arrays.stream(classEntry.getMethods())
-                    : Arrays.stream(classEntry.getDeclaredFields());
+                ? Arrays.stream(classEntry.getMethods())
+                : Stream.concat(Arrays.stream(classEntry.getDeclaredFields()), Arrays.stream(classEntry.getDeclaredMethods()));
             List<Member> classMembers = classMembersStream
                     .filter(PluginObjectPredicates.getMembersPredicate(predicates))
                     .collect(Collectors.toList());
@@ -332,6 +339,7 @@ public class PluginReflectionUtility {
                 ignoredMembers.addAll(processedClassMembers);
             }
         }
+
         return members.stream()
                 .filter(PluginObjectPredicates.getNotIgnoredMembersPredicate(ignoredMembers))
                 .sorted(PluginObjectPredicates::compareDialogMembers)
@@ -370,11 +378,13 @@ public class PluginReflectionUtility {
     public static List<Class<?>> getClassHierarchy(Class<?> targetClass, boolean includeTarget) {
         List<Class<?>> result = new LinkedList<>();
         Class<?> current = targetClass;
-        while (current != null && !current.isInterface() && !current.equals(Object.class)) {
+        while (current != null && !current.equals(Object.class)) {
             if (!current.equals(targetClass) || includeTarget) {
                 result.add(current);
+                result.addAll(Arrays.asList(current.getInterfaces()));
             }
             current = current.getSuperclass();
+            result.addAll(Arrays.asList(current.getInterfaces()));
         }
         Collections.reverse(result);
         return result;

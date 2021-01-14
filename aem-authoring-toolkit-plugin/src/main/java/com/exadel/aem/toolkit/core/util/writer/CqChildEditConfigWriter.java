@@ -16,11 +16,11 @@ package com.exadel.aem.toolkit.core.util.writer;
 
 import javax.xml.transform.Transformer;
 
-import com.exadel.aem.toolkit.api.handlers.Target;
 import org.w3c.dom.Document;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.handlers.editconfig.EditConfigHandlingHelper;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
@@ -66,8 +66,9 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
     @Override
     void populateDomDocument(Class<?> componentClass, Target root) {
         ChildEditConfig childEditConfig = componentClass.getDeclaredAnnotation(ChildEditConfig.class);
-        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
-        root.mapProperties(childEditConfig);
+        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
+            .mapProperties(childEditConfig)
+            .scope(getXmlScope());
         EditConfigHandlingHelper.append(childEditConfig, root);
     }
 }

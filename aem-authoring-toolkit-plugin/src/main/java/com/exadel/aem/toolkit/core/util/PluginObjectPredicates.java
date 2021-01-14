@@ -22,12 +22,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.core.source.SourceBase;
 import org.apache.commons.lang3.ClassUtils;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.core.source.SourceBase;
 
 /**
  * Contains utility methods for manipulating field streams and collections
@@ -42,7 +42,7 @@ public class PluginObjectPredicates {
      */
     private static final java.util.function.Predicate<Member> VALID_MEMBER_PREDICATE = member ->
             ((member instanceof Field && !member.getDeclaringClass().isInterface())
-                    || (member instanceof Method && member.getDeclaringClass().isInterface()))
+                    || (member instanceof Method))
                     && !Modifier.isStatic(member.getModifiers());
 
     /**

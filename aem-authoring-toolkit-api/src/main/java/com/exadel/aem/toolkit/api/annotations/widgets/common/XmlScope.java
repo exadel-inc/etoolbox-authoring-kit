@@ -37,6 +37,12 @@ public enum XmlScope {
             return "_cq_dialog.xml";
         }
     },
+    CQ_DESIGN_DIALOG {
+        @Override
+        public String toString() {
+            return "_cq_design_dialog.xml";
+        }
+    },
     CQ_HTML_TAG {
         @Override
         public String toString() {

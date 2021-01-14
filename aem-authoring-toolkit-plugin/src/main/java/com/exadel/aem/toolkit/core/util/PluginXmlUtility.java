@@ -35,10 +35,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
@@ -48,6 +44,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import com.google.common.collect.ImmutableMap;
 
+import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
@@ -55,11 +52,14 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
+import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
 import com.exadel.aem.toolkit.core.exceptions.ReflectionException;
+import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.validation.Validation;
 
 /**
@@ -79,6 +79,8 @@ public class PluginXmlUtility implements XmlUtility {
     public static final String ATTRIBUTE_LIST_SURROUND = "[]";
     public static final Pattern ATTRIBUTE_LIST_PATTERN = Pattern.compile("^\\[.+]$");
 
+    private static final String PREFIX_GET = "get";
+
     private static final XmlTransferPolicy DEFAULT_XML_TRANSFER_POLICY = XmlTransferPolicy.SKIP;
 
     /**
@@ -87,6 +89,10 @@ public class PluginXmlUtility implements XmlUtility {
     public static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
     private Document document;
+
+    public void setDocument(Document document) {
+        this.document = document;
+    }
 
     @Override
     public Element createNodeElement(String name, String nodeType, Map<String, String> properties, String resourceType) {
@@ -671,6 +677,13 @@ public class PluginXmlUtility implements XmlUtility {
                 .map(Map.Entry::getValue)
                 .findFirst()
                 .orElse(DEFAULT_XML_TRANSFER_POLICY);
+    }
+
+    public static String deleteGetFromName(String name) {
+        if (StringUtils.startsWith(name, PREFIX_GET)) {
+            return Character.toLowerCase(name.charAt(3)) + name.substring(4);
+        }
+        return name;
     }
 
     public static void appendDataAttributes(Target target, Data[] data) {
