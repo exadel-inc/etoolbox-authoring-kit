@@ -11,12 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.bundle.customlists.datasource;
 
-import com.adobe.cq.commerce.common.ValueMapDecorator;
-import com.adobe.granite.ui.components.ds.DataSource;
-import com.adobe.granite.ui.components.ds.SimpleDataSource;
-import com.adobe.granite.ui.components.ds.ValueMapResource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.servlet.Servlet;
+
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -27,12 +31,10 @@ import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.service.component.annotations.Component;
 
-import javax.annotation.Nonnull;
-import javax.servlet.Servlet;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import com.adobe.cq.commerce.common.ValueMapDecorator;
+import com.adobe.granite.ui.components.ds.DataSource;
+import com.adobe.granite.ui.components.ds.SimpleDataSource;
+import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 import static com.day.cq.commons.jcr.JcrConstants.JCR_TITLE;
 import static com.day.cq.commons.jcr.JcrConstants.NT_UNSTRUCTURED;

@@ -11,16 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.bundle.customlists.datasource;
 
-import com.adobe.granite.ui.components.ds.DataSource;
-import io.wcm.testing.mock.aem.junit.AemContext;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.servlet.http.HttpServletResponse;
+import com.adobe.granite.ui.components.ds.DataSource;
+import io.wcm.testing.mock.aem.junit.AemContext;
 
 import static org.junit.Assert.assertEquals;
 

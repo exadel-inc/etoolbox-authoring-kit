@@ -11,17 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.bundle.customlists.models;
 
-import io.wcm.testing.mock.aem.junit.AemContext;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import io.wcm.testing.mock.aem.junit.AemContext;
 
 import static org.junit.Assert.assertEquals;
 
@@ -32,19 +34,19 @@ public class ItemWrapperTest {
 
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
-    private ItemWrapper itemWrapper1;
+    private ItemWrapper itemWrapper;
 
     @Before
     public void setUp() {
         ResourceResolver resolver = context.resourceResolver();
         context.load().json("/com/exadel/aem/toolkit/bundle/customlists/util/simpleList.json", SIMPLE_LIST_PATH);
-        itemWrapper1 = resolver.resolve(SIMPLE_LIST_PATH + LIST_ITEM_PATH).adaptTo(ItemWrapper.class);
+        itemWrapper = resolver.resolve(SIMPLE_LIST_PATH + LIST_ITEM_PATH).adaptTo(ItemWrapper.class);
     }
 
     @Test
     public void getItemResType() {
         final String expected = "/apps/aem-custom-lists/components/content/genericItem";
-        String actual1 = itemWrapper1.getItemResType();
+        String actual1 = itemWrapper.getItemResType();
         assertEquals(expected, actual1);
     }
 
@@ -53,7 +55,7 @@ public class ItemWrapperTest {
         Map<String, Object> expected = new HashMap<>();
         expected.put("jcr:title", "key1");
         expected.put("value", "value1");
-        Map<String, Object> actual = itemWrapper1.getProperties();
+        Map<String, Object> actual = itemWrapper.getProperties();
         assertEquals(expected, actual);
     }
 }

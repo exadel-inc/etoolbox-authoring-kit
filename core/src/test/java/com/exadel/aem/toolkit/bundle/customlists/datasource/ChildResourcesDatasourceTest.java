@@ -11,11 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.bundle.customlists.datasource;
 
-import com.adobe.granite.ui.components.ExpressionResolver;
-import com.adobe.granite.ui.components.ds.DataSource;
-import io.wcm.testing.mock.aem.junit.AemContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Before;
@@ -27,12 +32,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
+import com.adobe.granite.ui.components.ExpressionResolver;
+import com.adobe.granite.ui.components.ds.DataSource;
+import io.wcm.testing.mock.aem.junit.AemContext;
 
 import static org.junit.Assert.assertEquals;
 
