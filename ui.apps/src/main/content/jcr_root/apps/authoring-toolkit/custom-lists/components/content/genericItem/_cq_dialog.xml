@@ -5,21 +5,29 @@
           jcr:primaryType="nt:unstructured"
           jcr:title="Simple List Item"
           sling:resourceType="cq/gui/components/authoring/dialog">
-    <content jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+    <content jcr:primaryType="nt:unstructured"
+             sling:resourceType="granite/ui/components/coral/foundation/container">
         <items jcr:primaryType="nt:unstructured">
-            <tabs jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/tabs">
+            <tabs jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/tabs">
                 <items jcr:primaryType="nt:unstructured">
-                    <mainConfig jcr:primaryType="nt:unstructured" granite:hidden="false" jcr:title="Main Config"
+                    <mainConfig jcr:primaryType="nt:unstructured"
+                                granite:hidden="false"
+                                jcr:title="Main Config"
                                 sling:resourceType="granite/ui/components/coral/foundation/container">
                         <items jcr:primaryType="nt:unstructured">
                             <title jcr:primaryType="nt:unstructured"
-                                   fieldDescription="Provide Item Title." fieldLabel="Title"
-                                   name="./jcr:title" required="true"
+                                   fieldDescription="Provide Item Title."
+                                   fieldLabel="Title"
+                                   name="./jcr:title"
+                                   required="true"
                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield">
                             </title>
                             <value jcr:primaryType="nt:unstructured"
-                                   fieldDescription="Provide Item Value." fieldLabel="Value"
-                                   name="./value" required="true"
+                                   fieldDescription="Provide Item Value."
+                                   fieldLabel="Value"
+                                   name="./value"
+                                   required="true"
                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield">
                             </value>
                         </items>
