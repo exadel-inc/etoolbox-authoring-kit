@@ -35,11 +35,12 @@ import static org.junit.Assert.assertEquals;
 
 public class ListsHelperTest {
 
+    private static final String SIMPLE_LIST_PATH = "/content/aem-custom-lists/simpleList";
+    private static final String CUSTOM_LIST_PATH = "/content/aem-custom-lists/customList";
+    
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
     private ResourceResolver resolver;
-    private static final String SIMPLE_LIST_PATH = "/content/aem-custom-lists/simpleList";
-    private static final String CUSTOM_LIST_PATH = "/content/aem-custom-lists/customList";
 
     @Before
     public void setUp() {
