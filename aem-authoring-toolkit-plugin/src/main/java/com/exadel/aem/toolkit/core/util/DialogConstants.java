@@ -134,6 +134,8 @@ public class DialogConstants {
     public static final String PN_MODE = "mode";
     public static final String PN_NAME = "name";
     public static final String PN_PATH = "path";
+    public static final String PN_POSTFIX = "postfix";
+    public static final String PN_PREFIX = "prefix";
     public static final String PN_PRIMARY_TYPE = "jcr:primaryType";
     public static final String PN_PROPERTY_NAME = "propertyName";
     public static final String PN_PROTOCOLS = "protocols";
@@ -141,7 +143,9 @@ public class DialogConstants {
     public static final String PN_RENDER_HIDDEN = "renderHidden";
     public static final String PN_REQUIRED = "required";
     public static final String PN_RETYPE = "retype";
+    public static final String PN_SCOPE = "scope";
     public static final String PN_SELECTED = "selected";
+    public static final String PN_SLING_RESOURCE_TYPE = "sling:resourceType";
     public static final String PN_SOURCE_CLASS = "source";
     public static final String PN_TAB_SIZE = "tabSize";
     public static final String PN_TAG_NAME = "cq:tagName";

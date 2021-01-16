@@ -38,7 +38,7 @@ import static com.day.cq.commons.jcr.JcrConstants.JCR_PRIMARYTYPE;
  * A wrapper model for a custom list item
  */
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class ItemWrapper {
+public class ListEntry {
 
     private static final String FIELD_ITEM_RES_TYPE = "itemResourceType";
     private static final String SLING_RESOURCE_TYPE = "sling:resourceType";

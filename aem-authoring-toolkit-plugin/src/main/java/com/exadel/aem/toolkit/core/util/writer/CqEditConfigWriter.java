@@ -14,14 +14,13 @@
 
 package com.exadel.aem.toolkit.core.util.writer;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.handlers.editconfig.EditConfigHandlingHelper;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
@@ -33,12 +32,10 @@ import com.exadel.aem.toolkit.core.util.DialogConstants;
 class CqEditConfigWriter extends PackageEntryWriter {
     /**
      * Basic constructor
-     * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
-     *                                               of this writer
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
      */
-    CqEditConfigWriter(DocumentBuilder documentBuilder, Transformer transformer) {
-        super(documentBuilder, transformer);
+    CqEditConfigWriter(Transformer transformer) {
+        super(transformer);
     }
 
     /**
@@ -61,16 +58,16 @@ class CqEditConfigWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Element)} abstract method to write down contents
+     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Target)} abstract method to write down contents
      * of {@code _cq_editConfig.xml} file
      * @param componentClass The {@code Class} being processed
      * @param root The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateDomDocument(Class<?> componentClass, Element root) {
+    void populateDomDocument(Class<?> componentClass, Target root) {
         EditConfig editConfig = componentClass.getDeclaredAnnotation(EditConfig.class);
-        root.setAttribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
-        EditConfigHandlingHelper.append(root, editConfig);
-        writeCommonProperties(componentClass, XmlScope.CQ_EDIT_CONFIG);
+        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
+            .scope(getXmlScope());
+        EditConfigHandlingHelper.append(editConfig, root);
     }
 }

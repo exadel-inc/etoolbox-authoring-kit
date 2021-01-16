@@ -29,7 +29,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ValueMap;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
@@ -39,28 +38,28 @@ import com.exadel.aem.toolkit.bundle.customlists.models.GenericItem;
 /**
  * Helper methods for working with AEM Custom Lists
  */
-public class CustomListsHelper {
+public class ListsHelper {
 
     private static final String PN_VALUE = "value";
-
+    
+    /**
+     * Retrieves the list of item resources from {@code listPagePath}
+     * @param resourceResolver an instance of ResourceResolver
+     * @param listPagePath     the path to List page
+     * @return a list of {@link Resource}s
+     */
+    public static List<Resource> getResourceList(ResourceResolver resourceResolver, String listPagePath) {
+        return getList(resourceResolver, listPagePath, Function.identity());
+    }
+    
     /**
      * Retrieves the list of item resources from {@code listPagePath} and adapts them to {@link GenericItem} model
      * @param resourceResolver an instance of ResourceResolver
      * @param listPagePath     the path to List page
      * @return a list of {@link GenericItem}s
      */
-    public static List<GenericItem> getAsGenericList(ResourceResolver resourceResolver, String listPagePath) {
-        return getAsList(resourceResolver, listPagePath, res -> res.adaptTo(GenericItem.class));
-    }
-
-    /**
-     * Retrieves the list of item resources from {@code listPagePath} and returns their {@link ValueMap}s
-     * @param resourceResolver an instance of ResourceResolver
-     * @param listPagePath     the path to List page
-     * @return a list of {@link ValueMap}s
-     */
-    public static List<ValueMap> getAsCustomList(ResourceResolver resourceResolver, String listPagePath) {
-        return getAsList(resourceResolver, listPagePath, Resource::getValueMap);
+    public static List<GenericItem> getList(ResourceResolver resourceResolver, String listPagePath) {
+        return getList(resourceResolver, listPagePath, res -> res.adaptTo(GenericItem.class));
     }
 
     /**
@@ -71,14 +70,26 @@ public class CustomListsHelper {
      * @param <T>              model which represents a list item
      * @return a list of {@code <T>} instances
      */
-    public static <T> List<T> getAsCustomList(ResourceResolver resourceResolver, String listPagePath, Class<T> itemClass) {
-        return getAsList(resourceResolver, listPagePath, res -> res.adaptTo(itemClass));
+    public static <T> List<T> getList(ResourceResolver resourceResolver, String listPagePath, Class<T> itemClass) {
+        return getList(resourceResolver, listPagePath, res -> res.adaptTo(itemClass));
     }
 
-    private static <T> List<T> getAsList(ResourceResolver resourceResolver, String listPagePath, Function<Resource, T> mapper) {
+    private static <T> List<T> getList(ResourceResolver resourceResolver, String listPagePath, Function<Resource, T> mapper) {
         return getItemsStream(resourceResolver, listPagePath)
             .map(mapper)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves the list of item resources from {@code listPagePath} and maps values from the specified {@code keyName} property to items' {@link Resource}s.
+     * If several items have the same key, the last value overrides all the previous ones
+     * @param resourceResolver an instance of ResourceResolver
+     * @param listPagePath     the path to List page
+     * @param keyName          item property that holds the resulting map's keys
+     * @return a map of item {@link Resource}s
+     */
+    public static Map<String, Resource> getResourceMap(ResourceResolver resourceResolver, String listPagePath, String keyName) {
+        return getMap(resourceResolver, listPagePath, keyName, Function.identity());
     }
 
     /**
@@ -88,21 +99,9 @@ public class CustomListsHelper {
      * @param listPagePath     the path to List page
      * @return a map representing title-to-value pairs
      */
-    public static Map<String, String> getAsGenericMap(ResourceResolver resourceResolver, String listPagePath) {
-        return getAsMap(resourceResolver, listPagePath, JcrConstants.JCR_TITLE,
+    public static Map<String, String> getMap(ResourceResolver resourceResolver, String listPagePath) {
+        return getMap(resourceResolver, listPagePath, JcrConstants.JCR_TITLE,
             res -> res.getValueMap().get(PN_VALUE, StringUtils.EMPTY));
-    }
-
-    /**
-     * Retrieves the list of item resources from {@code listPagePath} and maps values from the specified {@code keyName} property to items' {@link ValueMap}s.
-     * If several items have the same key, the last value overrides all the previous ones
-     * @param resourceResolver an instance of ResourceResolver
-     * @param listPagePath     the path to List page
-     * @param keyName          item property that holds the resulting map's keys
-     * @return a map that represents items as {@link ValueMap}s
-     */
-    public static Map<String, ValueMap> getAsCustomMap(ResourceResolver resourceResolver, String listPagePath, String keyName) {
-        return getAsMap(resourceResolver, listPagePath, keyName, Resource::getValueMap);
     }
 
     /**
@@ -115,12 +114,11 @@ public class CustomListsHelper {
      * @param <T>              model which represents a list item
      * @return a map that represents items as {@code <T>} instances
      */
-    public static <T> Map<String, T> getAsCustomMap(ResourceResolver resourceResolver, String listPagePath, String keyName, Class<T> itemClass) {
-        return getAsMap(resourceResolver, listPagePath, keyName, res -> res.adaptTo(itemClass));
+    public static <T> Map<String, T> getMap(ResourceResolver resourceResolver, String listPagePath, String keyName, Class<T> itemClass) {
+        return getMap(resourceResolver, listPagePath, keyName, res -> res.adaptTo(itemClass));
     }
-
-
-    private static <T> Map<String, T> getAsMap(ResourceResolver resourceResolver, String listPagePath, String keyName, Function<Resource, T> mapper) {
+    
+    private static <T> Map<String, T> getMap(ResourceResolver resourceResolver, String listPagePath, String keyName, Function<Resource, T> mapper) {
         return getItemsStream(resourceResolver, listPagePath)
             .map(res -> new ImmutablePair<>(res.getValueMap().get(keyName, StringUtils.EMPTY), mapper.apply(res)))
             .collect(Collectors.toMap(ImmutablePair::getLeft, ImmutablePair::getRight, (a, b) -> b, LinkedHashMap::new));
@@ -145,6 +143,6 @@ public class CustomListsHelper {
             .orElse(null);
     }
 
-    private CustomListsHelper() {
+    private ListsHelper() {
     }
 }

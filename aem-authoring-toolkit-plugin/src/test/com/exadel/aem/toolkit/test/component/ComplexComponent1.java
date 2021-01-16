@@ -45,7 +45,7 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_5;
 import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_6;
 
 @Dialog(
-        name = TestConstants.DEFAULT_COMPONENT_NAME,
+
         title = TestConstants.DEFAULT_COMPONENT_TITLE,
         description = "test component",
         componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
@@ -238,7 +238,7 @@ public class ComplexComponent1 extends ComplexComponent1Parent {
     private String thirdField;
 
     @DialogField
-    @FieldSet(namePrefix = PREFIX_FIRST_PRIMARY_DIALOG)
+    @FieldSet(namePrefix = PREFIX_FIRST_PRIMARY_DIALOG, namePostfix = "postfix")
     @PlaceOnTab(LABEL_TAB_2)
     private SampleFieldsetBase2 firstPrimaryDialog;
 

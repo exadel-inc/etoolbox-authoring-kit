@@ -14,12 +14,14 @@
 package com.exadel.aem.toolkit.core.handlers.widget;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.source.SourceBase;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
@@ -88,17 +90,16 @@ public enum DialogWidgets implements DialogWidget {
     ANCHOR_BUTTON(AnchorButton.class);
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";
-    private static final BiConsumer<Element, Field> EMPTY_HANDLER = (componentNode, field) -> {
-    };
+    private static final BiConsumer<Source, Target> EMPTY_HANDLER = (componentNode, field) -> {};
 
-    private Class<? extends Annotation> annotation;
-    private BiConsumer<Element, Field> handler;
+    private final Class<? extends Annotation> annotation;
+    private BiConsumer<Source, Target> handler;
 
     DialogWidgets(Class<? extends Annotation> annotation) {
         this.annotation = annotation;
     }
 
-    DialogWidgets(Class<? extends Annotation> annotation, BiConsumer<Element, Field> handler) {
+    DialogWidgets(Class<? extends Annotation> annotation, BiConsumer<Source, Target> handler) {
         this(annotation);
         this.handler = handler;
     }
@@ -109,26 +110,26 @@ public enum DialogWidgets implements DialogWidget {
     }
 
     @Override
-    public BiConsumer<Element, Field> getHandler() {
+    public BiConsumer<Source, Target> getHandler() {
         return handler != null ? handler : EMPTY_HANDLER;
     }
 
     /**
-     * Gets whether the specified {@code Field} has any particular Granite UI widget-defining annotation
-     * @param field {@code Field} of a component class
+     * Gets whether the specified {@code Member} has any particular Granite UI widget-defining annotation
+     * @param member {@code Member} of a component class
      * @return True or false
      */
-    public static boolean isPresent(Field field) {
-        return getWidgetAnnotationClass(field) != null;
+    public static boolean isPresent(Member member) {
+        return getWidgetAnnotationClass(SourceBase.fromMember(member, null)) != null;
     }
 
     /**
      * Gets a {@link DialogWidgets} bound to this {@code Field} of a component class, if any
-     * @param field {@code Field} of a component class
+     * @param source Current {@link Source} instance
      * @return {@code DialogWidget} value, or null
      */
-    public static DialogWidget fromField(Field field) {
-        Class<? extends Annotation> fieldAnnotationClass = getWidgetAnnotationClass(field);
+    public static DialogWidget fromSource(Source source) {
+        Class<? extends Annotation> fieldAnnotationClass = getWidgetAnnotationClass(source);
         if (fieldAnnotationClass == null) {
             return null;
         }
@@ -136,49 +137,49 @@ public enum DialogWidgets implements DialogWidget {
             return new CustomDialogWidget(fieldAnnotationClass);
         }
         DialogWidgets result = Arrays.stream(values())
-            .filter(dialogWidget -> fieldAnnotationClass.equals(dialogWidget.getAnnotationClass()))
-            .findFirst()
-            .orElse(null);
+                .filter(dialogWidget -> fieldAnnotationClass.equals(dialogWidget.getAnnotationClass()))
+                .findFirst()
+                .orElse(null);
         if (result == null) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(
-                NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE,
-                field.getName(),
-                field.getDeclaringClass())));
+                    NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE,
+                    source.getName(),
+                    source.getProcessedClass())));
         }
         return result;
     }
 
     /**
-     * Gets {@code Class} definition of a {@code DialogComponent}-defining annotation of the current {@code Field}
-     * @param field {@code Field} of a component class
+     * Gets {@code Class} definition of a {@code DialogComponent}-defining annotation of the current {@link Source}
+     * @param source {@link Source} of a component class
      * @return {@code Class} object
      */
-    private static Class<? extends Annotation> getWidgetAnnotationClass(Field field) {
-        // get first in-built component annotation attached to this field
+    private static Class<? extends Annotation> getWidgetAnnotationClass(Source source) {
+        // get first in-built component annotation attached to this source
         Class<? extends Annotation> annotationClass = Arrays.stream(values())
-            .filter(dialogComponent -> isAnnotated(field, dialogComponent))
-            .map(DialogWidgets::getAnnotationClass)
-            .findFirst()
-            .orElse(null);
+                .filter(dialogComponent -> isAnnotated(source, dialogComponent))
+                .map(DialogWidgets::getAnnotationClass)
+                .findFirst()
+                .orElse(null);
         if (annotationClass != null) {
             return annotationClass;
         }
-        // if no such annotation, retrieve first custom DialogComponentAnnotation attached to this field
-        return PluginReflectionUtility.getFieldAnnotations(field)
-            .filter(DialogWidgets::isCustomDialogWidgetAnnotation)
-            .findFirst()
-            .orElse(null);
+        // if no such annotation, retrieve first custom DialogComponentAnnotation attached to this source
+        return PluginReflectionUtility.getFieldAnnotations(source)
+                .filter(DialogWidgets::isCustomDialogWidgetAnnotation)
+                .findFirst()
+                .orElse(null);
     }
 
     /**
-     * Gets whether this {@code Field} has the particular {@code DialogComponent}-defining annotation
-     * @param field  {@code Field} of a component class
-     * @param widget {@code DialogComponent} instance
+     * Gets whether this {@link Source} has the particular {@code DialogComponent}-defining annotation
+     * @param source {@link Source} of a component class
+     * @param widget {@link DialogWidgets} instance
      * @return True or false
      */
-    private static boolean isAnnotated(Field field, DialogWidgets widget) {
+    private static boolean isAnnotated(Source source, DialogWidgets widget) {
         return Objects.nonNull(widget.getAnnotationClass())
-            && PluginReflectionUtility.getFieldAnnotations(field).anyMatch(fa -> fa.equals(widget.getAnnotationClass()));
+                && PluginReflectionUtility.getFieldAnnotations(source).anyMatch(fa -> fa.equals(widget.getAnnotationClass()));
     }
 
     /**
@@ -194,7 +195,7 @@ public enum DialogWidgets implements DialogWidget {
      * Implements {@link DialogWidget} to expose a custom dialog annotation attached to a field with no built-in annotation
      */
     private static class CustomDialogWidget implements DialogWidget {
-        private Class<? extends Annotation> annotationClass;
+        private final Class<? extends Annotation> annotationClass;
 
         CustomDialogWidget(Class<? extends Annotation> annotationClass) {
             this.annotationClass = annotationClass;
@@ -206,7 +207,7 @@ public enum DialogWidgets implements DialogWidget {
         }
 
         @Override
-        public BiConsumer<Element, Field> getHandler() {
+        public BiConsumer<Source, Target> getHandler() {
             return EMPTY_HANDLER;
         }
     }

@@ -1,12 +1,11 @@
 /**
- * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.3
+ * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
+ * @version 2.5.0
  *
  * DependsOn Coral 3 Basic Actions
  *
  * Defined actions:
  * - visibility - set field visibility (also hide form field wrapper)
- * - tab-visibility - set visibility of tab-panel and related tab-control
  * - required - set the require marker of the field
  * - readonly - set readonly state of field
  * - disabled - set disabled state of field
@@ -17,45 +16,11 @@
     'use strict';
 
     /**
-     * Find related tab panel
-     * */
-    function getTabPanel($element) {
-        return $element.closest('coral-panelstack > coral-panel');
-    }
-
-    /**
-     * Find related tab control
-     * */
-    function getTabControl($tabPanel) {
-        return $tabPanel.closest('coral-tabview').find('coral-tablist > coral-tab').eq($tabPanel.index());
-    }
-
-    /**
      * Change visibility of field and form field wrapper
      * query type: boolean
      * */
     ns.ActionRegistry.register('visibility', function setVisibility(state) {
         ns.ElementAccessors.setVisibility(this.$el, state);
-    });
-
-    /**
-     * Change visibility of tab-panel and related tab-control
-     * query type: boolean
-     * */
-    ns.ActionRegistry.register('tab-visibility', function setTabVisibility(state) {
-        this.$tabPanel = this.$tabPanel || getTabPanel(this.$el);
-        this.$tabControl = this.$tabControl || getTabControl(this.$tabPanel);
-
-        this.$el.attr('hidden', state ? null : 'true'); // If current target is tab
-        this.$tabPanel.attr('hidden', state ? null : 'true');
-        this.$tabControl.attr('hidden', state ? null : 'true');
-
-        const targetTab = this.$tabControl[0];
-        if (targetTab && targetTab.selected && !state) {
-            const tabs = targetTab.parentNode.items.getAll();
-            tabs.find((tab) => !tab.hidden).selected = true;
-            // Last tab is automatically deselected
-        }
     });
 
     /**

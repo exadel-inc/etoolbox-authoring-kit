@@ -38,7 +38,7 @@ public class GenericItem {
         return title;
     }
 
-    public String isValue() {
+    public String getValue() {
         return value;
     }
 
