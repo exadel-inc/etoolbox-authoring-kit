@@ -25,6 +25,8 @@ import javax.annotation.Nonnull;
 import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 
+import com.day.cq.commons.jcr.JcrConstants;
+import com.day.cq.wcm.api.NameConstants;
 import org.apache.commons.collections.iterators.TransformIterator;
 import org.apache.jackrabbit.commons.iterator.FilterIterator;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -47,12 +49,6 @@ import com.adobe.granite.ui.components.ds.AbstractDataSource;
 import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.EmptyDataSource;
 
-import static com.day.cq.commons.jcr.JcrConstants.JCR_CONTENT;
-import static com.day.cq.commons.jcr.JcrConstants.JCR_PRIMARYTYPE;
-import static com.day.cq.commons.jcr.JcrConstants.NT_FOLDER;
-import static com.day.cq.wcm.api.NameConstants.NN_TEMPLATE;
-import static com.day.cq.wcm.api.NameConstants.NT_PAGE;
-
 /**
  * Servlet that implements {@code datasource} pattern for populating a Custom Lists Console
  * with all child pages under the current root path, which are either custom lists themselves,
@@ -66,13 +62,13 @@ import static com.day.cq.wcm.api.NameConstants.NT_PAGE;
     }
 )
 public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
-    private static final String TEMPLATES_CUSTOM_LIST = "/conf/authoring-toolkit/settings/wcm/templates/custom-list";
+    private static final String CUSTOM_LIST_TEMPLATE_NAME = "/conf/authoring-toolkit/settings/wcm/templates/custom-list";
     private static final String PATH = "path";
     private static final String OFFSET = "offset";
     private static final String LIMIT = "limit";
     private static final String REP_PREFIX = "rep:";
     private static final String PN_RESOURCE_TYPE = "itemResourceType";
-    private static final String PATH_TO_JCR_CONTENT = String.format("/%s", JCR_CONTENT);
+    private static final String PATH_TO_JCR_CONTENT = String.format("/%s", JcrConstants.JCR_CONTENT);
 
     @Reference
     private transient ExpressionResolver expressionResolver;
@@ -117,24 +113,24 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
      * @param resources {@code Iterator<Resource>} instance of valid child pages
      * @param offset    The integer number of items that should be skipped
      * @param limit     The integer number of items that should be included
-     * @param itemRT    Resource type of items
+     * @param itemResourceType    Resource type of items
      * @return {@code DataSource} object
      */
-    private DataSource createDataSource(Iterator<Resource> resources, Integer offset, Integer limit, String itemRT) {
+    private DataSource createDataSource(Iterator<Resource> resources, Integer offset, Integer limit, String itemResourceType) {
         return new AbstractDataSource() {
             @SuppressWarnings("unchecked")
             @Override
             public Iterator<Resource> iterator() {
                 Iterator<Resource> it = new PagingIterator<>(new FilterIterator<>(resources, o -> {
                     String name = ((Resource) o).getName();
-                    return !name.startsWith(REP_PREFIX) && !name.equals(JCR_CONTENT);
+                    return !name.startsWith(REP_PREFIX) && !name.equals(JcrConstants.JCR_CONTENT);
                 }), offset, limit);
 
                 return new TransformIterator(it, o -> new ResourceWrapper((Resource) o) {
                     @Nonnull
                     @Override
                     public String getResourceType() {
-                        return itemRT;
+                        return itemResourceType;
                     }
                 });
             }
@@ -151,7 +147,7 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
      */
     private List<Resource> getValidChildren(ResourceResolver resolver, Resource parent) {
         return getChildrenStream(parent)
-            .filter(resource -> checkResourceAsTemplate(resolver, resource) || checkResourceAsFolder(resource))
+            .filter(resource -> isTemplate(resolver, resource) || isFolder(resource))
             .collect(Collectors.toList());
     }
 
@@ -162,11 +158,11 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
      * @param resource {@code Resource} instance used as the source of markup
      * @return True or false
      */
-    private static boolean checkResourceAsTemplate(ResourceResolver resolver, Resource resource) {
+    private static boolean isTemplate(ResourceResolver resolver, Resource resource) {
         Resource childParameters = resolver.getResource(resource.getPath() + PATH_TO_JCR_CONTENT);
         if (childParameters != null) {
-            String template = childParameters.getValueMap().get(NN_TEMPLATE, String.class);
-            return template != null && template.equals(TEMPLATES_CUSTOM_LIST);
+            String template = childParameters.getValueMap().get(NameConstants.NN_TEMPLATE, String.class);
+            return template != null && template.equals(CUSTOM_LIST_TEMPLATE_NAME);
         }
         return false;
     }
@@ -177,10 +173,10 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
      * @param resource {@code Resource} instance used as the source of markup
      * @return True or false
      */
-    private static boolean checkResourceAsFolder(Resource resource) {
+    private static boolean isFolder(Resource resource) {
         return getChildrenStream(resource).anyMatch(item -> {
-            String primaryType = item.getValueMap().get(JCR_PRIMARYTYPE, String.class);
-            return primaryType != null && (primaryType.equals(NT_PAGE) || primaryType.equals(NT_FOLDER));
+            String primaryType = item.getValueMap().get(JcrConstants.JCR_PRIMARYTYPE, String.class);
+            return primaryType != null && (primaryType.equals(NameConstants.NT_PAGE) || primaryType.equals(JcrConstants.NT_FOLDER));
         });
     }
 
