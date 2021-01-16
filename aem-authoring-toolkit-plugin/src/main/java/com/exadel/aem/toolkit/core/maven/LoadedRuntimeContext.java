@@ -46,6 +46,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
         return xmlUtility;
     }
 
+
     /**
      * Accumulates data and performs necessary routines for creating the functional ("loaded") {@link PluginRuntimeContext}
      */

@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 /**
  * In multi-tab or multi-panel TouchUI Dialog setup, used to specify on which tab or accordion panel a dialog field is placed
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @SuppressWarnings("unused")
 public @interface PlaceOn {

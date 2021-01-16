@@ -1,10 +1,12 @@
 /**
- * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.2
+ * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
+ * @version 2.5.0
  *
  * Coral 3 Single Radio Button/Checkbox/Switch and Radio Group accessors
  * */
 (function ($, ns) {
+    const SWITCH_INPUT_SELECTOR = '.coral3-Switch-input';
+
     // Coral 3 Single Radio Button/Checkbox/Switch
     ns.ElementAccessors.registerAccessor({
         selector: 'input[type="radio"],input[type="checkbox"],coral-radio,coral-checkbox,coral-switch',
@@ -17,6 +19,10 @@
                 this.checked = val;
             });
             notify && $el.trigger('change');
+        },
+        visibility: function ($el, state) {
+            $el.find(SWITCH_INPUT_SELECTOR).attr('type', state ? 'checkbox' : 'hidden');
+            ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($el, state);
         }
     });
 

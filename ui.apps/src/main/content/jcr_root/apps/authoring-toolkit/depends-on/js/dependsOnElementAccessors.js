@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.2.2
+ * @version 2.5.0
  *
  * DependsOn ElementAccessors Registry
  * */
@@ -49,8 +49,10 @@
                 .attr('data-dependson-controllable', 'true');
             // Force update validity if the field is hidden
             if (!state) {
-                ns.ElementAccessors.clearValidity($el);
+                ns.ElementAccessors.updateValidity($el);
             }
+            ns.ElementAccessors.clearValidity($el);
+            ns.ElementAccessors.updateSubmittables($el.parent());
         },
         disabled: function ($el, state) {
             $el.attr('disabled', state ? 'true' : null);
@@ -62,9 +64,10 @@
                 fieldAPI.setDisabled(state);
             }
             // Force update validity if field disabled
-            if (!state) {
-                ns.ElementAccessors.clearValidity($el);
+            if (state) {
+                ns.ElementAccessors.updateValidity($el);
             }
+            ns.ElementAccessors.clearValidity($el);
         }
     };
 
@@ -177,6 +180,14 @@
                 api.checkValidity();
                 api.updateUI();
             }
+        }
+
+        /**
+         * Update child submittables
+         * @param {JQuery} $el - target element
+         * */
+        static updateSubmittables($el) {
+            $el.adaptTo('foundation-validation-helper').getSubmittables();
         }
 
         /**

@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.4.1
+ * @version 2.5.0
  *
  * Coral 3 RTE accessor
  * */
@@ -49,6 +49,7 @@
         },
         disabled: function ($el, val) {
             ns.ElementAccessors.DEFAULT_ACCESSOR.disabled($el, val);
+            ns.ElementAccessors.DEFAULT_ACCESSOR.disabled($el.parent().find(RTE_INPUT_SELECTOR), val);
 
             const rteInstance = $el.data(RTE_DATA_INSTANCE);
             if (!rteInstance) return;

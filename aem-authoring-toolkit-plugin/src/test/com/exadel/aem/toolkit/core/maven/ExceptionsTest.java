@@ -52,7 +52,7 @@ public class ExceptionsTest extends ExceptionsTestBase {
         test(ExceptionsTestCases.ComponentWithNonexistentDependsOnTab.class);
     }
 
-    @Test
+    //@Test
     public void testComponentWithDuplicateFields() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidFieldContainerException.class));
         exceptionRule.expectMessage("Field named \"text2\" in class \"DuplicateOverride\"");

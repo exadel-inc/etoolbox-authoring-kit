@@ -13,12 +13,9 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
-
-import org.w3c.dom.Element;
-
 import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
-import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.handlers.container.common.WidgetContainerHandler;
 
 /**
@@ -33,7 +30,7 @@ class AccordionWidgetHandler extends WidgetContainerHandler {
      * @param field   Current {@code Field} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        acceptParent(element, AccordionWidget.class, field);
+    public void accept(Source source, Target target) {
+        acceptParent(source, AccordionWidget.class, target);
     }
 }

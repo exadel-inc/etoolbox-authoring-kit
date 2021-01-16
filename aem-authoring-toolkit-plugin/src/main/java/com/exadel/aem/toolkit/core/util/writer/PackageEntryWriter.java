@@ -22,6 +22,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
@@ -33,25 +34,27 @@ import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperties;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
+import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.TargetImpl;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
+
+import static com.exadel.aem.toolkit.core.util.writer.CqDialogWriter.getCustomDialogAnnotations;
 
 /**
  * Base class for creating XML representation of AEM component's stored attributes and authoring features
  */
 abstract class PackageEntryWriter {
-    private DocumentBuilder documentBuilder;
-    private Transformer transformer;
+    private final Transformer transformer;
 
     /**
      * Basic constructor
-     * @param documentBuilder {@code DocumentBuilder} instance used to compose new XML DOM document as need by the logic
-     *                                               of this writer
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
      */
-    PackageEntryWriter(DocumentBuilder documentBuilder, Transformer transformer) {
-        this.documentBuilder = documentBuilder;
+    PackageEntryWriter(Transformer transformer) {
         this.transformer = transformer;
     }
 
@@ -61,9 +64,6 @@ abstract class PackageEntryWriter {
      * @param componentPath {@link Path} representing a file within a file system to write data to
      */
     void writeXml(Class<?> componentClass, Path componentPath) {
-        if (!isProcessed(componentClass)) {
-            return;
-        }
         try (Writer writer = Files.newBufferedWriter(componentPath.resolve(getXmlScope().toString()), StandardOpenOption.CREATE)) {
             if (getXmlScope() != XmlScope.COMPONENT) {
                 // markup can be stored by hand in a _cq_dialog/.content.xml structure instead of _cq_dialog.xml file
@@ -75,7 +75,7 @@ abstract class PackageEntryWriter {
             }
             // then second we store the newly generated class
             writeXml(componentClass, writer);
-        } catch (IOException e) {
+        } catch (IOException | ParserConfigurationException e) {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
     }
@@ -85,7 +85,7 @@ abstract class PackageEntryWriter {
      * @param componentClass {@link Class} to analyze
      * @param writer {@link Writer} managing the data storage procedure
      */
-    void writeXml(Class<?> componentClass, Writer writer) {
+    void writeXml(Class<?> componentClass, Writer writer) throws ParserConfigurationException {
         Document document = createDomDocument(componentClass);
         try {
              transformer.transform(new DOMSource(document), new StreamResult(writer));
@@ -110,19 +110,24 @@ abstract class PackageEntryWriter {
     /**
      * Triggers the particular routines for storing component-related data in the XML markup
      * @param componentClass The {@code Class} being processed
-     * @param root The root element of DOM {@link Document} to feed data to
+     * @param target The targetFacade element of DOM {@link Document} to feed data to
      */
-    abstract void populateDomDocument(Class<?> componentClass, Element root);
+    abstract void populateDomDocument(Class<?> componentClass, Target target);
 
     /**
      * Wraps DOM document creating with use of a {@link DocumentBuilder} and populating it with data
      * @param componentClass The {@code Class} being processed
      * @return {@link Document} created
      */
-    private Document createDomDocument(Class<?> componentClass) {
-        Element rootElement = PluginRuntime.context().getXmlUtility().newDocumentRoot(this.documentBuilder, componentClass);
+    private Document createDomDocument(Class<?> componentClass) throws ParserConfigurationException {
+        Target rootElement = new TargetImpl(DialogConstants.NN_ROOT, null);
+        Document document = PackageWriter.createDocumentBuilder().newDocument();
+        PluginRuntime.context().getXmlUtility().setDocument(document);
         populateDomDocument(componentClass, rootElement);
-        return PluginRuntime.context().getXmlUtility().getCurrentDocument();
+        document = rootElement.buildXml(document);
+        writeCommonProperties(componentClass, getXmlScope(), document);
+        if (XmlScope.CQ_DIALOG.equals(getXmlScope())) acceptLegacyHandlers(document.getDocumentElement(), componentClass);
+        return document;
     }
 
     /**
@@ -131,19 +136,27 @@ abstract class PackageEntryWriter {
      * @param componentClass Current {@code Class} instance
      * @param scope Current {@code XmlScope}
      */
-    static void writeCommonProperties(Class<?> componentClass, XmlScope scope) {
+    static void writeCommonProperties(Class<?> componentClass, XmlScope scope, Document document) {
         Arrays.stream(componentClass.getAnnotationsByType(CommonProperty.class))
                 .filter(p -> p.scope().equals(scope))
-                .forEach(p -> writeCommonProperty(p, PluginRuntime.context().getXmlUtility().getElementNodes(p.path())));
+                .forEach(p -> writeCommonProperty(p, PluginXmlUtility.getElementNodes(p.path(), document)));
     }
 
     /**
-     * Called by {@link PackageEntryWriter#writeCommonProperties(Class, XmlScope)} for each {@link CommonProperty}
+     * Called by {@link PackageEntryWriter#writeCommonProperties(Class, XmlScope, Document)} for each {@link CommonProperty}
      * instance
      * @param property {@code CommonProperty} instance
      * @param targets Target {@code Node}s selected via an XPath
      */
     private static void writeCommonProperty(CommonProperty property, List<Element> targets) {
-        targets.forEach(target -> PluginRuntime.context().getXmlUtility().setAttribute(target, property.name(), property.value()));
+        targets.forEach(target -> target.setAttribute(property.name(), property.value()));
+    }
+
+    private static void acceptLegacyHandlers(Element element, Class<?> cls) {
+        List<DialogAnnotation> customAnnotations = getCustomDialogAnnotations(cls);
+        PluginRuntime.context().getReflectionUtility().getCustomDialogHandlers().stream()
+            .filter(handler -> customAnnotations.stream()
+                .anyMatch(annotation -> StringUtils.equals(annotation.source(), handler.getName())))
+            .forEach(handler -> handler.accept(element, cls));
     }
 }

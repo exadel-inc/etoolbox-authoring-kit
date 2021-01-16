@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.api.handlers;
 
+import com.exadel.aem.toolkit.api.markers._Default;
+
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,7 +30,7 @@ import java.lang.annotation.Target;
 public @interface Handles {
     Class<? extends Annotation>[] value() default {};
 
-    Class<?> before() default Object.class;
+    Class<?> before() default _Default.class;
 
-    Class<?> after() default Object.class;
+    Class<?> after() default _Default.class;
 }
