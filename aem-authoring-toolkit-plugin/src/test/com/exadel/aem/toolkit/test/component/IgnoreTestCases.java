@@ -26,12 +26,12 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
-import com.exadel.aem.toolkit.core.util.TestConstants;
+import com.exadel.aem.toolkit.plugin.util.TestConstants;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
 import com.exadel.aem.toolkit.test.widget.Tabs;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_2;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_3;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_2;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_3;
 
 @SuppressWarnings("unused")
 public class IgnoreTestCases {

@@ -17,17 +17,15 @@ package com.exadel.aem.toolkit.test.custom.handler;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import com.exadel.aem.toolkit.api.handlers.Handles;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
-
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
-
-import org.w3c.dom.Element;
+import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
 
 @Handles(before = CustomProcessingHandler.class, after = CustomWidgetHandler.class, value = CustomDialogAnnotation.class)
 @SuppressWarnings("unused")

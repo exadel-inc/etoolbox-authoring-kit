@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
