@@ -51,6 +51,7 @@ public @interface Dialog {
      */
     @PropertyRendering(name = JcrConstants.PN_DESCRIPTION)
     @PropertyScope(XmlScope.COMPONENT)
+    @Deprecated
     String description() default "";
 
     /**
@@ -59,6 +60,7 @@ public @interface Dialog {
      */
     @PropertyRendering(name = JcrConstants.PN_CELL_NAME)
     @PropertyScope(XmlScope.COMPONENT)
+    @Deprecated
     String cellName() default "";
 
     /**
@@ -66,6 +68,7 @@ public @interface Dialog {
      * @return String value
      */
     @PropertyScope(XmlScope.COMPONENT)
+    @Deprecated
     String componentGroup() default "";
 
     /**
@@ -74,6 +77,7 @@ public @interface Dialog {
      */
     @PropertyScope(XmlScope.COMPONENT)
     @ValueRestriction(ValueRestrictions.JCR_PATH)
+    @Deprecated
     String dialogPath() default "";
 
     /**
@@ -82,6 +86,7 @@ public @interface Dialog {
      */
     @PropertyRendering(name = JcrConstants.PN_NO_DECORATION, ignoreValues = "false")
     @PropertyScope(XmlScope.COMPONENT)
+    @Deprecated
     boolean noDecoration() default false;
 
     /**
@@ -90,6 +95,7 @@ public @interface Dialog {
      */
     @PropertyRendering(name = JcrConstants.PN_RESOURCE_SUPER_TYPE)
     @PropertyScope(XmlScope.COMPONENT)
+    @Deprecated
     String resourceSuperType() default "";
 
     /**
@@ -99,6 +105,7 @@ public @interface Dialog {
     @PropertyRendering(name = JcrConstants.PN_TEMPLATE_PATH)
     @PropertyScope(XmlScope.COMPONENT)
     @ValueRestriction(ValueRestrictions.JCR_PATH)
+    @Deprecated
     String templatePath() default "";
 
     /**
@@ -110,7 +117,7 @@ public @interface Dialog {
 
     /**
      * Renders as the `height` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal to zero provided, default 480 is used
-     * @return Double
+     * @return Numeric value
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
     @PropertyScope(XmlScope.CQ_DIALOG)
@@ -118,7 +125,7 @@ public @interface Dialog {
 
     /**
      * Renders as the `width` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal to zero provided, default 560 is used
-     * @return Double
+     * @return Numeric value
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
     @PropertyScope(XmlScope.CQ_DIALOG)
@@ -127,9 +134,11 @@ public @interface Dialog {
     /**
      * When set to true, renders as the `disableTargeting` attribute of the component root node with `true` value
      * @return True or false
+     * @deprecated Use {@link Component} to set this value
      */
     @PropertyScope(XmlScope.COMPONENT)
     @PropertyRendering(ignoreValues = "false")
+    @Deprecated
     boolean disableTargeting() default false;
 
     /**
@@ -146,7 +155,7 @@ public @interface Dialog {
      */
     @IgnorePropertyMapping
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
-    String name();
+    String name() default "";
 
     /**
      * Used to specify TouchUI dialog layout

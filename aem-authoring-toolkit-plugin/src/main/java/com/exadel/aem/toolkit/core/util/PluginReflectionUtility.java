@@ -48,18 +48,21 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
-import com.exadel.aem.toolkit.api.annotations.main.ClassField;
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
+import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.core.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.core.maven.PluginRuntime;
 import com.exadel.aem.toolkit.core.maven.PluginRuntimeContext;
+import com.exadel.aem.toolkit.core.source.SourceBase;
 
 /**
  * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields
@@ -91,7 +94,7 @@ public class PluginReflectionUtility {
      * @return {@link PluginReflectionUtility} instance
      */
     public static PluginReflectionUtility fromCodeScope(List<String> elements, String packageBase) {
-        URL[] urls = new URL[]{};
+        URL[] urls = new URL[] {};
         if (elements != null) {
             urls = elements.stream()
                     .map(File::new)
@@ -109,11 +112,9 @@ public class PluginReflectionUtility {
                 PACKAGE_BASE_WILDCARD);
         return newInstance;
     }
-
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
      * scope of the plugin
-     *
      * @return {@code List<DialogWidgetHandler>} of instances
      */
     public List<DialogWidgetHandler> getCustomDialogWidgetHandlers() {
@@ -127,12 +128,20 @@ public class PluginReflectionUtility {
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
      * scope of the plugin matching the specified widget annotation
-     *
+     * @param annotationClass {@code Class<?>} reference to pick up handlers for
+     * @return {@code List<DialogWidgetHandler>} of instances
+     */
+    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers(Class<? extends Annotation> annotationClass) {
+        return getCustomDialogWidgetHandlers(Collections.singletonList(annotationClass));
+    }
+
+    /**
+     * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
+     * scope of the plugin matching the specified widget annotation
      * @param annotationClasses List of {@code Class<?>} reference to pick up handlers for
      * @return {@code List<DialogWidgetHandler>} of instances
      */
-    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers(List<Class<? extends
-            Annotation>> annotationClasses) {
+    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers(List<Class<? extends Annotation>> annotationClasses) {
         if (annotationClasses == null) {
             return Collections.emptyList();
         }
@@ -148,7 +157,6 @@ public class PluginReflectionUtility {
     /**
      * Initializes as necessary and returns collection of {@code CustomDialogHandler}s defined within the Compile
      * scope of the AEM Authoring Toolkit Maven plugin
-     *
      * @return {@code List<DialogHandler>} of instances
      */
     public List<DialogHandler> getCustomDialogHandlers() {
@@ -184,9 +192,18 @@ public class PluginReflectionUtility {
      * @return {@code List<Class>} of instances
      */
     public List<Class<?>> getComponentClasses() {
-        return reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
-                .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
-                .collect(Collectors.toList());
+        List<Class<?>> classesAnnotatedWithDialog = reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
+            .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
+            .collect(Collectors.toList());
+        List<Class<?>> classesAnnotatedWithComponent = reflections.getTypesAnnotatedWith(Component.class, true).stream()
+            .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
+            .collect(Collectors.toList());
+
+        List<Class<?>> componentViews = new ArrayList<>();
+        classesAnnotatedWithComponent.forEach(cls -> componentViews.addAll(Arrays.asList(cls.getAnnotation(Component.class).views())));
+        classesAnnotatedWithComponent.addAll(classesAnnotatedWithDialog.stream().filter(cls -> !componentViews.contains(cls)).collect(Collectors.toList()));
+
+        return classesAnnotatedWithComponent;
     }
 
     /**
@@ -194,7 +211,7 @@ public class PluginReflectionUtility {
      * Each is supplied with a reference to {@link PluginRuntimeContext} as required
      *
      * @param handlerClass {@code Class} object
-     * @param <T>          Expected handler type
+     * @param <T> Expected handler type
      * @return {@link List<T>} of instances
      */
     private <T> List<T> getHandlers(Class<? extends T> handlerClass) {
@@ -220,7 +237,7 @@ public class PluginReflectionUtility {
      * every field annotated with {@link Injected}
      *
      * @param handlerClass The handler class to instantiate
-     * @param <T>          Instance type
+     * @param <T> Instance type
      * @return New handler instance
      */
     private static <T> T getHandlerInstance(Class<? extends T> handlerClass) {
@@ -236,9 +253,8 @@ public class PluginReflectionUtility {
 
     /**
      * Creates a new instance object of the specified {@code Class}
-     *
      * @param instanceClass The class to instantiate
-     * @param <T>           Instance type
+     * @param <T> Instance type
      * @return New object instance
      */
     private static <T> T getInstance(Class<? extends T> instanceClass) {
@@ -255,9 +271,8 @@ public class PluginReflectionUtility {
 
     /**
      * Used to set a reference to {@link PluginRuntimeContext} to the handler instance
-     *
      * @param handler Handler instance
-     * @param field   The field of handler to populate
+     * @param field The field of handler to populate
      */
     private static void populateRuntimeContext(Object handler, Field field) {
         field.setAccessible(true);
@@ -270,124 +285,82 @@ public class PluginReflectionUtility {
 
     /**
      * Retrieves annotations of a {@code Field} instance as a sequential {@code Stream}
-     *
-     * @param field The field to analyze
+     * @param source The source to analyze
      * @return Stream of annotation objects,
      */
-    public static Stream<Class<? extends Annotation>> getFieldAnnotations(Field field) {
-        return Arrays.stream(field.getDeclaredAnnotations())
+    public static Stream<Class<? extends Annotation>> getFieldAnnotations(Source source){
+        return Arrays.stream(source.adaptTo(Annotation[].class))
                 .map(Annotation::annotationType);
     }
 
-    /**
-     * Retrieves a complete list of {@code Field}s of a {@code Class}
-     *
-     * @param targetClass The class to analyze
-     * @return List of {@code Field} objects
-     */
-    public static List<Field> getAllFields(Class<?> targetClass) {
-        return getAllFields(targetClass, Collections.emptyList());
+    public static List<Source> getAllSourceFacades(Class<?> targetClass, List<Predicate<Member>> predicates) {
+        return getAllMembers(targetClass, predicates).stream()
+            .map(member -> SourceBase.fromMember(member, targetClass)).collect(Collectors.toList());
+    }
+
+    public static List<Source> getAllSourceFacades(Class<?> targetClass) {
+        return getAllSourceFacades(targetClass, Collections.emptyList());
     }
 
     /**
-     * Retrieves a sequential list of all {@code Field}s of a certain {@code Class} that match specific criteria
-     *
+     * Retrieves a complete list of {@code Member}s of a {@code Class}
      * @param targetClass The class to analyze
-     * @param predicates  List of {@code Predicate<Field>} instances to pick up appropriate fields
-     * @return List of {@code Field} objects
+     * @return List of {@code Member} objects
      */
-    public static List<Field> getAllFields(Class<?> targetClass, List<Predicate<Field>> predicates) {
-        List<Field> fields = new LinkedList<>();
-        List<ClassField> ignoredFields = new LinkedList<>();
+    public static List<Member> getAllMembers(Class<?> targetClass) {
+        return getAllMembers(targetClass, Collections.emptyList());
+    }
+
+    /**
+     * Retrieves a sequential list of all {@code Member}s of a certain {@code Class} that match specific criteria
+     * @param targetClass The class to analyze
+     * @param predicates List of {@code Predicate<Member>} instances to pick up appropriate fields
+     * @return List of {@code Member} objects
+     */
+    private static List<Member> getAllMembers(Class<?> targetClass, List<Predicate<Member>> predicates) {
+        List<Member> members = new LinkedList<>();
+        List<ClassMember> ignoredMembers = new LinkedList<>();
 
         for (Class<?> classEntry : getClassHierarchy(targetClass)) {
-            List<Field> classFields = Arrays.stream(classEntry.getDeclaredFields())
-                    .filter(PluginObjectPredicates.getFieldsPredicate(predicates))
+            Stream<Member> classMembersStream = targetClass.isInterface()
+                ? Arrays.stream(classEntry.getMethods())
+                : Stream.concat(Arrays.stream(classEntry.getDeclaredFields()), Arrays.stream(classEntry.getDeclaredMethods()));
+            List<Member> classMembers = classMembersStream
+                    .filter(PluginObjectPredicates.getMembersPredicate(predicates))
                     .collect(Collectors.toList());
-            fields.addAll(classFields);
+            members.addAll(classMembers);
             if (classEntry.getAnnotation(IgnoreFields.class) != null) {
-                List<ClassField> processedClassFields = Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
-                        .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
-                                ClassField.class,
+                List<ClassMember> processedClassMembers = Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
+                        .map(classMember -> PluginObjectUtility.modifyIfDefault(classMember,
+                                ClassMember.class,
                                 DialogConstants.PN_SOURCE_CLASS,
                                 targetClass))
                         .collect(Collectors.toList());
-                ignoredFields.addAll(processedClassFields);
+                ignoredMembers.addAll(processedClassMembers);
             }
         }
-        return fields.stream()
-                .filter(PluginObjectPredicates.getNotIgnoredFieldsPredicate(ignoredFields))
-                .sorted(PluginObjectPredicates::compareByRanking)
+
+        return members.stream()
+                .filter(PluginObjectPredicates.getNotIgnoredMembersPredicate(ignoredMembers))
+                .sorted(PluginObjectPredicates::compareDialogMembers)
                 .collect(Collectors.toList());
     }
 
     /**
-     * Retrieves the type represented by the provided class member. If the member is designed to provide a single object,
-     * its type is returned. But if the member represents an array, type of array's element is returned
-     *
-     * @param member The class member to analyze
+     * Retrieves type of object(s) returned by the method. If method is designed to provide single object, its type
+     * is returned. But if method supplies an array, type of array's element is returned
+     * @param method The method to analyze
      * @return Appropriate {@code Class} instance
      */
-    public static Class<?> getPlainType(Member member) {
-        return getPlainType(member, false);
-    }
-
-    /**
-     * Retrieves the type represented by the provided class member. If the member is designed to provide a single object,
-     * its type is returned. If the member represents an array, type of array's element is returned.
-     * If {@code extractGeneric} flag is set to true, the represented value is examined for being a parametrized
-     * collection, and if so, collection's parameter type is turned
-     *
-     * @param member The class member to analyze
-     * @return Appropriate {@code Class} instance
-     */
-    public static Class<?> getPlainType(Member member, boolean extractParamType) {
-        Class<?> result;
-        if (member instanceof Field) {
-            result = ((Field) member).getType();
-        } else {
-            result = ((Method) member).getReturnType();
-        }
-        if (result.isArray()) {
-            result = result.getComponentType();
-        }
-        if (extractParamType && ClassUtils.isAssignable(result, Collection.class)) {
-            return getGenericType(member, result);
-        }
-        return result;
-    }
-
-
-    /**
-     * Retrieves the underlying parameter type of the class member provided. If the member is an array or a collection.
-     * the item (parameter) type is returned; otherwise, the mere member type is returned
-     *
-     * @param member The class member to analyze
-     * @param defaultValue The value to return if parameter type extraction fails
-     * @return Appropriate {@code Class} instance
-     */
-    private static Class<?> getGenericType(Member member, Class<?> defaultValue) {
-        try {
-            ParameterizedType fieldGenericType;
-            if (member instanceof Field) {
-                fieldGenericType = (ParameterizedType) ((Field) member).getGenericType();
-            } else {
-                fieldGenericType = (ParameterizedType) ((Method) member).getGenericReturnType();
-            }
-            Type[] typeArguments = fieldGenericType.getActualTypeArguments();
-            if (ArrayUtils.isEmpty(typeArguments)) {
-                return defaultValue;
-            }
-            return (Class<?>) typeArguments[0];
-        } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
-            return defaultValue;
-        }
+    public static Class<?> getMethodPlainType(Method method) {
+        return method.getReturnType().isArray()
+                ? method.getReturnType().getComponentType()
+                : method.getReturnType();
     }
 
     /**
      * Retrieves the sequential list of ancestral of a specific {@code Class}, target class itself included,
      * starting from the "top" of the inheritance tree. {@code Object} class is not added to the hierarchy
-     *
      * @param targetClass The class to build the tree upon
      * @return List of {@code Class} objects
      */
@@ -398,19 +371,20 @@ public class PluginReflectionUtility {
     /**
      * Retrieves the sequential list of ancestral classes of a specific {@code Class}, started from the "top" of the inheritance
      * tree. {@code Object} class is not added to the hierarchy
-     *
-     * @param targetClass   The class to analyze
+     * @param targetClass The class to analyze
      * @param includeTarget Whether to include the {@code targetClass} itself to the hierarchy
      * @return List of {@code Class} objects
      */
     public static List<Class<?>> getClassHierarchy(Class<?> targetClass, boolean includeTarget) {
         List<Class<?>> result = new LinkedList<>();
         Class<?> current = targetClass;
-        while (current != null && !current.isInterface() && !current.equals(Object.class)) {
+        while (current != null && !current.equals(Object.class)) {
             if (!current.equals(targetClass) || includeTarget) {
                 result.add(current);
+                result.addAll(Arrays.asList(current.getInterfaces()));
             }
             current = current.getSuperclass();
+            result.addAll(Arrays.asList(current.getInterfaces()));
         }
         Collections.reverse(result);
         return result;
@@ -418,7 +392,6 @@ public class PluginReflectionUtility {
 
     /**
      * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
-     *
      * @param annotation The annotation instance to analyze
      * @return List of {@code Method} instances that represent properties initialized with non-defaults
      */
@@ -430,7 +403,6 @@ public class PluginReflectionUtility {
 
     /**
      * Gets whether any of the {@code Annotation}'s properties has a value which is not default
-     *
      * @param annotation The annotation to analyze
      * @return True or false
      */
@@ -441,9 +413,8 @@ public class PluginReflectionUtility {
 
     /**
      * Gets whether an {@code Annotation} property has a value which is not default
-     *
      * @param annotation The annotation to analyze
-     * @param method     The method representing the property
+     * @param method The method representing the property
      * @return True or false
      */
     static boolean annotationPropertyIsNotDefault(Annotation annotation, Method method) {
@@ -464,7 +435,6 @@ public class PluginReflectionUtility {
 
     /**
      * Converts {@link URI} parameter, such as of a classpath element, to an {@link URL} instance used by {@link Reflections}
-     *
      * @param uri {@code URI} value
      * @return {@code URL} value
      */
@@ -494,6 +464,45 @@ public class PluginReflectionUtility {
             }
         }
         return finalList;
+    }
+
+    /**
+     * Retrieves the type represented by the provided class method. If the method is designed to provide a single object,
+     * its type is returned. But if the method represents an array, type of array's element is returned
+     *
+     * @param method The class method to analyze
+     * @return Appropriate {@code Class} instance
+     */
+    public static Class<?> getPlainMethodType(Method method) {
+        Class<?> result = method.getReturnType();
+        if (result.isArray()) {
+            result = result.getComponentType();
+        }
+        if (ClassUtils.isAssignable(result, Collection.class)) {
+            return getGenericType(method, result);
+        }
+        return result;
+    }
+
+    /**
+     * Retrieves the underlying parameter type of the class method provided. If the method is an array or a collection.
+     * the item (parameter) type is returned; otherwise, the mere method type is returned
+     *
+     * @param method The class method to analyze
+     * @param defaultValue The value to return if parameter type extraction fails
+     * @return Appropriate {@code Class} instance
+     */
+    private static Class<?> getGenericType(Method method, Class<?> defaultValue) {
+        try {
+            ParameterizedType fieldGenericType = (ParameterizedType) method.getGenericReturnType();
+            Type[] typeArguments = fieldGenericType.getActualTypeArguments();
+            if (ArrayUtils.isEmpty(typeArguments)) {
+                return defaultValue;
+            }
+            return (Class<?>) typeArguments[0];
+        } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
+            return defaultValue;
+        }
     }
 
 }

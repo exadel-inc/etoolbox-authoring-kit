@@ -26,6 +26,7 @@
         <serviceUrl>http://${host}:${port}/crx/packmgr/service.jsp</serviceUrl>
         <project.jcrAppFolder>authoring-toolkit/samples</project.jcrAppFolder>
         <aat.version>2.0.0-SNAPSHOT</aat.version>
+        <project.vendor>Exadel</project.vendor>
     </properties>
 
     <build>
@@ -50,8 +51,22 @@
                     <version>2.5.2</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.1.2</version>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <Built-By>${project.vendor}</Built-By>
+                                <Build-Jdk>${java.version}</Build-Jdk>
+                                <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
+                                <Bundle-Name>${project.name}</Bundle-Name>
+                                <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                                <Bundle-Version>${project.version}</Bundle-Version>
+                                <Bundle-License>http://www.apache.org/licenses/LICENSE-2.0.txt</Bundle-License>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>com.day.jcr.vault</groupId>

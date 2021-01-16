@@ -6,6 +6,8 @@
     <filter root="/apps/authoring-toolkit/clientlib-injector"/>
     <filter root="/apps/authoring-toolkit/custom-lists"/>
     <filter root="/apps/authoring-toolkit/depends-on"/>
+    <filter root="/apps/authoring-toolkit/depends-on-injector"/>
+    <filter root="/apps/authoring-toolkit/fixes"/>
     <filter root="/apps/authoring-toolkit/install"/>
 
     <!-- The following filters clear old directories in JCR content. They can be removed after release 2.0.0 -->
