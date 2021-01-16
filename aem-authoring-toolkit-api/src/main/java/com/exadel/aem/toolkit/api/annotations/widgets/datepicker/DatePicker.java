@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/datepicker/index.html">
  * DatePicker element</a> in TouchUI dialog
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.DATEPICKER)
 @PropertyMapping

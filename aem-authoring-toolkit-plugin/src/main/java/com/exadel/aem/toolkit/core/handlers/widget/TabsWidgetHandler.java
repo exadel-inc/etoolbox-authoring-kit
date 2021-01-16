@@ -13,26 +13,23 @@
  */
 package com.exadel.aem.toolkit.core.handlers.widget;
 
-import java.lang.reflect.Field;
-
-import org.w3c.dom.Element;
-
 import com.exadel.aem.toolkit.api.annotations.widgets.TabsWidget;
-import com.exadel.aem.toolkit.core.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.handlers.container.common.WidgetContainerHandler;
 
 /**
- * The {@link Handler} for a tabbed TouchUI dialog
+ * The handler for a tabbed TouchUI dialog
  */
 public class TabsWidgetHandler extends WidgetContainerHandler {
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param element Current XML element
-     * @param field   Current {@code Field} instance
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
      */
     @Override
-    public void accept(Element element, Field field) {
-        acceptParent(element, TabsWidget.class, field);
+    public void accept(Source source, Target target) {
+        acceptParent(source, TabsWidget.class, target);
     }
 }

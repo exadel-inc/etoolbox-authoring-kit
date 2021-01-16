@@ -20,11 +20,14 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.xml.parsers.DocumentBuilder;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -32,9 +35,8 @@ import javax.xml.transform.TransformerConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
-import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
-import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
+import com.exadel.aem.toolkit.api.annotations.main.Component;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 
 public class TestXmlWriterHelper {
     private static final Logger LOG = LoggerFactory.getLogger(TestXmlWriterHelper.class);
@@ -44,7 +46,7 @@ public class TestXmlWriterHelper {
 
     public static boolean doTest(String testedClass, Path pathToExpectedFiles) throws ClassNotFoundException {
         Class dialogClass = Class.forName(testedClass);
-        List<PackageEntryWriter> writers = getWriters(dialogClass);
+        List<PackageEntryWriter> writers = getWriters();
 
         Map<String, String> actualFiles = getActualFiles(dialogClass, writers);
         if (pathToExpectedFiles == null) {
@@ -54,40 +56,66 @@ public class TestXmlWriterHelper {
         return compare(actualFiles, expectedFiles, pathToExpectedFiles.toString());
     }
 
-    private static List<PackageEntryWriter> getWriters(Class dialogClass) {
+    private static List<PackageEntryWriter> getWriters() {
         List<PackageEntryWriter> writers = new ArrayList<>();
         try {
-            DocumentBuilder documentBuilder = PackageWriter.createDocumentBuilder();
             Transformer transformer = PackageWriter.createTransformer();
-            writers.add(new ContentXmlWriter(documentBuilder, transformer));
-            writers.add(new CqDialogWriter(documentBuilder, transformer));
-            if (dialogClass.isAnnotationPresent(EditConfig.class)) {
-                writers.add(new CqEditConfigWriter(documentBuilder, transformer));
-            }
-            if (dialogClass.isAnnotationPresent(ChildEditConfig.class)) {
-                writers.add(new CqChildEditConfigWriter(documentBuilder, transformer));
-            }
-            if (dialogClass.isAnnotationPresent(HtmlTag.class)) {
-                writers.add(new CqHtmlTagWriter(documentBuilder, transformer));
-            }
-        } catch (ParserConfigurationException | TransformerConfigurationException e) {
+            writers.add(new ContentXmlWriter(transformer));
+            writers.add(new CqDialogWriter(transformer, XmlScope.CQ_DIALOG));
+            writers.add(new CqDialogWriter(transformer, XmlScope.CQ_DESIGN_DIALOG));
+            writers.add(new CqEditConfigWriter(transformer));
+            writers.add(new CqChildEditConfigWriter(transformer));
+            writers.add(new CqHtmlTagWriter(transformer));
+        } catch (TransformerConfigurationException e) {
             LOG.error(e.getMessage());
         }
 
         return writers;
     }
 
-    private static Map<String, String> getActualFiles(Class dialogClass, List<PackageEntryWriter> writers) {
+    private static Map<String, String> getActualFiles(Class<?> dialogClass, List<PackageEntryWriter> writers) {
         Map<String, String> actualFiles = new HashMap<>();
+        List<Class<?>> views = new LinkedList<>(Collections.singletonList(dialogClass));
+        Optional.ofNullable(dialogClass.getAnnotation(Component.class)).ifPresent(component -> Collections.addAll(views, component.views()));
         writers.forEach(packageEntryWriter -> {
-            try (StringWriter stringWriter = new StringWriter()){
-                packageEntryWriter.writeXml(dialogClass, stringWriter);
+            try (StringWriter stringWriter = new StringWriter()) {
+                if (packageEntryWriter instanceof ContentXmlWriter) {
+                    writeContent(packageEntryWriter, stringWriter, views);
+                    actualFiles.put(packageEntryWriter.getXmlScope().toString(), stringWriter.toString());
+                    return;
+                }
+                List<Class<?>> processedClasses = views.stream().filter(packageEntryWriter::isProcessed).collect(Collectors.toList());
+                if (processedClasses.size() > 1) {
+                    throw new IOException();
+                }
+                if (processedClasses.isEmpty()) {
+                    return;
+                }
+                packageEntryWriter.writeXml(processedClasses.get(0), stringWriter);
                 actualFiles.put(packageEntryWriter.getXmlScope().toString(), stringWriter.toString());
-            } catch (IOException ex) {
+            } catch (IOException | ParserConfigurationException ex) {
                 LOG.error("Could not implement test writer", ex);
             }
         });
         return actualFiles;
+    }
+
+    private static void writeContent(PackageEntryWriter writer, StringWriter stringWriter, List<Class<?>> views) throws IOException, ParserConfigurationException {
+        List<Class<?>> processedClasses = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
+        if (processedClasses.size() > 2) {
+            throw new IOException();
+        }
+        if (processedClasses.size() == 2) {
+            if (processedClasses.get(0).getDeclaredAnnotation(Component.class) != null) {
+                writer.writeXml(processedClasses.get(0), stringWriter);
+            } else {
+                writer.writeXml(processedClasses.get(1), stringWriter);
+            }
+            return;
+        }
+        if (!processedClasses.isEmpty()) {
+            writer.writeXml(processedClasses.get(0), stringWriter);
+        }
     }
 
     private static Map<String, String> getExpectedFiles(Path componentsPath) {

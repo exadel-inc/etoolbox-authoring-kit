@@ -21,6 +21,10 @@
             mode="replace"
             root="/apps/authoring-toolkit/install"
             rules="[]"/>
+        <f3 jcr:primaryType="nt:unstructured"
+            mode="replace"
+            root="/apps/authoring-toolkit/fixes"
+            rules="[]"/>
     </filter>
     <screenshots jcr:primaryType="nt:unstructured"/>
 </jcr:root>

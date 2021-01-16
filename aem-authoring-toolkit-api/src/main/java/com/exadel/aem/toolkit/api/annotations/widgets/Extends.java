@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  * Used to mark that this field must inherit annotations values from another field
  * specified by type and field name
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Extends {
     /**

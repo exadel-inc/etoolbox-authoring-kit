@@ -27,26 +27,26 @@ import io.wcm.testing.mock.aem.junit.AemContext;
 
 import static org.junit.Assert.assertEquals;
 
-public class ItemWrapperTest {
+public class ListEntryTest {
 
     private static final String SIMPLE_LIST_PATH = "/content/aem-custom-lists/simpleList";
     private static final String LIST_ITEM_PATH = "/jcr:content/list/list_item_1006003058";
 
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
-    private ItemWrapper itemWrapper;
+    private ListEntry listEntry;
 
     @Before
     public void setUp() {
         ResourceResolver resolver = context.resourceResolver();
         context.load().json("/com/exadel/aem/toolkit/bundle/customlists/util/simpleList.json", SIMPLE_LIST_PATH);
-        itemWrapper = resolver.resolve(SIMPLE_LIST_PATH + LIST_ITEM_PATH).adaptTo(ItemWrapper.class);
+        listEntry = resolver.resolve(SIMPLE_LIST_PATH + LIST_ITEM_PATH).adaptTo(ListEntry.class);
     }
 
     @Test
     public void getItemResType() {
         final String expected = "/apps/aem-custom-lists/components/content/genericItem";
-        String actual1 = itemWrapper.getItemResType();
+        String actual1 = listEntry.getItemResType();
         assertEquals(expected, actual1);
     }
 
@@ -55,7 +55,7 @@ public class ItemWrapperTest {
         Map<String, Object> expected = new HashMap<>();
         expected.put("jcr:title", "key1");
         expected.put("value", "value1");
-        Map<String, Object> actual = itemWrapper.getProperties();
+        Map<String, Object> actual = listEntry.getProperties();
         assertEquals(expected, actual);
     }
 }

@@ -18,7 +18,7 @@
 
     const actionConfig = {
         icon: 'coral-Icon--wrench',
-        text: 'Open Dialog',
+        text: ns.I18n.get('Open Dialog'),
         order: 'before COPY',
         isNonMulti: true,
         condition: function (editable) {
