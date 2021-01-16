@@ -28,7 +28,6 @@ import com.exadel.aem.toolkit.core.util.PluginXmlUtility;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +70,8 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
             return;
         }
         Map<String, String> valueMap = Maps.newHashMap();
-        valueMap.put(DialogConstants.PN_DEPENDS_ON, value.query());
+        String escapedQuery = StringUtils.replace(value.query(), ";", "\\\\;");
+        valueMap.put(DialogConstants.PN_DEPENDS_ON, escapedQuery);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, value.action());
         valueMap.putAll(buildParamsMap(value, 0));
         PluginXmlUtility.appendDataAttributes(target, valueMap);
@@ -95,9 +95,12 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
         Map<String, String> valueMap = new HashMap<>();
 
         String queries = validDeclarations.stream()
-                .map(DependsOn::query).collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
+                .map(DependsOn::query)
+                .map(str -> StringUtils.replace(str, ";", "\\\\;"))
+                .collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
         String actions = validDeclarations.stream()
-                .map(DependsOn::action).collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
+                .map(DependsOn::action)
+                .collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
 
         valueMap.put(DialogConstants.PN_DEPENDS_ON, queries);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, actions);

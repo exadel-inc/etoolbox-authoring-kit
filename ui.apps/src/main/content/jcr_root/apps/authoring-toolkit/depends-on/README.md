@@ -151,6 +151,48 @@ You can also use dynamic references to access other fields' values.
 In order to define a reference, referenced field's name should be specified in dependsOnRef attribute.
 Then reference will be accessible in the query using @ or @@ symbol and reference name.
 
+###### Using semicolon in DependsOn query
+
+DependsOn query is always treated as a single JavaScript expression, and never as multiple statements in one line.
+Semicolon symbols (`;`) within a DependsOn query must be escaped.
+
+If you add a query via a Java annotation, semicolons will be escaped automatically:
+```java
+class MyComponent {
+    @DependsOn(query = "@field === ';'")
+    private String field1;
+}
+```
+But, if you write directly to XML or HTML, you should escape them by hand:
+```xml
+<granite:data dependson="@field === '\\;'"></granite:data>
+```
+
+If you actually need to execute several JavaScript statements within a DependsOn,
+you can do this by wrapping them in a function call:
+```java
+class MyComponent {
+    @DependsOn(query = "function(){ var a = @field1 + @field2; return a * a < 4; }()")
+    private String field;
+}
+```
+
+Mind that it is still better to move complex structures to a standalone client library
+```javascript
+  // project-clientlib.js
+  window.MyUtils = window.MyUtils || {};
+  window.MyUtils.fieldAccepted = function (field1, field2) {
+      var a = field1 + field2;
+      return a * a < 4;
+  };
+```
+```java
+class MyComponent {
+    @DependsOn(query = "MyUtils.fieldAccepted(@field1, @field2)")
+    private String field;
+}
+```
+
 ##### Query Reference Syntax
 
 There are two versions of references available in the Queries:
