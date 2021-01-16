@@ -84,7 +84,7 @@ Custom action can be specified using `Granite.DependsOnPlugin.ActionRegistry`.
 Action should have name (allowed symbols: a-z, 0-9, -) and function to execute.
 For example build-in `set` action is defined as follows:
 ```javascript
-Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('set', function setValue(value) {
+Granite.DependsOnPlugin.ActionRegistry.register('set', function setValue(value) {
     if (value !== undefined) {
         Granite.DependsOnPlugin.ElementAccessors.setValue(this.$el, value);
     }
@@ -466,7 +466,7 @@ public class Component {
 ```javascript
 (function (Granite, $, DependsOn) {
     'use strict';
-    Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('customAsyncAction', function (path) {
+    Granite.DependsOnPlugin.ActionRegistry.register('customAsyncAction', function (path) {
          const $el = this.$el;
          $.get(Granite.HTTP.externalize(path + '/jcr:content.json')).then(
              function (data) { return data && data.result; },
