@@ -62,7 +62,7 @@ import com.adobe.granite.ui.components.ds.EmptyDataSource;
     }
 )
 public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
-    private static final String LIST_TEMPLATE_NAME = "/conf/authoring-toolkit/settings/wcm/templates/custom-list";
+    private static final String LIST_TEMPLATE_NAME = "/conf/authoring-toolkit/settings/wcm/templates/list";
     private static final String PN_PATH = "path";
     private static final String PN_OFFSET = "offset";
     private static final String PN_LIMIT = "limit";
