@@ -4,7 +4,7 @@
     <filter root="/apps/wcm/core/content/sites/actions/secondary/create/items/createlist"/>
 
     <filter root="/apps/authoring-toolkit/clientlib-injector"/>
-    <filter root="/apps/authoring-toolkit/custom-lists"/>
+    <filter root="/apps/authoring-toolkit/lists"/>
     <filter root="/apps/authoring-toolkit/depends-on"/>
     <filter root="/apps/authoring-toolkit/depends-on-injector"/>
     <filter root="/apps/authoring-toolkit/fixes"/>
