@@ -24,26 +24,27 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
 
-import static com.day.cq.commons.jcr.JcrConstants.JCR_CREATED;
-import static com.day.cq.commons.jcr.JcrConstants.JCR_CREATED_BY;
-import static com.day.cq.commons.jcr.JcrConstants.JCR_LASTMODIFIED;
-import static com.day.cq.commons.jcr.JcrConstants.JCR_LAST_MODIFIED_BY;
-import static com.day.cq.commons.jcr.JcrConstants.JCR_PRIMARYTYPE;
+import com.day.cq.commons.jcr.JcrConstants;
 
 /**
  * A wrapper model for a custom list item
  */
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ListEntry {
-
-    private static final String FIELD_ITEM_RES_TYPE = "itemResourceType";
-    private static final String SLING_RESOURCE_TYPE = "sling:resourceType";
-    private static final List<String> SYSTEM_PROPERTIES = new ArrayList<>(Arrays.asList(JCR_CREATED, JCR_CREATED_BY,
-        JCR_LASTMODIFIED, JCR_LAST_MODIFIED_BY, JCR_PRIMARYTYPE, SLING_RESOURCE_TYPE));
+    private static final String FIELD_ITEM_RESOURCE_TYPE = "itemResourceType";
+    private static final List<String> SYSTEM_PROPERTIES = new ArrayList<>(Arrays.asList(
+        JcrConstants.JCR_CREATED,
+        JcrConstants.JCR_CREATED_BY,
+        JcrConstants.JCR_LASTMODIFIED,
+        JcrConstants.JCR_LAST_MODIFIED_BY,
+        JcrConstants.JCR_PRIMARYTYPE,
+        ResourceResolver.PROPERTY_RESOURCE_TYPE
+    ));
 
     @Self
     private Resource currentResource;
@@ -61,17 +62,9 @@ public class ListEntry {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         Resource pageRes = getPageResource();
-        if (pageRes == null) {
-            return;
+        if (pageRes != null) {
+            itemResType = pageRes.getValueMap().get(FIELD_ITEM_RESOURCE_TYPE, StringUtils.EMPTY);
         }
-        itemResType = pageRes.getValueMap().get(FIELD_ITEM_RES_TYPE, StringUtils.EMPTY);
-    }
-
-    private Resource getPageResource() {
-        return Optional.of(currentResource)
-            .map(Resource::getParent)
-            .map(Resource::getParent)
-            .orElse(null);
     }
 
     public String getItemResType() {
@@ -82,4 +75,10 @@ public class ListEntry {
         return properties;
     }
 
+    private Resource getPageResource() {
+        return Optional.of(currentResource)
+            .map(Resource::getParent)
+            .map(Resource::getParent)
+            .orElse(null);
+    }
 }

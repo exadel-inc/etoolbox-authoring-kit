@@ -22,7 +22,6 @@ import javax.annotation.Nonnull;
 import javax.jcr.query.Query;
 import javax.servlet.Servlet;
 
-import com.day.cq.commons.jcr.JcrConstants;
 import org.apache.sling.api.SlingException;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -33,13 +32,14 @@ import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.day.cq.commons.jcr.JcrConstants;
 import com.adobe.cq.commerce.common.ValueMapDecorator;
 import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.SimpleDataSource;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Servlet that implements {@code datasource} pattern for populating a TouchUI {@code select} widget
@@ -57,8 +57,8 @@ public class ItemComponentDatasource extends SlingSafeMethodsServlet {
 
     private static final String SELECT_STATEMENT = "SELECT * FROM [cq:Component] AS s WHERE ISDESCENDANTNODE(s,'/apps') AND [componentGroup] = 'acl-item-component'";
 
-    private static final String VALUE = "value";
-    private static final String TEXT = "text";
+    private static final String PN_VALUE = "value";
+    private static final String PN_TEXT = "text";
 
     /**
      * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest}
@@ -76,14 +76,13 @@ public class ItemComponentDatasource extends SlingSafeMethodsServlet {
             while (resources.hasNext()) {
                 Resource item = resources.next();
                 ValueMap valueMap = new ValueMapDecorator(new HashMap<>());
-                valueMap.put(VALUE, item.getPath());
-                valueMap.put(TEXT, item.getValueMap().get(JcrConstants.JCR_TITLE, ""));
+                valueMap.put(PN_VALUE, item.getPath());
+                valueMap.put(PN_TEXT, item.getValueMap().get(JcrConstants.JCR_TITLE, ""));
                 actualList.add(new ValueMapResource(resolver, new ResourceMetadata(), JcrConstants.NT_UNSTRUCTURED, valueMap));
             }
             DataSource dataSource = new SimpleDataSource(actualList.iterator());
             request.setAttribute(DataSource.class.getName(), dataSource);
-        }
-        catch (SlingException | IllegalStateException ex){
+        } catch (SlingException | IllegalStateException ex) {
             LOG.error(ex.getMessage());
         }
     }

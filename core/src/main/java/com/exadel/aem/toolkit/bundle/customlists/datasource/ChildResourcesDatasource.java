@@ -25,8 +25,6 @@ import javax.annotation.Nonnull;
 import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 
-import com.day.cq.commons.jcr.JcrConstants;
-import com.day.cq.wcm.api.NameConstants;
 import org.apache.commons.collections.iterators.TransformIterator;
 import org.apache.jackrabbit.commons.iterator.FilterIterator;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -41,6 +39,8 @@ import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.day.cq.commons.jcr.JcrConstants;
+import com.day.cq.wcm.api.NameConstants;
 import com.adobe.granite.ui.components.Config;
 import com.adobe.granite.ui.components.ExpressionHelper;
 import com.adobe.granite.ui.components.ExpressionResolver;
@@ -63,9 +63,9 @@ import com.adobe.granite.ui.components.ds.EmptyDataSource;
 )
 public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
     private static final String CUSTOM_LIST_TEMPLATE_NAME = "/conf/authoring-toolkit/settings/wcm/templates/custom-list";
-    private static final String PATH = "path";
-    private static final String OFFSET = "offset";
-    private static final String LIMIT = "limit";
+    private static final String PN_PATH = "path";
+    private static final String PN_OFFSET = "offset";
+    private static final String PN_LIMIT = "limit";
     private static final String REP_PREFIX = "rep:";
     private static final String PN_RESOURCE_TYPE = "itemResourceType";
     private static final String PATH_TO_JCR_CONTENT = String.format("/%s", JcrConstants.JCR_CONTENT);
@@ -92,49 +92,18 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
             ExpressionHelper expressionHelper = new ExpressionHelper(expressionResolver, request);
             Config dsCfg = new Config(request.getResource().getChild(Config.DATASOURCE));
 
-            String parentPath = expressionHelper.getString(dsCfg.get(PATH, String.class));
-            Integer offset = expressionHelper.get(dsCfg.get(OFFSET, String.class), Integer.class);
-            Integer limit = expressionHelper.get(dsCfg.get(LIMIT, String.class), Integer.class);
+            String parentPath = expressionHelper.getString(dsCfg.get(PN_PATH, String.class));
+            Integer offset = expressionHelper.get(dsCfg.get(PN_OFFSET, String.class), Integer.class);
+            Integer limit = expressionHelper.get(dsCfg.get(PN_LIMIT, String.class), Integer.class);
             String itemResourceType = dsCfg.get(PN_RESOURCE_TYPE, String.class);
 
             Resource parent = parentPath != null ? resolver.getResource(parentPath) : null;
             if (parent != null) {
                 Iterator<Resource> resources = getValidChildren(resolver, parent).iterator();
-                dataSource = createDataSource(resources, offset, limit, itemResourceType);
+                dataSource = new CustomAbstractDataSource(resources, offset, limit, itemResourceType);
             }
         }
         request.setAttribute(DataSource.class.getName(), dataSource);
-    }
-
-    /**
-     * Creates a {@code datasource} limited by 'offset' and 'limit' parameter values
-     * from {@code Iterator<Resource>} instance
-     *
-     * @param resources {@code Iterator<Resource>} instance of valid child pages
-     * @param offset    The integer number of items that should be skipped
-     * @param limit     The integer number of items that should be included
-     * @param itemResourceType    Resource type of items
-     * @return {@code DataSource} object
-     */
-    private DataSource createDataSource(Iterator<Resource> resources, Integer offset, Integer limit, String itemResourceType) {
-        return new AbstractDataSource() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public Iterator<Resource> iterator() {
-                Iterator<Resource> it = new PagingIterator<>(new FilterIterator<>(resources, o -> {
-                    String name = ((Resource) o).getName();
-                    return !name.startsWith(REP_PREFIX) && !name.equals(JcrConstants.JCR_CONTENT);
-                }), offset, limit);
-
-                return new TransformIterator(it, o -> new ResourceWrapper((Resource) o) {
-                    @Nonnull
-                    @Override
-                    public String getResourceType() {
-                        return itemResourceType;
-                    }
-                });
-            }
-        };
     }
 
     /**
@@ -142,7 +111,7 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
      * that may contain lists inside
      *
      * @param resolver An instance of ResourceResolver
-     * @param parent {@code Resource} instance used as the source of markup
+     * @param parent   {@code Resource} instance used as the source of markup
      * @return a list of {@link Resource}s
      */
     private List<Resource> getValidChildren(ResourceResolver resolver, Resource parent) {
@@ -193,5 +162,36 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
     private static SlingScriptHelper getScriptHelper(ServletRequest request) {
         SlingBindings bindings = (SlingBindings) request.getAttribute(SlingBindings.class.getName());
         return bindings.getSling();
+    }
+
+    public class CustomAbstractDataSource extends AbstractDataSource {
+        private Iterator<Resource> resources;
+        private Integer offset;
+        private Integer limit;
+        private String itemResourceType;
+
+        private CustomAbstractDataSource(Iterator<Resource> resources, Integer offset, Integer limit, String itemResourceType) {
+            this.resources = resources;
+            this.offset = offset;
+            this.limit = limit;
+            this.itemResourceType = itemResourceType;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Iterator<Resource> iterator() {
+            Iterator<Resource> it = new PagingIterator<>(new FilterIterator<>(resources, o -> {
+                String name = ((Resource) o).getName();
+                return !name.startsWith(REP_PREFIX) && !name.equals(JcrConstants.JCR_CONTENT);
+            }), offset, limit);
+
+            return new TransformIterator(it, o -> new ResourceWrapper((Resource) o) {
+                @Nonnull
+                @Override
+                public String getResourceType() {
+                    return itemResourceType;
+                }
+            });
+        }
     }
 }
