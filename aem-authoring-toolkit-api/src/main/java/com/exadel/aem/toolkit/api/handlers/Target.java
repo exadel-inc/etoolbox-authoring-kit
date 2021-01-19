@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 
@@ -81,5 +82,5 @@ public interface Target {
 
     Source getSource();
 
-    Document buildXml(Document document);
+    Document buildXml() throws ParserConfigurationException;
 }

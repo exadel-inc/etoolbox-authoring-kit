@@ -126,8 +126,9 @@ abstract class PackageEntryWriter {
         Document document = rootElement.buildXml();
         writeCommonProperties(componentClass, getXmlScope(), document);
         if (XmlScope.CQ_DIALOG.equals(getXmlScope())) {
-            acceptLegacyHandlers(document.getDocumentElement(), componentClass);
+            processLegacyDialogHandlers(document.getDocumentElement(), componentClass);
         }
+
         return document;
     }
 
@@ -153,7 +154,7 @@ abstract class PackageEntryWriter {
         targets.forEach(target -> target.setAttribute(property.name(), property.value()));
     }
 
-    private static void acceptLegacyHandlers(Element element, Class<?> cls) {
+    private static void processLegacyDialogHandlers(Element element, Class<?> cls) {
         List<DialogAnnotation> customAnnotations = getCustomDialogAnnotations(cls);
         PluginRuntime.context().getReflectionUtility().getCustomDialogHandlers().stream()
             .filter(handler -> customAnnotations.stream()

@@ -26,17 +26,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.project.MavenProject;
-import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
@@ -45,6 +39,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.UnknownComponentException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.util.XmlDocumentFactory;
 
 /**
  * Implements actions needed to store collected/processed data into AEM package, optimal for use in "try-with-resources" block
@@ -54,24 +49,14 @@ public class PackageWriter implements AutoCloseable {
     private static final String FILESYSTEM_PREFIX = "jar:";
     private static final Map<String, String> FILESYSTEM_OPTIONS = Collections.singletonMap("create", "true");
 
-    /**
-     * Security features as per XML External entity protection cheat sheet
-     * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html">here</a>
-     */
-    private static final Map<String, Boolean> DOCUMENT_BUILDER_FACTORY_SECURITY_FEATURES = ImmutableMap.of(
-            "http://apache.org/xml/features/disallow-doctype-decl", true,
-            "http://xml.org/sax/features/external-general-entities", false,
-            "http://xml.org/sax/features/external-parameter-entities", false,
-            "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-
     private static final String INVALID_PROJECT_EXCEPTION_MESSAGE = "Invalid project";
     private static final String COMPONENT_PATH_MISSING_EXCEPTION_MESSAGE = "Component path missing for project ";
     private static final String COMPONENT_NAME_MISSING_EXCEPTION_MESSAGE = "Component name missing in @Dialog annotation for class ";
     private static final String CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE = "Cannot write to package ";
 
-    private String componentsBasePath;
-    private FileSystem fileSystem;
-    private List<PackageEntryWriter> writers;
+    private final String componentsBasePath;
+    private final FileSystem fileSystem;
+    private final List<PackageEntryWriter> writers;
 
     private PackageWriter(FileSystem fileSystem, String componentsBasePath, List<PackageEntryWriter> writers) {
         this.fileSystem = fileSystem;
@@ -147,7 +132,7 @@ public class PackageWriter implements AutoCloseable {
     private static PackageWriter forFileSystem(String projectName, FileSystem fileSystem, String componentsBasePath) {
         List<PackageEntryWriter> writers;
         try {
-            Transformer transformer = createTransformer();
+            Transformer transformer = XmlDocumentFactory.newDocumentTransformer();
             writers = Arrays.asList(
                     new ContentXmlWriter(transformer),
                     new CqDialogWriter(transformer, XmlScope.CQ_DIALOG),
@@ -157,40 +142,10 @@ public class PackageWriter implements AutoCloseable {
                     new CqHtmlTagWriter(transformer)
             );
         } catch (TransformerConfigurationException e) {
-            // exceptions caught here are due to possible XXE security vulnerabilities, so no further handling
+            // Exceptions caught here are due to possible XXE security vulnerabilities, so no further handling
             throw new PluginException(CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE + projectName, e);
         }
         return new PackageWriter(fileSystem, componentsBasePath, writers);
-    }
-
-    /**
-     * Creates an XML {@code DocumentBuilder} with specific XML security features set for this writer to generate DOM  trees for data storage
-     * @return {@link DocumentBuilder} instance
-     * @throws ParserConfigurationException in case security feature cannot be set
-     */
-    static DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        for(Map.Entry<String, Boolean> feature : DOCUMENT_BUILDER_FACTORY_SECURITY_FEATURES.entrySet()) {
-            dbf.setFeature(feature.getKey(), feature.getValue());
-        }
-        dbf.setXIncludeAware(false);
-        dbf.setExpandEntityReferences(false);
-        return dbf.newDocumentBuilder();
-    }
-
-    /**
-     * Creates an XML {@code DocumentBuilder} with specific XML security attributes set for this writer to output ready XML
-     * structures
-     * @return {@link Transformer} instance
-     * @throws TransformerConfigurationException in case security attributes cannot be set
-     */
-    static Transformer createTransformer() throws TransformerConfigurationException {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-        return transformerFactory.newTransformer();
     }
 
     private static String getComponentPath(Class<?> componentClass) {

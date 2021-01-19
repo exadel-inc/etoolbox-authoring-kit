@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.plugin.util.XmlDocumentFactory;
 
 public class TestXmlWriterHelper {
     private static final Logger LOG = LoggerFactory.getLogger(TestXmlWriterHelper.class);
@@ -45,7 +46,7 @@ public class TestXmlWriterHelper {
     }
 
     public static boolean doTest(String testedClass, Path pathToExpectedFiles) throws ClassNotFoundException {
-        Class dialogClass = Class.forName(testedClass);
+        Class<?> dialogClass = Class.forName(testedClass);
         List<PackageEntryWriter> writers = getWriters();
 
         Map<String, String> actualFiles = getActualFiles(dialogClass, writers);
@@ -59,7 +60,7 @@ public class TestXmlWriterHelper {
     private static List<PackageEntryWriter> getWriters() {
         List<PackageEntryWriter> writers = new ArrayList<>();
         try {
-            Transformer transformer = PackageWriter.createTransformer();
+            Transformer transformer = XmlDocumentFactory.newDocumentTransformer();
             writers.add(new ContentXmlWriter(transformer));
             writers.add(new CqDialogWriter(transformer, XmlScope.CQ_DIALOG));
             writers.add(new CqDialogWriter(transformer, XmlScope.CQ_DESIGN_DIALOG));

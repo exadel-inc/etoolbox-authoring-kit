@@ -30,6 +30,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +48,7 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.XmlAttributeSettingHelper;
+import com.exadel.aem.toolkit.plugin.util.XmlDocumentFactory;
 
 public class TargetImpl implements Target {
 
@@ -259,7 +261,8 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public Document buildXml(Document document) {
+    public Document buildXml() throws ParserConfigurationException {
+        Document document = XmlDocumentFactory.newDocument();
         return PluginXmlUtility.buildXml(this, document);
     }
 
