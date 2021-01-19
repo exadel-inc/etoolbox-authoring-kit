@@ -36,18 +36,18 @@ public abstract class SourceBase implements Source {
     }
 
     @Override
-    public <T> T adaptTo(Class<T> target) {
-        if (target == null) {
+    public <T> T adaptTo(Class<T> adaptation) {
+        if (adaptation == null) {
             return null;
         }
-        if (target.isAnnotation()) {
-            return target.cast(getDeclaredAnnotation((Class<? extends Annotation>) target));
+        if (adaptation.isAnnotation()) {
+            return adaptation.cast(getDeclaredAnnotation((Class<? extends Annotation>) adaptation));
         }
-        if (target.isArray()) {
-            if (target.getComponentType().equals(Annotation.class)) {
-                return target.cast(getDeclaredAnnotations());
+        if (adaptation.isArray()) {
+            if (adaptation.getComponentType().equals(Annotation.class)) {
+                return adaptation.cast(getDeclaredAnnotations());
             } else {
-                return target.cast(getAnnotationsByType((Class<? extends Annotation>) target.getComponentType()));
+                return adaptation.cast(getAnnotationsByType((Class<? extends Annotation>) adaptation.getComponentType()));
             }
         }
         return null;

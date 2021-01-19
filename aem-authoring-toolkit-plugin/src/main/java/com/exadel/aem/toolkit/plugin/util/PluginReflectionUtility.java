@@ -284,13 +284,14 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Retrieves annotations of a {@code Field} instance as a sequential {@code Stream}
+     * Retrieves collection of annotations associated with a {@code Source} instance
      * @param source The source to analyze
-     * @return Stream of annotation objects,
+     * @return {@code List} of annotation objects
      */
-    public static Stream<Class<? extends Annotation>> getFieldAnnotations(Source source){
+    public static List<Class<? extends Annotation>> getFieldAnnotations(Source source) {
         return Arrays.stream(source.adaptTo(Annotation[].class))
-                .map(Annotation::annotationType);
+                .map(Annotation::annotationType)
+                .collect(Collectors.toList());
     }
 
     public static List<Source> getAllSourceFacades(Class<?> targetClass, List<Predicate<Member>> predicates) {

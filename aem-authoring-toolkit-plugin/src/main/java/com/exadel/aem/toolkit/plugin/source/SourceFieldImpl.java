@@ -49,11 +49,11 @@ public class SourceFieldImpl extends SourceBase {
     }
 
     @Override
-    public <T> T adaptTo(Class<T> target) {
-        if (target.equals(Field.class)) {
-            return target.cast(field);
+    public <T> T adaptTo(Class<T> adaptation) {
+        if (adaptation.equals(Field.class)) {
+            return adaptation.cast(field);
         }
-        return super.adaptTo(target);
+        return super.adaptTo(adaptation);
     }
 
     private Class<?> getGenericType(Class<?> defaultValue) {
