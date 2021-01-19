@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.NamingUtil;
+import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 /**
@@ -70,8 +70,8 @@ public class DependsOnTabHandler implements BiConsumer<Class<?>, Target> {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(DependsOnHandler.EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
         }
-        if (target.hasChild(TAB_ITEMS_NODE_PATH + "/" + NamingUtil.getValidName(value.tabTitle()))) {
-            PluginXmlUtility.appendDataAttributes(target.get(TAB_ITEMS_NODE_PATH + "/" + NamingUtil.getValidName(value.tabTitle())), ImmutableMap.of(
+        if (target.hasChild(TAB_ITEMS_NODE_PATH + "/" + PluginNamingUtility.getValidName(value.tabTitle()))) {
+            PluginXmlUtility.appendDataAttributes(target.get(TAB_ITEMS_NODE_PATH + "/" + PluginNamingUtility.getValidName(value.tabTitle())), ImmutableMap.of(
                     DialogConstants.PN_DEPENDS_ON, value.query(),
                     DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
             ));

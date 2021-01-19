@@ -79,8 +79,6 @@ public class PluginXmlUtility implements XmlUtility {
     public static final String ATTRIBUTE_LIST_SURROUND = "[]";
     public static final Pattern ATTRIBUTE_LIST_PATTERN = Pattern.compile("^\\[.+]$");
 
-    private static final String PREFIX_GET = "get";
-
     /**
      * Default routine to manage merging two values of an XML attribute by suppressing existing value with a non-empty new one
      */
@@ -172,22 +170,22 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public String getValidName(String name) {
-        return NamingUtil.getValidName(name, DialogConstants.NN_ITEM);
+        return PluginNamingUtility.getValidName(name, DialogConstants.NN_ITEM);
     }
 
     @Override
     public String getValidSimpleName(String name) {
-        return NamingUtil.getValidName(name, DialogConstants.NN_ITEM);
+        return PluginNamingUtility.getValidName(name, DialogConstants.NN_ITEM);
     }
 
     @Override
     public String getValidFieldName(String name) {
-        return NamingUtil.getValidName(name, DialogConstants.NN_FIELD);
+        return PluginNamingUtility.getValidName(name, DialogConstants.NN_FIELD);
     }
 
     @Override
     public String getUniqueName(String name, String defaultValue, Element context) {
-        return NamingUtil.getUniqueName(name, defaultValue, context);
+        return PluginNamingUtility.getUniqueName(name, defaultValue, context);
     }
 
     @Override
@@ -614,13 +612,6 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
 
-    public static String deleteGetFromName(String name) {
-        if (StringUtils.startsWith(name, PREFIX_GET)) {
-            return Character.toLowerCase(name.charAt(3)) + name.substring(4);
-        }
-        return name;
-    }
-
     public static void appendDataAttributes(Target target, Data[] data) {
         if (ArrayUtils.isEmpty(data)) {
             return;
@@ -701,7 +692,7 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     private static Element populateDocument(Target target, Document document) {
-        String name = NamingUtil.getValidName(target.getName());
+        String name = PluginNamingUtility.getValidName(target.getName());
         Element tmp = document.createElement(name);
         mapProperties(target, tmp);
         acceptLegacyHandlers(target, tmp);

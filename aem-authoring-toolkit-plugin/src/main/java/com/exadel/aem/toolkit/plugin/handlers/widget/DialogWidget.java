@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.plugin.handlers.widget.common.InheritanceHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.MultipleHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.PropertyHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.PropertyMappingHandler;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
+import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
 /**
  * Represents an abstraction of a built-in or a custom dialog widget that has a widget annotation attached.
@@ -67,7 +67,7 @@ public interface DialogWidget {
      * @return Populated {@link Target} by the current {@link Source}
      */
     default Target appendTo(Source source, Target target, String name) {
-        Target widgetChildElement = target.getOrCreate(PluginXmlUtility.deleteGetFromName(name));
+        Target widgetChildElement = target.getOrCreate(PluginNamingUtility.stripGetterPrefix(name));
         getHandlerChain().accept(source, widgetChildElement);
         return widgetChildElement;
     }

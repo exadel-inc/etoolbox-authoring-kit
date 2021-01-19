@@ -52,7 +52,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.SourceBase;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.NamingUtil;
+import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginObjectPredicates;
 import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
@@ -73,7 +73,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param defaultContainerItemName {@link String} name of current container containerItem
      */
     private static void appendContainerSection(List<Source> fields, Target containerElement, ContainerInfo containerItem, String defaultContainerItemName) {
-        String nodeName = NamingUtil.getUniqueName(containerItem.getTitle(), defaultContainerItemName, containerElement);
+        String nodeName = PluginNamingUtility.getUniqueName(containerItem.getTitle(), defaultContainerItemName, containerElement);
         Target containerItemElement = containerElement.create(nodeName)
             .attribute(JcrConstants.PN_TITLE, containerItem.getTitle())
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);

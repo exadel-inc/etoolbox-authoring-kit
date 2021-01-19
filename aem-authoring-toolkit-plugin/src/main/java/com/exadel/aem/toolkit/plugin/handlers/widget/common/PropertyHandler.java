@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.util.NamingUtil;
+import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
 public class PropertyHandler implements BiConsumer<Source, Target> {
 
@@ -24,6 +24,6 @@ public class PropertyHandler implements BiConsumer<Source, Target> {
     private void acceptProperty(Property property, Target target) {
         List<String> list = Pattern.compile("/").splitAsStream(property.name()).collect(Collectors.toList());
         String propertyName = list.remove(list.size() - 1);
-        target.getOrCreate(String.join(StringUtils.EMPTY, list)).attribute(NamingUtil.getValidFieldName(propertyName), property.value());
+        target.getOrCreate(String.join(StringUtils.EMPTY, list)).attribute(PluginNamingUtility.getValidFieldName(propertyName), property.value());
     }
 }

@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.plugin.handlers.widget.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.SourceBase;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.NamingUtil;
+import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
 /**
  * {@code BiConsumer<EditConfig, Target>} implementation for storing {@link InplaceEditingConfig} arguments to {@code cq:editConfig} XML node
@@ -126,7 +126,7 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
      * @return Converted standard-compliant name
      */
     private String getValidPropertyName(String rawName) {
-        String propertyName = NamingUtil.getValidFieldName(rawName);
+        String propertyName = PluginNamingUtility.getValidFieldName(rawName);
         if (propertyName.startsWith(DialogConstants.PARENT_PATH_PREFIX)) {
             return propertyName;
         }

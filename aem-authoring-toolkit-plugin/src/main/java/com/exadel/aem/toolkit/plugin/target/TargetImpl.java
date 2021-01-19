@@ -44,7 +44,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.NamingUtil;
+import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.XmlAttributeSettingHelper;
 
@@ -83,7 +83,7 @@ public class TargetImpl implements Target {
 
     @Override
     public Target create(String name) {
-        return create(() -> NamingUtil.getUniqueName(name, "item", this));
+        return create(() -> PluginNamingUtility.getUniqueName(name, "item", this));
     }
 
     @Override

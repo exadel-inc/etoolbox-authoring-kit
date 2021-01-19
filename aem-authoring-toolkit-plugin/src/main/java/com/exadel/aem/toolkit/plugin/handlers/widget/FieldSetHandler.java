@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.NamingUtil;
+import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlContainerUtility;
 
 /**
@@ -53,7 +53,7 @@ class FieldSetHandler implements WidgetSetHandler {
         }
 
         if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
-            target.prefix(NamingUtil.getValidFieldName(fieldSet.namePrefix()))
+            target.prefix(PluginNamingUtility.getValidFieldName(fieldSet.namePrefix()))
                 .postfix(fieldSet.namePostfix());
         }
         // append the valid sources to the container

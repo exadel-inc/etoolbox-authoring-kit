@@ -19,7 +19,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Password;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.NamingUtil;
+import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for {@code Password} widget functionality
@@ -37,7 +37,7 @@ class PasswordHandler implements BiConsumer<Source, Target> {
         if(!password.retype().isEmpty()) {
             target.attribute(DialogConstants.PN_RETYPE,
                     DialogConstants.RELATIVE_PATH_PREFIX + target.getPrefix() +
-                            NamingUtil.getValidFieldName(password.retype()) +
+                            PluginNamingUtility.getValidFieldName(password.retype()) +
                             target.getPostfix());
         }
     }

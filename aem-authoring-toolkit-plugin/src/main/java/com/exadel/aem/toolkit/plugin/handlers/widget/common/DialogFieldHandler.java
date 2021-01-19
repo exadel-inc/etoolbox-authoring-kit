@@ -23,8 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.NamingUtil;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
+import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
 /**
  * Handler for storing {@link DialogField} properties to a Granite UI widget node
@@ -44,10 +43,10 @@ public class DialogFieldHandler implements BiConsumer<Source, Target> {
         if (dialogField == null) {
             return;
         }
-        String name = PluginXmlUtility.deleteGetFromName(source.getName());
+        String name = PluginNamingUtility.stripGetterPrefix(source.getName());
         if (StringUtils.isNotBlank(dialogField.name())) {
             name = !DialogConstants.PATH_SEPARATOR.equals(dialogField.name()) && !DialogConstants.RELATIVE_PATH_PREFIX.equals(dialogField.name())
-                ? NamingUtil.getValidFieldName(dialogField.name())
+                ? PluginNamingUtility.getValidFieldName(dialogField.name())
                 : DialogConstants.RELATIVE_PATH_PREFIX;
         }
         String prefix = target.getPrefix();
