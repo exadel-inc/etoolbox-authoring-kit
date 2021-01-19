@@ -703,16 +703,16 @@ public class PluginXmlUtility implements XmlUtility {
     private static Element populateDocument(Target target, Document document) {
         String name = NamingUtil.getValidName(target.getName());
         Element tmp = document.createElement(name);
-        acceptLegacyHandlers(target, tmp);
         mapProperties(target, tmp);
-        target.listChildren().forEach(child -> tmp.appendChild(populateDocument(child, document)));
+        acceptLegacyHandlers(target, tmp);
+        target.getChildren().forEach(child -> tmp.appendChild(populateDocument(child, document)));
         return tmp;
     }
 
     private static void mapProperties(Target target, Element element) {
-        target.deleteAttribute(DialogConstants.PN_PREFIX);
-        target.deleteAttribute(DialogConstants.PN_POSTFIX);
-        for (Map.Entry<String, String> entry : target.getValueMap().entrySet()) {
+        target.getAttributes().remove(DialogConstants.PN_PREFIX);
+        target.getAttributes().remove(DialogConstants.PN_POSTFIX);
+        for (Map.Entry<String, String> entry : target.getAttributes().entrySet()) {
             element.setAttribute(entry.getKey(), entry.getValue());
         }
     }

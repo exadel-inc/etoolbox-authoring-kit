@@ -50,7 +50,7 @@ public class XmlAttributeSettingHelper<T> {
     private static final String STRING_ESCAPE = "\\";
     private static final String REFLECTION_EXCEPTION_MESSAGE_TEMPLATE = "Error accessing property '%s' of @%s";
 
-    private Class<T> valueType;
+    private final Class<T> valueType;
     private boolean valueTypeIsSupported;
 
     private Annotation annotation;
@@ -205,7 +205,7 @@ public class XmlAttributeSettingHelper<T> {
         String stringifiedValue = value != null ? value.toString() : StringUtils.EMPTY;
 
         if (!isValid(stringifiedValue)) {
-            element.deleteAttribute(name);
+            element.getAttributes().remove(name);
             return;
         }
 
@@ -242,9 +242,7 @@ public class XmlAttributeSettingHelper<T> {
      * @param value String to store as the attribute
      */
     private void setAttribute(Target element, String value) {
-        String oldAttributeValue = element.hasAttribute(name)
-                ? element.getAttribute(name, String.class)
-                : "";
+        String oldAttributeValue = element.getAttributes().getOrDefault(name, StringUtils.EMPTY);
         element.attribute(name, valueMerger.apply(oldAttributeValue, value));
     }
 

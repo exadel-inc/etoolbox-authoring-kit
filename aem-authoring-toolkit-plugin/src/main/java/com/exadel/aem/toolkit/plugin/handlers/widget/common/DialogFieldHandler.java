@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.plugin.handlers.widget.common;
 
 import java.util.function.BiConsumer;
@@ -51,7 +52,7 @@ public class DialogFieldHandler implements BiConsumer<Source, Target> {
         }
         String prefix = target.getPrefix();
 
-        if (!ResourceTypes.MULTIFIELD.equals(target.get(PATH_TO_MULTIFIELD_ROOT).getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, String.class))) {
+        if (!ResourceTypes.MULTIFIELD.equals(target.get(PATH_TO_MULTIFIELD_ROOT).getAttributes().get(DialogConstants.PN_SLING_RESOURCE_TYPE))) {
             prefix = DialogConstants.RELATIVE_PATH_PREFIX + prefix;
         }
 

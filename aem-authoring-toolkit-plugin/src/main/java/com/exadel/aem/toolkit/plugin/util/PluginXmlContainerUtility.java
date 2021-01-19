@@ -60,7 +60,7 @@ public class PluginXmlContainerUtility {
             managedFields.put(source, newElement.getName());
         }
 
-        if (!container.listChildren().isEmpty()) {
+        if (!container.getChildren().isEmpty()) {
             checkForDuplicateFields(itemsElement, managedFields);
         }
     }
@@ -73,7 +73,7 @@ public class PluginXmlContainerUtility {
      * @param managedFields {@code Map<Field, String>} that matches rendered fields to corresponding element names
      */
     private static void checkForDuplicateFields(Target container, Map<Source, String> managedFields) {
-        List<String> childElementsTagNames = container.listChildren().stream()
+        List<String> childElementsTagNames = container.getChildren().stream()
                 .map(Target::getName)
                 .collect(Collectors.toList());
         if (childElementsTagNames.size() == new HashSet<>(childElementsTagNames).size()) {

@@ -338,13 +338,13 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
     }
 
     private boolean isEmpty(Target target) {
-        return target.getValueMap().size() == 1 &&
-            target.getValueMap().containsKey(DialogConstants.PN_PRIMARY_TYPE) &&
-            target.listChildren().isEmpty();
+        return target.getAttributes().size() == 1 &&
+            target.getAttributes().containsKey(DialogConstants.PN_PRIMARY_TYPE) &&
+            target.getChildren().isEmpty();
     }
 
     private void clearEmpty(Target target) {
-        target.listChildren().forEach(this::clearEmpty);
-        target.listChildren().removeIf(this::isEmpty);
+        target.getChildren().forEach(this::clearEmpty);
+        target.getChildren().removeIf(this::isEmpty);
     }
 }

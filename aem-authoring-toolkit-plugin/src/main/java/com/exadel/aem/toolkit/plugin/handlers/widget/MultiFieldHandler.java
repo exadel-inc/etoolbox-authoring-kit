@@ -41,8 +41,8 @@ public class MultiFieldHandler implements WidgetSetHandler {
         Class<?> multifieldType = source.getContainerClass();
 
         // Modify the targetFacade's attributes for multifield mode
-        String name = target.getAttribute(DialogConstants.PN_NAME, String.class);
-        target.deleteAttribute(DialogConstants.PN_NAME);
+        String name = target.getAttributes().get(DialogConstants.PN_NAME);
+        target.getAttributes().remove(DialogConstants.PN_NAME);
 
         // Get the filtered members collection for the current container; early return if collection is empty
         List<Source> members = getContainerSource(source, multifieldType);

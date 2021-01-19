@@ -67,21 +67,15 @@ public interface Target {
 
     void delete();
 
-    void deleteAttribute(String name);
+    Map<String, String> getAttributes();
 
-    boolean hasAttribute(String name);
-
-    List<Target> listChildren();
+    List<Target> getChildren();
 
     String getName();
 
     Target parent();
 
-    <T> T getAttribute(String name, Class<T> tClass);
-
-    boolean hasChild(String relPath);
-
-    Map<String, String> getValueMap();
+    boolean hasChild(String path);
 
     void setSource(Source source);
 

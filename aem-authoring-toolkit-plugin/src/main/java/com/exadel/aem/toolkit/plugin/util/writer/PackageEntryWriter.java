@@ -122,11 +122,13 @@ abstract class PackageEntryWriter {
     private Document createDomDocument(Class<?> componentClass) throws ParserConfigurationException {
         Target rootElement = new TargetImpl(DialogConstants.NN_ROOT, null);
         Document document = PackageWriter.createDocumentBuilder().newDocument();
-        PluginRuntime.context().getXmlUtility().setDocument(document);
+        PluginRuntime.context().getXmlUtility().setDocument(document); // this one needed for legacy handlers to work properly
         populateDomDocument(componentClass, rootElement);
         document = rootElement.buildXml(document);
         writeCommonProperties(componentClass, getXmlScope(), document);
-        if (XmlScope.CQ_DIALOG.equals(getXmlScope())) acceptLegacyHandlers(document.getDocumentElement(), componentClass);
+        if (XmlScope.CQ_DIALOG.equals(getXmlScope())) {
+            acceptLegacyHandlers(document.getDocumentElement(), componentClass);
+        }
         return document;
     }
 

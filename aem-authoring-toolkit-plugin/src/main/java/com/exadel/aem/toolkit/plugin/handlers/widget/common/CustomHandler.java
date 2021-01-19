@@ -43,10 +43,10 @@ public class CustomHandler implements BiConsumer<Source, Target> {
             .getCustomDialogWidgetHandlers(PluginReflectionUtility.getFieldAnnotations(source).collect(Collectors.toList()))
             .forEach(handler -> handler.accept(source, target));
 
-        acceptLegacyHandlers(source, target);
+        processLegacyHandlers(source, target);
     }
 
-    private void acceptLegacyHandlers(Source source, Target target) {
+    private void processLegacyHandlers(Source source, Target target) {
         if (PluginReflectionUtility.getFieldAnnotations(source).anyMatch(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))) {
             target.setSource(source);
         }
