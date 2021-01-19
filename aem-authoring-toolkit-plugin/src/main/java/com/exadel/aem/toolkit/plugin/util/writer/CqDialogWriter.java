@@ -100,7 +100,7 @@ class CqDialogWriter extends PackageEntryWriter {
         DialogLayout dialogLayout = getLayout(dialog);
         DialogContainer.getContainer(dialogLayout).build(componentClass, target);
 
-        new DependsOnTabHandler().accept(target, componentClass);
+        new DependsOnTabHandler().accept(componentClass, target);
         if (!classHasCustomDialogAnnotation(componentClass)) {
             return;
         }

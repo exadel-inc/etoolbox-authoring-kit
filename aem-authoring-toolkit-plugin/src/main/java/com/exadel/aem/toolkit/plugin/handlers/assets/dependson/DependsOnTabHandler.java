@@ -34,7 +34,7 @@ import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
  */
-public class DependsOnTabHandler implements BiConsumer<Target, Class<?>> {
+public class DependsOnTabHandler implements BiConsumer<Class<?>, Target> {
 
     private static final String TAB_ITEMS_NODE_PATH = String.join(DialogConstants.PATH_SEPARATOR,
         DialogConstants.NN_CONTENT,
@@ -48,7 +48,7 @@ public class DependsOnTabHandler implements BiConsumer<Target, Class<?>> {
      * @param dialogClass {@code Class} object representing the tab-defining class
      */
     @Override
-    public void accept(Target target, Class<?> dialogClass) {
+    public void accept(Class<?> dialogClass, Target target) {
         if (dialogClass.isAnnotationPresent(DependsOnTab.class)) {
             handleDependsOnTab(dialogClass.getDeclaredAnnotation(DependsOnTab.class), target);
         } else if (dialogClass.isAnnotationPresent(DependsOnTabConfig.class)) {
@@ -57,7 +57,7 @@ public class DependsOnTabHandler implements BiConsumer<Target, Class<?>> {
     }
 
     /**
-     * Called by {@link DependsOnTabHandler#accept(Target, Class)} to store particular {@code DependsOnTab} value
+     * Called by {@link DependsOnTabHandler#accept(Class, Target)} to store particular {@code DependsOnTab} value
      * in XML markup
      * @param value Current {@link DependsOnTab} value
      * @param target Current {@link Target} instance
@@ -82,7 +82,7 @@ public class DependsOnTabHandler implements BiConsumer<Target, Class<?>> {
     }
 
     /**
-     * Called by {@link DependsOnTabHandler#accept(Target, Class)} to store particular {@code DependsOnTab} value
+     * Called by {@link DependsOnTabHandler#accept(Class, Target)} to store particular {@code DependsOnTab} value
      * in XML markup
      * @param value Current {@link DependsOnTabConfig} value
      * @param target Current {@link Target} instance
