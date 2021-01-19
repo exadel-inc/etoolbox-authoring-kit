@@ -80,7 +80,7 @@ class CqDialogWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Target)} abstract method to write down contents
+     * Overrides {@link PackageEntryWriter#populateTarget(Class, Target)} abstract method to write down contents
      * of {@code _cq_dialog.xml} file. To the targetFacade node, several XML building routines are applied in sequence: the predefined
      * dialog container builder, the common properties writer, {@code DependsOn} handlers and any {@code CustomHandler}s defined for
      * this component class
@@ -89,7 +89,7 @@ class CqDialogWriter extends PackageEntryWriter {
      * @param target   The targetFacade element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateDomDocument(Class<?> componentClass, Target target) {
+    void populateTarget(Class<?> componentClass, Target target) {
         Annotation dialog = XmlScope.CQ_DIALOG.equals(scope)
             ? componentClass.getDeclaredAnnotation(Dialog.class)
             : componentClass.getDeclaredAnnotation(DesignDialog.class);

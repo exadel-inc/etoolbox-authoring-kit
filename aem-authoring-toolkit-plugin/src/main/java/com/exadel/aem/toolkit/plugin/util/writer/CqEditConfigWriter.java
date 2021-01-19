@@ -58,13 +58,13 @@ class CqEditConfigWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateDomDocument(Class, Target)} abstract method to write down contents
+     * Overrides {@link PackageEntryWriter#populateTarget(Class, Target)} abstract method to write down contents
      * of {@code _cq_editConfig.xml} file
      * @param componentClass The {@code Class} being processed
      * @param root The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateDomDocument(Class<?> componentClass, Target root) {
+    void populateTarget(Class<?> componentClass, Target root) {
         EditConfig editConfig = componentClass.getDeclaredAnnotation(EditConfig.class);
         root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
             .scope(getXmlScope());

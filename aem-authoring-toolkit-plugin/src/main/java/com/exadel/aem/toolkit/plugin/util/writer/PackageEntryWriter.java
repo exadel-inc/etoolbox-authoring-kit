@@ -112,7 +112,7 @@ abstract class PackageEntryWriter {
      * @param componentClass The {@code Class} being processed
      * @param target The targetFacade element of DOM {@link Document} to feed data to
      */
-    abstract void populateDomDocument(Class<?> componentClass, Target target);
+    abstract void populateTarget(Class<?> componentClass, Target target);
 
     /**
      * Wraps DOM document creating with use of a {@link DocumentBuilder} and populating it with data
@@ -121,10 +121,9 @@ abstract class PackageEntryWriter {
      */
     private Document createDomDocument(Class<?> componentClass) throws ParserConfigurationException {
         Target rootElement = new TargetImpl(DialogConstants.NN_ROOT, null);
-        Document document = PackageWriter.createDocumentBuilder().newDocument();
-        PluginRuntime.context().getXmlUtility().setDocument(document); // this one needed for legacy handlers to work properly
-        populateDomDocument(componentClass, rootElement);
-        document = rootElement.buildXml(document);
+        populateTarget(componentClass, rootElement);
+
+        Document document = rootElement.buildXml();
         writeCommonProperties(componentClass, getXmlScope(), document);
         if (XmlScope.CQ_DIALOG.equals(getXmlScope())) {
             acceptLegacyHandlers(document.getDocumentElement(), componentClass);
