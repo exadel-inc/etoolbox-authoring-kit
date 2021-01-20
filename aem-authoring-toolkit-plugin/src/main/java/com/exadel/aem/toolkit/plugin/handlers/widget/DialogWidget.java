@@ -20,14 +20,14 @@ import java.util.function.BiConsumer;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.AttributesHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.CustomHandlingsHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.DialogFieldHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.GenericPropertiesHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widget.common.AttributeAnnotationHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widget.common.CustomHandlingHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widget.common.DialogFieldAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.InheritanceHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.MultipleHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.PropertyHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widget.common.MultipleAnnotationHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widget.common.PropertyAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.PropertyMappingHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widget.common.ResourceTypeHandler;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
 /**
@@ -77,15 +77,15 @@ public interface DialogWidget {
      * @return {@code BiConsumer<Source, Target>} instance
      */
     default BiConsumer<Source, Target> getHandlerChain() {
-        BiConsumer<Source, Target> mainChain = new GenericPropertiesHandler()
+        BiConsumer<Source, Target> mainChain = new ResourceTypeHandler()
                 .andThen(new PropertyMappingHandler())
-                .andThen(new AttributesHandler())
-                .andThen(new DialogFieldHandler())
+                .andThen(new AttributeAnnotationHandler())
+                .andThen(new DialogFieldAnnotationHandler())
                 .andThen(getHandler())
                 .andThen(new DependsOnHandler())
-                .andThen(new CustomHandlingsHandler())
-                .andThen(new PropertyHandler())
-                .andThen(new MultipleHandler());
+                .andThen(new CustomHandlingHandler())
+                .andThen(new PropertyAnnotationHandler())
+                .andThen(new MultipleAnnotationHandler());
         return new InheritanceHandler(mainChain).andThen(mainChain);
     }
 }

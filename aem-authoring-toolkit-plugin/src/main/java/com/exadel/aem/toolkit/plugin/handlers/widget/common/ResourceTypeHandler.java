@@ -27,7 +27,7 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 /**
  * Handler for storing {@link ResourceType} and like properties to a Granite UI widget node
  */
-public class GenericPropertiesHandler implements BiConsumer<Source, Target> {
+public class ResourceTypeHandler implements BiConsumer<Source, Target> {
     private static final String RESTYPE_MISSING_EXCEPTION_MESSAGE = "@ResourceType is not present in ";
 
     /**

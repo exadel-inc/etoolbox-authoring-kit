@@ -23,15 +23,13 @@ import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 /**
  * Handler for storing {@link Attribute} properties to a Granite UI widget node
  */
-public class AttributesHandler implements BiConsumer<Source, Target> {
+public class AttributeAnnotationHandler implements BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to {@link Target}
      * @param source Current {@link Source} instance
      * @param target Current {@link Target} instance
      */
     @Override
-    @SuppressWarnings({"deprecation", "squid:S1874"})
-    // "clas" attribute processing remains for compatibility reasons until v.2.0.0
     public void accept(Source source, Target target) {
         Attribute attribute = source.adaptTo(Attribute.class);
         if (attribute == null) {

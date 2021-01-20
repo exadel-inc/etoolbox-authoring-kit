@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 /**
  * Handler for storing {@link DialogField} properties to a Granite UI widget node
  */
-public class DialogFieldHandler implements BiConsumer<Source, Target> {
+public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> {
 
     private static final String PATH_TO_MULTIFIELD_ROOT = "../../..";
 

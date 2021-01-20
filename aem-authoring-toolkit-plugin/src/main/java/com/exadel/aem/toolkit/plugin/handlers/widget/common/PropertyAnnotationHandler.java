@@ -13,7 +13,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
-public class PropertyHandler implements BiConsumer<Source, Target> {
+public class PropertyAnnotationHandler implements BiConsumer<Source, Target> {
 
     @Override
     public void accept(Source source, Target target) {

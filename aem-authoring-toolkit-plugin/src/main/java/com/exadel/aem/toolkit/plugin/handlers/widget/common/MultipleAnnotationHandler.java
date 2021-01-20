@@ -41,7 +41,7 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 /**
  * Handler for creating ad-hoc {@code Multifield}s for {@link Multiple}-marked dialog fields
  */
-public class MultipleHandler implements BiConsumer<Source, Target> {
+public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     private static final String PREFIX_GRANITE = "granite:*";
     private static final String POSTFIX_NESTED = "_nested";
 
