@@ -39,7 +39,7 @@ import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
  * Stores properties coming from custom annotations and, optionally, processed by custom handlers
  * to a Granite UI target
  */
-public class CustomHandler implements BiConsumer<Source, Target> {
+public class CustomHandlingsHandler implements BiConsumer<Source, Target> {
 
     /**
      * Processes the user-defined data and writes it to {@link Target}
@@ -59,12 +59,12 @@ public class CustomHandler implements BiConsumer<Source, Target> {
             .stream()
             .filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
             .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
-            .flatMap(CustomHandler::getMatchedHandlersByName)
+            .flatMap(CustomHandlingsHandler::getMatchedHandlersByName)
             .collect(Collectors.toList());
         handlers.addAll(sourceToNameMappingHandlers);
 
         // Extract legacy handlers that accept(Source, Target)
-        List<DialogWidgetHandler> legacyHandlers = handlers.stream().filter(CustomHandler::isLegacyHandler).collect(Collectors.toList());
+        List<DialogWidgetHandler> legacyHandlers = handlers.stream().filter(CustomHandlingsHandler::isLegacyHandler).collect(Collectors.toList());
         if (!legacyHandlers.isEmpty()) {
             Field field = source.adaptTo(Field.class);
             Element element = getElement(target);

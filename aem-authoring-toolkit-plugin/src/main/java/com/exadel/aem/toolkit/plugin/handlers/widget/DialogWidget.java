@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.AttributesHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.CustomHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widget.common.CustomHandlingsHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.DialogFieldHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.GenericPropertiesHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.InheritanceHandler;
@@ -83,7 +83,7 @@ public interface DialogWidget {
                 .andThen(new DialogFieldHandler())
                 .andThen(getHandler())
                 .andThen(new DependsOnHandler())
-                .andThen(new CustomHandler())
+                .andThen(new CustomHandlingsHandler())
                 .andThen(new PropertyHandler())
                 .andThen(new MultipleHandler());
         return new InheritanceHandler(mainChain).andThen(mainChain);
