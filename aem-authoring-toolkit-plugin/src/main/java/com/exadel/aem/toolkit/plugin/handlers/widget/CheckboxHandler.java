@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -41,7 +43,7 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
     public void accept(Source source, Target target) {
         Checkbox checkbox = source.adaptTo(Checkbox.class);
 
-        if (checkbox.sublist()[0] == Object.class) {
+        if (ArrayUtils.isEmpty(checkbox.sublist())) {
             target.mapProperties(checkbox);
             setTextAttribute(source, target);
         } else {
@@ -88,7 +90,7 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
                         .mapProperties(innerSource.adaptTo(Checkbox.class));
                 setTextAttribute(innerSource, checkboxElement);
 
-                if (innerSource.adaptTo(Checkbox.class).sublist()[0] != Object.class) {
+                if (ArrayUtils.isNotEmpty(innerSource.adaptTo(Checkbox.class).sublist())) {
                     appendNestedCheckBoxList(innerSource, checkboxElement);
                 }
             }

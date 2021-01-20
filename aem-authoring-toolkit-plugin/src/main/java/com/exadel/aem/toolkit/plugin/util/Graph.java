@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import com.exadel.aem.toolkit.api.markers._Default;
+
 /**
  * Implements topological sorting
  * List<Class<?>> nodes stores all existing Custom Handlers
@@ -31,13 +33,13 @@ class Graph {
      * @param y {@code Class<?>} Custom Handler y that comes after Custom Handler x
      */
     void addEdge(Class<?> x, Class<?> y) {
-        if (!x.equals(Object.class)) {
+        if (!x.equals(_Default.class)) {
             if (!edges.containsKey(x)) {
                 edgeList = new ArrayList<>();
             } else {
                 edgeList = edges.get(x);
             }
-            //check to prevent loops
+            // Check to prevent loops
             if (edges.containsKey(y)) {
                 ArrayList<Class<?>> edgeListY = edges.get(y);
                 if (!edgeListY.contains(x)) {

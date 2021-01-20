@@ -58,6 +58,7 @@ import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
 import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
@@ -70,6 +71,7 @@ import com.exadel.aem.toolkit.plugin.source.SourceBase;
  * are marked with
  */
 public class PluginReflectionUtility {
+
     private static final String PACKAGE_BASE_WILDCARD = ".*";
 
     private String packageBase;
@@ -457,7 +459,7 @@ public class PluginReflectionUtility {
         int i = 0;
         int k = 0;
         while (finalList.size() != list.size()) {
-            if (sortedList.get(k).equals(Object.class)) {
+            if (sortedList.get(k).equals(_Default.class)) {
                 k++;
             }
             if (list.get(i).getClass().equals(sortedList.get(k))) {

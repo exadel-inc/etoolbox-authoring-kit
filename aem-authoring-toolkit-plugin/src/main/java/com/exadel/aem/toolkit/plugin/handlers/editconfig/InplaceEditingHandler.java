@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.InheritanceHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.rte.RichTextEditorHandler;
@@ -156,7 +157,7 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
      * @return {@code Field} instance
      */
     private static Source getReferencedRteField(InplaceEditingConfig config) {
-        if (config.richText().value().equals(Object.class)
+        if (config.richText().value().equals(_Default.class)
                 && StringUtils.isBlank(config.richText().field())) {
             // richText attribute not specified, which is a valid case
             return null;
