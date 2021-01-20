@@ -14,7 +14,6 @@
 
 package com.exadel.aem.toolkit.plugin.util.writer;
 
-import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +21,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
@@ -75,7 +73,7 @@ abstract class PackageEntryWriter {
             }
             // then second we store the newly generated class
             writeXml(componentClass, writer);
-        } catch (IOException | ParserConfigurationException e) {
+        } catch (Exception e) {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
     }
@@ -85,7 +83,7 @@ abstract class PackageEntryWriter {
      * @param componentClass {@link Class} to analyze
      * @param writer {@link Writer} managing the data storage procedure
      */
-    void writeXml(Class<?> componentClass, Writer writer) throws ParserConfigurationException {
+    void writeXml(Class<?> componentClass, Writer writer) throws Exception {
         Document document = createDomDocument(componentClass);
         try {
              transformer.transform(new DOMSource(document), new StreamResult(writer));
@@ -119,13 +117,15 @@ abstract class PackageEntryWriter {
      * @param componentClass The {@code Class} being processed
      * @return {@link Document} created
      */
-    private Document createDomDocument(Class<?> componentClass) throws ParserConfigurationException {
+    private Document createDomDocument(Class<?> componentClass) throws Exception {
         Target rootElement = new TargetImpl(DialogConstants.NN_ROOT, null);
         populateTarget(componentClass, rootElement);
 
-        Document document = rootElement.buildXml();
+        Document document = rootElement.adaptTo(Document.class);
         writeCommonProperties(componentClass, getXmlScope(), document);
         if (XmlScope.CQ_DIALOG.equals(getXmlScope())) {
+            // This assignment is for legacy dialog handlers, will not interfere with modern handlers
+            PluginRuntime.context().getXmlUtility().setDocument(document);
             processLegacyDialogHandlers(document.getDocumentElement(), componentClass);
         }
 

@@ -19,9 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
@@ -80,5 +78,9 @@ public interface Target {
 
     boolean hasChild(String path);
 
-    Document buildXml() throws ParserConfigurationException;
+    <T> T adaptTo(Class<T> adaptation, Object context) throws Exception;
+
+    default <T> T adaptTo(Class<T> adaptation) throws Exception {
+        return adaptTo(adaptation, null);
+    }
 }

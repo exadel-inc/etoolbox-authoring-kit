@@ -31,7 +31,6 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +48,6 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.XmlAttributeSettingHelper;
-import com.exadel.aem.toolkit.plugin.util.XmlDocumentFactory;
 
 public class TargetImpl implements Target {
 
@@ -72,6 +70,8 @@ public class TargetImpl implements Target {
     private final List<Target> children;
 
     private String name;
+    private String prefix;
+    private String postfix;
     private XmlScope scope;
 
     public TargetImpl(String name, Target parent) {
@@ -197,13 +197,13 @@ public class TargetImpl implements Target {
 
     @Override
     public Target prefix(String prefix) {
-        this.attributes.put(DialogConstants.PN_PREFIX, prefix);
+        this.prefix = prefix;
         return this;
     }
 
     @Override
     public Target postfix(String postfix) {
-        this.attributes.put(DialogConstants.PN_POSTFIX, postfix);
+        this.postfix = postfix;
         return this;
     }
 
@@ -223,8 +223,7 @@ public class TargetImpl implements Target {
         if (this.parent == null) {
             return StringUtils.EMPTY;
         }
-        String prefix = this.attributes.getOrDefault(DialogConstants.PN_PREFIX, StringUtils.EMPTY) ;
-        return this.parent.getPrefix() + prefix;
+        return this.parent.getPrefix() + StringUtils.defaultString(this.prefix);
     }
 
     @Override
@@ -232,8 +231,7 @@ public class TargetImpl implements Target {
         if (this.parent == null) {
             return StringUtils.EMPTY;
         }
-        String postfix = this.attributes.getOrDefault(DialogConstants.PN_POSTFIX, StringUtils.EMPTY);
-        return postfix + this.parent.getPostfix();
+        return StringUtils.defaultString(this.postfix) + this.parent.getPostfix();
     }
 
     @Override
@@ -267,9 +265,13 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public Document buildXml() throws ParserConfigurationException {
-        Document document = XmlDocumentFactory.newDocument();
-        return PluginXmlUtility.buildXml(this, document);
+    public <T> T adaptTo(Class<T> adaptation, Object context) throws Exception {
+        if (Document.class.equals(adaptation)) {
+            return adaptation.cast(PluginXmlUtility.toDocument(this));
+        } else if (Element.class.equals(adaptation) && context instanceof Document) {
+            return adaptation.cast(PluginXmlUtility.toElement(this, (Document) context));
+        }
+        return null;
     }
 
     private void populateProperty(Method method, Target target, Annotation annotation) {

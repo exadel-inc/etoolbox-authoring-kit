@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -37,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.util.XmlDocumentFactory;
 
 public class TestXmlWriterHelper {
@@ -94,14 +94,17 @@ public class TestXmlWriterHelper {
                 }
                 packageEntryWriter.writeXml(processedClasses.get(0), stringWriter);
                 actualFiles.put(packageEntryWriter.getXmlScope().toString(), stringWriter.toString());
-            } catch (IOException | ParserConfigurationException ex) {
-                LOG.error("Could not implement test writer", ex);
+            } catch (PluginException pe) {
+                // Deliberately re-throwing to distinguish from an unanticipated exception (needed for exceptions testcases)
+                throw pe;
+            } catch (Exception e) {
+                LOG.error("Could not implement test writer", e);
             }
         });
         return actualFiles;
     }
 
-    private static void writeContent(PackageEntryWriter writer, StringWriter stringWriter, List<Class<?>> views) throws IOException, ParserConfigurationException {
+    private static void writeContent(PackageEntryWriter writer, StringWriter stringWriter, List<Class<?>> views) throws Exception {
         List<Class<?>> processedClasses = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
         if (processedClasses.size() > 2) {
             throw new IOException();
