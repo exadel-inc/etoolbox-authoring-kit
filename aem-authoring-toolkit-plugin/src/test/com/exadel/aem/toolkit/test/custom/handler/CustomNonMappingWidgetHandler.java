@@ -14,16 +14,15 @@
 
 package com.exadel.aem.toolkit.test.custom.handler;
 
+import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomNonMappingWidgetAnnotation;
 
-import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
-import com.exadel.aem.toolkit.api.handlers.Handles;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomProcessingAnnotation;
-
-@Handles(value = CustomProcessingAnnotation.class, before = CustomMultifieldHandler.class, after = CustomWidgetHandler.class)
+@HandlesWidgets(value = CustomNonMappingWidgetAnnotation.class)
 @SuppressWarnings("unused")
-public class CustomProcessingHandler implements DialogWidgetHandler {
+public class CustomNonMappingWidgetHandler implements DialogWidgetHandler {
 
     @Override
     public String getName() {

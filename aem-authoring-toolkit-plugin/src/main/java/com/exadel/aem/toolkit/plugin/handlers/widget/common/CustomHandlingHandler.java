@@ -82,6 +82,9 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
     }
 
     private static Stream<DialogWidgetHandler> getMatchedHandlersByName(String source) {
+        if (StringUtils.isEmpty(source)) {
+            return Stream.empty();
+        }
         return PluginRuntime.context()
             .getReflectionUtility()
             .getCustomDialogWidgetHandlers()

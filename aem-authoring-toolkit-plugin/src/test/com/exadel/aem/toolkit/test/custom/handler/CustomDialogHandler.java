@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
 
-@Handles(before = CustomProcessingHandler.class, after = CustomWidgetHandler.class, value = CustomDialogAnnotation.class)
+@Handles(before = CustomNonMappingWidgetHandler.class, after = CustomWidgetHandler.class, value = CustomDialogAnnotation.class)
 @SuppressWarnings("unused") // Used by AAT Plugin logic
 public class CustomDialogHandler implements DialogHandler {
 

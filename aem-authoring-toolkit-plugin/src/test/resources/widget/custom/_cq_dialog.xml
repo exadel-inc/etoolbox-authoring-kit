@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
           jcr:primaryType="nt:unstructured"
           jcr:title="test-component-dialog"
           sling:resourceType="cq/gui/components/authoring/dialog"
@@ -21,7 +24,7 @@
                     <testCustomAnnotation
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="test-components/form/customfield"
-                        customField="Custom!"
+                        customField="Overridden value"
                         customProcessing="turned on"
                         disabled="{Boolean}false"
                         name="./testCustomAnnotation"
@@ -30,11 +33,20 @@
                     <testCustomAnnotationDefault
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                        customField="Custom annotation's field!"
+                        customField="Non-overridden value"
                         disabled="{Boolean}false"
                         name="./testCustomAnnotationDefault"
                         renderHidden="{Boolean}false"
                         required="{Boolean}false"/>
+                    <testCustomAnnotationAuto
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="test-components/form/customfield"
+                        disabled="{Boolean}false"
+                        name="./testCustomAnnotationAuto"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false">
+                        <granite:data jcr:primaryType="nt:unstructured" cq:custom="Overridden value"/>
+                    </testCustomAnnotationAuto>
                     <testCustomAnnotationAutoDefault
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
@@ -42,6 +54,7 @@
                         name="./testCustomAnnotationAutoDefault"
                         renderHidden="{Boolean}false"
                         required="{Boolean}false">
+                        <granite:data jcr:primaryType="nt:unstructured" cq:custom="Non-overridden value"/>
                     </testCustomAnnotationAutoDefault>
                 </items>
             </column>

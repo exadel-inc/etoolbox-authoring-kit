@@ -31,5 +31,5 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 public @interface CustomWidgetAnnotation {
 
     @PropertyRendering(name = "custom")
-    String customField() default "Custom annotation's field!";
+    String customField() default "Non-overridden value";
 }
