@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.plugin.util;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +43,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import com.google.common.collect.ImmutableMap;
 
-import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
@@ -695,7 +693,6 @@ public class PluginXmlUtility implements XmlUtility {
         String name = PluginNamingUtility.getValidName(target.getName());
         Element tmp = document.createElement(name);
         mapProperties(target, tmp);
-        acceptLegacyHandlers(target, tmp);
         target.getChildren().forEach(child -> tmp.appendChild(populateDocument(child, document)));
         return tmp;
     }
@@ -705,20 +702,6 @@ public class PluginXmlUtility implements XmlUtility {
         target.getAttributes().remove(DialogConstants.PN_POSTFIX);
         for (Map.Entry<String, String> entry : target.getAttributes().entrySet()) {
             element.setAttribute(entry.getKey(), entry.getValue());
-        }
-    }
-
-    private static void acceptLegacyHandlers(Target target, Element element) {
-        if (target.getSource() != null) {
-            PluginReflectionUtility.getFieldAnnotations(target.getSource()).filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
-                .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
-                .flatMap(widgetSource -> PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers().stream()
-                    .filter(handler -> widgetSource.equals(handler.getName())))
-                .forEach(handler -> handler.accept(element, target.getSource().adaptTo(Field.class)));
-
-            PluginRuntime.context().getReflectionUtility()
-                .getCustomDialogWidgetHandlers(PluginReflectionUtility.getFieldAnnotations(target.getSource()).collect(Collectors.toList()))
-                .forEach(handler -> handler.accept(element, target.getSource().adaptTo(Field.class)));
         }
     }
 }

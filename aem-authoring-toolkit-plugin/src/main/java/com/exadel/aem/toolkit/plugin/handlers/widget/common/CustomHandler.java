@@ -13,10 +13,19 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widget.common;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.plexus.util.CollectionUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
@@ -27,10 +36,11 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
 /**
- * Handler for storing properties coming from custom annotations and, optionally, processed by custom handlers
- * to a Granite UI widget node
+ * Stores properties coming from custom annotations and, optionally, processed by custom handlers
+ * to a Granite UI target
  */
 public class CustomHandler implements BiConsumer<Source, Target> {
+
     /**
      * Processes the user-defined data and writes it to {@link Target}
      * @param source Current {@link Source} instance
@@ -38,29 +48,62 @@ public class CustomHandler implements BiConsumer<Source, Target> {
      */
     @Override
     public void accept(Source source, Target target) {
+        List<Class<? extends Annotation>> sourceAnnotations = PluginReflectionUtility.getSourceAnnotations(source);
+        List<DialogWidgetHandler> handlers;
 
-        PluginRuntime.context().getReflectionUtility()
-            .getCustomDialogWidgetHandlers(PluginReflectionUtility.getFieldAnnotations(source).collect(Collectors.toList()))
-            .forEach(handler -> handler.accept(source, target));
+        // Modern handlers mapping approach -- via @Handles annotation
+        handlers = new ArrayList<>(PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers(sourceAnnotations));
 
-        processLegacyHandlers(source, target);
-    }
+        // Legacy handlers mapping approach -- via source<->name mapping
+        List<DialogWidgetHandler> sourceToNameMappingHandlers = PluginReflectionUtility.getSourceAnnotations(source)
+            .stream()
+            .filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
+            .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
+            .flatMap(CustomHandler::getMatchedHandlersByName)
+            .collect(Collectors.toList());
+        handlers.addAll(sourceToNameMappingHandlers);
 
-    private void processLegacyHandlers(Source source, Target target) {
-        if (PluginReflectionUtility.getFieldAnnotations(source).anyMatch(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))) {
-            target.setSource(source);
-        }
-
-        try {
-            for (DialogWidgetHandler handler : PluginRuntime.context().getReflectionUtility()
-                .getCustomDialogWidgetHandlers(PluginReflectionUtility.getFieldAnnotations(source).collect(Collectors.toList()))) {
-                if (!handler.getClass().getMethod("accept", Element.class, Field.class).isDefault()) {
-                    target.setSource(source);
-                }
+        // Extract legacy handlers that accept(Source, Target)
+        List<DialogWidgetHandler> legacyHandlers = handlers.stream().filter(CustomHandler::isLegacyHandler).collect(Collectors.toList());
+        if (!legacyHandlers.isEmpty()) {
+            Field field = source.adaptTo(Field.class);
+            Element element = getElement(target);
+            if (element != null) {
+                legacyHandlers.forEach(handler -> handler.accept(element, field));
+                target.mapProperties(element);
             }
-        } catch (NoSuchMethodException ignored) {
-            //ignored
         }
 
+        // Process modern handlers that accept(Element, Field)
+        Collection<DialogWidgetHandler> modernHandlers = CollectionUtils.subtract(handlers, legacyHandlers);
+        modernHandlers.forEach(handler -> handler.accept(source, target));
     }
+
+    private static Stream<DialogWidgetHandler> getMatchedHandlersByName(String source) {
+        return PluginRuntime.context()
+            .getReflectionUtility()
+            .getCustomDialogWidgetHandlers()
+            .stream()
+            .filter(handler -> StringUtils.equals(source, handler.getName()));
+    }
+
+    private static boolean isLegacyHandler(DialogWidgetHandler handler) {
+        try {
+            Method legacyAcceptMethod = handler.getClass().getMethod("accept", Element.class, Field.class);
+            return !legacyAcceptMethod.isDefault(); // if it's not default, it has been overridden which is true for actual handlers
+        } catch (NoSuchMethodException | SecurityException e) {
+            // This is a valid situation, no particular processing needed
+            return false;
+        }
+    }
+
+    private static Element getElement(Target target) {
+        try {
+            return target.buildXml().getDocumentElement();
+        } catch (ParserConfigurationException e) {
+            PluginRuntime.context().getExceptionHandler().handle(e);
+        }
+        return null;
+    }
+
 }
