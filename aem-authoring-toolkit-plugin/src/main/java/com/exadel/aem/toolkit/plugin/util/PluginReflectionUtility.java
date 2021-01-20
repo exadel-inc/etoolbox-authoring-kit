@@ -56,6 +56,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
@@ -146,9 +147,12 @@ public class PluginReflectionUtility {
             return Collections.emptyList();
         }
         return getCustomDialogWidgetHandlers().stream()
-                .filter(handler -> handler.getClass().isAnnotationPresent(Handles.class))
+                .filter(handler -> handler.getClass().isAnnotationPresent(Handles.class)
+                    || handler.getClass().isAnnotationPresent(HandlesWidgets.class))
                 .filter(handler -> {
-                    Class<?>[] handled = handler.getClass().getDeclaredAnnotation(Handles.class).value();
+                    Class<?>[] handled = handler.getClass().isAnnotationPresent(Handles.class)
+                        ? handler.getClass().getDeclaredAnnotation(Handles.class).value()
+                        : handler.getClass().getDeclaredAnnotation(HandlesWidgets.class).value();
                     return annotationClasses.stream().anyMatch(annotationClass -> ArrayUtils.contains(handled, annotationClass));
                 })
                 .collect(Collectors.toList());
