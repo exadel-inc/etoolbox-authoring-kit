@@ -30,11 +30,13 @@ import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
@@ -42,7 +44,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
-import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
@@ -66,13 +67,12 @@ public class TargetImpl implements Target {
      */
     private static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
-    private final String name;
     private final Target parent;
     private final Map<String, String> attributes;
     private final List<Target> children;
 
+    private String name;
     private XmlScope scope;
-    private Source source;
 
     public TargetImpl(String name, Target parent) {
         this.name = name;
@@ -122,9 +122,26 @@ public class TargetImpl implements Target {
         }
         return current;
     }
+
     @Override
     public Target mapProperties(Annotation annotation, List<String> skipped) {
         mapAnnotationProperties(annotation, this, skipped);
+        return this;
+    }
+
+    @Override
+    public Target mapProperties(Element element) {
+        if (element == null) {
+            return this;
+        }
+        this.name = element.getTagName();
+        IntStream.range(0, element.getAttributes().getLength())
+            .mapToObj(pos -> element.getAttributes().item(pos))
+            .forEach(nodeAttr -> attributes.put(nodeAttr.getNodeName(), nodeAttr.getNodeValue()));
+
+        IntStream.range(0, element.getChildNodes().getLength())
+            .mapToObj(pos -> element.getChildNodes().item(pos))
+            .forEach(childNode -> get(childNode.getNodeName()).mapProperties((Element) childNode));
         return this;
     }
 
@@ -247,17 +264,6 @@ public class TargetImpl implements Target {
     @Override
     public boolean hasChild(String path) {
         return get(path) != null;
-    }
-
-
-    @Override
-    public void setSource(Source source) {
-        this.source = source;
-    }
-
-    @Override
-    public Source getSource() {
-        return this.source;
     }
 
     @Override

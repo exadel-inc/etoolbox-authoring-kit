@@ -22,9 +22,9 @@ import java.util.function.Supplier;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
-
 
 public interface Target {
 
@@ -41,6 +41,8 @@ public interface Target {
     }
 
     Target mapProperties(Annotation annotation, List<String> skipped);
+
+    Target mapProperties(Element element);
 
     Target attribute(String name, String value);
 
@@ -77,10 +79,6 @@ public interface Target {
     Target parent();
 
     boolean hasChild(String path);
-
-    void setSource(Source source);
-
-    Source getSource();
 
     Document buildXml() throws ParserConfigurationException;
 }
