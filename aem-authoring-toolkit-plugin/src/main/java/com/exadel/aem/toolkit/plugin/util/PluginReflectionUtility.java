@@ -288,7 +288,7 @@ public class PluginReflectionUtility {
      * @param source The source to analyze
      * @return {@code List} of annotation objects
      */
-    public static List<Class<? extends Annotation>> getFieldAnnotations(Source source) {
+    public static List<Class<? extends Annotation>> getSourceAnnotations(Source source) {
         return Arrays.stream(source.adaptTo(Annotation[].class))
                 .map(Annotation::annotationType)
                 .collect(Collectors.toList());

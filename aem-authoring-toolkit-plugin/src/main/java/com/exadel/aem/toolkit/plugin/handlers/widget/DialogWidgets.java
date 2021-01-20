@@ -164,7 +164,8 @@ public enum DialogWidgets implements DialogWidget {
             return annotationClass;
         }
         // if no such annotation, retrieve first custom DialogComponentAnnotation attached to this source
-        return PluginReflectionUtility.getFieldAnnotations(source)
+        return PluginReflectionUtility.getSourceAnnotations(source)
+                .stream()
                 .filter(DialogWidgets::isCustomDialogWidgetAnnotation)
                 .findFirst()
                 .orElse(null);
@@ -178,7 +179,7 @@ public enum DialogWidgets implements DialogWidget {
      */
     private static boolean isAnnotated(Source source, DialogWidgets widget) {
         return Objects.nonNull(widget.getAnnotationClass())
-                && PluginReflectionUtility.getFieldAnnotations(source).anyMatch(fa -> fa.equals(widget.getAnnotationClass()));
+                && PluginReflectionUtility.getSourceAnnotations(source).stream().anyMatch(fa -> fa.equals(widget.getAnnotationClass()));
     }
 
     /**
