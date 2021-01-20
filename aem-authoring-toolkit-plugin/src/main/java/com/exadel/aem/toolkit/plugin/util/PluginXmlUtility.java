@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -82,11 +83,24 @@ public class PluginXmlUtility implements XmlUtility {
      */
     public static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
+
+    /* ----------------
+       Instance members
+       ---------------- */
+
     private Document document;
 
     public void setDocument(Document document) {
         this.document = document;
     }
+
+    /* ----------------------------
+       XmlUtility interface members
+       ---------------------------- */
+
+    /*
+        Element creation
+     */
 
     @Override
     public Element createNodeElement(String name, String nodeType, Map<String, String> properties, String resourceType) {
@@ -137,20 +151,6 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     /**
-     * Creates named XML {@code Element} node wrapping several child element nodes from an array of {@code Annotation} instance
-     * @param name Tag name of the wrapper XML node
-     * @param childNodeNameProvider Function that generates child node's tag name based on corresponding Annotation instance
-     * @param sources Array of annotations to be rendered to XML
-     * @return {@code Element} instance
-     */
-    public Element createNodeElement(String name, Function<Annotation, String> childNodeNameProvider, Annotation[] sources) {
-        Element newNode = createNodeElement(name);
-        Arrays.stream(sources)
-                .forEach(source -> appendNonemptyChildElement(newNode, createNodeElement(childNodeNameProvider, source)));
-        return newNode;
-    }
-
-    /**
      * Creates named XML {2code Element} node from specified {@code Annotation} using specified name provider
      * @param nameProvider Function that processes {@code Annotation} instance to produce valid node name
      * @param source Annotation to be rendered to XML
@@ -165,6 +165,11 @@ public class PluginXmlUtility implements XmlUtility {
                 .forEach(method -> XmlAttributeSettingHelper.forMethod(source, method).setAttribute(newNode));
         return newNode;
     }
+
+
+    /*
+        Element naming
+     */
 
     @Override
     public String getValidName(String name) {
@@ -185,6 +190,11 @@ public class PluginXmlUtility implements XmlUtility {
     public String getUniqueName(String name, String defaultValue, Element context) {
         return PluginNamingUtility.getUniqueName(name, defaultValue, context);
     }
+
+
+    /*
+        Setting arbitrary attributes
+     */
 
     @Override
     public void setAttribute(Element element, String name, Double value) {
@@ -271,6 +281,11 @@ public class PluginXmlUtility implements XmlUtility {
             PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(source.getClass(), name));
         }
     }
+
+
+    /*
+        Mapping annotation properties
+     */
 
     @Override
     public void mapProperties(Element element, Annotation annotation) {
@@ -368,6 +383,11 @@ public class PluginXmlUtility implements XmlUtility {
         }
         return Arrays.asList(method.getAnnotation(PropertyScope.class).value()).contains(scope);
     }
+
+
+    /*
+        Child elements
+     */
 
     @Override
     public Element appendNonemptyChildElement(Element parent, Element child) {
@@ -489,7 +509,7 @@ public class PluginXmlUtility implements XmlUtility {
      * @return Element instance
      */
     private Element getParentOrChildElement(Element element, String nodeName) {
-        if(nodeName.contains(DialogConstants.PARENT_PATH_INDICATOR)){
+        if (nodeName.contains(DialogConstants.PARENT_PATH_INDICATOR)){
             return (Element)element.getParentNode();
         }
         return getOrAddChildElement(element, nodeName);
@@ -535,6 +555,11 @@ public class PluginXmlUtility implements XmlUtility {
         return DialogConstants.PN_PRIMARY_TYPE.equals(element.getAttributes().item(0).getNodeName());
     }
 
+
+    /*
+        Data attributes
+     */
+
     @Override
     public void appendDataAttributes(Element element, Data[] data) {
         if (ArrayUtils.isEmpty(data)) {
@@ -555,59 +580,10 @@ public class PluginXmlUtility implements XmlUtility {
                 .forEach(entry -> graniteDataNode.setAttribute(entry.getKey(), entry.getValue()));
     }
 
-    /**
-     * Appends {@link DataSource} value and, for compatibility reasons, deprecated {@code acsListPath}
-     * and {@code acsListResourceType} values to an {@code Element} node
-     * @param element Element to store data in
-     * @param dataSource Provided values as a {@code DataSource} annotation
-     * @param acsListPath Path to ACS Commons List in JCR repository
-     * @param acsListResourceType Use this to set {@code sling:resourceType} of data source, other than standard
-     * @return Appended {@code datasource} node
-     */
-    public Element appendDataSource(Element element, DataSource dataSource, String acsListPath, String acsListResourceType) {
-        Map<String, String> arbitraryProperties = Arrays.stream(dataSource.properties())
-                .collect(Collectors.toMap(Property::name, Property::value));
-        Element dataSourceElement = appendDataSource(element, dataSource.path(), dataSource.resourceType(), arbitraryProperties);
-        if (dataSourceElement == null) {
-            dataSourceElement = appendAcsCommonsList(element, acsListPath, acsListResourceType);
-        }
-        return dataSourceElement;
-    }
 
-    /**
-     * Appends to the current {@code Element} node and returns a child {@code datasource} node
-     * @param element Element to store data in
-     * @param path Path to element
-     * @param resourceType Use this to set {@code sling:resourceType} of data source
-     * @return Appended {@code datasource} node, or null if the provided {@code resourceType} is invalid
-     */
-    private Element appendDataSource(Element element, String path, String resourceType, Map<String, String> properties) {
-        if (StringUtils.isBlank(resourceType)) {
-            return null;
-        }
-        properties.put(DialogConstants.PN_PATH, path);
-        Element dataSourceElement = createNodeElement(DialogConstants.NN_DATASOURCE, null,
-                properties, resourceType);
-        return (Element) element.appendChild(dataSourceElement);
-    }
-
-    /**
-     * Appends to the current {@code Element} node and returns a child {@code datasource} node bearing link to an ACS Commons list
-     * @param element Element to store data in
-     * @param path Path to ACS Commons List in JCR repository
-     * @param resourceType Use this to set {@code sling:resourceType} of data source, other than standard
-     * @return Appended {@code datasource} node, or null if the provided {@code path} is invalid
-     */
-    private Element appendAcsCommonsList(Element element, String path, String resourceType) {
-        if (StringUtils.isBlank(path)) {
-            return null;
-        }
-        Element dataSourceElement = createNodeElement(DialogConstants.NN_DATASOURCE, null,
-                new ImmutableMap.Builder<String, String>().put(DialogConstants.PN_PATH, path).build(),
-                resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
-        element.appendChild(dataSourceElement);
-        return dataSourceElement;
-    }
+    /* ----------------------------------
+       Plugin internals - utility methods
+       ---------------------------------- */
 
 
     public static void appendDataAttributes(Target target, Data[] data) {
@@ -680,28 +656,37 @@ public class PluginXmlUtility implements XmlUtility {
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
     }
 
-    public static Document buildXml(Target target, Document document) {
-        Element root = populateDocument(target, document);
+    /**
+     * Exports provided {@link Target} object to an XML {@code Document}
+     * @param target {@code Target} instance, non-null reference expected
+     * @return {@code Document} object containing at least the root XML element
+     * @throws ParserConfigurationException if an XML document cannot be created due to e.g. security features not available
+     */
+    public static Document toDocument(Target target) throws ParserConfigurationException {
+        Document document = XmlDocumentFactory.newDocument();
+
+        Element root = toElement(target, document);
         XML_NAMESPACES.forEach((key, value) -> {
             if (StringUtils.isNoneBlank(key, value)) root.setAttribute(key, value);
         });
+
         document.appendChild(root);
         return document;
     }
 
-    private static Element populateDocument(Target target, Document document) {
+    /**
+     * Exports provided {@link Target} object to an XML {@code Element} based on given {@link Document}
+     * @param target {@code Target} instance, non-null reference expected
+     * @param context {@code Document} instance used to create new XML nodes
+     * @return {@code Element} object
+     */
+    public static Element toElement(Target target, Document context) {
         String name = PluginNamingUtility.getValidName(target.getName());
-        Element tmp = document.createElement(name);
-        mapProperties(target, tmp);
-        target.getChildren().forEach(child -> tmp.appendChild(populateDocument(child, document)));
-        return tmp;
-    }
-
-    private static void mapProperties(Target target, Element element) {
-        target.getAttributes().remove(DialogConstants.PN_PREFIX);
-        target.getAttributes().remove(DialogConstants.PN_POSTFIX);
+        Element element = context.createElement(name);
         for (Map.Entry<String, String> entry : target.getAttributes().entrySet()) {
             element.setAttribute(entry.getKey(), entry.getValue());
         }
+        target.getChildren().forEach(child -> element.appendChild(toElement(child, context)));
+        return element;
     }
 }

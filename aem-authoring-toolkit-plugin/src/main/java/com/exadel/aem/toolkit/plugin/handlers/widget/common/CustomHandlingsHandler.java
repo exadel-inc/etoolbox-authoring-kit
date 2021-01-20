@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.CollectionUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
@@ -69,6 +69,8 @@ public class CustomHandlingsHandler implements BiConsumer<Source, Target> {
             Field field = source.adaptTo(Field.class);
             Element element = getElement(target);
             if (element != null) {
+                // This assignment is for legacy dialog widget handlers, will not interfere with modern handlers
+                PluginRuntime.context().getXmlUtility().setDocument(element.getOwnerDocument());
                 legacyHandlers.forEach(handler -> handler.accept(element, field));
                 target.mapProperties(element);
             }
@@ -99,8 +101,8 @@ public class CustomHandlingsHandler implements BiConsumer<Source, Target> {
 
     private static Element getElement(Target target) {
         try {
-            return target.buildXml().getDocumentElement();
-        } catch (ParserConfigurationException e) {
+            return target.adaptTo(Document.class).getDocumentElement();
+        } catch (Exception e) {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
         return null;
