@@ -50,8 +50,8 @@ public class CustomDialogHandler implements DialogHandler {
     }
 
     @Override
-    public void accept(Class<?> aClass, Target element) {
-        visitElements(element, elt -> {
+    public void accept(Class<?> aClass, Target target) {
+        visitElements(target, elt -> {
             if (StringUtils.equals(elt.getAttributes().get(DialogConstants.PN_SLING_RESOURCE_TYPE), ResourceTypes.MULTIFIELD)
                     && isTopLevelMultifield(elt)) {
                 elt.attribute("multifieldSpecial", "This is added to top-level Multifields");

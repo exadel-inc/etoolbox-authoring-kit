@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.api.handlers;
 
 public interface Source {
 
-    <T> T adaptTo(Class<T> t);
+    <T> T adaptTo(Class<T> adaptation);
 
     Class<?> getProcessedClass();
 
