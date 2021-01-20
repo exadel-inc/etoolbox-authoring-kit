@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import com.exadel.aem.toolkit.test.dependson.DependsOnRefAnnotation;
 import com.exadel.aem.toolkit.test.dependson.DependsOnRequiredAnnotation;
+import com.exadel.aem.toolkit.test.dependson.DependsOnSemicolon;
 import com.exadel.aem.toolkit.test.dependson.DependsOnSetFragmentReference;
 import com.exadel.aem.toolkit.test.dependson.DependsOnTabAnnotation;
 
@@ -40,5 +41,10 @@ public class DependsOnTest extends DefaultTestBase {
     @Test
     public void testDependsOnTabAnnotation(){
         test(DependsOnTabAnnotation.class);
+    }
+
+    @Test
+    public void testDependsOnSemicolon() {
+        test(DependsOnSemicolon.class);
     }
 }

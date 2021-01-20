@@ -1,6 +1,6 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
- * @version 2.2.4
+ * @version 2.5.0
  *
  * DependsOn plugin utils
  * */
@@ -16,13 +16,13 @@
     };
 
     /**
-     * Split string by {@param separator} and trim
+     * Split string
      * @param {string} value
-     * @param {string} [separator] (default ';')
      * @returns {string[]}
      * */
-    ns.splitAndTrim = function splitAndTrim(value, separator = ';') {
-        return value.split(separator).map((term) => term.trim());
+    ns.splitAndTrim = function splitAndTrim(value) {
+        const parts = value.replace(/\\;/g, '#~#').split(';');
+        return parts.map((term) => term.replace(/#~#/g, ';').trim());
     };
 
     /**
