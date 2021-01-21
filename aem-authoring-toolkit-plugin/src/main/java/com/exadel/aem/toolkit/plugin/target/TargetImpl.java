@@ -141,7 +141,7 @@ public class TargetImpl implements Target {
 
         IntStream.range(0, element.getChildNodes().getLength())
             .mapToObj(pos -> element.getChildNodes().item(pos))
-            .forEach(childNode -> get(childNode.getNodeName()).mapProperties((Element) childNode));
+            .forEach(childNode -> getOrCreate(childNode.getNodeName()).mapProperties((Element) childNode));
         return this;
     }
 
