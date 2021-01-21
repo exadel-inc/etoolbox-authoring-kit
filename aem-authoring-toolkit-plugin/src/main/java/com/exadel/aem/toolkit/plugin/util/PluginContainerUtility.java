@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.plugin.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,8 +26,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreMembers;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
@@ -60,35 +63,64 @@ public class PluginContainerUtility {
      * @return {@code List<Source>} containing placeable members, or an empty collection
      */
     public static List<Source> getContainerEntries(Source container, boolean useReferredClass) {
-        Class<?> containerType = container.getContainerClass();
-        Class<?> componentType = useReferredClass ? container.getProcessedClass() : containerType;
-        // Build the collection of ignored fields that may be defined at field level and at nesting class level
+        Class<?> declaringClass = container.getContainerClass();
+        Class<?> currentlyReferredClass = useReferredClass ? container.getProcessedClass() : declaringClass;
+        // Build the collection of ignored members at nesting class level
         // (apart from those defined for the container class itself)
-        Stream<ClassMember> classLevelIgnoredFields = componentType.isAnnotationPresent(IgnoreFields.class)
-            ? Arrays.stream(componentType.getAnnotation(IgnoreFields.class).value())
-            .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
-                ClassMember.class,
-                DialogConstants.PN_SOURCE_CLASS,
-                componentType))
-            : Stream.empty();
-        Stream<ClassMember> fieldLevelIgnoredFields = container.adaptTo(IgnoreFields.class) != null
-            ? Arrays.stream(container.adaptTo(IgnoreFields.class).value())
-            .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
-                ClassMember.class,
-                DialogConstants.PN_SOURCE_CLASS,
-                containerType))
-            : Stream.empty();
-        List<ClassMember> allIgnoredFields = Stream.concat(classLevelIgnoredFields, fieldLevelIgnoredFields)
-            .filter(classField -> PluginReflectionUtility.getClassHierarchy(containerType).stream()
-                .anyMatch(superclass -> superclass.equals(classField.source())))
+        Stream<Annotation> classLevelIgnoredMembers = Stream.empty();
+        if (currentlyReferredClass.isAnnotationPresent(IgnoreMembers.class)) {
+            classLevelIgnoredMembers = Arrays.stream(currentlyReferredClass.getAnnotation(IgnoreMembers.class).value())
+                .map(memberPtr -> PluginObjectUtility.modifyIfDefault(
+                    memberPtr,
+                    ClassMember.class,
+                    DialogConstants.PN_SOURCE_CLASS,
+                    currentlyReferredClass));
+        } else if (currentlyReferredClass.isAnnotationPresent(IgnoreFields.class)) {
+            classLevelIgnoredMembers = Arrays.stream(currentlyReferredClass.getAnnotation(IgnoreFields.class).value())
+                .map(memberPtr -> PluginObjectUtility.modifyIfDefault(
+                    memberPtr,
+                    ClassField.class,
+                    DialogConstants.PN_SOURCE_CLASS,
+                    currentlyReferredClass));
+        }
+        // Now build collection of ignored members at member level
+        Stream<Annotation> fieldLevelIgnoredMembers = Stream.empty();
+        if (container.adaptTo(IgnoreMembers.class) != null) {
+            fieldLevelIgnoredMembers = Arrays.stream(container.adaptTo(IgnoreMembers.class).value())
+                .map(memberPtr -> PluginObjectUtility.modifyIfDefault(
+                    memberPtr,
+                    ClassMember.class,
+                    DialogConstants.PN_SOURCE_CLASS,
+                    declaringClass));
+        } else if (container.adaptTo(IgnoreFields.class) != null) {
+            fieldLevelIgnoredMembers = Arrays.stream(container.adaptTo(IgnoreFields.class).value())
+                .map(memberPtr -> PluginObjectUtility.modifyIfDefault(
+                    memberPtr,
+                    ClassField.class,
+                    DialogConstants.PN_SOURCE_CLASS,
+                    declaringClass));
+        }
+
+        // Join the collections and make sure that only members from any of the superclasses of the current source's class
+        // are present
+        List<Annotation> allIgnoredFields = Stream
+            .concat(classLevelIgnoredMembers, fieldLevelIgnoredMembers)
+            .filter(memberPtr -> {
+                Class<?> referencedClass = memberPtr instanceof ClassMember
+                    ? ((ClassMember) memberPtr).source()
+                    : ((ClassField) memberPtr).source();
+                return PluginReflectionUtility.getClassHierarchy(declaringClass)
+                    .stream()
+                    .anyMatch(superclass -> superclass.equals(referencedClass));
+            })
             .collect(Collectors.toList());
 
         // Create filters to sort out ignored fields (apart from those defined for the container class)
         // and to banish non-widget fields
         // Return the filtered field list
-        Predicate<Member> nonIgnoredFields = PluginObjectPredicates.getNotIgnoredMembersPredicate(allIgnoredFields);
+        Predicate<Member> nonIgnoredMembers = PluginObjectPredicates.getNotIgnoredMembersPredicate(allIgnoredFields);
         Predicate<Member> dialogFields = DialogWidgets::isPresent;
-        return PluginReflectionUtility.getAllSources(containerType, Arrays.asList(nonIgnoredFields, dialogFields));
+        return PluginReflectionUtility.getAllSources(declaringClass, Arrays.asList(nonIgnoredMembers, dialogFields));
     }
 
     /**

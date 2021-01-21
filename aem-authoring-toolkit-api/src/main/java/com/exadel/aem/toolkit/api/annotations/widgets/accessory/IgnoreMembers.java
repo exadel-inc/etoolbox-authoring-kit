@@ -19,25 +19,21 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 
 /**
- * Used to specify fields that are ignored (skipped) when preparing data for Granite component rendering.
+ * Used to specify class members that are ignored (skipped) when preparing data for Granite component rendering.
  * Typically used for the case when current dialog class or a fieldset extends another class and can expose
  * one or more {@code DialogField}s from superclass that are not actually needed
- * @see ClassField
- * @deprecated Use {@link IgnoreMembers} instead
  */
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
-public @interface IgnoreFields {
+public @interface IgnoreMembers {
     /**
      * Enumerates class members to be skipped when rendering a dialog or a dialog part.
      * Each member is specified by a reference to a {@code Class} and the name of a field or method
      * @see ClassMember
      * @return One or more {@code ClassMember} annotations
      */
-    ClassField[] value();
+    ClassMember[] value();
 }

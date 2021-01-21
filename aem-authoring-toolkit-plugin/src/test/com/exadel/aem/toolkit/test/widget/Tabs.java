@@ -53,6 +53,15 @@ public class Tabs {
     @PlaceOn("First tab")
     TabsExample tabsField;
 
+    @DialogField(label = "Field on the second tab")
+    @TextField
+    @PlaceOnTab("Second tab")
+    String field2;
+
+    @DialogField(description = "Field on the third tab")
+    @TextField
+    @PlaceOnTab("Third tab")
+    String field3;
 
     static class TabsExample {
         @DialogField(label = "Field 1 on the inner Tab")
@@ -71,14 +80,4 @@ public class Tabs {
             String field6;
         }
     }
-
-    @DialogField(label = "Field on the second tab")
-    @TextField
-    @PlaceOnTab("Second tab")
-    String field2;
-
-    @DialogField(description = "Field on the third tab")
-    @TextField
-    @PlaceOnTab("Third tab")
-    String field3;
 }

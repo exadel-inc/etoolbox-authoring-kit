@@ -39,5 +39,5 @@ public @interface ClassMember {
      * Name of the member, must refer to an actual field or method name
      * @return String value, non-blank
      */
-    String member();
+    String name();
 }

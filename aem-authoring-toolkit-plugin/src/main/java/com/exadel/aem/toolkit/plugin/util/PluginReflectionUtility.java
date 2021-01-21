@@ -48,11 +48,13 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
+import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreMembers;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
@@ -325,8 +327,9 @@ public class PluginReflectionUtility {
      * @return List of {@code Member} objects
      */
     private static List<Member> getAllMembers(Class<?> targetClass, List<Predicate<Member>> predicates) {
-        List<Member> members = new LinkedList<>();
-        List<ClassMember> ignoredMembers = new LinkedList<>();
+        List<Member> result = new LinkedList<>();
+        List<ClassMember> ignoredClassMembers = new ArrayList<>();
+        List<ClassField> ignoredClassFields = new ArrayList<>();
 
         for (Class<?> classEntry : getClassHierarchy(targetClass)) {
             Stream<Member> classMembersStream = targetClass.isInterface()
@@ -335,22 +338,30 @@ public class PluginReflectionUtility {
             List<Member> classMembers = classMembersStream
                     .filter(PluginObjectPredicates.getMembersPredicate(predicates))
                     .collect(Collectors.toList());
-            members.addAll(classMembers);
-            if (classEntry.getAnnotation(IgnoreFields.class) != null) {
-                List<ClassMember> processedClassMembers = Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
+            result.addAll(classMembers);
+            if (classEntry.getAnnotation(IgnoreMembers.class) != null) {
+                Arrays.stream(classEntry.getAnnotation(IgnoreMembers.class).value())
                         .map(classMember -> PluginObjectUtility.modifyIfDefault(classMember,
                                 ClassMember.class,
                                 DialogConstants.PN_SOURCE_CLASS,
                                 targetClass))
-                        .collect(Collectors.toList());
-                ignoredMembers.addAll(processedClassMembers);
+                        .forEach(ignoredClassMembers::add);
+            } else if (classEntry.getAnnotation(IgnoreFields.class) != null) {
+                Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
+                    .map(classMember -> PluginObjectUtility.modifyIfDefault(classMember,
+                        ClassField.class,
+                        DialogConstants.PN_SOURCE_CLASS,
+                        targetClass))
+                    .forEach(ignoredClassFields::add);
             }
         }
 
-        return members.stream()
-                .filter(PluginObjectPredicates.getNotIgnoredMembersPredicate(ignoredMembers))
-                .sorted(PluginObjectPredicates::compareDialogMembers)
-                .collect(Collectors.toList());
+        return result
+            .stream()
+            .filter(PluginObjectPredicates.getNotIgnoredMembersPredicate(ignoredClassMembers))
+            .filter(PluginObjectPredicates.getNotIgnoredMembersPredicate(ignoredClassFields))
+            .sorted(PluginObjectPredicates::compareDialogMembers)
+            .collect(Collectors.toList());
     }
 
     /**

@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.plugin.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -24,6 +25,7 @@ import java.util.function.Predicate;
 
 import org.apache.commons.lang3.ClassUtils;
 
+import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -36,6 +38,10 @@ public class PluginObjectPredicates {
     private PluginObjectPredicates() {
     }
 
+    /* ---------
+       Constants
+       --------- */
+
     /**
      * A predicate for picking out non-static {@code Member} instances which is by default
      * in {@link PluginReflectionUtility#getAllMembers(Class)} routines
@@ -45,21 +51,11 @@ public class PluginObjectPredicates {
                     || (member instanceof Method))
                     && !Modifier.isStatic(member.getModifiers());
 
-    /**
-     * Gets a predicate for sorting out the fields set to be ignored
-     * @param ignoredMembers List of {@link ClassMember} representing the fields set to be ignored
-     * @return A {@code Predicate<Member>} which is affirmative by default, that is, returns *tru* if the field is not
-     * ignored, and *false* if the field is set to be ignored
-     */
-    public static Predicate<Member> getNotIgnoredMembersPredicate(List<ClassMember> ignoredMembers) {
-        if (ignoredMembers == null || ignoredMembers.isEmpty()) {
-            return field -> true;
-        }
-        return field -> ignoredMembers.stream().noneMatch(
-                ignoredMember -> ignoredMember.source().equals(field.getDeclaringClass())
-                        && ignoredMember.member().equals(field.getName())
-        );
-    }
+
+    /* ---------------
+       Utility methods
+       --------------- */
+
 
     /**
      * Generates an combined {@code Predicate<Member>} from the list of partial predicates given
@@ -71,6 +67,38 @@ public class PluginObjectPredicates {
             return VALID_MEMBER_PREDICATE;
         }
         return predicates.stream().filter(Objects::nonNull).reduce(VALID_MEMBER_PREDICATE, Predicate::and);
+    }
+
+    /**
+     * Gets a predicate for sorting out the fields set to be ignored
+     * @param memberPointers List of {@link ClassMember} or {@link ClassField} annotations representing the fields
+     *                       set to be ignored
+     * @return A {@code Predicate<Member>} which is affirmative by default, that is, returns *tru* if the field is not
+     * ignored, and *false* if the field is set to be ignored
+     */
+    public static Predicate<Member> getNotIgnoredMembersPredicate(List<? extends Annotation> memberPointers) {
+        if (memberPointers == null || memberPointers.isEmpty()) {
+            return member -> true;
+        }
+        return member -> memberPointers.stream().noneMatch(ptr -> isMatch(member, ptr));
+    }
+
+    /**
+     * Gets whether a field or a method corresponds to the provided pointer structure, such as a {@link ClassMember}
+     * @param member {@code Member} object representing Java field or method
+     * @param memberPointer {@code Annotation} containing data that points to a class member
+     * @return True or false
+     */
+    private static boolean isMatch(Member member, Annotation memberPointer) {
+        if (memberPointer instanceof ClassMember) {
+            ClassMember classMember = (ClassMember) memberPointer;
+            return classMember.source().equals(member.getDeclaringClass())
+                && classMember.name().equals(member.getName());
+        } else {
+            ClassField classField = (ClassField) memberPointer;
+            return classField.source().equals(member.getDeclaringClass())
+                && classField.field().equals(member.getName());
+        }
     }
 
     /**
