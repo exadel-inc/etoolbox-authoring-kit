@@ -39,6 +39,11 @@ public class SourceFieldImpl extends SourceBase {
     }
 
     @Override
+    public Class<?> getDeclaringClass() {
+        return field.getDeclaringClass();
+    }
+
+    @Override
     Class<?> getPlainType() {
         Class<?> result;
         result = getSourceType();

@@ -18,9 +18,11 @@ public interface Source {
 
     <T> T adaptTo(Class<T> adaptation);
 
-    Class<?> getProcessedClass();
-
     String getName();
 
+    Class<?> getProcessedClass();
+
     Class<?> getContainerClass();
+
+    Class<?> getDeclaringClass();
 }
