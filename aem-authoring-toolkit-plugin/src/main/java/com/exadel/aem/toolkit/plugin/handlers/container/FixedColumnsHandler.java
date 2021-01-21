@@ -20,8 +20,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginContainerUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlContainerUtility;
 
 /**
  * The {@code BiConsumer<Class<?>, Target>} implementation for a fixed-columns TouchUI dialog.
@@ -45,6 +45,6 @@ public class FixedColumnsHandler implements BiConsumer<Class<?>, Target> {
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 
         List<Source> allSources = PluginReflectionUtility.getAllSources(componentClass);
-        PluginXmlContainerUtility.appendToContainer(contentItemsColumn, allSources);
+        PluginContainerUtility.appendToContainer(contentItemsColumn, allSources);
     }
 }

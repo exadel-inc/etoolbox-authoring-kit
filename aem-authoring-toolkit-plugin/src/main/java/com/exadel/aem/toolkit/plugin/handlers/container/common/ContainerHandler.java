@@ -52,11 +52,11 @@ import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.SourceBase;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginContainerUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginObjectPredicates;
 import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlContainerUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
@@ -312,7 +312,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
             skippedList.add(DialogConstants.PN_TITLE);
             containerItemsNode.create(DialogConstants.NN_PARENT_CONFIG).mapProperties(accordionPanel, skippedList);
         }
-        PluginXmlContainerUtility.appendToContainer(containerItemsNode, sources);
+        PluginContainerUtility.appendToContainer(containerItemsNode, sources);
     }
 
     /**

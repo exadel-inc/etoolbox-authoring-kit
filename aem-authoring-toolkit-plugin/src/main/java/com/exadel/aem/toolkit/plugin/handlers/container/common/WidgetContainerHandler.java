@@ -20,8 +20,8 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginContainerUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlContainerUtility;
 
 public abstract class WidgetContainerHandler implements BiConsumer<Source, Target> {
 
@@ -42,7 +42,7 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
 
         Map<String, ContainerSection> containerSections = getContainerSections(source, annotationClass);
 
-        List<Source> placeableSources = PluginXmlContainerUtility.getContainerEntries(source, false);
+        List<Source> placeableSources = PluginContainerUtility.getContainerEntries(source, false);
 
         if (containerSections.isEmpty() && !placeableSources.isEmpty()) {
             InvalidSettingException ex = new InvalidSettingException(exceptionMessage + source.getContainerClass().getName());

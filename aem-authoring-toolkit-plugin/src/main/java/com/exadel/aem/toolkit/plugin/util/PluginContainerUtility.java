@@ -37,14 +37,14 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 /**
  * Contains utility methods that handle adding nodes describing Granite widgets to a widget container node
  */
-public class PluginXmlContainerUtility {
+public class PluginContainerUtility {
     private static final String DUPLICATE_FIELDS_MESSAGE_TEMPLATE = "Field named \"%s\" in class \"%s\" " +
             "collides with the field having same name in superclass \"%s\". This may cause unexpected behavior";
 
     /**
      * Default (private) constructor
      */
-    private PluginXmlContainerUtility() {
+    private PluginContainerUtility() {
     }
 
     /**

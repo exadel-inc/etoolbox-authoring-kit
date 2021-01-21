@@ -23,8 +23,8 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.util.PluginContainerUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlContainerUtility;
 
 /**
  * Handler used to prepare data for {@link FieldSet} widget rendering
@@ -45,7 +45,7 @@ class FieldSetHandler implements BiConsumer<Source, Target> {
         FieldSet fieldSet = source.adaptTo(FieldSet.class);
         Class<?> fieldSetType = source.getContainerClass();
 
-        List<Source> fieldSetEntries = PluginXmlContainerUtility.getContainerEntries(source, true);
+        List<Source> fieldSetEntries = PluginContainerUtility.getContainerEntries(source, true);
 
         if (fieldSetEntries.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(
@@ -60,6 +60,6 @@ class FieldSetHandler implements BiConsumer<Source, Target> {
                 .postfix(fieldSet.namePostfix());
         }
         // Append the valid sources to the container
-        PluginXmlContainerUtility.appendToContainer(target, fieldSetEntries);
+        PluginContainerUtility.appendToContainer(target, fieldSetEntries);
     }
 }
