@@ -298,21 +298,21 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         String containerItemName) {
 
         String nodeName = PluginNamingUtility.getUniqueName(containerItem.getTitle(), containerItemName, container);
-        Target containerItemElement = container.create(nodeName)
+        Target containerItemsNode = container.create(nodeName)
             .attribute(JcrConstants.PN_TITLE, containerItem.getTitle())
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
         if (containerItemName.equals(DialogConstants.NN_TAB)) {
             Tab newTab = PluginObjectUtility.create(Tab.class,
                 containerItem.getAttributes());
-            appendTabAttributes(containerItemElement, newTab);
+            appendTabAttributes(containerItemsNode, newTab);
         } else if (containerItemName.equals(DialogConstants.NN_ACCORDION)) {
             AccordionPanel accordionPanel = PluginObjectUtility.create(AccordionPanel.class,
                 containerItem.getAttributes());
             List<String> skippedList = new ArrayList<>();
             skippedList.add(DialogConstants.PN_TITLE);
-            containerItemElement.create(DialogConstants.NN_PARENT_CONFIG).mapProperties(accordionPanel, skippedList);
+            containerItemsNode.create(DialogConstants.NN_PARENT_CONFIG).mapProperties(accordionPanel, skippedList);
         }
-        PluginXmlContainerUtility.append(sources, containerItemElement);
+        PluginXmlContainerUtility.appendToContainer(containerItemsNode, sources);
     }
 
     /**

@@ -45,9 +45,9 @@ class FieldSetHandler implements BiConsumer<Source, Target> {
         FieldSet fieldSet = source.adaptTo(FieldSet.class);
         Class<?> fieldSetType = source.getContainerClass();
 
-        List<Source> sources = PluginXmlContainerUtility.getPlaceableSources(source, true);
+        List<Source> fieldSetEntries = PluginXmlContainerUtility.getContainerEntries(source, true);
 
-        if (sources.isEmpty()) {
+        if (fieldSetEntries.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(
                 new InvalidFieldContainerException(EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName())
             );
@@ -60,6 +60,6 @@ class FieldSetHandler implements BiConsumer<Source, Target> {
                 .postfix(fieldSet.namePostfix());
         }
         // Append the valid sources to the container
-        PluginXmlContainerUtility.append(sources, target);
+        PluginXmlContainerUtility.appendToContainer(target, fieldSetEntries);
     }
 }

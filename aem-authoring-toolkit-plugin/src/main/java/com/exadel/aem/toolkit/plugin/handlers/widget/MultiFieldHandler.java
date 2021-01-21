@@ -45,7 +45,7 @@ public class MultiFieldHandler implements BiConsumer<Source, Target> {
         target.getAttributes().remove(DialogConstants.PN_NAME);
 
         // Get the filtered members collection for the current container; early return if collection is empty
-        List<Source> members = PluginXmlContainerUtility.getPlaceableSources(source, true);
+        List<Source> members = PluginXmlContainerUtility.getContainerEntries(source, true);
         if (members.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.getContainerClass().getName()
@@ -77,7 +77,7 @@ public class MultiFieldHandler implements BiConsumer<Source, Target> {
         // with "./" which is by default
         // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
         // That is why we must alter the default name prefix for the ongoing set of sources
-        PluginXmlContainerUtility.append(sources, multifieldContainerElement);
+        PluginXmlContainerUtility.appendToContainer(multifieldContainerElement, sources);
     }
 
     /**
