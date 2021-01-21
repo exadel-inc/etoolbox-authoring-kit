@@ -15,13 +15,18 @@
 package com.exadel.aem.toolkit.plugin.util;
 
 import java.lang.reflect.Member;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
@@ -40,6 +45,49 @@ public class PluginXmlContainerUtility {
      * Default (private) constructor
      */
     private PluginXmlContainerUtility() {
+    }
+
+    /**
+     * Retrieves the list of sources that define widgets assignable to the current container.
+     * This is performed by calling {@link PluginReflectionUtility#getAllSources(Class)}
+     * with additional predicates that allow to sort out sources (class members) set to be ignored at either
+     * the "member itself" level and at "declaring class" level. Afterwards the non-widget fields are sorted out
+     * @param current Current {@link Source} instance
+     * @param useReferredClass True to use {@link Source#getProcessedClass()} to look for ignored members (this is the case
+     *                         for {@code Multifield} or {@code FieldSet}-bound members);
+     *                         False to use same {@link Source#getContainerClass()} as for the rest of method logic
+     * @return {@code List<Source>} containing renderable members, or an empty collection
+     */
+    public static List<Source> getPlaceableSources(Source current, boolean useReferredClass) {
+        Class<?> containerType = current.getContainerClass();
+        Class<?> componentType = useReferredClass ? current.getProcessedClass() : containerType;
+        // Build the collection of ignored fields that may be defined at field level and at nesting class level
+        // (apart from those defined for the container class itself)
+        Stream<ClassMember> classLevelIgnoredFields = componentType.isAnnotationPresent(IgnoreFields.class)
+            ? Arrays.stream(componentType.getAnnotation(IgnoreFields.class).value())
+            .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
+                ClassMember.class,
+                DialogConstants.PN_SOURCE_CLASS,
+                componentType))
+            : Stream.empty();
+        Stream<ClassMember> fieldLevelIgnoredFields = current.adaptTo(IgnoreFields.class) != null
+            ? Arrays.stream(current.adaptTo(IgnoreFields.class).value())
+            .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
+                ClassMember.class,
+                DialogConstants.PN_SOURCE_CLASS,
+                containerType))
+            : Stream.empty();
+        List<ClassMember> allIgnoredFields = Stream.concat(classLevelIgnoredFields, fieldLevelIgnoredFields)
+            .filter(classField -> PluginReflectionUtility.getClassHierarchy(containerType).stream()
+                .anyMatch(superclass -> superclass.equals(classField.source())))
+            .collect(Collectors.toList());
+
+        // Create filters to sort out ignored fields (apart from those defined for the container class)
+        // and to banish non-widget fields
+        // Return the filtered field list
+        Predicate<Member> nonIgnoredFields = PluginObjectPredicates.getNotIgnoredMembersPredicate(allIgnoredFields);
+        Predicate<Member> dialogFields = DialogWidgets::isPresent;
+        return PluginReflectionUtility.getAllSources(containerType, Arrays.asList(nonIgnoredFields, dialogFields));
     }
 
     /**

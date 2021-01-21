@@ -30,6 +30,6 @@ public class AccordionContainerHandler extends ContainerHandler {
      */
     @Override
     public void accept(Class<?> componentClass, Target parentElement) {
-        acceptParent(componentClass, parentElement, AccordionPanel.class);
+        populateContainer(componentClass, parentElement, AccordionPanel.class);
     }
 }

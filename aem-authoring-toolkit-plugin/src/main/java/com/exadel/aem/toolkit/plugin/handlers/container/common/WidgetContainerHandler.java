@@ -2,96 +2,81 @@ package com.exadel.aem.toolkit.plugin.handlers.container.common;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.TabsWidget;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
-import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginObjectPredicates;
 import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.plugin.util.PluginXmlContainerUtility;
 
 public abstract class WidgetContainerHandler implements BiConsumer<Source, Target> {
+
     private static final Logger LOG = LoggerFactory.getLogger(WidgetContainerHandler.class);
 
     /**
-     * Retrieves the list of fields applicable to the current container, by calling {@link PluginReflectionUtility#getAllSourceFacades(Class)}
-     * with additional predicates that allow to sort out the fields set to be ignored at field level and at nesting class
-     * level, and then sort out the non-widget fields
-     * @param source       Current {@link Source} instance
-     * @param target         Current {@link Target} instance
-     * @param containerType {@code Class} representing the type of the container
-     * @return {@code List<Field>} containing renderable fields, or an empty collection
+     * Processes the user-defined data and writes it to XML entity
+     * @param source Current {@link Source} instance
+     * @param target Current {@link Target} instance
+     * @param annotationClass class of container
      */
-    public static List<Source> getContainerFields(Source source, Target target, Class<?> containerType) {
-        // Extract type of the Java class being the current rendering source
-        Class<?> componentType = source.getContainerClass();
-        // Build the collection of ignored fields that may be defined at field level and at nesting class level
-        // (apart from those defined for the container class itself)
-        Stream<ClassMember> classLevelIgnoredFields = componentType != null && componentType.isAnnotationPresent(IgnoreFields.class)
-            ? Arrays.stream(componentType.getAnnotation(IgnoreFields.class).value())
-            .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
-                ClassMember.class,
-                DialogConstants.PN_SOURCE_CLASS,
-                componentType))
-            : Stream.empty();
-        Stream<ClassMember> fieldLevelIgnoredFields = source.adaptTo(IgnoreFields.class) != null
-            ? Arrays.stream(source.adaptTo(IgnoreFields.class).value())
-            .map(classField -> PluginObjectUtility.modifyIfDefault(classField,
-                ClassMember.class,
-                DialogConstants.PN_SOURCE_CLASS,
-                containerType))
-            : Stream.empty();
-        List<ClassMember> allIgnoredFields = Stream.concat(classLevelIgnoredFields, fieldLevelIgnoredFields)
-            .filter(classField -> PluginReflectionUtility.getClassHierarchy(containerType).stream()
-                .anyMatch(superclass -> superclass.equals(classField.source())))
-            .collect(Collectors.toList());
+    protected void populateContainer(Source source, Target target, Class<? extends Annotation> annotationClass) {
+        String containerName = annotationClass.equals(TabsWidget.class) ? DialogConstants.NN_TABS : DialogConstants.NN_ACCORDION;
+        String containerSectionName = annotationClass.equals(TabsWidget.class) ? DialogConstants.NN_TAB : DialogConstants.NN_ACCORDION;
+        String exceptionMessage = annotationClass.equals(TabsWidget.class) ? ContainerHandler.TABS_EXCEPTION : ContainerHandler.ACCORDION_EXCEPTION;
 
-        // Create filters to sort out ignored fields (apart from those defined for the container class)
-        // and to banish non-widget fields
-        // Return the filtered field list
-        Predicate<Member> nonIgnoredFields = PluginObjectPredicates.getNotIgnoredMembersPredicate(allIgnoredFields);
-        Predicate<Member> dialogFields = DialogWidgets::isPresent;
-        return PluginReflectionUtility.getAllSourceFacades(containerType, Arrays.asList(nonIgnoredFields, dialogFields));
+        target.create(DialogConstants.NN_ITEMS);
+
+        Map<String, ContainerSection> containerSections = getContainerSections(source, annotationClass);
+
+        List<Source> placeableSources = PluginXmlContainerUtility.getPlaceableSources(source, false);
+
+        if (containerSections.isEmpty() && !placeableSources.isEmpty()) {
+            InvalidSettingException ex = new InvalidSettingException(exceptionMessage + source.getContainerClass().getName());
+            PluginRuntime.context().getExceptionHandler().handle(ex);
+            containerSections.put(StringUtils.EMPTY, new ContainerSection("Untitled"));
+        }
+
+        ContainerHandler.addToContainer(
+            target.get(DialogConstants.NN_ITEMS),
+            placeableSources,
+            containerSections,
+            ArrayUtils.EMPTY_STRING_ARRAY,
+            containerSectionName);
+
+        ContainerHandler.handleInvalidContainerException(placeableSources, containerName);
     }
 
     /**
-     * Get all container item instances from current class
-     * @param annotationClass {@code Class <? extends Annotation>} searching annotationClass
-     * @param source           Current {@link Source} instance
+     * Retrieves container sections declared by the current source, such as a class member
+     * @param source Current {@link Source} instance
+     * @param annotationClass Container annotation to look for, such as a {@link TabsWidget} or {@link AccordionWidget}
      */
-    private Map<String, ContainerInfo> getInstancesFromCurrentClass(Class<? extends Annotation> annotationClass, Source source) {
-        Map<String, ContainerInfo> containerItemInstancesFromCurrentClass = new LinkedHashMap<>();
+    private static Map<String, ContainerSection> getContainerSections(Source source, Class<? extends Annotation> annotationClass) {
+        Map<String, ContainerSection> result = new LinkedHashMap<>();
         if (source.adaptTo(annotationClass) == null) {
-            return containerItemInstancesFromCurrentClass;
+            return result;
         }
         if (annotationClass.equals(TabsWidget.class)) {
             Arrays.stream(source.adaptTo(TabsWidget.class).tabs())
                 .forEach(tab -> {
-                    ContainerInfo containerInfo = new ContainerInfo(tab.title());
+                    ContainerSection containerInfo = new ContainerSection(tab.title());
                     try {
                         containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(tab));
-                        containerItemInstancesFromCurrentClass.put(tab.title(), containerInfo);
+                        result.put(tab.title(), containerInfo);
                     } catch (IllegalAccessException | InvocationTargetException exception) {
                         LOG.error(exception.getMessage());
                     }
@@ -99,45 +84,15 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
         } else if (annotationClass.equals(AccordionWidget.class)) {
             Arrays.stream(source.adaptTo(AccordionWidget.class).panels())
                 .forEach(accordionPanel -> {
-                    ContainerInfo containerInfo = new ContainerInfo(accordionPanel.title());
+                    ContainerSection containerInfo = new ContainerSection(accordionPanel.title());
                     try {
                         containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(accordionPanel));
-                        containerItemInstancesFromCurrentClass.put(accordionPanel.title(), containerInfo);
+                        result.put(accordionPanel.title(), containerInfo);
                     } catch (IllegalAccessException | InvocationTargetException exception) {
                         LOG.error(exception.getMessage());
                     }
                 });
         }
-        return containerItemInstancesFromCurrentClass;
-    }
-
-    /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source         Current {@link Source} instance
-     * @param annotationClass class of container
-     * @param target           Current {@link Target} instance
-     */
-    protected void acceptParent(Source source, Class<? extends Annotation> annotationClass, Target target) {
-        String defaultContainerItemName = annotationClass.equals(TabsWidget.class) ? DialogConstants.NN_TAB : DialogConstants.NN_ACCORDION;
-        String containerName = annotationClass.equals(TabsWidget.class) ? DialogConstants.NN_TABS : DialogConstants.NN_ACCORDION;
-        String exceptionMessage = annotationClass.equals(TabsWidget.class) ? ContainerHandler.TABS_EXCEPTION : ContainerHandler.ACCORDION_EXCEPTION;
-        target.create(DialogConstants.NN_ITEMS);
-
-        Map<String, ContainerInfo> containerItemInstancesFromCurrentClass = getInstancesFromCurrentClass(annotationClass, source);
-
-        Class<?> containerType = source.getContainerClass();
-        List<Source> allFields = getContainerFields(source, target, containerType);
-
-        if (containerItemInstancesFromCurrentClass.isEmpty() && !allFields.isEmpty()) {
-            PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(
-                exceptionMessage + containerType.getName()
-            ));
-            if (annotationClass.equals(TabsWidget.class)) {
-                containerItemInstancesFromCurrentClass.put(StringUtils.EMPTY, new ContainerInfo("Untitled"));
-            }
-        }
-
-        ContainerHandler.addContainerElements(containerItemInstancesFromCurrentClass, allFields, ArrayUtils.EMPTY_STRING_ARRAY, target.get(DialogConstants.NN_ITEMS), defaultContainerItemName);
-        ContainerHandler.handleInvalidContainerItemException(allFields, containerName);
+        return result;
     }
 }

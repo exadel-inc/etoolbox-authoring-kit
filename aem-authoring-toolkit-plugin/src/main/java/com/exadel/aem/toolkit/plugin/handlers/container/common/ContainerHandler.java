@@ -59,211 +59,74 @@ import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlContainerUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
-
 public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     private static final Logger LOG = LoggerFactory.getLogger(ContainerHandler.class);
 
     static final String TABS_EXCEPTION = "No tabs defined for the dialog at ";
-    static final String ACCORDION_EXCEPTION = "No accordions defined for the dialog at ";
+    static final String ACCORDION_EXCEPTION = "No accordion panels defined for the dialog at ";
 
-    /**
-     * Appends containerItem attributes to a pre-built containerItem-defining XML element
-     * @param containerElement         {@link Element} instance representing a TouchUI dialog containerItem
-     * @param containerItem            {@link ContainerInfo} stores information about current container item
-     * @param defaultContainerItemName {@link String} name of current container containerItem
-     */
-    private static void appendContainerSection(List<Source> fields, Target containerElement, ContainerInfo containerItem, String defaultContainerItemName) {
-        String nodeName = PluginNamingUtility.getUniqueName(containerItem.getTitle(), defaultContainerItemName, containerElement);
-        Target containerItemElement = containerElement.create(nodeName)
-            .attribute(JcrConstants.PN_TITLE, containerItem.getTitle())
-            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
-        if (defaultContainerItemName.equals(DialogConstants.NN_TAB)) {
-            Tab newTab = PluginObjectUtility.create(Tab.class,
-                containerItem.getAttributes());
-            appendTabAttributes(containerItemElement, newTab);
-        } else if (defaultContainerItemName.equals(DialogConstants.NN_ACCORDION)) {
-            AccordionPanel accordionPanel = PluginObjectUtility.create(AccordionPanel.class,
-                containerItem.getAttributes());
-            List<String> skippedList = new ArrayList<>();
-            skippedList.add(DialogConstants.PN_TITLE);
-            containerItemElement.create(DialogConstants.NN_PARENT_CONFIG).mapProperties(accordionPanel, skippedList);
-        }
-        PluginXmlContainerUtility.append(fields, containerItemElement);
-    }
+    private static final String DEFAULT_CONTAINER_SECTION_TITLE = "Untitled";
 
-    /**
-     * Render XML markup for all existing tabs or accordion panels
-     * @param allContainerItemInstances {@code Map<String, ContainerInfo >} Map where we store names of tabs or accordion panels as keys and all its fields as values
-     * @param allFields                 {@code List<Field>} All *non-nested* fields from superclasses and the current class
-     * @param ignoredContainerItems     {@link String[]} Array of ignored tabs or accordion panels for the current class
-     * @param containerItemsElement     {@link Element} instance representing a TouchUI dialog tab or accordion panel
-     * @param defaultContainerItemName  {@link String} name of current container item
-     */
-    static void addContainerElements(Map<String, ContainerInfo> allContainerItemInstances, List<Source> allFields, String[] ignoredContainerItems, Target containerItemsElement, String defaultContainerItemName) {
-        // Iterate container item registry, from the first ever defined container item to the last
-        // Within the iteration loop, we
-        // 1) add fields from the "all fields" collection that are applicable to the current container item, to the container item's field collection
-        // 2) re-sort the current container item's fields collection with the field ranking comparator
-        // 3) remove managed fields from the "all fields" collection
-        // 4) render XML markup for the current container item
-        Iterator<Map.Entry<String, ContainerInfo>> containerItemInstanceIterator = allContainerItemInstances.entrySet().iterator();
-        int iterationStep = 0;
-        while (containerItemInstanceIterator.hasNext()) {
-            final boolean isFirstContainerItem = iterationStep++ == 0;
-            ContainerInfo currentContainerItemInstance
-                = containerItemInstanceIterator.next().getValue();
-            List<Source> storedCurrentContainerItemFields = new ArrayList<>();
-            for (String key : currentContainerItemInstance.getFields().keySet()) {
-                Member member = (Member) currentContainerItemInstance.getFields().get(key);
-                storedCurrentContainerItemFields.add(SourceBase.fromMember(member, member.getDeclaringClass()));
-            }
-            List<Source> moreCurrentContainerItemFields = allFields.stream()
-                .filter(field -> isFieldForContainerItem(field, currentContainerItemInstance.getTitle(), isFirstContainerItem))
-                .collect(Collectors.toList());
-            boolean needResort = !storedCurrentContainerItemFields.isEmpty() && !moreCurrentContainerItemFields.isEmpty();
-            storedCurrentContainerItemFields.addAll(moreCurrentContainerItemFields);
-            if (needResort) {
-                storedCurrentContainerItemFields.sort(PluginObjectPredicates::compareByRanking);
-            }
-            allFields.removeAll(moreCurrentContainerItemFields);
-            if (ArrayUtils.contains(ignoredContainerItems, currentContainerItemInstance.getTitle())) {
-                continue;
-            }
-            appendContainerSection(storedCurrentContainerItemFields, containerItemsElement, currentContainerItemInstance, defaultContainerItemName);
-        }
-    }
 
-    /**
-     * Appends tab attributes to a pre-built tab-defining XML element
-     * @param tabElement {@link Element} instance representing a TouchUI dialog tab
-     * @param tab        {@link Tab} annotation that contains settings
-     */
-    private static void appendTabAttributes(Target tabElement, Tab tab) {
-        tabElement.attribute(JcrConstants.PN_TITLE, tab.title());
-        Attribute attribute = tab.attribute();
-        tabElement.mapProperties(attribute);
-        PluginXmlUtility.appendDataAttributes(tabElement, attribute.data());
-    }
-
-    /**
-     * Handle an InvalidContainerException for fields for which a non-existent tab or accordion panel was specified
-     * @param allFields     {@code List<Field>} all stored dialog fields
-     * @param containerName {@link String} name of current container
-     */
-    static void handleInvalidContainerItemException(List<Source> allFields, String containerName) {
-        for (Source source : allFields) {
-            if (source.adaptTo(PlaceOnTab.class) != null) {
-                PluginRuntime.context().getExceptionHandler().handle(new InvalidContainerException(source.adaptTo(PlaceOnTab.class).value(), containerName));
-            } else if (source.adaptTo(PlaceOn.class) != null) {
-                PluginRuntime.context().getExceptionHandler().handle(new InvalidContainerException(source.adaptTo(PlaceOn.class).value(), containerName));
-            } else {
-                PluginRuntime.context().getExceptionHandler().handle(new InvalidContainerException(StringUtils.EMPTY, containerName));
-            }
-        }
-    }
-
-    /**
-     * The predicate to match a {@code Field} against particular {@link Tab} or {@link AccordionPanel}
-     * @param field                  {@link Field} instance to analyze
-     * @param containerItemTitle     String annotation to analyze
-     * @param isDefaultContainerItem True if the current container item accepts fields for which no container item was specified; otherwise, false
-     * @return True or false
-     */
-    private static boolean isFieldForContainerItem(Source field, String containerItemTitle, boolean isDefaultContainerItem) {
-        if (field.adaptTo(PlaceOnTab.class) == null && field.adaptTo(PlaceOn.class) == null) {
-            return isDefaultContainerItem;
-        }
-        if (field.adaptTo(PlaceOn.class) != null) {
-            return containerItemTitle.equalsIgnoreCase(field.adaptTo(PlaceOn.class).value());
-        }
-        return containerItemTitle.equalsIgnoreCase(field.adaptTo(PlaceOnTab.class).value());
-    }
-
-    /**
-     * Compose the "overall" registry of container items
-     * @param containerItemInstancesFromCurrentClass {@code Map<String, ContainerInfo >} Map where names of container items
-     *                                               from current class are stored as keys and all its fields as values
-     * @param containerItemInstancesFromSuperClasses {@code Map<String, ContainerInfo >} Map where names of container items
-     *                                               from super classes are stored as keys and all their fields as values
-     * @return {@code Map<String,ContainerInfo>} map containing all container items
-     */
-    private static Map<String, ContainerInfo> getAllContainerItemInstances(Map<String, ContainerInfo> containerItemInstancesFromCurrentClass, Map<String, ContainerInfo> containerItemInstancesFromSuperClasses) {
-        // Compose the "overall" registry of container items.
-        // Whether the current class has any container items that match container items from superclasses,we consider that the "right" order
-        // of container items is defined herewith, and place container items from the current class first, then rest of the container items.
-        // Otherwise, we consider the container items of the current class to be an "addendum" of container items from superclasses, and put
-        // them in the end
-        if (containerItemInstancesFromCurrentClass.keySet().stream().anyMatch(containerItemInstancesFromSuperClasses::containsKey)) {
-            return Stream.concat(containerItemInstancesFromCurrentClass.entrySet().stream(), containerItemInstancesFromSuperClasses.entrySet().stream())
-                .collect(Collectors.toMap(
-                    Map.Entry::getKey,
-                    Map.Entry::getValue,
-                    (child, parent) -> parent.merge(child),
-                    LinkedHashMap::new));
-        } else {
-            return Stream.concat(containerItemInstancesFromSuperClasses.entrySet().stream(), containerItemInstancesFromCurrentClass.entrySet().stream())
-                .collect(Collectors.toMap(
-                    Map.Entry::getKey,
-                    Map.Entry::getValue,
-                    ContainerInfo::merge,
-                    LinkedHashMap::new));
-        }
-    }
+    /* ---------------------
+       Inherited class logic
+       --------------------- */
 
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
      * to process component-backing Java class and append the results to the XML root node
      * @param componentClass  {@code Class<?>} instance used as the source of markup
-     * @param parentElement   XML document root element
+     * @param target   XML document root element
      * @param annotationClass class of container items element
      */
-    protected void acceptParent(Class<?> componentClass, Target parentElement, Class<? extends Annotation> annotationClass) {
+    protected void populateContainer(Class<?> componentClass, Target target, Class<? extends Annotation> annotationClass) {
         String containerName = annotationClass.equals(Tab.class) ? DialogConstants.NN_TABS : DialogConstants.NN_ACCORDION;
-        String defaultContainerItemName = annotationClass.equals(Tab.class) ? DialogConstants.NN_TAB : DialogConstants.NN_ACCORDION;
-        String exceptionMessage = annotationClass.equals(Tab.class) ? TABS_EXCEPTION : ACCORDION_EXCEPTION;
+        String containerSectionName = annotationClass.equals(Tab.class) ? DialogConstants.NN_TAB : DialogConstants.NN_ACCORDION;
         String resourceType = annotationClass.equals(Tab.class) ? ResourceTypes.TABS : ResourceTypes.ACCORDION;
+        String exceptionMessage = annotationClass.equals(Tab.class) ? TABS_EXCEPTION : ACCORDION_EXCEPTION;
 
-        Target containerTabItemsElement = parentElement.create(DialogConstants.NN_CONTENT).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
+        Target containerItemsElement = target
+            .create(DialogConstants.NN_CONTENT)
+            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
             .create(DialogConstants.NN_ITEMS)
-            .create(containerName).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
+            .create(containerName)
+            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
             .create(DialogConstants.NN_ITEMS);
 
-
         // Initialize ignored tabs or accordion panels list for the current class if IgnoreTabs annotation is present.
-        // Note that "ignored tabs" setting is not inherited and is for current class only, unlike tabs collection
-        String[] ignoredTabs = componentClass.isAnnotationPresent(IgnoreTabs.class)
+        // Note that "ignored tabs" setting is not inherited and is for current class only, unlike tabs/panels collection
+        String[] ignoredSections = componentClass.isAnnotationPresent(IgnoreTabs.class)
             ? componentClass.getAnnotation(IgnoreTabs.class).value()
             : new String[]{};
 
-
         // Retrieve superclasses of the current class, from top of the hierarchy to the most immediate ancestor,
-        // populate container item registry and store fields that are within @Tab or @AccordionPanel-marked nested classes
+        // populate container section registry and store fields that are within @Tab or @AccordionPanel-marked nested classes
         // (because we will not have access to them later)
-        Map<String, ContainerInfo> containerItemInstancesFromSuperClasses = getContainerElements(PluginReflectionUtility.getClassHierarchy(componentClass, false), annotationClass, parentElement.getScope());
+        Map<String, ContainerSection> containerSectionsFromSuperClasses = getContainerSections(PluginReflectionUtility.getClassHierarchy(componentClass, false), annotationClass, target.getScope());
 
         // Retrieve tabs or accordions of the current class same way
-        Map<String, ContainerInfo> containerItemsInstancesFromCurrentClass = getContainerElements(Collections.singletonList(componentClass), annotationClass, parentElement.getScope());
+        Map<String, ContainerSection> containerSectionsFromCurrentClass = getContainerSections(Collections.singletonList(componentClass), annotationClass, target.getScope());
 
         // Compose the "overall" registry of tabs or accordions.
-        Map<String, ContainerInfo> allContainerItemInstances = getAllContainerItemInstances(containerItemsInstancesFromCurrentClass, containerItemInstancesFromSuperClasses);
+        Map<String, ContainerSection> allContainerSections = mergeContainerSections(containerSectionsFromCurrentClass, containerSectionsFromSuperClasses);
 
         // Get all *non-nested* fields from superclasses and the current class
-        List<Source> allFields = PluginReflectionUtility.getAllSourceFacades(componentClass);
+        List<Source> allSources = PluginReflectionUtility.getAllSources(componentClass);
 
         // If tabs or accordions collection is empty and yet there are fields to be placed, fire an exception and create a default tab
-        if (allContainerItemInstances.isEmpty() && !allFields.isEmpty()) {
+        if (allContainerSections.isEmpty() && !allSources.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidContainerException(
                 exceptionMessage + componentClass.getSimpleName(), containerName
             ));
-            allContainerItemInstances.put(StringUtils.EMPTY, new ContainerInfo("Untitled"));
+            allContainerSections.put(StringUtils.EMPTY, new ContainerSection(DEFAULT_CONTAINER_SECTION_TITLE));
         }
 
         // Render XML markup for all existing container items
-        addContainerElements(allContainerItemInstances, allFields, ignoredTabs, containerTabItemsElement, defaultContainerItemName);
+        addToContainer(containerItemsElement, allSources, allContainerSections, ignoredSections,  containerSectionName);
 
-        // Afterwards there still can be "orphaned" fields in the "all fields" collection. They are probably fields
+        // Afterwards there still can be "orphaned" sources in the "all sources" collection. They are probably members
         // for which a non-existent tab or accordion panel was specified. Handle an InvalidContainerItemException for each of them.
-        handleInvalidContainerItemException(allFields, containerName);
+        handleInvalidContainerException(allSources, containerName);
     }
 
     /**
@@ -272,27 +135,27 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param classes         The {@code Class<?>}-es to search for defined container items
      * @param annotationClass The annotationClass are searching for
      * @param scope           Current XML scope
-     * @return Map of entries, each specified by a container item title and containing a {@link ContainerInfo} aggregate object
+     * @return Map of entries, each specified by a container item title and containing a {@link ContainerSection} aggregate object
      */
-    private Map<String, ContainerInfo> getContainerElements(List<Class<?>> classes, Class<? extends Annotation> annotationClass, XmlScope scope) {
-        Map<String, ContainerInfo> result = new LinkedHashMap<>();
+    private Map<String, ContainerSection> getContainerSections(List<Class<?>> classes, Class<? extends Annotation> annotationClass, XmlScope scope) {
+        Map<String, ContainerSection> result = new LinkedHashMap<>();
         Map<String, Object> annotationMap;
         try {
             for (Class<?> cls : classes) {
-                List<Class<?>> containerItemClasses = Arrays.stream(cls.getDeclaredClasses())
+                List<Class<?>> containerSectionClasses = Arrays.stream(cls.getDeclaredClasses())
                     .filter(nestedCls -> nestedCls.isAnnotationPresent(annotationClass))
                     .collect(Collectors.toList());
-                Collections.reverse(containerItemClasses);
-                for (Class<?> containerItemClass : containerItemClasses) {
-                    Annotation currentAnnotation = containerItemClass.getDeclaredAnnotation(annotationClass);
+                Collections.reverse(containerSectionClasses);
+                for (Class<?> containerSectionClass : containerSectionClasses) {
+                    Annotation currentAnnotation = containerSectionClass.getDeclaredAnnotation(annotationClass);
                     annotationMap = PluginObjectUtility.getAnnotationFields(currentAnnotation);
-                    ContainerInfo containerInfo = new ContainerInfo(annotationMap.get(DialogConstants.PN_TITLE).toString());
+                    ContainerSection containerInfo = new ContainerSection(annotationMap.get(DialogConstants.PN_TITLE).toString());
                     containerInfo.setAttributes(annotationMap);
-                    Arrays.stream(containerItemClass.getDeclaredFields()).forEach(field -> containerInfo.setField(field.getName(), field));
+                    Arrays.stream(containerSectionClass.getDeclaredFields()).forEach(field -> containerInfo.setField(field.getName(), field));
                     result.put(annotationMap.get(DialogConstants.PN_TITLE).toString(), containerInfo);
                 }
                 if (cls.isAnnotationPresent(Dialog.class) || cls.isAnnotationPresent(DesignDialog.class)) {
-                    getCurrentDialogContainerElements(result, cls, scope);
+                    getCurrentDialogContainerSections(result, cls, scope);
                 }
             }
         } catch (IllegalAccessException | InvocationTargetException exception) {
@@ -304,11 +167,10 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     /**
      * Put all tabs or accordion panels from current Dialog to result Map
      * @param result {@code Map<String,ContainerInfo>} map containing all container items
-     * @param cls    {@code Class<?>} current class that contains container elements
+     * @param cls {@code Class<?>} current class that contains container elements
      */
-    private void getCurrentDialogContainerElements(Map<String, ContainerInfo> result, Class<?> cls, XmlScope scope) {
+    private void getCurrentDialogContainerSections(Map<String, ContainerSection> result, Class<?> cls, XmlScope scope) {
         try {
-
             Map<String, Object> map;
             if (XmlScope.CQ_DIALOG.equals(scope)) {
                 map = PluginObjectUtility.getAnnotationFields(cls.getDeclaredAnnotation(Dialog.class));
@@ -325,7 +187,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
                 try {
                     Map<String, Object> fields = PluginObjectUtility.getAnnotationFields((Annotation) item);
                     String title = (String) fields.get(DialogConstants.PN_TITLE);
-                    ContainerInfo containerInfo = new ContainerInfo(title);
+                    ContainerSection containerInfo = new ContainerSection(title);
                     containerInfo.setAttributes(fields);
                     result.put(title, containerInfo);
                 } catch (IllegalAccessException | InvocationTargetException exception) {
@@ -334,6 +196,171 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
             });
         } catch (IllegalAccessException | InvocationTargetException exception) {
             LOG.error(exception.getMessage());
+        }
+    }
+
+    /**
+     * Compose the "overall" registry of container sections (such as tabs or accordion panels)
+     * @param containerSectionsFromCurrentClass A {@code Map} storing names of container sections from current class
+     * as keys and section details as values
+     * @param containerSectionsFromSuperClasses A {@code Map} storing names of container sections from superclasses
+     * as keys and section details as values
+     * @return {@code Map} map containing all container sections
+     */
+    private static Map<String, ContainerSection> mergeContainerSections(
+        Map<String, ContainerSection> containerSectionsFromCurrentClass,
+        Map<String, ContainerSection> containerSectionsFromSuperClasses) {
+        // Compose the "overall" registry of container items.
+        // Whether the current class has any container items that match container items from superclasses,we consider that the "right" order
+        // of container items is defined herewith, and place container items from the current class first, then rest of the container items.
+        // Otherwise, we consider the container items of the current class to be an "addendum" of container items from superclasses, and put
+        // them in the end
+        if (containerSectionsFromCurrentClass.keySet().stream().anyMatch(containerSectionsFromSuperClasses::containsKey)) {
+            return Stream.concat(containerSectionsFromCurrentClass.entrySet().stream(), containerSectionsFromSuperClasses.entrySet().stream())
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue,
+                    (child, parent) -> parent.merge(child),
+                    LinkedHashMap::new));
+        } else {
+            return Stream.concat(containerSectionsFromSuperClasses.entrySet().stream(), containerSectionsFromCurrentClass.entrySet().stream())
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue,
+                    ContainerSection::merge,
+                    LinkedHashMap::new));
+        }
+    }
+
+
+    /* ---------------
+       Utility methods
+       --------------- */
+
+    /**
+     * Render XML markup for all existing tabs or accordion panels
+     * @param containerItems {@code Map<String, ContainerInfo >} Map where we store names of tabs or accordion panels as keys and all its fields as values
+     * @param sources {@code List<Field>} All *non-nested* fields from superclasses and the current class
+     * @param ignoredContainerItems {@link String[]} Array of ignored tabs or accordion panels for the current class
+     * @param container {@link Target} instance representing a TouchUI dialog tab or accordion panel
+     * @param containerItemName {@link String} name of current container item
+     */
+    static void addToContainer(
+        Target container,
+        List<Source> sources,
+        Map<String, ContainerSection> containerItems,
+        String[] ignoredContainerItems,
+        String containerItemName) {
+
+        // Iterate container item registry, from the first ever defined container item to the last
+        // Within the iteration loop, we
+        // 1) add fields from the "all fields" collection that are applicable to the current container item, to the container item's field collection
+        // 2) re-sort the current container item's fields collection with the field ranking comparator
+        // 3) remove managed fields from the "all fields" collection
+        // 4) render XML markup for the current container item
+        Iterator<Map.Entry<String, ContainerSection>> containerItemInstanceIterator = containerItems.entrySet().iterator();
+        int iterationStep = 0;
+        while (containerItemInstanceIterator.hasNext()) {
+            final boolean isFirstContainerItem = iterationStep++ == 0;
+            ContainerSection currentContainerItemInstance
+                = containerItemInstanceIterator.next().getValue();
+            List<Source> storedCurrentContainerItemFields = new ArrayList<>();
+            for (String key : currentContainerItemInstance.getFields().keySet()) {
+                Member member = (Member) currentContainerItemInstance.getFields().get(key);
+                storedCurrentContainerItemFields.add(SourceBase.fromMember(member, member.getDeclaringClass()));
+            }
+            List<Source> moreCurrentContainerItemFields = sources.stream()
+                .filter(field -> isFieldForContainerItem(field, currentContainerItemInstance.getTitle(), isFirstContainerItem))
+                .collect(Collectors.toList());
+            boolean needResort = !storedCurrentContainerItemFields.isEmpty() && !moreCurrentContainerItemFields.isEmpty();
+            storedCurrentContainerItemFields.addAll(moreCurrentContainerItemFields);
+            if (needResort) {
+                storedCurrentContainerItemFields.sort(PluginObjectPredicates::compareByRanking);
+            }
+            sources.removeAll(moreCurrentContainerItemFields);
+            if (ArrayUtils.contains(ignoredContainerItems, currentContainerItemInstance.getTitle())) {
+                continue;
+            }
+            addToContainerSection(container, storedCurrentContainerItemFields, currentContainerItemInstance, containerItemName);
+        }
+    }
+
+    /**
+     * Appends containerItem attributes to a pre-built containerItem-defining XML element
+     * @param container {@link Element} instance representing a TouchUI dialog containerItem
+     * @param containerItem {@link ContainerSection} stores information about current container item
+     * @param containerItemName {@link String} name of current container containerItem
+     */
+    private static void addToContainerSection(
+        Target container,
+        List<Source> sources,
+        ContainerSection containerItem,
+        String containerItemName) {
+
+        String nodeName = PluginNamingUtility.getUniqueName(containerItem.getTitle(), containerItemName, container);
+        Target containerItemElement = container.create(nodeName)
+            .attribute(JcrConstants.PN_TITLE, containerItem.getTitle())
+            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
+        if (containerItemName.equals(DialogConstants.NN_TAB)) {
+            Tab newTab = PluginObjectUtility.create(Tab.class,
+                containerItem.getAttributes());
+            appendTabAttributes(containerItemElement, newTab);
+        } else if (containerItemName.equals(DialogConstants.NN_ACCORDION)) {
+            AccordionPanel accordionPanel = PluginObjectUtility.create(AccordionPanel.class,
+                containerItem.getAttributes());
+            List<String> skippedList = new ArrayList<>();
+            skippedList.add(DialogConstants.PN_TITLE);
+            containerItemElement.create(DialogConstants.NN_PARENT_CONFIG).mapProperties(accordionPanel, skippedList);
+        }
+        PluginXmlContainerUtility.append(sources, containerItemElement);
+    }
+
+    /**
+     * Appends tab attributes to a pre-built tab-defining XML element
+     * @param tabElement {@link Element} instance representing a TouchUI dialog tab
+     * @param tab {@link Tab} annotation that contains settings
+     */
+    private static void appendTabAttributes(Target tabElement, Tab tab) {
+        tabElement.attribute(JcrConstants.PN_TITLE, tab.title());
+        Attribute attribute = tab.attribute();
+        tabElement.mapProperties(attribute);
+        PluginXmlUtility.appendDataAttributes(tabElement, attribute.data());
+    }
+
+    /**
+     * The predicate to match a {@code Field} against particular {@link Tab} or {@link AccordionPanel}
+     * @param field {@link Field} instance to analyze
+     * @param containerItemTitle String annotation to analyze
+     * @param isDefaultContainerItem True if the current container item accepts fields for which no container item was specified; otherwise, false
+     * @return True or false
+     */
+    private static boolean isFieldForContainerItem(Source field, String containerItemTitle, boolean isDefaultContainerItem) {
+        if (field.adaptTo(PlaceOnTab.class) == null && field.adaptTo(PlaceOn.class) == null) {
+            return isDefaultContainerItem;
+        }
+        if (field.adaptTo(PlaceOn.class) != null) {
+            return containerItemTitle.equalsIgnoreCase(field.adaptTo(PlaceOn.class).value());
+        }
+        return containerItemTitle.equalsIgnoreCase(field.adaptTo(PlaceOnTab.class).value());
+    }
+
+    /**
+     * Handle an InvalidContainerException for sources (class members) for which a non-existent tab or accordion panel
+     * was specified
+     * @param sources {@code List<Field>} all stored dialog fields
+     * @param containerName {@link String} name of current container
+     */
+    static void handleInvalidContainerException(List<Source> sources, String containerName) {
+        for (Source source : sources) {
+            InvalidContainerException ex;
+            if (source.adaptTo(PlaceOnTab.class) != null) {
+                ex = new InvalidContainerException(source.adaptTo(PlaceOnTab.class).value(), containerName);
+            } else if (source.adaptTo(PlaceOn.class) != null) {
+                ex = new InvalidContainerException(source.adaptTo(PlaceOn.class).value(), containerName);
+            } else {
+                ex = new InvalidContainerException(StringUtils.EMPTY, containerName);
+            }
+            PluginRuntime.context().getExceptionHandler().handle(ex);
         }
     }
 }

@@ -14,8 +14,10 @@
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
@@ -24,50 +26,48 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlContainerUtility;
 
 /**
- * {@link WidgetSetHandler} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
- * within the {@code cq:dialog} node
+ * Handler used to prepare data for {@link MultiField} widget rendering
  */
-public class MultiFieldHandler implements WidgetSetHandler {
+public class MultiFieldHandler implements BiConsumer<Source, Target> {
+
     private static final String EMPTY_MULTIFIELD_EXCEPTION_MESSAGE = "No valid fields found in multifield class ";
 
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Implements the {@code BiConsumer<Source, Target} pattern to process settings specified by {@link MultiField}
+     * and provide data for widget rendering
+     * @param source Member that defines a {@code MultiField}
+     * @param target Data structure used for rendering
      */
     @Override
     public void accept(Source source, Target target) {
-        // Define the working @Multifield annotation instance and the multifield type
-        Class<?> multifieldType = source.getContainerClass();
-
-        // Modify the targetFacade's attributes for multifield mode
+        // Modify attributes of the target for multifield mode
         String name = target.getAttributes().get(DialogConstants.PN_NAME);
         target.getAttributes().remove(DialogConstants.PN_NAME);
 
         // Get the filtered members collection for the current container; early return if collection is empty
-        List<Source> members = getContainerSource(source, multifieldType);
+        List<Source> members = PluginXmlContainerUtility.getPlaceableSources(source, true);
         if (members.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
-                    EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + multifieldType.getName()
+                    EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.getContainerClass().getName()
             ));
             return;
         }
 
-        // Render separately the multiple-source and the single-source modes of multifield
+        // Process separately the multiple-source and the single-source modes of multifield
         if (members.size() > 1){
-            render(members, target, name);
+            process(members, target, name);
         } else {
-            render(members.get(0), target);
+            process(members.get(0), target);
         }
     }
 
     /**
-     * Renders multiple widgets as XML nodes within the current multifield container
-     * @param sources The collection of {@link Source} instances to render TouchUI widgets from
+     * Places multiple widget sources to the container of the {@code Target} multifield
+     * @param sources The collection of {@link Source} instances to become multifield children
      * @param target Current {@link Target} instance
-     * @param name The targetFacade's {@code name} attribute
+     * @param name The {@code name} attribute fot the target multifield
      */
-    private void render(List<Source> sources, Target target, String name) {
+    private void process(List<Source> sources, Target target, String name) {
         target.attribute(DialogConstants.PN_COMPOSITE, true);
         Target multifieldContainerElement = target.getOrCreate(DialogConstants.NN_FIELD)
                 .attribute(DialogConstants.PN_NAME, name)
@@ -81,11 +81,11 @@ public class MultiFieldHandler implements WidgetSetHandler {
     }
 
     /**
-     * Renders a single widget within the current multifield container
-     * @param source The {@link Source} instance to render TouchUI widget from
-     * @param target Current {@link Source} instance
+     * Places a single widget source under the {@code Target} multifield
+     * @param source The {@link Source} instance to render multifield content from
+     * @param target Current {@link Target} instance
      */
-    private void render(Source source, Target target) {
+    private void process(Source source, Target target) {
         DialogWidget widget = DialogWidgets.fromSource(source);
         if (widget == null) {
             return;

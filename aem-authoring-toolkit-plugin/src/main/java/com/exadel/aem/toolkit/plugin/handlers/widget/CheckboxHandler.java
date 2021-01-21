@@ -80,7 +80,7 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
         Checkbox checkbox = source.adaptTo(Checkbox.class);
 
         for (Class<?> sublistClass : checkbox.sublist()) {
-            List<Source> sources = PluginReflectionUtility.getAllSourceFacades(sublistClass).stream()
+            List<Source> sources = PluginReflectionUtility.getAllSources(sublistClass).stream()
                     .filter(f -> f.adaptTo(Checkbox.class) != null)
                     .collect(Collectors.toList());
 

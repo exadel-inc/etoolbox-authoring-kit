@@ -19,17 +19,18 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.container.common.WidgetContainerHandler;
 
 /**
- * The handler for a tabbed TouchUI dialog
+ * {@link WidgetContainerHandler} implementation used to prepare data needed for {@code Tabs} widget functionality
  */
 public class TabsWidgetHandler extends WidgetContainerHandler {
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Implements the {@code BiConsumer<Source, Target} pattern to process user input data specific for {@link TabsWidget}
+     * and provide data for widget rendering
+     * @param source Member that defines a {@code Tabs} widget
+     * @param target Data structure used for rendering
      */
     @Override
     public void accept(Source source, Target target) {
-        acceptParent(source, TabsWidget.class, target);
+        populateContainer(source, target, TabsWidget.class);
     }
 }

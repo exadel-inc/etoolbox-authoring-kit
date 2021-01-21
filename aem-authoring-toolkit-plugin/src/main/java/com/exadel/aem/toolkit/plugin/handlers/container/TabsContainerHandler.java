@@ -30,6 +30,6 @@ public class TabsContainerHandler extends ContainerHandler {
      */
     @Override
     public void accept(Class<?> componentClass, Target parentElement) {
-        acceptParent(componentClass, parentElement, Tab.class);
+        populateContainer(componentClass, parentElement, Tab.class);
     }
 }

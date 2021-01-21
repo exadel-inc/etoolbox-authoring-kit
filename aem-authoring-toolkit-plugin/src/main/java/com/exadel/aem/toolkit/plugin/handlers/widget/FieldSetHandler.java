@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,16 +27,17 @@ import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlContainerUtility;
 
 /**
- * {@link WidgetSetHandler} implementation used to create markup responsible for Granite {@code FieldSet} widget functionality
- * within the {@code cq:dialog} node
+ * Handler used to prepare data for {@link FieldSet} widget rendering
  */
-class FieldSetHandler implements WidgetSetHandler {
+class FieldSetHandler implements BiConsumer<Source, Target> {
+
     private static final String EMPTY_FIELDSET_EXCEPTION_MESSAGE = "No valid fields found in fieldset class ";
 
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Implements the {@code BiConsumer<Source, Target} pattern to process settings specified by {@link FieldSet}
+     * and provide data for widget rendering
+     * @param source Member that defines a {@code FieldSet}
+     * @param target Data structure used for rendering
      */
     @Override
     public void accept(Source source, Target target) {
@@ -43,20 +45,21 @@ class FieldSetHandler implements WidgetSetHandler {
         FieldSet fieldSet = source.adaptTo(FieldSet.class);
         Class<?> fieldSetType = source.getContainerClass();
 
-        List<Source> sources = getContainerSource(source, fieldSetType);
+        List<Source> sources = PluginXmlContainerUtility.getPlaceableSources(source, true);
 
-        if(sources.isEmpty()) {
-            PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
-                    EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName()
-            ));
+        if (sources.isEmpty()) {
+            PluginRuntime.context().getExceptionHandler().handle(
+                new InvalidFieldContainerException(EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName())
+            );
             return;
         }
 
         if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
-            target.prefix(PluginNamingUtility.getValidFieldName(fieldSet.namePrefix()))
+            target
+                .prefix(PluginNamingUtility.getValidFieldName(fieldSet.namePrefix()))
                 .postfix(fieldSet.namePostfix());
         }
-        // append the valid sources to the container
+        // Append the valid sources to the container
         PluginXmlContainerUtility.append(sources, target);
     }
 }

@@ -17,10 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Represents an aggregate of Tab or Accordion instance and a list of fields designed to be rendered within this container element.
+ * Represents an abstraction of {@code Tab} or {@code Accordion panel} that contains list of fields designed to be rendered within this container element.
  * Used to compose a sorted "container element registry" for a component class
  */
-public class ContainerInfo {
+class ContainerSection {
     private final String title;
     private final Map<String, Object> attributes;
     private final Map<String, Object> fields;
@@ -29,7 +29,7 @@ public class ContainerInfo {
      * Creates a new {@code ContainerInfo} wrapped around a specified  with an empty list of associated fields
      * @param containerElementTitle Container element name
      */
-    ContainerInfo(String containerElementTitle) {
+    ContainerSection(String containerElementTitle) {
         this.title = containerElementTitle;
         this.fields = new HashMap<>();
         this.attributes = new HashMap<>();
@@ -61,7 +61,7 @@ public class ContainerInfo {
      * @param other Foreign {@code ContainerInfo} object
      * @return This instance
      */
-    ContainerInfo merge(ContainerInfo other) {
+    ContainerSection merge(ContainerSection other) {
         this.fields.putAll(other.getFields());
         return this;
     }

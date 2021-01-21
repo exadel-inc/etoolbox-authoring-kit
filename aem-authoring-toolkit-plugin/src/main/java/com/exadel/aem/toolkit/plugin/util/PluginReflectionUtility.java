@@ -300,13 +300,13 @@ public class PluginReflectionUtility {
                 .collect(Collectors.toList());
     }
 
-    public static List<Source> getAllSourceFacades(Class<?> targetClass, List<Predicate<Member>> predicates) {
+    public static List<Source> getAllSources(Class<?> targetClass, List<Predicate<Member>> predicates) {
         return getAllMembers(targetClass, predicates).stream()
             .map(member -> SourceBase.fromMember(member, targetClass)).collect(Collectors.toList());
     }
 
-    public static List<Source> getAllSourceFacades(Class<?> targetClass) {
-        return getAllSourceFacades(targetClass, Collections.emptyList());
+    public static List<Source> getAllSources(Class<?> targetClass) {
+        return getAllSources(targetClass, Collections.emptyList());
     }
 
     /**
