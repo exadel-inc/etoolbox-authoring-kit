@@ -29,6 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.plugin.util.TestConstants;
+import com.exadel.aem.toolkit.test.widget.Accordion;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
 import com.exadel.aem.toolkit.test.widget.Tabs;
 
@@ -47,7 +48,7 @@ public class IgnoreTestCases {
                     @ClassMember(source = SelectWidget.class, name = "timezone"),
                     @ClassMember(source = SelectWidget.class, name = "rating")
     })
-    public static class IgnoreFieldsFixedColumnsLayout extends SelectWidget {}
+    public static class IgnoreMembersFixedColumnsLayout extends SelectWidget {}
 
 
     @Dialog(
@@ -60,10 +61,26 @@ public class IgnoreTestCases {
             @ClassField(field = "field4") // source value falls back to the annotated class'es type
     })
     @IgnoreTabs(LABEL_TAB_3)
-    public static class IgnoreFieldsTabsLayout extends Tabs {
+    public static class IgnoreMembersTabsLayout extends Tabs {
         @DialogField
         @TextField
         private String field4;
+    }
+
+
+    @Dialog(
+        name = TestConstants.DEFAULT_COMPONENT_NAME,
+        title = TestConstants.DEFAULT_COMPONENT_NAME,
+        layout = DialogLayout.ACCORDION
+    )
+    @Ignore(
+        sections = "Basic2",
+        members = @ClassMember(source = Accordion.class, name = "field1")
+    )
+    public static class IgnoreMembersAccordionLayout extends Accordion {
+        @DialogField
+        @TextField
+        private String field2;
     }
 
     @Dialog(
@@ -78,7 +95,7 @@ public class IgnoreTestCases {
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "dropdown"),
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "fieldSet")
     })
-    public static class IgnoreFieldsInFieldSet extends ComponentWithTabsAndInnerClass {
+    public static class IgnoreMembersInFieldSet extends ComponentWithTabsAndInnerClass {
         @FieldSet(title = "Field set example")
         @PlaceOnTab(LABEL_TAB_2)
         FieldSetExampleCut fieldSet;
@@ -101,7 +118,7 @@ public class IgnoreTestCases {
             @ClassField(source = ComponentWithTabsAndInnerClass.class, field = "fieldSet"),
             @ClassField(field = "localIgnored")
     })
-    public static class IgnoreFieldsImposedOnFieldSet extends ComponentWithTabsAndInnerClass {
+    public static class IgnoreMembersImposedOnFieldSet extends ComponentWithTabsAndInnerClass {
         @FieldSet(title = "Field set example")
         @PlaceOnTab(LABEL_TAB_2)
         @Ignore(
@@ -120,20 +137,20 @@ public class IgnoreTestCases {
             layout = DialogLayout.TABS
     )
     @Ignore(
-        members ={
+        members = {
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "field1"),
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "field2"),
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "dropdown"),
             @ClassMember(source = ComponentWithTabsAndInnerClass.FieldSetExample.class, name = "field6")
     })
-    public static class IgnoreFieldsImposedOnFieldSetClassLevel extends ComponentWithTabsAndInnerClass {}
+    public static class IgnoreMembersImposedOnFieldSetClassLevel extends ComponentWithTabsAndInnerClass {}
 
     @Dialog(
             name = TestConstants.DEFAULT_COMPONENT_NAME,
             title = TestConstants.DEFAULT_COMPONENT_NAME,
             layout = DialogLayout.FIXED_COLUMNS
     )
-    public static class IgnoreFieldsInMultifield {
+    public static class IgnoreMembersInMultifield {
         @DialogField
         @MultiField(field = SampleMultifieldCut.class)
         private List<SampleMultifieldCut> links;
@@ -151,7 +168,7 @@ public class IgnoreTestCases {
             title = TestConstants.DEFAULT_COMPONENT_NAME,
             layout = DialogLayout.FIXED_COLUMNS
     )
-    public static class IgnoreFieldsImposedOnMultifield {
+    public static class IgnoreMembersImposedOnMultifield {
         @DialogField
         @MultiField(field = SampleMultifieldBase.class)
         @Ignore(
@@ -172,7 +189,7 @@ public class IgnoreTestCases {
             @ClassMember(source = SampleMultifieldBase.class, name = "checkbox"),
             @ClassMember(source = SampleMultifieldBase.class, name = "iconName"),
     })
-    public static class IgnoreFieldsImposedOnMultifieldClassLevel {
+    public static class IgnoreMembersImposedOnMultifieldClassLevel {
         @DialogField
         @MultiField(field = SampleMultifieldBase.class)
         @Ignore(
