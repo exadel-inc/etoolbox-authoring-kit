@@ -44,6 +44,7 @@ import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -68,9 +69,9 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     private static final String DEFAULT_CONTAINER_SECTION_TITLE = "Untitled";
 
 
-    /* ---------------------
-       Inherited class logic
-       --------------------- */
+    /* -----------------------
+       Inheritable class logic
+       ----------------------- */
 
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
@@ -93,11 +94,16 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
             .create(DialogConstants.NN_ITEMS);
 
-        // Initialize ignored tabs or accordion panels list for the current class if IgnoreTabs annotation is present.
-        // Note that "ignored tabs" setting is not inherited and is for current class only, unlike tabs/panels collection
-        String[] ignoredSections = componentClass.isAnnotationPresent(IgnoreTabs.class)
-            ? componentClass.getAnnotation(IgnoreTabs.class).value()
-            : new String[]{};
+        // Initialize ignored sections (tabs or accordion panels) list for the current class.
+        // Note that "ignored sections" setting is not inherited and is for current class only, unlike the very collection
+        // of tabs or panels
+        String[] ignoredSections = ArrayUtils.EMPTY_STRING_ARRAY;
+        if (componentClass.isAnnotationPresent(IgnoreTabs.class)) {
+            ignoredSections = componentClass.getAnnotation(IgnoreTabs.class).value();
+        }
+        if (componentClass.isAnnotationPresent(Ignore.class) && componentClass.getAnnotation(Ignore.class).sections().length > 0) {
+            ignoredSections = ArrayUtils.addAll(ignoredSections, componentClass.getAnnotation(Ignore.class).sections());
+        }
 
         // Retrieve superclasses of the current class, from top of the hierarchy to the most immediate ancestor,
         // populate container section registry and store fields that are within @Tab or @AccordionPanel-marked nested classes
@@ -108,7 +114,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         Map<String, ContainerSection> containerSectionsFromCurrentClass = getContainerSections(Collections.singletonList(componentClass), annotationClass, target.getScope());
 
         // Compose the "overall" registry of tabs or accordions.
-        Map<String, ContainerSection> allContainerSections = mergeContainerSections(containerSectionsFromCurrentClass, containerSectionsFromSuperClasses);
+        Map<String, ContainerSection> allContainerSections = mergeSectionsFromCurrentClassAndSuperclasses(containerSectionsFromCurrentClass, containerSectionsFromSuperClasses);
 
         // Get all *non-nested* fields from superclasses and the current class
         List<Source> allSources = PluginReflectionUtility.getAllSources(componentClass);
@@ -155,7 +161,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
                     result.put(annotationMap.get(DialogConstants.PN_TITLE).toString(), containerInfo);
                 }
                 if (cls.isAnnotationPresent(Dialog.class) || cls.isAnnotationPresent(DesignDialog.class)) {
-                    getCurrentDialogContainerSections(result, cls, scope);
+                    appendSectionsFromClass(result, cls, scope);
                 }
             }
         } catch (IllegalAccessException | InvocationTargetException exception) {
@@ -169,7 +175,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param result {@code Map<String,ContainerInfo>} map containing all container items
      * @param cls {@code Class<?>} current class that contains container elements
      */
-    private void getCurrentDialogContainerSections(Map<String, ContainerSection> result, Class<?> cls, XmlScope scope) {
+    private void appendSectionsFromClass(Map<String, ContainerSection> result, Class<?> cls, XmlScope scope) {
         try {
             Map<String, Object> map;
             if (XmlScope.CQ_DIALOG.equals(scope)) {
@@ -201,29 +207,28 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
 
     /**
      * Compose the "overall" registry of container sections (such as tabs or accordion panels)
-     * @param containerSectionsFromCurrentClass A {@code Map} storing names of container sections from current class
+     * @param sectionsFromCurrentClass A {@code Map} storing names of container sections from current class
      * as keys and section details as values
-     * @param containerSectionsFromSuperClasses A {@code Map} storing names of container sections from superclasses
+     * @param sectionsFromSuperClasses A {@code Map} storing names of container sections from superclasses
      * as keys and section details as values
      * @return {@code Map} map containing all container sections
      */
-    private static Map<String, ContainerSection> mergeContainerSections(
-        Map<String, ContainerSection> containerSectionsFromCurrentClass,
-        Map<String, ContainerSection> containerSectionsFromSuperClasses) {
-        // Compose the "overall" registry of container items.
-        // Whether the current class has any container items that match container items from superclasses,we consider that the "right" order
+    private static Map<String, ContainerSection> mergeSectionsFromCurrentClassAndSuperclasses(
+        Map<String, ContainerSection> sectionsFromCurrentClass,
+        Map<String, ContainerSection> sectionsFromSuperClasses) {
+        // Whether the current class has any container items that match container items from superclasses, we consider that the "right" order
         // of container items is defined herewith, and place container items from the current class first, then rest of the container items.
         // Otherwise, we consider the container items of the current class to be an "addendum" of container items from superclasses, and put
         // them in the end
-        if (containerSectionsFromCurrentClass.keySet().stream().anyMatch(containerSectionsFromSuperClasses::containsKey)) {
-            return Stream.concat(containerSectionsFromCurrentClass.entrySet().stream(), containerSectionsFromSuperClasses.entrySet().stream())
+        if (sectionsFromCurrentClass.keySet().stream().anyMatch(sectionsFromSuperClasses::containsKey)) {
+            return Stream.concat(sectionsFromCurrentClass.entrySet().stream(), sectionsFromSuperClasses.entrySet().stream())
                 .collect(Collectors.toMap(
                     Map.Entry::getKey,
                     Map.Entry::getValue,
                     (child, parent) -> parent.merge(child),
                     LinkedHashMap::new));
         } else {
-            return Stream.concat(containerSectionsFromSuperClasses.entrySet().stream(), containerSectionsFromCurrentClass.entrySet().stream())
+            return Stream.concat(sectionsFromSuperClasses.entrySet().stream(), sectionsFromCurrentClass.entrySet().stream())
                 .collect(Collectors.toMap(
                     Map.Entry::getKey,
                     Map.Entry::getValue,

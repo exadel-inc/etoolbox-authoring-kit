@@ -25,7 +25,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
  * Used to mark a class field that is ignored in the process of TouchUI XML markup rendering
  *
  * @deprecated This will be removed starting from version 2.0.0. Please use {@link Ignore}
- * or {@link com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs} as necessary
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
