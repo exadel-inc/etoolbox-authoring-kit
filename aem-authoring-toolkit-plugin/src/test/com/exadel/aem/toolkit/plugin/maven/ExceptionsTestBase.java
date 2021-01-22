@@ -14,22 +14,41 @@
 
 package com.exadel.aem.toolkit.plugin.maven;
 
-import com.exadel.aem.toolkit.plugin.util.writer.TestXmlWriterHelper;
+import java.io.IOException;
 
-class ExceptionsTestBase extends DefaultTestBase {
-    private static final String EXCEPTION_SETTING = "all";
+import org.apache.commons.lang3.StringUtils;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
-    @Override
-    String getExceptionSetting() {
-        return EXCEPTION_SETTING;
+import com.exadel.aem.toolkit.plugin.util.FileSystemHelper;
+import com.exadel.aem.toolkit.plugin.util.writer.TestXmlUtility;
+
+public abstract class ExceptionsTestBase {
+
+    private static FileSystemHelper fileSystemHelper;
+
+    @BeforeClass
+    public static void setUp() {
+        fileSystemHelper = new FileSystemHelper();
+        PluginRuntime.contextBuilder()
+            .classPathElements(DefaultTestBase.CLASSPATH_ELEMENTS)
+            .packageBase(StringUtils.EMPTY)
+            .terminateOn("all")
+            .build();
     }
 
-    @Override
+    @AfterClass
+    public static void finalizeAll() throws IOException {
+        fileSystemHelper.close();
+    }
+
     void test(Class<?> tested) {
         try {
-            TestXmlWriterHelper.doTest(tested.getName(), null);
-        } catch (ClassNotFoundException ex) {
-            LOG.error("Cannot initialize instance of class " + tested.getName(), ex);
+            TestXmlUtility.doTest(fileSystemHelper.getFileSystem(), tested.getName(), null);
+        } catch (ClassNotFoundException cnfe) {
+            DefaultTestBase.LOG.error(DefaultTestBase.INSTANTIATION_EXCEPTION_MESSAGE + tested.getName(), cnfe);
+        } catch (IOException ioe) {
+            DefaultTestBase.LOG.error(DefaultTestBase.CLEANUP_EXCEPTION_MESSAGE + tested.getName(), ioe);
         }
     }
 }

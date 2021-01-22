@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.plugin.util.writer;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,7 +44,7 @@ import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import static com.exadel.aem.toolkit.plugin.util.writer.CqDialogWriter.getCustomDialogAnnotations;
 
 /**
- * Base class for creating XML representation of AEM component's stored attributes and authoring features
+ * Base class for routines that render XML files inside a component folder within an AEM package
  */
 abstract class PackageEntryWriter {
     private final Transformer transformer;
@@ -73,7 +74,7 @@ abstract class PackageEntryWriter {
             }
             // then second we store the newly generated class
             writeXml(componentClass, writer);
-        } catch (Exception e) {
+        } catch (IOException e) {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
     }
@@ -83,7 +84,7 @@ abstract class PackageEntryWriter {
      * @param componentClass {@link Class} to analyze
      * @param writer {@link Writer} managing the data storage procedure
      */
-    void writeXml(Class<?> componentClass, Writer writer) {
+    private void writeXml(Class<?> componentClass, Writer writer) {
         Document document = createDocument(componentClass);
         try {
              transformer.transform(new DOMSource(document), new StreamResult(writer));

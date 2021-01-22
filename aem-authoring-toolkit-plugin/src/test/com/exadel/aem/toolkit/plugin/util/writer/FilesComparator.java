@@ -51,15 +51,16 @@ class FilesComparator {
 
     private FilesComparator() {
     }
-    static boolean compareXMLFiles(String actualFile, String expectedFile, String resourcePath)
+
+    static boolean compareXml(String actual, String expected, String resourcePath)
             throws IOException, SAXException, ParserConfigurationException, XPathExpressionException, TransformerException {
-        Diff diff = DiffBuilder.compare(Input.fromString(expectedFile))
-                .withTest(Input.fromString(actualFile)).normalizeWhitespace().build();
+        Diff diff = DiffBuilder.compare(Input.fromString(expected))
+                .withTest(Input.fromString(actual)).normalizeWhitespace().build();
         if (!diff.hasDifferences()) {
             return true;
         }
-        Document actualDocument = getXmlDocument(actualFile);
-        Document expectedDocument = getXmlDocument(expectedFile);
+        Document actualDocument = getXmlDocument(actual);
+        Document expectedDocument = getXmlDocument(expected);
         XPath xPathInstance = XPathFactory.newInstance().newXPath();
 
         final StringBuilder differences = new StringBuilder("difference(s) detected at ")

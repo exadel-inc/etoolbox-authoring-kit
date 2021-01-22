@@ -23,9 +23,9 @@ import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
-import com.exadel.aem.toolkit.test.mvc.component1.ComplexComponentHolder;
+import com.exadel.aem.toolkit.test.component.viewPattern.component1.ComplexComponentHolder;
 
-public class DialogsTest extends DefaultTestBase {
+public class ComponentsTest extends DefaultTestBase {
     @Test
     public void testComponentWithRichTextAndExternalClasses() {
         test(ComponentWithRichTextAndExternalClasses.class);
@@ -62,7 +62,7 @@ public class DialogsTest extends DefaultTestBase {
     }
 
     @Test
-    public void testMVC() {
-        test(ComplexComponentHolder.class, "mvc/component1");
+    public void testComponentPattern() {
+        test(ComplexComponentHolder.class, "component/viewPattern/component1");
     }
 }

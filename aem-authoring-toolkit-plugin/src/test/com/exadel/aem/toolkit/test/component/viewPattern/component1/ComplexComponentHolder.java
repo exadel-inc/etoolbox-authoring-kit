@@ -12,14 +12,14 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.test.mvc.component1;
+package com.exadel.aem.toolkit.test.component.viewPattern.component1;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.plugin.util.TestConstants;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
-import com.exadel.aem.toolkit.test.mvc.component1.views.ChildEditConfigView;
-import com.exadel.aem.toolkit.test.mvc.component1.views.DesignDialogView;
-import com.exadel.aem.toolkit.test.mvc.component1.views.HtmlTagView;
+import com.exadel.aem.toolkit.test.component.viewPattern.component1.views.ChildEditConfigView;
+import com.exadel.aem.toolkit.test.component.viewPattern.component1.views.DesignDialogView;
+import com.exadel.aem.toolkit.test.component.viewPattern.component1.views.HtmlTagView;
 
 @Component(
     path = TestConstants.DEFAULT_COMPONENT_NAME,
