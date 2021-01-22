@@ -57,9 +57,9 @@ class ContentXmlWriter extends PackageEntryWriter {
      * @return True if current {@code Class} is annotated with {@link Dialog} or {@link Component}; otherwise, false
      */
     @Override
-    boolean isProcessed(Class<?> componentClass) {
-        return componentClass.isAnnotationPresent(Dialog.class) ||
-            componentClass.isAnnotationPresent(Component.class);
+    boolean canProcess(Class<?> componentClass) {
+        return componentClass.isAnnotationPresent(Dialog.class)
+            || componentClass.isAnnotationPresent(Component.class);
     }
 
     /**

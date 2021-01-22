@@ -53,7 +53,7 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
      * @return True if current {@code Class} is annotated with {@link ChildEditConfig}; otherwise, false
      */
     @Override
-    boolean isProcessed(Class<?> componentClass) {
+    boolean canProcess(Class<?> componentClass) {
         return componentClass.isAnnotationPresent(ChildEditConfig.class);
     }
 

@@ -103,7 +103,7 @@ abstract class PackageEntryWriter {
      * @param componentClass The {@code Class} under consideration
      * @return True or false
      */
-    abstract boolean isProcessed(Class<?> componentClass);
+    abstract boolean canProcess(Class<?> componentClass);
 
     /**
      * Triggers the particular routines for storing component-related data in the XML markup

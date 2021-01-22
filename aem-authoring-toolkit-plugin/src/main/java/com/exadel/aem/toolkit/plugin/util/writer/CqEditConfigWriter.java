@@ -53,7 +53,7 @@ class CqEditConfigWriter extends PackageEntryWriter {
      * @return True if current {@code Class} is annotated with {@link EditConfig}; otherwise, false
      */
     @Override
-    boolean isProcessed(Class<?> componentClass) {
+    boolean canProcess(Class<?> componentClass) {
         return componentClass.isAnnotationPresent(EditConfig.class);
     }
 

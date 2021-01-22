@@ -50,7 +50,7 @@ class CqHtmlTagWriter extends PackageEntryWriter {
      * @return True if current {@code Class} is annotated with {@link HtmlTag}; otherwise, false
      */
     @Override
-    boolean isProcessed(Class<?> componentClass) {
+    boolean canProcess(Class<?> componentClass) {
         return componentClass.isAnnotationPresent(HtmlTag.class);
     }
 

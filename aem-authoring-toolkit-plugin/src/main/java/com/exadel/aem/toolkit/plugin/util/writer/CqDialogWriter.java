@@ -73,7 +73,7 @@ class CqDialogWriter extends PackageEntryWriter {
      * @return True if current {@code Class} is annotated with {@link Dialog} or {@link DesignDialog}; otherwise, false
      */
     @Override
-    boolean isProcessed(Class<?> componentClass) {
+    boolean canProcess(Class<?> componentClass) {
         return XmlScope.CQ_DIALOG.equals(scope)
             ? componentClass.isAnnotationPresent(Dialog.class)
             : componentClass.isAnnotationPresent(DesignDialog.class);
