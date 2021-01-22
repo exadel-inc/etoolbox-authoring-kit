@@ -24,10 +24,10 @@ import org.w3c.dom.Document;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.ListItem;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.handlers.container.ListItemHandler;
 import com.exadel.aem.toolkit.core.util.DialogConstants;
 
 /**
@@ -71,10 +71,6 @@ class ContentXmlWriter extends PackageEntryWriter {
      */
     @Override
     void populateDomDocument(Class<?> componentClass, Target root) {
-        Annotation listItemAnnotation = componentClass.getDeclaredAnnotation(ListItem.class);
-        if (listItemAnnotation!= null) {
-            root.attribute(DialogConstants.PN_IS_LIST_ITEM, "true");
-        }
         Annotation annotation = componentClass.getDeclaredAnnotation(Component.class);
         if (annotation == null) {
             annotation = componentClass.getDeclaredAnnotation(Dialog.class);
@@ -87,6 +83,7 @@ class ContentXmlWriter extends PackageEntryWriter {
             || (annotation instanceof Dialog && ((Dialog) annotation).isContainer())) {
             root.attribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
         }
+        new ListItemHandler().accept(root, componentClass);
     }
 
     private static boolean fitsInScope(Method method, XmlScope scope) {
