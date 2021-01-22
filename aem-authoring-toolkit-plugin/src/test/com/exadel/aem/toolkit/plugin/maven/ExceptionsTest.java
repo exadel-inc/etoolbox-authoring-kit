@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
 import com.exadel.aem.toolkit.test.component.InheritanceTestCases;
 
 public class ExceptionsTest extends ExceptionsTestBase {
-    private static final String NOT_AN_EXCEPTION_MESSAGE = "Not an exception: testing terminateOn logic";
+    private static final String NOT_AN_EXCEPTION_MESSAGE = "NOT AN EXCEPTION: testing terminateOn logic";
     private static final String SHOULD_TERMINATE_TEMPLATE = "Setting \"%s\" should have caused termination with %s";
 
     @Rule
@@ -52,11 +52,11 @@ public class ExceptionsTest extends ExceptionsTestBase {
         test(ExceptionsTestCases.ComponentWithNonexistentDependsOnTab.class);
     }
 
-    //@Test
+    @Test
     public void testComponentWithDuplicateFields() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidFieldContainerException.class));
-        exceptionRule.expectMessage("Field named \"text2\" in class \"DuplicateOverride\"");
-        test(InheritanceTestCases.DuplicateOverride.class);
+        exceptionRule.expectMessage("Field named \"text2\" in class \"Child\"");
+        test(InheritanceTestCases.Child.class);
     }
 
     @Test

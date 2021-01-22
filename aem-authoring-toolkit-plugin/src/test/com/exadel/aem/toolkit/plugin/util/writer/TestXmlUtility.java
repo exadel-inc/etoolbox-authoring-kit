@@ -16,68 +16,53 @@ package com.exadel.aem.toolkit.plugin.util.writer;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exadel.aem.toolkit.api.annotations.main.Component;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
-import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
-import com.exadel.aem.toolkit.plugin.util.XmlDocumentFactory;
+import com.exadel.aem.toolkit.plugin.util.TestConstants;
 
-public class TestXmlWriterHelper {
-    private static final Logger LOG = LoggerFactory.getLogger(TestXmlWriterHelper.class);
+public class TestXmlUtility {
+    private static final Logger LOG = LoggerFactory.getLogger(TestXmlUtility.class);
 
-    private TestXmlWriterHelper() {
+    private static final String PROJECT_NAME = "test-package";
+
+    private TestXmlUtility() {
     }
 
-    public static boolean doTest(String testedClass, Path pathToExpectedFiles) throws ClassNotFoundException {
-        Class<?> dialogClass = Class.forName(testedClass);
-        List<PackageEntryWriter> writers = getWriters();
 
-        Map<String, String> actualFiles = getActualFiles(dialogClass, writers);
-        if (pathToExpectedFiles == null) {
-            return true;
+    public static boolean doTest(FileSystem fileSystem, String className, Path pathToExpectedFiles) throws ClassNotFoundException, IOException {
+
+        Class<?> testable = Class.forName(className);
+
+        PackageWriter.forFileSystem(fileSystem, PROJECT_NAME, StringUtils.EMPTY).write(testable);
+
+        Map<String, String> actualFiles = getFiles(fileSystem.getPath(TestConstants.DEFAULT_COMPONENT_NAME));
+        Map<String, String> expectedFiles = getFiles(pathToExpectedFiles);
+
+        for (String fileName : actualFiles.keySet()) {
+            Path filePath = fileSystem.getPath(TestConstants.DEFAULT_COMPONENT_NAME, fileName);
+            Files.delete(filePath);
         }
-        Map<String, String> expectedFiles = getExpectedFiles(pathToExpectedFiles);
+
         return compare(actualFiles, expectedFiles, pathToExpectedFiles.toString());
     }
 
-    private static List<PackageEntryWriter> getWriters() {
-        List<PackageEntryWriter> writers = new ArrayList<>();
-        try {
-            Transformer transformer = XmlDocumentFactory.newDocumentTransformer();
-            writers.add(new ContentXmlWriter(transformer));
-            writers.add(new CqDialogWriter(transformer, XmlScope.CQ_DIALOG));
-            writers.add(new CqDialogWriter(transformer, XmlScope.CQ_DESIGN_DIALOG));
-            writers.add(new CqEditConfigWriter(transformer));
-            writers.add(new CqChildEditConfigWriter(transformer));
-            writers.add(new CqHtmlTagWriter(transformer));
-        } catch (TransformerConfigurationException e) {
-            LOG.error(e.getMessage());
-        }
 
-        return writers;
-    }
 
-    private static Map<String, String> getActualFiles(Class<?> dialogClass, List<PackageEntryWriter> writers) {
+/*
+    private static Map<String, String> getActualFiles(Class<?> componentClass, List<PackageEntryWriter> writers) {
         Map<String, String> actualFiles = new HashMap<>();
-        List<Class<?>> views = new LinkedList<>(Collections.singletonList(dialogClass));
-        Optional.ofNullable(dialogClass.getAnnotation(Component.class)).ifPresent(component -> Collections.addAll(views, component.views()));
+        List<Class<?>> views = new LinkedList<>(Collections.singletonList(componentClass));
+        Optional.ofNullable(componentClass.getAnnotation(Component.class)).ifPresent(component -> Collections.addAll(views, component.views()));
         writers.forEach(packageEntryWriter -> {
             try (StringWriter stringWriter = new StringWriter()) {
                 if (packageEntryWriter instanceof ContentXmlWriter) {
@@ -121,37 +106,46 @@ public class TestXmlWriterHelper {
             writer.writeXml(processedClasses.get(0), stringWriter);
         }
     }
+*/
 
-    private static Map<String, String> getExpectedFiles(Path componentsPath) {
-        Map<String, String> expectedFiles = new HashMap<>();
+    private static Map<String, String> getFiles(Path componentPath) {
+        Map<String, String> files = new HashMap<>();
         try {
-            for (File file : Objects.requireNonNull(componentsPath.toFile().listFiles())) {
-                expectedFiles.put(file.getName(), String.join("", Files.readAllLines(componentsPath.resolve(file.getName()))));
+            for (Path filePath : Files.list(componentPath).collect(Collectors.toList())) {
+                files.put(filePath.getFileName().toString(), String.join("", Files.readAllLines(filePath)));
             }
         } catch (NullPointerException | IOException ex) {
-            LOG.error("Could not read the package " + componentsPath, ex);
+            LOG.error("Could not read the package " + componentPath, ex);
         }
-        return expectedFiles;
+        return files;
     }
 
     private static boolean compare(Map<String, String> actualFiles, Map<String, String> expectedFiles, String resourcePath) {
-        if (!mapsCorrespond(actualFiles, expectedFiles)) {
+        if (!filesetsAreSame(actualFiles, expectedFiles)) {
             return false;
         }
-        return expectedFiles.entrySet().stream()
-                .allMatch(entry -> {
-                    try {
-                        return FilesComparator.compareXMLFiles(actualFiles.get(entry.getKey()),
-                                entry.getValue(),
-                                resourcePath + File.separator + entry.getKey());
-                    } catch (Exception ex) {
-                        LOG.error("Could not implement XML files comparison", ex);
-                    }
-                    return false;
-                });
+        Collection<String> fileNames = expectedFiles.keySet();
+        for (String fileName : fileNames) {
+            String actualContent = actualFiles.get(fileName);
+            String expectedContent = expectedFiles.get(fileName);
+            boolean isMatch;
+            try {
+                isMatch = FilesComparator.compareXml(
+                    actualContent,
+                    expectedContent,
+                    resourcePath + File.separator + fileName);
+            } catch (Exception ex) {
+                LOG.error("Could not implement XML files comparison", ex);
+                isMatch = false;
+            }
+            if (!isMatch) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    private static boolean mapsCorrespond(Map<String, String> first, Map<String, String> second) {
+    private static boolean filesetsAreSame(Map<String, String> first, Map<String, String> second) {
         if (first == null || second == null || first.size() != second.size()) {
             return false;
         }

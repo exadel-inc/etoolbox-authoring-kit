@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.plugin.maven;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -21,13 +22,15 @@ import java.util.List;
 
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.exadel.aem.toolkit.plugin.util.FileSystemHelper;
 import com.exadel.aem.toolkit.plugin.util.TestConstants;
-import com.exadel.aem.toolkit.plugin.util.writer.TestXmlWriterHelper;
+import com.exadel.aem.toolkit.plugin.util.writer.TestXmlUtility;
 
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.RESOURCE_FOLDER_COMMON;
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.RESOURCE_FOLDER_COMPONENT;
@@ -37,26 +40,36 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.RESOURCE_FOLDER_W
 public abstract class DefaultTestBase {
     static final Logger LOG = LoggerFactory.getLogger("AEM Authoring Toolkit Unit Tests");
 
+    static final List<String> CLASSPATH_ELEMENTS = Arrays.asList(
+        TestConstants.PLUGIN_MODULE_TARGET,
+        TestConstants.API_MODULE_TARGET,
+        TestConstants.PLUGIN_MODULE_TEST_TARGET
+    );
+
+    static final String INSTANTIATION_EXCEPTION_MESSAGE = "Could not initialize instance of class ";
+    static final String CLEANUP_EXCEPTION_MESSAGE = "Could not finalize testing class ";
+
     private static final String KEYWORD_ANNOTATION = "Annotation";
     private static final String KEYWORD_DEPENDSON = "DependsOn";
     private static final String KEYWORD_WIDGET = "Widget";
 
     private static final String SUFFIX_PATTERN = "(Widget|Annotation)$";
 
-    private static final String EXCEPTION_SETTING = "none";
+    private static FileSystemHelper fileSystemHelper;
 
-    @Before
-    public void setUp() {
-        List<String> classpathElements = Arrays.asList(
-                TestConstants.PLUGIN_MODULE_TARGET,
-                TestConstants.API_MODULE_TARGET,
-                TestConstants.PLUGIN_MODULE_TEST_TARGET
-        );
+    @BeforeClass
+    public static void setUp() {
+        fileSystemHelper = new FileSystemHelper();
         PluginRuntime.contextBuilder()
-                .classPathElements(classpathElements)
+                .classPathElements(CLASSPATH_ELEMENTS)
                 .packageBase(StringUtils.EMPTY)
-                .terminateOn(getExceptionSetting())
+                .terminateOn("none")
                 .build();
+    }
+
+    @AfterClass
+    public static void finalizeAll() throws IOException {
+        fileSystemHelper.close();
     }
 
     void test(Class<?> testable) {
@@ -76,13 +89,12 @@ public abstract class DefaultTestBase {
     void test(Class<?> testable, String... pathElements) {
         Path pathToExpectedContent = Paths.get(TestConstants.CONTENT_ROOT_PATH, pathElements).toAbsolutePath();
         try {
-            Assert.assertTrue(TestXmlWriterHelper.doTest(testable.getName(), pathToExpectedContent));
-        } catch (ClassNotFoundException ex) {
-            LOG.error("Cannot initialize instance of class " + testable.getName(), ex);
+            boolean result = TestXmlUtility.doTest(fileSystemHelper.getFileSystem(), testable.getName(), pathToExpectedContent);
+            Assert.assertTrue(result);
+        } catch (ClassNotFoundException cnfe) {
+            LOG.error(INSTANTIATION_EXCEPTION_MESSAGE + testable.getName(), cnfe);
+        } catch (IOException ioe) {
+            LOG.error(CLEANUP_EXCEPTION_MESSAGE + testable.getName(), ioe);
         }
-    }
-
-    String getExceptionSetting() {
-        return EXCEPTION_SETTING;
     }
 }
