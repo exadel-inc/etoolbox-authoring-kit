@@ -26,8 +26,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreMembers;
 import com.exadel.aem.toolkit.plugin.util.TestConstants;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
 import com.exadel.aem.toolkit.test.widget.Tabs;
@@ -42,7 +42,8 @@ public class IgnoreTestCases {
             title = TestConstants.DEFAULT_COMPONENT_NAME,
             layout = DialogLayout.FIXED_COLUMNS
     )
-    @IgnoreMembers({
+    @Ignore(
+        members ={
                     @ClassMember(source = SelectWidget.class, name = "timezone"),
                     @ClassMember(source = SelectWidget.class, name = "rating")
     })
@@ -70,7 +71,8 @@ public class IgnoreTestCases {
             title = TestConstants.DEFAULT_COMPONENT_NAME,
             layout = DialogLayout.TABS
     )
-    @IgnoreMembers({
+    @Ignore(
+        members = {
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "field1"),
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "field2"),
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "dropdown"),
@@ -81,7 +83,9 @@ public class IgnoreTestCases {
         @PlaceOnTab(LABEL_TAB_2)
         FieldSetExampleCut fieldSet;
 
-        @IgnoreMembers(@ClassMember(source = FieldSetExample.class, name = "field6"))
+        @Ignore(
+            members = @ClassMember(source = FieldSetExample.class, name = "field6")
+        )
         private static class FieldSetExampleCut extends FieldSetExample {}
     }
 
@@ -100,7 +104,9 @@ public class IgnoreTestCases {
     public static class IgnoreFieldsImposedOnFieldSet extends ComponentWithTabsAndInnerClass {
         @FieldSet(title = "Field set example")
         @PlaceOnTab(LABEL_TAB_2)
-        @IgnoreMembers(@ClassMember(name = "field6")) // sourceClass value falls back to the annotated field's type
+        @Ignore(
+            members = @ClassMember(name = "field6")
+        ) // sourceClass value falls back to the annotated field's type
         FieldSetExample fieldSet;
 
         @DialogField
@@ -113,7 +119,8 @@ public class IgnoreTestCases {
             title = TestConstants.DEFAULT_COMPONENT_NAME,
             layout = DialogLayout.TABS
     )
-    @IgnoreMembers({
+    @Ignore(
+        members ={
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "field1"),
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "field2"),
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "dropdown"),
@@ -131,7 +138,8 @@ public class IgnoreTestCases {
         @MultiField(field = SampleMultifieldCut.class)
         private List<SampleMultifieldCut> links;
 
-        @IgnoreMembers({
+        @Ignore(
+            members = {
                 @ClassMember(source = SampleMultifieldBase.class, name = "checkbox"),
                 @ClassMember(source = SampleMultifieldBase.class, name = "iconName")
         })
@@ -146,7 +154,8 @@ public class IgnoreTestCases {
     public static class IgnoreFieldsImposedOnMultifield {
         @DialogField
         @MultiField(field = SampleMultifieldBase.class)
-        @IgnoreMembers({
+        @Ignore(
+            members = {
                 @ClassMember(source = SampleMultifieldBase.class, name = "checkbox"),
                 @ClassMember(name = "iconName")
         })
@@ -158,14 +167,16 @@ public class IgnoreTestCases {
             title = TestConstants.DEFAULT_COMPONENT_NAME,
             layout = DialogLayout.FIXED_COLUMNS
     )
-    @IgnoreMembers({
+    @Ignore(
+        members = {
             @ClassMember(source = SampleMultifieldBase.class, name = "checkbox"),
             @ClassMember(source = SampleMultifieldBase.class, name = "iconName"),
     })
     public static class IgnoreFieldsImposedOnMultifieldClassLevel {
         @DialogField
         @MultiField(field = SampleMultifieldBase.class)
-        @IgnoreMembers({
+        @Ignore(
+            members = {
                 @ClassMember(name = "additionalLabel"),
                 @ClassMember(name = "additionalInfo"),
         })

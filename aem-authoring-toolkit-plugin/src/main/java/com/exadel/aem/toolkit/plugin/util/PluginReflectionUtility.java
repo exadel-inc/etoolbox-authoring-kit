@@ -332,6 +332,7 @@ public class PluginReflectionUtility {
         List<ClassField> ignoredClassFields = new ArrayList<>();
 
         for (Class<?> classEntry : getClassHierarchy(targetClass)) {
+
             Stream<Member> classMembersStream = targetClass.isInterface()
                 ? Arrays.stream(classEntry.getMethods())
                 : Stream.concat(Arrays.stream(classEntry.getDeclaredFields()), Arrays.stream(classEntry.getDeclaredMethods()));
@@ -339,8 +340,9 @@ public class PluginReflectionUtility {
                     .filter(PluginObjectPredicates.getMembersPredicate(predicates))
                     .collect(Collectors.toList());
             result.addAll(classMembers);
-            if (classEntry.getAnnotation(IgnoreMembers.class) != null) {
-                Arrays.stream(classEntry.getAnnotation(IgnoreMembers.class).value())
+
+            if (classEntry.getAnnotation(Ignore.class) != null && classEntry.getAnnotation(Ignore.class).members().length > 0) {
+                Arrays.stream(classEntry.getAnnotation(Ignore.class).members())
                         .map(classMember -> PluginObjectUtility.modifyIfDefault(classMember,
                                 ClassMember.class,
                                 DialogConstants.PN_SOURCE_CLASS,

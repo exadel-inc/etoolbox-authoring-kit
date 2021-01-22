@@ -30,8 +30,8 @@ import java.util.stream.Stream;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreMembers;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
@@ -70,8 +70,8 @@ public class PluginContainerUtility {
         // Build the collection of ignored members at nesting class level
         // (apart from those defined for the container class itself)
         Stream<Annotation> classLevelIgnoredMembers = Stream.empty();
-        if (currentlyReferredClass.isAnnotationPresent(IgnoreMembers.class)) {
-            classLevelIgnoredMembers = Arrays.stream(currentlyReferredClass.getAnnotation(IgnoreMembers.class).value())
+        if (currentlyReferredClass.isAnnotationPresent(Ignore.class)) {
+            classLevelIgnoredMembers = Arrays.stream(currentlyReferredClass.getAnnotation(Ignore.class).members())
                 .map(memberPtr -> PluginObjectUtility.modifyIfDefault(
                     memberPtr,
                     ClassMember.class,
@@ -87,8 +87,8 @@ public class PluginContainerUtility {
         }
         // Now build collection of ignored members at member level
         Stream<Annotation> fieldLevelIgnoredMembers = Stream.empty();
-        if (container.adaptTo(IgnoreMembers.class) != null) {
-            fieldLevelIgnoredMembers = Arrays.stream(container.adaptTo(IgnoreMembers.class).value())
+        if (container.adaptTo(Ignore.class) != null) {
+            fieldLevelIgnoredMembers = Arrays.stream(container.adaptTo(Ignore.class).members())
                 .map(memberPtr -> PluginObjectUtility.modifyIfDefault(
                     memberPtr,
                     ClassMember.class,
