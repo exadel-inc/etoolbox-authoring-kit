@@ -17,11 +17,13 @@ package com.exadel.aem.toolkit.plugin.util;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -142,35 +144,32 @@ public class PluginContainerUtility {
         }
 
         if (!container.getChildren().isEmpty()) {
-            checkForDuplicates(itemsElement, managedFields);
+            checkForDuplicates(managedFields);
         }
     }
 
     /**
-     * Tests the provided collection of members for possible duplicates (members that generate Granite entities sharing
-     * the same tag name), and throws an exception if a member from a superclass is positioned below the correspondent
-     * member from a subclass, therefore, will have precedence
-     * @param container {@code Target} instance that manifests immediate parent for widget nodes
-     *                  (typically an {@code items} element)
-     * @param managedMembers {@code Map} instance that matches renderable sources (class members)
-     *                        to corresponding node names
+     * Tests the provided collection of members for possible duplicates (members that share the same tag name),
+     * and throws an exception if a member from a superclass is positioned after the correspondent
+     * member from a subclass, therefore, will "shadow" it and produce unexpected UI display
+     * @param processedSources {@code Map} instance that matches renderable sources (Java class members)
+     *                        to the genera tag names
      */
-    private static void checkForDuplicates(Target container, Map<Source, String> managedMembers) {
-        List<String> childElementsTagNames = container.getChildren().stream()
-                .map(Target::getName)
-                .collect(Collectors.toList());
-        if (childElementsTagNames.size() == new HashSet<>(childElementsTagNames).size()) {
+    private static void checkForDuplicates(Map<Source, String> processedSources) {
+        Collection<String> processedTagNames = processedSources.values();
+        Set<String> distinctTagNames = new HashSet<>(processedTagNames);
+        if (distinctTagNames.size() ==  processedTagNames.size()) {
             return;
         }
-        for (String tagName : childElementsTagNames) {
-            checkForDuplicates(tagName, managedMembers);
+        for (String tagName : distinctTagNames) {
+            checkForDuplicates(tagName, processedSources);
         }
     }
 
     /**
      * Tests the provided collection of members for a particular duplicating tag name. Throws an exception
-     * if a member from a superclass is positioned below the corresponding member from a subclass, therefore,
-     * will have precedence
+     * if a member from a superclass is positioned after the corresponding member from a subclass, therefore,
+     * will "shadow" it and produce unexpected UI display
      * @param tagName String representing the tag name in question
      * @param managedMembers {@code Map} instance that matches renderable sources (class members)
      *                       to corresponding node names

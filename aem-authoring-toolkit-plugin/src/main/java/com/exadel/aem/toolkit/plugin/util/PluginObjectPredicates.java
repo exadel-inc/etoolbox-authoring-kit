@@ -133,8 +133,8 @@ public class PluginObjectPredicates {
      * @return Integer value per {@code Comparator#compare(Object, Object)} convention
      */
     static int compareByOrigin(Source f1, Source f2) {
-        Class<?> f1Class = f1.getProcessedClass();
-        Class<?> f2Class = f2.getProcessedClass();
+        Class<?> f1Class = f1.getDeclaringClass();
+        Class<?> f2Class = f2.getDeclaringClass();
         if (f1Class != f2Class) {
             if (ClassUtils.isAssignable(f1Class, f2Class)) {
                 return 1;
