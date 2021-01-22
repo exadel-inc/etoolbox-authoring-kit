@@ -22,23 +22,23 @@ import com.exadel.aem.toolkit.plugin.util.TestConstants;
 @SuppressWarnings("unused")
 public class InheritanceTestCases {
 
-    private static class DuplicateBase {
-        @DialogField
+    private static class Grandparent {
+        @DialogField(description = "Grandparent.text1")
         @TextField
         private String text1;
 
-        @DialogField(ranking = 1)
+        @DialogField(ranking = 1, description = "Grandparent.text2")
         @TextField
         private String text2;
     }
 
-    private static class DuplicateInterim extends DuplicateBase {
+    private static class Parent extends Grandparent {
 
-        @DialogField
+        @DialogField(description = "Parent.text1")
         @TextField
         private String text1; // will not cause an exception because of not being a rendering target
 
-        @DialogField
+        @DialogField(description = "Parent.text2")
         @TextField
         private String text2; // will not cause an exception because of not being a rendering target
     }
@@ -47,14 +47,14 @@ public class InheritanceTestCases {
             name = TestConstants.DEFAULT_COMPONENT_NAME,
             title = TestConstants.DEFAULT_COMPONENT_TITLE
     )
-    public static class DuplicateOverride extends DuplicateInterim {
-        @DialogField
+    public static class Child extends Parent {
+        @DialogField(description = "Child.text1")
         @TextField
-        private String text1; // will not cause an exception because placed underneath the field from superclass by order
+        private String text1; // will not cause an exception because placed underneath the field from superclass by ranking
 
-        @DialogField
+        @DialogField(description = "Child.text2")
         @TextField
-        private String text2; // will cause an exception because placed above the field from superclass by order
+        private String text2; // *will* cause an exception because placed above the field from grandparent class by ranking
     }
 }
 

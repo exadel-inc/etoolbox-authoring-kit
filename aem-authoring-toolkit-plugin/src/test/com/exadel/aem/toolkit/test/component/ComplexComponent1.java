@@ -45,7 +45,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_5;
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_6;
 
 @Dialog(
-
+        name = TestConstants.DEFAULT_COMPONENT_NAME,
         title = TestConstants.DEFAULT_COMPONENT_TITLE,
         description = "test component",
         componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
