@@ -17,6 +17,7 @@ package com.exadel.aem.toolkit.plugin.maven;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -63,7 +64,7 @@ public class ExceptionsTest extends ExceptionsTestBase {
     public void testTerminateOnSettings() {
         // Test non-terminating cases
         Map<String, Exception> nonTerminatingCases = ImmutableMap.of(
-                " ValidationException, !java.lang.RuntimeException", new ValidationException(NOT_AN_EXCEPTION_MESSAGE),
+                "!ValidationException, java.lang.RuntimeException", new ValidationException(NOT_AN_EXCEPTION_MESSAGE),
                 "!java.lang.IndexOutOfBoundsException, *", new IndexOutOfBoundsException(NOT_AN_EXCEPTION_MESSAGE),
                 "!java.io.IOException, !java.lang.RuntimeException, !com.exadel.aem.plugin.exceptions.*", new ValidationException(NOT_AN_EXCEPTION_MESSAGE),
                 "!java.lang.IndexOutOfBoundsException, !*", new RuntimeException(NOT_AN_EXCEPTION_MESSAGE) // must neglect the "!*" sign
@@ -72,6 +73,7 @@ public class ExceptionsTest extends ExceptionsTestBase {
 
         // Test terminating cases
         Map<String, Exception> terminatingCases = ImmutableMap.of(
+            "ValidationException, !java.lang.RuntimeException", new ValidationException(StringUtils.EMPTY),
                 "java.lang.RuntimeException", new IndexOutOfBoundsException(),
                 "java.io.IOException, !java.lang.Exception, *", new IOException(),
                 "!java.lang.IndexOutOfBoundsException, java.lang.RuntimeException", new NullPointerException(),
