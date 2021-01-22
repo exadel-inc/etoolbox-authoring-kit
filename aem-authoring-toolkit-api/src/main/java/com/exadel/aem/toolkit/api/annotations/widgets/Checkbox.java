@@ -76,7 +76,7 @@ public @interface Checkbox {
      * @return Reference to a class describing sublist
      */
     @IgnorePropertyMapping
-    Class<?>[] sublist() default Object.class;
+    Class<?>[] sublist() default {};
     /**
      * When set, allows to define a sublist of TouchUI dialog components (other checkboxes).
      * The 'disconnected' attribute will be set to the sublist's node

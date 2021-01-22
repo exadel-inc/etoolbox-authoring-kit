@@ -17,7 +17,7 @@ package com.exadel.aem.toolkit.test.component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.core.util.TestConstants;
+import com.exadel.aem.toolkit.plugin.util.TestConstants;
 
 @SuppressWarnings("unused")
 public class InheritanceTestCases {

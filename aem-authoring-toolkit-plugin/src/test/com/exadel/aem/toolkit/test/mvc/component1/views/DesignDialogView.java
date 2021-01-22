@@ -29,11 +29,11 @@ import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.core.util.TestConstants;
+import com.exadel.aem.toolkit.plugin.util.TestConstants;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_1;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_2;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_3;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_1;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_2;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_3;
 
 @DesignDialog(
     title = TestConstants.DEFAULT_COMPONENT_TITLE,

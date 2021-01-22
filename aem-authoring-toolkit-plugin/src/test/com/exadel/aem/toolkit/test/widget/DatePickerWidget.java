@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePickerType;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,

@@ -19,22 +19,25 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.markers._Default;
+
 /**
- * Used to refer a particular field of a class for a specific processing while building XML markup
+ * Used to refer a particular member (field or method) of a class defined by the class reference and the name
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ClassMember {
 
     /**
-     * The Java class possessing the field
+     * The Java class possessing the member. If not specified, the class currently processed by the AEM Authoring Toolkit's
+     * plugin will be used
      * @return {@code Class<?>} instance
      */
-    Class<?> source() default Object.class;
+    Class<?> source() default _Default.class;
 
     /**
-     * The name of the field
-     * @return String value, non-empty
+     * Name of the member, must refer to an actual field or method name
+     * @return String value, non-blank
      */
-    String member();
+    String name();
 }

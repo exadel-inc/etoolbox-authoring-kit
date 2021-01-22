@@ -15,7 +15,7 @@
 package com.exadel.aem.toolkit.test.mvc.component1;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
-import com.exadel.aem.toolkit.core.util.TestConstants;
+import com.exadel.aem.toolkit.plugin.util.TestConstants;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
 import com.exadel.aem.toolkit.test.mvc.component1.views.ChildEditConfigView;
 import com.exadel.aem.toolkit.test.mvc.component1.views.DesignDialogView;
