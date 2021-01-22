@@ -43,8 +43,7 @@ public class PluginObjectPredicates {
        --------- */
 
     /**
-     * A predicate for picking out non-static {@code Member} instances which is by default
-     * in {@link PluginReflectionUtility#getAllMembers(Class)} routines
+     * A predicate for picking out non-static {@code Member} instances
      */
     private static final java.util.function.Predicate<Member> VALID_MEMBER_PREDICATE = member ->
             ((member instanceof Field && !member.getDeclaringClass().isInterface())

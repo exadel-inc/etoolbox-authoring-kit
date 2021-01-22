@@ -53,8 +53,8 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreMembers;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
@@ -302,31 +302,18 @@ public class PluginReflectionUtility {
                 .collect(Collectors.toList());
     }
 
-    public static List<Source> getAllSources(Class<?> targetClass, List<Predicate<Member>> predicates) {
-        return getAllMembers(targetClass, predicates).stream()
-            .map(member -> SourceBase.fromMember(member, targetClass)).collect(Collectors.toList());
-    }
-
     public static List<Source> getAllSources(Class<?> targetClass) {
         return getAllSources(targetClass, Collections.emptyList());
     }
 
     /**
-     * Retrieves a complete list of {@code Member}s of a {@code Class}
-     * @param targetClass The class to analyze
-     * @return List of {@code Member} objects
+     * Retrieves a sequential list of {@link Source} instances representing class members extractable from
+     * a certain {@code Class} that match specific criteria
+     * @param targetClass The class to extract sources from
+     * @param predicates List of {@code Predicate<Member>} instances to pick up appropriate fields and methods
+     * @return List of {@code Source} objects
      */
-    public static List<Member> getAllMembers(Class<?> targetClass) {
-        return getAllMembers(targetClass, Collections.emptyList());
-    }
-
-    /**
-     * Retrieves a sequential list of all {@code Member}s of a certain {@code Class} that match specific criteria
-     * @param targetClass The class to analyze
-     * @param predicates List of {@code Predicate<Member>} instances to pick up appropriate fields
-     * @return List of {@code Member} objects
-     */
-    private static List<Member> getAllMembers(Class<?> targetClass, List<Predicate<Member>> predicates) {
+    public static List<Source> getAllSources(Class<?> targetClass, List<Predicate<Member>> predicates) {
         List<Member> result = new LinkedList<>();
         List<ClassMember> ignoredClassMembers = new ArrayList<>();
         List<ClassField> ignoredClassFields = new ArrayList<>();
@@ -363,6 +350,7 @@ public class PluginReflectionUtility {
             .filter(PluginObjectPredicates.getNotIgnoredMembersPredicate(ignoredClassMembers))
             .filter(PluginObjectPredicates.getNotIgnoredMembersPredicate(ignoredClassFields))
             .sorted(PluginObjectPredicates::compareDialogMembers)
+            .map(member -> SourceBase.fromMember(member, targetClass))
             .collect(Collectors.toList());
     }
 
@@ -437,7 +425,7 @@ public class PluginReflectionUtility {
      * @param method The method representing the property
      * @return True or false
      */
-    static boolean annotationPropertyIsNotDefault(Annotation annotation, Method method) {
+    public static boolean annotationPropertyIsNotDefault(Annotation annotation, Method method) {
         try {
             Object defaultValue = method.getDefaultValue();
             if (defaultValue == null) {
