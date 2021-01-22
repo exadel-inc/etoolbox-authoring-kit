@@ -116,7 +116,7 @@ public class PackageWriter implements AutoCloseable {
             FileSystem fs = FileSystems.newFileSystem(uri, FILESYSTEM_OPTIONS);
             return forFileSystem(project.getBuild().getFinalName(), fs, componentsBasePath);
         } catch (IOException e) {
-            // exception caught here are critical for the execution, so no further handling
+            // Exceptions caught here are critical for the execution, so no further handling
             throw new PluginException(CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE + project.getBuild().getFinalName(), e);
         }
     }

@@ -34,7 +34,7 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
     private static final String INVERSION_SIGN = "!";
     private static final String PACKAGE_POSTFIX = ".*";
 
-    private List<String> exceptionTokens;
+    private final List<String> exceptionTokens;
 
     SelectiveExceptionHandler(List<String> exceptionTokens) {
         this.exceptionTokens = exceptionTokens;

@@ -78,9 +78,9 @@ public interface Target {
 
     boolean hasChild(String path);
 
-    <T> T adaptTo(Class<T> adaptation, Object context) throws Exception;
+    <T> T adaptTo(Class<T> adaptation, Object context);
 
-    default <T> T adaptTo(Class<T> adaptation) throws Exception {
+    default <T> T adaptTo(Class<T> adaptation) {
         return adaptTo(adaptation, null);
     }
 }

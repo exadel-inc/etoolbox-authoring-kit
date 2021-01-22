@@ -31,6 +31,7 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +45,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
@@ -265,9 +267,13 @@ public class TargetImpl implements Target {
     }
 
     @Override
-    public <T> T adaptTo(Class<T> adaptation, Object context) throws Exception {
+    public <T> T adaptTo(Class<T> adaptation, Object context) {
         if (Document.class.equals(adaptation)) {
-            return adaptation.cast(PluginXmlUtility.toDocument(this));
+            try {
+                return adaptation.cast(PluginXmlUtility.toDocument(this));
+            } catch (ParserConfigurationException e) {
+                PluginRuntime.context().getExceptionHandler().handle(e);
+            }
         } else if (Element.class.equals(adaptation) && context instanceof Document) {
             return adaptation.cast(PluginXmlUtility.toElement(this, (Document) context));
         }

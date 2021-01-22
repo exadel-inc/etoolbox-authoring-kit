@@ -83,8 +83,8 @@ abstract class PackageEntryWriter {
      * @param componentClass {@link Class} to analyze
      * @param writer {@link Writer} managing the data storage procedure
      */
-    void writeXml(Class<?> componentClass, Writer writer) throws Exception {
-        Document document = createDomDocument(componentClass);
+    void writeXml(Class<?> componentClass, Writer writer) {
+        Document document = createDocument(componentClass);
         try {
              transformer.transform(new DOMSource(document), new StreamResult(writer));
         } catch (TransformerException e) {
@@ -117,7 +117,7 @@ abstract class PackageEntryWriter {
      * @param componentClass The {@code Class} being processed
      * @return {@link Document} created
      */
-    private Document createDomDocument(Class<?> componentClass) throws Exception {
+    private Document createDocument(Class<?> componentClass) {
         Target rootElement = new TargetImpl(DialogConstants.NN_ROOT, null);
         populateTarget(componentClass, rootElement);
 
