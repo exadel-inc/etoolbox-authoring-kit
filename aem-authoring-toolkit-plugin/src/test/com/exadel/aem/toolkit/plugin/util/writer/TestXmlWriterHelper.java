@@ -85,7 +85,7 @@ public class TestXmlWriterHelper {
                     actualFiles.put(packageEntryWriter.getXmlScope().toString(), stringWriter.toString());
                     return;
                 }
-                List<Class<?>> processedClasses = views.stream().filter(packageEntryWriter::isProcessed).collect(Collectors.toList());
+                List<Class<?>> processedClasses = views.stream().filter(packageEntryWriter::canProcess).collect(Collectors.toList());
                 if (processedClasses.size() > 1) {
                     throw new IOException();
                 }
@@ -105,7 +105,7 @@ public class TestXmlWriterHelper {
     }
 
     private static void writeContent(PackageEntryWriter writer, StringWriter stringWriter, List<Class<?>> views) throws Exception {
-        List<Class<?>> processedClasses = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
+        List<Class<?>> processedClasses = views.stream().filter(writer::canProcess).collect(Collectors.toList());
         if (processedClasses.size() > 2) {
             throw new IOException();
         }

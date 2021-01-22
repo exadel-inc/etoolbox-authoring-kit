@@ -52,7 +52,7 @@ public class ComponentWriter {
                 writeContentXml(writer, path);
                 return;
             }
-            List<Class<?>> processedViews = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
+            List<Class<?>> processedViews = views.stream().filter(writer::canProcess).collect(Collectors.toList());
             if (processedViews.size() > 1) {
                 PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(EXCEPTION_MESSAGE_TEMPLATE, writer.getXmlScope())));
             }
@@ -64,7 +64,7 @@ public class ComponentWriter {
     }
 
     private void writeContentXml(PackageEntryWriter writer, Path path) {
-        List<Class<?>> processedClasses = views.stream().filter(writer::isProcessed).collect(Collectors.toList());
+        List<Class<?>> processedClasses = views.stream().filter(writer::canProcess).collect(Collectors.toList());
         if (processedClasses.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(EXCEPTION_MESSAGE_TEMPLATE, writer.getXmlScope())));
             return;
