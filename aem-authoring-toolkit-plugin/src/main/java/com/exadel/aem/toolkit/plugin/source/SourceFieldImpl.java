@@ -16,13 +16,10 @@ package com.exadel.aem.toolkit.plugin.source;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.MalformedParameterizedTypeException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
+import java.lang.reflect.Member;
+import java.lang.reflect.Modifier;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ClassUtils;
+import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
 public class SourceFieldImpl extends SourceBase {
 
@@ -61,5 +58,18 @@ public class SourceFieldImpl extends SourceBase {
     @Override
     <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass) {
         return field.getAnnotationsByType(annotationClass);
+    }
+
+    @Override
+    public boolean isValid() {
+        return field != null && !field.getDeclaringClass().isInterface() && !Modifier.isStatic(field.getModifiers());
+    }
+
+    @Override
+    public <T> T adaptTo(Class<T> adaptation) {
+        if (adaptation.equals(Field.class) || adaptation.equals(Member.class)) {
+            return adaptation.cast(field);
+        }
+        return super.adaptTo(adaptation);
     }
 }

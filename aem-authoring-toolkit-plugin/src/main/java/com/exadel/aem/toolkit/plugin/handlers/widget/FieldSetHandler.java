@@ -43,7 +43,7 @@ class FieldSetHandler implements BiConsumer<Source, Target> {
     public void accept(Source source, Target target) {
         // Define the working @FieldSet annotation instance and the fieldset type
         FieldSet fieldSet = source.adaptTo(FieldSet.class);
-        Class<?> fieldSetType = source.getContainerClass();
+        Class<?> fieldSetType = source.getValueType();
 
         List<Source> fieldSetEntries = PluginContainerUtility.getContainerEntries(source, true);
 

@@ -14,15 +14,23 @@
 
 package com.exadel.aem.toolkit.api.handlers;
 
-public interface Source {
+import java.lang.annotation.Annotation;
 
-    <T> T adaptTo(Class<T> adaptation);
+public interface Source {
 
     String getName();
 
-    Class<?> getProcessedClass();
-
-    Class<?> getContainerClass();
-
     Class<?> getDeclaringClass();
+
+    Class<?> getReportingClass();
+
+    Class<?> getValueType();
+
+    <T> T getSetting(Class<? extends Annotation> holder, String name, T defaultValue);
+
+    void storeSetting(Class<? extends Annotation> holder, String name, Object value);
+
+    boolean isValid();
+
+    <T> T adaptTo(Class<T> adaptation);
 }
