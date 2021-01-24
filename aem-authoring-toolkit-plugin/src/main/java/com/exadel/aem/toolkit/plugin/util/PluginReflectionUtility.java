@@ -61,7 +61,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
-import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSettings;
+import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeContext;
@@ -313,7 +313,7 @@ public class PluginReflectionUtility {
      */
     public static List<Source> getAllSources(Class<?> targetClass, List<Predicate<Source>> predicates) {
         List<Source> raw = new ArrayList<>();
-        List<ClassMemberSettings> ignoredClassMembers = new ArrayList<>();
+        List<ClassMemberSetting> ignoredClassMembers = new ArrayList<>();
 
         for (Class<?> classEntry : getClassHierarchy(targetClass)) {
 
@@ -328,11 +328,11 @@ public class PluginReflectionUtility {
 
             if (classEntry.getAnnotation(Ignore.class) != null && classEntry.getAnnotation(Ignore.class).members().length > 0) {
                 Arrays.stream(classEntry.getAnnotation(Ignore.class).members())
-                        .map(classMember -> new ClassMemberSettings(classMember).populateDefaults(targetClass, classEntry.getName()))
+                        .map(classMember -> new ClassMemberSetting(classMember).populateDefaults(targetClass, classEntry.getName()))
                         .forEach(ignoredClassMembers::add);
             } else if (classEntry.getAnnotation(IgnoreFields.class) != null) {
                 Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
-                    .map(classMember -> new ClassMemberSettings(classMember).populateDefaults(targetClass))
+                    .map(classMember -> new ClassMemberSetting(classMember).populateDefaults(targetClass))
                     .forEach(ignoredClassMembers::add);
             }
         }

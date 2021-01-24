@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSettings;
+import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 
 public class Filtering {
 
@@ -37,11 +37,11 @@ public class Filtering {
 
     /**
      * Gets a predicate for sorting out the fields set to be ignored
-     * @param memberPointers List of {@link ClassMemberSettings} objects representing the ignored class members
+     * @param memberPointers List of {@link ClassMemberSetting} objects representing the ignored class members
      * @return A {@code Predicate<Source>} which is affirmative by default, that is, returns <i>true</i> if the field
      * is not ignored, and <i>false</i> if the field is set to be ignored
      */
-    public static Predicate<Source> getNotIgnoredSourcesPredicate(List<? extends ClassMemberSettings> memberPointers) {
+    public static Predicate<Source> getNotIgnoredSourcesPredicate(List<? extends ClassMemberSetting> memberPointers) {
         if (memberPointers == null || memberPointers.isEmpty()) {
             return member -> true;
         }

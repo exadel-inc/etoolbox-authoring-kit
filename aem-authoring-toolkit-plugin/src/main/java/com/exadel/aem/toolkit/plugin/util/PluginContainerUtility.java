@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSettings;
+import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidget;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
@@ -68,27 +68,27 @@ public class PluginContainerUtility {
         Class<?> reportingClass = useReportingClass ? container.getReportingClass() : valueTypeClass;
         // Build the collection of ignored members at nesting class level
         // (apart from those defined for the container class itself)
-        Stream<ClassMemberSettings> classLevelIgnoredMembers = Stream.empty();
+        Stream<ClassMemberSetting> classLevelIgnoredMembers = Stream.empty();
         if (reportingClass.isAnnotationPresent(Ignore.class)) {
             classLevelIgnoredMembers = Arrays.stream(reportingClass.getAnnotation(Ignore.class).members())
-                .map(memberPtr -> new ClassMemberSettings(memberPtr).populateDefaults(reportingClass));
+                .map(memberPtr -> new ClassMemberSetting(memberPtr).populateDefaults(reportingClass));
         } else if (reportingClass.isAnnotationPresent(IgnoreFields.class)) {
             classLevelIgnoredMembers = Arrays.stream(reportingClass.getAnnotation(IgnoreFields.class).value())
-                .map(memberPtr -> new ClassMemberSettings(memberPtr).populateDefaults(reportingClass));
+                .map(memberPtr -> new ClassMemberSetting(memberPtr).populateDefaults(reportingClass));
         }
         // Now build collection of ignored members at member level
-        Stream<ClassMemberSettings> fieldLevelIgnoredMembers = Stream.empty();
+        Stream<ClassMemberSetting> fieldLevelIgnoredMembers = Stream.empty();
         if (container.adaptTo(Ignore.class) != null) {
             fieldLevelIgnoredMembers = Arrays.stream(container.adaptTo(Ignore.class).members())
-                .map(memberPtr -> new ClassMemberSettings(memberPtr).populateDefaults(valueTypeClass));
+                .map(memberPtr -> new ClassMemberSetting(memberPtr).populateDefaults(valueTypeClass));
         } else if (container.adaptTo(IgnoreFields.class) != null) {
             fieldLevelIgnoredMembers = Arrays.stream(container.adaptTo(IgnoreFields.class).value())
-                .map(memberPtr -> new ClassMemberSettings(memberPtr).populateDefaults(valueTypeClass));
+                .map(memberPtr -> new ClassMemberSetting(memberPtr).populateDefaults(valueTypeClass));
         }
 
         // Join the collections and make sure that only members from any of the superclasses of the current source's class
         // are present
-        List<ClassMemberSettings> allIgnoredFields = Stream
+        List<ClassMemberSetting> allIgnoredFields = Stream
             .concat(classLevelIgnoredMembers, fieldLevelIgnoredMembers)
             .filter(memberSettings ->
                 PluginReflectionUtility. getClassHierarchy(valueTypeClass)

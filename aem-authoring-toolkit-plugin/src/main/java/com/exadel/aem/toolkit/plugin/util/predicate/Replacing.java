@@ -31,7 +31,7 @@ import com.google.common.collect.Sets;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Replace;
 import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSettings;
+import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
@@ -59,7 +59,7 @@ public class Replacing {
             Source replacingEntry = replacingEntries.remove();
             Replace replace = replacingEntry.adaptTo(Replace.class);
 
-            ClassMemberSettings formerClassMemberAnnotation = new ClassMemberSettings(replace.value())
+            ClassMemberSetting formerClassMemberAnnotation = new ClassMemberSetting(replace.value())
                 .populateDefaults(replacingEntry.getDeclaringClass(), replacingEntry.getName());
 
             Source formerEntry = internal.stream()
