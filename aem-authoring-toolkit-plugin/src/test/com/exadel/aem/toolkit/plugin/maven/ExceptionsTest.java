@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
 import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
-import com.exadel.aem.toolkit.test.component.InheritanceTestCases;
+import com.exadel.aem.toolkit.test.component.InheritanceExceptionTestCases;
 
 public class ExceptionsTest extends ExceptionsTestBase {
     private static final String NOT_AN_EXCEPTION_MESSAGE = "NOT AN EXCEPTION: testing terminateOn logic";
@@ -57,7 +57,7 @@ public class ExceptionsTest extends ExceptionsTestBase {
     public void testComponentWithDuplicateFields() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidFieldContainerException.class));
         exceptionRule.expectMessage("Field named \"text2\" in class \"Child\"");
-        test(InheritanceTestCases.Child.class);
+        test(InheritanceExceptionTestCases.Child.class);
     }
 
     @Test

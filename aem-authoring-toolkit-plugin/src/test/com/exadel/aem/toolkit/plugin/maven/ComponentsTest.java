@@ -23,6 +23,7 @@ import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
+import com.exadel.aem.toolkit.test.component.InheritanceTestCases;
 import com.exadel.aem.toolkit.test.component.viewPattern.component1.ComplexComponentHolder;
 
 public class ComponentsTest extends DefaultTestBase {
@@ -62,7 +63,12 @@ public class ComponentsTest extends DefaultTestBase {
     }
 
     @Test
-    public void testComponentPattern() {
+    public void testComponentViewPattern() {
         test(ComplexComponentHolder.class, "component/viewPattern/component1");
+    }
+
+    @Test
+    public void testInheritanceOverride() {
+        test(InheritanceTestCases.Child.class, "component/inheritanceOverride");
     }
 }
