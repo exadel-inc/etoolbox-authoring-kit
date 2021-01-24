@@ -14,8 +14,6 @@
 
 package com.exadel.aem.toolkit.plugin.util;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,12 +26,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.exadel.aem.toolkit.api.annotations.main.ClassField;
-import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSettings;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidget;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
@@ -91,16 +88,13 @@ public class PluginContainerUtility {
 
         // Join the collections and make sure that only members from any of the superclasses of the current source's class
         // are present
-        List<Annotation> allIgnoredFields = Stream
+        List<ClassMemberSettings> allIgnoredFields = Stream
             .concat(classLevelIgnoredMembers, fieldLevelIgnoredMembers)
-            .filter(memberPtr -> {
-                Class<?> referencedClass = memberPtr instanceof ClassMember
-                    ? ((ClassMember) memberPtr).source()
-                    : ((ClassField) memberPtr).source();
-                return PluginReflectionUtility.getClassHierarchy(declaringClass)
+            .filter(memberSettings ->
+                PluginReflectionUtility. getClassHierarchy(valueTypeClass)
                     .stream()
-                    .anyMatch(superclass -> superclass.equals(referencedClass));
-            })
+                    .anyMatch(superclass -> superclass.equals(memberSettings.source()))
+            )
             .collect(Collectors.toList());
 
         // Create filters to sort out ignored fields (apart from those defined for the container class)

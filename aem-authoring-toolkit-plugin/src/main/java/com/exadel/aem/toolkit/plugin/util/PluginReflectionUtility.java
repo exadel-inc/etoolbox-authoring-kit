@@ -48,8 +48,6 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
-import com.exadel.aem.toolkit.api.annotations.main.ClassField;
-import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
@@ -63,6 +61,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
+import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSettings;
 import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeContext;
@@ -131,16 +130,6 @@ public class PluginReflectionUtility {
         }
         customDialogWidgetHandlers = getHandlers(DialogWidgetHandler.class);
         return customDialogWidgetHandlers;
-    }
-
-    /**
-     * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
-     * scope of the plugin matching the specified widget annotation
-     * @param annotationClass {@code Class<?>} reference to pick up handlers for
-     * @return {@code List<DialogWidgetHandler>} of instances
-     */
-    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers(Class<? extends Annotation> annotationClass) {
-        return getCustomDialogWidgetHandlers(Collections.singletonList(annotationClass));
     }
 
     /**
@@ -305,46 +294,46 @@ public class PluginReflectionUtility {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a sequential list of {@link Source} objects representing manageable members that belong
+     * a certain {@code Class} (and its superclasses) and match specific criteria
+     * @param targetClass The class to extract sources from
+     * @return List of {@code Source} objects
+     */
     public static List<Source> getAllSources(Class<?> targetClass) {
         return getAllSources(targetClass, Collections.emptyList());
     }
 
     /**
-     * Retrieves a sequential list of {@link Source} instances representing class members extractable from
-     * a certain {@code Class} that match specific criteria
+     * Retrieves a sequential list of {@link Source} objects representing manageable members that belong
+     * a certain {@code Class} (and its superclasses) and match specific criteria
      * @param targetClass The class to extract sources from
      * @param predicates List of {@code Predicate<Member>} instances to pick up appropriate fields and methods
      * @return List of {@code Source} objects
      */
-    public static List<Source> getAllSources(Class<?> targetClass, List<Predicate<Member>> predicates) {
-        List<Member> result = new LinkedList<>();
-        List<ClassMember> ignoredClassMembers = new ArrayList<>();
-        List<ClassField> ignoredClassFields = new ArrayList<>();
+    public static List<Source> getAllSources(Class<?> targetClass, List<Predicate<Source>> predicates) {
+        List<Source> raw = new ArrayList<>();
+        List<ClassMemberSettings> ignoredClassMembers = new ArrayList<>();
 
         for (Class<?> classEntry : getClassHierarchy(targetClass)) {
 
             Stream<Member> classMembersStream = targetClass.isInterface()
                 ? Arrays.stream(classEntry.getMethods())
                 : Stream.concat(Arrays.stream(classEntry.getDeclaredFields()), Arrays.stream(classEntry.getDeclaredMethods()));
-            List<Member> classMembers = classMembersStream
-                    .filter(PluginObjectPredicates.getMembersPredicate(predicates))
+            List<Source> classMemberSources = classMembersStream
+                    .map(member -> SourceBase.fromMember(member, targetClass))
+                    .filter(Filtering.getSourcesPredicate(predicates))
                     .collect(Collectors.toList());
-            result.addAll(classMembers);
+            raw.addAll(classMemberSources);
 
             if (classEntry.getAnnotation(Ignore.class) != null && classEntry.getAnnotation(Ignore.class).members().length > 0) {
                 Arrays.stream(classEntry.getAnnotation(Ignore.class).members())
-                        .map(classMember -> PluginObjectUtility.modifyIfDefault(classMember,
-                                ClassMember.class,
-                                DialogConstants.PN_SOURCE_CLASS,
-                                targetClass))
+                        .map(classMember -> new ClassMemberSettings(classMember).populateDefaultSource(targetClass))
                         .forEach(ignoredClassMembers::add);
             } else if (classEntry.getAnnotation(IgnoreFields.class) != null) {
                 Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
-                    .map(classMember -> PluginObjectUtility.modifyIfDefault(classMember,
-                        ClassField.class,
-                        DialogConstants.PN_SOURCE_CLASS,
-                        targetClass))
-                    .forEach(ignoredClassFields::add);
+                    .map(classMember -> new ClassMemberSettings(classMember).populateDefaultSource(targetClass))
+                    .forEach(ignoredClassMembers::add);
             }
         }
 
@@ -357,18 +346,6 @@ public class PluginReflectionUtility {
             .filter(Filtering.getNotIgnoredSourcesPredicate(ignoredClassMembers))
             .sorted(Sorting::compareByRank)
             .collect(Collectors.toList());
-    }
-
-    /**
-     * Retrieves type of object(s) returned by the method. If method is designed to provide single object, its type
-     * is returned. But if method supplies an array, type of array's element is returned
-     * @param method The method to analyze
-     * @return Appropriate {@code Class} instance
-     */
-    public static Class<?> getMethodPlainType(Method method) {
-        return method.getReturnType().isArray()
-                ? method.getReturnType().getComponentType()
-                : method.getReturnType();
     }
 
     /**
@@ -427,10 +404,29 @@ public class PluginReflectionUtility {
     /**
      * Gets whether an {@code Annotation} property has a value which is not default
      * @param annotation The annotation to analyze
+     * @param name Name of the property
+     * @return True or false
+     */
+    public static boolean annotationPropertyIsNotDefault(Annotation annotation, String name) {
+        Method method;
+        try {
+            method = annotation.annotationType().getMethod(name);
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+        return annotationPropertyIsNotDefault(annotation, method);
+    }
+
+    /**
+     * Gets whether an {@code Annotation} property has a value which is not default
+     * @param annotation The annotation to analyze
      * @param method The method representing the property
      * @return True or false
      */
     public static boolean annotationPropertyIsNotDefault(Annotation annotation, Method method) {
+        if (annotation == null) {
+            return false;
+        }
         try {
             Object defaultValue = method.getDefaultValue();
             if (defaultValue == null) {
