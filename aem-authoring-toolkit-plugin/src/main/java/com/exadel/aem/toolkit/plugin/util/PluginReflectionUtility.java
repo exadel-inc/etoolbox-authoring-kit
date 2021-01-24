@@ -67,6 +67,9 @@ import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeContext;
 import com.exadel.aem.toolkit.plugin.source.SourceBase;
+import com.exadel.aem.toolkit.plugin.util.predicate.Filtering;
+import com.exadel.aem.toolkit.plugin.util.predicate.Replacing;
+import com.exadel.aem.toolkit.plugin.util.predicate.Sorting;
 
 /**
  * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields
@@ -345,12 +348,14 @@ public class PluginReflectionUtility {
             }
         }
 
-        return result
+        List<Source> reducedWithReplacements = raw
             .stream()
-            .filter(PluginObjectPredicates.getNotIgnoredMembersPredicate(ignoredClassMembers))
-            .filter(PluginObjectPredicates.getNotIgnoredMembersPredicate(ignoredClassFields))
-            .sorted(PluginObjectPredicates::compareDialogMembers)
-            .map(member -> SourceBase.fromMember(member, targetClass))
+            .collect(Replacing.processSourceReplace());
+
+        return reducedWithReplacements
+            .stream()
+            .filter(Filtering.getNotIgnoredSourcesPredicate(ignoredClassMembers))
+            .sorted(Sorting::compareByRank)
             .collect(Collectors.toList());
     }
 

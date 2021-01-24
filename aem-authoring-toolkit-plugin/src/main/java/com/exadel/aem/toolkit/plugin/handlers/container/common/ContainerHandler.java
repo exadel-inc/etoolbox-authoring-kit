@@ -55,10 +55,10 @@ import com.exadel.aem.toolkit.plugin.source.SourceBase;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginContainerUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginObjectPredicates;
 import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
+import com.exadel.aem.toolkit.plugin.util.predicate.Sorting;
 
 public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     private static final Logger LOG = LoggerFactory.getLogger(ContainerHandler.class);
@@ -280,7 +280,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
             boolean needResort = !storedCurrentContainerItemFields.isEmpty() && !moreCurrentContainerItemFields.isEmpty();
             storedCurrentContainerItemFields.addAll(moreCurrentContainerItemFields);
             if (needResort) {
-                storedCurrentContainerItemFields.sort(PluginObjectPredicates::compareByRanking);
+                storedCurrentContainerItemFields.sort(Sorting::compareByRank);
             }
             sources.removeAll(moreCurrentContainerItemFields);
             if (ArrayUtils.contains(ignoredContainerItems, currentContainerItemInstance.getTitle())) {
