@@ -38,13 +38,8 @@ public class SourceMethodImpl extends SourceBase {
     }
 
     @Override
-    Class<?> getPlainType() {
-        return PluginReflectionUtility.getPlainMethodType(method);
-    }
-
-    @Override
-    Class<?> getSourceType() {
-        return method.getReturnType();
+    Class<?> getPlainReturnType() {
+        return PluginReflectionUtility.getPlainType(method);
     }
 
     @Override

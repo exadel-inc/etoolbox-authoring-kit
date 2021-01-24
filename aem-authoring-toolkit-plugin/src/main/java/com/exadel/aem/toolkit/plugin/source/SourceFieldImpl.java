@@ -44,40 +44,8 @@ public class SourceFieldImpl extends SourceBase {
     }
 
     @Override
-    Class<?> getPlainType() {
-        Class<?> result;
-        result = getSourceType();
-        if (ClassUtils.isAssignable(result, Collection.class)) {
-            return getGenericType(result);
-        }
-        return result;
-    }
-
-    @Override
-    public <T> T adaptTo(Class<T> adaptation) {
-        if (adaptation.equals(Field.class)) {
-            return adaptation.cast(field);
-        }
-        return super.adaptTo(adaptation);
-    }
-
-    private Class<?> getGenericType(Class<?> defaultValue) {
-        try {
-            ParameterizedType fieldGenericType;
-            fieldGenericType = (ParameterizedType) field.getGenericType();
-            Type[] typeArguments = fieldGenericType.getActualTypeArguments();
-            if (ArrayUtils.isEmpty(typeArguments)) {
-                return defaultValue;
-            }
-            return (Class<?>) typeArguments[0];
-        } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
-            return defaultValue;
-        }
-    }
-
-    @Override
-    Class<?> getSourceType() {
-        return field.getType().isArray() ? field.getType().getComponentType() : field.getType();
+    Class<?> getPlainReturnType() {
+        return PluginReflectionUtility.getPlainType(field);
     }
 
     @Override

@@ -480,34 +480,42 @@ public class PluginReflectionUtility {
     }
 
     /**
-     * Retrieves the type represented by the provided class method. If the method is designed to provide a single object,
-     * its type is returned. But if the method represents an array, type of array's element is returned
+     * Retrieves the type represented by the provided Java class {@code Member}. If the method is designed to provide
+     * a primitive value or a singular object, its "direct" type is returned. But if the method represents a collection,
+     * type of array's element is returned
      *
-     * @param method The class method to analyze
-     * @return Appropriate {@code Class} instance
+     * @param member The member to analyze, a {@link Field} or {@link Method} reference expected
+     * @return Appropriate {@code Class} instance or null if an invalid {@code Member} provided
      */
-    public static Class<?> getPlainMethodType(Method method) {
-        Class<?> result = method.getReturnType();
+    public static Class<?> getPlainType(Member member) {
+        if (!(member instanceof Field) && !(member instanceof Method)) {
+            return null;
+        }
+        Class<?> result = member instanceof Field
+            ? ((Field) member).getType()
+            : ((Method) member).getReturnType();
         if (result.isArray()) {
             result = result.getComponentType();
         }
         if (ClassUtils.isAssignable(result, Collection.class)) {
-            return getGenericType(method, result);
+            return getGenericType(member, result);
         }
         return result;
     }
 
     /**
-     * Retrieves the underlying parameter type of the class method provided. If the method is an array or a collection.
-     * the item (parameter) type is returned; otherwise, the mere method type is returned
+     * Retrieves the underlying parameter type of the provided Java class {@code Member}. If the method is an array
+     * or a collection, the item (parameter) type is returned; otherwise, the mere method type is returned
      *
-     * @param method The class method to analyze
+     * @param member The member to analyze, a {@link Field} or {@link Method} reference expected
      * @param defaultValue The value to return if parameter type extraction fails
-     * @return Appropriate {@code Class} instance
+     * @return Extracted {@code Class} instance, or the {@code defaultValue}
      */
-    private static Class<?> getGenericType(Method method, Class<?> defaultValue) {
+    private static Class<?> getGenericType(Member member, Class<?> defaultValue) {
         try {
-            ParameterizedType fieldGenericType = (ParameterizedType) method.getGenericReturnType();
+            ParameterizedType fieldGenericType = member instanceof Field
+                ? (ParameterizedType) ((Field) member).getGenericType()
+                : (ParameterizedType) ((Method) member).getGenericReturnType();
             Type[] typeArguments = fieldGenericType.getActualTypeArguments();
             if (ArrayUtils.isEmpty(typeArguments)) {
                 return defaultValue;
