@@ -28,6 +28,7 @@ public class ClassMemberSettings {
     private ClassField wrappedClassField;
 
     private Class<?> overridingSource;
+    private String overridingName;
 
     public ClassMemberSettings(ClassMember wrappedClassMember) {
         this.wrappedClassMember = wrappedClassMember;
@@ -41,22 +42,34 @@ public class ClassMemberSettings {
         if (overridingSource != null) {
             return overridingSource;
         }
-        return wrappedClassMember != null
-            ? wrappedClassMember.source()
-            : (wrappedClassField != null) ? wrappedClassField.source() : _Default.class;
+        if (wrappedClassMember != null) {
+            return wrappedClassMember.source();
+        }
+        return (wrappedClassField != null) ? wrappedClassField.source() : _Default.class;
     }
 
     public String name() {
-        return wrappedClassMember != null
-            ? wrappedClassMember.name()
-            : (wrappedClassField != null) ? wrappedClassField.field() : StringUtils.EMPTY;
+        if (StringUtils.isNotBlank(overridingName)) {
+            return overridingName;
+        }
+        if (wrappedClassMember != null) {
+            return wrappedClassMember.name();
+        }
+        return (wrappedClassField != null) ? wrappedClassField.field() : StringUtils.EMPTY;
     }
 
-    public ClassMemberSettings populateDefaultSource(Class<?> source) {
+    public ClassMemberSettings populateDefaults(Class<?> source) {
+        return populateDefaults(source, null);
+    }
+
+    public ClassMemberSettings populateDefaults(Class<?> source, String name) {
         if (this.overridingSource == null && this.source().equals(_Default.class)) {
             this.overridingSource = source;
         } else if (this.overridingSource == null && this.source().equals(_Super.class)) {
             this.overridingSource = source.getSuperclass() != null ? source.getSuperclass() : source;
+        }
+        if (StringUtils.isNotBlank(name) && StringUtils.isBlank(this.name())) {
+            this.overridingName = name;
         }
         return this;
     }
@@ -65,4 +78,5 @@ public class ClassMemberSettings {
         return source().equals(source.getDeclaringClass())
             && name().equals(source.getName());
     }
+
 }

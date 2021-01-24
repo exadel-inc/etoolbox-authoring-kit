@@ -60,7 +60,7 @@ public class Replacing {
             Replace replace = replacingEntry.adaptTo(Replace.class);
 
             ClassMemberSettings formerClassMemberAnnotation = new ClassMemberSettings(replace.value())
-                .populateDefaultSource(replacingEntry.getDeclaringClass());
+                .populateDefaults(replacingEntry.getDeclaringClass(), replacingEntry.getName());
 
             Source formerEntry = internal.stream()
                 .filter(formerClassMemberAnnotation::matches)

@@ -77,7 +77,7 @@ public class InheritanceTestCases {
             // Will override Grandparent#text2 and should have been overridden by Child#text2 but will remain in place
             // because the latter is in its own turn replaced by the Grandparent#text2, and when it comes to rendering
             // this field, there's no Child#text2 anymore
-            @ClassMember(source = _Super.class, name = "text2")
+            @ClassMember(source = _Super.class)
         )
         private String text2;
 
@@ -166,7 +166,7 @@ public class InheritanceTestCases {
         )
         @TextField
         @Replace(
-            @ClassMember(source = FieldsetGrandparent.class, name = "fieldsetText")
+            @ClassMember(source = FieldsetGrandparent.class)
         )
         private String fieldsetText;
 

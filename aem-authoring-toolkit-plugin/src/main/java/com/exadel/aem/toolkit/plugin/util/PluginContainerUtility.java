@@ -71,19 +71,19 @@ public class PluginContainerUtility {
         Stream<ClassMemberSettings> classLevelIgnoredMembers = Stream.empty();
         if (reportingClass.isAnnotationPresent(Ignore.class)) {
             classLevelIgnoredMembers = Arrays.stream(reportingClass.getAnnotation(Ignore.class).members())
-                .map(memberPtr -> new ClassMemberSettings(memberPtr).populateDefaultSource(reportingClass));
+                .map(memberPtr -> new ClassMemberSettings(memberPtr).populateDefaults(reportingClass));
         } else if (reportingClass.isAnnotationPresent(IgnoreFields.class)) {
             classLevelIgnoredMembers = Arrays.stream(reportingClass.getAnnotation(IgnoreFields.class).value())
-                .map(memberPtr -> new ClassMemberSettings(memberPtr).populateDefaultSource(reportingClass));
+                .map(memberPtr -> new ClassMemberSettings(memberPtr).populateDefaults(reportingClass));
         }
         // Now build collection of ignored members at member level
         Stream<ClassMemberSettings> fieldLevelIgnoredMembers = Stream.empty();
         if (container.adaptTo(Ignore.class) != null) {
             fieldLevelIgnoredMembers = Arrays.stream(container.adaptTo(Ignore.class).members())
-                .map(memberPtr -> new ClassMemberSettings(memberPtr).populateDefaultSource(valueTypeClass));
+                .map(memberPtr -> new ClassMemberSettings(memberPtr).populateDefaults(valueTypeClass));
         } else if (container.adaptTo(IgnoreFields.class) != null) {
             fieldLevelIgnoredMembers = Arrays.stream(container.adaptTo(IgnoreFields.class).value())
-                .map(memberPtr -> new ClassMemberSettings(memberPtr).populateDefaultSource(valueTypeClass));
+                .map(memberPtr -> new ClassMemberSettings(memberPtr).populateDefaults(valueTypeClass));
         }
 
         // Join the collections and make sure that only members from any of the superclasses of the current source's class

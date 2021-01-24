@@ -328,11 +328,11 @@ public class PluginReflectionUtility {
 
             if (classEntry.getAnnotation(Ignore.class) != null && classEntry.getAnnotation(Ignore.class).members().length > 0) {
                 Arrays.stream(classEntry.getAnnotation(Ignore.class).members())
-                        .map(classMember -> new ClassMemberSettings(classMember).populateDefaultSource(targetClass))
+                        .map(classMember -> new ClassMemberSettings(classMember).populateDefaults(targetClass, classEntry.getName()))
                         .forEach(ignoredClassMembers::add);
             } else if (classEntry.getAnnotation(IgnoreFields.class) != null) {
                 Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
-                    .map(classMember -> new ClassMemberSettings(classMember).populateDefaultSource(targetClass))
+                    .map(classMember -> new ClassMemberSettings(classMember).populateDefaults(targetClass))
                     .forEach(ignoredClassMembers::add);
             }
         }
