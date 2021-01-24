@@ -37,8 +37,6 @@ import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
@@ -49,6 +47,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.adapters.PlaceOnSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.SourceBase;
@@ -74,7 +73,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
        ----------------------- */
 
     /**
-     * Implements {@code BiConsumer<Class<?>, Element>} pattern
+     * Implements {@code BiConsumer<Class<?>, Target>} pattern
      * to process component-backing Java class and append the results to the XML root node
      * @param componentClass  {@code Class<?>} instance used as the source of markup
      * @param target   XML document root element
@@ -334,19 +333,16 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
 
     /**
      * The predicate to match a {@code Field} against particular {@link Tab} or {@link AccordionPanel}
-     * @param field {@link Field} instance to analyze
+     * @param source {@link Field} instance to analyze
      * @param containerItemTitle String annotation to analyze
      * @param isDefaultContainerItem True if the current container item accepts fields for which no container item was specified; otherwise, false
      * @return True or false
      */
-    private static boolean isFieldForContainerItem(Source field, String containerItemTitle, boolean isDefaultContainerItem) {
-        if (field.adaptTo(PlaceOnTab.class) == null && field.adaptTo(PlaceOn.class) == null) {
+    private static boolean isFieldForContainerItem(Source source, String containerItemTitle, boolean isDefaultContainerItem) {
+        if (StringUtils.isBlank(source.adaptTo(PlaceOnSetting.class).getValue())) {
             return isDefaultContainerItem;
         }
-        if (field.adaptTo(PlaceOn.class) != null) {
-            return containerItemTitle.equalsIgnoreCase(field.adaptTo(PlaceOn.class).value());
-        }
-        return containerItemTitle.equalsIgnoreCase(field.adaptTo(PlaceOnTab.class).value());
+        return containerItemTitle.equalsIgnoreCase(source.adaptTo(PlaceOnSetting.class).getValue());
     }
 
     /**
@@ -357,14 +353,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      */
     static void handleInvalidContainerException(List<Source> sources, String containerName) {
         for (Source source : sources) {
-            InvalidContainerException ex;
-            if (source.adaptTo(PlaceOnTab.class) != null) {
-                ex = new InvalidContainerException(source.adaptTo(PlaceOnTab.class).value(), containerName);
-            } else if (source.adaptTo(PlaceOn.class) != null) {
-                ex = new InvalidContainerException(source.adaptTo(PlaceOn.class).value(), containerName);
-            } else {
-                ex = new InvalidContainerException(StringUtils.EMPTY, containerName);
-            }
+            InvalidContainerException ex = new InvalidContainerException(source.adaptTo(PlaceOnSetting.class).getValue(), containerName);
             PluginRuntime.context().getExceptionHandler().handle(ex);
         }
     }

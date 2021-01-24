@@ -29,10 +29,11 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
+import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
-public abstract class SourceBase implements Source {
+public abstract class SourceBase extends AdaptationBase<Source> implements Source {
 
     private static final String CACHE_KEY_TEMPLATE = "%s#%s";
     private static final String HOLDER_EXCEPTION_MESSAGE = "Settings holder class missing";
@@ -42,6 +43,7 @@ public abstract class SourceBase implements Source {
     private Map<String, Object> settingsCache;
 
     SourceBase(Class<?> reportingClass) {
+        super(Source.class);
         this.reportingClass = reportingClass;
     }
 
@@ -121,11 +123,6 @@ public abstract class SourceBase implements Source {
         if (adaptation == null) {
             return null;
         }
-        if (adaptation.isAnnotation()) {
-            @SuppressWarnings("unchecked")
-            Class<? extends Annotation> annotationClass = (Class<? extends Annotation>) adaptation;
-            return adaptation.cast(getDeclaredAnnotation(annotationClass));
-        }
         if (adaptation.isArray()) {
             if (adaptation.getComponentType().equals(Annotation.class)) {
                 return adaptation.cast(getDeclaredAnnotations());
@@ -135,7 +132,12 @@ public abstract class SourceBase implements Source {
                 return adaptation.cast(getAnnotationsByType(annotationClass));
             }
         }
-        return null;
+        if (adaptation.isAnnotation()) {
+            @SuppressWarnings("unchecked")
+            Class<? extends Annotation> annotationClass = (Class<? extends Annotation>) adaptation;
+            return adaptation.cast(getDeclaredAnnotation(annotationClass));
+        }
+        return getAdaptation(adaptation); // Retrieves adaptation value, if present, or null
     }
 
     public static Source fromMember(Member member, Class<?> processedClass) {

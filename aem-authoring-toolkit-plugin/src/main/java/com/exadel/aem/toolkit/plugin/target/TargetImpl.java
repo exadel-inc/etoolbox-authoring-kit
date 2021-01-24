@@ -45,13 +45,14 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.XmlAttributeSettingHelper;
 
-public class TargetImpl implements Target {
+public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     private static final String ATTRIBUTE_LIST_TEMPLATE = "[%s]";
     private static final String ATTRIBUTE_LIST_SPLIT_PATTERN = "\\s*,\\s*";
@@ -77,6 +78,7 @@ public class TargetImpl implements Target {
     private XmlScope scope;
 
     public TargetImpl(String name, Target parent) {
+        super(Target.class);
         this.name = name;
         this.parent = parent;
         this.attributes = new HashMap<>();
@@ -273,11 +275,13 @@ public class TargetImpl implements Target {
                 return adaptation.cast(PluginXmlUtility.toDocument(this));
             } catch (ParserConfigurationException e) {
                 PluginRuntime.context().getExceptionHandler().handle(e);
+                return null;
             }
-        } else if (Element.class.equals(adaptation) && context instanceof Document) {
+        }
+        if (Element.class.equals(adaptation) && context instanceof Document) {
             return adaptation.cast(PluginXmlUtility.toElement(this, (Document) context));
         }
-        return null;
+        return getAdaptation(adaptation); // Returns the adapted value or null
     }
 
     private void populateProperty(Method method, Target target, Annotation annotation) {

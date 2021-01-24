@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.api.markers._Super;
 
-public class ClassMemberSettings {
+public class ClassMemberSetting {
 
     private ClassMember wrappedClassMember;
     private ClassField wrappedClassField;
@@ -30,11 +30,11 @@ public class ClassMemberSettings {
     private Class<?> overridingSource;
     private String overridingName;
 
-    public ClassMemberSettings(ClassMember wrappedClassMember) {
+    public ClassMemberSetting(ClassMember wrappedClassMember) {
         this.wrappedClassMember = wrappedClassMember;
     }
 
-    public ClassMemberSettings(ClassField wrappedClassField) {
+    public ClassMemberSetting(ClassField wrappedClassField) {
         this.wrappedClassField = wrappedClassField;
     }
 
@@ -58,11 +58,11 @@ public class ClassMemberSettings {
         return (wrappedClassField != null) ? wrappedClassField.field() : StringUtils.EMPTY;
     }
 
-    public ClassMemberSettings populateDefaults(Class<?> source) {
+    public ClassMemberSetting populateDefaults(Class<?> source) {
         return populateDefaults(source, null);
     }
 
-    public ClassMemberSettings populateDefaults(Class<?> source, String name) {
+    public ClassMemberSetting populateDefaults(Class<?> source, String name) {
         if (this.overridingSource == null && this.source().equals(_Default.class)) {
             this.overridingSource = source;
         } else if (this.overridingSource == null && this.source().equals(_Super.class)) {
