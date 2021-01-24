@@ -28,9 +28,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 
 /**
- * Represents the back-end part of an AEM component - an entity used to supply component metadata and
- * {@code Adobe Granite}-compliant XML markup for the associated component authoring tools to the component folder
- * in AEM content package.<br><br>
+ * Represents the back-end part of an AEM component - an entity used to supply component metadata in accordance with
+ * {@code Adobe Granite API}.<br><br>
  * <p>
  * In a most basic case, the {@code @Component} is the Java class that defines a Sling model or a POJO
  * with the annotations to build an authoring {@code dialog} upon (particularly, the {@code @Dialog} annotation.<br><br>
@@ -51,7 +50,7 @@ public @interface Component {
 
     /**
      * The path to the folder of the current component in an AEM package,
-     * relative to path specified in {@code componentsPathBase} configuration setting<br>
+     * relative to path specified in {@code componentsPathBase} configuration setting<br><br>
      * This property has precedence over the {@code name} property of a {@code Dialog} specified for the same component
      *
      * @return String value, non-blank
@@ -69,7 +68,7 @@ public @interface Component {
     Class<?>[] views() default {};
 
     /**
-     * When set to non-blank, maps to the 'jcr:description' attribute of the component's root node
+     * When set to a non-blank string, maps to the 'jcr:description' attribute of the component's root node
      * @return String value
      */
     @PropertyRendering(name = JcrConstants.PN_DESCRIPTION)
@@ -85,14 +84,14 @@ public @interface Component {
     String cellName() default "";
 
     /**
-     * When set to non-blank, maps to the 'componentGroup' attribute of the component root node
+     * When set to a non-blank string, maps to the 'componentGroup' attribute of the component root node
      * @return String value
      */
     @PropertyScope(XmlScope.COMPONENT)
     String componentGroup() default "";
 
     /**
-     * Maps to the 'dialogPath' attribute of the component root node. Must represent a valid JCR path
+     * When set to a non-blank string, maps to the 'dialogPath' attribute of the component root node. Must represent a valid JCR path
      * @return String value
      */
     @PropertyScope(XmlScope.COMPONENT)
@@ -108,7 +107,7 @@ public @interface Component {
     boolean noDecoration() default false;
 
     /**
-     * When set to non-blank, renders as the 'sling:resourceSuperType' attribute of the component root node
+     * When set to a non-blank string, renders as the 'sling:resourceSuperType' attribute of the component root node
      * @return String value
      */
     @PropertyRendering(name = JcrConstants.PN_RESOURCE_SUPER_TYPE)
