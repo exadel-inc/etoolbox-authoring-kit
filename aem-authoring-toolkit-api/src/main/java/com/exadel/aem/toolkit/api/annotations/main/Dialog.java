@@ -144,8 +144,10 @@ public @interface Dialog {
     /**
      * Renders as the 'isContainer' attribute of the component root node
      * @return True or false
+     * @deprecated Use {@link Component} to set this value
      */
     @IgnorePropertyMapping
+    @Deprecated
     boolean isContainer() default false;
 
     /**

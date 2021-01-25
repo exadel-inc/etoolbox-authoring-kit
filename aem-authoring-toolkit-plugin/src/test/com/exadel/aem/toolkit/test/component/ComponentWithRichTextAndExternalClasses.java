@@ -38,7 +38,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.core.util.TestConstants;
+import com.exadel.aem.toolkit.plugin.util.TestConstants;
 
 @SuppressWarnings("unused")
 @Dialog(

@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 @SuppressWarnings("unused")
 public @interface CustomWidgetAnnotationAuto {
     @PropertyRendering(name = "custom")
-    String customField() default "Custom annotation's field!";
+    String customField() default "Non-overridden value";
 
     @ValueRestriction("com.exadel.aem.toolkit.test.custom.CustomValidator")
     String customColor() default "";

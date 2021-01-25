@@ -60,6 +60,7 @@ hs_err_pid*
 
 ### Maven ###
 target/
+!toolkit/plugin/target
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup

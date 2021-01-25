@@ -14,14 +14,13 @@
 
 package com.exadel.aem.toolkit.test.custom.handler;
 
-import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.handlers.Target;
-
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 
-@Handles(value = MultiField.class, before = CustomMultifieldHandler.class, after = CustomProcessingHandler.class)
+@Handles(value = MultiField.class, before = CustomMultifieldHandler.class, after = CustomNonMappingWidgetHandler.class)
 @SuppressWarnings("unused")
 public class CustomMultifieldHandler implements DialogWidgetHandler {
 

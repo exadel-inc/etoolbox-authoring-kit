@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BinaryOperator;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
@@ -16,8 +15,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
  */
 @SuppressWarnings("unused")
 public interface XmlUtility {
-
-    void setDocument(Document document);
 
     /**
      * Creates named XML {@code Element} node with default JCR type

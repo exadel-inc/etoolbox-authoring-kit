@@ -18,6 +18,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.markers._Default;
+
 /**
  * Used to mark that this field must inherit annotations values from another field
  * specified by type and field name
@@ -29,7 +31,7 @@ public @interface Extends {
      * Class to inherit setup from
      * @return {@code Class<?>} object
      */
-    Class<?> value() default Object.class;
+    Class<?> value() default _Default.class;
 
     /**
      * Field name (if not specified, the field with identical name to the current field's name is implied)
