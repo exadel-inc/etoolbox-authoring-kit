@@ -12,28 +12,22 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.handlers.container;
+package com.exadel.aem.toolkit.plugin.handlers.container;
 
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.annotations.main.ListItem;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
  * The {@code Handler} for adding listItem property to a TouchUI dialog
  */
 public class ListItemHandler implements BiConsumer<Target, Class<?>> {
-    /**
-     * Implements {@code BiConsumer<Class<?>, Element>} pattern
-     * to process component-backing Java class and append the results to the {@link Target} root node
-     * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param target Current {@link Target} instance
-     */
     @Override
     public void accept(Target target, Class<?> componentClass) {
         if (componentClass.isAnnotationPresent(ListItem.class)) {
-            target.attribute(DialogConstants.PN_IS_LIST_ITEM, "true");
+            target.attribute(DialogConstants.PN_IS_LIST_ITEM, true);
         }
     }
 }
