@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.handlers.container.ListItemHandler;
+import com.exadel.aem.toolkit.plugin.handlers.lists.ListItemHandler;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing component-wide attributes (writes data to the

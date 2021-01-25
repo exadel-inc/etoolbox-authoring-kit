@@ -12,11 +12,11 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.handlers.container;
+package com.exadel.aem.toolkit.plugin.handlers.lists;
 
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.annotations.main.ListItem;
+import com.exadel.aem.toolkit.api.annotations.lists.ListItem;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
