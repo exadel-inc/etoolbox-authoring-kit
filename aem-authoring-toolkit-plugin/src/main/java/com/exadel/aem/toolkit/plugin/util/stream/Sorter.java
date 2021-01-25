@@ -20,9 +20,18 @@ import org.apache.commons.lang3.ClassUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
 
+/**
+ * Utility class that exposes comparison routines used to order {@code Source} instances by their origin or explicit ranking
+ */
 public class Sorter {
+
+    /**
+     * Default private (hiding) constructor
+     */
+    private Sorter() {
+    }
 
     /**
      * Facilitates ordering {@code Member} instances according to their optional {@link DialogField} annotations'
@@ -32,8 +41,8 @@ public class Sorter {
      * @return Integer value per {@code Comparator#compare(Object, Object)} convention
      */
     public static int compareByRank(Source f1, Source f2)  {
-        int rank1 = normalizeRanking(f1.getSetting(DialogField.class, DialogConstants.PN_RANKING, 0));
-        int rank2 = normalizeRanking(f2.getSetting(DialogField.class, DialogConstants.PN_RANKING, 0));
+        int rank1 = f1.adaptTo(MemberRankingSetting.class).getRanking();
+        int rank2 = f2.adaptTo(MemberRankingSetting.class).getRanking();
         if (rank1 != rank2) {
             return Integer.compare(rank1, rank2);
         }
@@ -68,12 +77,4 @@ public class Sorter {
         }
         return 0;
     }
-
-    private static int normalizeRanking(int rank) {
-        if (rank == Integer.MIN_VALUE) {
-            return 0;
-        }
-        return rank;
-    }
-
 }

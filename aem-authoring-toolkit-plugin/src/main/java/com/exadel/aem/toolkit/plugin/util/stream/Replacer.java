@@ -28,12 +28,10 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Replace;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
 
 public class Replacer {
     private static final SourceReplacingCollector SOURCE_REPLACING = new SourceReplacingCollector();
@@ -76,9 +74,9 @@ public class Replacer {
             result.add(insertPosition, replacingEntry);
 
             // If the replacing entry has no particular ranking value, assign to it the ranking of the former entry
-            if (!PluginReflectionUtility.annotationPropertyIsNotDefault(replacingEntry.adaptTo(DialogField.class), DialogConstants.PN_RANKING)) {
-                int formerRank = formerEntry.getSetting(DialogField.class, DialogConstants.PN_RANKING, 0);
-                replacingEntry.storeSetting(DialogField.class, DialogConstants.PN_RANKING, formerRank);
+            if (replacingEntry.adaptTo(MemberRankingSetting.class).isUnset()) {
+                int formerRank = formerEntry.adaptTo(MemberRankingSetting.class).getRanking();
+                replacingEntry.adaptTo(MemberRankingSetting.class).setRanking(formerRank);
             }
 
             // Purge the former entry
