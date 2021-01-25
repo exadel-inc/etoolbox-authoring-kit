@@ -41,7 +41,7 @@ public class Sources {
      */
     public static Source fromMember(Member member, Class<?> reportingClass) {
         return member instanceof Field
-            ? new SourceFieldImpl((Field) member, reportingClass)
-            : new SourceMethodImpl((Method) member, reportingClass);
+            ? new FieldSourceImpl((Field) member, reportingClass)
+            : new MethodSourceImpl((Method) member, reportingClass);
     }
 }

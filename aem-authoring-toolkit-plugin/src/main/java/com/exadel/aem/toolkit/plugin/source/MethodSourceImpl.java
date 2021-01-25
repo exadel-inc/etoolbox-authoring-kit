@@ -15,60 +15,60 @@
 package com.exadel.aem.toolkit.plugin.source;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
-public class SourceFieldImpl extends SourceImpl {
+public class MethodSourceImpl extends SourceImpl {
 
-    private final Field field;
+    private final Method method;
 
-    public SourceFieldImpl(Field field, Class<?> processedClass) {
-        super(processedClass);
-        this.field = field;
+    MethodSourceImpl(Method method, Class<?> reportingClass) {
+        super(reportingClass);
+        this.method = method;
     }
 
     @Override
     public String getName() {
-        return field.getName();
+        return method.getName();
     }
 
     @Override
     public Class<?> getDeclaringClass() {
-        return field.getDeclaringClass();
+        return method.getDeclaringClass();
     }
 
     @Override
     Class<?> getPlainReturnType() {
-        return PluginReflectionUtility.getPlainType(field);
+        return PluginReflectionUtility.getPlainType(method);
     }
 
     @Override
     Annotation[] getDeclaredAnnotations() {
-        return field.getDeclaredAnnotations();
+        return method.getDeclaredAnnotations();
     }
 
     @Override
     <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
-        return field.getDeclaredAnnotation(annotationClass);
+        return method.getDeclaredAnnotation(annotationClass);
     }
 
     @Override
     <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass) {
-        return field.getAnnotationsByType(annotationClass);
+        return method.getAnnotationsByType(annotationClass);
     }
 
     @Override
     public boolean isValid() {
-        return field != null && !field.getDeclaringClass().isInterface() && !Modifier.isStatic(field.getModifiers());
+        return method != null && !Modifier.isStatic(method.getModifiers());
     }
 
     @Override
     public <T> T adaptTo(Class<T> adaptation) {
-        if (adaptation.equals(Field.class) || adaptation.equals(Member.class)) {
-            return adaptation.cast(field);
+        if (adaptation.equals(Method.class) || adaptation.equals(Member.class)) {
+            return adaptation.cast(method);
         }
         return super.adaptTo(adaptation);
     }
