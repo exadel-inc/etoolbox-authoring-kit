@@ -28,6 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.handlers.container.ListItemHandler;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing component-wide attributes (writes data to the
@@ -82,6 +83,7 @@ class ContentXmlWriter extends PackageEntryWriter {
             || (annotation instanceof Dialog && ((Dialog) annotation).isContainer())) {
             root.attribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
         }
+        new ListItemHandler().accept(root, componentClass);
     }
 
     private static boolean fitsInScope(Method method, XmlScope scope) {

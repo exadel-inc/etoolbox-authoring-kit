@@ -153,6 +153,11 @@
             <artifactId>uber-jar</artifactId>
             <classifier>apis</classifier>
         </dependency>
+        <dependency>
+            <groupId>com.exadel.aem</groupId>
+            <artifactId>aem-authoring-toolkit-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

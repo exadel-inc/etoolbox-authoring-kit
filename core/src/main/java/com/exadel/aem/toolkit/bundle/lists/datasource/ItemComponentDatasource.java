@@ -55,7 +55,7 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 public class ItemComponentDatasource extends SlingSafeMethodsServlet {
     private static final Logger LOG = LoggerFactory.getLogger(ItemComponentDatasource.class);
 
-    private static final String SELECT_STATEMENT = "SELECT * FROM [cq:Component] AS s WHERE ISDESCENDANTNODE(s,'/apps') AND [componentGroup] = 'acl-item-component'";
+    private static final String SELECT_STATEMENT = "SELECT * FROM [cq:Component] AS s WHERE ISDESCENDANTNODE(s,'/apps') AND [isListItem] = 'true'";
 
     private static final String PN_VALUE = "value";
     private static final String PN_TEXT = "text";

@@ -21,17 +21,41 @@ import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import com.day.cq.commons.jcr.JcrConstants;
+import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.ListItem;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 /**
  * A model that represents the simplest List item which contains of "jct:title" and "value" fields
  */
+@Dialog(
+    name = "content/genericItem",
+    title = "Generic List Item",
+    tabs = {
+        @Tab(title = "Main Config")
+    }
+)
+@ListItem
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class GenericItem {
 
     @ValueMapValue(name = JcrConstants.JCR_TITLE)
+    @DialogField(
+        name = JcrConstants.JCR_TITLE,
+        label = "Title",
+        description = "Provide Item Title.",
+        required = true)
+    @TextField
     private String title;
 
     @ValueMapValue
+    @DialogField(
+        label = "Value",
+        description = "Provide Item Value.",
+        required = true)
+    @TextField
     private String value;
 
     public String getTitle() {

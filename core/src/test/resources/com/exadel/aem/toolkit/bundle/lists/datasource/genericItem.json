@@ -1,7 +1,7 @@
 {
   "jcr:primaryType": "cq:Component",
   "jcr:title": "Generic List Item",
-  "componentGroup": "acl-item-component",
+  "isListItem": "true",
   "jcr:content": {
     "jcr:primaryType": "nt:unstructured",
     "jcr:title": "Generic List Item",
