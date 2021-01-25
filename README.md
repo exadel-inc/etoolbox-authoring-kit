@@ -845,14 +845,14 @@ Same as for tabs ignoring, the `@Ignore` setting is *not* inherited, unlike fiel
 
 ##### Replacing members
 
-Apart from ignoring fields, there is the option to replace an (ancestral) field with another one. This may be used to virtually "override" a field from superclass preserving the same field name (but with mo duplicating this time). Take a look at the following sample:
+Apart from ignoring fields, there is an option to replace an (ancestral) field with another one. This may be used to virtually "override" a field from superclass preserving the same field name (but with no duplicating this time). Take a look at the following sample:
 ```
     @DialogField
     @TextField
     @Replace(@ClassMember(source = _Super.class, name = "supertext"))
     private String text;
 ```
-This way, the "text" field in the superclass class will be removed from the rendering workflow, but the "text" field from the current class will remain. Moreover, this latter be placed exaclty where the overridden field would reside unless another _ranking_ value is set.
+This way, the "text" field in the superclass will be removed from the rendering workflow, but the "text" field from the current class will remain. Moreover, the latter be placed exactly where the overridden field would reside unless another _ranking_ value is set.
 
 If you omit the _source_ part from `@Replace`, the current class will be supposed. Otherwise, if you omit the _name_, the same-named field from the specified source class will be supposed.
 

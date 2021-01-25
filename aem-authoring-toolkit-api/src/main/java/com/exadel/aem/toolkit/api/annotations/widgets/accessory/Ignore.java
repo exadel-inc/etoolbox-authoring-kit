@@ -44,7 +44,7 @@ public @interface Ignore {
      * or a dialog part. Each section is specified by its title
      * @see com.exadel.aem.toolkit.api.annotations.container.Tab
      * @see com.exadel.aem.toolkit.api.annotations.container.AccordionPanel
-     * @return One or more {@code ClassMember} annotations
+     * @return One or more String values
      */
     String[] sections() default {};
 }
