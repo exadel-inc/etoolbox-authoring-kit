@@ -14,17 +14,18 @@
 
 package com.exadel.aem.toolkit.test.custom.handler;
 
-import com.exadel.aem.toolkit.api.handlers.*;
+import java.lang.reflect.Field;
 
+import org.w3c.dom.Element;
+
+import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
-import org.w3c.dom.Element;
-
-import java.lang.reflect.Field;
 
 @SuppressWarnings("unused")
-@Handles(before = CustomWidgetHandler.class, after = CustomWidgetHandler.class)
+@Handles(value = CustomWidgetAnnotation.class, before = CustomWidgetHandler.class, after = CustomWidgetHandler.class)
 public class CustomWidgetHandler implements DialogWidgetHandler {
 
     @Override

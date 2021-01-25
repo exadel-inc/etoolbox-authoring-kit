@@ -344,23 +344,14 @@
         </profile>
     </profiles>
 
-    <repositories>
-        <repository>
-            <id>adobe</id>
-            <name>Adobe Public Repository</name>
-            <url>http://repo.adobe.com/nexus/content/groups/public</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
-
     <pluginRepositories>
-        <pluginRepository>
-            <id>adobe</id>
-            <name>Adobe Public Repository</name>
-            <url>http://repo.adobe.com/nexus/content/groups/public/</url>
-            <layout>default</layout>
-        </pluginRepository>
-    </pluginRepositories>
+		<pluginRepository>
+			<id>adobe</id>
+			<name>Adobe Public Repository</name>
+			<url>http://repo.adobe.com/nexus/content/groups/public/</url>
+			<layout>default</layout>
+		</pluginRepository>
+	</pluginRepositories>
 
     <dependencyManagement>
         <dependencies>
@@ -374,6 +365,12 @@
                 <artifactId>guava</artifactId>
                 <version>30.0-jre</version>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.jimfs</groupId>
+                <artifactId>jimfs</artifactId>
+                <version>1.1</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>io.wcm</groupId>

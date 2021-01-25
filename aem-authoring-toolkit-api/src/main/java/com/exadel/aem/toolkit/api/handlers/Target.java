@@ -20,10 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
-
 
 public interface Target {
 
@@ -40,6 +39,8 @@ public interface Target {
     }
 
     Target mapProperties(Annotation annotation, List<String> skipped);
+
+    Target mapProperties(Element element);
 
     Target attribute(String name, String value);
 
@@ -67,25 +68,19 @@ public interface Target {
 
     void delete();
 
-    void deleteAttribute(String name);
+    Map<String, String> getAttributes();
 
-    boolean hasAttribute(String name);
-
-    List<Target> listChildren();
+    List<Target> getChildren();
 
     String getName();
 
     Target parent();
 
-    <T> T getAttribute(String name, Class<T> tClass);
+    boolean hasChild(String path);
 
-    boolean hasChild(String relPath);
+    <T> T adaptTo(Class<T> adaptation, Object context);
 
-    Map<String, String> getValueMap();
-
-    void setSource(Source source);
-
-    Source getSource();
-
-    Document buildXml(Document document);
+    default <T> T adaptTo(Class<T> adaptation) {
+        return adaptTo(adaptation, null);
+    }
 }

@@ -19,7 +19,7 @@ package com.exadel.aem.toolkit.api.annotations.meta;
  */
 @SuppressWarnings("unused")
 public class ValueRestrictions {
-    private static final String BUILTIN_VALIDATORS_PACKAGE = "com.exadel.aem.toolkit.core.util.validation.";
+    private static final String BUILTIN_VALIDATORS_PACKAGE = "com.exadel.aem.toolkit.plugin.util.validation.";
 
     public static final String NUMBER = BUILTIN_VALIDATORS_PACKAGE + "NumberValidator";
     public static final String POSITIVE = BUILTIN_VALIDATORS_PACKAGE + "PositiveNumberValidator";
