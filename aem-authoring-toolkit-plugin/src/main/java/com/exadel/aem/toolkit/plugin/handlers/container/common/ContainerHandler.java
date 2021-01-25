@@ -50,7 +50,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.PlaceOnSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.source.SourceImpl;
+import com.exadel.aem.toolkit.plugin.source.Sources;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginContainerUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
@@ -271,7 +271,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
             List<Source> storedCurrentContainerItemFields = new ArrayList<>();
             for (String key : currentContainerItemInstance.getFields().keySet()) {
                 Member member = (Member) currentContainerItemInstance.getFields().get(key);
-                storedCurrentContainerItemFields.add(SourceImpl.fromMember(member, member.getDeclaringClass()));
+                storedCurrentContainerItemFields.add(Sources.fromMember(member, member.getDeclaringClass()));
             }
             List<Source> moreCurrentContainerItemFields = sources.stream()
                 .filter(field -> isFieldForContainerItem(field, currentContainerItemInstance.getTitle(), isFirstContainerItem))

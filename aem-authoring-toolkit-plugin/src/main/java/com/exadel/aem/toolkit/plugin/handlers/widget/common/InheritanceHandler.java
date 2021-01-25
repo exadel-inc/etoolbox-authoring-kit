@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidget;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.source.SourceImpl;
+import com.exadel.aem.toolkit.plugin.source.Sources;
 
 /**
  * Handler for processing Granite UI widgets features "inherited" by the current component class {@code SourceFacade} from
@@ -64,7 +64,7 @@ public class InheritanceHandler implements BiConsumer<Source, Target> {
         while (extendsAnnotation != null) {
             String referencedFieldName = extendsAnnotation.field().isEmpty() ? source.getName() : extendsAnnotation.field();
             try {
-                Source referencedField = SourceImpl.fromMember(extendsAnnotation.value().getDeclaredField(referencedFieldName), extendsAnnotation.value());
+                Source referencedField = Sources.fromMember(extendsAnnotation.value().getDeclaredField(referencedFieldName), extendsAnnotation.value());
                 if (referencedField.equals(source) || result.contains(referencedField)) { // to avoid circular references
                     break;
                 }

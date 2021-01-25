@@ -15,23 +15,12 @@
 package com.exadel.aem.toolkit.plugin.source;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
-import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
-import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 public abstract class SourceImpl extends AdaptationBase<Source> implements Source {
 
@@ -71,49 +60,6 @@ public abstract class SourceImpl extends AdaptationBase<Source> implements Sourc
     abstract <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass);
 
     @Override
-    public <T> T getSetting(Class<? extends Annotation> holder, String name, T defaultValue) {
-        if (holder == null || StringUtils.isBlank(name)) {
-            return defaultValue;
-        }
-        if (settingsCache != null) {
-            String key = String.format(CACHE_KEY_TEMPLATE, holder.getName(), name);
-            if (settingsCache.containsKey(key)) {
-                @SuppressWarnings("unchecked")
-                T result = (T) settingsCache.getOrDefault(key, defaultValue);
-                return result;
-            }
-        }
-        Annotation adapted = adaptTo(holder);
-        if (adapted == null) {
-            return defaultValue;
-        }
-        try {
-            @SuppressWarnings("unchecked")
-            T result = (T) adapted.annotationType().getDeclaredMethod(name).invoke(adapted);
-            return result;
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassCastException e) {
-            return defaultValue;
-        }
-    }
-
-    @Override
-    public void storeSetting(Class<? extends Annotation> holder, String name, Object value) {
-        try {
-            Objects.requireNonNull(holder).getMethod(StringUtils.defaultString(name)); // this is to check if method provided actually exists
-        } catch (NoSuchMethodException | NullPointerException e) {
-            ReflectionException re = holder != null
-                ? new ReflectionException(holder, name)
-                : new ReflectionException(HOLDER_EXCEPTION_MESSAGE, e);
-            PluginRuntime.context().getExceptionHandler().handle(re);
-            return;
-        }
-        if (settingsCache == null) {
-            settingsCache = new HashMap<>();
-        }
-        settingsCache.put(String.format(CACHE_KEY_TEMPLATE, holder.getName(), name), value);
-    }
-
-    @Override
     public <T> T adaptTo(Class<T> adaptation) {
         if (adaptation == null) {
             return null;
@@ -133,11 +79,5 @@ public abstract class SourceImpl extends AdaptationBase<Source> implements Sourc
             return adaptation.cast(getDeclaredAnnotation(annotationClass));
         }
         return getAdaptation(adaptation); // Retrieves adaptation value, if present, or null
-    }
-
-    public static Source fromMember(Member member, Class<?> processedClass) {
-        return member instanceof Field
-            ? new SourceFieldImpl((Field) member, processedClass)
-            : new SourceMethodImpl((Method) member, processedClass);
     }
 }

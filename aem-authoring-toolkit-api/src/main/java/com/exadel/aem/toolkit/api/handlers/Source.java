@@ -14,8 +14,6 @@
 
 package com.exadel.aem.toolkit.api.handlers;
 
-import java.lang.annotation.Annotation;
-
 public interface Source {
 
     String getName();
@@ -25,10 +23,6 @@ public interface Source {
     Class<?> getReportingClass();
 
     Class<?> getValueType();
-
-    <T> T getSetting(Class<? extends Annotation> holder, String name, T defaultValue);
-
-    void storeSetting(Class<? extends Annotation> holder, String name, Object value);
 
     boolean isValid();
 

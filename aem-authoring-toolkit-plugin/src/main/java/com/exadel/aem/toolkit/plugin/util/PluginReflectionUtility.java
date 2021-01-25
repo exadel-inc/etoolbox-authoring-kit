@@ -65,7 +65,7 @@ import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeContext;
-import com.exadel.aem.toolkit.plugin.source.SourceImpl;
+import com.exadel.aem.toolkit.plugin.source.Sources;
 import com.exadel.aem.toolkit.plugin.util.stream.Filter;
 import com.exadel.aem.toolkit.plugin.util.stream.Replacer;
 import com.exadel.aem.toolkit.plugin.util.stream.Sorter;
@@ -321,7 +321,7 @@ public class PluginReflectionUtility {
                 ? Arrays.stream(classEntry.getMethods())
                 : Stream.concat(Arrays.stream(classEntry.getDeclaredFields()), Arrays.stream(classEntry.getDeclaredMethods()));
             List<Source> classMemberSources = classMembersStream
-                    .map(member -> SourceImpl.fromMember(member, targetClass))
+                    .map(member -> Sources.fromMember(member, targetClass))
                     .filter(Filter.getSourcesPredicate(predicates))
                     .collect(Collectors.toList());
             raw.addAll(classMemberSources);
