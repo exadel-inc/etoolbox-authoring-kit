@@ -33,16 +33,11 @@ import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
-public abstract class SourceBase extends AdaptationBase<Source> implements Source {
-
-    private static final String CACHE_KEY_TEMPLATE = "%s#%s";
-    private static final String HOLDER_EXCEPTION_MESSAGE = "Settings holder class missing";
+public abstract class SourceImpl extends AdaptationBase<Source> implements Source {
 
     private final Class<?> reportingClass;
 
-    private Map<String, Object> settingsCache;
-
-    SourceBase(Class<?> reportingClass) {
+    SourceImpl(Class<?> reportingClass) {
         super(Source.class);
         this.reportingClass = reportingClass;
     }

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.util.predicate;
+package com.exadel.aem.toolkit.plugin.util.stream;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 
-public class Filtering {
+public class Filter {
 
     /**
      * Generates an combined {@code Predicate<Member>} from the list of partial predicates given

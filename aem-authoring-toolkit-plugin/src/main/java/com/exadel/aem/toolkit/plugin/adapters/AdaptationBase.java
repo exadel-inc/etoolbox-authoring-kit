@@ -18,7 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.exadel.aem.toolkit.api.handlers.Adapts;
+import com.exadel.aem.toolkit.api.handlers.Adaptable;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -38,8 +38,8 @@ public abstract class AdaptationBase<T> {
         if (adaptationsCache != null && adaptationsCache.containsKey(adaptation)) {
             return adaptation.cast(adaptationsCache.get(adaptation));
         }
-        if (adaptation.isAnnotationPresent(Adapts.class)
-            && Source.class.equals(adaptation.getAnnotation(Adapts.class).value())) {
+        if (adaptation.isAnnotationPresent(Adaptable.class)
+            && Source.class.equals(adaptation.getAnnotation(Adaptable.class).value())) {
             try {
                 Object result = adaptation.getConstructor(reflectedClass).newInstance(this);
                 if (adaptationsCache == null) {

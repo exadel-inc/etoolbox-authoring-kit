@@ -18,10 +18,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
-import com.exadel.aem.toolkit.api.handlers.Adapts;
+import com.exadel.aem.toolkit.api.handlers.Adaptable;
 import com.exadel.aem.toolkit.api.handlers.Source;
 
-@Adapts(Source.class)
+@Adaptable(Source.class)
 public class PlaceOnSetting {
 
     private PlaceOn wrappedPlaceOn;

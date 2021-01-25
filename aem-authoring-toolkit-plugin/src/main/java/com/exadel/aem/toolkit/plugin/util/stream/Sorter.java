@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.util.predicate;
+package com.exadel.aem.toolkit.plugin.util.stream;
 
 import java.lang.reflect.Member;
 
@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
-public class Sorting {
+public class Sorter {
 
     /**
      * Facilitates ordering {@code Member} instances according to their optional {@link DialogField} annotations'

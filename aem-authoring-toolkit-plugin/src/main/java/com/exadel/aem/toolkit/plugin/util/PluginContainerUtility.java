@@ -35,8 +35,8 @@ import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidget;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.predicate.Filtering;
-import com.exadel.aem.toolkit.plugin.util.predicate.Sorting;
+import com.exadel.aem.toolkit.plugin.util.stream.Filter;
+import com.exadel.aem.toolkit.plugin.util.stream.Sorter;
 
 /**
  * Contains utility methods that handle adding nodes describing Granite widgets to a widget container node
@@ -100,7 +100,7 @@ public class PluginContainerUtility {
         // Create filters to sort out ignored fields (apart from those defined for the container class)
         // and to banish non-widget fields
         // Return the filtered field list
-        Predicate<Source> nonIgnoredMembers = Filtering.getNotIgnoredSourcesPredicate(allIgnoredFields);
+        Predicate<Source> nonIgnoredMembers = Filter.getNotIgnoredSourcesPredicate(allIgnoredFields);
         Predicate<Source> dialogFields = DialogWidgets::isPresent;
         return PluginReflectionUtility.getAllSources(valueTypeClass, Arrays.asList(nonIgnoredMembers, dialogFields));
     }
@@ -160,7 +160,7 @@ public class PluginContainerUtility {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toCollection(LinkedList::new));
         LinkedList<Source> sameNameFieldsByOrigin = sameNameFields.stream()
-                .sorted(Sorting::compareByOrigin)
+                .sorted(Sorter::compareByOrigin)
                 .collect(Collectors.toCollection(LinkedList::new));
 
         if (sameNameFields.getLast().equals(sameNameFieldsByOrigin.getLast())) {

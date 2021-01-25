@@ -21,7 +21,7 @@ import java.lang.reflect.Modifier;
 
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
-public class SourceFieldImpl extends SourceBase {
+public class SourceFieldImpl extends SourceImpl {
 
     private final Field field;
 

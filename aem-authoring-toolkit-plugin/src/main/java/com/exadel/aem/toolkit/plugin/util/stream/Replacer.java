@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.util.predicate;
+package com.exadel.aem.toolkit.plugin.util.stream;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -35,7 +35,7 @@ import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
-public class Replacing {
+public class Replacer {
     private static final SourceReplacingCollector SOURCE_REPLACING = new SourceReplacingCollector();
 
     private final List<Source> internal = new ArrayList<>();
@@ -51,7 +51,7 @@ public class Replacing {
         List<Source> result = new ArrayList<>(internal);
         Queue<Source> replacingEntries = result.stream()
             .filter(entry -> entry.adaptTo(Replace.class) != null)
-            .sorted(Sorting::compareByOrigin)
+            .sorted(Sorter::compareByOrigin)
             .collect(Collectors.toCollection(LinkedList::new));
 
         while (!replacingEntries.isEmpty()) {
@@ -88,24 +88,24 @@ public class Replacing {
         return result;
     }
 
-    public static Collector<Source, Replacing, List<Source>> processSourceReplace() {
+    public static Collector<Source, Replacer, List<Source>> processSourceReplace() {
         return SOURCE_REPLACING;
     }
 
-    private static class SourceReplacingCollector implements Collector<Source, Replacing, List<Source>> {
+    private static class SourceReplacingCollector implements Collector<Source, Replacer, List<Source>> {
 
         @Override
-        public Supplier<Replacing> supplier() {
-            return Replacing::new;
+        public Supplier<Replacer> supplier() {
+            return Replacer::new;
         }
 
         @Override
-        public BiConsumer<Replacing, Source> accumulator() {
+        public BiConsumer<Replacer, Source> accumulator() {
             return (left, right) -> left.internal.add(right);
         }
 
         @Override
-        public BinaryOperator<Replacing> combiner() {
+        public BinaryOperator<Replacer> combiner() {
             return (left, right) -> {
                 left.internal.addAll(right.internal);
                 return left;
@@ -113,8 +113,8 @@ public class Replacing {
         }
 
         @Override
-        public Function<Replacing, List<Source>> finisher() {
-            return Replacing::processInternal;
+        public Function<Replacer, List<Source>> finisher() {
+            return Replacer::processInternal;
         }
 
         @Override

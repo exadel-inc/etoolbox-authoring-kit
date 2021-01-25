@@ -65,10 +65,10 @@ import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeContext;
-import com.exadel.aem.toolkit.plugin.source.SourceBase;
-import com.exadel.aem.toolkit.plugin.util.predicate.Filtering;
-import com.exadel.aem.toolkit.plugin.util.predicate.Replacing;
-import com.exadel.aem.toolkit.plugin.util.predicate.Sorting;
+import com.exadel.aem.toolkit.plugin.source.SourceImpl;
+import com.exadel.aem.toolkit.plugin.util.stream.Filter;
+import com.exadel.aem.toolkit.plugin.util.stream.Replacer;
+import com.exadel.aem.toolkit.plugin.util.stream.Sorter;
 
 /**
  * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields
@@ -321,8 +321,8 @@ public class PluginReflectionUtility {
                 ? Arrays.stream(classEntry.getMethods())
                 : Stream.concat(Arrays.stream(classEntry.getDeclaredFields()), Arrays.stream(classEntry.getDeclaredMethods()));
             List<Source> classMemberSources = classMembersStream
-                    .map(member -> SourceBase.fromMember(member, targetClass))
-                    .filter(Filtering.getSourcesPredicate(predicates))
+                    .map(member -> SourceImpl.fromMember(member, targetClass))
+                    .filter(Filter.getSourcesPredicate(predicates))
                     .collect(Collectors.toList());
             raw.addAll(classMemberSources);
 
@@ -339,12 +339,12 @@ public class PluginReflectionUtility {
 
         List<Source> reducedWithReplacements = raw
             .stream()
-            .collect(Replacing.processSourceReplace());
+            .collect(Replacer.processSourceReplace());
 
         return reducedWithReplacements
             .stream()
-            .filter(Filtering.getNotIgnoredSourcesPredicate(ignoredClassMembers))
-            .sorted(Sorting::compareByRank)
+            .filter(Filter.getNotIgnoredSourcesPredicate(ignoredClassMembers))
+            .sorted(Sorter::compareByRank)
             .collect(Collectors.toList());
     }
 

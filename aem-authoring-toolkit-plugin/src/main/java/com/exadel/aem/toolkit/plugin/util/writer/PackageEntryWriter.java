@@ -119,10 +119,10 @@ abstract class PackageEntryWriter {
      * @return {@link Document} created
      */
     private Document createDocument(Class<?> componentClass) {
-        Target rootElement = new TargetImpl(DialogConstants.NN_ROOT, null);
-        populateTarget(componentClass, rootElement);
+        Target rootTarget = new TargetImpl(DialogConstants.NN_ROOT, null);
+        populateTarget(componentClass, rootTarget);
 
-        Document document = rootElement.adaptTo(Document.class);
+        Document document = rootTarget.adaptTo(Document.class);
         writeCommonProperties(componentClass, getXmlScope(), document);
         if (XmlScope.CQ_DIALOG.equals(getXmlScope())) {
             // This assignment is for legacy dialog handlers, will not interfere with modern handlers

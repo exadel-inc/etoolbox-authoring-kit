@@ -21,7 +21,7 @@ import java.lang.reflect.Modifier;
 
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
-public class SourceMethodImpl extends SourceBase {
+public class SourceMethodImpl extends SourceImpl {
 
     private final Method method;
 
