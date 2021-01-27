@@ -133,7 +133,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         getIconsNode(cui);
         // if ./cui node has been added any children, append it to ./uiSettings and then append ./uiSettings to root target
         if (rteAnnotation.externalStyleSheets().length != 0)
-            target.attribute(DialogConstants.PN_EXTERNAL_STYLESHEETS, Arrays.asList(rteAnnotation.externalStyleSheets()).toString().replace(" ", ""));
+            target.attribute(DialogConstants.PN_EXTERNAL_STYLESHEETS, Arrays.asList(rteAnnotation.externalStyleSheets()).toString().replace(StringUtils.SPACE, StringUtils.EMPTY));
         // build rtePlugins node, merge it to existing target structure (to pick up child nodes that may have already been populated)
         // then populate rtePlugins node with the context rteAnnotation fields, then merge again
         Target rtePlugins = pluginsBuilder.build(target);
@@ -141,12 +141,12 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         getSpecialCharactersNode(rtePlugins.getOrCreate(DialogConstants.NN_MISCTOOLS));
         populatePasteRulesNode(rtePlugins);
         populateStylesNode(rtePlugins.getOrCreate(DialogConstants.NN_STYLES).attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION));
-        if (rtePlugins.hasChild(DialogConstants.NN_UNDO))
-            rtePlugins.getOrCreate(DialogConstants.NN_UNDO).attribute(DialogConstants.PN_MAX_UNDO_STEPS, rteAnnotation.maxUndoSteps());
+        if (rtePlugins.hasChild(DialogConstants.NN_UNDO) && rteAnnotation.maxUndoSteps() != 50)
+            rtePlugins.get(DialogConstants.NN_UNDO).attribute(DialogConstants.PN_MAX_UNDO_STEPS, rteAnnotation.maxUndoSteps());
         if (rteAnnotation.tabSize() != 4)
             rtePlugins.getOrCreate(DialogConstants.NN_KEYS).attribute(DialogConstants.PN_TAB_SIZE, rteAnnotation.tabSize());
-        if (rtePlugins.hasChild(DialogConstants.NN_LISTS))
-            rtePlugins.getOrCreate(DialogConstants.NN_LISTS).attribute(DialogConstants.PN_INDENT_SIZE, rteAnnotation.indentSize());
+        if (rtePlugins.hasChild(DialogConstants.NN_LISTS) && rteAnnotation.indentSize() != 0)
+            rtePlugins.get(DialogConstants.NN_LISTS).attribute(DialogConstants.PN_INDENT_SIZE, rteAnnotation.indentSize());
 
         // build htmlLinkRules node and append to root target, if needed
         populateHtmlLinkRules(target);
@@ -287,7 +287,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
             // default values are all 'true' so non-defaults are 'false'
             nonDefaultAllowPropsNames.forEach(fieldName -> allowBasicsNode.attribute(fieldName, false));
         }
-        htmlPasteRulesNode.attribute(DialogConstants.PN_ALLOW_BLOCK_TAGS,  rules.allowedBlockTags().length == 0 ? null : Arrays.asList(rules.allowedBlockTags()).toString().replace(" ", ""))
+        htmlPasteRulesNode.attribute(DialogConstants.PN_ALLOW_BLOCK_TAGS,  rules.allowedBlockTags().length == 0 ? null : Arrays.asList(rules.allowedBlockTags()).toString().replace(StringUtils.SPACE, StringUtils.EMPTY))
                 .attribute(DialogConstants.PN_FALLBACK_BLOCK_TAG, rules.fallbackBlockTag().isEmpty() ? null : rules.fallbackBlockTag());
         if (!isEmpty(htmlPasteRulesNode)) {
             edit.attribute(DialogConstants.PN_DEFAULT_PASTE_MODE, rteAnnotation.defaultPasteMode().toString().toLowerCase());
@@ -310,7 +310,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
                 .attribute(DialogConstants.PN_CSS_EXTERNAL, rules.cssExternal().isEmpty() ? null : rules.cssExternal())
                 .attribute(DialogConstants.PN_CSS_INTERNAL, rules.cssInternal().isEmpty() ? null : rules.cssInternal())
                 .attribute(DialogConstants.PN_DEFAULT_PROTOCOL, rules.defaultProtocol())
-                .attribute(DialogConstants.PN_PROTOCOLS, Arrays.asList(rules.protocols()).toString().replace(" ", ""))
+                .attribute(DialogConstants.PN_PROTOCOLS, Arrays.asList(rules.protocols()).toString().replace(StringUtils.SPACE, StringUtils.EMPTY))
                 .getOrCreate(DialogConstants.NN_TARGET_CONFIG)
                 .attribute(DialogConstants.PN_MODE, KEYWORD_AUTO)
                 .attribute(DialogConstants.PN_TARGET_EXTERNAL, rules.targetExternal().toString())

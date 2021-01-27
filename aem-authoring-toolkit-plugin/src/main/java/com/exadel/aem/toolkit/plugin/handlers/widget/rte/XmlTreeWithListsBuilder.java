@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 /**
  * Used to build nodes for feature representations with nested XML nodes within RichTextEditor config XML, such as
@@ -102,7 +104,13 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
                         : value)
                 .collect(Collectors.toList());
         if (valueList.size() > 1) {
-            node.attribute(getAttributeName(), valueList.toString().replace(" ", ""));
+            // Temporarily fixing disparity between 1.2.1 and 2.0.0 XML output (code to be revised)
+            if (DialogConstants.NN_RTE_PLUGINS.equals(parent.getName())) {
+                String tmp = valueList.toString().replace(StringUtils.SPACE, StringUtils.EMPTY);
+                node.attribute(getAttributeName(), PluginXmlUtility.mergeStringAttributes(tmp, tmp));
+            } else {
+                node.attribute(getAttributeName(), valueList.toString().replace(StringUtils.SPACE, StringUtils.EMPTY));
+            }
         } else {
             node.attribute(getAttributeName(), valueList.get(0));
         }

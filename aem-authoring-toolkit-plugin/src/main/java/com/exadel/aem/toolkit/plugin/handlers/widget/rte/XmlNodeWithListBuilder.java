@@ -16,6 +16,8 @@ package com.exadel.aem.toolkit.plugin.handlers.widget.rte;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 /**
@@ -56,7 +58,7 @@ class XmlNodeWithListBuilder extends XmlNodeBuilderBase {
     Target build(Target parent) {
         if (!isEmpty()) {
             Target result = parent.getOrCreate(getName());
-            result.attribute(getAttributeName(), argumentList.toString().replace(" ", ""));
+            result.attribute(getAttributeName(), argumentList.toString().replace(StringUtils.SPACE, StringUtils.EMPTY));
             if (childBuilder != null) childBuilder.build(result);
             if (getPostprocessing() != null) getPostprocessing().accept(result);
             return result;
