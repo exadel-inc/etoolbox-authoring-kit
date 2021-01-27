@@ -99,7 +99,7 @@
                                         features="[subscript,superscript]"/>
                                     <links
                                         jcr:primaryType="nt:unstructured"
-                                        features="[modifylink,unlink]"/>
+                                        features="[unlink,modifylink]"/>
                                     <styles jcr:primaryType="nt:unstructured"/>
                                 </rtePlugins>
                             </description>
@@ -332,7 +332,7 @@
                                         <rtePlugins jcr:primaryType="nt:unstructured">
                                             <links
                                                 jcr:primaryType="nt:unstructured"
-                                                features="[modifylink,unlink]"/>
+                                                features="[unlink,modifylink]"/>
                                             <styles jcr:primaryType="nt:unstructured"/>
                                         </rtePlugins>
                                     </description>
@@ -441,7 +441,7 @@
                                         <rtePlugins jcr:primaryType="nt:unstructured">
                                             <links
                                                 jcr:primaryType="nt:unstructured"
-                                                features="[modifylink,unlink]"/>
+                                                features="[unlink,modifylink]"/>
                                             <styles jcr:primaryType="nt:unstructured"/>
                                         </rtePlugins>
                                     </description>
