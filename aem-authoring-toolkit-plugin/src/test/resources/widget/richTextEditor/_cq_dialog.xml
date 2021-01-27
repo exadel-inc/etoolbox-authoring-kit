@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
           xmlns:cq="http://www.day.com/jcr/cq/1.0"
-          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           width="{Double}560.0"
@@ -175,7 +174,7 @@
                             <findreplace jcr:primaryType="nt:unstructured"
                                          features="[find,replace]"/>
                             <edit jcr:primaryType="nt:unstructured"
-                                  features="[cut,copy,paste-default,paste-plaintext,paste-wordhtml]"
+                                  features="[cut,paste-wordhtml,paste-default,copy,paste-plaintext]"
                                   defaultPasteMode="wordhtml">
                                 <htmlPasteRules jcr:primaryType="nt:unstructured"
                                                 allowBlockTags="[p]"
@@ -195,14 +194,14 @@
                                     <h4 jcr:primaryType="nt:unstructured" tag="h4" description="H4 tagged paragraph"/>
                                 </formats>
                             </paraformat>
-                            <format jcr:primaryType="nt:unstructured" features="[bold,italic,underline]"/>
+                            <format jcr:primaryType="nt:unstructured" features="[underline,bold,italic]"/>
                             <control jcr:primaryType="nt:unstructured" features="[save,close]"/>
                             <undo jcr:primaryType="nt:unstructured" features="[undo,redo]" maxUndoSteps="{Long}20"/>
                             <fullscreen jcr:primaryType="nt:unstructured" features="toggle"/>
                             <spellcheck jcr:primaryType="nt:unstructured" features="checktext"/>
-                            <lists jcr:primaryType="nt:unstructured" features="[ordered,unordered,indent,outdent]" indentSize="{Long}4"/>
-                            <justify jcr:primaryType="nt:unstructured" features="[justifyleft,justifycenter,justifyright]"/>
-                            <links jcr:primaryType="nt:unstructured" features="[modifylink,unlink]"/>
+                            <lists jcr:primaryType="nt:unstructured" features="[unordered,ordered,indent,outdent]" indentSize="{Long}4"/>
+                            <justify jcr:primaryType="nt:unstructured" features="[justifyright,justifyleft,justifycenter]"/>
+                            <links jcr:primaryType="nt:unstructured" features="[unlink,modifylink]"/>
                             <styles jcr:primaryType="cq:WidgetCollection" features="*">
                                 <styles jcr:primaryType="cq:WidgetCollection">
                                     <italic jcr:primaryType="nt:unstructured" cssName="italic" text="Italic"/>
