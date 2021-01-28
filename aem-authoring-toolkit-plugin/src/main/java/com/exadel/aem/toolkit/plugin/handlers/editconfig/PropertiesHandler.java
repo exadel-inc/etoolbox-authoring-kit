@@ -31,7 +31,7 @@ public class PropertiesHandler implements BiConsumer<EditConfig, Target> {
      */
     @Override
     public void accept(EditConfig editConfig, Target root) {
-        root.mapProperties(editConfig);
+        root.attributes(editConfig);
         EditConfigLayout dialogLayout = editConfig.dialogLayout();
         if (dialogLayout != EditConfigLayout.DEFAULT) {
             root.attribute(DialogConstants.PN_DIALOG_LAYOUT, dialogLayout.toString().toLowerCase());

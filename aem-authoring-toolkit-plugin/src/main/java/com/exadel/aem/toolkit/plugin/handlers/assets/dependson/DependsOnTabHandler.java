@@ -63,15 +63,15 @@ public class DependsOnTabHandler implements BiConsumer<Class<?>, Target> {
      * @param target Current {@link Target} instance
      */
     private void handleDependsOnTab(DependsOnTab value, Target target) {
-        if (!target.hasChild(TAB_ITEMS_NODE_PATH)) {
+        if (!target.exists(TAB_ITEMS_NODE_PATH)) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidContainerException());
             return;
         } else if (StringUtils.isAnyBlank(value.tabTitle(), value.query())) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(DependsOnHandler.EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
         }
-        if (target.hasChild(TAB_ITEMS_NODE_PATH + "/" + PluginNamingUtility.getValidName(value.tabTitle()))) {
-            PluginXmlUtility.appendDataAttributes(target.get(TAB_ITEMS_NODE_PATH + "/" + PluginNamingUtility.getValidName(value.tabTitle())), ImmutableMap.of(
+        if (target.exists(TAB_ITEMS_NODE_PATH + "/" + PluginNamingUtility.getValidName(value.tabTitle()))) {
+            PluginXmlUtility.appendDataAttributes(target.getTarget(TAB_ITEMS_NODE_PATH + "/" + PluginNamingUtility.getValidName(value.tabTitle())), ImmutableMap.of(
                     DialogConstants.PN_DEPENDS_ON, value.query(),
                     DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
             ));

@@ -34,6 +34,6 @@ public class PropertyMappingHandler implements BiConsumer<Source, Target> {
     public void accept(Source source, Target target) {
         Arrays.stream(source.adaptTo(Annotation[].class))
                 .filter(a -> a.annotationType().isAnnotationPresent(PropertyMapping.class))
-                .forEach(target::mapProperties);
+                .forEach(target::attributes);
     }
 }

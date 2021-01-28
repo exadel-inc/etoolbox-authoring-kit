@@ -597,7 +597,7 @@ public class PluginXmlUtility implements XmlUtility {
         if (data == null || data.isEmpty()) {
             return;
         }
-        Target graniteDataNode = target.getOrCreate(DialogConstants.NN_DATA);
+        Target graniteDataNode = target.getOrCreateTarget(DialogConstants.NN_DATA);
         data.entrySet().stream()
                 .filter(entry -> StringUtils.isNotBlank(entry.getKey()))
                 .forEach(entry -> graniteDataNode.attribute(entry.getKey(), entry.getValue()));
@@ -635,7 +635,7 @@ public class PluginXmlUtility implements XmlUtility {
         }
         properties.put(DialogConstants.PN_PATH, path);
 
-        return target.getOrCreate(DialogConstants.NN_DATASOURCE)
+        return target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
                 .attributes(properties);
     }
@@ -651,7 +651,7 @@ public class PluginXmlUtility implements XmlUtility {
         if (StringUtils.isBlank(path)) {
             return null;
         }
-        return target.getOrCreate(DialogConstants.NN_DATASOURCE)
+        return target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_PATH, path)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
     }

@@ -75,9 +75,7 @@ class ContentXmlWriter extends PackageEntryWriter {
             annotation = componentClass.getDeclaredAnnotation(Dialog.class);
         }
         root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT)
-            .mapProperties(annotation, Arrays.stream(Dialog.class.getDeclaredMethods())
-                .filter(m -> !fitsInScope(m, getXmlScope())).map(Method::getName).collect(Collectors.toList()))
-            .scope(getXmlScope());
+            .attributes(annotation, member -> fitsInScope(member, getScope()));
         if ((annotation instanceof Component && ((Component) annotation).isContainer())
             || (annotation instanceof Dialog && ((Dialog) annotation).isContainer())) {
             root.attribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));

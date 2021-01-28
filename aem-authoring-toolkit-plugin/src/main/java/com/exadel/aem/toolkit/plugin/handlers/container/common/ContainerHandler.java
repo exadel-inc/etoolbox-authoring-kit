@@ -86,12 +86,12 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         String exceptionMessage = annotationClass.equals(Tab.class) ? TABS_EXCEPTION : ACCORDION_EXCEPTION;
 
         Target containerItemsElement = target
-            .create(DialogConstants.NN_CONTENT)
+            .createTarget(DialogConstants.NN_CONTENT)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
-            .create(DialogConstants.NN_ITEMS)
-            .create(containerName)
+            .createTarget(DialogConstants.NN_ITEMS)
+            .createTarget(containerName)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
-            .create(DialogConstants.NN_ITEMS);
+            .createTarget(DialogConstants.NN_ITEMS);
 
         // Initialize ignored sections (tabs or accordion panels) list for the current class.
         // Note that "ignored sections" setting is not inherited and is for current class only, unlike the very collection
@@ -302,7 +302,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         String containerItemName) {
 
         String nodeName = PluginNamingUtility.getUniqueName(containerItem.getTitle(), containerItemName, container);
-        Target containerItemsNode = container.create(nodeName)
+        Target containerItemsNode = container.createTarget(nodeName)
             .attribute(JcrConstants.PN_TITLE, containerItem.getTitle())
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
         if (containerItemName.equals(DialogConstants.NN_TAB)) {
@@ -312,9 +312,9 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         } else if (containerItemName.equals(DialogConstants.NN_ACCORDION)) {
             AccordionPanel accordionPanel = PluginObjectUtility.create(AccordionPanel.class,
                 containerItem.getAttributes());
-            List<String> skippedList = new ArrayList<>();
-            skippedList.add(DialogConstants.PN_TITLE);
-            containerItemsNode.create(DialogConstants.NN_PARENT_CONFIG).mapProperties(accordionPanel, skippedList);
+            containerItemsNode
+                .createTarget(DialogConstants.NN_PARENT_CONFIG)
+                .attributes(accordionPanel, member -> !member.getName().equals(DialogConstants.PN_TITLE));
         }
         PluginContainerUtility.appendToContainer(containerItemsNode, sources);
     }
@@ -327,7 +327,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     private static void appendTabAttributes(Target tabElement, Tab tab) {
         tabElement.attribute(JcrConstants.PN_TITLE, tab.title());
         Attribute attribute = tab.attribute();
-        tabElement.mapProperties(attribute);
+        tabElement.attributes(attribute);
         PluginXmlUtility.appendDataAttributes(tabElement, attribute.data());
     }
 

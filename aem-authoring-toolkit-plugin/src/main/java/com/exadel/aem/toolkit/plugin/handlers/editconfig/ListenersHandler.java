@@ -41,7 +41,7 @@ public class ListenersHandler implements BiConsumer<EditConfig, Target> {
         }
         Map<String, Object> properties = listeners.stream()
             .collect(Collectors.toMap(Listener::event, Listener::action));
-        root.getOrCreate(DialogConstants.NN_LISTENERS)
+        root.getOrCreateTarget(DialogConstants.NN_LISTENERS)
                 .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_LISTENERS)
                 .attributes(properties);
     }

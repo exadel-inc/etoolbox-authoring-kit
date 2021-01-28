@@ -93,9 +93,10 @@ class CqDialogWriter extends PackageEntryWriter {
         Annotation dialog = XmlScope.CQ_DIALOG.equals(scope)
             ? componentClass.getDeclaredAnnotation(Dialog.class)
             : componentClass.getDeclaredAnnotation(DesignDialog.class);
-        target.mapProperties(dialog, getSkippedProperties())
-            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG)
-            .scope(scope);
+
+        target
+            .attributes(dialog, member -> fitsInScope(member, scope))
+            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
 
         DialogLayout dialogLayout = getLayout(dialog);
         DialogContainer.getContainer(dialogLayout).build(componentClass, target);

@@ -119,12 +119,12 @@ abstract class PackageEntryWriter {
      * @return {@link Document} created
      */
     private Document createDocument(Class<?> componentClass) {
-        Target rootTarget = new TargetImpl(DialogConstants.NN_ROOT, null);
+        Target rootTarget = Targets.newInstance(DialogConstants.NN_ROOT, getScope());
         populateTarget(componentClass, rootTarget);
 
-        Document document = rootTarget.adaptTo(Document.class);
-        writeCommonProperties(componentClass, getXmlScope(), document);
-        if (XmlScope.CQ_DIALOG.equals(getXmlScope())) {
+        Document document = rootTarget.adaptTo(DocumentAdapter.class).getDocument();
+        writeCommonProperties(componentClass, getScope(), document);
+        if (XmlScope.CQ_DIALOG.equals(getScope())) {
             // This assignment is for legacy dialog handlers, will not interfere with modern handlers
             PluginRuntime.context().getXmlUtility().setDocument(document);
             processLegacyDialogHandlers(document.getDocumentElement(), componentClass);

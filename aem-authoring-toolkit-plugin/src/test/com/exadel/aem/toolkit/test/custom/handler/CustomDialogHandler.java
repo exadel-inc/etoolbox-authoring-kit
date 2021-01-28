@@ -68,9 +68,9 @@ public class CustomDialogHandler implements DialogHandler {
     }
 
     private static boolean isTopLevelMultifield(Target target) {
-        String resourceType = Optional.ofNullable(target.parent())
-            .map(Target::parent)
-            .map(Target::parent)
+        String resourceType = Optional.ofNullable(target.getParent())
+            .map(Target::getParent)
+            .map(Target::getParent)
             .map(t -> t.getAttributes().get(DialogConstants.PN_SLING_RESOURCE_TYPE))
             .orElse(StringUtils.EMPTY);
         return !resourceType.equals(ResourceTypes.MULTIFIELD);

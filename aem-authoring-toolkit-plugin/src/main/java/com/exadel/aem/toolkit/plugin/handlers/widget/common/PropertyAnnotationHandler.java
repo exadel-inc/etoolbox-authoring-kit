@@ -24,6 +24,6 @@ public class PropertyAnnotationHandler implements BiConsumer<Source, Target> {
     private void acceptProperty(Property property, Target target) {
         List<String> list = Pattern.compile("/").splitAsStream(property.name()).collect(Collectors.toList());
         String propertyName = list.remove(list.size() - 1);
-        target.getOrCreate(String.join(StringUtils.EMPTY, list)).attribute(PluginNamingUtility.getValidFieldName(propertyName), property.value());
+        target.getOrCreateChild(String.join(StringUtils.EMPTY, list)).attribute(PluginNamingUtility.getValidFieldName(propertyName), property.value());
     }
 }

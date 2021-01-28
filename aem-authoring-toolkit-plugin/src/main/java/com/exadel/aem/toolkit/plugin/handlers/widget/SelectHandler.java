@@ -42,9 +42,9 @@ class SelectHandler implements BiConsumer<Source, Target> {
     public void accept(Source source, Target target) {
         Select select = source.adaptTo(Select.class);
         if (ArrayUtils.isNotEmpty(select.options())) {
-            Target items = target.getOrCreate(DialogConstants.NN_ITEMS);
+            Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             for (Option option: select.options()) {
-                items.create(option.value()).mapProperties(option);
+                items.createTarget(option.value()).attributes(option);
             }
         }
         Target dataSourceElement = PluginXmlUtility.appendDataSource(
