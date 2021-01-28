@@ -46,7 +46,7 @@
                                                                    fieldLabel="Item Component"
                                                                    emptyText="Select component">
                                                         <datasource jcr:primaryType="nt:unstructured"
-                                                                    sling:resourceType="apps/authoring-toolkit/lists/datasources/list-items"/>
+                                                                    sling:resourceType="/apps/authoring-toolkit/lists/datasources/list-items"/>
                                                     </itemcomponent>
                                                 </items>
                                             </well>

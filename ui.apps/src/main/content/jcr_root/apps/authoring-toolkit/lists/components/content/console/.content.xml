@@ -56,7 +56,7 @@
                     src="/mnt/overlay/authoring-toolkit/lists/components/content/console/jcr:content/views/column{.offset,limit}.html{+id}">
                 <datasource
                         jcr:primaryType="nt:unstructured"
-                        sling:resourceType="apps/authoring-toolkit/lists/datasources/list"
+                        sling:resourceType="/apps/authoring-toolkit/lists/datasources/list"
                         itemResourceType="cq/gui/components/coral/admin/page/columnitem"
                         limit="${empty requestPathInfo.selectors[1] ? &quot;41&quot; : requestPathInfo.selectors[1] + 1}"
                         offset="${requestPathInfo.selectors[0]}"
@@ -75,7 +75,7 @@
                     src="/mnt/overlay/authoring-toolkit/lists/components/content/console/jcr:content/views/card{.offset,limit}.html{+id}">
                 <datasource
                         jcr:primaryType="nt:unstructured"
-                        sling:resourceType="apps/authoring-toolkit/lists/datasources/list"
+                        sling:resourceType="/apps/authoring-toolkit/lists/datasources/list"
                         applyWeighting="{Boolean}true"
                         itemResourceType="cq/gui/components/coral/admin/page/card"
                         limit="${empty requestPathInfo.selectors[1] ? &quot;21&quot; : requestPathInfo.selectors[1] + 1}"
@@ -106,7 +106,7 @@
                         stateId="aem.sites.listview.columns"/>
                 <datasource
                         jcr:primaryType="nt:unstructured"
-                        sling:resourceType="apps/authoring-toolkit/lists/datasources/list"
+                        sling:resourceType="/apps/authoring-toolkit/lists/datasources/list"
                         itemResourceType="cq/gui/components/coral/admin/page/row"
                         limit="${empty requestPathInfo.selectors[1] ? &quot;41&quot; : requestPathInfo.selectors[1] + 1}"
                         offset="${requestPathInfo.selectors[0]}"

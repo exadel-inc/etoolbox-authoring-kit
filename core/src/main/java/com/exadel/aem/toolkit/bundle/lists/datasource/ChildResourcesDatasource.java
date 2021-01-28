@@ -26,7 +26,6 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 
 import org.apache.commons.collections.iterators.TransformIterator;
-import org.apache.jackrabbit.commons.iterator.FilterIterator;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -57,7 +56,7 @@ import com.adobe.granite.ui.components.ds.EmptyDataSource;
 @Component(
     service = Servlet.class,
     property = {
-        "sling.servlet.resourceTypes=apps/authoring-toolkit/lists/datasources/list",
+        "sling.servlet.resourceTypes=/apps/authoring-toolkit/lists/datasources/list",
         "sling.servlet.methods=" + HttpConstants.METHOD_GET
     }
 )
@@ -99,7 +98,7 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
 
             Resource parent = parentPath != null ? resolver.getResource(parentPath) : null;
             if (parent != null) {
-                Iterator<Resource> resources = getValidChildren(resolver, parent).iterator();
+                List<Resource> resources = getValidChildren(resolver, parent);
                 dataSource = new PagingDataSource(resources, offset, limit, itemResourceType);
             }
         }
@@ -108,7 +107,7 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
 
     /**
      * Retrieves the list of item resources, which are either lists themselves, or folders
-     * that may contain lists inside
+     * that may contain lists inside. excludes service and content nodes
      *
      * @param resolver An instance of ResourceResolver
      * @param parent   {@code Resource} instance used as the source of markup
@@ -116,7 +115,7 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
      */
     private List<Resource> getValidChildren(ResourceResolver resolver, Resource parent) {
         return getChildrenStream(parent)
-            .filter(resource -> isTemplate(resolver, resource) || isFolder(resource))
+            .filter(resource -> !isServiceNode(resource) && (isList(resolver, resource) || isFolder(resource)))
             .collect(Collectors.toList());
     }
 
@@ -127,7 +126,7 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
      * @param resource {@code Resource} instance used as the source of markup
      * @return True or false
      */
-    private static boolean isTemplate(ResourceResolver resolver, Resource resource) {
+    private static boolean isList(ResourceResolver resolver, Resource resource) {
         Resource childParameters = resolver.getResource(resource.getPath() + PATH_TO_JCR_CONTENT);
         if (childParameters != null) {
             String template = childParameters.getValueMap().get(NameConstants.NN_TEMPLATE, String.class);
@@ -149,6 +148,16 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
         });
     }
 
+    /**
+     * Checks whether the resource is a service/content node
+     *
+     * @param resource {@code Resource} instance used as the source of markup
+     * @return True or false
+     */
+    private static boolean isServiceNode(Resource resource) {
+        return resource.getName().startsWith(REP_PREFIX) || resource.getName().equals(JcrConstants.JCR_CONTENT);
+    }
+
     private static Stream<Resource> getChildrenStream(Resource resource) {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(resource.listChildren(), Spliterator.ORDERED), false);
     }
@@ -164,13 +173,13 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
         return bindings.getSling();
     }
 
-    public class PagingDataSource extends AbstractDataSource {
-        private Iterator<Resource> resources;
-        private int offset;
-        private int limit;
-        private String itemResourceType;
+    public static class PagingDataSource extends AbstractDataSource {
+        private final List<Resource> resources;
+        private final int offset;
+        private final int limit;
+        private final String itemResourceType;
 
-        private PagingDataSource(Iterator<Resource> resources, int offset, int limit, String itemResourceType) {
+        private PagingDataSource(List<Resource> resources, int offset, int limit, String itemResourceType) {
             this.resources = resources;
             this.offset = offset;
             this.limit = limit;
@@ -180,10 +189,7 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
         @SuppressWarnings("unchecked")
         @Override
         public Iterator<Resource> iterator() {
-            Iterator<Resource> it = new PagingIterator<>(new FilterIterator<>(resources, o -> {
-                String name = ((Resource) o).getName();
-                return !name.startsWith(REP_PREFIX) && !name.equals(JcrConstants.JCR_CONTENT);
-            }), offset, limit);
+            Iterator<Resource> it = new PagingIterator<>(resources.iterator(), offset, limit);
 
             return new TransformIterator(it, o -> new ResourceWrapper((Resource) o) {
                 @Nonnull
