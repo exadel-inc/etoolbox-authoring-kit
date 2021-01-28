@@ -48,7 +48,7 @@ public class MultiFieldHandler implements BiConsumer<Source, Target> {
         List<Source> members = PluginContainerUtility.getContainerEntries(source, true);
         if (members.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
-                    EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.getContainerClass().getName()
+                    EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.getValueType().getName()
             ));
             return;
         }

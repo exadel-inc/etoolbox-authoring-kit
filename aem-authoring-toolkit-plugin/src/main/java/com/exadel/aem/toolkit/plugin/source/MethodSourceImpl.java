@@ -15,18 +15,21 @@
 package com.exadel.aem.toolkit.plugin.source;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
-public class SourceMethodImpl extends SourceBase {
+public class MethodSourceImpl extends SourceImpl {
 
     private final Method method;
 
-    SourceMethodImpl(Method method, Class<?> processedClass) {
-        super(processedClass);
+    MethodSourceImpl(Method method, Class<?> reportingClass) {
+        super(reportingClass);
         this.method = method;
     }
+
     @Override
     public String getName() {
         return method.getName();
@@ -38,13 +41,8 @@ public class SourceMethodImpl extends SourceBase {
     }
 
     @Override
-    Class<?> getPlainType() {
-        return PluginReflectionUtility.getPlainMethodType(method);
-    }
-
-    @Override
-    Class<?> getSourceType() {
-        return method.getReturnType();
+    Class<?> getPlainReturnType() {
+        return PluginReflectionUtility.getPlainType(method);
     }
 
     @Override
@@ -60,5 +58,18 @@ public class SourceMethodImpl extends SourceBase {
     @Override
     <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass) {
         return method.getAnnotationsByType(annotationClass);
+    }
+
+    @Override
+    public boolean isValid() {
+        return method != null && !Modifier.isStatic(method.getModifiers());
+    }
+
+    @Override
+    public <T> T adaptTo(Class<T> adaptation) {
+        if (adaptation.equals(Method.class) || adaptation.equals(Member.class)) {
+            return adaptation.cast(method);
+        }
+        return super.adaptTo(adaptation);
     }
 }

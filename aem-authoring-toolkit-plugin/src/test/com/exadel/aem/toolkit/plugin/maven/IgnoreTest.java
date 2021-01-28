@@ -21,61 +21,78 @@ import com.exadel.aem.toolkit.plugin.util.TestConstants;
 import com.exadel.aem.toolkit.test.component.IgnoreTestCases;
 
 public class IgnoreTest extends DefaultTestBase {
+    private static final String LOCAL_RESOURCE_FOLDER_NAME = "ignore";
 
     @Test
     public void testFixedColumnsLayout() {
-        test(IgnoreTestCases.IgnoreFieldsFixedColumnsLayout.class,
-                TestConstants.RESOURCE_FOLDER_COMMON,
-                getFolderName(IgnoreTestCases.IgnoreFieldsFixedColumnsLayout.class));
+        test(IgnoreTestCases.IgnoreMembersFixedColumnsLayout.class,
+            TestConstants.RESOURCE_FOLDER_COMMON,
+            LOCAL_RESOURCE_FOLDER_NAME,
+            getFolderName(IgnoreTestCases.IgnoreMembersFixedColumnsLayout.class));
     }
 
     @Test
     public void testTabsLayout() {
-        test(IgnoreTestCases.IgnoreFieldsTabsLayout.class,
-                TestConstants.RESOURCE_FOLDER_COMMON,
-                getFolderName(IgnoreTestCases.IgnoreFieldsTabsLayout.class));
+        test(IgnoreTestCases.IgnoreMembersTabsLayout.class,
+            TestConstants.RESOURCE_FOLDER_COMMON,
+            LOCAL_RESOURCE_FOLDER_NAME,
+            getFolderName(IgnoreTestCases.IgnoreMembersTabsLayout.class));
+    }
+
+    @Test
+    public void testAccordionLayout() {
+        test(IgnoreTestCases.IgnoreMembersAccordionLayout.class,
+            TestConstants.RESOURCE_FOLDER_COMMON,
+            LOCAL_RESOURCE_FOLDER_NAME,
+            getFolderName(IgnoreTestCases.IgnoreMembersAccordionLayout.class));
     }
 
     @Test
     public void testFieldSet1() {
-        test(IgnoreTestCases.IgnoreFieldsInFieldSet.class,
-                TestConstants.RESOURCE_FOLDER_COMMON,
-                getFolderName(IgnoreTestCases.IgnoreFieldsInFieldSet.class));
+        test(IgnoreTestCases.IgnoreMembersInFieldSet.class,
+            TestConstants.RESOURCE_FOLDER_COMMON,
+            LOCAL_RESOURCE_FOLDER_NAME,
+            getFolderName(IgnoreTestCases.IgnoreMembersInFieldSet.class));
     }
 
     @Test
     public void testFieldSet2() {
-        test(IgnoreTestCases.IgnoreFieldsImposedOnFieldSet.class,
-                TestConstants.RESOURCE_FOLDER_COMMON,
-                getFolderName(IgnoreTestCases.IgnoreFieldsInFieldSet.class));
+        test(IgnoreTestCases.IgnoreMembersImposedOnFieldSet.class,
+            TestConstants.RESOURCE_FOLDER_COMMON,
+            LOCAL_RESOURCE_FOLDER_NAME,
+            getFolderName(IgnoreTestCases.IgnoreMembersInFieldSet.class));
     }
 
     @Test
     public void testFieldSet3() {
-        test(IgnoreTestCases.IgnoreFieldsImposedOnFieldSetClassLevel.class,
-                TestConstants.RESOURCE_FOLDER_COMMON,
-                getFolderName(IgnoreTestCases.IgnoreFieldsInFieldSet.class));
+        test(IgnoreTestCases.IgnoreMembersImposedOnFieldSetClassLevel.class,
+            TestConstants.RESOURCE_FOLDER_COMMON,
+            LOCAL_RESOURCE_FOLDER_NAME,
+            getFolderName(IgnoreTestCases.IgnoreMembersInFieldSet.class));
     }
 
     @Test
     public void testMutlifield1() {
-        test(IgnoreTestCases.IgnoreFieldsInMultifield.class,
-                TestConstants.RESOURCE_FOLDER_COMMON,
-                getFolderName(IgnoreTestCases.IgnoreFieldsInMultifield.class));
+        test(IgnoreTestCases.IgnoreMembersInMultifield.class,
+            TestConstants.RESOURCE_FOLDER_COMMON,
+            LOCAL_RESOURCE_FOLDER_NAME,
+            getFolderName(IgnoreTestCases.IgnoreMembersInMultifield.class));
     }
 
     @Test
     public void testMutlifield2() {
-        test(IgnoreTestCases.IgnoreFieldsImposedOnMultifield.class,
-                TestConstants.RESOURCE_FOLDER_COMMON,
-                getFolderName(IgnoreTestCases.IgnoreFieldsInMultifield.class));
+        test(IgnoreTestCases.IgnoreMembersImposedOnMultifield.class,
+            TestConstants.RESOURCE_FOLDER_COMMON,
+            LOCAL_RESOURCE_FOLDER_NAME,
+            getFolderName(IgnoreTestCases.IgnoreMembersInMultifield.class));
     }
 
     @Test
     public void testMutlifield3() {
-        test(IgnoreTestCases.IgnoreFieldsImposedOnMultifieldClassLevel.class,
-                TestConstants.RESOURCE_FOLDER_COMMON,
-                getFolderName(IgnoreTestCases.IgnoreFieldsInMultifield.class));
+        test(IgnoreTestCases.IgnoreMembersImposedOnMultifieldClassLevel.class,
+            TestConstants.RESOURCE_FOLDER_COMMON,
+            LOCAL_RESOURCE_FOLDER_NAME,
+            getFolderName(IgnoreTestCases.IgnoreMembersInMultifield.class));
     }
 
     private static String getFolderName(Class<?> testClass) {

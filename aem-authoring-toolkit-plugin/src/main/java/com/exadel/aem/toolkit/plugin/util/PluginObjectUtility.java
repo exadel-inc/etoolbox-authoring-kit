@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -64,7 +65,7 @@ public class PluginObjectUtility {
                         : method.getDefaultValue();
                 methods.put(method.getName(), methodFunction);
             });
-        return modify(null, type, methods);
+        return genericModify(null, type, methods);
     }
 
     /**
@@ -87,7 +88,38 @@ public class PluginObjectUtility {
                 .forEach(method -> methods.put(method.getName(),
                     (annotation, args) -> method.getReturnType().equals(String.class) ? StringUtils.EMPTY : 0L));
         }
-        return modify(source, type, methods);
+        return genericModify(source, type, methods);
+    }
+
+
+    /**
+     * Creates in runtime a {@code <T extends Annotation>}-typed facade for the specified annotation and assigns to its
+     * specified field  the provided updated value in case it currently contains the specified "old" value
+     * @param source {@code Annotation} instance to produce a facade for
+     * @param type Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
+     * @param transformations {@code Map} consisting of String-typed keys representing annotation properties,
+     *                                   and {@code UnaryOperator}-typed routines that should swap an existing property
+     *                                   value with a newly computed value
+     * @param <T> Type of the annotation facade
+     * @return Facade annotation instance, a subtype of the {@code Annotation} class
+     */
+    @SuppressWarnings("SameParameterValue") // for the consistency of API
+    static <T extends Annotation> T modify(Annotation source, Class<T> type, Map<String, UnaryOperator<Object>> transformations) {
+        if (transformations == null || transformations.isEmpty()) {
+            return type.cast(source);
+        }
+        Map<String, BiFunction<Annotation, Object[], Object>> methods = new HashMap<>();
+        transformations.forEach((methodName, routine) -> {
+            Object currentValue;
+            try {
+                currentValue = source.annotationType().getDeclaredMethod(methodName).invoke(source);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                currentValue = null;
+            }
+            Object fixedValue = routine.apply(currentValue);
+            methods.put(methodName, (annotation, args) -> fixedValue);
+        });
+        return genericModify(source, type, methods);
     }
 
     /**
@@ -97,22 +129,12 @@ public class PluginObjectUtility {
      * @param type   Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
      * @param name   String representing the method to check for default value, non-blank
      * @param value  The value to use in case the method above returns its default
-     * @param <T>    Particular type of the annotation facade
+     * @param <T>    Type of the annotation facade
      * @param <R>    Return type of a fallback method / methods
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
     public static <T extends Annotation, R> T modifyIfDefault(Annotation source, Class<T> type, String name, R value) {
         return modifyIfDefault(source, type, Collections.singletonMap(name, value));
-    }
-
-
-    public static Map<String, Object> getAnnotationFields(Annotation annotation) throws IllegalAccessException, InvocationTargetException {
-        Map<String, Object> result = new HashMap<>();
-        for (Method method : annotation.annotationType().getDeclaredMethods()) {
-            Object value = method.invoke(annotation, (Object[]) null);
-            result.put(method.getName(), value);
-        }
-        return result;
     }
 
 
@@ -138,7 +160,17 @@ public class PluginObjectUtility {
                 .forEach(method -> methods.put(method.getName(),
                     (annotation, args) -> fallbackValues.get(method.getName())));
         }
-        return modify(source, type, methods);
+        return genericModify(source, type, methods);
+    }
+
+
+    public static Map<String, Object> getAnnotationFields(Annotation annotation) throws IllegalAccessException, InvocationTargetException {
+        Map<String, Object> result = new HashMap<>();
+        for (Method method : annotation.annotationType().getDeclaredMethods()) {
+            Object value = method.invoke(annotation, (Object[]) null);
+            result.put(method.getName(), value);
+        }
+        return result;
     }
 
     /**
@@ -174,7 +206,7 @@ public class PluginObjectUtility {
      * @return The {@code <U>}-typed extension object, or else null if {@code modification} is null, or else
      * the {@code methods} map is empty
      */
-    private static <T, U, R> U modify(T value, Class<U> modification, Map<String, BiFunction<T, Object[], R>> methods) {
+    private static <T, U, R> U genericModify(T value, Class<U> modification, Map<String, BiFunction<T, Object[], R>> methods) {
         if (modification == null) {
             return null;
         }
@@ -190,6 +222,7 @@ public class PluginObjectUtility {
             new ExtensionInvocationHandler<>(value, modification, methods));
         return modification.cast(result);
     }
+
 
     /**
      * Wraps up extracting method from an {@code Annotation} signature by name, with {@link NoSuchMethodException} handled
@@ -207,7 +240,7 @@ public class PluginObjectUtility {
 
     /**
      * Implements {@link InvocationHandler} mechanism for creating object extension
-     * as per {@link PluginObjectUtility#modify(Object, Class, Map)}
+     * per the {@link PluginObjectUtility#genericModify(Object, Class, Map)} signature
      * @param <T> The {@code Class} of the source object
      * @param <R> The return type of the extension methods defined for this instance
      */
@@ -216,9 +249,9 @@ public class PluginObjectUtility {
         private static final String METHOD_ANNOTATION_TYPE = "annotationType";
         private static final String INVOCATION_EXCEPTION_MESSAGE_TEMPLATE = "Could not invoke method '%s' on object %s";
 
-        private T source;
-        private Class<U> targetType;
-        private Map<String, BiFunction<T, Object[], R>> extensionMethods;
+        private final T source;
+        private final Class<U> targetType;
+        private final Map<String, BiFunction<T, Object[], R>> extensionMethods;
 
         /**
          * Class constructor

@@ -17,6 +17,7 @@ package com.exadel.aem.toolkit.plugin.maven;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -29,7 +30,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
 import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
-import com.exadel.aem.toolkit.test.component.InheritanceTestCases;
+import com.exadel.aem.toolkit.test.component.InheritanceExceptionTestCases;
 
 public class ExceptionsTest extends ExceptionsTestBase {
     private static final String NOT_AN_EXCEPTION_MESSAGE = "NOT AN EXCEPTION: testing terminateOn logic";
@@ -56,14 +57,14 @@ public class ExceptionsTest extends ExceptionsTestBase {
     public void testComponentWithDuplicateFields() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidFieldContainerException.class));
         exceptionRule.expectMessage("Field named \"text2\" in class \"Child\"");
-        test(InheritanceTestCases.Child.class);
+        test(InheritanceExceptionTestCases.Child.class);
     }
 
     @Test
     public void testTerminateOnSettings() {
         // Test non-terminating cases
         Map<String, Exception> nonTerminatingCases = ImmutableMap.of(
-                " ValidationException, !java.lang.RuntimeException", new ValidationException(NOT_AN_EXCEPTION_MESSAGE),
+                "!ValidationException, java.lang.RuntimeException", new ValidationException(NOT_AN_EXCEPTION_MESSAGE),
                 "!java.lang.IndexOutOfBoundsException, *", new IndexOutOfBoundsException(NOT_AN_EXCEPTION_MESSAGE),
                 "!java.io.IOException, !java.lang.RuntimeException, !com.exadel.aem.plugin.exceptions.*", new ValidationException(NOT_AN_EXCEPTION_MESSAGE),
                 "!java.lang.IndexOutOfBoundsException, !*", new RuntimeException(NOT_AN_EXCEPTION_MESSAGE) // must neglect the "!*" sign
@@ -72,6 +73,7 @@ public class ExceptionsTest extends ExceptionsTestBase {
 
         // Test terminating cases
         Map<String, Exception> terminatingCases = ImmutableMap.of(
+            "ValidationException, !java.lang.RuntimeException", new ValidationException(StringUtils.EMPTY),
                 "java.lang.RuntimeException", new IndexOutOfBoundsException(),
                 "java.io.IOException, !java.lang.Exception, *", new IOException(),
                 "!java.lang.IndexOutOfBoundsException, java.lang.RuntimeException", new NullPointerException(),
