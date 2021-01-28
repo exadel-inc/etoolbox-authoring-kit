@@ -45,7 +45,7 @@ public class ListEntryTest {
 
     @Test
     public void getItemResType() {
-        final String expected = "/apps/authoring-toolkit/lists/components/content/genericItem";
+        final String expected = "/apps/authoring-toolkit/lists/components/content/simpleItem";
         String actual1 = listEntry.getItemResType();
         assertEquals(expected, actual1);
     }

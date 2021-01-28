@@ -16,7 +16,9 @@ package com.exadel.aem.toolkit.bundle.lists.models;
 
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
@@ -28,33 +30,33 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 /**
- * Represents the basic List item which consists of "jct:title" and "value" fields
+ * Represents the basic list item which consists of "jct:title" and "value" fields
  */
 @Dialog(
-    name = "content/genericItem",
-    title = "Generic List Item",
+    name = "content/simpleListItem",
+    title = "Simple List Item",
     tabs = {
         @Tab(title = "Main Config")
     }
 )
 @ListItem
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class GenericItem {
+public class SimpleListItem {
 
     @ValueMapValue(name = JcrConstants.JCR_TITLE)
+    @Default(values = StringUtils.EMPTY)
     @DialogField(
         name = JcrConstants.JCR_TITLE,
         label = "Title",
-        description = "Provide item title.",
-        required = true)
+        description = "Provide item title.")
     @TextField
     private String title;
 
     @ValueMapValue
+    @Default(values = StringUtils.EMPTY)
     @DialogField(
         label = "Value",
-        description = "Provide item value.",
-        required = true)
+        description = "Provide item value.")
     @TextField
     private String value;
 
@@ -68,9 +70,13 @@ public class GenericItem {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GenericItem that = (GenericItem) o;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SimpleListItem that = (SimpleListItem) o;
         return Objects.equals(title, that.title) && Objects.equals(value, that.value);
     }
 

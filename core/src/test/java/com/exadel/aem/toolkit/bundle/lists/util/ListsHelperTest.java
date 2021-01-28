@@ -28,16 +28,17 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.bundle.lists.models.GenericItem;
+import com.exadel.aem.toolkit.bundle.lists.models.SimpleListItem;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
+
 import static org.junit.Assert.assertEquals;
 
 public class ListsHelperTest {
 
     private static final String SIMPLE_LIST_PATH = "/content/aat-lists/simpleList";
     private static final String CUSTOM_LIST_PATH = "/content/aat-lists/customList";
-    
+
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
     private ResourceResolver resolver;
@@ -61,7 +62,8 @@ public class ListsHelperTest {
 
     @Test
     public void getList() {
-        List<GenericItem> actual = ListsHelper.getList(resolver, SIMPLE_LIST_PATH);
+        List<SimpleListItem> actual = ListsHelper.getList(resolver, SIMPLE_LIST_PATH);
+        assertEquals(5, actual.size());
         assertEquals("key1", actual.get(0).getTitle());
         assertEquals("value1", actual.get(0).getValue());
 
@@ -70,6 +72,12 @@ public class ListsHelperTest {
 
         assertEquals("key1", actual.get(2).getTitle());
         assertEquals("value3", actual.get(2).getValue());
+
+        assertEquals("", actual.get(3).getTitle());
+        assertEquals("", actual.get(3).getValue());
+
+        assertEquals("", actual.get(4).getTitle());
+        assertEquals("value4", actual.get(4).getValue());
     }
 
     @Test
@@ -92,8 +100,10 @@ public class ListsHelperTest {
     @Test
     public void getMap() {
         Map<String, String> actual = ListsHelper.getMap(resolver, SIMPLE_LIST_PATH);
+        assertEquals(3, actual.size());
         assertEquals("value3", actual.get("key1"));
         assertEquals("value2", actual.get("key2"));
+        assertEquals("value4", actual.get(""));
     }
 
     @Test

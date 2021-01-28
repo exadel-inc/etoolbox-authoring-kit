@@ -1294,15 +1294,15 @@ AEM Authoring Toolkit Lists provide a flexible way to create, store and retrieve
     - description = "Not Found"
 ```
 
-A list consists of a number of items, the structure and authoring dialog of every item is be defined by an arbitrary AEM component (a.k.a. Item Component).
+A list consists of a number of items, the structure and authoring dialog of every item is defined by an arbitrary AEM component (a.k.a. Item Component).
 Each list is an AEM page, which means that it can be placed anywhere in the content structure; lists can be created, edited, localized and published via TouchUI interface.
 
 
 #### Usage
 
 ###### Creating a new list
-AAT Lists can be viewed and created either from Sites Console, or from Lists Console (Tools -> AEM Custom Lists -> AEM Lists (todo: change to agreed naming)). Click Create -> List and specify list's Title, Name and Item Component.
-"Generic Item" component is provided out-of-the box and consists of "jcr:title" and "value" fields. In order to add a new Item Component to the dropdown, change this component's group to "**acl-item-component**". 
+AAT Lists can be created and managed either from Sites Console, or from Lists Console (Tools -> AEM Custom Lists -> AEM Lists (todo: change to agreed naming)). Click Create -> List and specify list's Title, Name and Item Component.
+"Simple List Item" component is provided out-of-the box and consists of "jcr:title" and "value" fields. In order to add a new Item Component to the dropdown, change this component's group to "**acl-item-component**". 
 
 ###### Editing lists
 AAT Lists can be edited similarly to any other page. You may change the type of Item Component used in this list (even after the list has been populated with data) via page properties.

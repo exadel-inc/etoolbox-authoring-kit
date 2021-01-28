@@ -33,7 +33,7 @@ import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 
-import com.exadel.aem.toolkit.bundle.lists.models.GenericItem;
+import com.exadel.aem.toolkit.bundle.lists.models.SimpleListItem;
 
 /**
  * Helper methods for working with AAT Lists
@@ -53,13 +53,13 @@ public class ListsHelper {
     }
     
     /**
-     * Retrieves the list of item resources from {@code listPagePath} and adapts them to {@link GenericItem} model
+     * Retrieves the list of item resources from {@code listPagePath} and adapts them to {@link SimpleListItem} model
      * @param resourceResolver an instance of ResourceResolver
      * @param listPagePath     the path to List page
-     * @return a list of {@link GenericItem}s
+     * @return a list of {@link SimpleListItem}s
      */
-    public static List<GenericItem> getList(ResourceResolver resourceResolver, String listPagePath) {
-        return getList(resourceResolver, listPagePath, res -> res.adaptTo(GenericItem.class));
+    public static List<SimpleListItem> getList(ResourceResolver resourceResolver, String listPagePath) {
+        return getList(resourceResolver, listPagePath, res -> res.adaptTo(SimpleListItem.class));
     }
 
     /**

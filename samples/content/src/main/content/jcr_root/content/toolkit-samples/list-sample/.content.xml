@@ -6,7 +6,7 @@
                  cq:template="/conf/authoring-toolkit/settings/wcm/templates/list"
                  jcr:title="Coral Icons"
                  jcr:description="Shows an example of AAT List"
-                 itemResourceType="/apps/authoring-toolkit/lists/components/content/genericItem"
+                 itemResourceType="/apps/authoring-toolkit/lists/components/content/simpleListItem"
                  sling:resourceType="authoring-toolkit/lists/components/structure/page-list">
         <list jcr:primaryType="nt:unstructured"
               sling:resourceType="wcm/foundation/components/responsivegrid">
