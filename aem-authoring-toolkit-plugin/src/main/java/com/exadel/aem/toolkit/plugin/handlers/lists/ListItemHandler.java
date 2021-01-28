@@ -27,7 +27,7 @@ public class ListItemHandler implements BiConsumer<Target, Class<?>> {
     @Override
     public void accept(Target target, Class<?> componentClass) {
         if (componentClass.isAnnotationPresent(ListItem.class)) {
-            target.attribute(DialogConstants.PN_IS_LIST_ITEM, true);
+            target.attribute(DialogConstants.PN_AAT_LIST_ITEM, true);
         }
     }
 }

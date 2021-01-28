@@ -57,7 +57,7 @@ import com.adobe.granite.ui.components.ds.EmptyDataSource;
 @Component(
     service = Servlet.class,
     property = {
-        "sling.servlet.resourceTypes=aat-lists/datasources/list",
+        "sling.servlet.resourceTypes=apps/authoring-toolkit/lists/datasources/list",
         "sling.servlet.methods=" + HttpConstants.METHOD_GET
     }
 )
@@ -93,14 +93,14 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
             Config dsCfg = new Config(request.getResource().getChild(Config.DATASOURCE));
 
             String parentPath = expressionHelper.getString(dsCfg.get(PN_PATH, String.class));
-            Integer offset = expressionHelper.get(dsCfg.get(PN_OFFSET, String.class), Integer.class);
-            Integer limit = expressionHelper.get(dsCfg.get(PN_LIMIT, String.class), Integer.class);
+            int offset = expressionHelper.get(dsCfg.get(PN_OFFSET, String.class), Integer.class);
+            int limit = expressionHelper.get(dsCfg.get(PN_LIMIT, String.class), Integer.class);
             String itemResourceType = dsCfg.get(PN_RESOURCE_TYPE, String.class);
 
             Resource parent = parentPath != null ? resolver.getResource(parentPath) : null;
             if (parent != null) {
                 Iterator<Resource> resources = getValidChildren(resolver, parent).iterator();
-                dataSource = new CustomAbstractDataSource(resources, offset, limit, itemResourceType);
+                dataSource = new PagingDataSource(resources, offset, limit, itemResourceType);
             }
         }
         request.setAttribute(DataSource.class.getName(), dataSource);
@@ -164,13 +164,13 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
         return bindings.getSling();
     }
 
-    public class CustomAbstractDataSource extends AbstractDataSource {
+    public class PagingDataSource extends AbstractDataSource {
         private Iterator<Resource> resources;
-        private Integer offset;
-        private Integer limit;
+        private int offset;
+        private int limit;
         private String itemResourceType;
 
-        private CustomAbstractDataSource(Iterator<Resource> resources, Integer offset, Integer limit, String itemResourceType) {
+        private PagingDataSource(Iterator<Resource> resources, int offset, int limit, String itemResourceType) {
             this.resources = resources;
             this.offset = offset;
             this.limit = limit;

@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ListEntryTest {
 
-    private static final String SIMPLE_LIST_PATH = "/content/aat-lists/simpleList";
+    private static final String SIMPLE_LIST_PATH = "/content/authoring-toolkit/lists/simpleList";
     private static final String LIST_ITEM_PATH = "/jcr:content/list/list_item_1006003058";
 
     @Rule

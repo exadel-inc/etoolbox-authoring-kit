@@ -20,7 +20,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represent a value to be rendered as a TouchUI Dialog property
+ * Represents a value to be rendered as a TouchUI Dialog property
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

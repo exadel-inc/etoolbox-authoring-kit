@@ -5,7 +5,7 @@
     "jcr:title": "Simple List Page",
     "cq:template": "/conf/authoring-toolkit/settings/wcm/templates/list",
     "itemResourceType": "/apps/authoring-toolkit/lists/components/content/genericItem",
-    "sling:resourceType": "authoring-toolkit/components/structure/page-list",
+    "sling:resourceType": "authoring-toolkit/lists/components/structure/page-list",
     "option": "existingComponent",
     "list": {
       "jcr:primaryType": "nt:unstructured",

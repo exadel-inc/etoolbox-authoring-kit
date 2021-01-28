@@ -40,8 +40,8 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ChildResourcesDatasourceTest {
-    private static final String SIMPLE_LIST_PATH = "/content/simpleList";
-    private static final String CUSTOM_LIST_PATH = "/content/aat-lists/customList";
+    private static final String SIMPLE_LIST_PATH = "/content/authoring-toolkit/lists/simpleList";
+    private static final String CUSTOM_LIST_PATH = "/content/authoring-toolkit/lists/aat-lists/customList";
     private static final String DATASOURCE_PATH = "/datasource";
 
     @Rule
@@ -59,7 +59,7 @@ public class ChildResourcesDatasourceTest {
         context.load().json("/com/exadel/aem/toolkit/bundle/lists/util/customList.json", CUSTOM_LIST_PATH);
         context.load().json("/com/exadel/aem/toolkit/bundle/lists/datasource/datasource.json", DATASOURCE_PATH);
 
-        Mockito.when(expressionResolver.resolve("${requestPathInfo.suffix}", Locale.US, String.class, context.request())).thenReturn("/content");
+        Mockito.when(expressionResolver.resolve("${requestPathInfo.suffix}", Locale.US, String.class, context.request())).thenReturn("/content/authoring-toolkit/lists");
         Mockito.when(expressionResolver.resolve("${requestPathInfo.selectors[0]}", Locale.US, Integer.class, context.request())).thenReturn(0);
         Mockito.when(expressionResolver.resolve("${empty requestPathInfo.selectors[1] ? &quot;41&quot; : requestPathInfo.selectors[1] + 1}", Locale.US, Integer.class, context.request())).thenReturn(100);
     }

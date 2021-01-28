@@ -90,6 +90,7 @@ public class DialogConstants {
     public static final String NT_UNSTRUCTURED = "nt:unstructured";
     public static final String NT_WIDGET_COLLECTION = "cq:WidgetCollection";
 
+    public static final String PN_AAT_LIST_ITEM = "aatListItem";
     public static final String PN_ACCEPT = "accept";
     public static final String PN_ACTIONS = "actions";
     public static final String PN_ACTIVE = "active";
@@ -128,7 +129,6 @@ public class DialogConstants {
     public static final String PN_IGNORE_MODE = "ignoreMode";
     public static final String PN_INDENT_SIZE = "indentSize";
     public static final String PN_IS_CONTAINER = "cq:isContainer";
-    public static final String PN_IS_LIST_ITEM = "isListItem";
     public static final String PN_MAX_DATE = "maxDate";
     public static final String PN_MAX_UNDO_STEPS = "maxUndoSteps";
     public static final String PN_MIN_DATE = "minDate";

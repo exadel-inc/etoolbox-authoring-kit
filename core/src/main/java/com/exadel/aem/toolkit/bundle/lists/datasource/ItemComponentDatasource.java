@@ -42,27 +42,27 @@ import com.adobe.granite.ui.components.ds.SimpleDataSource;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 /**
- * Servlet that implements {@code datasource} pattern for populating a TouchUI {@code select} widget
- * with item components that have acl-item-component group in a Granite datasource
+ * Servlet that implements {@code datasource} pattern for populating a TouchUI {@code Select} widget
+ * with item components that have aatListItem property in a Granite datasource
  */
 @Component(
     service = Servlet.class,
     property = {
-        "sling.servlet.resourceTypes=aat-lists/datasources/list-items",
+        "sling.servlet.resourceTypes=apps/authoring-toolkit/lists/datasources/list-items",
         "sling.servlet.methods=" + HttpConstants.METHOD_GET
     }
 )
 public class ItemComponentDatasource extends SlingSafeMethodsServlet {
     private static final Logger LOG = LoggerFactory.getLogger(ItemComponentDatasource.class);
 
-    private static final String SELECT_STATEMENT = "SELECT * FROM [cq:Component] AS s WHERE ISDESCENDANTNODE(s,'/apps') AND [isListItem] = 'true'";
+    private static final String SELECT_STATEMENT = "SELECT * FROM [cq:Component] AS s WHERE ISDESCENDANTNODE(s,'/apps') AND [aatListItem] = 'true'";
 
     private static final String PN_VALUE = "value";
     private static final String PN_TEXT = "text";
 
     /**
      * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest}
-     * a {@code datasource} object filled with item components that have acl-item-component group in a Granite datasource
+     * a {@code datasource} object filled with item components that are list items
      *
      * @param request  {@code SlingHttpServletRequest} instance
      * @param response {@code SlingHttpServletResponse} instance

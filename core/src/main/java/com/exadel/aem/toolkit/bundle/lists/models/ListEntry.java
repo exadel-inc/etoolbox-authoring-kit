@@ -14,7 +14,6 @@
 
 package com.exadel.aem.toolkit.bundle.lists.models;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -37,14 +36,14 @@ import com.day.cq.commons.jcr.JcrConstants;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ListEntry {
     private static final String FIELD_ITEM_RESOURCE_TYPE = "itemResourceType";
-    private static final List<String> SYSTEM_PROPERTIES = new ArrayList<>(Arrays.asList(
+    private static final List<String> SYSTEM_PROPERTIES = Arrays.asList(
         JcrConstants.JCR_CREATED,
         JcrConstants.JCR_CREATED_BY,
         JcrConstants.JCR_LASTMODIFIED,
         JcrConstants.JCR_LAST_MODIFIED_BY,
         JcrConstants.JCR_PRIMARYTYPE,
         ResourceResolver.PROPERTY_RESOURCE_TYPE
-    ));
+    );
 
     @Self
     private Resource currentResource;

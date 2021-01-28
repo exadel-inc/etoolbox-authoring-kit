@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 /**
- * A model that represents the simplest List item which contains of "jct:title" and "value" fields
+ * Represents the basic List item which consists of "jct:title" and "value" fields
  */
 @Dialog(
     name = "content/genericItem",
@@ -45,7 +45,7 @@ public class GenericItem {
     @DialogField(
         name = JcrConstants.JCR_TITLE,
         label = "Title",
-        description = "Provide Item Title.",
+        description = "Provide item title.",
         required = true)
     @TextField
     private String title;
@@ -53,7 +53,7 @@ public class GenericItem {
     @ValueMapValue
     @DialogField(
         label = "Value",
-        description = "Provide Item Value.",
+        description = "Provide item value.",
         required = true)
     @TextField
     private String value;

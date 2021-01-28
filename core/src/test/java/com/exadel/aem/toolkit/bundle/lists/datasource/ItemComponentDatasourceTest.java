@@ -28,8 +28,8 @@ import static org.junit.Assert.assertEquals;
 
 public class ItemComponentDatasourceTest {
 
-    private static final String GENERIC_ITEM_PATH = "/apps/aat-lists/components/content/genericItem";
-    private static final String SIMPLE_ITEM_PATH = "/etc/aat-lists/components/content/simpleItem";
+    private static final String GENERIC_ITEM_PATH = "/apps/authoring-toolkit/lists/components/content/genericItem";
+    private static final String SIMPLE_ITEM_PATH = "/etc/authoring-toolkit/lists/components/content/simpleItem";
 
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.JCR_OAK);
