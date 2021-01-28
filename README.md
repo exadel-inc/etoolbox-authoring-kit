@@ -1317,8 +1317,18 @@ Each list is an AEM page, which means that it can be placed anywhere in the cont
 
 ###### Creating a new list
 AAT Lists can be created and managed either from Sites Console, or from Lists Console (Tools -> AEM Custom Lists -> AEM Lists (todo: change to agreed naming)). Click Create -> List and specify list's Title, Name and Item Component.
-"Simple List Item" component is provided out-of-the box and consists of "jcr:title" and "value" fields. In order to add a new Item Component to the dropdown, change this component's group to "**acl-item-component**".
+"Simple List Item" component is provided out-of-the box and consists of "jcr:title" and "value" fields. In order to add a new Item Component to the dropdown, add `@ListItem` annotation to this component.
 
+```java
+@Dialog(
+    name = "content/listItemComponent",
+    title = "List Item"
+)
+@ListItem
+public class ListItemComponent {
+  ...
+}
+```
 ###### Editing lists
 AAT Lists can be edited similarly to any other page. You may change the type of Item Component used in this list (even after the list has been populated with data) via page properties.
 
