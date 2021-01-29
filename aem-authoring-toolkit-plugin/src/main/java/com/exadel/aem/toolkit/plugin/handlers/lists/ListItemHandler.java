@@ -23,9 +23,9 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 /**
  * The {@code Handler} for adding listItem property to a TouchUI dialog
  */
-public class ListItemHandler implements BiConsumer<Target, Class<?>> {
+public class ListItemHandler implements BiConsumer<Class<?>, Target> {
     @Override
-    public void accept(Target target, Class<?> componentClass) {
+    public void accept(Class<?> componentClass, Target target) {
         if (componentClass.isAnnotationPresent(ListItem.class)) {
             target.attribute(DialogConstants.PN_AAT_LIST_ITEM, true);
         }

@@ -49,9 +49,8 @@ import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.EmptyDataSource;
 
 /**
- * Servlet that implements {@code datasource} pattern for populating a Lists Console
- * with all child pages under the current root path, which are either lists themselves,
- * or folders that may contain lists inside
+ * Provides the collection of AEM resources that either represent AAT Lists or serve as folders for AAT lists
+ * to be displayed in the AAT Lists console
  */
 @Component(
     service = Servlet.class,
@@ -74,7 +73,7 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
 
     /**
      * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest}
-     * a {@code datasource} object filled with all child pages under the current root path, which are either
+     * a {@code DataSource} object filled with all child pages under the current root path, which are either
      * lists themselves, or folders that may contain lists inside.
      * The result is then limited by 'offset' and 'limit' parameter values.
      *
@@ -106,8 +105,8 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Retrieves the list of item resources, which are either lists themselves, or folders
-     * that may contain lists inside. excludes service and content nodes
+     * Retrieves the list of item resources, which are either lists themselves or folders
+     * that may contain lists inside, excludes service and content nodes
      *
      * @param resolver An instance of ResourceResolver
      * @param parent   {@code Resource} instance used as the source of markup

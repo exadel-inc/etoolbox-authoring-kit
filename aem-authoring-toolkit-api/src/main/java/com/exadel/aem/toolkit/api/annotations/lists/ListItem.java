@@ -20,7 +20,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represents a value to be rendered as a TouchUI Dialog property
+ * Marker added to AEM components that can serve as AAT Lists items
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

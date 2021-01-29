@@ -42,8 +42,8 @@ import com.adobe.granite.ui.components.ds.SimpleDataSource;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 /**
- * Servlet that implements {@code datasource} pattern for populating a TouchUI {@code Select} widget
- * with item components that have aatListItem property in a Granite datasource
+ * Provides the collection of AEM resources that represent AAT Lists items
+ * to be displayed in a TouchUI {@code Select} widget
  */
 @Component(
     service = Servlet.class,
@@ -62,7 +62,7 @@ public class ItemComponentDatasource extends SlingSafeMethodsServlet {
 
     /**
      * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest}
-     * a {@code datasource} object filled with item components that are list items
+     * a {@code DataSource} object filled with item components that are list items
      *
      * @param request  {@code SlingHttpServletRequest} instance
      * @param response {@code SlingHttpServletResponse} instance
