@@ -83,7 +83,7 @@ class ContentXmlWriter extends PackageEntryWriter {
             || (annotation instanceof Dialog && ((Dialog) annotation).isContainer())) {
             root.attribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
         }
-        new ListItemHandler().accept(root, componentClass);
+        new ListItemHandler().accept(componentClass, root);
     }
 
     private static boolean fitsInScope(Method method, XmlScope scope) {
