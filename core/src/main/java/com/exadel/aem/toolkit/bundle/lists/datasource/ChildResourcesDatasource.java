@@ -111,7 +111,7 @@ public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
      *
      * @param resolver An instance of ResourceResolver
      * @param parent   {@code Resource} instance used as the source of markup
-     * @return a list of {@link Resource}s
+     * @return A list of {@link Resource}s
      */
     private List<Resource> getValidChildren(ResourceResolver resolver, Resource parent) {
         return getChildrenStream(parent)

@@ -41,22 +41,22 @@ import com.exadel.aem.toolkit.bundle.lists.models.SimpleListItem;
 public class ListsHelper {
 
     private static final String PN_VALUE = "value";
-    
+
     /**
      * Retrieves the list of item resources from {@code listPagePath}
-     * @param resourceResolver an instance of ResourceResolver
-     * @param listPagePath     the path to List page
-     * @return a list of {@link Resource}s
+     * @param resourceResolver An instance of ResourceResolver
+     * @param listPagePath     The path to List page
+     * @return A list of {@link Resource}s
      */
     public static List<Resource> getResourceList(ResourceResolver resourceResolver, String listPagePath) {
         return getList(resourceResolver, listPagePath, Function.identity());
     }
-    
+
     /**
      * Retrieves the list of item resources from {@code listPagePath} and adapts them to {@link SimpleListItem} model
-     * @param resourceResolver an instance of ResourceResolver
-     * @param listPagePath     the path to List page
-     * @return a list of {@link SimpleListItem}s
+     * @param resourceResolver An instance of ResourceResolver
+     * @param listPagePath     The path to List page
+     * @return A list of {@link SimpleListItem}s
      */
     public static List<SimpleListItem> getList(ResourceResolver resourceResolver, String listPagePath) {
         return getList(resourceResolver, listPagePath, res -> res.adaptTo(SimpleListItem.class));
@@ -64,11 +64,11 @@ public class ListsHelper {
 
     /**
      * Retrieves the list of item resources from {@code listPagePath} and adapts them to the specified {@code itemClass}
-     * @param resourceResolver an instance of ResourceResolver
-     * @param listPagePath     the path to List page
-     * @param itemClass        parametrized model class
-     * @param <T>              model which represents a list item
-     * @return a list of {@code <T>} instances
+     * @param resourceResolver An instance of ResourceResolver
+     * @param listPagePath     The path to List page
+     * @param itemClass        Parametrized model class
+     * @param <T>              Model which represents a list item
+     * @return A list of {@code <T>} instances
      */
     public static <T> List<T> getList(ResourceResolver resourceResolver, String listPagePath, Class<T> itemClass) {
         return getList(resourceResolver, listPagePath, res -> res.adaptTo(itemClass));
@@ -83,10 +83,10 @@ public class ListsHelper {
     /**
      * Retrieves the list of item resources from {@code listPagePath} and maps values from the specified {@code keyName} property to items' {@link Resource}s.
      * If several items have the same key, the last value overrides all the previous ones
-     * @param resourceResolver an instance of ResourceResolver
-     * @param listPagePath     the path to List page
-     * @param keyName          item property that holds the resulting map's keys
-     * @return a map of item {@link Resource}s
+     * @param resourceResolver An instance of ResourceResolver
+     * @param listPagePath     The path to List page
+     * @param keyName          Item property that holds the resulting map's keys
+     * @return A map of item {@link Resource}s
      */
     public static Map<String, Resource> getResourceMap(ResourceResolver resourceResolver, String listPagePath, String keyName) {
         return getMap(resourceResolver, listPagePath, keyName, Function.identity());
@@ -95,9 +95,9 @@ public class ListsHelper {
     /**
      * Retrieves the list of item resources from {@code listPagePath} and maps {@code jcr:title}s to {@code value}s.
      * If several items have the same {@code jcr:title}, the last value overrides all the previous ones
-     * @param resourceResolver an instance of ResourceResolver
-     * @param listPagePath     the path to List page
-     * @return a map representing title-to-value pairs
+     * @param resourceResolver An instance of ResourceResolver
+     * @param listPagePath     The path to List page
+     * @return A map representing title-to-value pairs
      */
     public static Map<String, String> getMap(ResourceResolver resourceResolver, String listPagePath) {
         return getMap(resourceResolver, listPagePath, JcrConstants.JCR_TITLE,
@@ -107,17 +107,17 @@ public class ListsHelper {
     /**
      * Retrieves the list of item resources from {@code listPagePath} and maps values from the specified {@code keyName} to the {@code itemClass} model, adapted from item resource.
      * If several items have the same key, the last value overrides all the previous ones
-     * @param resourceResolver an instance of ResourceResolver
-     * @param listPagePath     the path to List page
-     * @param keyName          item property that holds the resulting map's keys
-     * @param itemClass        parametrized model class
-     * @param <T>              model which represents a list item
-     * @return a map that represents items as {@code <T>} instances
+     * @param resourceResolver An instance of ResourceResolver
+     * @param listPagePath     The path to List page
+     * @param keyName          Item property that holds the resulting map's keys
+     * @param itemClass        Parametrized model class
+     * @param <T>              Model which represents a list item
+     * @return A map that represents items as {@code <T>} instances
      */
     public static <T> Map<String, T> getMap(ResourceResolver resourceResolver, String listPagePath, String keyName, Class<T> itemClass) {
         return getMap(resourceResolver, listPagePath, keyName, res -> res.adaptTo(itemClass));
     }
-    
+
     private static <T> Map<String, T> getMap(ResourceResolver resourceResolver, String listPagePath, String keyName, Function<Resource, T> mapper) {
         return getItemsStream(resourceResolver, listPagePath)
             .map(res -> new ImmutablePair<>(res.getValueMap().get(keyName, StringUtils.EMPTY), mapper.apply(res)))
