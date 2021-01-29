@@ -39,7 +39,7 @@ import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ChildResourcesDatasourceTest {
+public class ChildResourcesDataSourceTest {
     private static final String SIMPLE_LIST_PATH = "/content/authoring-toolkit/lists/simpleList";
     private static final String CUSTOM_LIST_PATH = "/content/authoring-toolkit/lists/aat-lists/customList";
     private static final String DATASOURCE_PATH = "/datasource";
@@ -51,7 +51,7 @@ public class ChildResourcesDatasourceTest {
     private ExpressionResolver expressionResolver;
 
     @InjectMocks
-    private ChildResourcesDatasource servlet;
+    private ChildResourcesDataSource servlet;
 
     @Before
     public void setUp() {
@@ -65,7 +65,7 @@ public class ChildResourcesDatasourceTest {
     }
 
     @Test
-    public void shouldReturnDatasourceFromContent() {
+    public void shouldReturnDataSourceFromContent() {
         List<String> expected = Arrays.asList("simpleList", "aat-lists");
 
         context.request().setResource(context.resourceResolver().getResource(DATASOURCE_PATH));

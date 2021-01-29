@@ -59,7 +59,7 @@ import com.adobe.granite.ui.components.ds.EmptyDataSource;
         "sling.servlet.methods=" + HttpConstants.METHOD_GET
     }
 )
-public class ChildResourcesDatasource extends SlingSafeMethodsServlet {
+public class ChildResourcesDataSource extends SlingSafeMethodsServlet {
     private static final String LIST_TEMPLATE_NAME = "/conf/authoring-toolkit/settings/wcm/templates/list";
     private static final String PN_PATH = "path";
     private static final String PN_OFFSET = "offset";

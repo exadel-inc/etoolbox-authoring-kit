@@ -26,7 +26,7 @@ import io.wcm.testing.mock.aem.junit.AemContext;
 
 import static org.junit.Assert.assertEquals;
 
-public class ItemComponentDatasourceTest {
+public class ItemComponentDataSourceTest {
 
     private static final String GENERIC_ITEM_PATH = "/apps/authoring-toolkit/lists/components/content/genericItem";
     private static final String SIMPLE_ITEM_PATH = "/etc/authoring-toolkit/lists/components/content/simpleItem";
@@ -41,8 +41,8 @@ public class ItemComponentDatasourceTest {
     }
 
     @Test
-    public void shouldReturnDatasourceFromApps() {
-        ItemComponentDatasource servlet = new ItemComponentDatasource();
+    public void shouldReturnDataSourceFromApps() {
+        ItemComponentDataSource servlet = new ItemComponentDataSource();
         servlet.doGet(context.request(), context.response());
 
         DataSource dataSource = (DataSource) context.request().getAttribute(DataSource.class.getName());
