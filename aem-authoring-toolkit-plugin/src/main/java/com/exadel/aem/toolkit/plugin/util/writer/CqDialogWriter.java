@@ -15,7 +15,6 @@
 package com.exadel.aem.toolkit.plugin.util.writer;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +28,6 @@ import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
@@ -63,7 +61,7 @@ class CqDialogWriter extends PackageEntryWriter {
      * @return {@link XmlScope} value
      */
     @Override
-    XmlScope getXmlScope() {
+    XmlScope getScope() {
         return scope;
     }
 
@@ -90,6 +88,7 @@ class CqDialogWriter extends PackageEntryWriter {
      */
     @Override
     void populateTarget(Class<?> componentClass, Target target) {
+
         Annotation dialog = XmlScope.CQ_DIALOG.equals(scope)
             ? componentClass.getDeclaredAnnotation(Dialog.class)
             : componentClass.getDeclaredAnnotation(DesignDialog.class);
@@ -110,11 +109,6 @@ class CqDialogWriter extends PackageEntryWriter {
                 .filter(handler -> customAnnotations.stream()
                         .anyMatch(annotation -> customAnnotationMatchesHandler(annotation, handler)))
                 .forEach(handler -> handler.accept(componentClass, target));
-    }
-
-    private List<String> getSkippedProperties() {
-        return Arrays.stream(XmlScope.CQ_DIALOG.equals(scope) ? Dialog.class.getDeclaredMethods() : DesignDialog.class.getDeclaredMethods())
-            .filter(m -> !fitsInScope(m, getXmlScope())).map(Method::getName).collect(Collectors.toList());
     }
 
     private static DialogLayout getLayout(Annotation annotation) {
@@ -177,12 +171,5 @@ class CqDialogWriter extends PackageEntryWriter {
         } else {
             return StringUtils.equals(annotation.source(), handler.getName());
         }
-    }
-
-    private static boolean fitsInScope(Method method, XmlScope scope) {
-        if (!method.isAnnotationPresent(PropertyScope.class)) {
-            return true;
-        }
-        return Arrays.asList(method.getAnnotation(PropertyScope.class).value()).contains(scope);
     }
 }

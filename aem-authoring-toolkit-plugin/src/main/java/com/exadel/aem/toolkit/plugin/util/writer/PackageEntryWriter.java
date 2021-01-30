@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.plugin.util.writer;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.reflect.Member;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -27,6 +28,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -34,10 +36,13 @@ import org.w3c.dom.Element;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperties;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.adapters.DocumentAdapter;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.target.TargetImpl;
+import com.exadel.aem.toolkit.plugin.source.Sources;
+import com.exadel.aem.toolkit.plugin.target.Targets;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
@@ -63,11 +68,11 @@ abstract class PackageEntryWriter {
      * @param componentPath {@link Path} representing a file within a file system to write data to
      */
     void writeXml(Class<?> componentClass, Path componentPath) {
-        try (Writer writer = Files.newBufferedWriter(componentPath.resolve(getXmlScope().toString()), StandardOpenOption.CREATE)) {
-            if (getXmlScope() != XmlScope.COMPONENT) {
+        try (Writer writer = Files.newBufferedWriter(componentPath.resolve(getScope().toString()), StandardOpenOption.CREATE)) {
+            if (getScope() != XmlScope.COMPONENT) {
                 // markup can be stored by hand in a _cq_dialog/.content.xml structure instead of _cq_dialog.xml file
                 // at first, folder-like storage must be deleted, or we might end up with two versions of component markup within same package
-                Path nestedFolderPath = componentPath.resolve(StringUtils.substringBeforeLast(getXmlScope().toString(), DialogConstants.EXTENSION_SEPARATOR));
+                Path nestedFolderPath = componentPath.resolve(StringUtils.substringBeforeLast(getScope().toString(), DialogConstants.EXTENSION_SEPARATOR));
                 Path nestedFilePath = nestedFolderPath.resolve(XmlScope.COMPONENT.toString());
                 Files.deleteIfExists(nestedFilePath);
                 Files.deleteIfExists(nestedFolderPath);
@@ -97,7 +102,7 @@ abstract class PackageEntryWriter {
      * Gets {@link XmlScope} associated with this {@code PackageEntryWriter} instance
      * @return One of {@code XmlScope} values
      */
-    abstract XmlScope getXmlScope();
+    abstract XmlScope getScope();
 
     /**
      * Gets whether this component {@code Class} is processable by this particular {@code PackageEntryWriter} implementation
@@ -161,5 +166,15 @@ abstract class PackageEntryWriter {
             .filter(handler -> customAnnotations.stream()
                 .anyMatch(annotation -> StringUtils.equals(annotation.source(), handler.getName())))
             .forEach(handler -> handler.accept(element, cls));
+    }
+
+    static boolean fitsInScope(Member member, XmlScope scope) {
+        List<XmlScope> activeScopes = Sources.fromMember(member)
+            .tryAdaptTo(PropertyScope.class)
+            .map(PropertyScope::value)
+            .map(Arrays::asList)
+            .orElse(EnumUtils.getEnumList(XmlScope.class));
+
+        return activeScopes.contains(scope);
     }
 }

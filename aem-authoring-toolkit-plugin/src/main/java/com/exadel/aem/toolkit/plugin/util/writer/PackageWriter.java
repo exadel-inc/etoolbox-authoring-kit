@@ -104,7 +104,7 @@ public class PackageWriter implements AutoCloseable {
 
         Map<PackageEntryWriter, Class<?>> viewsByWriter = getComponentViews(componentClass);
 
-        if (viewsByWriter.keySet().stream().noneMatch(writer -> writer.getXmlScope() == XmlScope.COMPONENT)) {
+        if (viewsByWriter.keySet().stream().noneMatch(writer -> writer.getScope() == XmlScope.COMPONENT)) {
             InvalidSettingException ex = new InvalidSettingException(
                 COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE + componentClass.getName());
             PluginRuntime.context().getExceptionHandler().handle(ex);
@@ -148,10 +148,10 @@ public class PackageWriter implements AutoCloseable {
             }
 
             for (PackageEntryWriter matchedWriter : matchedWriters) {
-                if (result.containsKey(matchedWriter) && matchedWriter.getXmlScope() != XmlScope.COMPONENT) {
+                if (result.containsKey(matchedWriter) && matchedWriter.getScope() != XmlScope.COMPONENT) {
                     InvalidSettingException ex = new InvalidSettingException(String.format(
                         MULTIPLE_MODULES_EXCEPTION_MESSAGE,
-                        matchedWriter.getXmlScope(),
+                        matchedWriter.getScope(),
                         componentClass.getName()
                     ));
                     PluginRuntime.context().getExceptionHandler().handle(ex);

@@ -43,7 +43,7 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
      * @return {@link XmlScope} value
      */
     @Override
-    XmlScope getXmlScope() {
+    XmlScope getScope() {
         return XmlScope.CQ_CHILD_EDIT_CONFIG;
     }
 

@@ -15,16 +15,12 @@
 package com.exadel.aem.toolkit.plugin.util.writer;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 import javax.xml.transform.Transformer;
 
 import org.w3c.dom.Document;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
@@ -47,7 +43,7 @@ class ContentXmlWriter extends PackageEntryWriter {
      * @return {@link XmlScope} value
      */
     @Override
-    XmlScope getXmlScope() {
+    XmlScope getScope() {
         return XmlScope.COMPONENT;
     }
 
@@ -80,12 +76,5 @@ class ContentXmlWriter extends PackageEntryWriter {
             || (annotation instanceof Dialog && ((Dialog) annotation).isContainer())) {
             root.attribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
         }
-    }
-
-    private static boolean fitsInScope(Method method, XmlScope scope) {
-        if (!method.isAnnotationPresent(PropertyScope.class)) {
-            return true;
-        }
-        return Arrays.asList(method.getAnnotation(PropertyScope.class).value()).contains(scope);
     }
 }
