@@ -435,7 +435,7 @@ public class PluginReflectionUtility {
      * @param method The method representing the property
      * @return True or false
      */
-    static boolean annotationPropertyIsNotDefault(Annotation annotation, Method method) {
+    public static boolean annotationPropertyIsNotDefault(Annotation annotation, Method method) {
         try {
             Object defaultValue = method.getDefaultValue();
             if (defaultValue == null) {
