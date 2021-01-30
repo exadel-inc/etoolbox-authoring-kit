@@ -29,7 +29,6 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -42,7 +41,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
@@ -65,15 +63,6 @@ import com.exadel.aem.toolkit.plugin.util.validation.Validation;
  * Utility methods to process, verify and store AEM TouchUI dialog-related data to XML markup
  */
 public class PluginXmlUtility implements XmlUtility {
-    public static final Map<String, String> XML_NAMESPACES = ImmutableMap.of(
-            "jcr", "http://www.jcp.org/jcr/1.0",
-            "nt", "http://www.jcp.org/jcr/nt/1.0",
-            "sling", "http://sling.apache.org/jcr/sling/1.0",
-            "cq", "http://www.day.com/jcr/cq/1.0",
-            "granite", "http://www.adobe.com/jcr/granite/1.0"
-    );
-    private static final String XML_NAMESPACE_PREFIX = "xmlns:";
-
     public static final String ATTRIBUTE_LIST_TEMPLATE = "[%s]";
     public static final String ATTRIBUTE_LIST_SPLIT_PATTERN = "\\s*,\\s*";
     public static final String ATTRIBUTE_LIST_SURROUND = "[]";
@@ -85,16 +74,19 @@ public class PluginXmlUtility implements XmlUtility {
     public static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
 
-    /* ----------------
-       Instance members
-       ---------------- */
+    /* ---------------------------------
+       Instance members and constructors
+       --------------------------------- */
 
-    private Document document;
+    private final Document document;
 
-    public void setDocument(Document document) {
+    PluginXmlUtility(Document document) {
         this.document = document;
     }
 
+    public Document getDocument() {
+        return document;
+    }
 
     /* ----------------------------
        XmlUtility interface members
@@ -106,7 +98,7 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public Element createNodeElement(String name, String nodeType, Map<String, String> properties, String resourceType) {
-        Element element = document.createElement(getValidName(name));
+        Element element = getDocument().createElement(getValidName(name));
         if (nodeType == null) {
             nodeType = DialogConstants.NT_UNSTRUCTURED;
         }
@@ -656,39 +648,5 @@ public class PluginXmlUtility implements XmlUtility {
         return target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_PATH, path)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
-    }
-
-    /**
-     * Exports provided {@link Target} object to an XML {@code Document}
-     * @param target {@code Target} instance, non-null reference expected
-     * @return {@code Document} object containing at least the root XML element
-     * @throws ParserConfigurationException if an XML document cannot be created due to e.g. security features not available
-     */
-    public static Document toDocument(Target target) throws ParserConfigurationException {
-        Document document = XmlDocumentFactory.newDocument();
-
-        Element root = toElement(target, document);
-        XML_NAMESPACES.forEach((key, value) -> {
-            root.setAttribute(XML_NAMESPACE_PREFIX + key, value);
-        });
-
-        document.appendChild(root);
-        return document;
-    }
-
-    /**
-     * Exports provided {@link Target} object to an XML {@code Element} based on given {@link Document}
-     * @param target {@code Target} instance, non-null reference expected
-     * @param context {@code Document} instance used to create new XML nodes
-     * @return {@code Element} object
-     */
-    public static Element toElement(Target target, Document context) {
-        String name = PluginNamingUtility.getValidName(target.getName());
-        Element element = context.createElement(name);
-        for (Map.Entry<String, String> entry : target.getAttributes().entrySet()) {
-            element.setAttribute(entry.getKey(), entry.getValue());
-        }
-        target.getChildren().forEach(child -> element.appendChild(toElement(child, context)));
-        return element;
     }
 }

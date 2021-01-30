@@ -67,7 +67,10 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
         List<DialogWidgetHandler> legacyHandlers = handlers.stream().filter(CustomHandlingHandler::isLegacyHandler).collect(Collectors.toList());
         if (!legacyHandlers.isEmpty()) {
             Field field = source.adaptTo(Field.class);
-            Element element = target.adaptTo(DocumentAdapter.class).getDocument().getDocumentElement();
+            Element element = target
+                .adaptTo(DomAdapter.class)
+                .useExisting(PluginRuntime.context().getXmlUtility().getDocument())
+                .getDocumentElement();
             if (element != null) {
                 // This assignment is for legacy dialog widget handlers, will not interfere with modern handlers
                 PluginRuntime.context().getXmlUtility().setDocument(element.getOwnerDocument());
@@ -101,14 +104,4 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
             return false;
         }
     }
-
-    private static Element getElement(Target target) {
-        try {
-            return target.adaptTo(Document.class).getDocumentElement();
-        } catch (Exception e) {
-            PluginRuntime.context().getExceptionHandler().handle(e);
-        }
-        return null;
-    }
-
 }
