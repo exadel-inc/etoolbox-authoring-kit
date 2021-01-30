@@ -25,14 +25,15 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.CollectionUtils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.target.TargetImpl;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
 /**
@@ -63,7 +64,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
             .collect(Collectors.toList());
         handlers.addAll(sourceToNameMappingHandlers);
 
-        // Extract legacy handlers that accept(Source, Target)
+        // Extract legacy handlers that accept(Element, Field)
         List<DialogWidgetHandler> legacyHandlers = handlers.stream().filter(CustomHandlingHandler::isLegacyHandler).collect(Collectors.toList());
         if (!legacyHandlers.isEmpty()) {
             Field field = source.adaptTo(Field.class);
@@ -77,7 +78,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
             }
         }
 
-        // Process modern handlers that accept(Element, Field)
+        // Process modern handlers that accept(Source, Target)
         Collection<DialogWidgetHandler> modernHandlers = CollectionUtils.subtract(handlers, legacyHandlers);
         modernHandlers.forEach(handler -> handler.accept(source, target));
     }

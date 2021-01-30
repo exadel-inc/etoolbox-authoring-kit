@@ -1,6 +1,7 @@
 package com.exadel.aem.toolkit.api.runtime;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Target;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BinaryOperator;
@@ -9,11 +10,16 @@ import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
  * An abstraction of class encapsulating routines for XML generation and handling
+ *
+ * @deprecated Since AEM Authoring Toolkit v. 2.0.0 users are encouraged to use new custom handlers API that is based
+ * on {@link Source} and {@link Target} objects handling. Legacy API will be revoked in the versions to come
  */
 @SuppressWarnings("unused")
+@Deprecated
 public interface XmlUtility {
 
     /**

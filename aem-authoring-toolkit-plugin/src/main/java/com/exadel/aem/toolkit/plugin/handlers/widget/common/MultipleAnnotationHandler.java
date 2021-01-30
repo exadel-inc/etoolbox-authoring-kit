@@ -45,10 +45,9 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     private static final String PREFIX_GRANITE = "granite:*";
     private static final String POSTFIX_NESTED = "_nested";
 
-
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
+     * @param source {@code Source} instance referring to the class member being processed
      * @param target XML targetFacade
      */
     @Override
@@ -108,22 +107,21 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Creates a {@code source} node encapsulating source element's properties to be used within a synthetic multifield
-     * @param source Previously rendered {@code Element} being converted to a synthetic multifield
-     * @param source Current {@code Field} instance
-     * @return {@code Element} representing the {@code source} node
+     * Transforms the provided {@code Target} by internally moving child entities and attributes so that a nested
+     * field structure created
+     * @param source {@code Source} instance referring to the class member being processed
+     * @param target Previously created {@code Target} being converted to a synthetic multifield
      */
     private void wrapSingularField(Source source, Target target) {
-        Target fieldSubresource = target.createChild(DialogConstants.NN_FIELD);
+        Target fieldSubresource = target.createTarget(DialogConstants.NN_FIELD);
         // Move content to the new wrapper
         transferProperties(target, fieldSubresource, getTransferPolicies(source));
     }
 
     /**
-     * Creates a {@code Target} instance containing a set of nodes that will be subsequently used within a synthetic
-     * multifield
-     * @param target Previously created {@code Target} that is now being converted to a synthetic multifield
-     * @return {@code Target} representing the {@code SourceFacade} node
+     * Transforms the provided {@code Target} by internally moving child entities and attributes so that a nested
+     * FieldSet structure created
+     * @param target Previously created {@code Target} being converted to a synthetic multifield
      */
     private void wrapFieldSet(Target target) {
         Target fieldSubresource = target.createTarget(DialogConstants.NN_FIELD);
@@ -147,9 +145,8 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
 
     /**
      * Creates a {@code source} node wrapping an existing {@code multifield} that will be used within a synthetic multifield
-     * @param source Previously rendered {@code Element} being converted to a synthetic multifield
-     * @param source Current {@code SourceFacade} instance
-     * @return {@code Element} representing the {@code source} node
+     * @param source {@code Source} instance referring to the class member being processed
+     * @param target Previously created {@code Target} being converted to a synthetic multifield
      */
     private void wrapNestedMultifield(Source source, Target target) {
         // Wee will create new "field" subresource but we need it "detached" not to mingle with existing "field" subresource
@@ -179,8 +176,9 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     /**
      * Generates set of node transfer policies to properly distribute XML element requisites between the wrapper level
      * and the nested element level while converting a singular element to a multifield
-     * @param source Current {@code SourceFacade} instance
-     * @return {@code Map<String, XmlTransferPolicy>} instance
+     * @param source {@code Source} instance referring to the class member being processed
+     * @return Map containing attribute/child names, either plain or wildcarded, and the action appropriate, whether
+     * to copy element, move, or leave intact. Wildcard symbol ({@code *}) is to specify common policy for multiple elements
      */
     private static Map<String, PropertyTransferPolicy> getTransferPolicies(Source source) {
         Map<String, PropertyTransferPolicy> transferPolicies = new LinkedHashMap<>();
@@ -220,8 +218,8 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * @param from Element to serve as the source of migration
      * @param to Element to serve as the target of migration
      * @param policies Map containing attribute names (must start with {@code @}), child node names (must start with
-     *                 {@code ./}) and the action appropriate to each of them, whether to copy element, move, or leave
-     *                 intact. Wildcard symbol ({@code *}) is supported to specify common policy for multiple elements
+     *                 {@code ./}) and the action appropriate, whether to copy element, move, or leave intact. Wildcard
+     *                 symbol ({@code *}) is to specify common policy for multiple elements
      */
     private static void transferProperties(Target from, Target to, Map<String, PropertyTransferPolicy> policies) {
         // Process attributes
