@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 /**
  * Helper class for creating standard compliant names for XML entities designed to work together
- * with a {@link com.exadel.aem.toolkit.api.runtime.XmlUtility} implementation
+ * with the {@link PluginNamingUtility}
  */
 class NamingHelper {
     private static final String VERB_SEPARATOR = "_";
@@ -49,6 +49,10 @@ class NamingHelper {
      */
     private NamingHelper() {
     }
+
+    /* -----------------
+       Interface methods
+       ----------------- */
 
     /**
      * Checks whether the given string argument is compliant to XML entity naming rules and either returns it as is or
@@ -89,13 +93,7 @@ class NamingHelper {
         }
 
         if (checkNamespace) {
-            Matcher namespaceMatcher = NAMESPACE_PATTERN.matcher(result);
-            String namespaceCapture = namespaceMatcher.find()
-                ? namespaceMatcher.group().substring(0, namespaceMatcher.end() - 1)
-                : null;
-            if (namespaceCapture != null && !XmlFactory.XML_NAMESPACES.containsKey(namespaceCapture)) {
-                result = result.replace(namespaceMatcher.group(), namespaceCapture);
-            }
+            result = removeInvalidNamespaces(result);
         }
 
         if (lowercaseFirst && !result.chars().allMatch(Character::isUpperCase)) {
@@ -139,6 +137,27 @@ class NamingHelper {
         }
         return result;
     }
+
+    /**
+     * Called by {@link NamingHelper#getValidName(String, String)} to remove namespace sign ("{@code :}") from a name
+     * source when a namespace prefix does not correspond to any registered XML namespace
+     * @param value Name source
+     * @return Same value if no invalid namespace detected, or a transformed string
+     */
+    private static String removeInvalidNamespaces(String value) {
+        Matcher namespaceMatcher = NAMESPACE_PATTERN.matcher(value);
+        String namespaceCapture = namespaceMatcher.find()
+            ? namespaceMatcher.group().substring(0, namespaceMatcher.end() - 1)
+            : null;
+        if (namespaceCapture != null && !XmlFactory.XML_NAMESPACES.containsKey(namespaceCapture)) {
+            return value.replace(namespaceMatcher.group(), namespaceCapture);
+        }
+        return value;
+    }
+
+    /* ---------------
+       Factory methods
+       --------------- */
 
     /**
      * Creates and initializes an instance of {@link NamingHelper} to deal with field names
