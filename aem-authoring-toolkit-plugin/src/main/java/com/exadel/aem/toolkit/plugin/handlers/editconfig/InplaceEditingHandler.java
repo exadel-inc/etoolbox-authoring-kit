@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.InheritanceHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.source.SourceBase;
+import com.exadel.aem.toolkit.plugin.source.Sources;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
@@ -163,7 +163,7 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
             return null;
         }
         try {
-            return SourceBase.fromMember(config.richText().value().getDeclaredField(config.richText().field()), config.richText().value());
+            return Sources.fromMember(config.richText().value().getDeclaredField(config.richText().field()), config.richText().value());
         } catch (NoSuchFieldException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
                     config.richText().value(),

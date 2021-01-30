@@ -27,5 +27,8 @@ import org.junit.runners.Suite.SuiteClasses;
     ExceptionsTest.class,
     DependsOnTest.class
 })
+/**
+ * Shortcut class for running all available test cases in a batch
+ */
 public class AllTests {
 }

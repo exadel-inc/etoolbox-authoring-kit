@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -52,7 +51,6 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.plugin.handlers.widget.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.source.SourceBase;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
 /**
@@ -114,12 +112,12 @@ public enum DialogWidgets implements DialogWidget {
     }
 
     /**
-     * Gets whether the specified {@code Member} has any particular Granite UI widget-defining annotation
-     * @param member {@code Member} of a component class
+     * Gets whether the specified {@link Source} has any particular Granite UI widget-defining annotation
+     * @param source {@code Source} instance to search for annotations
      * @return True or false
      */
-    public static boolean isPresent(Member member) {
-        return getWidgetAnnotationClass(SourceBase.fromMember(member, null)) != null;
+    public static boolean isPresent(Source source) {
+        return getWidgetAnnotationClass(source) != null;
     }
 
     /**
@@ -143,7 +141,7 @@ public enum DialogWidgets implements DialogWidget {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(
                     NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE,
                     source.getName(),
-                    source.getProcessedClass())));
+                    source.getReportingClass())));
         }
         return result;
     }

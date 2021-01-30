@@ -45,7 +45,7 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
         List<Source> placeableSources = PluginContainerUtility.getContainerEntries(source, false);
 
         if (containerSections.isEmpty() && !placeableSources.isEmpty()) {
-            InvalidSettingException ex = new InvalidSettingException(exceptionMessage + source.getContainerClass().getName());
+            InvalidSettingException ex = new InvalidSettingException(exceptionMessage + source.getValueType().getName());
             PluginRuntime.context().getExceptionHandler().handle(ex);
             containerSections.put(StringUtils.EMPTY, new ContainerSection("Untitled"));
         }

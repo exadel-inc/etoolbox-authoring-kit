@@ -88,6 +88,11 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
                 return Optional.empty();
             }
         }
+        // We allow "simple" exception names for the plugin's in-box exception classes
+        if (exceptionType.getPackage().equals(PluginException.class.getPackage())
+                && exceptionToken.equals(exceptionType.getSimpleName())) {
+            return Optional.of(!inverse);
+        }
         try {
             Class<?> managedClass = Class.forName(exceptionToken);
             if (ClassUtils.isAssignable(exceptionType, managedClass)) {

@@ -40,7 +40,7 @@
          * */
         static parseQuery(query, $root, changeHandlerCB) {
             return query.replace(REFERENCE_REGEXP, (q, isGroup, name, selWrapper, sel) => {
-                const $context = ns.findBaseElement($root, sel);
+                const $context = ns.findScope($root, sel);
 
                 if (name === 'this' && (isGroup || sel)) {
                     console.warn(`[DependsOn]: ${q} is always referencing current element, could be replaced by simple @this`);

@@ -19,6 +19,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
@@ -36,8 +38,10 @@ public @interface ClassMember {
     Class<?> source() default _Default.class;
 
     /**
-     * Name of the member, must refer to an actual field or method name
-     * @return String value, non-blank
+     * When set to a non-blank String, defines name of the member, must refer to an actual field or method name. Otherwise.
+     * name of the current field will be used
+     * @return String value
      */
-    String name();
+    @ValueRestriction(ValueRestrictions.NOT_BLANK)
+    String name() default "";
 }

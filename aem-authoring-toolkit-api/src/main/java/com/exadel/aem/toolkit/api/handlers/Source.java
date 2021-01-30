@@ -16,13 +16,15 @@ package com.exadel.aem.toolkit.api.handlers;
 
 public interface Source {
 
-    <T> T adaptTo(Class<T> adaptation);
-
     String getName();
 
-    Class<?> getProcessedClass();
-
-    Class<?> getContainerClass();
-
     Class<?> getDeclaringClass();
+
+    Class<?> getReportingClass();
+
+    Class<?> getValueType();
+
+    boolean isValid();
+
+    <T> T adaptTo(Class<T> adaptation);
 }

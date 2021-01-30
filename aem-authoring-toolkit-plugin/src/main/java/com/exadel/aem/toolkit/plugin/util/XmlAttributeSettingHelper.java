@@ -361,7 +361,7 @@ public class XmlAttributeSettingHelper<T> {
      * @return Object type
      */
     private static Class<?> getMethodWrappedType(Method method) {
-        Class<?> effectiveType = PluginReflectionUtility.getPlainMethodType(method);
+        Class<?> effectiveType = PluginReflectionUtility.getPlainType(method);
         if (effectiveType.isEnum()) {
             return String.class;
         }

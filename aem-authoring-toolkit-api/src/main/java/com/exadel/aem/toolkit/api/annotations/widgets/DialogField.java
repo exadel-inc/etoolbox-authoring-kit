@@ -70,7 +70,7 @@ public @interface DialogField {
      * Both positive and negative values allowed
      * @return Integer value
      */
-    int ranking() default 0;
+    int ranking() default Integer.MIN_VALUE;
     /**
      * Maps to the 'required' attribute of this TouchUI dialog component's node.
      * @return True or false

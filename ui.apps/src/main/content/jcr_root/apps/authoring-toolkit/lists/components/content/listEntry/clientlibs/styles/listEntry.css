@@ -1,0 +1,15 @@
+.item-component {
+    padding: 1rem;
+    background-color: #f5f5f5;
+    font-family: adobe-clean, Helvetica, Arial, sans-serif;
+}
+
+.item-component .item-property {
+    display: flex;
+    padding: .625rem;
+}
+
+.item-component .item-error {
+    color: darkred;
+    font-weight: bold;
+}

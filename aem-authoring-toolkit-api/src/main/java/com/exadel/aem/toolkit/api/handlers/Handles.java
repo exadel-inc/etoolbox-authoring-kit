@@ -22,7 +22,8 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
- * Used to specify one or more AEM Authoring Toolkit annotations processed by a handler class
+ * Used to specify one or more AEM Authoring Toolkit annotations processed by a handler class, and also to marshal
+ * invocation order if multiple handlers are attached to the same annotation
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
