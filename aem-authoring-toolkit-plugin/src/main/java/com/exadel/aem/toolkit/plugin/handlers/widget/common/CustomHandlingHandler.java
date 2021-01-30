@@ -72,8 +72,6 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
                 .useExisting(PluginRuntime.context().getXmlUtility().getDocument())
                 .getDocumentElement();
             if (element != null) {
-                // This assignment is for legacy dialog widget handlers, will not interfere with modern handlers
-                PluginRuntime.context().getXmlUtility().setDocument(element.getOwnerDocument());
                 legacyHandlers.forEach(handler -> handler.accept(element, field));
                 ((TargetImpl) target).attributes(element);
             }

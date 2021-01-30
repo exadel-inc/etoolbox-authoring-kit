@@ -39,7 +39,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.adapters.DocumentAdapter;
+import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.Sources;
 import com.exadel.aem.toolkit.plugin.target.Targets;
@@ -127,11 +127,9 @@ abstract class PackageEntryWriter {
         Target rootTarget = Targets.newInstance(DialogConstants.NN_ROOT, getScope());
         populateTarget(componentClass, rootTarget);
 
-        Document document = rootTarget.adaptTo(DocumentAdapter.class).getDocument();
+        Document document = rootTarget.adaptTo(DomAdapter.class).getDocument();
         writeCommonProperties(componentClass, getScope(), document);
         if (XmlScope.CQ_DIALOG.equals(getScope())) {
-            // This assignment is for legacy dialog handlers, will not interfere with modern handlers
-            PluginRuntime.context().getXmlUtility().setDocument(document);
             processLegacyDialogHandlers(document.getDocumentElement(), componentClass);
         }
 

@@ -93,7 +93,7 @@ class NamingHelper {
             String namespaceCapture = namespaceMatcher.find()
                 ? namespaceMatcher.group().substring(0, namespaceMatcher.end() - 1)
                 : null;
-            if (namespaceCapture != null && !PluginXmlUtility.XML_NAMESPACES.containsKey(namespaceCapture)) {
+            if (namespaceCapture != null && !XmlFactory.XML_NAMESPACES.containsKey(namespaceCapture)) {
                 result = result.replace(namespaceMatcher.group(), namespaceCapture);
             }
         }

@@ -45,7 +45,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.UnknownComponentException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.XmlDocumentFactory;
+import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
 /**
  * Implements actions needed to store collected/processed data into AEM package, optimal for use in "try-with-resources" block
@@ -200,7 +200,7 @@ public class PackageWriter implements AutoCloseable {
     static PackageWriter forFileSystem(FileSystem fileSystem, String projectName, String componentsBasePath) {
         List<PackageEntryWriter> writers;
         try {
-            Transformer transformer = XmlDocumentFactory.newDocumentTransformer();
+            Transformer transformer = XmlFactory.newDocumentTransformer();
             writers = Arrays.asList(
                     new ContentXmlWriter(transformer),
                     new CqDialogWriter(transformer, XmlScope.CQ_DIALOG),
