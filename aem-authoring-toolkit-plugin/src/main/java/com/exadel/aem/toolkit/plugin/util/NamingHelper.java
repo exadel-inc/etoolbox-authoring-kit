@@ -32,15 +32,16 @@ class NamingHelper {
     private static final String VERB_SEPARATOR = "_";
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
     private static final Pattern NODE_NAME_INDEX_PATTERN = Pattern.compile("\\d*$");
+    private static final Pattern NAMESPACE_PATTERN = Pattern.compile("^\\w+:");
 
     private static final Pattern INVALID_FIELD_NAME_PATTERN = Pattern.compile("^\\W+|[^\\w-/]$|[^\\w-/:]+");
-    private static final Pattern INVALID_NODE_NAME_PATTERN = Pattern.compile("\\W+");
-    private static final Pattern INVALID_NAMESPACE_NODE_NAME_PATTERN = Pattern.compile("^\\W*:|\\W+:$|[^\\w:]+");
+    private static final Pattern INVALID_NODE_NAME_NS_PATTERN = Pattern.compile("^\\W*:|\\W+:$|[^\\w:]+");
 
     private static final Pattern PARENT_PATH_PREFIX_PATTERN = Pattern.compile("^(?:\\.\\./)+");
 
     private boolean lowercaseFirst;
     private boolean preserveParentPath;
+    private boolean checkNamespace;
     private Pattern clearingPattern;
 
     /**
@@ -87,8 +88,18 @@ class NamingHelper {
             result = StringUtils.defaultString(defaultValue) +  result;
         }
 
+        if (checkNamespace) {
+            Matcher namespaceMatcher = NAMESPACE_PATTERN.matcher(result);
+            String namespaceCapture = namespaceMatcher.find()
+                ? namespaceMatcher.group().substring(0, namespaceMatcher.end() - 1)
+                : null;
+            if (namespaceCapture != null && !PluginXmlUtility.XML_NAMESPACES.containsKey(namespaceCapture)) {
+                result = result.replace(namespaceMatcher.group(), namespaceCapture);
+            }
+        }
+
         if (lowercaseFirst && !result.chars().allMatch(Character::isUpperCase)) {
-            return StringUtils.uncapitalize(result);
+            result = StringUtils.uncapitalize(result);
         }
 
         if (StringUtils.isNotEmpty(parentPathPrefix)) {
@@ -111,7 +122,7 @@ class NamingHelper {
             return result;
         }
         int index = 1;
-        while (context.hasChild(result)) {
+        while (context.exists(result)) {
             result = NODE_NAME_INDEX_PATTERN.matcher(result).replaceFirst(String.valueOf(index++));
         }
         return result;
@@ -138,18 +149,7 @@ class NamingHelper {
         helper.lowercaseFirst = false;
         helper.preserveParentPath = true;
         helper.clearingPattern = INVALID_FIELD_NAME_PATTERN;
-        return helper;
-    }
-
-    /**
-     * Creates and initializes an instance of {@link NamingHelper} to deal with simple (non-namespaced) node names
-     * and attribute names
-     * @return {@code XmlNamingHelper} object
-     */
-    static NamingHelper forSimpleName() {
-        NamingHelper helper = new NamingHelper();
-        helper.lowercaseFirst = true;
-        helper.clearingPattern = INVALID_NODE_NAME_PATTERN;
+        helper.checkNamespace = false;
         return helper;
     }
 
@@ -158,10 +158,11 @@ class NamingHelper {
      * names and attribute names
      * @return {@code XmlNamingHelper} object
      */
-    static NamingHelper forNamespaceAndName() {
+    static NamingHelper forNodeName() {
         NamingHelper helper = new NamingHelper();
         helper.lowercaseFirst = true;
-        helper.clearingPattern = INVALID_NAMESPACE_NODE_NAME_PATTERN;
+        helper.clearingPattern = INVALID_NODE_NAME_NS_PATTERN;
+        helper.checkNamespace = true;
         return helper;
     }
 }

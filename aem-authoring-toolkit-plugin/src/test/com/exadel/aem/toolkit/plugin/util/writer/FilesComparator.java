@@ -103,7 +103,7 @@ class FilesComparator {
     }
 
     private static String getXmlString(Element element) throws TransformerException {
-        PluginXmlUtility.XML_NAMESPACES.forEach(element::setAttribute);
+        PluginXmlUtility.XML_NAMESPACES.forEach((key, value) -> element.setAttribute("xmlns:" + key, value));
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         Transformer transformer = transformerFactory.newTransformer();

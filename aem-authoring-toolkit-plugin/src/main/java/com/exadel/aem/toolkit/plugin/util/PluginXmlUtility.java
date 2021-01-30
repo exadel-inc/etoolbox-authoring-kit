@@ -66,12 +66,13 @@ import com.exadel.aem.toolkit.plugin.util.validation.Validation;
  */
 public class PluginXmlUtility implements XmlUtility {
     public static final Map<String, String> XML_NAMESPACES = ImmutableMap.of(
-            "xmlns:jcr", "http://www.jcp.org/jcr/1.0",
-            "xmlns:nt", "http://www.jcp.org/jcr/nt/1.0",
-            "xmlns:sling", "http://sling.apache.org/jcr/sling/1.0",
-            "xmlns:cq", "http://www.day.com/jcr/cq/1.0",
-            "xmlns:granite", "http://www.adobe.com/jcr/granite/1.0"
+            "jcr", "http://www.jcp.org/jcr/1.0",
+            "nt", "http://www.jcp.org/jcr/nt/1.0",
+            "sling", "http://sling.apache.org/jcr/sling/1.0",
+            "cq", "http://www.day.com/jcr/cq/1.0",
+            "granite", "http://www.adobe.com/jcr/granite/1.0"
     );
+    private static final String XML_NAMESPACE_PREFIX = "xmlns:";
 
     public static final String ATTRIBUTE_LIST_TEMPLATE = "[%s]";
     public static final String ATTRIBUTE_LIST_SPLIT_PATTERN = "\\s*,\\s*";
@@ -93,6 +94,7 @@ public class PluginXmlUtility implements XmlUtility {
     public void setDocument(Document document) {
         this.document = document;
     }
+
 
     /* ----------------------------
        XmlUtility interface members
@@ -667,7 +669,7 @@ public class PluginXmlUtility implements XmlUtility {
 
         Element root = toElement(target, document);
         XML_NAMESPACES.forEach((key, value) -> {
-            if (StringUtils.isNoneBlank(key, value)) root.setAttribute(key, value);
+            root.setAttribute(XML_NAMESPACE_PREFIX + key, value);
         });
 
         document.appendChild(root);
