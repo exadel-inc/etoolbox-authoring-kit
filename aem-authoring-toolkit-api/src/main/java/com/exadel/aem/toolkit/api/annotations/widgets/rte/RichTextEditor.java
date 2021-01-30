@@ -20,6 +20,7 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
@@ -104,18 +105,21 @@ public @interface RichTextEditor {
      * Defines maximal amount of operations managed by "undo" plugin (max clicks of "undo" button) in this RichTextEditor
      * @return Long value, non-negative
      */
+    @PropertyRendering
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
     long maxUndoSteps() default 50;
     /**
      * Defines size of tab indent in this RichTextEditor
      * @return Long value, non-negative
      */
+    @PropertyRendering
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
     long tabSize() default 4;
     /**
      * Defines size of paragraph indent for e.g. list items in this RichTextEditor
      * @return Long value, non-negative
      */
+    @PropertyRendering
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
     long indentSize() default 0;
 }
