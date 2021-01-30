@@ -141,12 +141,11 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         getSpecialCharactersNode(rtePlugins.getOrCreate(DialogConstants.NN_MISCTOOLS));
         populatePasteRulesNode(rtePlugins);
         populateStylesNode(rtePlugins.getOrCreate(DialogConstants.NN_STYLES).attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION));
-        if (rtePlugins.hasChild(DialogConstants.NN_UNDO) && rteAnnotation.maxUndoSteps() != 50)
-            rtePlugins.get(DialogConstants.NN_UNDO).attribute(DialogConstants.PN_MAX_UNDO_STEPS, rteAnnotation.maxUndoSteps());
-        if (rteAnnotation.tabSize() != 4)
-            rtePlugins.getOrCreate(DialogConstants.NN_KEYS).attribute(DialogConstants.PN_TAB_SIZE, rteAnnotation.tabSize());
-        if (rtePlugins.hasChild(DialogConstants.NN_LISTS) && rteAnnotation.indentSize() != 0)
-            rtePlugins.get(DialogConstants.NN_LISTS).attribute(DialogConstants.PN_INDENT_SIZE, rteAnnotation.indentSize());
+        if (rtePlugins.hasChild(DialogConstants.NN_UNDO))
+            rtePlugins.get(DialogConstants.NN_UNDO).mapProperties(rteAnnotation, name -> name.equals("maxUndoSteps"));
+        rtePlugins.getOrCreate(DialogConstants.NN_KEYS).mapProperties(rteAnnotation, name -> name.equals("tabSize"));
+        if (rtePlugins.hasChild(DialogConstants.NN_LISTS))
+            rtePlugins.get(DialogConstants.NN_LISTS).mapProperties(rteAnnotation, name -> name.equals("indentSize"));
 
         // build htmlLinkRules node and append to root target, if needed
         populateHtmlLinkRules(target);
