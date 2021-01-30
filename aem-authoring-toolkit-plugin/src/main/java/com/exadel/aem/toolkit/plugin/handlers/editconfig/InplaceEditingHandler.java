@@ -180,9 +180,12 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
      * @return String value
      */
     private static String getConfigName(InplaceEditingConfig config) {
-        if (StringUtils.isNotBlank(config.name())) {
-            return config.name();
+        String result = StringUtils.isNotBlank(config.name())
+            ? config.name()
+            : config.propertyName();
+        if (result.contains(DialogConstants.PATH_SEPARATOR)) {
+            return StringUtils.substringAfterLast(result, DialogConstants.PATH_SEPARATOR).trim();
         }
-        return config.propertyName();
+        return result.trim();
     }
 }
