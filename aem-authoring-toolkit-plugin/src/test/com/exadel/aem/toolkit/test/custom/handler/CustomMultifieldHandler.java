@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 public class CustomMultifieldHandler implements DialogWidgetHandler {
 
     @Override
-    public void accept(Source source, Target element) {
-        element.attribute("multifieldSpecial", "This is added to Multifields");
+    public void accept(Source source, Target target) {
+        target.attribute("multifieldSpecial", "This is added to Multifields");
     }
 }

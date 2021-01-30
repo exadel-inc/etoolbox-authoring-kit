@@ -25,8 +25,8 @@ import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
 
 @SuppressWarnings("unused")
-@Handles(value = CustomWidgetAnnotation.class, before = CustomWidgetHandler.class, after = CustomWidgetHandler.class)
-public class CustomWidgetHandler implements DialogWidgetHandler {
+@Handles(value = CustomWidgetAnnotation.class)
+public class CustomWidgetHandler1 implements DialogWidgetHandler {
 
     @Override
     public String getName() {

@@ -22,6 +22,7 @@ import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomNonMappingWidgetAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAutoOrder;
 
 @Dialog(
         name = "test-component",
@@ -49,4 +50,9 @@ public class CustomAnnotations {
     @TextField
     @CustomWidgetAnnotationAuto
     String testCustomAnnotationAutoDefault;
+
+    @CustomWidgetAutoOrder
+    public String getTestAutoOrder() {
+        return "test1";
+    }
 }
