@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.w3c.dom.Element;
@@ -39,6 +40,8 @@ public interface Target {
     }
 
     Target mapProperties(Annotation annotation, List<String> skipped);
+
+    Target mapProperties(Annotation annotation, Predicate<String> predicate);
 
     Target mapProperties(Element element);
 

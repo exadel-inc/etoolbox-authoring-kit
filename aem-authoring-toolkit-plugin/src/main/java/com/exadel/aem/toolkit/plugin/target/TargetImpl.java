@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.BinaryOperator;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -48,6 +49,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
+import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.XmlAttributeSettingHelper;
 
@@ -128,6 +130,15 @@ public class TargetImpl implements Target {
     @Override
     public Target mapProperties(Annotation annotation, List<String> skipped) {
         mapAnnotationProperties(annotation, this, skipped);
+        return this;
+    }
+
+    @Override
+    public Target mapProperties(Annotation annotation, Predicate<String> predicate) {
+        Arrays.stream(annotation.annotationType().getDeclaredMethods())
+            .filter(method -> predicate.test(method.getName()))
+            .filter(method -> PluginReflectionUtility.annotationPropertyIsNotDefault(annotation, method))
+            .forEach(method -> populateProperty(method, this, annotation));
         return this;
     }
 
