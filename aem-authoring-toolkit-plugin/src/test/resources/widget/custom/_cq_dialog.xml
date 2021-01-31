@@ -24,20 +24,22 @@
                     <testCustomAnnotation
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="test-components/form/customfield"
-                        customField="Overridden value"
                         customProcessing="turned on"
                         disabled="{Boolean}false"
                         name="./testCustomAnnotation"
                         renderHidden="{Boolean}false"
-                        required="{Boolean}false"/>
+                        required="{Boolean}false">
+                        <customElement jcr:primaryType="nt:unstructured" customField="Overridden value"/>
+                    </testCustomAnnotation>
                     <testCustomAnnotationDefault
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                        customField="Non-overridden value"
                         disabled="{Boolean}false"
                         name="./testCustomAnnotationDefault"
                         renderHidden="{Boolean}false"
-                        required="{Boolean}false"/>
+                        required="{Boolean}false">
+                        <customElement jcr:primaryType="nt:unstructured" customField="Non-overridden value"/>
+                    </testCustomAnnotationDefault>
                     <testCustomAnnotationAuto
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="test-components/form/customfield"
@@ -56,6 +58,7 @@
                         required="{Boolean}false">
                         <granite:data jcr:primaryType="nt:unstructured" cq:custom="Non-overridden value"/>
                     </testCustomAnnotationAutoDefault>
+                    <customChild jcr:primaryType="nt:unstructured"/>
                 </items>
             </column>
         </items>

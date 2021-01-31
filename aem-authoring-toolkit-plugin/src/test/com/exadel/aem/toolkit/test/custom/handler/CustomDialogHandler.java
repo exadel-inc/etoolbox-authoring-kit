@@ -26,6 +26,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.api.runtime.Injected;
+import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
 
@@ -38,6 +40,10 @@ public class CustomDialogHandler implements DialogHandler {
         return "customDialogProcessing";
     }
 
+    @Injected
+    private RuntimeContext runtimeContext;
+
+
     @Override
     public void accept(Element element, Class<?> cls) {
         element.setAttribute("className", cls.getSimpleName());
@@ -47,6 +53,12 @@ public class CustomDialogHandler implements DialogHandler {
                 elt.setAttribute("multifieldSpecial", "This is added to top-level Multifields");
             }
         });
+        Element customChild = runtimeContext.getXmlUtility().createNodeElement("customChild");
+        Element content = runtimeContext.getXmlUtility().getChildElement(element, "content");
+        Element extItems = runtimeContext.getXmlUtility().getChildElement(content, "items");
+        Element column = runtimeContext.getXmlUtility().getChildElement(extItems, "column");
+        Element intItems = runtimeContext.getXmlUtility().getChildElement(column, "items");
+        intItems.appendChild(customChild);
     }
 
     @Override
