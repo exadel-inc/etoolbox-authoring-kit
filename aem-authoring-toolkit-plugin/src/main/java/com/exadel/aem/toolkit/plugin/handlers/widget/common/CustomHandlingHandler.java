@@ -70,8 +70,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
             Field field = source.adaptTo(Field.class);
             Element element = target
                 .adaptTo(DomAdapter.class)
-                .useExisting(PluginRuntime.context().getXmlUtility().getDocument())
-                .getDocumentElement();
+                .composeElement(PluginRuntime.context().getXmlUtility().getDocument());
             if (element != null) {
                 legacyHandlers.forEach(handler -> handler.accept(element, field));
                 ((TargetImpl) target).attributes(element);

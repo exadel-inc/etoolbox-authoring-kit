@@ -71,7 +71,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
 
         // Facilitate the modified targetFacade to work as Multifield
         if (isComposite) {
-            target.getTarget(DialogConstants.NN_FIELD).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
+            target.getOrCreateTarget(DialogConstants.NN_FIELD).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
             target.attribute(DialogConstants.PN_COMPOSITE, true);
         }
         target.getAttributes().remove(DialogConstants.PN_NAME);
@@ -257,9 +257,12 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * Called to pick up an appropriate {@link PropertyTransferPolicy}
      * from the set of provided policies
      * @param policies {@code Map<String, XmlTransferPolicy>} describing available policies
-     * @return The selected policy, or a default policy if no appropriate option found
+     * @param propertyToken String representing the name of the current attribute or child node
+     * @return The selected policy, or the default policy if no appropriate option found
      */
-    private static PropertyTransferPolicy getPolicyForProperty(Map<String, PropertyTransferPolicy> policies, String propertyToken) {
+    private static PropertyTransferPolicy getPolicyForProperty(
+        Map<String, PropertyTransferPolicy> policies,
+        String propertyToken) {
         return policies.entrySet().stream()
             .filter(entry -> entry.getKey().endsWith(DialogConstants.WILDCARD)
                 ? propertyToken.startsWith(StringUtils.stripEnd(entry.getKey(), DialogConstants.WILDCARD))

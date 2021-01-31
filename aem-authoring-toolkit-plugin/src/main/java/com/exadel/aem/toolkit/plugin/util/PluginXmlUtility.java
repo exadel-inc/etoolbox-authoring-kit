@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -78,14 +79,41 @@ public class PluginXmlUtility implements XmlUtility {
        Instance members and constructors
        --------------------------------- */
 
-    private final Document document;
+    private Document document;
 
+    /**
+     * Default constructor
+     * @param document {@code Document} instance ti be used as a node factory within this instance
+     */
     PluginXmlUtility(Document document) {
         this.document = document;
     }
 
+    /**
+     * Retrieves the current {@code Document}
+     * @return {@code Document} instance
+     */
     public Document getDocument() {
         return document;
+    }
+
+    /**
+     * Replaces and retrieves the current {@code Document}. If the document sotred has been populated with data
+     * it is discarded in foavor of another document itsnatce; otherwise returned as is
+     * @return {@code Document} instance
+     */
+    public Document resetDocument() {
+        if (getDocument().getDocumentElement() == null) {
+            return getDocument();
+        }
+        Document newDocument;
+        try {
+            newDocument = XmlFactory.newDocument();
+            this.document = newDocument;
+        } catch (ParserConfigurationException e) {
+            PluginRuntime.context().getExceptionHandler().handle(e);
+        }
+        return getDocument();
     }
 
     /* ----------------------------

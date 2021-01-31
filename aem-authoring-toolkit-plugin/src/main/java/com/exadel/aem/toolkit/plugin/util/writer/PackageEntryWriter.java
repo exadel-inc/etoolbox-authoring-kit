@@ -127,13 +127,15 @@ abstract class PackageEntryWriter {
         Target rootTarget = Targets.newInstance(DialogConstants.NN_ROOT, getScope());
         populateTarget(componentClass, rootTarget);
 
-        Document document = rootTarget.adaptTo(DomAdapter.class).getDocument();
-        writeCommonProperties(componentClass, getScope(), document);
+        Document result = rootTarget
+            .adaptTo(DomAdapter.class)
+            .composeDocument(PluginRuntime.context().getXmlUtility().resetDocument());
+        writeCommonProperties(componentClass, getScope(), result);
         if (XmlScope.CQ_DIALOG.equals(getScope())) {
-            processLegacyDialogHandlers(document.getDocumentElement(), componentClass);
+            processLegacyDialogHandlers(result.getDocumentElement(), componentClass);
         }
 
-        return document;
+        return result;
     }
 
     /**

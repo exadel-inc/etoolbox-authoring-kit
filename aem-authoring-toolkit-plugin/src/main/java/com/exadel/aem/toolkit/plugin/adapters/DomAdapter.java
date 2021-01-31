@@ -15,7 +15,6 @@
 package com.exadel.aem.toolkit.plugin.adapters;
 
 import java.util.Map;
-import java.util.Optional;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
@@ -27,61 +26,79 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
+/**
+ * Implements {@link Adaptable} for rendering a {@link Target} instance into a DOM {@code Document}
+ */
 @Adaptable(Target.class)
 public class DomAdapter {
 
     private final Target target;
-    private Document document;
-    private Element documentElement;
 
+    /**
+     * Default constructor per {@link Adaptable} contract
+     * @param target {@code Target} object that will be used as a source of data for rendering
+     */
     public DomAdapter(Target target) {
         this.target = target;
     }
 
-    public DomAdapter useExisting(Document document) {
-        // If no valid document passed, trigger creation of a new Document with its root element populated with
-        // Target data, by calling DomAdapter#getDocument(), then return
-        if (document == null) {
-            getDocument();
-            return this;
+    /**
+     * Retrieves a {@code Document} populated with data for the {@code Target} passed upon class initialization
+     * @param sourceDocument Document used as a factory for new elements
+     * @return {@code Document} instance, or null in case an exception occurred when creating the return value
+     */
+    public Document composeDocument(Document sourceDocument) {
+        if (target == null) {
+            return sourceDocument;
         }
-        // But if a document passed, store it and leave it as is, but create an "overriding" documentElement that
-        // will be returned upon DomAdapter#getDocumentElement() call
-        this.document = document;
-        this.documentElement = createDocumentElement(target);
-        return this;
+        if (sourceDocument == null) {
+            try {
+                sourceDocument = XmlFactory.newDocument();
+            } catch (ParserConfigurationException e) {
+                PluginRuntime.context().getExceptionHandler().handle(e);
+                return null;
+            }
+        }
+        sourceDocument.appendChild(createDocumentElement(sourceDocument, target));
+        return sourceDocument;
     }
 
-    public Document getDocument() {
-        if (document != null) {
-            return document;
+    /**
+     * Retrieves an {@code Element} populated with data for the {@code Target} passed upon class initialization.
+     * The element is created via the provided {@code Document} instance but stays "unattached" so as to form an isolated
+     * structure that may be used e.g. in legacy handlers
+     * @param sourceDocument Document used as a factory for new elements
+     * @return {@code Document} instance, or null in case an exception occurred when creating the return value
+     */
+    public Element composeElement(Document sourceDocument) {
+        if (target == null) {
+            return sourceDocument != null ? sourceDocument.getDocumentElement() : null;
         }
-        try {
-            document = XmlFactory.newDocument();
-            documentElement = createDocumentElement(target);
-            XmlFactory.XML_NAMESPACES.forEach((key, value) -> documentElement.setAttribute(XmlFactory.XML_NAMESPACE_PREFIX + key, value));
-            document.appendChild(documentElement);
-
-        } catch (ParserConfigurationException e) {
-            PluginRuntime.context().getExceptionHandler().handle(e);
+        if (sourceDocument == null) {
+            try {
+                sourceDocument = XmlFactory.newDocument();
+            } catch (ParserConfigurationException e) {
+                PluginRuntime.context().getExceptionHandler().handle(e);
+                return null;
+            }
         }
-        return document;
+        return createDocumentElement(sourceDocument, target);
     }
 
-    public Element getDocumentElement() {
-        if (documentElement != null) {
-            return documentElement;
-        }
-        return Optional.ofNullable(document).map(Document::getDocumentElement).orElse(null);
-    }
-
-    private Element createDocumentElement(Target target) {
+    /**
+     * Implements creating a root document element with the {@code Document} source and {@code Target} provided
+     * @param sourceDocument Document used as a factory for new elements
+     * @param target {@code Target} instance holding the data for rendering
+     * @return {@code Element} instance
+     */
+    private static Element createDocumentElement(Document sourceDocument, Target target) {
         String name = PluginNamingUtility.getValidName(target.getName());
-        Element element = document.createElement(name);
+        Element element = sourceDocument.createElement(name);
         for (Map.Entry<String, String> entry : target.getAttributes().entrySet()) {
             element.setAttribute(entry.getKey(), entry.getValue());
         }
-        target.getChildren().forEach(child -> element.appendChild(createDocumentElement(child)));
+        target.getChildren().forEach(child -> element.appendChild(createDocumentElement(sourceDocument, child)));
+        XmlFactory.XML_NAMESPACES.forEach((key, value) -> element.setAttribute(XmlFactory.XML_NAMESPACE_PREFIX + key, value));
         return element;
     }
 }
