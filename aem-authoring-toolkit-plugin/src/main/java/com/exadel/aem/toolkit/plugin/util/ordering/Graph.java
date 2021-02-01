@@ -25,40 +25,38 @@ import java.util.List;
  * List<Class<?>> nodes stores all existing Custom Handlers
  * HashMap<Class<?>, ArrayList<Class<?>>> edges stores Handler as a key and all neighbors as list of values
  */
-class Graph {
+class Graph<T> {
 
-    private final List<Orderable> nodes;
-    private final List<List<Orderable>> adjacencyList;
-    private final int amountOfNodes;
+    private final List<Orderable<T>> nodes;
+    private final List<List<Orderable<T>>> adjacencyList;
 
-    public Graph(List<Orderable> nodes) {
+    public Graph(List<Orderable<T>> nodes) {
         this.nodes = nodes;
-        this.amountOfNodes = nodes.size();
-        this.adjacencyList = new ArrayList<>(this.amountOfNodes);
-        for (int i = 0; i < this.amountOfNodes; i++) {
-            this.nodes.get(i).setPositionInAllNodes(i);
+        this.adjacencyList = new ArrayList<>(this.nodes.size());
+        for (int i = 0; i < this.nodes.size(); i++) {
+            this.nodes.get(i).setPosition(i);
             this.adjacencyList.add(new ArrayList<>());
         }
         initAdjacencyList();
     }
 
-    public List<Orderable> topologicalSort() {
+    public List<Orderable<T>> topologicalSort() {
         // Array to store how much edges incoming to the i node
-        int[] inDegrees = new int[this.amountOfNodes];
+        int[] inDegrees = new int[this.nodes.size()];
         // Deque for bfs that store nodes in special order for bfs
-        Deque<Orderable> deque = new LinkedList<>();
+        Deque<Orderable<T>> deque = new LinkedList<>();
         // List to store sorted order
-        List<Orderable> sortedOrder = new ArrayList<>(this.amountOfNodes);
+        List<Orderable<T>> sortedOrder = new ArrayList<>(this.nodes.size());
 
         // Loop to count how much edges incoming to the i node
-        for (int i = 0; i < this.amountOfNodes; i++) {
-            for (Orderable node : this.adjacencyList.get(i)) {
-                inDegrees[node.getPositionInAllNodes()]++;
+        for (int i = 0; i < this.nodes.size(); i++) {
+            for (Orderable<T> node : this.adjacencyList.get(i)) {
+                inDegrees[node.getPosition()]++;
             }
         }
 
         // Loop to init dequeue with nodes, that do not have incoming edges
-        for (int i = 0; i < this.amountOfNodes; i++) {
+        for (int i = 0; i < this.nodes.size(); i++) {
             if (inDegrees[i] == 0) {
                 deque.addLast(nodes.get(i));
             }
@@ -76,39 +74,39 @@ class Graph {
 
         // Start of bfs
         while (!deque.isEmpty()) {
-            Orderable currentNode = deque.pollFirst();
+            Orderable<T> currentNode = deque.pollFirst();
             sortedOrder.add(currentNode);
 
-            int indexOfCurrentNode = currentNode.getPositionInAllNodes();
+            int indexOfCurrentNode = currentNode.getPosition();
 
             // Iterate trough all neighbors for current node (that means bfs)
-            for (Orderable adj : this.adjacencyList.get(indexOfCurrentNode)) {
-                int indexOfNeighborNode = adj.getPositionInAllNodes();
+            for (Orderable<T> adjacent : this.adjacencyList.get(indexOfCurrentNode)) {
+                int indexOfNeighborNode = adjacent.getPosition();
                 inDegrees[indexOfNeighborNode]--;
                 if (inDegrees[indexOfNeighborNode] == 0) {
-                    deque.addLast(adj);
+                    deque.addLast(adjacent);
                 }
             }
         }
 
         // Check if not all nodes are visited
         if (sortedOrder.size() != this.nodes.size()) {
-            List<Orderable> loopNodes = new ArrayList<>();
-            for (int i = 0; i < this.amountOfNodes; i++) {
+            List<Orderable<T>> loopNodes = new ArrayList<>();
+            for (int i = 0; i < this.nodes.size(); i++) {
                 if (inDegrees[i] != 0) {
                     loopNodes.add(this.nodes.get(i));
                 }
             }
-            sortedOrder.addAll(new Graph(loopNodes).topologicalSort());
+            sortedOrder.addAll(new Graph<>(loopNodes).topologicalSort());
         }
         return sortedOrder;
     }
 
     private void initAdjacencyList() {
-        for (int i = 0; i < this.amountOfNodes; i++) {
-            Orderable currNode = this.nodes.get(i);
-            Orderable before = currNode.getBefore();
-            Orderable after = currNode.getAfter();
+        for (int i = 0; i < this.nodes.size(); i++) {
+            Orderable<T> currNode = this.nodes.get(i);
+            Orderable<T> before = currNode.getBefore();
+            Orderable<T> after = currNode.getAfter();
             // Check for null and self-loop
             if (before != null && !before.equals(currNode)) {
                 this.adjacencyList.get(i).add(before);
@@ -116,12 +114,12 @@ class Graph {
             // Check for null, self-loop and simple cycle, e.g. 1->2 and 2->1
             if (after != null
                 && !after.equals(currNode)
-                && !this.adjacencyList.get(after.getPositionInAllNodes()).contains(currNode)) {
-                this.adjacencyList.get(after.getPositionInAllNodes()).add(currNode);
+                && !this.adjacencyList.get(after.getPosition()).contains(currNode)) {
+                this.adjacencyList.get(after.getPosition()).add(currNode);
             }
         }
         // Sort every list to keep alphabetical order
-        for (int i = 0; i < this.amountOfNodes; i++) {
+        for (int i = 0; i < this.nodes.size(); i++) {
             this.adjacencyList.get(i).sort((Comparator.comparing(Orderable::getName)));
         }
     }

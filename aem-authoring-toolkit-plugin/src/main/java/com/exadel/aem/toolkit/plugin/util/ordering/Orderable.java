@@ -14,55 +14,56 @@
 
 package com.exadel.aem.toolkit.plugin.util.ordering;
 
-class Orderable {
+class Orderable<T> {
 
     private final String name;
 
-    private Orderable before;
+    private Orderable<T> before;
 
-    private Orderable after;
+    private Orderable<T> after;
 
-    private Object value;
+    private T value;
 
     private int positionInAllNodes;
 
-    private Orderable(String name) {
+    public Orderable(String name, T value) {
         this.name = name;
+        this.value = value;
     }
 
     public String getName() {
         return name;
     }
 
-    public Orderable getBefore() {
+    public Orderable<T> getBefore() {
         return before;
     }
 
-    public void setBefore(Orderable before) { // package-friendly setter for test cases
+    public void setBefore(Orderable<T> before) { // package-friendly setter for test cases
         this.before = before;
     }
 
-    public Orderable getAfter() {
+    public Orderable<T> getAfter() {
         return after;
     }
 
-    public void setAfter(Orderable after) { // package-friendly setter for test cases
+    public void setAfter(Orderable<T> after) { // package-friendly setter for test cases
         this.after = after;
     }
 
-    public Object getValue() {
+    public T getValue() {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue(T value) {
         this.value = value;
     }
 
-    public int getPositionInAllNodes() {
+    public int getPosition() {
         return positionInAllNodes;
     }
 
-    public void setPositionInAllNodes(int positionInAllNodes) {
+    public void setPosition(int positionInAllNodes) {
         this.positionInAllNodes = positionInAllNodes;
     }
 
@@ -71,7 +72,7 @@ class Orderable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Orderable orderable = (Orderable) o;
+        Orderable<T> orderable = (Orderable<T>) o;
 
         return name.equals(orderable.name);
     }
@@ -79,9 +80,5 @@ class Orderable {
     @Override
     public int hashCode() {
         return name.hashCode();
-    }
-
-    public static Orderable from(String name) { // package-friendly factory method for test cases
-        return new Orderable(name);
     }
 }

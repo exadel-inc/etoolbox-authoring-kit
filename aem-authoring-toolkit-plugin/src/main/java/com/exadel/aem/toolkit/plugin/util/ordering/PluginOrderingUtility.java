@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.plugin.util.ordering;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,16 +23,15 @@ import com.exadel.aem.toolkit.api.markers._Default;
 
 public class PluginOrderingUtility {
 
-    public static <T> List<T> orderList(List<T> handlers) {
+    public static <T> List<T> sort(List<T> handlers) {
         if (handlers.size() < 2) {
             return handlers;
         }
 
-        List<Orderable> list = handlers.stream()
-            .map(Object::getClass)
-            .map(Class::getSimpleName)
-            .map(Orderable::from)
-            .collect(Collectors.toList());
+        List<Orderable<T>> list = new ArrayList<>();
+        for (T handler : handlers) {
+            list.add(new Orderable<>(handler.getClass().getName(), handler));
+        }
 
         for (int i = 0; i < handlers.size(); i++) {
             list.get(i).setValue(handlers.get(i));
@@ -39,23 +39,23 @@ public class PluginOrderingUtility {
             // This lines should be changed, after "before/after" rules appear in the PlaceOn annotation
             Handles handles = handlers.get(i).getClass().getDeclaredAnnotation(Handles.class);
             if (!_Default.class.equals(handles.before())) {
-                Orderable before = get(handles.before().getSimpleName(), list);
+                Orderable<T> before = find(handles.before().getSimpleName(), list);
                 list.get(i).setBefore(before);
             }
             if (!_Default.class.equals(handles.after())) {
-                Orderable after = get(handles.after().getSimpleName(), list);
+                Orderable<T> after = find(handles.after().getSimpleName(), list);
                 list.get(i).setAfter(after);
             }
         }
 
-        return new Graph(list).topologicalSort().stream()
-            .map(node -> ((T) node.getValue()))
+        return new Graph<>(list).topologicalSort().stream()
+            .map(Orderable::getValue)
             .collect(Collectors.toList());
     }
 
-    // Gets the Orderable object from list to store right links in before/after fields
-    private static Orderable get(String find, List<Orderable> list) {
-        for (Orderable orderable : list) {
+    // Gets the Orderable object from list to store valid links in before/after fields
+    private static <T> Orderable<T> find(String find, List<Orderable<T>> list) {
+        for (Orderable<T> orderable : list) {
             if (orderable.getName().equals(find)) {
                 return orderable;
             }
