@@ -1,6 +1,5 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.3.0
  *
  * Cached resource request utility.
  * */

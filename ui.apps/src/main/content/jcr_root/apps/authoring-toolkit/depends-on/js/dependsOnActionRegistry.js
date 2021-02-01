@@ -1,6 +1,5 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
- * @version 2.3.0
  *
  * DependsOn Actions Registry
  * Action defines steps to process query result
