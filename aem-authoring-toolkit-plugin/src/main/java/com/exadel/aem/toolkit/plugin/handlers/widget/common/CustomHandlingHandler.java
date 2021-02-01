@@ -80,7 +80,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
 
         // Process modern handlers that accept(Source, Target)
         Collection<DialogWidgetHandler> modernHandlers = CollectionUtils.subtract(handlers, legacyHandlers);
-        PluginOrderingUtility.orderList(new ArrayList<>(modernHandlers)).forEach(handler -> handler.accept(source, target));
+        PluginOrderingUtility.sort(new ArrayList<>(modernHandlers)).forEach(handler -> handler.accept(source, target));
     }
 
     private static Stream<DialogWidgetHandler> getMatchedHandlersByName(String source) {
