@@ -63,6 +63,7 @@
                         <granite:data jcr:primaryType="nt:unstructured" cq:custom="Non-overridden value"/>
                     </testCustomAnnotationAutoDefault>
                     <testAutoOrder jcr:primaryType="nt:unstructured" ca1="ca1" ca2="ca2" ca3="ca3" sling:resourceType="test"/>
+                    <testOrder jcr:primaryType="nt:unstructured" ch0="ch0" ch1="ch1" ch2="ch2" ch3="ch3" ch4="ch4" ch5="ch5" sling:resourceType="test"/>
                 </items>
             </column>
         </items>

@@ -12,20 +12,21 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.test.custom.handler;
+package com.exadel.aem.toolkit.test.custom.handler.order.simple;
 
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAutoOrder;
 
-@Handles(value = CustomWidgetAnnotation.class, after = CustomWidgetHandler2.class)
+@Handles(value = CustomWidgetAutoOrder.class)
 @SuppressWarnings("unused")
-public class CustomWidgetHandler3 implements DialogWidgetHandler {
+public class CustomAutoOrder2 implements DialogWidgetHandler {
 
     @Override
     public void accept(Source source, Target target) {
-        target.attribute("cwh3", "cwh3");
+        target.attribute("ca2", "ca2")
+            .attribute("ca3", "ca2");
     }
 }

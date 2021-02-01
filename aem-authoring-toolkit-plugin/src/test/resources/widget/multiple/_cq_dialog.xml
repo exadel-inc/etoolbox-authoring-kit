@@ -128,6 +128,8 @@
                                sling:resourceType="test-components/form/customfield"
                                name="./customAnnotation"
                                customField="Custom!"
+                               cwh2="cwh2"
+                               cwh3="cwh3"
                                disabled="{Boolean}false"
                                renderHidden="{Boolean}false"
                                required="{Boolean}false"/>

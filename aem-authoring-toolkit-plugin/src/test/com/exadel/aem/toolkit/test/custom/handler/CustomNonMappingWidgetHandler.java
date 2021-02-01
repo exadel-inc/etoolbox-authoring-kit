@@ -14,10 +14,12 @@
 
 package com.exadel.aem.toolkit.test.custom.handler;
 
+import java.lang.reflect.Field;
+
+import org.w3c.dom.Element;
+
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
-import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomNonMappingWidgetAnnotation;
 
 @HandlesWidgets(value = CustomNonMappingWidgetAnnotation.class)
@@ -30,7 +32,7 @@ public class CustomNonMappingWidgetHandler implements DialogWidgetHandler {
     }
 
     @Override
-    public void accept(Source source, Target element) {
-        element.attribute("customProcessing", "turned on");
+    public void accept(Element element, Field field) {
+        element.setAttribute("customProcessing", "turned on");
     }
 }
