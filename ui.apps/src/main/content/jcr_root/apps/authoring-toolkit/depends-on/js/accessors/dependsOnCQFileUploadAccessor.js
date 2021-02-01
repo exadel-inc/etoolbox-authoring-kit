@@ -1,6 +1,5 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.5.0
  *
  * CQ Coral3 based FileUpload accessor
  * */

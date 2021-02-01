@@ -1,6 +1,5 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.2
  *
  * DependsOn Query Processor
  * parse & compile DependsOn queries
