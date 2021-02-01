@@ -16,30 +16,141 @@ package com.exadel.aem.toolkit.plugin.util.ordering;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 public class TestOrdering {
 
-    int size = 100;
-    List<Orderable> list = new ArrayList<>(size);
+    private static final List<String> expectedTestGraphWithCycleInside1 = Arrays
+        .asList("Handler0", "Handler1", "Handler2", "Handler4", "Handler3");
 
-    // Init list with random nodes
-    @Before
-    public void init() {
+    private static final List<String> expectedTestGraphWithCycleInside2 = Arrays
+        .asList("Handler0", "Handler5", "Handler6", "Handler1", "Handler2", "Handler3", "Handler4");
+
+    private static final List<String> expectedTestSimpleCycleGraph = Arrays
+        .asList("Handler0", "Handler1", "Handler2", "Handler3");
+
+    private static final List<String> expectedTestExampleGraph1 = Arrays
+        .asList("Handler1", "Handler3", "Handler8", "Handler9", "Handler2", "Handler5", "Handler4", "Handler6", "Handler0", "Handler7");
+
+    private static final List<String> expectedTestExampleGraph2 = Arrays
+        .asList("Handler0", "Handler1", "Handler2", "Handler3", "Handler4", "Handler5", "Handler6");
+
+    // Test, that size will be equal to initial size and ordered list consists of unique nodes
+    @Test
+    public void testRandomOrderableList() {
+        List<Orderable<String>> list = getRandomList(100);
+
+        List<String> answer = sortListToValues(list);
+
+        Assert.assertEquals(list.size(), answer.size());
+        assertUnique(answer);
+    }
+
+    // Test graph with cycle inside
+    @Test
+    public void testGraphWithCycleInside1() {
+        List<Orderable<String>> list = getList(5);
+
+        list.get(0).setBefore(list.get(1));
+        list.get(1).setBefore(list.get(2));
+        list.get(4).setAfter(list.get(1));
+        list.get(2).setBefore(list.get(3));
+        list.get(3).setBefore(list.get(1));
+
+        List<String> answer = sortListToValues(list);
+
+        assertUnique(answer);
+        Assert.assertEquals(expectedTestGraphWithCycleInside1, answer);
+    }
+
+    // Test graph with cycle inside
+    @Test
+    public void testGraphWithCycleInside2() {
+        List<Orderable<String>> list = getList(7);
+
+        list.get(0).setBefore(list.get(1));
+        list.get(1).setBefore(list.get(2));
+        list.get(2).setBefore(list.get(3));
+        list.get(3).setBefore(list.get(4));
+        list.get(1).setAfter(list.get(3));
+        list.get(5).setBefore(list.get(1));
+        list.get(6).setBefore(list.get(1));
+
+        List<String> answer = sortListToValues(list);
+
+        Assert.assertEquals(expectedTestGraphWithCycleInside2, answer);
+    }
+
+    // Test cycle graph
+    @Test
+    public void testSimpleCycleGraph() {
+        List<Orderable<String>> list = getList(4);
+
+        list.get(0).setBefore(list.get(1));
+        list.get(1).setBefore(list.get(2));
+        list.get(2).setBefore(list.get(3));
+        list.get(3).setBefore(list.get(0));
+
+        List<String> answer = sortListToValues(list);
+
+        Assert.assertEquals(expectedTestSimpleCycleGraph, answer);
+    }
+
+    @Test
+    public void testExampleGraph1() {
+        List<Orderable<String>> list = getList(10);
+
+        list.get(1).setBefore(list.get(0));
+        list.get(2).setBefore(list.get(6));
+        list.get(3).setBefore(list.get(2));
+        list.get(4).setAfter(list.get(2));
+        list.get(6).setBefore(list.get(0));
+        list.get(7).setAfter(list.get(6));
+        list.get(9).setBefore(list.get(5));
+
+        List<Orderable<String>> answer = sortList(list);
+        List<String> answerValues = sortListToValues(list);
+
+        assertCommon(answer, list);
+        Assert.assertEquals(expectedTestExampleGraph1, answerValues);
+    }
+
+    // Test graph without edges
+    @Test
+    public void testExampleGraph2() {
+        List<Orderable<String>> list = getList(7);
+
+        List<Orderable<String>> answer = sortList(list);
+        List<String> answerValues = sortListToValues(list);
+
+        assertCommon(answer, list);
+        Assert.assertEquals(expectedTestExampleGraph2, answerValues);
+    }
+
+    // Inits list without edges
+    private List<Orderable<String>> getList(int size) {
+        return IntStream.range(0, size)
+            .mapToObj(i -> new Orderable<>("Handler" + i, "Handler" + i))
+            .collect(Collectors.toList());
+    }
+
+    // Inits list with random edges
+    private List<Orderable<String>> getRandomList(int size) {
+        List<Orderable<String>> list = new ArrayList<>(size);
         Random random = new Random();
         for (int i = 0; i < size; i++) {
-            list.add(Orderable.from("Handler" + i));
+            list.add(new Orderable<>("Handler" + i, "Handler" + i));
         }
         for (int i = 0; i < size; i++) {
-            int mode = random.nextInt(4);
+            int mode = random.nextInt(3);
             int iAfter = random.nextInt(size);
             while (iAfter == i) {
                 iAfter = random.nextInt(size);
@@ -52,146 +163,27 @@ public class TestOrdering {
                 list.get(i).setAfter(list.get(iAfter));
             } else if (mode == 1) {
                 list.get(i).setBefore(list.get(iBefore));
-            } else if (mode == 2) {
+            } else {
                 list.get(i).setBefore(list.get(iBefore));
                 list.get(i).setBefore(list.get(iAfter));
             }
         }
+        return list;
     }
 
-    // Test, that size will be equal to initial size and ordered list consists of unique nodes
-    @Test
-    public void testRandomOrderableList() {
-        Graph graph = new Graph(list);
-        List<Orderable> answer = graph.topologicalSort();
-        Assert.assertEquals(size, answer.size());
-        assertUnique(answer);
+    // Gets sorted list
+    private List<Orderable<String>> sortList(List<Orderable<String>> list) {
+        return new Graph<>(list).topologicalSort();
     }
 
-    // Test graph with cycle inside
-    @Test
-    public void testGraphWithCycleInside1() {
-        List<Orderable> list = new ArrayList<>(5);
-        for (int i = 0; i < 5; i++) {
-            list.add(Orderable.from("Handler" + i));
-        }
-        list.get(0).setBefore(list.get(1));
-        list.get(1).setBefore(list.get(2));
-        list.get(4).setAfter(list.get(1));
-        list.get(2).setBefore(list.get(3));
-        list.get(3).setBefore(list.get(1));
-        Graph graph = new Graph(list);
-        List<Orderable> answer = graph.topologicalSort();
-
-        List<String> expected = new ArrayList<>(5);
-        expected.add("Handler0");
-        expected.add("Handler1");
-        expected.add("Handler2");
-        expected.add("Handler4");
-        expected.add("Handler3");
-        Assert.assertEquals(5, answer.size());
-        Assert.assertEquals(answer.stream().map(Orderable::getName).collect(Collectors.toList()), expected);
+    // Gets sorted list mapped to their values
+    private List<String> sortListToValues(List<Orderable<String>> list) {
+        return sortList(list).stream().map(Orderable::getValue).collect(Collectors.toList());
     }
 
-    // Test graph with cycle inside
-    @Test
-    public void testGraphWithCycleInside2() {
-        List<Orderable> list = new ArrayList<>(7);
-        for (int i = 0; i < 7; i++) {
-            list.add(Orderable.from("Handler" + i));
-        }
-        list.get(0).setBefore(list.get(1));
-        list.get(1).setBefore(list.get(2));
-        list.get(2).setBefore(list.get(3));
-        list.get(3).setBefore(list.get(4));
-        list.get(1).setAfter(list.get(3));
-        list.get(5).setBefore(list.get(1));
-        list.get(6).setBefore(list.get(1));
-        Graph graph = new Graph(list);
-        List<Orderable> answer = graph.topologicalSort();
-
-        Assert.assertEquals(7, answer.size());
-        assertUnique(answer);
-        List<String> expected = new ArrayList<>(7);
-        expected.add("Handler0");
-        expected.add("Handler5");
-        expected.add("Handler6");
-        expected.add("Handler1");
-        expected.add("Handler2");
-        expected.add("Handler3");
-        expected.add("Handler4");
-        Assert.assertEquals(answer.stream().map(Orderable::getName).collect(Collectors.toList()), expected);
-        assertUnique(answer);
-    }
-
-    // Test cycle graph
-    @Test
-    public void testSimpleCycleGraph() {
-        List<Orderable> list = new ArrayList<>(4);
-        for (int i = 0; i < 4; i++) {
-            list.add(Orderable.from("Handler" + i));
-        }
-        list.get(0).setBefore(list.get(1));
-        list.get(1).setBefore(list.get(2));
-        list.get(2).setBefore(list.get(3));
-        list.get(3).setBefore(list.get(0));
-        Graph graph = new Graph(list);
-        List<Orderable> answer = graph.topologicalSort();
-
-        Assert.assertEquals(4, answer.size());
-        assertUnique(answer);
-        Assert.assertEquals(answer, list);
-    }
-
-    @Test
-    public void testExampleGraph1() {
-        List<Orderable> list = new ArrayList<>(10);
-        for (int i = 0; i < 10; i++) {
-            list.add(Orderable.from("Handler" + i));
-        }
-        list.get(1).setBefore(list.get(0));
-        list.get(2).setBefore(list.get(6));
-        list.get(3).setBefore(list.get(2));
-        list.get(4).setAfter(list.get(2));
-        list.get(6).setBefore(list.get(0));
-        list.get(7).setAfter(list.get(6));
-        list.get(9).setBefore(list.get(5));
-        Graph graph = new Graph(list);
-        List<Orderable> answer = graph.topologicalSort();
-
-        Assert.assertEquals(10, answer.size());
-        List<String> expected = new ArrayList<>(10);
-        expected.add("Handler1");
-        expected.add("Handler3");
-        expected.add("Handler8");
-        expected.add("Handler9");
-        expected.add("Handler2");
-        expected.add("Handler5");
-        expected.add("Handler4");
-        expected.add("Handler6");
-        expected.add("Handler0");
-        expected.add("Handler7");
-        Assert.assertEquals(expected, answer.stream().map(Orderable::getName).collect(Collectors.toList()));
-        assertUnique(answer);
-        assertCommon(answer, list);
-    }
-
-    // Test graph without edges
-    @Test
-    public void testExampleGraph2() {
-        List<Orderable> list = new ArrayList<>(7);
-        for (int i = 0; i < 7; i++) {
-            list.add(Orderable.from("Handler" + i));
-        }
-
-        Graph graph = new Graph(list);
-        List<Orderable> answer = graph.topologicalSort();
-        Assert.assertEquals(answer, list);
-    }
-
-    // Assert that before, after rules are achieved
-    private void assertCommon(List<Orderable> answer, List<Orderable> initial) {
-        for (Orderable node : initial) {
+    // Asserts that before, after rules are achieved
+    private void assertCommon(List<Orderable<String>> answer, List<Orderable<String>> initial) {
+        for (Orderable<String> node : initial) {
             int currentPosition = answer.indexOf(node);
             int beforePosition = node.getBefore() != null
                 ? answer.indexOf(node.getBefore())
@@ -204,10 +196,8 @@ public class TestOrdering {
         }
     }
 
-    // Assert that ordered list consists of only unique values
-    private void assertUnique(List<Orderable> answer) {
-        Set<Orderable> set = new HashSet<>(answer.size());
-        set.addAll(answer);
-        Assert.assertEquals(answer.size(), set.size());
+    // Asserts that ordered list consists of only unique values
+    private void assertUnique(List<String> answer) {
+        Assert.assertEquals(answer.size(), new HashSet<>(answer).size());
     }
 }
