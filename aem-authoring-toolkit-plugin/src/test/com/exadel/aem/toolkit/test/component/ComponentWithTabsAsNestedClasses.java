@@ -14,7 +14,6 @@
 
 package com.exadel.aem.toolkit.test.component;
 
-import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
@@ -22,6 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.plugin.util.TestConstants;
 
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_0;
@@ -40,7 +40,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_6;
             @Tab(title = LABEL_TAB_6),
         }
 )
-@IgnoreTabs({LABEL_TAB_4, LABEL_TAB_5})
+@Ignore(sections = {LABEL_TAB_4, LABEL_TAB_5})
 @SuppressWarnings("unused")
 public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedClassesAncestor {
 

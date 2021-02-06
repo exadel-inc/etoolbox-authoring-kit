@@ -16,11 +16,14 @@ package com.exadel.aem.toolkit.plugin.maven;
 
 import java.util.List;
 import java.util.function.Consumer;
+import javax.xml.parsers.ParserConfigurationException;
 
 import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
+import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
+import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
 /**
  * The implementation of {@link PluginRuntimeContext} for the AEM Authoring Toolkit plugin instance that
@@ -51,10 +54,12 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
      * Accumulates data and performs necessary routines for creating the functional ("loaded") {@link PluginRuntimeContext}
      */
     static class Builder {
+        private static final String XML_EXCEPTION_MESSAGE = "Could not initialize XML writing routine";
+
         private List<String> classPathElements;
         private String packageBase;
         private String terminateOn;
-        private Consumer<LoadedRuntimeContext> onComplete;
+        private final Consumer<LoadedRuntimeContext> onComplete;
 
         /**
          * Creates new instance of this Builder
@@ -108,7 +113,12 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
             LoadedRuntimeContext result = new LoadedRuntimeContext();
             result.pluginReflections = PluginReflectionUtility.fromCodeScope(classPathElements, packageBase);
             result.exceptionHandler = ExceptionHandlers.forSetting(terminateOn);
-            result.xmlUtility = new PluginXmlUtility();
+            try {
+                result.xmlUtility = XmlFactory.newXmlUtility();
+            } catch (ParserConfigurationException e) {
+                // Cannot proceed with the plugin flow if XML subsystem fails this early
+                throw new PluginException(XML_EXCEPTION_MESSAGE, e);
+            }
             this.onComplete.accept(result);
         }
 

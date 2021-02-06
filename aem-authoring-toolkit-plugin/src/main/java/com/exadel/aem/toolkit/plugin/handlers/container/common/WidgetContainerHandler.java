@@ -38,20 +38,20 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
         String containerSectionName = annotationClass.equals(TabsWidget.class) ? DialogConstants.NN_TAB : DialogConstants.NN_ACCORDION;
         String exceptionMessage = annotationClass.equals(TabsWidget.class) ? ContainerHandler.TABS_EXCEPTION : ContainerHandler.ACCORDION_EXCEPTION;
 
-        target.create(DialogConstants.NN_ITEMS);
+        target.createTarget(DialogConstants.NN_ITEMS);
 
         Map<String, ContainerSection> containerSections = getContainerSections(source, annotationClass);
 
         List<Source> placeableSources = PluginContainerUtility.getContainerEntries(source, false);
 
         if (containerSections.isEmpty() && !placeableSources.isEmpty()) {
-            InvalidSettingException ex = new InvalidSettingException(exceptionMessage + source.getContainerClass().getName());
+            InvalidSettingException ex = new InvalidSettingException(exceptionMessage + source.getValueType().getName());
             PluginRuntime.context().getExceptionHandler().handle(ex);
             containerSections.put(StringUtils.EMPTY, new ContainerSection("Untitled"));
         }
 
         ContainerHandler.addToContainer(
-            target.get(DialogConstants.NN_ITEMS),
+            target.getTarget(DialogConstants.NN_ITEMS),
             placeableSources,
             containerSections,
             ArrayUtils.EMPTY_STRING_ARRAY,

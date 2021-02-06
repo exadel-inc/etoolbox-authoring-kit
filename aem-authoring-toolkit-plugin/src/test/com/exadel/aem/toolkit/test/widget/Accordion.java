@@ -43,13 +43,12 @@ public class Accordion {
         name = "Field",
         panels = {@AccordionPanel(title = "Accordion Widget Panel 1", disabled = true)})
     @PlaceOn("Basic2")
-    AccordionExample accordion;
+    AccordionFieldSet accordion;
 
-    static class AccordionExample {
+    static class AccordionFieldSet {
         @PlaceOn("Accordion Widget Panel 1")
         @DialogField
         @TextField
         String field6;
     }
-
 }

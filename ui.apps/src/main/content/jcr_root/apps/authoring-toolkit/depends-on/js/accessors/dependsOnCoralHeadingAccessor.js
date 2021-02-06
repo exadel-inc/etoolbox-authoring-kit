@@ -1,6 +1,5 @@
 /**
  * @author Liubou Masiuk
- * @version 2.2.3
  *
  * Coral 3 Heading accessor
  * */

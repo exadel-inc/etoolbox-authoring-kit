@@ -42,7 +42,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
@@ -65,14 +64,6 @@ import com.exadel.aem.toolkit.plugin.util.validation.Validation;
  * Utility methods to process, verify and store AEM TouchUI dialog-related data to XML markup
  */
 public class PluginXmlUtility implements XmlUtility {
-    public static final Map<String, String> XML_NAMESPACES = ImmutableMap.of(
-            "xmlns:jcr", "http://www.jcp.org/jcr/1.0",
-            "xmlns:nt", "http://www.jcp.org/jcr/nt/1.0",
-            "xmlns:sling", "http://sling.apache.org/jcr/sling/1.0",
-            "xmlns:cq", "http://www.day.com/jcr/cq/1.0",
-            "xmlns:granite", "http://www.adobe.com/jcr/granite/1.0"
-    );
-
     public static final String ATTRIBUTE_LIST_TEMPLATE = "[%s]";
     public static final String ATTRIBUTE_LIST_SPLIT_PATTERN = "\\s*,\\s*";
     public static final String ATTRIBUTE_LIST_SURROUND = "[]";
@@ -84,14 +75,45 @@ public class PluginXmlUtility implements XmlUtility {
     public static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
 
-    /* ----------------
-       Instance members
-       ---------------- */
+    /* ---------------------------------
+       Instance members and constructors
+       --------------------------------- */
 
     private Document document;
 
-    public void setDocument(Document document) {
+    /**
+     * Default constructor
+     * @param document {@code Document} instance ti be used as a node factory within this instance
+     */
+    PluginXmlUtility(Document document) {
         this.document = document;
+    }
+
+    /**
+     * Retrieves the current {@code Document}
+     * @return {@code Document} instance
+     */
+    public Document getDocument() {
+        return document;
+    }
+
+    /**
+     * Replaces and retrieves the current {@code Document}. If the document sotred has been populated with data
+     * it is discarded in foavor of another document itsnatce; otherwise returned as is
+     * @return {@code Document} instance
+     */
+    public Document resetDocument() {
+        if (getDocument().getDocumentElement() == null) {
+            return getDocument();
+        }
+        Document newDocument;
+        try {
+            newDocument = XmlFactory.newDocument();
+            this.document = newDocument;
+        } catch (ParserConfigurationException e) {
+            PluginRuntime.context().getExceptionHandler().handle(e);
+        }
+        return getDocument();
     }
 
     /* ----------------------------
@@ -104,7 +126,7 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public Element createNodeElement(String name, String nodeType, Map<String, String> properties, String resourceType) {
-        Element element = document.createElement(getValidName(name));
+        Element element = getDocument().createElement(getValidName(name));
         if (nodeType == null) {
             nodeType = DialogConstants.NT_UNSTRUCTURED;
         }
@@ -597,7 +619,7 @@ public class PluginXmlUtility implements XmlUtility {
         if (data == null || data.isEmpty()) {
             return;
         }
-        Target graniteDataNode = target.getOrCreate(DialogConstants.NN_DATA);
+        Target graniteDataNode = target.getOrCreateTarget(DialogConstants.NN_DATA);
         data.entrySet().stream()
                 .filter(entry -> StringUtils.isNotBlank(entry.getKey()))
                 .forEach(entry -> graniteDataNode.attribute(entry.getKey(), entry.getValue()));
@@ -635,7 +657,7 @@ public class PluginXmlUtility implements XmlUtility {
         }
         properties.put(DialogConstants.PN_PATH, path);
 
-        return target.getOrCreate(DialogConstants.NN_DATASOURCE)
+        return target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
                 .attributes(properties);
     }
@@ -651,42 +673,8 @@ public class PluginXmlUtility implements XmlUtility {
         if (StringUtils.isBlank(path)) {
             return null;
         }
-        return target.getOrCreate(DialogConstants.NN_DATASOURCE)
+        return target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_PATH, path)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
-    }
-
-    /**
-     * Exports provided {@link Target} object to an XML {@code Document}
-     * @param target {@code Target} instance, non-null reference expected
-     * @return {@code Document} object containing at least the root XML element
-     * @throws ParserConfigurationException if an XML document cannot be created due to e.g. security features not available
-     */
-    public static Document toDocument(Target target) throws ParserConfigurationException {
-        Document document = XmlDocumentFactory.newDocument();
-
-        Element root = toElement(target, document);
-        XML_NAMESPACES.forEach((key, value) -> {
-            if (StringUtils.isNoneBlank(key, value)) root.setAttribute(key, value);
-        });
-
-        document.appendChild(root);
-        return document;
-    }
-
-    /**
-     * Exports provided {@link Target} object to an XML {@code Element} based on given {@link Document}
-     * @param target {@code Target} instance, non-null reference expected
-     * @param context {@code Document} instance used to create new XML nodes
-     * @return {@code Element} object
-     */
-    public static Element toElement(Target target, Document context) {
-        String name = PluginNamingUtility.getValidName(target.getName());
-        Element element = context.createElement(name);
-        for (Map.Entry<String, String> entry : target.getAttributes().entrySet()) {
-            element.setAttribute(entry.getKey(), entry.getValue());
-        }
-        target.getChildren().forEach(child -> element.appendChild(toElement(child, context)));
-        return element;
     }
 }

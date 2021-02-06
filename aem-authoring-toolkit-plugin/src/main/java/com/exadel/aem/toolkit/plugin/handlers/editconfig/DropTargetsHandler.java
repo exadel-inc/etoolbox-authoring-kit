@@ -36,12 +36,12 @@ public class DropTargetsHandler implements BiConsumer<EditConfig, Target> {
         if(editConfig.dropTargets().length == 0){
             return;
         }
-        Target dropTargetsElement = target.getOrCreate(DialogConstants.NN_DROP_TARGETS);
+        Target dropTargetsElement = target.getOrCreateTarget(DialogConstants.NN_DROP_TARGETS);
         for (int i = 0; i < editConfig.dropTargets().length; i++) {
             DropTargetConfig dropTargetConfig = editConfig.dropTargets()[i];
-            dropTargetsElement.getOrCreate(dropTargetConfig.nodeName())
+            dropTargetsElement.getOrCreateTarget(dropTargetConfig.nodeName())
                     .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_DROP_TARGET_CONFIG)
-                    .mapProperties(dropTargetConfig)
+                    .attributes(dropTargetConfig)
                     .attribute(DialogConstants.PN_ACCEPT, Arrays.stream(dropTargetConfig.accept()).collect(Collectors.toList()).toString())
                     .attribute(DialogConstants.PN_GROUPS, Arrays.stream(dropTargetConfig.groups()).collect(Collectors.toList()).toString());
         }

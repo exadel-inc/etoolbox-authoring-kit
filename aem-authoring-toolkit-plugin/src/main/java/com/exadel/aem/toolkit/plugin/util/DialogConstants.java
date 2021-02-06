@@ -90,6 +90,7 @@ public class DialogConstants {
     public static final String NT_UNSTRUCTURED = "nt:unstructured";
     public static final String NT_WIDGET_COLLECTION = "cq:WidgetCollection";
 
+    public static final String PN_AAT_LIST_ITEM = "aatListItem";
     public static final String PN_ACCEPT = "accept";
     public static final String PN_ACTIONS = "actions";
     public static final String PN_ACTIVE = "active";
@@ -137,6 +138,7 @@ public class DialogConstants {
     public static final String PN_PRIMARY_TYPE = "jcr:primaryType";
     public static final String PN_PROPERTY_NAME = "propertyName";
     public static final String PN_PROTOCOLS = "protocols";
+    public static final String PN_RANKING = "ranking";
     public static final String PN_REF = "ref";
     public static final String PN_RENDER_HIDDEN = "renderHidden";
     public static final String PN_REQUIRED = "required";

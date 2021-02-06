@@ -43,7 +43,7 @@ class CqEditConfigWriter extends PackageEntryWriter {
      * @return {@link XmlScope} value
      */
     @Override
-    XmlScope getXmlScope() {
+    XmlScope getScope() {
         return XmlScope.CQ_EDIT_CONFIG;
     }
 
@@ -66,8 +66,7 @@ class CqEditConfigWriter extends PackageEntryWriter {
     @Override
     void populateTarget(Class<?> componentClass, Target root) {
         EditConfig editConfig = componentClass.getDeclaredAnnotation(EditConfig.class);
-        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
-            .scope(getXmlScope());
+        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
         EditConfigHandlingHelper.append(editConfig, root);
     }
 }

@@ -35,7 +35,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.target.TargetImpl;
+import com.exadel.aem.toolkit.plugin.target.Targets;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
@@ -45,10 +45,9 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     private static final String PREFIX_GRANITE = "granite:*";
     private static final String POSTFIX_NESTED = "_nested";
 
-
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
+     * @param source {@code Source} instance referring to the class member being processed
      * @param target XML targetFacade
      */
     @Override
@@ -72,7 +71,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
 
         // Facilitate the modified targetFacade to work as Multifield
         if (isComposite) {
-            target.get(DialogConstants.NN_FIELD).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
+            target.getOrCreateTarget(DialogConstants.NN_FIELD).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
             target.attribute(DialogConstants.PN_COMPOSITE, true);
         }
         target.getAttributes().remove(DialogConstants.PN_NAME);
@@ -91,8 +90,8 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * @return True or false
      */
     private boolean isFieldSet(Target target) {
-        return target.get(DialogConstants.NN_ITEMS) != null
-            && !target.get(DialogConstants.NN_ITEMS).getChildren().isEmpty();
+        return target.getTarget(DialogConstants.NN_ITEMS) != null
+            && !target.getTarget(DialogConstants.NN_ITEMS).getChildren().isEmpty();
     }
 
     /**
@@ -103,32 +102,31 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      */
     private boolean isMultifield(Target target) {
         return StringUtils.equals(target.getAttributes().get(DialogConstants.PN_SLING_RESOURCE_TYPE), ResourceTypes.MULTIFIELD)
-            && target.get(DialogConstants.NN_FIELD) != null
-            && !target.get(DialogConstants.NN_FIELD).getChildren().isEmpty();
+            && target.getTarget(DialogConstants.NN_FIELD) != null
+            && !target.getTarget(DialogConstants.NN_FIELD).getChildren().isEmpty();
     }
 
     /**
-     * Creates a {@code source} node encapsulating source element's properties to be used within a synthetic multifield
-     * @param source Previously rendered {@code Element} being converted to a synthetic multifield
-     * @param source Current {@code Field} instance
-     * @return {@code Element} representing the {@code source} node
+     * Transforms the provided {@code Target} by internally moving child entities and attributes so that a nested
+     * field structure created
+     * @param source {@code Source} instance referring to the class member being processed
+     * @param target Previously created {@code Target} being converted to a synthetic multifield
      */
     private void wrapSingularField(Source source, Target target) {
-        Target fieldSubresource = target.create(DialogConstants.NN_FIELD);
+        Target fieldSubresource = target.createTarget(DialogConstants.NN_FIELD);
         // Move content to the new wrapper
         transferProperties(target, fieldSubresource, getTransferPolicies(source));
     }
 
     /**
-     * Creates a {@code Target} instance containing a set of nodes that will be subsequently used within a synthetic
-     * multifield
-     * @param target Previously created {@code Target} that is now being converted to a synthetic multifield
-     * @return {@code Target} representing the {@code SourceFacade} node
+     * Transforms the provided {@code Target} by internally moving child entities and attributes so that a nested
+     * FieldSet structure created
+     * @param target Previously created {@code Target} being converted to a synthetic multifield
      */
     private void wrapFieldSet(Target target) {
-        Target fieldSubresource = target.create(DialogConstants.NN_FIELD);
+        Target fieldSubresource = target.createTarget(DialogConstants.NN_FIELD);
         // Get the existing "items" node and remove leading "./"-s from "name" attributes of particular items
-        Target itemsSubresource = target.get(DialogConstants.NN_ITEMS);
+        Target itemsSubresource = target.getTarget(DialogConstants.NN_ITEMS);
         itemsSubresource.getChildren().forEach(child -> {
             String modifiedName = StringUtils.removeStart(
                 child.getAttributes().get(DialogConstants.PN_NAME),
@@ -147,15 +145,14 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
 
     /**
      * Creates a {@code source} node wrapping an existing {@code multifield} that will be used within a synthetic multifield
-     * @param source Previously rendered {@code Element} being converted to a synthetic multifield
-     * @param source Current {@code SourceFacade} instance
-     * @return {@code Element} representing the {@code source} node
+     * @param source {@code Source} instance referring to the class member being processed
+     * @param target Previously created {@code Target} being converted to a synthetic multifield
      */
     private void wrapNestedMultifield(Source source, Target target) {
         // Wee will create new "field" subresource but we need it "detached" not to mingle with existing "field" subresource
-        Target fieldSubresource = new TargetImpl(DialogConstants.NN_FIELD, target);
-        Target itemsSubresource = fieldSubresource.create(DialogConstants.NN_ITEMS);
-        Target nestedMultifield = itemsSubresource.create(source.getName() + POSTFIX_NESTED);
+        Target fieldSubresource = Targets.newInstance(DialogConstants.NN_FIELD, target);
+        Target itemsSubresource = fieldSubresource.createTarget(DialogConstants.NN_ITEMS);
+        Target nestedMultifield = itemsSubresource.createTarget(source.getName() + POSTFIX_NESTED);
 
         // Move existing multifield attributes to the nested multifield
         Map<String, PropertyTransferPolicy> standardPolicies = getTransferPolicies(source);
@@ -168,7 +165,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
 
         // Set the "name" attribute of the "source" node of the current multifield
         // At the same time, alter the "name" attribute of the nested multifield to not get mixed with the name of the current one
-        Target nestedMultifieldFieldSubresource = nestedMultifield.get(DialogConstants.NN_FIELD);
+        Target nestedMultifieldFieldSubresource = nestedMultifield.getTarget(DialogConstants.NN_FIELD);
         String nestedMultifieldFieldName = StringUtils.defaultString(nestedMultifieldFieldSubresource.getAttributes().get(DialogConstants.PN_NAME));
 
         fieldSubresource.attribute(DialogConstants.PN_NAME, nestedMultifieldFieldName);
@@ -179,8 +176,9 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     /**
      * Generates set of node transfer policies to properly distribute XML element requisites between the wrapper level
      * and the nested element level while converting a singular element to a multifield
-     * @param source Current {@code SourceFacade} instance
-     * @return {@code Map<String, XmlTransferPolicy>} instance
+     * @param source {@code Source} instance referring to the class member being processed
+     * @return Map containing attribute/child names, either plain or wildcarded, and the action appropriate, whether
+     * to copy element, move, or leave intact. Wildcard symbol ({@code *}) is to specify common policy for multiple elements
      */
     private static Map<String, PropertyTransferPolicy> getTransferPolicies(Source source) {
         Map<String, PropertyTransferPolicy> transferPolicies = new LinkedHashMap<>();
@@ -220,8 +218,8 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * @param from Element to serve as the source of migration
      * @param to Element to serve as the target of migration
      * @param policies Map containing attribute names (must start with {@code @}), child node names (must start with
-     *                 {@code ./}) and the action appropriate to each of them, whether to copy element, move, or leave
-     *                 intact. Wildcard symbol ({@code *}) is supported to specify common policy for multiple elements
+     *                 {@code ./}) and the action appropriate, whether to copy element, move, or leave intact. Wildcard
+     *                 symbol ({@code *}) is to specify common policy for multiple elements
      */
     private static void transferProperties(Target from, Target to, Map<String, PropertyTransferPolicy> policies) {
         // Process attributes
@@ -259,9 +257,12 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * Called to pick up an appropriate {@link PropertyTransferPolicy}
      * from the set of provided policies
      * @param policies {@code Map<String, XmlTransferPolicy>} describing available policies
-     * @return The selected policy, or a default policy if no appropriate option found
+     * @param propertyToken String representing the name of the current attribute or child node
+     * @return The selected policy, or the default policy if no appropriate option found
      */
-    private static PropertyTransferPolicy getPolicyForProperty(Map<String, PropertyTransferPolicy> policies, String propertyToken) {
+    private static PropertyTransferPolicy getPolicyForProperty(
+        Map<String, PropertyTransferPolicy> policies,
+        String propertyToken) {
         return policies.entrySet().stream()
             .filter(entry -> entry.getKey().endsWith(DialogConstants.WILDCARD)
                 ? propertyToken.startsWith(StringUtils.stripEnd(entry.getKey(), DialogConstants.WILDCARD))

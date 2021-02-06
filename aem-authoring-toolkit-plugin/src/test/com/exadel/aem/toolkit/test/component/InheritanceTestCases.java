@@ -14,47 +14,167 @@
 
 package com.exadel.aem.toolkit.test.component;
 
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
+import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Replace;
+import com.exadel.aem.toolkit.api.markers._Super;
 import com.exadel.aem.toolkit.plugin.util.TestConstants;
 
 @SuppressWarnings("unused")
 public class InheritanceTestCases {
 
     private static class Grandparent {
-        @DialogField(description = "Grandparent.text1")
+        @DialogField(
+            label = "Grandparent",
+            ranking = 2
+        )
         @TextField
-        private String text1;
+        private String text;
 
-        @DialogField(ranking = 1, description = "Grandparent.text2")
+        @DialogField(
+            label = "Grandparent",
+            ranking = 1
+        )
         @TextField
+        @Replace(
+            // "Downward" replacement (technically possible but discouraged because breaks dependency inversion)
+            @ClassMember(source = Child.class, name = "text2")
+        )
         private String text2;
+
+        @DialogField(
+            label = "Grandparent",
+            ranking = 5
+        )
+        @TextField
+        private String text3; // Will not be rendered, because explicitly ignored in the child class
     }
 
     private static class Parent extends Grandparent {
-
-        @DialogField(description = "Parent.text1")
+        @DialogField(
+            label = "Parent",
+            required = true,
+            ranking = 1
+        )
         @TextField
-        private String text1; // will not cause an exception because of not being a rendering target
+        @Replace(
+            @ClassMember(source = Grandparent.class, name = "text")
+        )
+        private String text;
 
-        @DialogField(description = "Parent.text2")
+        @DialogField(
+            label = "Parent",
+            required = true
+        )
         @TextField
-        private String text2; // will not cause an exception because of not being a rendering target
+        @Replace(
+            // Will override Grandparent#text2 and should have been overridden by Child#text2 but will remain in place
+            // because the latter is in its own turn replaced by the Grandparent#text2, and when it comes to rendering
+            // this field, there's no Child#text2 anymore
+            @ClassMember(source = _Super.class)
+        )
+        private String text2;
+
+        @DialogField(label = "Parent")
+        @TextField
+        private String text3; // Will not be rendered, because explicitly ignored in the child class
+
+        @DialogField(
+            label = "Parent",
+            ranking = 4
+        )
+        @TextField
+        @Replace(
+            // Will not replace anything, because is considered "pointing" at itself
+            // Will be placed above #text2 because having some ranking but originating from a superclass
+            @ClassMember(name = "text4")
+        )
+        private String text4;
     }
 
-    @Dialog(
-            name = TestConstants.DEFAULT_COMPONENT_NAME,
-            title = TestConstants.DEFAULT_COMPONENT_TITLE
+    @Component(
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
+        resourceSuperType = TestConstants.DEFAULT_COMPONENT_SUPERTYPE,
+        title = TestConstants.DEFAULT_COMPONENT_TITLE
     )
+    @Dialog(
+        title = TestConstants.DEFAULT_COMPONENT_TITLE,
+        layout = DialogLayout.FIXED_COLUMNS
+    )
+    @Ignore(
+        members = {
+            @ClassMember(source = _Super.class, name = "text3"),
+            @ClassMember(source = Grandparent.class, name = "text3")
+    })
     public static class Child extends Parent {
-        @DialogField(description = "Child.text1")
-        @TextField
-        private String text1; // will not cause an exception because placed underneath the field from superclass by ranking
+        @DialogField(name = "./fieldset")
+        @FieldSet(title = "Fieldset")
+        private FieldsetChild fieldsetChild;
 
-        @DialogField(description = "Child.text2")
+        @DialogField(
+            label = "Child",
+            ranking = 4,
+            required = true
+        )
         @TextField
-        private String text2; // *will* cause an exception because placed above the field from grandparent class by ranking
+        // Replaced by Grandparent#text2
+        private String text2;
+
+    }
+
+    private static class FieldsetGrandparent {
+        @DialogField(
+            label = "Fieldset grandparent",
+            ranking = 1
+        )
+        @TextField
+        private String fieldsetText;
+
+        @DialogField(
+            label = "Fieldset grandparent"
+        )
+        @TextField
+        private String fieldsetText3;
+    }
+
+    private static class FieldsetParent extends FieldsetGrandparent {
+        @DialogField(
+            label = "Fieldset parent",
+            ranking = 3 // will not be effective because overridden by FieldsetChil#fiseldsetText3
+        )
+        @TextField
+        // Will override the same-named parent "as is"
+        private String fieldsetText3;
+
+        @DialogField(
+            label = "Fieldset parent",
+            ranking = 2
+        )
+        @TextField
+        private String fieldsetText2;
+    }
+
+    private static class FieldsetChild extends FieldsetParent {
+        @DialogField(
+            label = "Fieldset child"
+        )
+        @TextField
+        @Replace(
+            @ClassMember(source = FieldsetGrandparent.class)
+        )
+        private String fieldsetText;
+
+        @DialogField(
+            label = "Fieldset child",
+            ranking = 3
+        )
+        @TextField
+        private String fieldsetText3;
     }
 }
-

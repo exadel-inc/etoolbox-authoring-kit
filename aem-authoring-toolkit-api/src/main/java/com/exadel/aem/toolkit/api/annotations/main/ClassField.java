@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
- * Used to refer a particular field of a class defined by the class reference and the name
+ * Used to refer to a particular field of a class defined by the class reference and the name
  * @deprecated Use {@link ClassMember} instead
  */
 @Target(ElementType.TYPE)

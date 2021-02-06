@@ -108,7 +108,7 @@ public class DesignDialogView implements Addition, Addition2 {
     }
 
     @Override
-    public String dropdown3() {
+    public String getDropdown3() {
         return null;
     }
 
@@ -135,5 +135,5 @@ interface Addition2 {
     @DialogField(ranking = 300)
     @TextField(value = "text")
     @PlaceOn(LABEL_TAB_3)
-    String dropdown3();
+    String getDropdown3();
 }
