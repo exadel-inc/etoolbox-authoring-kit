@@ -34,12 +34,13 @@ public class CustomWidgetHandler implements DialogWidgetHandler {
     }
 
     @Injected
-    @SuppressWarnings("UnusedDeclaration")
     private RuntimeContext runtimeContext;
 
     @Override
     public void accept(Element element, Field field) {
         CustomWidgetAnnotation testCustomAnnotation = field.getDeclaredAnnotation(CustomWidgetAnnotation.class);
-        element.setAttribute("customField", testCustomAnnotation.customField());
+        Element customElement = runtimeContext.getXmlUtility().createNodeElement("customElement");
+        element.appendChild(customElement);
+        customElement.setAttribute("customField", testCustomAnnotation.customField());
     }
 }

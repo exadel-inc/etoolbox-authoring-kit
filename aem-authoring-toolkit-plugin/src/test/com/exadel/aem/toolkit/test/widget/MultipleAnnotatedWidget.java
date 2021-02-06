@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
@@ -89,7 +89,7 @@ public class MultipleAnnotatedWidget {
     }
 
     @DialogField
-    @CustomWidgetAnnotation(customField = "Custom!")
+    @CustomWidgetAnnotationAuto(customField = "Custom!")
     @Multiple
     String customAnnotation;
 

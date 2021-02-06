@@ -44,14 +44,14 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
         Checkbox checkbox = source.adaptTo(Checkbox.class);
 
         if (ArrayUtils.isEmpty(checkbox.sublist())) {
-            target.mapProperties(checkbox);
+            target.attributes(checkbox);
             setTextAttribute(source, target);
         } else {
             Target checkboxElement = target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST)
-                    .getOrCreate(DialogConstants.NN_ITEMS)
-                    .getOrCreate(source.getName() + POSTFIX_FOR_ROOT_CHECKBOX)
+                    .getOrCreateTarget(DialogConstants.NN_ITEMS)
+                    .getOrCreateTarget(source.getName() + POSTFIX_FOR_ROOT_CHECKBOX)
                     .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX)
-                    .mapProperties(checkbox);
+                    .attributes(checkbox);
 
             appendNestedCheckBoxList(source, checkboxElement);
         }
@@ -63,10 +63,10 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
      * @param target {@link Target} instance representing current node
      */
     private void appendNestedCheckBoxList(Source source, Target target) {
-        Target itemsElement = target.getOrCreate(DialogConstants.NN_SUBLIST)
+        Target itemsElement = target.getOrCreateTarget(DialogConstants.NN_SUBLIST)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST)
                 .attribute(DialogConstants.PN_DISCONNECTED, source.adaptTo(Checkbox.class).disconnectedSublist())
-                .getOrCreate(DialogConstants.NN_ITEMS);
+                .getOrCreateTarget(DialogConstants.NN_ITEMS);
 
         appendCheckbox(source, itemsElement);
     }
@@ -85,9 +85,9 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
                     .collect(Collectors.toList());
 
             for (Source innerSource : sources) {
-                Target checkboxElement = target.getOrCreate(innerSource.getName())
+                Target checkboxElement = target.getOrCreateTarget(innerSource.getName())
                         .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX)
-                        .mapProperties(innerSource.adaptTo(Checkbox.class));
+                        .attributes(innerSource.adaptTo(Checkbox.class));
                 setTextAttribute(innerSource, checkboxElement);
 
                 if (ArrayUtils.isNotEmpty(innerSource.adaptTo(Checkbox.class).sublist())) {

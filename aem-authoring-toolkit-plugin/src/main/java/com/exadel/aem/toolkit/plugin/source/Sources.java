@@ -34,6 +34,15 @@ public class Sources {
     /**
      * Creates a {@link Source} facade for a Java class member
      * @param member A {@code Method} or a {@code Field} for which a source facade is cledayed
+     * @return {@code Source instance}
+     */
+    public static Source fromMember(Member member) {
+        return fromMember(member, null);
+    }
+
+    /**
+     * Creates a {@link Source} facade for a Java class member
+     * @param member A {@code Method} or a {@code Field} for which a source facade is cledayed
      * @param reportingClass {@code Class<?>} pointer determing the class that "reports" the AEM Authpring Toolkit's plugin
      *                       of current member (can be a class where this member was declared or a descendant of
      *                       some superclass that uses the memeber for UI rendering)

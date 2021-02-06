@@ -40,7 +40,7 @@ class CqHtmlTagWriter extends PackageEntryWriter {
      * @return {@link XmlScope} value
      */
     @Override
-    XmlScope getXmlScope() {
+    XmlScope getScope() {
         return XmlScope.CQ_HTML_TAG;
     }
 
@@ -63,8 +63,8 @@ class CqHtmlTagWriter extends PackageEntryWriter {
     @Override
     void populateTarget(Class<?> componentClass, Target root) {
         HtmlTag htmlTag = componentClass.getDeclaredAnnotation(HtmlTag.class);
-        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
-            .mapProperties(htmlTag)
-            .scope(getXmlScope());
+        root
+            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
+            .attributes(htmlTag);
     }
 }

@@ -14,6 +14,8 @@
 
 package com.exadel.aem.toolkit.api.handlers;
 
+import java.util.Optional;
+
 public interface Source {
 
     String getName();
@@ -27,4 +29,8 @@ public interface Source {
     boolean isValid();
 
     <T> T adaptTo(Class<T> adaptation);
+
+    default <T> Optional<T> tryAdaptTo(Class<T> adaptation) {
+        return Optional.ofNullable(adaptTo(adaptation));
+    }
 }

@@ -43,7 +43,7 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
      * @return {@link XmlScope} value
      */
     @Override
-    XmlScope getXmlScope() {
+    XmlScope getScope() {
         return XmlScope.CQ_CHILD_EDIT_CONFIG;
     }
 
@@ -66,9 +66,9 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
     @Override
     void populateTarget(Class<?> componentClass, Target root) {
         ChildEditConfig childEditConfig = componentClass.getDeclaredAnnotation(ChildEditConfig.class);
-        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
-            .mapProperties(childEditConfig)
-            .scope(getXmlScope());
+        root
+            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
+            .attributes(childEditConfig);
         EditConfigHandlingHelper.append(childEditConfig, root);
     }
 }
