@@ -44,7 +44,7 @@ import com.exadel.aem.toolkit.plugin.util.validation.Validation;
  * @see com.exadel.aem.toolkit.api.runtime.XmlUtility#setAttribute(Element, String, Annotation, BinaryOperator)
  * @param <T> Type of value to be rendered as XML attribute
  */
-public class XmlAttributeSettingHelper<T> {
+public class AttributeSettingHelper<T> {
     private static final String TYPE_TOKEN_TEMPLATE = "{%s}%s";
     private static final String TYPE_TOKEN_ARRAY_TEMPLATE = "{%s}[%s]";
     private static final String STRING_ESCAPE = "\\";
@@ -69,7 +69,7 @@ public class XmlAttributeSettingHelper<T> {
      * Creates XmlAttributeSettingHelper instance parametrized with value type
      * @param valueType Type of value to be rendered as XML attribute
      */
-    private XmlAttributeSettingHelper(Class<T> valueType) {
+    private AttributeSettingHelper(Class<T> valueType) {
         this.valueType = valueType;
     }
 
@@ -80,8 +80,8 @@ public class XmlAttributeSettingHelper<T> {
      * @return New {@code XmlAttributeSettingHelper} instance
      */
     @SuppressWarnings({"deprecation", "squid:S1874"}) // IgnoreValue processing remains for compatibility reasons until v.2.0.0
-    public static XmlAttributeSettingHelper forMethod(Annotation annotation, Method method) {
-        XmlAttributeSettingHelper attributeSetter = new XmlAttributeSettingHelper<>(getMethodWrappedType(method));
+    public static AttributeSettingHelper<?> forMethod(Annotation annotation, Method method) {
+        AttributeSettingHelper<?> attributeSetter = new AttributeSettingHelper<>(getMethodWrappedType(method));
         if (!fits(method)) {
             return attributeSetter;
         }
@@ -115,8 +115,8 @@ public class XmlAttributeSettingHelper<T> {
      * @param valueType Target value type
      * @return New typed {@code XmlAttributeSettingHelper} instance
      */
-    static <T> XmlAttributeSettingHelper<T> forNamedValue(String name, Class<T> valueType) {
-        XmlAttributeSettingHelper<T> attributeSetter = new XmlAttributeSettingHelper<>(valueType);
+    static <T> AttributeSettingHelper<T> forNamedValue(String name, Class<T> valueType) {
+        AttributeSettingHelper<T> attributeSetter = new AttributeSettingHelper<>(valueType);
         if (!fits(valueType)) {
             return attributeSetter;
         }
@@ -130,17 +130,18 @@ public class XmlAttributeSettingHelper<T> {
      * @param name Provisional name
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    public XmlAttributeSettingHelper<T> withName(String name) {
+    public AttributeSettingHelper<T> withName(String name) {
         this.name = name;
         return this;
     }
 
     /**
      * Sets {@param merger} of current instance. Suitable for chained initialization of XmlAttributeSettingHelper
-     * @param merger Function that manages an existing attribute value and a new one (whether to keep only one of them or combine/merge)
+     * @param merger Function that manages an existing attribute value, and a new one (whether to keep only one of them
+     *               or combine/merge)
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    public XmlAttributeSettingHelper<T> withMerger(BinaryOperator<String> merger) {
+    public AttributeSettingHelper<T> withMerger(BinaryOperator<String> merger) {
         this.valueMerger = merger;
         return this;
     }

@@ -45,9 +45,9 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
+import com.exadel.aem.toolkit.plugin.util.AttributeSettingHelper;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
-import com.exadel.aem.toolkit.plugin.util.XmlAttributeSettingHelper;
 
 public class TargetImpl extends AdaptationBase<Target> implements Target {
 
@@ -372,7 +372,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
             methodName = namePrefix + methodName;
         }
         BinaryOperator<String> merger = TargetImpl::mergeStringAttributes;
-        XmlAttributeSettingHelper.forMethod(context, method)
+        AttributeSettingHelper.forMethod(context, method)
             .withName(methodName)
             .withMerger(merger)
             .setAttribute(target);
