@@ -56,8 +56,8 @@ public @interface RadioGroup {
     DataSource datasource() default @DataSource;
     /**
      * @deprecated Use {@code datasource:resourceType} instead
-     * When set to a non-blank string, allows to override {@code sling:resourceType} attribute of a {@code datasource node}
-     * pointing to a ACS Commons list
+     * When set to a non-blank string, allows overriding {@code sling:resourceType} attribute of a {@code datasource node}
+     * which points to an ACS Commons list
      * @return String value
      */
     @Deprecated
@@ -65,8 +65,8 @@ public @interface RadioGroup {
     String acsListResourceType() default "";
     /**
      * @deprecated Use {@code datasource:path} instead
-     * When set to a non-blank string, a {@code datasource} node is appended to the JCR buildup of this component
-     * pointing to a ACS Commons list
+     * When set to a non-blank string, a {@code datasource} node which points to an ACS Commons list is appended
+     * to the JCR buildup of this component
      * @return Valid JCR path, or an empty string
      */
     @Deprecated

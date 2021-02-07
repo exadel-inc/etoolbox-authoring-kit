@@ -90,7 +90,7 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
     }
 
     /**
-     * Generates node containing one or more {@code cq:InplaceEditingConfig} subnodes
+     * Generates a node containing one or more {@code cq:InplaceEditingConfig} sub-nodes
      * for use with {@code cq:inplaceEditing} markup
      * @param config {@link EditConfig} annotation instance
      * @param target Current {@link Target} instance
@@ -134,7 +134,8 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
     }
 
     /**
-     * Plants necessary attributes and subnodes related to in-place rich text editor to {@code cq:InplaceEditingConfig} XML node
+     * Plants necessary attributes and sub-nodes related to in-place rich text editor to {@code cq:InplaceEditingConfig}
+     * XML node
      * @param config {@link InplaceEditingConfig} annotation instance
      * @param target {@link Target} representing config node
      */

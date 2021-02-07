@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 public @interface DependsOnTab {
     /**
      * Defines the 'dependsOn' attribute
-     * @return String representing value the current tab is depending on, non-null
+     * @return String representing value the current tab depends on, non-null
      */
     String query();
 

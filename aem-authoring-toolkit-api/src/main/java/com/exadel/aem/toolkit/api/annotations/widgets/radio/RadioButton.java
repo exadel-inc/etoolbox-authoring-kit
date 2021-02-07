@@ -37,14 +37,14 @@ public @interface RadioButton {
     String value();
     /**
      * When set to true, maps to the 'checked' attribute of this TouchUI dialog component's node.
-     * Defines the the current option is selected by default
+     * Defines the current option is selected by default
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")
     boolean checked() default false;
     /**
      * When set to true, maps to the 'disabled' attribute of this TouchUI dialog component's node.
-     * Defines the the current option is shown in disabled state
+     * Defines the current option is shown in disabled state
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

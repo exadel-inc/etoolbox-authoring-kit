@@ -130,7 +130,7 @@ public class PluginObjectUtility {
      * @param name   String representing the method to check for default value, non-blank
      * @param value  The value to use in case the method above returns its default
      * @param <T>    Type of the annotation facade
-     * @param <R>    Return type of a fallback method / methods
+     * @param <R>    Return type of fallback method / methods
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
     public static <T extends Annotation, R> T modifyIfDefault(Annotation source, Class<T> type, String name, R value) {
@@ -140,14 +140,14 @@ public class PluginObjectUtility {
 
     /**
      * Creates in runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with new values
-     * for the given properties (specified in {@code method name -> value} map that will be used in case these methods
+     * for the given properties (defined in {@code method name -> value} map) that will be used in case these methods
      * return default values
      * @param source         {@code Annotation} instance to produce a facade for
      * @param type           Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
      * @param fallbackValues {@code Map<String, Object>} representing values to be returned by the annotation methods
      *                       whether they have now their default values
      * @param <T>            Particular type of the annotation facade
-     * @param <R>            Return type of a fallback method / methods
+     * @param <R>            Return type of fallback method / methods
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
     private static <T extends Annotation, R> T modifyIfDefault(Annotation source, Class<T> type, Map<String, R> fallbackValues) {
@@ -201,7 +201,7 @@ public class PluginObjectUtility {
      * @param <T>          The {@code Class} of the source object
      * @param <U>          The interface exposing modified methods that the {@code value} implements, or an interface bearing
      *                     newly added methods that extends one of the interfaces implemented by {@code value}
-     * @param <R>          The return type of extension methods. Must be fallen back to {@code Object} type of a narrower generic
+     * @param <R>          The return type of extension methods. Must be fallen back to {@code Object} type of narrower generic
      *                     type in case returns are to be differently typed
      * @return The {@code <U>}-typed extension object, or else null if {@code modification} is null, or else
      * the {@code methods} map is empty
@@ -247,7 +247,7 @@ public class PluginObjectUtility {
     private static class ExtensionInvocationHandler<T, U, R> implements InvocationHandler {
         private static final String METHOD_TO_STRING = "toString";
         private static final String METHOD_ANNOTATION_TYPE = "annotationType";
-        private static final String INVOCATION_EXCEPTION_MESSAGE_TEMPLATE = "Could not invoke method '%s' on object %s";
+        private static final String INVOCATION_EXCEPTION_MESSAGE_TEMPLATE = "Could not invoke method '%s' on %s";
 
         private final T source;
         private final Class<U> targetType;

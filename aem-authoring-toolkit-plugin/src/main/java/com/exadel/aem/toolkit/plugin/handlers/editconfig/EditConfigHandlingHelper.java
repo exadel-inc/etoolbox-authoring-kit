@@ -48,7 +48,7 @@ public class EditConfigHandlingHelper {
      * @param target {@link Target} representing {@code cq:editConfig} node
      */
     public static void append(ChildEditConfig childEditConfig, Target target) {
-        // herewith create a "proxied" @EditConfig object out of the provided @ChildEditConfig
+        // Herewith we create a "proxied" @EditConfig object out of the provided @ChildEditConfig
         // with "dropTargets" and "listeners" methods of @EditConfig populated with  @ChildEditConfig values
         EditConfig derivedEditConfig = PluginObjectUtility.create(EditConfig.class, ImmutableMap.of(
                 METHOD_DROP_TARGETS, childEditConfig.dropTargets(),

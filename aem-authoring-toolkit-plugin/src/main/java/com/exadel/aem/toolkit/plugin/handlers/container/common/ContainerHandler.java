@@ -115,7 +115,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         // Compose the "overall" registry of tabs or accordions.
         Map<String, ContainerSection> allContainerSections = mergeSectionsFromCurrentClassAndSuperclasses(containerSectionsFromCurrentClass, containerSectionsFromSuperClasses);
 
-        // Get all *non-nested* fields from superclasses and the current class
+        // Get all *non-nested* fields from the superclasses, and from the current class
         List<Source> allSources = PluginReflectionUtility.getAllSources(componentClass);
 
         // If tabs or accordions collection is empty and yet there are fields to be placed, fire an exception and create a default tab
@@ -170,7 +170,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     }
 
     /**
-     * Put all tabs or accordion panels from current Dialog to result Map
+     * Put all tabs or accordion panels from the current Dialog to the resulting map
      * @param result {@code Map<String,ContainerInfo>} map containing all container items
      * @param cls {@code Class<?>} current class that contains container elements
      */
@@ -256,7 +256,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         String[] ignoredContainerItems,
         String containerItemName) {
 
-        // Iterate container item registry, from the first ever defined container item to the last
+        // Iterate the container item registry, from the first ever defined container item to the last
         // Within the iteration loop, we
         // 1) add fields from the "all fields" collection that are applicable to the current container item, to the container item's field collection
         // 2) re-sort the current container item's fields collection with the field ranking comparator
@@ -292,7 +292,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     /**
      * Appends containerItem attributes to a pre-built containerItem-defining XML element
      * @param container {@link Element} instance representing a TouchUI dialog containerItem
-     * @param containerItem {@link ContainerSection} stores information about current container item
+     * @param containerItem {@link ContainerSection} stores information about the current container item
      * @param containerItemName {@link String} name of current container containerItem
      */
     private static void addToContainerSection(

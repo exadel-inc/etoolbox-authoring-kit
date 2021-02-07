@@ -68,7 +68,7 @@ public @interface RichTextEditor {
      */
     ParagraphFormat[] formats() default {};
     /**
-     * Represents collection of {@link Characters} to to populate "Insert symbol" popup window
+     * Represents collection of {@link Characters} to populate "Insert symbol" popup window
      * @return Single {@code @Characters} value, or an array of such
      */
     Characters[] specialCharacters() default {};
@@ -102,7 +102,7 @@ public @interface RichTextEditor {
      */
     Style[] styles() default {};
     /**
-     * Defines maximal amount of operations managed by "undo" plugin (max clicks of "undo" button) in this RichTextEditor
+     * Defines a maximal amount of operations managed by "undo" plugin (max clicks of "undo" button) in this RichTextEditor
      * @return Long value, non-negative
      */
     @PropertyRendering

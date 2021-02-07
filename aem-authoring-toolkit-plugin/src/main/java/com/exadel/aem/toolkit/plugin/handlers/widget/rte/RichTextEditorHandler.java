@@ -110,7 +110,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
                 Arrays.stream(rteAnnotation.fullscreenFeatures()).map(feature -> new ImmutablePair<>(fullScreenBuilder, feature))
         ).forEach(featureItem -> processFeatureItem(featureItem, tableEditBuilder, pluginsBuilder));
 
-        // build uiSettings node with subnodes, append conditionally if not empty
+        // build uiSettings node with sub-nodes, append conditionally if not empty
         Target uiSettings = target.getOrCreateTarget(DialogConstants.NN_UI_SETTINGS);
         Target cui = uiSettings.getOrCreateTarget(DialogConstants.NN_CUI);
         inlineBuilder.build(cui);

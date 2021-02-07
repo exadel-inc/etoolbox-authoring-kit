@@ -38,7 +38,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 @SuppressWarnings("unused")
 public @interface Dialog {
     /**
-     * Maps to the 'jcr:title' attributes of both the component root node node and its {@code cq:dialog} node
+     * Maps to the 'jcr:title' attributes of both the component root node and its {@code cq:dialog} node
      * @return String value, non-blank
      */
     @PropertyRendering(name = JcrConstants.PN_TITLE)
@@ -168,7 +168,7 @@ public @interface Dialog {
     DialogLayout layout() default DialogLayout.FIXED_COLUMNS;
 
     /**
-     * When set to a non-blank String or an array of strings, renders as the `extraClientlibs` attribute
+     * When set to a non-blank String, or an array of strings, renders as the `extraClientlibs` attribute
      * of component's {@code cq:dialog} node
      * @return String value, or an array of strings
      */

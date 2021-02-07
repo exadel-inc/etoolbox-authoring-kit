@@ -80,8 +80,8 @@ public class AttributeSettingHelper<T> {
      * @return New {@code XmlAttributeSettingHelper} instance
      */
     @SuppressWarnings({"deprecation", "squid:S1874"}) // IgnoreValue processing remains for compatibility reasons until v.2.0.0
-    public static AttributeSettingHelper<?> forMethod(Annotation annotation, Method method) {
-        AttributeSettingHelper<?> attributeSetter = new AttributeSettingHelper<>(getMethodWrappedType(method));
+    public static AttributeSettingHelper forMethod(Annotation annotation, Method method) {
+        AttributeSettingHelper attributeSetter = new AttributeSettingHelper<>(getMethodWrappedType(method));
         if (!fits(method)) {
             return attributeSetter;
         }

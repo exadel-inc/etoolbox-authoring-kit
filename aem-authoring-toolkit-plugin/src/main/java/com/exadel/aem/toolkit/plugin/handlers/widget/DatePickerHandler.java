@@ -64,7 +64,7 @@ class DatePickerHandler implements BiConsumer<Source, Target> {
         if (datePickerAttribute.typeHint() == TypeHint.STRING
             && !StringUtils.isEmpty(datePickerAttribute.valueFormat())) {
             try {
-                // Java DateTimeFormatter interprets D as 'day of year', unlike Coral engine
+                // Java DateTimeFormatter interprets D as 'day of year', unlike Coral engine,
                 // so a replacement made here to make sure 'DD' as in 'YYYY-MM-DD' is not passed to formatter.
                 // Another replacement is for treating timezone literals that can be surrounded by arbitrary symbols
                 // but need to be surrounded with apostrophes in Java 1.8+
