@@ -153,7 +153,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
                 Collections.reverse(containerSectionClasses);
                 for (Class<?> containerSectionClass : containerSectionClasses) {
                     Annotation currentAnnotation = containerSectionClass.getDeclaredAnnotation(annotationClass);
-                    annotationMap = PluginObjectUtility.getAnnotationFields(currentAnnotation);
+                    annotationMap = PluginObjectUtility.getProperties(currentAnnotation);
                     ContainerSection containerInfo = new ContainerSection(annotationMap.get(DialogConstants.PN_TITLE).toString());
                     containerInfo.setAttributes(annotationMap);
                     Arrays.stream(containerSectionClass.getDeclaredFields()).forEach(field -> containerInfo.setField(field.getName(), field));
@@ -178,9 +178,9 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         try {
             Map<String, Object> map;
             if (XmlScope.CQ_DIALOG.equals(scope)) {
-                map = PluginObjectUtility.getAnnotationFields(cls.getDeclaredAnnotation(Dialog.class));
+                map = PluginObjectUtility.getProperties(cls.getDeclaredAnnotation(Dialog.class));
             } else {
-                map = PluginObjectUtility.getAnnotationFields(cls.getDeclaredAnnotation(DesignDialog.class));
+                map = PluginObjectUtility.getProperties(cls.getDeclaredAnnotation(DesignDialog.class));
             }
             List<Object> list = new ArrayList<>();
             List<Object> panelsAndTabs = Stream.concat(Stream.of(map.get(DialogConstants.NN_PANELS)), Stream.of(map.get(DialogConstants.NN_TABS))).collect(Collectors.toList());
@@ -190,7 +190,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
             }
             list.forEach(item -> {
                 try {
-                    Map<String, Object> fields = PluginObjectUtility.getAnnotationFields((Annotation) item);
+                    Map<String, Object> fields = PluginObjectUtility.getProperties((Annotation) item);
                     String title = (String) fields.get(DialogConstants.PN_TITLE);
                     ContainerSection containerInfo = new ContainerSection(title);
                     containerInfo.setAttributes(fields);
@@ -306,11 +306,11 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
             .attribute(JcrConstants.PN_TITLE, containerItem.getTitle())
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
         if (containerItemName.equals(DialogConstants.NN_TAB)) {
-            Tab newTab = PluginObjectUtility.create(Tab.class,
+            Tab newTab = PluginObjectUtility.createInstance(Tab.class,
                 containerItem.getAttributes());
             appendTabAttributes(containerItemsNode, newTab);
         } else if (containerItemName.equals(DialogConstants.NN_ACCORDION)) {
-            AccordionPanel accordionPanel = PluginObjectUtility.create(AccordionPanel.class,
+            AccordionPanel accordionPanel = PluginObjectUtility.createInstance(AccordionPanel.class,
                 containerItem.getAttributes());
             containerItemsNode
                 .createTarget(DialogConstants.NN_PARENT_CONFIG)

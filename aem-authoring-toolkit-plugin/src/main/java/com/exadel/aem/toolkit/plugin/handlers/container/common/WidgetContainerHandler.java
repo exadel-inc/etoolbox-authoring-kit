@@ -75,7 +75,7 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
                 .forEach(tab -> {
                     ContainerSection containerInfo = new ContainerSection(tab.title());
                     try {
-                        containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(tab));
+                        containerInfo.setAttributes(PluginObjectUtility.getProperties(tab));
                         result.put(tab.title(), containerInfo);
                     } catch (IllegalAccessException | InvocationTargetException exception) {
                         LOG.error(exception.getMessage());
@@ -86,7 +86,7 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
                 .forEach(accordionPanel -> {
                     ContainerSection containerInfo = new ContainerSection(accordionPanel.title());
                     try {
-                        containerInfo.setAttributes(PluginObjectUtility.getAnnotationFields(accordionPanel));
+                        containerInfo.setAttributes(PluginObjectUtility.getProperties(accordionPanel));
                         result.put(accordionPanel.title(), containerInfo);
                     } catch (IllegalAccessException | InvocationTargetException exception) {
                         LOG.error(exception.getMessage());

@@ -66,9 +66,9 @@ public class CharactersObjectValidator extends AllNotBlankValidator {
      */
     public Characters getFilteredInstance(Characters source) {
         if (super.test(source)) {
-            return PluginObjectUtility.filter(source, Characters.class, Arrays.asList(METHOD_RANGE_START, METHOD_RANGE_END));
+            return PluginObjectUtility.filterInstance(source, Characters.class, Arrays.asList(METHOD_RANGE_START, METHOD_RANGE_END));
         }
-        return PluginObjectUtility.filter(source, Characters.class, Arrays.asList(METHOD_NAME, METHOD_ENTITY));
+        return PluginObjectUtility.filterInstance(source, Characters.class, Arrays.asList(METHOD_NAME, METHOD_ENTITY));
     }
 
     @Override

@@ -64,7 +64,7 @@ public class PluginObjectUtility {
      * @param <T>    Particular type of the annotation facade
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
-    public static <T extends Annotation> T create(Class<T> type, Map<String, Object> values) {
+    public static <T extends Annotation> T createInstance(Class<T> type, Map<String, Object> values) {
         Map<String, BiFunction<Annotation, Object[], Object>> methods = new HashMap<>();
         Arrays.stream(type.getDeclaredMethods())
             .forEach(method -> {
@@ -88,7 +88,7 @@ public class PluginObjectUtility {
      * @param <T>          Particular type of the annotation facade
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
-    public static <T extends Annotation> T filter(Annotation source, Class<T> type, List<String> voidedFields) {
+    public static <T extends Annotation> T filterInstance(Annotation source, Class<T> type, List<String> voidedFields) {
         Map<String, BiFunction<Annotation, Object[], Object>> methods = new HashMap<>();
         if (voidedFields != null) {
             voidedFields.stream()
@@ -100,8 +100,15 @@ public class PluginObjectUtility {
         return genericModify(source, type, methods);
     }
 
-
-    public static Map<String, Object> getAnnotationFields(Annotation annotation) throws IllegalAccessException, InvocationTargetException {
+    /**
+     * Gets the properties exposed by a given {@code Annotation} as a key-value map. Keys are the method names
+     * this annotation possesses, and the values are the results of methods' invocation
+     * @param annotation {@code Annotation} object to retrieve values for
+     * @return {@code Map<String, Object>} instance
+     * @throws IllegalAccessException in case a non-public method accessed (not probable for the current JRE implementation)
+     * @throws InvocationTargetException in case an annotation methods could not be invoked to retrieve a value
+     */
+    public static Map<String, Object> getProperties(Annotation annotation) throws IllegalAccessException, InvocationTargetException {
         Map<String, Object> result = new HashMap<>();
         for (Method method : annotation.annotationType().getDeclaredMethods()) {
             Object value = method.invoke(annotation, (Object[]) null);
