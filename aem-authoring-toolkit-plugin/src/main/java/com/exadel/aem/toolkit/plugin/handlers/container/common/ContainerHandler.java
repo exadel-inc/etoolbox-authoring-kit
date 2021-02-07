@@ -327,7 +327,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     private static void appendTabAttributes(Target tabElement, Tab tab) {
         tabElement.attribute(JcrConstants.PN_TITLE, tab.title());
         Attribute attribute = tab.attribute();
-        tabElement.attributes(attribute);
+        tabElement.attributes(attribute, PluginObjectUtility.getPropertyMappingFilter(attribute));
         PluginXmlUtility.appendDataAttributes(tabElement, attribute.data());
     }
 

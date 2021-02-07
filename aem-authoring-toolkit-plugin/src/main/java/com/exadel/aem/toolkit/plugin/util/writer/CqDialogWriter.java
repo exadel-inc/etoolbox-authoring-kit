@@ -37,6 +37,7 @@ import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnTabHandl
 import com.exadel.aem.toolkit.plugin.handlers.container.DialogContainer;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing AEM TouchUI dialog definition (writes data to the
@@ -94,7 +95,11 @@ class CqDialogWriter extends PackageEntryWriter {
             : componentClass.getDeclaredAnnotation(DesignDialog.class);
 
         target
-            .attributes(dialogAnnotation, AnnotationHelper.forAnnotation(dialogAnnotation).getPropertyMappingFilter(member -> fitsInScope(member, scope)))
+            .attributes(
+                dialogAnnotation,
+                PluginObjectUtility
+                    .getPropertyMappingFilter(dialogAnnotation)
+                    .and(member -> fitsInScope(member, scope)))
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
 
         DialogLayout dialogLayout = getLayout(dialogAnnotation);

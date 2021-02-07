@@ -36,6 +36,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.validation.CharactersObjectValidator;
@@ -141,12 +142,22 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         getSpecialCharactersNode(rtePlugins.getOrCreateTarget(DialogConstants.NN_MISCTOOLS));
         populatePasteRulesNode(rtePlugins);
         populateStylesNode(rtePlugins.getOrCreateTarget(DialogConstants.NN_STYLES).attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION));
-        if (rtePlugins.exists(DialogConstants.NN_UNDO))
-            rtePlugins.getOrCreateTarget(DialogConstants.NN_UNDO).attribute(DialogConstants.PN_MAX_UNDO_STEPS, rteAnnotation.maxUndoSteps());
-        if (rteAnnotation.tabSize() != 4)
-            rtePlugins.getOrCreateTarget(DialogConstants.NN_KEYS).attribute(DialogConstants.PN_TAB_SIZE, rteAnnotation.tabSize());
-        if (rtePlugins.exists(DialogConstants.NN_LISTS))
-            rtePlugins.getOrCreateTarget(DialogConstants.NN_LISTS).attribute(DialogConstants.PN_INDENT_SIZE, rteAnnotation.indentSize());
+
+        if (rtePlugins.exists(DialogConstants.NN_UNDO)) {
+            rtePlugins
+                .getTarget(DialogConstants.NN_UNDO)
+                .attributes(rteAnnotation, member -> DialogConstants.PN_MAX_UNDO_STEPS.equals(member.getName()));
+        }
+
+        rtePlugins
+            .getOrCreateTarget(DialogConstants.NN_KEYS)
+            .attributes(rteAnnotation, member -> DialogConstants.PN_TAB_SIZE.equals(member.getName()));
+
+        if (rtePlugins.exists(DialogConstants.NN_LISTS)) {
+            rtePlugins.getTarget(DialogConstants.NN_LISTS)
+                .attributes(rteAnnotation, member -> DialogConstants.PN_INDENT_SIZE.equals(member.getName()));
+
+        }
 
         // build htmlLinkRules node and append to root target, if needed
         populateHtmlLinkRules(target);
@@ -209,7 +220,10 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
 
     private void getIconsNode(Target parent) {
         Target icons = parent.getOrCreateTarget(DialogConstants.NN_ICONS);
-        Arrays.stream(rteAnnotation.icons()).forEach(iconMapping -> icons.getOrCreateTarget(iconMapping.command()).attributes(iconMapping));
+        Arrays.stream(rteAnnotation.icons()).forEach(
+            iconMapping -> icons
+            .getOrCreateTarget(iconMapping.command())
+            .attributes(iconMapping, PluginObjectUtility.getPropertyMappingFilter(iconMapping)));
     }
 
 /**
@@ -220,9 +234,14 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
     private void getFormatNode(Target parent) {
         Target formats = parent.getOrCreateTarget(DialogConstants.NN_FORMATS).attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION);
         Arrays.stream(rteAnnotation.formats()).forEach(paragraphFormat -> Validation.forType(paragraphFormat.annotationType()).test(paragraphFormat));
-        Arrays.stream(rteAnnotation.formats()).forEach(paragraphFormat ->
-                formats.getOrCreateTarget(paragraphFormat.tag())
-                        .attributes(paragraphFormat));
+        Arrays.stream(rteAnnotation.formats()).forEach(
+            paragraphFormat ->
+                formats
+                    .getOrCreateTarget(paragraphFormat.tag())
+                    .attributes(
+                        paragraphFormat,
+                        PluginObjectUtility.getPropertyMappingFilter(paragraphFormat))
+        );
     }
 
 
@@ -242,8 +261,14 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
                 .map(validator::getFilteredInstance)
                 .toArray(Annotation[]::new);
         Arrays.stream(validCharactersAnnotations).forEach(annotation -> Validation.forType(annotation.annotationType()).test(annotation));
-        Arrays.stream(validCharactersAnnotations).forEach(annotation ->
-                charsConfigNode.getOrCreateTarget(childNodeNameProvider.apply(annotation)).attributes(annotation));
+        Arrays.stream(validCharactersAnnotations).forEach(
+            annotation ->
+                charsConfigNode
+                    .getOrCreateTarget(childNodeNameProvider.apply(annotation))
+                    .attributes(
+                        annotation,
+                        PluginObjectUtility.getPropertyMappingFilter(annotation))
+        );
     }
 
 
@@ -257,7 +282,11 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
             return;
         }
         Arrays.stream(rteAnnotation.styles()).forEach(style ->
-                styles.getOrCreateTarget(style.cssName()).attributes(style));
+                styles
+                    .getOrCreateTarget(style.cssName())
+                    .attributes(
+                        style,
+                        PluginObjectUtility.getPropertyMappingFilter(style)));
     }
 
     /**
