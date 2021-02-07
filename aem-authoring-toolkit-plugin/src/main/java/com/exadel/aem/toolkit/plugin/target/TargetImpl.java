@@ -15,7 +15,6 @@
 package com.exadel.aem.toolkit.plugin.target;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -25,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.BinaryOperator;
@@ -33,11 +33,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
@@ -307,8 +305,11 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
     @Override
-    public Target attributes(Annotation value, Predicate<Member> filter) {
-        populateAnnotationProperties(value, filter);
+    public Target attributes(Annotation value, Predicate<Method> filter) {
+        if (value == null) {
+            return this;
+        }
+        populateAnnotationProperties(value, filter == null ? method -> true : filter);
         return this;
     }
 
@@ -326,33 +327,27 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
             });
     }
 
-    private void populateAnnotationProperties(Annotation annotation, Predicate<Member> filter) {
-        PropertyMapping propMapping = annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class);
-        if (propMapping == null) {
-            return;
-        }
-        String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
-        String nodePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
-            ? StringUtils.substringBeforeLast(prefix, DialogConstants.PATH_SEPARATOR)
+    private void populateAnnotationProperties(Annotation annotation, Predicate<Method> filter) {
+        String completePropertyPrefix = Optional.ofNullable(annotation.annotationType().getAnnotation(PropertyMapping.class))
+            .map(PropertyMapping::prefix)
+            .orElse(StringUtils.EMPTY);
+        String nodePrefix = completePropertyPrefix.contains(DialogConstants.PATH_SEPARATOR)
+            ? StringUtils.substringBeforeLast(completePropertyPrefix, DialogConstants.PATH_SEPARATOR)
             : StringUtils.EMPTY;
 
         Target effectiveTarget = this;
         if (StringUtils.isNotEmpty(nodePrefix)) {
-            effectiveTarget = Pattern.compile(DialogConstants.PATH_SEPARATOR)
-                .splitAsStream(nodePrefix)
-                .reduce(effectiveTarget, Target::getOrCreateTarget, (prev, next) -> next);
+            effectiveTarget = effectiveTarget.getOrCreateTarget(nodePrefix);
         }
         List<Method> propertySources = Arrays.stream(annotation.annotationType().getDeclaredMethods())
-            .filter(method -> ArrayUtils.isEmpty(propMapping.mappings()) || ArrayUtils.contains(propMapping.mappings(), method.getName()))
-            .filter(m -> !m.isAnnotationPresent(IgnorePropertyMapping.class))
             .filter(filter)
             .collect(Collectors.toList());
         for (Method propertySource: propertySources) {
-            populateAnnotationProperty(effectiveTarget, propertySource, annotation);
+            populateAnnotationProperty(annotation, propertySource, effectiveTarget);
         }
     }
 
-    private static void populateAnnotationProperty(Target target, Method method, Annotation context) {
+    private static void populateAnnotationProperty(Annotation context, Method method, Target target) {
         String methodName = method.getName();
         boolean ignorePrefix = false;
         if (method.isAnnotationPresent(PropertyRendering.class)) {
@@ -364,11 +359,13 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
             methodName = propertyName.value();
             ignorePrefix = propertyName.ignorePrefix();
         }
-        String prefix = context.annotationType().getAnnotation(PropertyMapping.class).prefix();
-        String namePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
-            ? StringUtils.substringAfterLast(prefix, DialogConstants.PATH_SEPARATOR)
-            : prefix;
-        if (!ignorePrefix && StringUtils.isNotBlank(prefix)) {
+        String propertyPrefix = Optional.ofNullable(context.annotationType().getAnnotation(PropertyMapping.class))
+            .map(PropertyMapping::prefix)
+            .orElse(StringUtils.EMPTY);
+        String namePrefix = propertyPrefix.contains(DialogConstants.PATH_SEPARATOR)
+            ? StringUtils.substringAfterLast(propertyPrefix, DialogConstants.PATH_SEPARATOR)
+            : propertyPrefix;
+        if (!ignorePrefix && StringUtils.isNotBlank(propertyPrefix)) {
             methodName = namePrefix + methodName;
         }
         BinaryOperator<String> merger = TargetImpl::mergeStringAttributes;

@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.handlers;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -66,11 +66,7 @@ public interface Target {
 
     Target attributes(Map<String, Object> map);
 
-    default Target attributes(Annotation annotation) {
-        return attributes(annotation, member -> true);
-    }
-
-    Target attributes(Annotation annotation, Predicate<Member> filter);
+    Target attributes(Annotation annotation, Predicate<Method> filter);
 
     <T> T adaptTo(Class<T> adaptation);
 }
