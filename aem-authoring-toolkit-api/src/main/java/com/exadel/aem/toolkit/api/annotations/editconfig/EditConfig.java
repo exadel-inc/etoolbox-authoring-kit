@@ -20,7 +20,6 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 
@@ -31,9 +30,10 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@PropertyMapping(prefix = "cq:")
+@PropertyMapping(prefix = "cq:", mappings = {"actions", "emptyText", "inherit"})
 @SuppressWarnings("unused")
 public @interface EditConfig {
+
     /**
      * When set to a non-blank string or to an array of strings, maps to the 'cq:actions' property
      * of {@code cq:editConfig} node
@@ -58,34 +58,29 @@ public @interface EditConfig {
      * When set to a value other than {@code Layout.DEFAULT}, renders as the 'dialogLayout' attribute of {@code cq:editConfig} node
      * @return One of {@link EditConfigLayout} constants
      */
-    @IgnorePropertyMapping
     EditConfigLayout dialogLayout() default EditConfigLayout.DEFAULT;
 
     /**
      * Used to specify a collection of {@link DropTargetConfig} values for this editing configuration
      * @return Single {@code DropTargetConfig} or an array of configs
      */
-    @IgnorePropertyMapping
     DropTargetConfig[] dropTargets() default {};
 
     /**
      * Used to specify a collection of {@link FormParameter} values for this editing configuration
      * @return Single {@code FormParameter} or an array of parameters
      */
-    @IgnorePropertyMapping
     FormParameter[] formParameters() default {};
 
     /**
      * Used to specify a collection of {@link InplaceEditingConfig} values for this editing configuration
      * @return Single {@code InplaceEditingConfig} or an array of configs
      */
-    @IgnorePropertyMapping
     InplaceEditingConfig[] inplaceEditing() default @InplaceEditingConfig(propertyName = "");
 
     /**
      * Used to specify a collection of {@link Listener} configs for this editing configuration
      * @return Single {@code Listener} or an array of Listeners
      */
-    @IgnorePropertyMapping
     Listener[] listeners() default {};
 }

@@ -77,6 +77,7 @@ public @interface RichTextEditor {
      * @return One of {@code PasteMode} values
      */
     @EnumValue(transformation = StringTransformation.LOWERCASE)
+    @PropertyRendering(ignoreValues = "default")
     PasteMode defaultPasteMode() default PasteMode.DEFAULT;
     /**
      * Defines the rules applied to html links within this RichTextEditor
@@ -105,21 +106,21 @@ public @interface RichTextEditor {
      * Defines a maximal amount of operations managed by "undo" plugin (max clicks of "undo" button) in this RichTextEditor
      * @return Long value, non-negative
      */
-    @PropertyRendering
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
+    @PropertyRendering(ignoreValues = "50")
     long maxUndoSteps() default 50;
     /**
      * Defines size of tab indent in this RichTextEditor
      * @return Long value, non-negative
      */
-    @PropertyRendering
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
+    @PropertyRendering(ignoreValues = "4")
     long tabSize() default 4;
     /**
      * Defines size of paragraph indent for e.g. list items in this RichTextEditor
      * @return Long value, non-negative
      */
-    @PropertyRendering
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
+    @PropertyRendering(ignoreValues = "0")
     long indentSize() default 0;
 }
