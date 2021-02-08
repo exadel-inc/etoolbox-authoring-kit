@@ -1,6 +1,5 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
- * @version 2.5.0
  *
  * Coral 3 Single Radio Button/Checkbox/Switch and Radio Group accessors
  * */

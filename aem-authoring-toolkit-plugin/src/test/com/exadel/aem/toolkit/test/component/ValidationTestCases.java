@@ -17,6 +17,8 @@ package com.exadel.aem.toolkit.test.component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
+import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
+import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
 import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
@@ -28,33 +30,30 @@ import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_TITLE;
 
+@SuppressWarnings("unused")
 public class ValidationTestCases {
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = "")
     public static class InvalidTitleDialog {}
 
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
     public static class InvalidNumberFieldDialog {
         @NumberField(value = "not-a-number", min = 0, max = 10)
         String number;
     }
 
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
     public static class InvalidImageUploadDialog {
         @ImageUpload(sizeLimit = -99)
         String image;
     }
 
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
     public static class InvalidTextAreaDialog {
         @TextArea(rows = 0, cols = -99)
         String text;
     }
 
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
     public static class InvalidRteCharactersDialog {
         @RichTextEditor(
                 specialCharacters = {
@@ -66,7 +65,6 @@ public class ValidationTestCases {
     }
 
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
     public static class InvalidRteParaformatDialog {
         @RichTextEditor(
                 formats = {
@@ -77,14 +75,18 @@ public class ValidationTestCases {
     }
 
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
     public static class InvalidPathDialog {
         @FileUpload(uploadUrl = "wrong path")
         String file;
     }
 
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
-    @SuppressWarnings("unused")
+    public static class InvalidDatePickerDialog {
+        @DatePicker(minDate = @DateTimeValue(month = 12, year = 2011))
+        String date;
+    }
+
+    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     public static class InvalidCustomAnnotationDialog {
         @CustomWidgetAnnotationAuto(customColor = "yellow")
         String custom;

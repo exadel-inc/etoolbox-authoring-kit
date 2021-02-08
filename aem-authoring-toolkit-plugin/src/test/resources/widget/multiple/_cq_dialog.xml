@@ -3,6 +3,7 @@
           xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
           jcr:primaryType="nt:unstructured"
           sling:resourceType="cq/gui/components/authoring/dialog"
           jcr:title="Dialog with Multiple-Annotated Fields"
@@ -124,6 +125,7 @@
                                       disabled="{Boolean}false"
                                       renderHidden="{Boolean}false"
                                       multifieldSpecial="This is added to top-level Multifields">
+                        <granite:data jcr:primaryType="nt:unstructured" cq:custom="Custom!"/>
                         <field jcr:primaryType="nt:unstructured"
                                sling:resourceType="test-components/form/customfield"
                                name="./customAnnotation"
@@ -134,6 +136,8 @@
                                renderHidden="{Boolean}false"
                                required="{Boolean}false"/>
                     </customAnnotation>
+
+                    <customChild jcr:primaryType="nt:unstructured"/>
                 </items>
             </column>
         </items>

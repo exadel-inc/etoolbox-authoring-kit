@@ -36,7 +36,7 @@ public @interface PropertyRendering {
     String name() default "";
 
     /**
-     * When set to true, allows to override prefix set for this field name
+     * When set to true, allows overriding prefix set for this field name
      * (in. e.g. a {@link FieldSet} annotation)
      * @return True or false
      */
@@ -51,7 +51,7 @@ public @interface PropertyRendering {
 
     /**
      * When set to true, indicates that a user-defined value will be necessarily rendered into an XML attribute
-     * even if results in an empty or a blank strong
+     * even if it maps to an empty, or a blank strong
      * @return True or false
      */
     boolean allowBlank() default false;

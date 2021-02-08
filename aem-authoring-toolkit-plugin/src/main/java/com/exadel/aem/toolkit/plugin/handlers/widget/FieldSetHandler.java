@@ -56,8 +56,8 @@ class FieldSetHandler implements BiConsumer<Source, Target> {
 
         if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
             target
-                .prefix(PluginNamingUtility.getValidFieldName(fieldSet.namePrefix()))
-                .postfix(fieldSet.namePostfix());
+                .namePrefix(PluginNamingUtility.getValidFieldName(fieldSet.namePrefix()))
+                .namePostfix(fieldSet.namePostfix());
         }
         // Append the valid sources to the container
         PluginContainerUtility.appendToContainer(target, fieldSetEntries);

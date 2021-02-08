@@ -67,7 +67,7 @@ public interface DialogWidget {
      * @return Populated {@link Target} by the current {@link Source}
      */
     default Target appendTo(Source source, Target target, String name) {
-        Target widgetChildElement = target.getOrCreate(PluginNamingUtility.stripGetterPrefix(name));
+        Target widgetChildElement = target.getOrCreateTarget(PluginNamingUtility.stripGetterPrefix(name));
         getHandlerChain().accept(source, widgetChildElement);
         return widgetChildElement;
     }

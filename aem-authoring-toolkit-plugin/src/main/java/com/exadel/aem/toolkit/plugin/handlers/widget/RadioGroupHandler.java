@@ -23,6 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 /**
@@ -41,14 +42,14 @@ class RadioGroupHandler implements BiConsumer<Source, Target> {
     public void accept(Source source, Target target) {
         RadioGroup radioGroup = source.adaptTo(RadioGroup.class);
         if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {
-            Target items = target.getOrCreate(DialogConstants.NN_ITEMS);
+            Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));
         }
         PluginXmlUtility.appendDataSource(target, radioGroup.datasource(), radioGroup.acsListPath(), radioGroup.acsListResourceType());
     }
 
     private void renderButton(RadioButton buttonInstance, Target parentElement) {
-        parentElement.create(buttonInstance.value())
-                .mapProperties(buttonInstance);
+        parentElement.createTarget(buttonInstance.value())
+                .attributes(buttonInstance, PluginAnnotationUtility.getPropertyMappingFilter(buttonInstance));
     }
 }

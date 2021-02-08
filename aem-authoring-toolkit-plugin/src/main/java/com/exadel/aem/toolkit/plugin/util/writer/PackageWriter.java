@@ -45,7 +45,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.UnknownComponentException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.XmlDocumentFactory;
+import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
 /**
  * Implements actions needed to store collected/processed data into AEM package, optimal for use in "try-with-resources" block
@@ -104,7 +104,7 @@ public class PackageWriter implements AutoCloseable {
 
         Map<PackageEntryWriter, Class<?>> viewsByWriter = getComponentViews(componentClass);
 
-        if (viewsByWriter.keySet().stream().noneMatch(writer -> writer.getXmlScope() == XmlScope.COMPONENT)) {
+        if (viewsByWriter.keySet().stream().noneMatch(writer -> writer.getScope() == XmlScope.COMPONENT)) {
             InvalidSettingException ex = new InvalidSettingException(
                 COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE + componentClass.getName());
             PluginRuntime.context().getExceptionHandler().handle(ex);
@@ -148,10 +148,10 @@ public class PackageWriter implements AutoCloseable {
             }
 
             for (PackageEntryWriter matchedWriter : matchedWriters) {
-                if (result.containsKey(matchedWriter) && matchedWriter.getXmlScope() != XmlScope.COMPONENT) {
+                if (result.containsKey(matchedWriter) && matchedWriter.getScope() != XmlScope.COMPONENT) {
                     InvalidSettingException ex = new InvalidSettingException(String.format(
                         MULTIPLE_MODULES_EXCEPTION_MESSAGE,
-                        matchedWriter.getXmlScope(),
+                        matchedWriter.getScope(),
                         componentClass.getName()
                     ));
                     PluginRuntime.context().getExceptionHandler().handle(ex);
@@ -200,7 +200,7 @@ public class PackageWriter implements AutoCloseable {
     static PackageWriter forFileSystem(FileSystem fileSystem, String projectName, String componentsBasePath) {
         List<PackageEntryWriter> writers;
         try {
-            Transformer transformer = XmlDocumentFactory.newDocumentTransformer();
+            Transformer transformer = XmlFactory.newDocumentTransformer();
             writers = Arrays.asList(
                     new ContentXmlWriter(transformer),
                     new CqDialogWriter(transformer, XmlScope.CQ_DIALOG),

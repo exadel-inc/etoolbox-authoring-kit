@@ -18,6 +18,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+/**
+ * Shortcut class for running all available test cases in a batch
+ */
 @RunWith(Suite.class)
 @SuiteClasses({
     ComponentsTest.class,
@@ -27,8 +30,5 @@ import org.junit.runners.Suite.SuiteClasses;
     ExceptionsTest.class,
     DependsOnTest.class
 })
-/**
- * Shortcut class for running all available test cases in a batch
- */
 public class AllTests {
 }

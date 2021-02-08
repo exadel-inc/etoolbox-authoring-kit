@@ -49,9 +49,9 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
                 ? PluginNamingUtility.getValidFieldName(dialogField.name())
                 : DialogConstants.RELATIVE_PATH_PREFIX;
         }
-        String prefix = target.getPrefix();
+        String prefix = target.getNamePrefix();
 
-        if (!ResourceTypes.MULTIFIELD.equals(target.get(PATH_TO_MULTIFIELD_ROOT).getAttributes().get(DialogConstants.PN_SLING_RESOURCE_TYPE))) {
+        if (!ResourceTypes.MULTIFIELD.equals(target.getTarget(PATH_TO_MULTIFIELD_ROOT).getAttributes().get(DialogConstants.PN_SLING_RESOURCE_TYPE))) {
             prefix = DialogConstants.RELATIVE_PATH_PREFIX + prefix;
         }
 
@@ -60,7 +60,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
                 && !(prefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.startsWith(DialogConstants.PARENT_PATH_PREFIX))) {
             name = prefix + name;
         }
-        name = name + target.getPostfix();
+        name = name + target.getNamePostfix();
         target.attribute(DialogConstants.PN_NAME, name);
     }
 }

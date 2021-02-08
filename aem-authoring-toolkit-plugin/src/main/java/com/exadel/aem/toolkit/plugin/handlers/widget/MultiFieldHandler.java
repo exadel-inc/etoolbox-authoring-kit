@@ -69,7 +69,7 @@ public class MultiFieldHandler implements BiConsumer<Source, Target> {
      */
     private void process(List<Source> sources, Target target, String name) {
         target.attribute(DialogConstants.PN_COMPOSITE, true);
-        Target multifieldContainerElement = target.getOrCreate(DialogConstants.NN_FIELD)
+        Target multifieldContainerElement = target.getOrCreateTarget(DialogConstants.NN_FIELD)
                 .attribute(DialogConstants.PN_NAME, name)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 

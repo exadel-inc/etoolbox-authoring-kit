@@ -26,14 +26,15 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.CollectionUtils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.target.TargetImpl;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.ordering.PluginOrderingUtility;
 
@@ -69,12 +70,12 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
         List<DialogWidgetHandler> legacyHandlers = handlers.stream().filter(CustomHandlingHandler::isLegacyHandler).collect(Collectors.toList());
         if (!legacyHandlers.isEmpty()) {
             Field field = source.adaptTo(Field.class);
-            Element element = getElement(target);
+            Element element = target
+                .adaptTo(DomAdapter.class)
+                .composeElement(PluginRuntime.context().getXmlUtility().getDocument());
             if (element != null) {
-                // This assignment is for legacy dialog widget handlers, will not interfere with modern handlers
-                PluginRuntime.context().getXmlUtility().setDocument(element.getOwnerDocument());
                 legacyHandlers.forEach(handler -> handler.accept(element, field));
-                target.mapProperties(element);
+                ((TargetImpl) target).attributes(element);
             }
         }
 
@@ -103,14 +104,4 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
             return false;
         }
     }
-
-    private static Element getElement(Target target) {
-        try {
-            return target.adaptTo(Document.class).getDocumentElement();
-        } catch (Exception e) {
-            PluginRuntime.context().getExceptionHandler().handle(e);
-        }
-        return null;
-    }
-
 }

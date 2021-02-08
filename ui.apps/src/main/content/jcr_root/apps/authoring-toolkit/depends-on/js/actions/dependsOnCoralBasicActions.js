@@ -1,6 +1,5 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
- * @version 2.5.0
  *
  * DependsOn Coral 3 Basic Actions
  *
