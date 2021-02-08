@@ -132,7 +132,7 @@ public class PluginContainerUtility {
      * Tests the provided collection of members for possible duplicates (members that share the same tag name),
      * and throws an exception if a member from a superclass is positioned after the correspondent
      * member from a subclass, therefore, will "shadow" it and produce unexpected UI display
-     * @param processedSources {@code Map} instance that matches renderable sources (Java class members)
+     * @param processedSources {@code Map} instance that matches the sources (Java class members) available for rendering
      *                        to the genera tag names
      */
     private static void checkForDuplicates(Map<Source, String> processedSources) {

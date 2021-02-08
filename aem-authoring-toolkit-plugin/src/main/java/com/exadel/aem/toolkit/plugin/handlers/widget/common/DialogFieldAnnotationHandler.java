@@ -30,8 +30,6 @@ import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
  */
 public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> {
 
-    private static final String PATH_TO_MULTIFIELD_ROOT = "../../..";
-
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param source Current {@link Source} instance
@@ -51,7 +49,12 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         }
         String prefix = target.getNamePrefix();
 
-        if (!ResourceTypes.MULTIFIELD.equals(target.getTarget(PATH_TO_MULTIFIELD_ROOT).getAttributes().get(DialogConstants.PN_SLING_RESOURCE_TYPE))) {
+        // In case there are multiple sources in multifield container, their "name" values must not be preceded
+        // with "./" which is by default
+        // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
+        // That is why we must alter the default name prefix for the ongoing set of sources
+        Target multifieldAncestor = target.findAncestor(t -> ResourceTypes.MULTIFIELD.equals(t.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE)));
+        if (multifieldAncestor == null || multifieldAncestor.equals(target.getParent())) {
             prefix = DialogConstants.RELATIVE_PATH_PREFIX + prefix;
         }
 
