@@ -17,8 +17,8 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginContainerUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
 
 public abstract class WidgetContainerHandler implements BiConsumer<Source, Target> {
 
@@ -69,14 +69,14 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
             Arrays.stream(source.adaptTo(TabsWidget.class).tabs())
                 .forEach(tab -> {
                     ContainerSection containerInfo = new ContainerSection(tab.title());
-                    containerInfo.setAttributes(PluginObjectUtility.getProperties(tab));
+                    containerInfo.setAttributes(PluginAnnotationUtility.getProperties(tab));
                     result.put(tab.title(), containerInfo);
                 });
         } else if (annotationClass.equals(AccordionWidget.class)) {
             Arrays.stream(source.adaptTo(AccordionWidget.class).panels())
                 .forEach(accordionPanel -> {
                     ContainerSection containerInfo = new ContainerSection(accordionPanel.title());
-                    containerInfo.setAttributes(PluginObjectUtility.getProperties(accordionPanel));
+                    containerInfo.setAttributes(PluginAnnotationUtility.getProperties(accordionPanel));
                     result.put(accordionPanel.title(), containerInfo);
                 });
         }

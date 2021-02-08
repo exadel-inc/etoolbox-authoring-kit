@@ -103,7 +103,7 @@ public class AttributeSettingHelper<T> {
             attributeSetter.ignoredValues = new String[] {method.getAnnotation(IgnoreValue.class).value()};
         }
 
-        if (PluginObjectUtility.propertyIsNotDefault(annotation, method)) {
+        if (PluginAnnotationUtility.propertyIsNotDefault(annotation, method)) {
             attributeSetter.validationChecker = Validation.forMethod(method);
         }
         return attributeSetter;

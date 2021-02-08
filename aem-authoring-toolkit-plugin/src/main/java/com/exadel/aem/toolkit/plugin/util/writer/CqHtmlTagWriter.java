@@ -20,7 +20,7 @@ import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing decoration tag properties,
@@ -66,6 +66,6 @@ class CqHtmlTagWriter extends PackageEntryWriter {
         HtmlTag htmlTag = componentClass.getDeclaredAnnotation(HtmlTag.class);
         root
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
-            .attributes(htmlTag, PluginObjectUtility.getPropertyMappingFilter(htmlTag));
+            .attributes(htmlTag, PluginAnnotationUtility.getPropertyMappingFilter(htmlTag));
     }
 }

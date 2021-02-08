@@ -20,7 +20,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
@@ -39,18 +39,18 @@ class AutocompleteHandler implements BiConsumer<Source, Target> {
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
                 .attributes(
                     autocomplete.datasource(),
-                    PluginObjectUtility.getPropertyMappingFilter(autocomplete.datasource()))
+                    PluginAnnotationUtility.getPropertyMappingFilter(autocomplete.datasource()))
                 .getParent()
                 .getOrCreateTarget(DialogConstants.NN_OPTIONS)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.options().annotationType().getAnnotation(ResourceType.class).value())
                 .attributes(
                     autocomplete.options(),
-                    PluginObjectUtility.getPropertyMappingFilter(autocomplete.options()))
+                    PluginAnnotationUtility.getPropertyMappingFilter(autocomplete.options()))
                 .getParent()
                 .getOrCreateTarget(DialogConstants.NN_VALUES)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.values().annotationType().getAnnotation(ResourceType.class).value())
                 .attributes(
                     autocomplete.values(),
-                    PluginObjectUtility.getPropertyMappingFilter(autocomplete.values()));
+                    PluginAnnotationUtility.getPropertyMappingFilter(autocomplete.values()));
     }
 }

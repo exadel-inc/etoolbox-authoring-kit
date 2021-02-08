@@ -49,9 +49,9 @@ import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.Sources;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginContainerUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.stream.Sorter;
@@ -147,7 +147,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
             Collections.reverse(containerSectionClasses);
             for (Class<?> containerSectionClass : containerSectionClasses) {
                 Annotation currentAnnotation = containerSectionClass.getDeclaredAnnotation(annotationClass);
-                annotationMap = PluginObjectUtility.getProperties(currentAnnotation);
+                annotationMap = PluginAnnotationUtility.getProperties(currentAnnotation);
                 ContainerSection containerInfo = new ContainerSection(annotationMap.get(DialogConstants.PN_TITLE).toString());
                 containerInfo.setAttributes(annotationMap);
                 Arrays.stream(containerSectionClass.getDeclaredFields()).forEach(field -> containerInfo.setField(field.getName(), field));
@@ -168,9 +168,9 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     private void appendSectionsFromClass(Map<String, ContainerSection> result, Class<?> cls, XmlScope scope) {
         Map<String, Object> map;
         if (XmlScope.CQ_DIALOG.equals(scope)) {
-            map = PluginObjectUtility.getProperties(cls.getDeclaredAnnotation(Dialog.class));
+            map = PluginAnnotationUtility.getProperties(cls.getDeclaredAnnotation(Dialog.class));
         } else {
-            map = PluginObjectUtility.getProperties(cls.getDeclaredAnnotation(DesignDialog.class));
+            map = PluginAnnotationUtility.getProperties(cls.getDeclaredAnnotation(DesignDialog.class));
         }
         List<Object> list = new ArrayList<>();
         List<Object> panelsAndTabs = Stream.concat(Stream.of(map.get(DialogConstants.NN_PANELS)), Stream.of(map.get(DialogConstants.NN_TABS))).collect(Collectors.toList());
@@ -179,7 +179,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
             list.addAll(Arrays.asList(objects));
         }
         list.forEach(item -> {
-            Map<String, Object> fields = PluginObjectUtility.getProperties((Annotation) item);
+            Map<String, Object> fields = PluginAnnotationUtility.getProperties((Annotation) item);
             String title = (String) fields.get(DialogConstants.PN_TITLE);
             ContainerSection containerInfo = new ContainerSection(title);
             containerInfo.setAttributes(fields);
@@ -289,11 +289,11 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
             .attribute(JcrConstants.PN_TITLE, containerItem.getTitle())
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
         if (containerItemName.equals(DialogConstants.NN_TAB)) {
-            Tab newTab = PluginObjectUtility.createInstance(Tab.class,
+            Tab newTab = PluginAnnotationUtility.createInstance(Tab.class,
                 containerItem.getAttributes());
             appendTabAttributes(containerItemsNode, newTab);
         } else if (containerItemName.equals(DialogConstants.NN_ACCORDION)) {
-            AccordionPanel accordionPanel = PluginObjectUtility.createInstance(AccordionPanel.class,
+            AccordionPanel accordionPanel = PluginAnnotationUtility.createInstance(AccordionPanel.class,
                 containerItem.getAttributes());
             containerItemsNode
                 .createTarget(DialogConstants.NN_PARENT_CONFIG)
@@ -310,7 +310,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     private static void appendTabAttributes(Target tabElement, Tab tab) {
         tabElement.attribute(JcrConstants.PN_TITLE, tab.title());
         Attribute attribute = tab.attribute();
-        tabElement.attributes(attribute, PluginObjectUtility.getPropertyMappingFilter(attribute));
+        tabElement.attributes(attribute, PluginAnnotationUtility.getPropertyMappingFilter(attribute));
         PluginXmlUtility.appendDataAttributes(tabElement, attribute.data());
     }
 

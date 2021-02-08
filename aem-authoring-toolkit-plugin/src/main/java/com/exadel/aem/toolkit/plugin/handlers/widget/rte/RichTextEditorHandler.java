@@ -36,7 +36,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.validation.CharactersObjectValidator;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
@@ -222,7 +222,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         Arrays.stream(rteAnnotation.icons()).forEach(
             iconMapping -> icons
             .getOrCreateTarget(iconMapping.command())
-            .attributes(iconMapping, PluginObjectUtility.getPropertyMappingFilter(iconMapping)));
+            .attributes(iconMapping, PluginAnnotationUtility.getPropertyMappingFilter(iconMapping)));
     }
 
 /**
@@ -239,7 +239,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
                     .getOrCreateTarget(paragraphFormat.tag())
                     .attributes(
                         paragraphFormat,
-                        PluginObjectUtility.getPropertyMappingFilter(paragraphFormat))
+                        PluginAnnotationUtility.getPropertyMappingFilter(paragraphFormat))
         );
     }
 
@@ -266,7 +266,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
                     .getOrCreateTarget(childNodeNameProvider.apply(annotation))
                     .attributes(
                         annotation,
-                        PluginObjectUtility.getPropertyMappingFilter(annotation))
+                        PluginAnnotationUtility.getPropertyMappingFilter(annotation))
         );
     }
 
@@ -285,7 +285,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
                     .getOrCreateTarget(style.cssName())
                     .attributes(
                         style,
-                        PluginObjectUtility.getPropertyMappingFilter(style)));
+                        PluginAnnotationUtility.getPropertyMappingFilter(style)));
     }
 
     /**
@@ -296,7 +296,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         HtmlPasteRules rules = this.rteAnnotation.htmlPasteRules();
         Target edit = parent.getOrCreateTarget(DialogConstants.NN_EDIT);
         Target htmlPasteRulesNode = edit.getOrCreateTarget(DialogConstants.NN_HTML_PASTE_RULES);
-        List<String> nonDefaultAllowPropsNames = PluginObjectUtility.getNonDefaultProperties(rules).keySet().stream()
+        List<String> nonDefaultAllowPropsNames = PluginAnnotationUtility.getNonDefaultProperties(rules).keySet().stream()
                 .filter(name -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(name).matches())
                 .map(name -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(name).replaceAll("$1").toLowerCase())
                 .filter(propName -> {
@@ -330,7 +330,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
 
     private void populateHtmlLinkRules(Target parent) {
         HtmlLinkRules rulesAnnotation = this.rteAnnotation.htmlLinkRules();
-        if (!PluginObjectUtility.isNotDefault(rulesAnnotation)) {
+        if (!PluginAnnotationUtility.isNotDefault(rulesAnnotation)) {
             return;
         }
         parent.getOrCreateTarget(DialogConstants.NN_HTML_RULES)

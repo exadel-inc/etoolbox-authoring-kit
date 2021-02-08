@@ -42,7 +42,7 @@ import com.exadel.aem.toolkit.plugin.source.Sources;
  * Contains utility methods to perform {@code annotation - to - plain Java object} and {@code annotation - to - annotation}
  * value conversions for the sake of proper dialog markup rendering
  */
-public class PluginObjectUtility {
+public class PluginAnnotationUtility {
     private static final String INVOCATION_EXCEPTION_MESSAGE_TEMPLATE = "Could not invoke method '%s' on %s";
 
     private static final Predicate<Method> MAP_ALL_PROPERTIES = member -> true;
@@ -50,7 +50,7 @@ public class PluginObjectUtility {
     /**
      * Default (hiding) constructor
      */
-    private PluginObjectUtility() {
+    private PluginAnnotationUtility() {
     }
 
     /**
@@ -130,7 +130,6 @@ public class PluginObjectUtility {
             return true;
         }
     }
-
 
     /**
      * Creates in runtime a {@code <T extends Annotation>}-typed annotation-like proxy object to mimic the behavior of
@@ -250,7 +249,7 @@ public class PluginObjectUtility {
 
     /**
      * Implements {@link InvocationHandler} mechanism for creating object extension
-     * per the {@link PluginObjectUtility#genericModify(Object, Class, Map)} signature
+     * per the {@link PluginAnnotationUtility#genericModify(Object, Class, Map)} signature
      * @param <T> The {@code Class} of the source object
      * @param <R> The return type of the extension methods defined for this instance
      */
