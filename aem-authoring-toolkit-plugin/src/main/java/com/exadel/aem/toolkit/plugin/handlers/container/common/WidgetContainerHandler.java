@@ -1,7 +1,6 @@
 package com.exadel.aem.toolkit.plugin.handlers.container.common;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,8 +9,6 @@ import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.TabsWidget;
@@ -24,8 +21,6 @@ import com.exadel.aem.toolkit.plugin.util.PluginContainerUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
 
 public abstract class WidgetContainerHandler implements BiConsumer<Source, Target> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(WidgetContainerHandler.class);
 
     /**
      * Processes the user-defined data and writes it to XML entity
@@ -74,23 +69,15 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
             Arrays.stream(source.adaptTo(TabsWidget.class).tabs())
                 .forEach(tab -> {
                     ContainerSection containerInfo = new ContainerSection(tab.title());
-                    try {
-                        containerInfo.setAttributes(PluginObjectUtility.getProperties(tab));
-                        result.put(tab.title(), containerInfo);
-                    } catch (IllegalAccessException | InvocationTargetException exception) {
-                        LOG.error(exception.getMessage());
-                    }
+                    containerInfo.setAttributes(PluginObjectUtility.getProperties(tab));
+                    result.put(tab.title(), containerInfo);
                 });
         } else if (annotationClass.equals(AccordionWidget.class)) {
             Arrays.stream(source.adaptTo(AccordionWidget.class).panels())
                 .forEach(accordionPanel -> {
                     ContainerSection containerInfo = new ContainerSection(accordionPanel.title());
-                    try {
-                        containerInfo.setAttributes(PluginObjectUtility.getProperties(accordionPanel));
-                        result.put(accordionPanel.title(), containerInfo);
-                    } catch (IllegalAccessException | InvocationTargetException exception) {
-                        LOG.error(exception.getMessage());
-                    }
+                    containerInfo.setAttributes(PluginObjectUtility.getProperties(accordionPanel));
+                    result.put(accordionPanel.title(), containerInfo);
                 });
         }
         return result;

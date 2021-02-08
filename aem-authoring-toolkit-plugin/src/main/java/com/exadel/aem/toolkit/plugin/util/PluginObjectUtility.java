@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +43,8 @@ import com.exadel.aem.toolkit.plugin.source.Sources;
  * value conversions for the sake of proper dialog markup rendering
  */
 public class PluginObjectUtility {
+    private static final String INVOCATION_EXCEPTION_MESSAGE_TEMPLATE = "Could not invoke method '%s' on %s";
+
     private static final Predicate<Method> MAP_ALL_PROPERTIES = member -> true;
 
     /**
@@ -49,6 +52,85 @@ public class PluginObjectUtility {
      */
     private PluginObjectUtility() {
     }
+
+    /**
+     * Gets the properties exposed by a given {@code Annotation} as a key-value map. The keys are the method names
+     * this annotation possesses, and the values are the results of methods' invocation
+     * @param annotation {@code Annotation} object to retrieve values for
+     * @return {@code Map<String, Object>} instance
+     */
+    public static Map<String, Object> getProperties(Annotation annotation) {
+        return getProperties(annotation, method -> true);
+    }
+
+    /**
+     * Retrieves list of properties of an {@code Annotation} object as a key-value map. The keys are the method names
+     * this annotation possesses, and the values are the results of methods' invocation
+     * @param annotation The annotation instance to analyze
+     * @param filter {@code Predicate<Method>} do decide whether the current method is eligible for collection
+     * @return {@code Map<String, Object>} instance containing property names and values
+     */
+    private static Map<String, Object> getProperties(Annotation annotation, Predicate<Method> filter) {
+        Map<String, Object> result = new HashMap<>();
+        for (Method method : Arrays.stream(annotation.annotationType().getDeclaredMethods()).filter(filter).collect(Collectors.toList())) {
+            try {
+                Object value = method.invoke(annotation, (Object[]) null);
+                result.put(method.getName(), value);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
+                    String.format(INVOCATION_EXCEPTION_MESSAGE_TEMPLATE, method.getName(), annotation.annotationType().getName()),
+                    e));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
+     * as a key-value map. The keys are the method names this annotation possesses, and the values are the results
+     * of methods' invocation
+     * @param annotation The annotation instance to analyze
+     * @return List of {@code Method} instances that represent properties initialized with non-defaults
+     */
+    public static Map<String, Object> getNonDefaultProperties(Annotation annotation) {
+        return getProperties(annotation, method -> propertyIsNotDefault(annotation, method));
+    }
+
+    /**
+     * Gets whether any of the {@code Annotation}'s properties has a value which is not default
+     * @param annotation The annotation to analyze
+     * @return True or false
+     */
+    public static boolean isNotDefault(Annotation annotation) {
+        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
+            .anyMatch(method -> propertyIsNotDefault(annotation, method));
+    }
+
+    /**
+     * Gets whether an {@code Annotation} property has a value which is not default
+     * @param annotation The annotation to analyze
+     * @param method The method representing the property
+     * @return True or false
+     */
+    public static boolean propertyIsNotDefault(Annotation annotation, Method method) {
+        if (annotation == null) {
+            return false;
+        }
+        try {
+            Object defaultValue = method.getDefaultValue();
+            if (defaultValue == null) {
+                return true;
+            }
+            Object invocationResult = method.invoke(annotation);
+            if (method.getReturnType().isArray() && ArrayUtils.isEmpty((Object[]) invocationResult)) {
+                return false;
+            }
+            return !defaultValue.equals(invocationResult);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            return true;
+        }
+    }
+
 
     /**
      * Creates in runtime a {@code <T extends Annotation>}-typed annotation-like proxy object to mimic the behavior of
@@ -95,26 +177,9 @@ public class PluginObjectUtility {
     }
 
     /**
-     * Gets the properties exposed by a given {@code Annotation} as a key-value map. Keys are the method names
-     * this annotation possesses, and the values are the results of methods' invocation
-     * @param annotation {@code Annotation} object to retrieve values for
-     * @return {@code Map<String, Object>} instance
-     * @throws IllegalAccessException in case a non-public method accessed (not probable for the current JRE implementation)
-     * @throws InvocationTargetException in case an annotation methods could not be invoked to retrieve a value
-     */
-    public static Map<String, Object> getProperties(Annotation annotation) throws IllegalAccessException, InvocationTargetException {
-        Map<String, Object> result = new HashMap<>();
-        for (Method method : annotation.annotationType().getDeclaredMethods()) {
-            Object value = method.invoke(annotation, (Object[]) null);
-            result.put(method.getName(), value);
-        }
-        return result;
-    }
-
-    /**
      * Gets a filter routine typically passed to {@link com.exadel.aem.toolkit.api.handlers.Target#attributes(Annotation, Predicate)}.
-     * If {@link PropertyMapping| is present in the annotation given, the filters passes throwug the methods as regulated
-     * by its settings; otherwise a neutral (pass-all) filtering is implemented
+     * If {@link PropertyMapping} is present in the annotation given, the filter passes combs through the methods
+     * as regulated by the property mapping; otherwise a neutral (pass-all) filtering is imposed
      * @param annotation {@code Annotation} object to use methods from
      * @return {@code Predicate<Method>} instance
      */
@@ -192,7 +257,6 @@ public class PluginObjectUtility {
     private static class ExtensionInvocationHandler<T, U, R> implements InvocationHandler {
         private static final String METHOD_TO_STRING = "toString";
         private static final String METHOD_ANNOTATION_TYPE = "annotationType";
-        private static final String INVOCATION_EXCEPTION_MESSAGE_TEMPLATE = "Could not invoke method '%s' on %s";
 
         private final T source;
         private final Class<U> targetType;

@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.plugin.handlers.container.common;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,8 +30,6 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
@@ -60,13 +57,11 @@ import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.stream.Sorter;
 
 public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
-    private static final Logger LOG = LoggerFactory.getLogger(ContainerHandler.class);
 
     static final String TABS_EXCEPTION = "No tabs defined for the dialog at ";
     static final String ACCORDION_EXCEPTION = "No accordion panels defined for the dialog at ";
 
     private static final String DEFAULT_CONTAINER_SECTION_TITLE = "Untitled";
-
 
     /* -----------------------
        Inheritable class logic
@@ -145,26 +140,22 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     private Map<String, ContainerSection> getContainerSections(List<Class<?>> classes, Class<? extends Annotation> annotationClass, XmlScope scope) {
         Map<String, ContainerSection> result = new LinkedHashMap<>();
         Map<String, Object> annotationMap;
-        try {
-            for (Class<?> cls : classes) {
-                List<Class<?>> containerSectionClasses = Arrays.stream(cls.getDeclaredClasses())
-                    .filter(nestedCls -> nestedCls.isAnnotationPresent(annotationClass))
-                    .collect(Collectors.toList());
-                Collections.reverse(containerSectionClasses);
-                for (Class<?> containerSectionClass : containerSectionClasses) {
-                    Annotation currentAnnotation = containerSectionClass.getDeclaredAnnotation(annotationClass);
-                    annotationMap = PluginObjectUtility.getProperties(currentAnnotation);
-                    ContainerSection containerInfo = new ContainerSection(annotationMap.get(DialogConstants.PN_TITLE).toString());
-                    containerInfo.setAttributes(annotationMap);
-                    Arrays.stream(containerSectionClass.getDeclaredFields()).forEach(field -> containerInfo.setField(field.getName(), field));
-                    result.put(annotationMap.get(DialogConstants.PN_TITLE).toString(), containerInfo);
-                }
-                if (cls.isAnnotationPresent(Dialog.class) || cls.isAnnotationPresent(DesignDialog.class)) {
-                    appendSectionsFromClass(result, cls, scope);
-                }
+        for (Class<?> cls : classes) {
+            List<Class<?>> containerSectionClasses = Arrays.stream(cls.getDeclaredClasses())
+                .filter(nestedCls -> nestedCls.isAnnotationPresent(annotationClass))
+                .collect(Collectors.toList());
+            Collections.reverse(containerSectionClasses);
+            for (Class<?> containerSectionClass : containerSectionClasses) {
+                Annotation currentAnnotation = containerSectionClass.getDeclaredAnnotation(annotationClass);
+                annotationMap = PluginObjectUtility.getProperties(currentAnnotation);
+                ContainerSection containerInfo = new ContainerSection(annotationMap.get(DialogConstants.PN_TITLE).toString());
+                containerInfo.setAttributes(annotationMap);
+                Arrays.stream(containerSectionClass.getDeclaredFields()).forEach(field -> containerInfo.setField(field.getName(), field));
+                result.put(annotationMap.get(DialogConstants.PN_TITLE).toString(), containerInfo);
             }
-        } catch (IllegalAccessException | InvocationTargetException exception) {
-            LOG.error(exception.getMessage());
+            if (cls.isAnnotationPresent(Dialog.class) || cls.isAnnotationPresent(DesignDialog.class)) {
+                appendSectionsFromClass(result, cls, scope);
+            }
         }
         return result;
     }
@@ -175,33 +166,25 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param cls {@code Class<?>} current class that contains container elements
      */
     private void appendSectionsFromClass(Map<String, ContainerSection> result, Class<?> cls, XmlScope scope) {
-        try {
-            Map<String, Object> map;
-            if (XmlScope.CQ_DIALOG.equals(scope)) {
-                map = PluginObjectUtility.getProperties(cls.getDeclaredAnnotation(Dialog.class));
-            } else {
-                map = PluginObjectUtility.getProperties(cls.getDeclaredAnnotation(DesignDialog.class));
-            }
-            List<Object> list = new ArrayList<>();
-            List<Object> panelsAndTabs = Stream.concat(Stream.of(map.get(DialogConstants.NN_PANELS)), Stream.of(map.get(DialogConstants.NN_TABS))).collect(Collectors.toList());
-            for (Object o : panelsAndTabs) {
-                Object[] objects = (Object[]) o;
-                list.addAll(Arrays.asList(objects));
-            }
-            list.forEach(item -> {
-                try {
-                    Map<String, Object> fields = PluginObjectUtility.getProperties((Annotation) item);
-                    String title = (String) fields.get(DialogConstants.PN_TITLE);
-                    ContainerSection containerInfo = new ContainerSection(title);
-                    containerInfo.setAttributes(fields);
-                    result.put(title, containerInfo);
-                } catch (IllegalAccessException | InvocationTargetException exception) {
-                    LOG.error(exception.getMessage());
-                }
-            });
-        } catch (IllegalAccessException | InvocationTargetException exception) {
-            LOG.error(exception.getMessage());
+        Map<String, Object> map;
+        if (XmlScope.CQ_DIALOG.equals(scope)) {
+            map = PluginObjectUtility.getProperties(cls.getDeclaredAnnotation(Dialog.class));
+        } else {
+            map = PluginObjectUtility.getProperties(cls.getDeclaredAnnotation(DesignDialog.class));
         }
+        List<Object> list = new ArrayList<>();
+        List<Object> panelsAndTabs = Stream.concat(Stream.of(map.get(DialogConstants.NN_PANELS)), Stream.of(map.get(DialogConstants.NN_TABS))).collect(Collectors.toList());
+        for (Object o : panelsAndTabs) {
+            Object[] objects = (Object[]) o;
+            list.addAll(Arrays.asList(objects));
+        }
+        list.forEach(item -> {
+            Map<String, Object> fields = PluginObjectUtility.getProperties((Annotation) item);
+            String title = (String) fields.get(DialogConstants.PN_TITLE);
+            ContainerSection containerInfo = new ContainerSection(title);
+            containerInfo.setAttributes(fields);
+            result.put(title, containerInfo);
+        });
     }
 
     /**

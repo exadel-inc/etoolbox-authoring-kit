@@ -37,7 +37,6 @@ import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.validation.CharactersObjectValidator;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
@@ -297,9 +296,9 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         HtmlPasteRules rules = this.rteAnnotation.htmlPasteRules();
         Target edit = parent.getOrCreateTarget(DialogConstants.NN_EDIT);
         Target htmlPasteRulesNode = edit.getOrCreateTarget(DialogConstants.NN_HTML_PASTE_RULES);
-        List<String> nonDefaultAllowPropsNames = PluginReflectionUtility.getAnnotationNonDefaultProperties(rules).stream()
-                .filter(field -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(field.getName()).matches())
-                .map(field -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(field.getName()).replaceAll("$1").toLowerCase())
+        List<String> nonDefaultAllowPropsNames = PluginObjectUtility.getNonDefaultProperties(rules).keySet().stream()
+                .filter(name -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(name).matches())
+                .map(name -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(name).replaceAll("$1").toLowerCase())
                 .filter(propName -> {
                     if (StringUtils.equalsAny(propName, DialogConstants.NN_TABLE, DialogConstants.NN_LIST)) {
                         htmlPasteRulesNode.getOrCreateTarget(propName).attribute(DialogConstants.PN_ALLOW, false)
@@ -324,26 +323,26 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create and append an node representing
+     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create and append a node representing
      * {@code htmlRules} to the RichTextEditor XML markup
      * @param parent {@code Target} instance representing the RichTextEditor node
      */
 
     private void populateHtmlLinkRules(Target parent) {
-        HtmlLinkRules rules = this.rteAnnotation.htmlLinkRules();
-        if (!PluginReflectionUtility.annotationIsNotDefault(rules)) {
+        HtmlLinkRules rulesAnnotation = this.rteAnnotation.htmlLinkRules();
+        if (!PluginObjectUtility.isNotDefault(rulesAnnotation)) {
             return;
         }
         parent.getOrCreateTarget(DialogConstants.NN_HTML_RULES)
                 .getOrCreateTarget(DialogConstants.NN_LINKS)
-                .attribute(DialogConstants.PN_CSS_EXTERNAL, rules.cssExternal().isEmpty() ? null : rules.cssExternal())
-                .attribute(DialogConstants.PN_CSS_INTERNAL, rules.cssInternal().isEmpty() ? null : rules.cssInternal())
-                .attribute(DialogConstants.PN_DEFAULT_PROTOCOL, rules.defaultProtocol())
-                .attribute(DialogConstants.PN_PROTOCOLS, Arrays.asList(rules.protocols()).toString().replace(" ", ""))
+                .attribute(DialogConstants.PN_CSS_EXTERNAL, rulesAnnotation.cssExternal().isEmpty() ? null : rulesAnnotation.cssExternal())
+                .attribute(DialogConstants.PN_CSS_INTERNAL, rulesAnnotation.cssInternal().isEmpty() ? null : rulesAnnotation.cssInternal())
+                .attribute(DialogConstants.PN_DEFAULT_PROTOCOL, rulesAnnotation.defaultProtocol())
+                .attribute(DialogConstants.PN_PROTOCOLS, Arrays.asList(rulesAnnotation.protocols()).toString().replace(" ", ""))
                 .getOrCreateTarget(DialogConstants.NN_TARGET_CONFIG)
                 .attribute(DialogConstants.PN_MODE, KEYWORD_AUTO)
-                .attribute(DialogConstants.PN_TARGET_EXTERNAL, rules.targetExternal().toString())
-                .attribute(DialogConstants.PN_TARGET_INTERNAL, rules.targetInternal().toString());
+                .attribute(DialogConstants.PN_TARGET_EXTERNAL, rulesAnnotation.targetExternal().toString())
+                .attribute(DialogConstants.PN_TARGET_INTERNAL, rulesAnnotation.targetInternal().toString());
     }
 
     /**
