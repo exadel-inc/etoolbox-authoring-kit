@@ -48,7 +48,7 @@ public class PluginOrderingUtility {
             }
         }
 
-        return new Graph<>(list).topologicalSort().stream()
+        return new TopologicalSorter<>(list).topologicalSort().stream()
             .map(Orderable::getValue)
             .collect(Collectors.toList());
     }
