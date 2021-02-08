@@ -196,10 +196,10 @@
                             </paraformat>
                             <format jcr:primaryType="nt:unstructured" features="[bold,italic,underline]"/>
                             <control jcr:primaryType="nt:unstructured" features="[save,close]"/>
-                            <undo jcr:primaryType="nt:unstructured" features="[undo,redo]" maxUndoSteps="{Long}20"/>
+                            <undo jcr:primaryType="nt:unstructured" features="[undo,redo]"/>
                             <fullscreen jcr:primaryType="nt:unstructured" features="toggle"/>
                             <spellcheck jcr:primaryType="nt:unstructured" features="checktext"/>
-                            <lists jcr:primaryType="nt:unstructured" features="[ordered,unordered,indent,outdent]" indentSize="{Long}4"/>
+                            <lists jcr:primaryType="nt:unstructured" features="[ordered,unordered,indent,outdent]"/>
                             <justify jcr:primaryType="nt:unstructured" features="[justifyleft,justifycenter,justifyright]"/>
                             <links jcr:primaryType="nt:unstructured" features="[modifylink,unlink]"/>
                             <styles jcr:primaryType="cq:WidgetCollection" features="*">
