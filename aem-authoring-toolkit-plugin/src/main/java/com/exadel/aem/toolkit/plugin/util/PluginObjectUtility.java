@@ -19,11 +19,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.Temporal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +33,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.Sources;
@@ -139,24 +133,6 @@ public class PluginObjectUtility {
             boolean isAllowedByIgnorePropertyMapping = Sources.fromMember(method).adaptTo(IgnorePropertyMapping.class) == null;
             return isAllowedByPropertyMapping && isAllowedByIgnorePropertyMapping;
         };
-    }
-
-
-    /**
-     * Creates Java {@code Temporal} from {@code DateTimeValue} annotation
-     * @param obj {@code DateTimeValue} annotation instance
-     * @return Canonical Temporal instance, or null
-     */
-    public static Temporal getDateTimeInstance(Object obj) {
-        DateTimeValue dt = (DateTimeValue) obj;
-        try {
-            if (StringUtils.isNotBlank(dt.timezone())) { // the following induces exception if any of DateTime parameters is invalid
-                return ZonedDateTime.of(dt.year(), dt.month(), dt.day(), dt.hour(), dt.minute(), 0, 0, ZoneId.of(dt.timezone()));
-            }
-            return LocalDateTime.of(dt.year(), dt.month(), dt.day(), dt.hour(), dt.minute());
-        } catch (DateTimeException e) {
-            return null;
-        }
     }
 
     /**
