@@ -29,8 +29,8 @@
                         name="./testCustomAnnotation"
                         renderHidden="{Boolean}false"
                         required="{Boolean}false"
-                        cwh2="cwh2"
-                        cwh3="cwh3">
+                        customWidgetHandler2="customWidgetHandler2"
+                        customWidgetHandler3="customWidgetHandler3">
                         <customElement jcr:primaryType="nt:unstructured" customField="Overridden value"/>
                     </testCustomAnnotation>
                     <testCustomAnnotationDefault
@@ -40,8 +40,8 @@
                         name="./testCustomAnnotationDefault"
                         renderHidden="{Boolean}false"
                         required="{Boolean}false"
-                        cwh2="cwh2"
-                        cwh3="cwh3">
+                        customWidgetHandler2="customWidgetHandler2"
+                        customWidgetHandler3="customWidgetHandler3">
                         <customElement jcr:primaryType="nt:unstructured" customField="Non-overridden value"/>
                     </testCustomAnnotationDefault>
                     <testCustomAnnotationAuto
