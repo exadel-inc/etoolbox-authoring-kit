@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
-import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  *  {@link Validator} implementation for testing that provided character range is valid
@@ -66,9 +66,9 @@ public class CharactersObjectValidator extends AllNotBlankValidator {
      */
     public Characters getFilteredInstance(Characters source) {
         if (super.test(source)) {
-            return PluginObjectUtility.filter(source, Characters.class, Arrays.asList(METHOD_RANGE_START, METHOD_RANGE_END));
+            return PluginAnnotationUtility.filterInstance(source, Characters.class, Arrays.asList(METHOD_RANGE_START, METHOD_RANGE_END));
         }
-        return PluginObjectUtility.filter(source, Characters.class, Arrays.asList(METHOD_NAME, METHOD_ENTITY));
+        return PluginAnnotationUtility.filterInstance(source, Characters.class, Arrays.asList(METHOD_NAME, METHOD_ENTITY));
     }
 
     @Override

@@ -36,7 +36,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.validation.CharactersObjectValidator;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
@@ -110,7 +110,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
                 Arrays.stream(rteAnnotation.fullscreenFeatures()).map(feature -> new ImmutablePair<>(fullScreenBuilder, feature))
         ).forEach(featureItem -> processFeatureItem(featureItem, tableEditBuilder, pluginsBuilder));
 
-        // build uiSettings node with subnodes, append conditionally if not empty
+        // build uiSettings node with sub-nodes, append conditionally if not empty
         Target uiSettings = target.getOrCreateTarget(DialogConstants.NN_UI_SETTINGS);
         Target cui = uiSettings.getOrCreateTarget(DialogConstants.NN_CUI);
         inlineBuilder.build(cui);
@@ -141,12 +141,22 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         getSpecialCharactersNode(rtePlugins.getOrCreateTarget(DialogConstants.NN_MISCTOOLS));
         populatePasteRulesNode(rtePlugins);
         populateStylesNode(rtePlugins.getOrCreateTarget(DialogConstants.NN_STYLES).attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION));
-        if (rtePlugins.exists(DialogConstants.NN_UNDO))
-            rtePlugins.getOrCreateTarget(DialogConstants.NN_UNDO).attribute(DialogConstants.PN_MAX_UNDO_STEPS, rteAnnotation.maxUndoSteps());
-        if (rteAnnotation.tabSize() != 4)
-            rtePlugins.getOrCreateTarget(DialogConstants.NN_KEYS).attribute(DialogConstants.PN_TAB_SIZE, rteAnnotation.tabSize());
-        if (rtePlugins.exists(DialogConstants.NN_LISTS))
-            rtePlugins.getOrCreateTarget(DialogConstants.NN_LISTS).attribute(DialogConstants.PN_INDENT_SIZE, rteAnnotation.indentSize());
+
+        if (rtePlugins.exists(DialogConstants.NN_UNDO)) {
+            rtePlugins
+                .getTarget(DialogConstants.NN_UNDO)
+                .attributes(rteAnnotation, member -> DialogConstants.PN_MAX_UNDO_STEPS.equals(member.getName()));
+        }
+
+        rtePlugins
+            .getOrCreateTarget(DialogConstants.NN_KEYS)
+            .attributes(rteAnnotation, member -> DialogConstants.PN_TAB_SIZE.equals(member.getName()));
+
+        if (rtePlugins.exists(DialogConstants.NN_LISTS)) {
+            rtePlugins.getTarget(DialogConstants.NN_LISTS)
+                .attributes(rteAnnotation, member -> DialogConstants.PN_INDENT_SIZE.equals(member.getName()));
+
+        }
 
         // build htmlLinkRules node and append to root target, if needed
         populateHtmlLinkRules(target);
@@ -209,7 +219,10 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
 
     private void getIconsNode(Target parent) {
         Target icons = parent.getOrCreateTarget(DialogConstants.NN_ICONS);
-        Arrays.stream(rteAnnotation.icons()).forEach(iconMapping -> icons.getOrCreateTarget(iconMapping.command()).attributes(iconMapping));
+        Arrays.stream(rteAnnotation.icons()).forEach(
+            iconMapping -> icons
+            .getOrCreateTarget(iconMapping.command())
+            .attributes(iconMapping, PluginAnnotationUtility.getPropertyMappingFilter(iconMapping)));
     }
 
 /**
@@ -220,9 +233,14 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
     private void getFormatNode(Target parent) {
         Target formats = parent.getOrCreateTarget(DialogConstants.NN_FORMATS).attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION);
         Arrays.stream(rteAnnotation.formats()).forEach(paragraphFormat -> Validation.forType(paragraphFormat.annotationType()).test(paragraphFormat));
-        Arrays.stream(rteAnnotation.formats()).forEach(paragraphFormat ->
-                formats.getOrCreateTarget(paragraphFormat.tag())
-                        .attributes(paragraphFormat));
+        Arrays.stream(rteAnnotation.formats()).forEach(
+            paragraphFormat ->
+                formats
+                    .getOrCreateTarget(paragraphFormat.tag())
+                    .attributes(
+                        paragraphFormat,
+                        PluginAnnotationUtility.getPropertyMappingFilter(paragraphFormat))
+        );
     }
 
 
@@ -242,8 +260,14 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
                 .map(validator::getFilteredInstance)
                 .toArray(Annotation[]::new);
         Arrays.stream(validCharactersAnnotations).forEach(annotation -> Validation.forType(annotation.annotationType()).test(annotation));
-        Arrays.stream(validCharactersAnnotations).forEach(annotation ->
-                charsConfigNode.getOrCreateTarget(childNodeNameProvider.apply(annotation)).attributes(annotation));
+        Arrays.stream(validCharactersAnnotations).forEach(
+            annotation ->
+                charsConfigNode
+                    .getOrCreateTarget(childNodeNameProvider.apply(annotation))
+                    .attributes(
+                        annotation,
+                        PluginAnnotationUtility.getPropertyMappingFilter(annotation))
+        );
     }
 
 
@@ -257,7 +281,11 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
             return;
         }
         Arrays.stream(rteAnnotation.styles()).forEach(style ->
-                styles.getOrCreateTarget(style.cssName()).attributes(style));
+                styles
+                    .getOrCreateTarget(style.cssName())
+                    .attributes(
+                        style,
+                        PluginAnnotationUtility.getPropertyMappingFilter(style)));
     }
 
     /**
@@ -268,9 +296,9 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         HtmlPasteRules rules = this.rteAnnotation.htmlPasteRules();
         Target edit = parent.getOrCreateTarget(DialogConstants.NN_EDIT);
         Target htmlPasteRulesNode = edit.getOrCreateTarget(DialogConstants.NN_HTML_PASTE_RULES);
-        List<String> nonDefaultAllowPropsNames = PluginReflectionUtility.getAnnotationNonDefaultProperties(rules).stream()
-                .filter(field -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(field.getName()).matches())
-                .map(field -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(field.getName()).replaceAll("$1").toLowerCase())
+        List<String> nonDefaultAllowPropsNames = PluginAnnotationUtility.getNonDefaultProperties(rules).keySet().stream()
+                .filter(name -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(name).matches())
+                .map(name -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(name).replaceAll("$1").toLowerCase())
                 .filter(propName -> {
                     if (StringUtils.equalsAny(propName, DialogConstants.NN_TABLE, DialogConstants.NN_LIST)) {
                         htmlPasteRulesNode.getOrCreateTarget(propName).attribute(DialogConstants.PN_ALLOW, false)
@@ -295,26 +323,26 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create and append an node representing
+     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create and append a node representing
      * {@code htmlRules} to the RichTextEditor XML markup
      * @param parent {@code Target} instance representing the RichTextEditor node
      */
 
     private void populateHtmlLinkRules(Target parent) {
-        HtmlLinkRules rules = this.rteAnnotation.htmlLinkRules();
-        if (!PluginReflectionUtility.annotationIsNotDefault(rules)) {
+        HtmlLinkRules rulesAnnotation = this.rteAnnotation.htmlLinkRules();
+        if (!PluginAnnotationUtility.isNotDefault(rulesAnnotation)) {
             return;
         }
         parent.getOrCreateTarget(DialogConstants.NN_HTML_RULES)
                 .getOrCreateTarget(DialogConstants.NN_LINKS)
-                .attribute(DialogConstants.PN_CSS_EXTERNAL, rules.cssExternal().isEmpty() ? null : rules.cssExternal())
-                .attribute(DialogConstants.PN_CSS_INTERNAL, rules.cssInternal().isEmpty() ? null : rules.cssInternal())
-                .attribute(DialogConstants.PN_DEFAULT_PROTOCOL, rules.defaultProtocol())
-                .attribute(DialogConstants.PN_PROTOCOLS, Arrays.asList(rules.protocols()).toString().replace(" ", ""))
+                .attribute(DialogConstants.PN_CSS_EXTERNAL, rulesAnnotation.cssExternal().isEmpty() ? null : rulesAnnotation.cssExternal())
+                .attribute(DialogConstants.PN_CSS_INTERNAL, rulesAnnotation.cssInternal().isEmpty() ? null : rulesAnnotation.cssInternal())
+                .attribute(DialogConstants.PN_DEFAULT_PROTOCOL, rulesAnnotation.defaultProtocol())
+                .attribute(DialogConstants.PN_PROTOCOLS, Arrays.asList(rulesAnnotation.protocols()).toString().replace(" ", ""))
                 .getOrCreateTarget(DialogConstants.NN_TARGET_CONFIG)
                 .attribute(DialogConstants.PN_MODE, KEYWORD_AUTO)
-                .attribute(DialogConstants.PN_TARGET_EXTERNAL, rules.targetExternal().toString())
-                .attribute(DialogConstants.PN_TARGET_INTERNAL, rules.targetInternal().toString());
+                .attribute(DialogConstants.PN_TARGET_EXTERNAL, rulesAnnotation.targetExternal().toString())
+                .attribute(DialogConstants.PN_TARGET_INTERNAL, rulesAnnotation.targetInternal().toString());
     }
 
     /**

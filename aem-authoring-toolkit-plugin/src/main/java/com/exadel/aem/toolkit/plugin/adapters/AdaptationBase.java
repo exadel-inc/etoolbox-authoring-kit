@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 public abstract class AdaptationBase<T> {
 
-    private static final String ADAPTER_EXCEPTION_MESSAGE = "Could not create adapter for ";
+    private static final String ADAPTER_EXCEPTION_MESSAGE = "Could not create an adapter for ";
 
     private final Class<T> reflectedClass;
     private Map<Class<?>, Object> adaptationsCache;
@@ -54,5 +54,4 @@ public abstract class AdaptationBase<T> {
         }
         return null;
     }
-
 }

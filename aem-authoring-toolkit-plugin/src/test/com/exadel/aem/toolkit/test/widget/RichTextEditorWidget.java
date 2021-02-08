@@ -97,14 +97,12 @@ public class RichTextEditorWidget {
                     @ParagraphFormat(tag = "h4", description = "H4 tagged paragraph")
             },
             tabSize = 8,
-            maxUndoSteps = 20,
             htmlLinkRules = @HtmlLinkRules(
                     targetInternal = LinkTarget.MANUAL,
                     targetExternal = LinkTarget.BLANK,
                     protocols = {"http:", "https:"},
                     defaultProtocol = "http:"
             ),
-            indentSize = 4,
             useFixedInlineToolbar = false
     )
     private String text;

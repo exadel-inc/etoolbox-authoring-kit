@@ -18,13 +18,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
 import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
 
 /**
  * Used to set up
@@ -45,7 +45,7 @@ public @interface DatePicker {
     String emptyText() default "";
     /**
      * Maps to the 'type' attribute of this TouchUI dialog component's node.
-     * Used the specify whether this DatePicker allows to pick date, time, or both
+     * Used to specify whether this DatePicker allows picking date, time, or both
      * @see DatePickerType
      * @return One of {@code DatePickerType} values
      */
@@ -81,7 +81,7 @@ public @interface DatePicker {
     DateTimeValue maxDate() default @DateTimeValue;
     /**
      * Maps to the 'displayTimezoneMessage' attribute of this TouchUI dialog component's node.
-     * Used to set if a informative message should be displayed regarding timezone prevalence
+     * Used to set if an informative message should be displayed regarding timezone prevalence
      * @return True or false
      */
     boolean displayTimezoneMessage() default false;

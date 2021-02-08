@@ -37,6 +37,7 @@ import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnTabHandl
 import com.exadel.aem.toolkit.plugin.handlers.container.DialogContainer;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing AEM TouchUI dialog definition (writes data to the
@@ -80,7 +81,7 @@ class CqDialogWriter extends PackageEntryWriter {
     /**
      * Overrides {@link PackageEntryWriter#populateTarget(Class, Target)} abstract method to write down contents
      * of {@code _cq_dialog.xml} file. To the targetFacade node, several XML building routines are applied in sequence: the predefined
-     * dialog container builder, the common properties writer, {@code DependsOn} handlers and any {@code CustomHandler}s defined for
+     * dialog container builder, the common properties' writer, {@code DependsOn} handlers and any {@code CustomHandler}s defined for
      * this component class
      *
      * @param componentClass The {@code Class} being processed
@@ -89,15 +90,19 @@ class CqDialogWriter extends PackageEntryWriter {
     @Override
     void populateTarget(Class<?> componentClass, Target target) {
 
-        Annotation dialog = XmlScope.CQ_DIALOG.equals(scope)
+        Annotation dialogAnnotation = XmlScope.CQ_DIALOG.equals(scope)
             ? componentClass.getDeclaredAnnotation(Dialog.class)
             : componentClass.getDeclaredAnnotation(DesignDialog.class);
 
         target
-            .attributes(dialog, member -> fitsInScope(member, scope))
+            .attributes(
+                dialogAnnotation,
+                PluginAnnotationUtility
+                    .getPropertyMappingFilter(dialogAnnotation)
+                    .and(member -> fitsInScope(member, scope)))
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
 
-        DialogLayout dialogLayout = getLayout(dialog);
+        DialogLayout dialogLayout = getLayout(dialogAnnotation);
         DialogContainer.getContainer(dialogLayout).build(componentClass, target);
 
         new DependsOnTabHandler().accept(componentClass, target);

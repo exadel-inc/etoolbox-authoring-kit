@@ -20,6 +20,7 @@ import java.util.function.BiConsumer;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * Handler for storing sets of generic widget properties to a Granite UI widget node
@@ -33,7 +34,7 @@ public class PropertyMappingHandler implements BiConsumer<Source, Target> {
     @Override
     public void accept(Source source, Target target) {
         Arrays.stream(source.adaptTo(Annotation[].class))
-                .filter(a -> a.annotationType().isAnnotationPresent(PropertyMapping.class))
-                .forEach(target::attributes);
+                .filter(annotation -> annotation.annotationType().isAnnotationPresent(PropertyMapping.class))
+                .forEach(annotation -> target.attributes(annotation, PluginAnnotationUtility.getPropertyMappingFilter(annotation)));
     }
 }

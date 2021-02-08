@@ -45,7 +45,7 @@ public class AllNotBlankValidator implements Validator {
     }
 
     /**
-     * Tests single String-typed propertiy value for being not blank
+     * Tests single String-typed property value for being not blank
      * @param method {@code Method} instance representing annotation property
      * @param annotation Target annotation
      * @return True or false

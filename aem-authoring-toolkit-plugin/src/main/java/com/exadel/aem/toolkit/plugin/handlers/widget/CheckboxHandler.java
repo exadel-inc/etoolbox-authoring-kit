@@ -13,8 +13,10 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -25,6 +27,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
 /**
@@ -43,15 +46,16 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
     public void accept(Source source, Target target) {
         Checkbox checkbox = source.adaptTo(Checkbox.class);
 
+        Predicate<Method> mappingFilter = PluginAnnotationUtility.getPropertyMappingFilter(checkbox);
         if (ArrayUtils.isEmpty(checkbox.sublist())) {
-            target.attributes(checkbox);
+            target.attributes(checkbox, mappingFilter);
             setTextAttribute(source, target);
         } else {
             Target checkboxElement = target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.NESTED_CHECKBOX_LIST)
                     .getOrCreateTarget(DialogConstants.NN_ITEMS)
                     .getOrCreateTarget(source.getName() + POSTFIX_FOR_ROOT_CHECKBOX)
                     .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX)
-                    .attributes(checkbox);
+                    .attributes(checkbox, mappingFilter);
 
             appendNestedCheckBoxList(source, checkboxElement);
         }
@@ -85,9 +89,10 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
                     .collect(Collectors.toList());
 
             for (Source innerSource : sources) {
+                Checkbox innerCheckbox = innerSource.adaptTo(Checkbox.class);
                 Target checkboxElement = target.getOrCreateTarget(innerSource.getName())
                         .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX)
-                        .attributes(innerSource.adaptTo(Checkbox.class));
+                        .attributes(innerCheckbox, PluginAnnotationUtility.getPropertyMappingFilter(innerCheckbox));
                 setTextAttribute(innerSource, checkboxElement);
 
                 if (ArrayUtils.isNotEmpty(innerSource.adaptTo(Checkbox.class).sublist())) {

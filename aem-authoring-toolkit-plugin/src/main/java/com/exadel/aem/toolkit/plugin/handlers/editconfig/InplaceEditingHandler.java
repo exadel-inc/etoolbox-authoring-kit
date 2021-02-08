@@ -32,6 +32,7 @@ import com.exadel.aem.toolkit.plugin.handlers.widget.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.Sources;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
 /**
@@ -90,7 +91,7 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
     }
 
     /**
-     * Generates node containing one or more {@code cq:InplaceEditingConfig} subnodes
+     * Generates a node containing one or more {@code cq:InplaceEditingConfig} sub-nodes
      * for use with {@code cq:inplaceEditing} markup
      * @param config {@link EditConfig} annotation instance
      * @param target Current {@link Target} instance
@@ -134,7 +135,8 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
     }
 
     /**
-     * Plants necessary attributes and subnodes related to in-place rich text editor to {@code cq:InplaceEditingConfig} XML node
+     * Plants necessary attributes and sub-nodes related to in-place rich text editor to {@code cq:InplaceEditingConfig}
+     * XML node
      * @param config {@link InplaceEditingConfig} annotation instance
      * @param target {@link Target} representing config node
      */
@@ -143,9 +145,12 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
         if (referencedRteField != null && referencedRteField.adaptTo(RichTextEditor.class) != null) {
             BiConsumer<Source, Target> rteHandler = new RichTextEditorHandler(false);
             new InheritanceHandler(rteHandler).andThen(rteHandler).accept(referencedRteField, target);
+            RichTextEditor rteAnnotation = referencedRteField.adaptTo(RichTextEditor.class);
             target.attributes(
-                referencedRteField.adaptTo(RichTextEditor.class),
-                member -> !DialogConstants.PN_USE_FIXED_INLINE_TOOLBAR.equals(member.getName())
+                rteAnnotation,
+                PluginAnnotationUtility
+                    .getPropertyMappingFilter(rteAnnotation)
+                    .and(method -> !DialogConstants.PN_USE_FIXED_INLINE_TOOLBAR.equals(method.getName()))
             );
         }
         new RichTextEditorHandler(false).accept(config.richTextConfig(), target);

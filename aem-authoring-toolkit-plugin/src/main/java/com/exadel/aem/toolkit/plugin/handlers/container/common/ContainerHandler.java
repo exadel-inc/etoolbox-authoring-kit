@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.plugin.handlers.container.common;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,8 +30,6 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
@@ -52,21 +49,19 @@ import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.Sources;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginContainerUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.stream.Sorter;
 
 public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
-    private static final Logger LOG = LoggerFactory.getLogger(ContainerHandler.class);
 
     static final String TABS_EXCEPTION = "No tabs defined for the dialog at ";
     static final String ACCORDION_EXCEPTION = "No accordion panels defined for the dialog at ";
 
     private static final String DEFAULT_CONTAINER_SECTION_TITLE = "Untitled";
-
 
     /* -----------------------
        Inheritable class logic
@@ -115,7 +110,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         // Compose the "overall" registry of tabs or accordions.
         Map<String, ContainerSection> allContainerSections = mergeSectionsFromCurrentClassAndSuperclasses(containerSectionsFromCurrentClass, containerSectionsFromSuperClasses);
 
-        // Get all *non-nested* fields from superclasses and the current class
+        // Get all *non-nested* fields from the superclasses, and from the current class
         List<Source> allSources = PluginReflectionUtility.getAllSources(componentClass);
 
         // If tabs or accordions collection is empty and yet there are fields to be placed, fire an exception and create a default tab
@@ -145,63 +140,51 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     private Map<String, ContainerSection> getContainerSections(List<Class<?>> classes, Class<? extends Annotation> annotationClass, XmlScope scope) {
         Map<String, ContainerSection> result = new LinkedHashMap<>();
         Map<String, Object> annotationMap;
-        try {
-            for (Class<?> cls : classes) {
-                List<Class<?>> containerSectionClasses = Arrays.stream(cls.getDeclaredClasses())
-                    .filter(nestedCls -> nestedCls.isAnnotationPresent(annotationClass))
-                    .collect(Collectors.toList());
-                Collections.reverse(containerSectionClasses);
-                for (Class<?> containerSectionClass : containerSectionClasses) {
-                    Annotation currentAnnotation = containerSectionClass.getDeclaredAnnotation(annotationClass);
-                    annotationMap = PluginObjectUtility.getAnnotationFields(currentAnnotation);
-                    ContainerSection containerInfo = new ContainerSection(annotationMap.get(DialogConstants.PN_TITLE).toString());
-                    containerInfo.setAttributes(annotationMap);
-                    Arrays.stream(containerSectionClass.getDeclaredFields()).forEach(field -> containerInfo.setField(field.getName(), field));
-                    result.put(annotationMap.get(DialogConstants.PN_TITLE).toString(), containerInfo);
-                }
-                if (cls.isAnnotationPresent(Dialog.class) || cls.isAnnotationPresent(DesignDialog.class)) {
-                    appendSectionsFromClass(result, cls, scope);
-                }
+        for (Class<?> cls : classes) {
+            List<Class<?>> containerSectionClasses = Arrays.stream(cls.getDeclaredClasses())
+                .filter(nestedCls -> nestedCls.isAnnotationPresent(annotationClass))
+                .collect(Collectors.toList());
+            Collections.reverse(containerSectionClasses);
+            for (Class<?> containerSectionClass : containerSectionClasses) {
+                Annotation currentAnnotation = containerSectionClass.getDeclaredAnnotation(annotationClass);
+                annotationMap = PluginAnnotationUtility.getProperties(currentAnnotation);
+                ContainerSection containerInfo = new ContainerSection(annotationMap.get(DialogConstants.PN_TITLE).toString());
+                containerInfo.setAttributes(annotationMap);
+                Arrays.stream(containerSectionClass.getDeclaredFields()).forEach(field -> containerInfo.setField(field.getName(), field));
+                result.put(annotationMap.get(DialogConstants.PN_TITLE).toString(), containerInfo);
             }
-        } catch (IllegalAccessException | InvocationTargetException exception) {
-            LOG.error(exception.getMessage());
+            if (cls.isAnnotationPresent(Dialog.class) || cls.isAnnotationPresent(DesignDialog.class)) {
+                appendSectionsFromClass(result, cls, scope);
+            }
         }
         return result;
     }
 
     /**
-     * Put all tabs or accordion panels from current Dialog to result Map
+     * Put all tabs or accordion panels from the current Dialog to the resulting map
      * @param result {@code Map<String,ContainerInfo>} map containing all container items
      * @param cls {@code Class<?>} current class that contains container elements
      */
     private void appendSectionsFromClass(Map<String, ContainerSection> result, Class<?> cls, XmlScope scope) {
-        try {
-            Map<String, Object> map;
-            if (XmlScope.CQ_DIALOG.equals(scope)) {
-                map = PluginObjectUtility.getAnnotationFields(cls.getDeclaredAnnotation(Dialog.class));
-            } else {
-                map = PluginObjectUtility.getAnnotationFields(cls.getDeclaredAnnotation(DesignDialog.class));
-            }
-            List<Object> list = new ArrayList<>();
-            List<Object> panelsAndTabs = Stream.concat(Stream.of(map.get(DialogConstants.NN_PANELS)), Stream.of(map.get(DialogConstants.NN_TABS))).collect(Collectors.toList());
-            for (Object o : panelsAndTabs) {
-                Object[] objects = (Object[]) o;
-                list.addAll(Arrays.asList(objects));
-            }
-            list.forEach(item -> {
-                try {
-                    Map<String, Object> fields = PluginObjectUtility.getAnnotationFields((Annotation) item);
-                    String title = (String) fields.get(DialogConstants.PN_TITLE);
-                    ContainerSection containerInfo = new ContainerSection(title);
-                    containerInfo.setAttributes(fields);
-                    result.put(title, containerInfo);
-                } catch (IllegalAccessException | InvocationTargetException exception) {
-                    LOG.error(exception.getMessage());
-                }
-            });
-        } catch (IllegalAccessException | InvocationTargetException exception) {
-            LOG.error(exception.getMessage());
+        Map<String, Object> map;
+        if (XmlScope.CQ_DIALOG.equals(scope)) {
+            map = PluginAnnotationUtility.getProperties(cls.getDeclaredAnnotation(Dialog.class));
+        } else {
+            map = PluginAnnotationUtility.getProperties(cls.getDeclaredAnnotation(DesignDialog.class));
         }
+        List<Object> list = new ArrayList<>();
+        List<Object> panelsAndTabs = Stream.concat(Stream.of(map.get(DialogConstants.NN_PANELS)), Stream.of(map.get(DialogConstants.NN_TABS))).collect(Collectors.toList());
+        for (Object o : panelsAndTabs) {
+            Object[] objects = (Object[]) o;
+            list.addAll(Arrays.asList(objects));
+        }
+        list.forEach(item -> {
+            Map<String, Object> fields = PluginAnnotationUtility.getProperties((Annotation) item);
+            String title = (String) fields.get(DialogConstants.PN_TITLE);
+            ContainerSection containerInfo = new ContainerSection(title);
+            containerInfo.setAttributes(fields);
+            result.put(title, containerInfo);
+        });
     }
 
     /**
@@ -256,7 +239,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         String[] ignoredContainerItems,
         String containerItemName) {
 
-        // Iterate container item registry, from the first ever defined container item to the last
+        // Iterate the container item registry, from the first ever defined container item to the last
         // Within the iteration loop, we
         // 1) add fields from the "all fields" collection that are applicable to the current container item, to the container item's field collection
         // 2) re-sort the current container item's fields collection with the field ranking comparator
@@ -292,7 +275,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     /**
      * Appends containerItem attributes to a pre-built containerItem-defining XML element
      * @param container {@link Element} instance representing a TouchUI dialog containerItem
-     * @param containerItem {@link ContainerSection} stores information about current container item
+     * @param containerItem {@link ContainerSection} stores information about the current container item
      * @param containerItemName {@link String} name of current container containerItem
      */
     private static void addToContainerSection(
@@ -306,11 +289,11 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
             .attribute(JcrConstants.PN_TITLE, containerItem.getTitle())
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
         if (containerItemName.equals(DialogConstants.NN_TAB)) {
-            Tab newTab = PluginObjectUtility.create(Tab.class,
+            Tab newTab = PluginAnnotationUtility.createInstance(Tab.class,
                 containerItem.getAttributes());
             appendTabAttributes(containerItemsNode, newTab);
         } else if (containerItemName.equals(DialogConstants.NN_ACCORDION)) {
-            AccordionPanel accordionPanel = PluginObjectUtility.create(AccordionPanel.class,
+            AccordionPanel accordionPanel = PluginAnnotationUtility.createInstance(AccordionPanel.class,
                 containerItem.getAttributes());
             containerItemsNode
                 .createTarget(DialogConstants.NN_PARENT_CONFIG)
@@ -327,7 +310,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     private static void appendTabAttributes(Target tabElement, Tab tab) {
         tabElement.attribute(JcrConstants.PN_TITLE, tab.title());
         Attribute attribute = tab.attribute();
-        tabElement.attributes(attribute);
+        tabElement.attributes(attribute, PluginAnnotationUtility.getPropertyMappingFilter(attribute));
         PluginXmlUtility.appendDataAttributes(tabElement, attribute.data());
     }
 

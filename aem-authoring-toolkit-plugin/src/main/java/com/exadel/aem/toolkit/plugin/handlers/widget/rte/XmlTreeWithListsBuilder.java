@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.plugin.handlers.widget.rte;
 
 import java.util.HashMap;
@@ -61,7 +62,7 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
     public void store(String pluginId, String feature) {
         String mapKey = StringUtils.substringBefore(feature, RichTextEditorHandler.PLUGIN_FEATURE_SEPARATOR);
         // if pluginId is the same as 'plugin#' part in feature token, do not duplicate the 'plugin' part in the map
-        // otherwise store feature token as it comes (may be needed if this is a popover builder, and it contains tokens
+        // otherwise store feature token as it comes (might be needed if this is a popover builder, and it contains tokens
         // (i.e. buttons) that come from different plugins
         String mapValue = (StringUtils.isNoneEmpty(pluginId, mapKey) && !pluginId.equals(mapKey))
                 ? feature
@@ -102,7 +103,7 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
                         : value)
                 .collect(Collectors.toList());
         if (valueList.size() > 1) {
-            node.attribute(getAttributeName(), valueList.toString().replace(" ", ""));
+            node.attribute(getAttributeName(), valueList.toString().replace(StringUtils.SPACE, StringUtils.EMPTY));
         } else {
             node.attribute(getAttributeName(), valueList.get(0));
         }

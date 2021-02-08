@@ -139,8 +139,8 @@ abstract class PackageEntryWriter {
     }
 
     /**
-     * Maps values set in {@link CommonProperties} annotation to nodes of a pre-build XML document. The nodes are picked
-     * by an {@link javax.xml.xpath.XPath}
+     * Maps the values set in {@link CommonProperties} annotation to nodes of a pre-built XML document. The nodes are
+     * picked by an {@link javax.xml.xpath.XPath}
      * @param componentClass Current {@code Class} instance
      * @param scope Current {@code XmlScope}
      */

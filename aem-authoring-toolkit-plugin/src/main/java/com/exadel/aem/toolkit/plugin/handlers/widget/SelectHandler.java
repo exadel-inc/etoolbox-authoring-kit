@@ -23,6 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 /**
@@ -44,7 +45,9 @@ class SelectHandler implements BiConsumer<Source, Target> {
         if (ArrayUtils.isNotEmpty(select.options())) {
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             for (Option option: select.options()) {
-                items.createTarget(option.value()).attributes(option);
+                items
+                    .createTarget(option.value())
+                    .attributes(option, PluginAnnotationUtility.getPropertyMappingFilter(option));
             }
         }
         Target dataSourceElement = PluginXmlUtility.appendDataSource(

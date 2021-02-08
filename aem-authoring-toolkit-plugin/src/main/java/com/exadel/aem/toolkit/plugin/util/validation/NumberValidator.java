@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Validator;
  *  {@link Validator} implementation for testing that provided value is of numeric type
  */
 public class NumberValidator implements Validator {
-    private static final String MSG_NUMBER_EXPECTED = "numeric value or an empty string expected";
+    private static final String MSG_NUMBER_EXPECTED = "a numeric value or an empty string expected";
 
     /**
      * Tests that the provided value is of numeric type or an empty string
