@@ -49,7 +49,8 @@ class RadioGroupHandler implements BiConsumer<Source, Target> {
     }
 
     private void renderButton(RadioButton buttonInstance, Target parentElement) {
-        parentElement.createTarget(buttonInstance.value())
-                .attributes(buttonInstance, PluginAnnotationUtility.getPropertyMappingFilter(buttonInstance));
+        parentElement
+            .createTarget(DialogConstants.DOUBLE_QUOTE + buttonInstance.value() + DialogConstants.DOUBLE_QUOTE)
+            .attributes(buttonInstance, PluginAnnotationUtility.getPropertyMappingFilter(buttonInstance));
     }
 }

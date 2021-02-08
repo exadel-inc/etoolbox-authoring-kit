@@ -136,22 +136,28 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     @Override
     public Target createTarget(String path) {
-        if (StringUtils.contains(path, DialogConstants.PATH_SEPARATOR)) {
-            Target existingTarget = getTarget(path);
+        if (path == null) {
+            return null;
+        }
+        String effectivePath = StringUtils.strip(path, DialogConstants.DOUBLE_QUOTE);
+        boolean isEscaped = !StringUtils.equals(path, effectivePath);
+
+        if (!isEscaped && effectivePath.contains(DialogConstants.PATH_SEPARATOR)) {
+            Target existingTarget = getTarget(effectivePath);
             if (existingTarget != null && !this.equals(existingTarget)) {
-                removeTarget(path);
+                removeTarget(effectivePath);
             } else if (this.equals(existingTarget)) {
                 return this;
             }
-            return getOrCreateTarget(path);
+            return getOrCreateTarget(effectivePath);
         }
-        if (PARENT_PATH.equals(path)) {
+        if (PARENT_PATH.equals(effectivePath)) {
             return getParent() != null ? getParent() : null;
         }
-        if (SELF_PATH.equals(path)) {
+        if (SELF_PATH.equals(effectivePath)) {
             return this;
         }
-        String effectiveName = PluginNamingUtility.getUniqueName(path, DialogConstants.NN_ITEM, this);
+        String effectiveName = PluginNamingUtility.getUniqueName(effectivePath, DialogConstants.NN_ITEM, this);
         Target child = new TargetImpl(effectiveName, this);
         this.children.add(child);
         return child;
@@ -169,8 +175,11 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         if (StringUtils.isBlank(path)) {
             return null;
         }
-        if (path.contains(DialogConstants.PATH_SEPARATOR)) {
-            Queue<String> pathChunks = Pattern.compile("/").splitAsStream(path).collect(Collectors.toCollection(LinkedList::new));
+        String effectivePath = StringUtils.strip(path, DialogConstants.DOUBLE_QUOTE);
+        boolean isEscaped = !StringUtils.equals(path, effectivePath);
+
+        if (!isEscaped && effectivePath.contains(DialogConstants.PATH_SEPARATOR)) {
+            Queue<String> pathChunks = Pattern.compile("/").splitAsStream(effectivePath).collect(Collectors.toCollection(LinkedList::new));
             Target current = this;
             while (!pathChunks.isEmpty()) {
                 String currentChunk = pathChunks.poll();
@@ -182,13 +191,13 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
             return current;
         }
 
-        if (PARENT_PATH.equals(path) && getParent() != null) {
+        if (PARENT_PATH.equals(effectivePath) && getParent() != null) {
             return getParent();
         }
-        if (PARENT_PATH.equals(path) || SELF_PATH.equals(path)) {
+        if (PARENT_PATH.equals(effectivePath) || SELF_PATH.equals(effectivePath)) {
             return this;
         }
-        Target result = getChildren().stream().filter(child -> path.equals(child.getName())).findFirst().orElse(null);
+        Target result = getChildren().stream().filter(child -> effectivePath.equals(child.getName())).findFirst().orElse(null);
         if (result == null && createIfMissing) {
             result = createTarget(path);
         }

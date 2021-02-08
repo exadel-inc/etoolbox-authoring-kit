@@ -20,6 +20,7 @@ package com.exadel.aem.toolkit.plugin.util;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class DialogConstants {
     public static final String WILDCARD = "*";
+    public static final String DOUBLE_QUOTE = "\"";
 
     public static final String PATH_SEPARATOR = "/";
     public static final String EXTENSION_SEPARATOR = ".";

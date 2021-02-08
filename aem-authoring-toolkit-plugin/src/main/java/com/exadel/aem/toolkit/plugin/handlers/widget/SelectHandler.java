@@ -46,7 +46,7 @@ class SelectHandler implements BiConsumer<Source, Target> {
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             for (Option option: select.options()) {
                 items
-                    .createTarget(option.value())
+                    .createTarget(DialogConstants.DOUBLE_QUOTE + option.value() + DialogConstants.DOUBLE_QUOTE)
                     .attributes(option, PluginAnnotationUtility.getPropertyMappingFilter(option));
             }
         }
