@@ -83,7 +83,7 @@ public class ValidationsTest extends ExceptionsTestBase {
     @Test
     public void testDateValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
-        exceptionRule.expectMessage("Property 'minDate' of @DatePicker does not correspond to specified valueFormat");
+        exceptionRule.expectMessage("valid date/time value expected");
         test(ValidationTestCases.InvalidDatePickerDialog.class);
     }
 

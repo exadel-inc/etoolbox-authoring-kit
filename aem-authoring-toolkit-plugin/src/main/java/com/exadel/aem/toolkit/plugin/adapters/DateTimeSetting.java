@@ -46,8 +46,20 @@ public class DateTimeSetting {
      */
     public boolean isValid() {
         return dateTimeValue != null
-            && !isEmpty(dateTimeValue)
-            && getTemporal() != null;
+            && (isEmpty() || getTemporal() != null);
+    }
+
+    /**
+     * Gets whether the provided {@link DateTimeValue} is an empty (non-initialized) instance
+     * @return True or false
+     */
+    public boolean isEmpty() {
+        return StringUtils.isEmpty(dateTimeValue.timezone())
+            && dateTimeValue.minute() == 0
+            && dateTimeValue.hour() == 0
+            && dateTimeValue.day() == 0
+            && dateTimeValue.month() == 0
+            && dateTimeValue.year() == 0;
     }
 
     /**
@@ -81,19 +93,5 @@ public class DateTimeSetting {
             dateTimeInstance = null;
         }
         return dateTimeInstance;
-    }
-
-    /**
-     * Tests whether the provided {@link DateTimeValue} is an empty (non-initialized) instance
-     * @param dateTimeValue {@code DateTimeValue} annotation instance
-     * @return True or false
-     */
-    private static boolean isEmpty(DateTimeValue dateTimeValue) {
-        return StringUtils.isNotEmpty(dateTimeValue.timezone())
-            && dateTimeValue.minute() == 0
-            && dateTimeValue.hour() != 0
-            && dateTimeValue.day() != 0
-            && dateTimeValue.month() != 0
-            && dateTimeValue.year() != 0;
     }
 }
