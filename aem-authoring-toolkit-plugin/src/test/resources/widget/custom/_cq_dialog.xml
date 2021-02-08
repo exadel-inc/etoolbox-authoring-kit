@@ -24,7 +24,6 @@
                     <testCustomAnnotation
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="test-components/form/customfield"
-                        customField="Overridden value"
                         customProcessing="turned on"
                         disabled="{Boolean}false"
                         name="./testCustomAnnotation"
@@ -32,19 +31,17 @@
                         required="{Boolean}false"
                         cwh2="cwh2"
                         cwh3="cwh3">
+                        <customElement jcr:primaryType="nt:unstructured" customField="Overridden value"/>
                     </testCustomAnnotation>
                     <testCustomAnnotationDefault
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                        customField="Non-overridden value"
                         disabled="{Boolean}false"
                         name="./testCustomAnnotationDefault"
                         renderHidden="{Boolean}false"
                         required="{Boolean}false"
                         cwh2="cwh2"
                         cwh3="cwh3">
-                    </testCustomAnnotationDefault>
-                        required="{Boolean}false">
                         <customElement jcr:primaryType="nt:unstructured" customField="Non-overridden value"/>
                     </testCustomAnnotationDefault>
                     <testCustomAnnotationAuto
@@ -65,8 +62,20 @@
                         required="{Boolean}false">
                         <granite:data jcr:primaryType="nt:unstructured" cq:custom="Non-overridden value"/>
                     </testCustomAnnotationAutoDefault>
-                    <testAutoOrder jcr:primaryType="nt:unstructured" ca1="ca1" ca2="ca2" ca3="ca3" sling:resourceType="test"/>
-                    <testOrder jcr:primaryType="nt:unstructured" ch0="ch0" ch1="ch1" ch2="ch2" ch3="ch3" ch4="ch4" ch5="ch5" sling:resourceType="test"/>
+                    <testAutoOrder jcr:primaryType="nt:unstructured"
+                                   customAutoOrder1="customAutoOrder1"
+                                   customAutoOrder2="customAutoOrder2"
+                                   customAutoOrder3="customAutoOrder3"
+                                   sling:resourceType="test"/>
+                    <testOrder jcr:primaryType="nt:unstructured"
+                               customHandler0="customHandler0"
+                               customHandler1="customHandler1"
+                               customHandler2="customHandler2"
+                               customHandler3="customHandler3"
+                               customHandler4="customHandler4"
+                               customHandler5="customHandler5"
+                               sling:resourceType="test"/>
+                    <customChild jcr:primaryType="nt:unstructured"/>
                 </items>
             </column>
         </items>
