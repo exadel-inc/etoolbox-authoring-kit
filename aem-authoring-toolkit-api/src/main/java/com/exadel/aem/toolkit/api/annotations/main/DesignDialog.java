@@ -38,7 +38,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 public @interface DesignDialog {
 
     /**
-     * Maps to the 'jcr:title' attributes of both the component root node node and its {@code cq:design_dialog} node
+     * Maps to the 'jcr:title' attributes of both the component root node and its {@code cq:design_dialog} sub-node
      *
      * @return String value, non-blank
      */

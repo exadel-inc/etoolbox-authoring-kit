@@ -1,6 +1,5 @@
 /**
  * @author Yana Bernatskaya (YanaBr)
- * @version 2.2.3
  *
  * Coral 3 MultiField accessor
  * */

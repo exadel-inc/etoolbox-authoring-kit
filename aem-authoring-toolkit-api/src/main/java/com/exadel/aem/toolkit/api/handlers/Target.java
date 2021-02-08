@@ -14,33 +14,45 @@
 package com.exadel.aem.toolkit.api.handlers;
 
 import java.lang.annotation.Annotation;
-import java.util.Collections;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
-
-import org.w3c.dom.Element;
+import java.util.function.Predicate;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 
 public interface Target {
 
-    Target create(String s);
+    String getName();
 
-    Target create(Supplier<String> s);
+    Target getParent();
 
-    Target getOrCreate(String s);
+    List<Target> getChildren();
 
-    Target get(String s);
-
-    default Target mapProperties(Annotation annotation) {
-        return mapProperties(annotation, Collections.emptyList());
+    default boolean exists(String path) {
+        return getTarget(path) != null;
     }
 
-    Target mapProperties(Annotation annotation, List<String> skipped);
+    XmlScope getScope();
 
-    Target mapProperties(Element element);
+    Target getTarget(String path);
+
+    Target getOrCreateTarget(String path);
+
+    Target createTarget(String path);
+
+    void removeTarget(String path);
+
+    String getNamePrefix();
+
+    Target namePrefix(String prefix);
+
+    String getNamePostfix();
+
+    Target namePostfix(String postfix);
+
+    Map<String, String> getAttributes();
 
     Target attribute(String name, String value);
 
@@ -54,33 +66,7 @@ public interface Target {
 
     Target attributes(Map<String, Object> map);
 
-    Target prefix(String prefix);
+    Target attributes(Annotation annotation, Predicate<Method> filter);
 
-    Target postfix(String postfix);
-
-    Target scope(XmlScope scope);
-
-    XmlScope getScope();
-
-    String getPrefix();
-
-    String getPostfix();
-
-    void delete();
-
-    Map<String, String> getAttributes();
-
-    List<Target> getChildren();
-
-    String getName();
-
-    Target parent();
-
-    boolean hasChild(String path);
-
-    <T> T adaptTo(Class<T> adaptation, Object context);
-
-    default <T> T adaptTo(Class<T> adaptation) {
-        return adaptTo(adaptation, null);
-    }
+    <T> T adaptTo(Class<T> adaptation);
 }

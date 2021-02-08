@@ -67,7 +67,7 @@ public abstract class SourceImpl extends AdaptationBase<Source> implements Sourc
         if (adaptation.isArray()) {
             if (adaptation.getComponentType().equals(Annotation.class)) {
                 return adaptation.cast(getDeclaredAnnotations());
-            } else {
+            } else if (adaptation.getComponentType().isAnnotation()) {
                 @SuppressWarnings("unchecked")
                 Class<? extends Annotation> annotationClass = (Class<? extends Annotation>) adaptation.getComponentType();
                 return adaptation.cast(getAnnotationsByType(annotationClass));
@@ -78,6 +78,6 @@ public abstract class SourceImpl extends AdaptationBase<Source> implements Sourc
             Class<? extends Annotation> annotationClass = (Class<? extends Annotation>) adaptation;
             return adaptation.cast(getDeclaredAnnotation(annotationClass));
         }
-        return getAdaptation(adaptation); // Retrieves adaptation value, if present, or null
+        return super.adaptTo(adaptation); // Retrieves adaptation value, if present, or null
     }
 }

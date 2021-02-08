@@ -16,39 +16,39 @@ package com.exadel.aem.toolkit.api.annotations.editconfig;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 
 /**
- * Defines target for a drag-and-drop operation in a TouchUI dialog. Upon properties of this annotation,
+ * Defines a target for a drag-and-drop operation in a TouchUI dialog. Upon properties of this annotation,
  * a {@code cq:editConfig/cq:dropTargets/[targetName]} node within a component's buildup is created
  * See <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#main-pars_title_2_tckaux_refd_">AEM Components documentation</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@PropertyMapping
+@PropertyMapping(mappings = "propertyName")
 @SuppressWarnings("unused")
 public @interface DropTargetConfig {
+
     /**
      * Maps to the 'accept' attribute of {@code cq:editConfig/cq:dropTargets/[targetName]} node
      * @return Non-blank string, or an array of strings
      */
-    @IgnorePropertyMapping
     String[] accept() default {};
+
     /**
      * Maps to the 'groups' attribute of {@code cq:editConfig/cq:dropTargets/[targetName]} node
      * @return Non-blank string, or an array of strings
      */
-    @IgnorePropertyMapping
     String[] groups() default {};
+
     /**
      * Maps to the 'propertyName' attribute of {@code cq:editConfig/cq:dropTargets/[targetName]} node
      * @return Non-blank string
      */
     String propertyName();
+
     /**
      * Used to specify tag name of the current {@code cq:editConfig/cq:dropTargets} subnode
      * @return Non-blank string
      */
-    @IgnorePropertyMapping
     String nodeName();
 }

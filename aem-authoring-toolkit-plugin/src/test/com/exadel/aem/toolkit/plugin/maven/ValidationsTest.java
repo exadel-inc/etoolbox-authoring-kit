@@ -81,6 +81,13 @@ public class ValidationsTest extends ExceptionsTestBase {
     }
 
     @Test
+    public void testDateValidation() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
+        exceptionRule.expectMessage("valid date/time value expected");
+        test(ValidationTestCases.InvalidDatePickerDialog.class);
+    }
+
+    @Test
     public void testCustomValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("one of 'red', 'green', or 'blue' must be provided");

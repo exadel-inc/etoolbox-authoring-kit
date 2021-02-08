@@ -20,6 +20,7 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
@@ -67,7 +68,7 @@ public @interface RichTextEditor {
      */
     ParagraphFormat[] formats() default {};
     /**
-     * Represents collection of {@link Characters} to to populate "Insert symbol" popup window
+     * Represents collection of {@link Characters} to populate "Insert symbol" popup window
      * @return Single {@code @Characters} value, or an array of such
      */
     Characters[] specialCharacters() default {};
@@ -76,6 +77,7 @@ public @interface RichTextEditor {
      * @return One of {@code PasteMode} values
      */
     @EnumValue(transformation = StringTransformation.LOWERCASE)
+    @PropertyRendering(ignoreValues = "default")
     PasteMode defaultPasteMode() default PasteMode.DEFAULT;
     /**
      * Defines the rules applied to html links within this RichTextEditor
@@ -101,21 +103,24 @@ public @interface RichTextEditor {
      */
     Style[] styles() default {};
     /**
-     * Defines maximal amount of operations managed by "undo" plugin (max clicks of "undo" button) in this RichTextEditor
+     * Defines a maximal amount of operations managed by "undo" plugin (max clicks of "undo" button) in this RichTextEditor
      * @return Long value, non-negative
      */
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
+    @PropertyRendering(ignoreValues = "50")
     long maxUndoSteps() default 50;
     /**
      * Defines size of tab indent in this RichTextEditor
      * @return Long value, non-negative
      */
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
+    @PropertyRendering(ignoreValues = "4")
     long tabSize() default 4;
     /**
      * Defines size of paragraph indent for e.g. list items in this RichTextEditor
      * @return Long value, non-negative
      */
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
+    @PropertyRendering(ignoreValues = "0")
     long indentSize() default 0;
 }

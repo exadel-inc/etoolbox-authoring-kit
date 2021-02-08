@@ -1,6 +1,5 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.2.2
  *
  * DependsOn plugin Elements Reference Registry
  * Store and manage known elements references

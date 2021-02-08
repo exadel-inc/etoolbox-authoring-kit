@@ -1,6 +1,5 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
- * @version 2.5.0
  *
  * DependsOn ElementAccessors Registry
  * */

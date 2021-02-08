@@ -1,6 +1,5 @@
 /**
  * @author Liubou Masiuk
- * @version 2.2.4
  *
  * Accessor for widgets that do not have a surrounding wrapper element
  * */

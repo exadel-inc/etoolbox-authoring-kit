@@ -22,7 +22,7 @@ public class ReflectionException extends RuntimeException {
         super(message, inner);
     }
 
-    public ReflectionException(Class<?> clazz, String fieldName) {
-        super(String.format("Field '%s' not present in %s", fieldName, clazz));
+    public ReflectionException(Class<?> reflected, String fieldName) {
+        super(String.format("Field '%s' not present in %s", fieldName, reflected));
     }
 }

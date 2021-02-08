@@ -25,10 +25,10 @@ import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.adapters.DateTimeSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginObjectUtility;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
 /**
@@ -64,7 +64,7 @@ class DatePickerHandler implements BiConsumer<Source, Target> {
         if (datePickerAttribute.typeHint() == TypeHint.STRING
             && !StringUtils.isEmpty(datePickerAttribute.valueFormat())) {
             try {
-                // Java DateTimeFormatter interprets D as 'day of year', unlike Coral engine
+                // Java DateTimeFormatter interprets D as 'day of year', unlike Coral engine,
                 // so a replacement made here to make sure 'DD' as in 'YYYY-MM-DD' is not passed to formatter.
                 // Another replacement is for treating timezone literals that can be surrounded by arbitrary symbols
                 // but need to be surrounded with apostrophes in Java 1.8+
@@ -82,46 +82,36 @@ class DatePickerHandler implements BiConsumer<Source, Target> {
             }
         }
         // store values with specified or default formatting
-        storeDateValue(target, DialogConstants.PN_MIN_DATE, datePickerAttribute.minDate(), dateTimeFormatter);
-        storeDateValue(target, DialogConstants.PN_MAX_DATE, datePickerAttribute.maxDate(), dateTimeFormatter);
+        storeDateValue(datePickerAttribute.minDate(), target, DialogConstants.PN_MIN_DATE, dateTimeFormatter);
+        storeDateValue(datePickerAttribute.maxDate(), target, DialogConstants.PN_MAX_DATE, dateTimeFormatter);
     }
 
     /**
      * Writes formatted {@link DateTimeValue} attribute to node
+     * @param value The {@code DateTimeValue} to store
      * @param target {@link Target} to store data in
      * @param attribute Name of date-preserving attribute
-     * @param value The {@code DateTimeValue} to store
      * @param formatter {@link DateTimeFormatter} instance
      */
     private void storeDateValue(
+            DateTimeValue value,
             Target target,
             String attribute,
-            DateTimeValue value,
             DateTimeFormatter formatter
     ) {
-        if (!Validation.forMethod(DatePicker.class, attribute).test(value) || isEmptyDateTime(value)) {
+        if (!Validation.forMethod(DatePicker.class, attribute).test(value)) {
+            return;
+        }
+        DateTimeSetting dateTimeSetting = new DateTimeSetting(value);
+        if (dateTimeSetting.isEmpty()) {
             return;
         }
         try {
-            target.attribute(attribute, formatter.format(Objects.requireNonNull(PluginObjectUtility.getDateTimeInstance(value))));
+            target.attribute(attribute, formatter.format(Objects.requireNonNull(dateTimeSetting.getTemporal())));
         } catch (DateTimeException | NullPointerException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(
                     INVALID_VALUE_EXCEPTION_TEMPLATE,
                     attribute));
         }
-    }
-
-    /**
-     * Tests whether the provided {@link DateTimeValue} is an empty (non-initialized) instance
-     * @param value {@code DateTimeValue} annotation instance
-     * @return True or false
-     */
-    private static boolean isEmptyDateTime(DateTimeValue value) {
-        return StringUtils.isEmpty(value.timezone())
-                && value.minute() == 0
-                && value.hour() == 0
-                && value.day() == 0
-                && value.month() == 0
-                && value.year() == 0;
     }
 }

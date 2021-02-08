@@ -1,6 +1,5 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.2
  *
  * DependsOn plugin Observed Reference
  * ObservedReference is a base class for references
