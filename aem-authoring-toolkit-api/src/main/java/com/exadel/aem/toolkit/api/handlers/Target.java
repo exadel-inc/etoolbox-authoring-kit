@@ -44,6 +44,10 @@ public interface Target {
 
     void removeTarget(String path);
 
+    List<Target> findTargets(Predicate<Target> filter);
+
+    Target findAncestor(Predicate<Target> filter);
+
     String getNamePrefix();
 
     Target namePrefix(String prefix);
@@ -53,6 +57,14 @@ public interface Target {
     Target namePostfix(String postfix);
 
     Map<String, String> getAttributes();
+
+    default String getAttribute(String name) {
+        return getAttributes().get(name);
+    }
+
+    default String getAttribute(String name, String defaultValue) {
+        return getAttributes().getOrDefault(name, defaultValue);
+    }
 
     Target attribute(String name, String value);
 

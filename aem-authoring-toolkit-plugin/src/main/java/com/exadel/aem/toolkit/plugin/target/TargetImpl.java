@@ -17,7 +17,9 @@ package com.exadel.aem.toolkit.plugin.target;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -204,6 +206,42 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return result;
     }
 
+
+    /* --------------------
+       Filtering operations
+       -------------------- */
+    @Override
+    public List<Target> findTargets(Predicate<Target> filter) {
+        if (filter == null) {
+            return Collections.emptyList();
+        }
+        List<Target> result = new ArrayList<>();
+        collectTargets(this, filter, result);
+        return result;
+    }
+
+    private void collectTargets(Target current, Predicate<Target> filter, List<Target> collection) {
+        List<Target> matches = current.getChildren().stream().filter(filter).collect(Collectors.toList());
+        collection.addAll(matches);
+        for (Target match : matches) {
+            collectTargets(match, filter, collection);
+        }
+    }
+
+    @Override
+    public Target findAncestor(Predicate<Target> filter) {
+        if (filter == null) {
+            return null;
+        }
+        Target current = getParent();
+        while (current != null) {
+            if (filter.test(current)) {
+                return current;
+            }
+            current = current.getParent();
+        }
+        return null;
+    }
 
     /* -----------------
        Prefix operations
