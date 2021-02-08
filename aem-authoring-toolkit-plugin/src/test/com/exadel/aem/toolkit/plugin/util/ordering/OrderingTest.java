@@ -26,7 +26,7 @@ import java.util.stream.IntStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TestOrdering {
+public class OrderingTest {
 
     private static final List<String> expectedTestGraphWithCycleInside1 = Arrays
         .asList("Handler0", "Handler1", "Handler2", "Handler4", "Handler3");
@@ -173,7 +173,7 @@ public class TestOrdering {
 
     // Gets sorted list
     private List<Orderable<String>> sortList(List<Orderable<String>> list) {
-        return new Graph<>(list).topologicalSort();
+        return new TopologicalSorter<>(list).topologicalSort();
     }
 
     // Gets sorted list mapped to their values

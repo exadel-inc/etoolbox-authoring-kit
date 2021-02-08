@@ -82,7 +82,7 @@ public class ValidationTestCases {
 
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     public static class InvalidDatePickerDialog {
-        @DatePicker(minDate = @DateTimeValue(month = 12, year = 2011))
+        @DatePicker(minDate = @DateTimeValue(day = 1, month = 13, year = -1))
         String date;
     }
 

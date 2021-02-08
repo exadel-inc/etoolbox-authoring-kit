@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
+import java.time.DateTimeException;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -101,10 +102,13 @@ class DatePickerHandler implements BiConsumer<Source, Target> {
         if (!Validation.forMethod(DatePicker.class, attribute).test(value)) {
             return;
         }
+        DateTimeSetting dateTimeSetting = new DateTimeSetting(value);
+        if (dateTimeSetting.isEmpty()) {
+            return;
+        }
         try {
-            DateTimeSetting dateTimeSetting = new DateTimeSetting(value);
             target.attribute(attribute, formatter.format(Objects.requireNonNull(dateTimeSetting.getTemporal())));
-        } catch (NullPointerException e) {
+        } catch (DateTimeException | NullPointerException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(
                     INVALID_VALUE_EXCEPTION_TEMPLATE,
                     attribute));

@@ -25,12 +25,12 @@ import java.util.List;
  * List<Class<?>> nodes stores all existing Custom Handlers
  * HashMap<Class<?>, ArrayList<Class<?>>> edges stores Handler as a key and all neighbors as list of values
  */
-class Graph<T> {
+class TopologicalSorter<T> {
 
     private final List<Orderable<T>> nodes;
     private final List<List<Orderable<T>>> adjacencyList;
 
-    public Graph(List<Orderable<T>> nodes) {
+    public TopologicalSorter(List<Orderable<T>> nodes) {
         this.nodes = nodes;
         this.adjacencyList = new ArrayList<>(this.nodes.size());
         for (int i = 0; i < this.nodes.size(); i++) {
@@ -97,7 +97,7 @@ class Graph<T> {
                     loopNodes.add(this.nodes.get(i));
                 }
             }
-            sortedOrder.addAll(new Graph<>(loopNodes).topologicalSort());
+            sortedOrder.addAll(new TopologicalSorter<>(loopNodes).topologicalSort());
         }
         return sortedOrder;
     }
