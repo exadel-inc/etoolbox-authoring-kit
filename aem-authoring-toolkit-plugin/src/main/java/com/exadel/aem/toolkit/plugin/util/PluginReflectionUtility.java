@@ -60,7 +60,6 @@ import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
 import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
@@ -370,25 +369,6 @@ public class PluginReflectionUtility {
         }
         Collections.reverse(result);
         return result;
-    }
-
-    private <T> List<T> listCorrectOrder(List<T> list, List<T> sortedList) {
-        List<T> finalList = new ArrayList<>();
-        int i = 0;
-        int k = 0;
-        while (finalList.size() != list.size()) {
-            if (sortedList.get(k).equals(_Default.class)) {
-                k++;
-            }
-            if (list.get(i).getClass().equals(sortedList.get(k))) {
-                finalList.add(list.get(i));
-                k++;
-                i = 0;
-            } else {
-                i++;
-            }
-        }
-        return finalList;
     }
 
     /**
