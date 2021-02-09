@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.test.custom.handler.order;
+package com.exadel.aem.toolkit.test.custom.handler.ordering;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAutoOrder;
 
 @SuppressWarnings("unused")
-public class CustomAutoOrder {
+public class AutoOrderingTestCases {
 
     private static final List<String> ATTRIBUTE_LIST = new ArrayList<>(3);
 
