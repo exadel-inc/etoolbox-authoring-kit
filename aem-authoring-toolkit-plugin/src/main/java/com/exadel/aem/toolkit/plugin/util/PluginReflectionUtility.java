@@ -217,21 +217,11 @@ public class PluginReflectionUtility {
      * @return {@link List<T>} of instances
      */
     private <T> List<T> getHandlers(Class<? extends T> handlerClass) {
-        List<T> list = reflections.getSubTypesOf(handlerClass).stream()
+        return reflections.getSubTypesOf(handlerClass).stream()
                 .map(PluginReflectionUtility::getHandlerInstance)
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(handler -> handler.getClass().getCanonicalName())) // to provide stable handlers sequence between runs
                 .collect(Collectors.toList());
-        Graph classGraph = new Graph(list);
-        for (T item : list) {
-            Class<?> after = item.getClass().isAnnotationPresent(Handles.class) ? item.getClass().getDeclaredAnnotation(Handles.class).after() : item.getClass();
-            Class<?> before = item.getClass().isAnnotationPresent(Handles.class) ? item.getClass().getDeclaredAnnotation(Handles.class).before() : item.getClass();
-            classGraph.addEdge(item.getClass(), before);
-            classGraph.addEdge(after, item.getClass());
-        }
-        List<T> sortedList = (List<T>) classGraph.topologicalSort();
-        return listCorrectOrder(list, sortedList);
-
     }
 
     /**

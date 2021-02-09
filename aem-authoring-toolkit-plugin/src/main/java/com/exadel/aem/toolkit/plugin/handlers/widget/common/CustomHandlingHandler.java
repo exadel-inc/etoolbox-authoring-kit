@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.plugin.handlers.widget.common;
 
 import java.lang.annotation.Annotation;
@@ -35,6 +36,7 @@ import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.target.TargetImpl;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.plugin.util.ordering.PluginOrderingUtility;
 
 /**
  * Stores properties coming from custom annotations and, optionally, processed by custom handlers
@@ -82,7 +84,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
 
         // Process modern handlers that accept(Source, Target)
         Collection<DialogWidgetHandler> modernHandlers = CollectionUtils.subtract(handlers, legacyHandlers);
-        modernHandlers.forEach(handler -> handler.accept(source, target));
+        PluginOrderingUtility.sort(new ArrayList<>(modernHandlers)).forEach(handler -> handler.accept(source, target));
     }
 
     private List<DialogWidgetHandler> getEffectiveHandlers(Source source) {
