@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.MalformedParameterizedTypeException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
@@ -31,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -397,6 +399,33 @@ public class PluginReflectionUtility {
             }
         }
         return finalList;
+    }
+
+    /**
+     * Retrieves values of public constant fields originating from the given constant class as a key-value map
+     * @param value {@code Class<?>} object representing the constants class
+     * @return {@code Map<String, Object>} containing the key-value pairs. An empty map can be returned if no valid
+     * constants found
+     */
+    public static Map<String, Object> getConstantValues(Class<?> value) {
+        Map<String, Object> result = new HashMap<>();
+        for (Field field : value.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())
+                || !Modifier.isFinal(field.getModifiers())
+                || !Modifier.isPublic(field.getModifiers())) {
+                continue;
+            }
+            Object fieldValue;
+            try {
+                fieldValue = field.get(value);
+            } catch (IllegalAccessException e) {
+                fieldValue = null;
+            }
+            if (fieldValue != null) {
+                result.put(field.getName(), fieldValue);
+            }
+        }
+        return result;
     }
 
     /**

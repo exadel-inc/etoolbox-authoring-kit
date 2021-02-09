@@ -18,7 +18,6 @@ import org.junit.Test;
 
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
 import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
-import com.exadel.aem.toolkit.test.component.NewMultifieldSample;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
 import com.exadel.aem.toolkit.test.widget.Accordion;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
@@ -177,11 +176,6 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testWidgetAnnotatedWithMultiple() {
         test(MultipleAnnotatedWidget.class, RESOURCE_FOLDER_WIDGET, "multiple");
-    }
-
-    @Test
-    public void testWidgetAnnotatedWithMultiple2() {
-        test(NewMultifieldSample.class, RESOURCE_FOLDER_WIDGET, "multiple2");
     }
 
     @Test

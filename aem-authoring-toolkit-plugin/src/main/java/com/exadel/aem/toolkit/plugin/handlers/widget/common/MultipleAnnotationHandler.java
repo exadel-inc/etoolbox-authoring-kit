@@ -38,6 +38,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.target.Targets;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
 /**
  * Handler for creating ad-hoc {@code Multifield}s for {@link Multiple}-marked dialog fields
@@ -105,9 +106,19 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * @return True or false
      */
     private boolean isMultifield(Target target) {
-        return StringUtils.equals(target.getAttributes().get(DialogConstants.PN_SLING_RESOURCE_TYPE), ResourceTypes.MULTIFIELD)
-            && target.getTarget(DialogConstants.NN_FIELD) != null
-            && !target.getTarget(DialogConstants.NN_FIELD).getChildren().isEmpty();
+        if (StringUtils.equals(target.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE), ResourceTypes.MULTIFIELD)) {
+            return true;
+        }
+        boolean hasSingularFieldNode = target.getChildren().size() == 1
+            && DialogConstants.NN_FIELD.equals(target.getChildren().get(0).getName());
+        if (!hasSingularFieldNode) {
+            return false;
+        }
+        // Assuming this is a custom multifield, i.e. the target does not match any of the known resource types
+        return PluginReflectionUtility.getConstantValues(ResourceTypes.class).values()
+            .stream()
+            .map(Object::toString)
+            .noneMatch(restype -> restype.equals(target.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE)));
     }
 
     /**
