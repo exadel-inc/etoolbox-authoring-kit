@@ -12,26 +12,19 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.maven;
+package com.exadel.aem.toolkit.test.custom.annotation;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.plugin.util.ordering.OrderingTest;
+import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 
-/**
- * Shortcut class for running all available test cases in a batch
- */
-@RunWith(Suite.class)
-@SuiteClasses({
-    ComponentsTest.class,
-    WidgetsTest.class,
-    ValidationsTest.class,
-    IgnoreTest.class,
-    ExceptionsTest.class,
-    DependsOnTest.class,
-    OrderingTest.class
-})
-public class AllTests {
+@Target({ElementType.FIELD,ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@DialogWidgetAnnotation
+@ResourceType("test")
+public @interface CustomAnnotationForOrderTest {
 }
