@@ -92,7 +92,7 @@ public class DomAdapter {
      * @return {@code Element} instance
      */
     private static Element createDocumentElement(Document sourceDocument, Target target) {
-        String name = PluginNamingUtility.getValidName(target.getName());
+        String name = PluginNamingUtility.getValidNodeName(target.getName());
         Element element = sourceDocument.createElement(name);
         for (Map.Entry<String, String> entry : target.getAttributes().entrySet()) {
             element.setAttribute(entry.getKey(), entry.getValue());

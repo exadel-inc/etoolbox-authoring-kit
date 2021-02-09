@@ -199,7 +199,12 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         if (PARENT_PATH.equals(effectivePath) || SELF_PATH.equals(effectivePath)) {
             return this;
         }
-        Target result = getChildren().stream().filter(child -> effectivePath.equals(child.getName())).findFirst().orElse(null);
+        String nameToFind = PluginNamingUtility.getValidNodeName(effectivePath);
+        Target result = getChildren()
+            .stream()
+            .filter(child -> nameToFind.equals(child.getName()))
+            .findFirst()
+            .orElse(null);
         if (result == null && createIfMissing) {
             result = createTarget(path);
         }

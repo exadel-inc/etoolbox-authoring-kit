@@ -195,17 +195,17 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public String getValidName(String name) {
-        return PluginNamingUtility.getValidName(name, DialogConstants.NN_ITEM);
+        return PluginNamingUtility.getValidNodeName(name, DialogConstants.NN_ITEM);
     }
 
     @Override
     public String getValidSimpleName(String name) {
-        return PluginNamingUtility.getValidName(name, DialogConstants.NN_ITEM);
+        return PluginNamingUtility.getValidNodeName(name, DialogConstants.NN_ITEM);
     }
 
     @Override
     public String getValidFieldName(String name) {
-        return PluginNamingUtility.getValidName(name, DialogConstants.NN_FIELD);
+        return PluginNamingUtility.getValidNodeName(name, DialogConstants.NN_FIELD);
     }
 
     @Override
