@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 
 /**
  * Used to set up
@@ -45,6 +46,13 @@ public @interface Select {
      */
     @IgnorePropertyMapping
     Option[] options() default {};
+
+    /**
+     * Used to specify the source for options handled by the AEM Authoring Toolkit's OptionProvider mechanism
+     * @return {@link OptionProvider} instance, or an empty {@code }OptionProvider} if not needed
+     */
+    @IgnorePropertyMapping
+    OptionProvider optionProvider() default @OptionProvider;
 
     /**
      * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.

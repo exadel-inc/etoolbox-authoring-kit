@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for {@code RadioGroup} widget functionality
  * within the {@code cq:dialog} node
  */
-class RadioGroupHandler implements BiConsumer<Source, Target> {
+class RadioGroupHandler extends OptionProviderHandler implements BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to {@link Target}
      * @param source Current {@link Source} instance
@@ -42,6 +42,10 @@ class RadioGroupHandler implements BiConsumer<Source, Target> {
     // .acsListPath() and .acsListResourceType() method calls remain for compatibility reasons until v.2.0.0
     public void accept(Source source, Target target) {
         RadioGroup radioGroup = source.adaptTo(RadioGroup.class);
+        if (hasProvidedOptions(radioGroup.buttonProvider())) {
+            appendOptionProvider(radioGroup.buttonProvider(), target);
+            return;
+        }
         if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));
