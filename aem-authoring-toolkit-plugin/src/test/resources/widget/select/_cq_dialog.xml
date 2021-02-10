@@ -57,10 +57,26 @@
                             <item2 jcr:primaryType="nt:unstructured" text="UTC -2" value="-02:00"/>
                         </items>
                     </timezone>
+                    <optionList jcr:primaryType="nt:unstructured"
+                              sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                              name="./optionList"
+                              fieldLabel="Provided options list"
+                              disabled="{Boolean}false"
+                              renderHidden="{Boolean}false"
+                              required="{Boolean}false">
+                        <datasource jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="authoring-toolkit/datasources/option-provider"
+                                    prepend="[None:none]"
+                                    path1="/path/to/acs/list"
+                                    path2="/path/to/acs/list2"
+                                    fallbackPath2="/path/to/acs/list3"
+                                    textMember2="pageTitle"
+                                    sorted="{Boolean}true"/>
+                    </optionList>
                     <acsListOptions jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/select"
                                     name="./acsListOptions"
-                                    fieldLabel="ACS List Options"
+                                    fieldLabel="ACS options list"
                                     deleteHint="{Boolean}false"
                                     disabled="{Boolean}false"
                                     renderHidden="{Boolean}false"
