@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomAnnotationForOrderTest;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomAnnotationForOrderingTest;
 
 @SuppressWarnings("unused")
 public class ManualOrderingTestCases {
@@ -37,7 +37,7 @@ public class ManualOrderingTestCases {
         ATTRIBUTE_LIST.add("customHandler5");
     }
 
-    @Handles(value = CustomAnnotationForOrderTest.class, before = CustomHandler1.class, after = CustomHandler0.class)
+    @Handles(value = CustomAnnotationForOrderingTest.class, before = CustomHandler1.class, after = CustomHandler0.class)
     public static class CustomHandler0 implements DialogWidgetHandler {
 
         @Override
@@ -52,7 +52,7 @@ public class ManualOrderingTestCases {
         }
     }
 
-    @Handles(value = CustomAnnotationForOrderTest.class, before = CustomHandler3.class, after = CustomHandler1.class)
+    @Handles(value = CustomAnnotationForOrderingTest.class, before = CustomHandler3.class, after = CustomHandler1.class)
     public static class CustomHandler1 implements DialogWidgetHandler {
 
         @Override
@@ -66,7 +66,7 @@ public class ManualOrderingTestCases {
         }
     }
 
-    @Handles(value = CustomAnnotationForOrderTest.class, before = CustomHandler3.class ,after = CustomHandler0.class)
+    @Handles(value = CustomAnnotationForOrderingTest.class, before = CustomHandler3.class ,after = CustomHandler0.class)
     public static class CustomHandler2 implements DialogWidgetHandler {
 
         @Override
@@ -79,7 +79,7 @@ public class ManualOrderingTestCases {
         }
     }
 
-    @Handles(value = CustomAnnotationForOrderTest.class, before = CustomHandler0.class, after = CustomHandler3.class)
+    @Handles(value = CustomAnnotationForOrderingTest.class, before = CustomHandler0.class, after = CustomHandler3.class)
     public static class CustomHandler3 implements DialogWidgetHandler {
 
         @Override
@@ -91,7 +91,7 @@ public class ManualOrderingTestCases {
         }
     }
 
-    @Handles(value = CustomAnnotationForOrderTest.class, after = CustomHandler3.class)
+    @Handles(value = CustomAnnotationForOrderingTest.class, after = CustomHandler3.class)
     public static class CustomHandler4 implements DialogWidgetHandler {
 
         @Override
@@ -102,7 +102,7 @@ public class ManualOrderingTestCases {
         }
     }
 
-    @Handles(value = CustomAnnotationForOrderTest.class, after = CustomHandler3.class)
+    @Handles(value = CustomAnnotationForOrderingTest.class, after = CustomHandler3.class)
     public static class CustomHandler5 implements DialogWidgetHandler {
 
         @Override

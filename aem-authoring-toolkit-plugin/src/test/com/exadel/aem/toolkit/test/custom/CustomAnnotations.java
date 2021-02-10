@@ -18,7 +18,7 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomAnnotationForOrderTest;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomAnnotationForOrderingTest;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomNonMappingWidgetAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
@@ -55,6 +55,6 @@ public class CustomAnnotations {
     @CustomWidgetAutoOrder
     String getTestAutoOrder;
 
-    @CustomAnnotationForOrderTest
+    @CustomAnnotationForOrderingTest
     boolean getTestOrder;
 }
