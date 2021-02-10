@@ -373,13 +373,13 @@ public class PluginReflectionUtility {
 
     /**
      * Retrieves values of public constant fields originating from the given constant class as a key-value map
-     * @param value {@code Class<?>} object representing the constants class
+     * @param targetClass {@code Class<?>} object representing the constants class
      * @return {@code Map<String, Object>} containing the key-value pairs. An empty map can be returned if no valid
      * constants found
      */
-    public static Map<String, Object> getConstantValues(Class<?> value) {
+    public static Map<String, Object> getConstantValues(Class<?> targetClass) {
         Map<String, Object> result = new HashMap<>();
-        for (Field field : value.getDeclaredFields()) {
+        for (Field field : targetClass.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())
                 || !Modifier.isFinal(field.getModifiers())
                 || !Modifier.isPublic(field.getModifiers())) {
@@ -387,7 +387,7 @@ public class PluginReflectionUtility {
             }
             Object fieldValue;
             try {
-                fieldValue = field.get(value);
+                fieldValue = field.get(targetClass);
             } catch (IllegalAccessException e) {
                 fieldValue = null;
             }

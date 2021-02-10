@@ -44,6 +44,10 @@ public interface Target {
 
     void removeTarget(String path);
 
+    default Target findTarget(Predicate<Target> filter) {
+        return findTargets(filter).stream().findFirst().orElse(null);
+    }
+
     List<Target> findTargets(Predicate<Target> filter);
 
     Target findAncestor(Predicate<Target> filter);

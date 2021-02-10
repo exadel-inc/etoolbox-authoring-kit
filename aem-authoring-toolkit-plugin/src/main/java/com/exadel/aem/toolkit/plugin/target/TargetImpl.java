@@ -181,7 +181,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         boolean isEscaped = !StringUtils.equals(path, effectivePath);
 
         if (!isEscaped && effectivePath.contains(DialogConstants.PATH_SEPARATOR)) {
-            Queue<String> pathChunks = Pattern.compile("/").splitAsStream(effectivePath).collect(Collectors.toCollection(LinkedList::new));
+            Queue<String> pathChunks = Pattern.compile(DialogConstants.PATH_SEPARATOR)
+                .splitAsStream(effectivePath)
+                .collect(Collectors.toCollection(LinkedList::new));
             Target current = this;
             while (!pathChunks.isEmpty()) {
                 String currentChunk = pathChunks.poll();
@@ -215,6 +217,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     /* --------------------
        Filtering operations
        -------------------- */
+
     @Override
     public List<Target> findTargets(Predicate<Target> filter) {
         if (filter == null) {
@@ -228,8 +231,8 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     private void collectTargets(Target current, Predicate<Target> filter, List<Target> collection) {
         List<Target> matches = current.getChildren().stream().filter(filter).collect(Collectors.toList());
         collection.addAll(matches);
-        for (Target match : matches) {
-            collectTargets(match, filter, collection);
+        for (Target child : current.getChildren()) {
+            collectTargets(child, filter, collection);
         }
     }
 
