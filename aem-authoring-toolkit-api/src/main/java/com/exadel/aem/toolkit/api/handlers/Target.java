@@ -44,13 +44,11 @@ public interface Target {
 
     void removeTarget(String path);
 
-    default Target findTarget(Predicate<Target> filter) {
-        return findTargets(filter).stream().findFirst().orElse(null);
-    }
+    Target findParent(Predicate<Target> filter);
 
-    List<Target> findTargets(Predicate<Target> filter);
+    Target findChild(Predicate<Target> filter);
 
-    Target findAncestor(Predicate<Target> filter);
+    List<Target> findChildren(Predicate<Target> filter);
 
     String getNamePrefix();
 

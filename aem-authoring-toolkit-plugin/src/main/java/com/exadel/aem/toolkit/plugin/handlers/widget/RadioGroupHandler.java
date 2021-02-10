@@ -50,7 +50,7 @@ class RadioGroupHandler implements BiConsumer<Source, Target> {
     }
 
     private void renderButton(RadioButton button, Target parentElement) {
-        List<Target> existing = parentElement.findTargets(t -> button.value().equals(t.getAttribute(DialogConstants.PN_VALUE)));
+        List<Target> existing = parentElement.findChildren(t -> button.value().equals(t.getAttribute(DialogConstants.PN_VALUE)));
         Target item = existing.isEmpty()
             ? parentElement.createTarget(DialogConstants.DOUBLE_QUOTE + button.value() + DialogConstants.DOUBLE_QUOTE)
             : parentElement.getTarget(DialogConstants.DOUBLE_QUOTE + button.value() + DialogConstants.DOUBLE_QUOTE);

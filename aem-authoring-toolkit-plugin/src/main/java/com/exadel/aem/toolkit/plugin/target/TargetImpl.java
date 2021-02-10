@@ -141,10 +141,10 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         if (path == null) {
             return null;
         }
-        String effectivePath = StringUtils.strip(path, DialogConstants.DOUBLE_QUOTE);
-        boolean isEscaped = !StringUtils.equals(path, effectivePath);
+        boolean isEscaped = path.startsWith(DialogConstants.DOUBLE_QUOTE) && path.endsWith(DialogConstants.DOUBLE_QUOTE);
+        String effectivePath = isEscaped ? StringUtils.strip(path, DialogConstants.DOUBLE_QUOTE) : path;
 
-        if (!isEscaped && effectivePath.contains(DialogConstants.PATH_SEPARATOR)) {
+        if (!isEscaped && PathSplitHelper.of(effectivePath).isSplittable()) {
             Target existingTarget = getTarget(effectivePath);
             if (existingTarget != null && !this.equals(existingTarget)) {
                 removeTarget(effectivePath);
@@ -177,13 +177,12 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         if (StringUtils.isBlank(path)) {
             return null;
         }
-        String effectivePath = StringUtils.strip(path, DialogConstants.DOUBLE_QUOTE);
-        boolean isEscaped = !StringUtils.equals(path, effectivePath);
+        boolean isEscaped = path.startsWith(DialogConstants.DOUBLE_QUOTE) && path.endsWith(DialogConstants.DOUBLE_QUOTE);
+        String effectivePath = isEscaped ? StringUtils.strip(path, DialogConstants.DOUBLE_QUOTE) : path;
+        PathSplitHelper pathSplitHelper = PathSplitHelper.of(effectivePath);
 
-        if (!isEscaped && effectivePath.contains(DialogConstants.PATH_SEPARATOR)) {
-            Queue<String> pathChunks = Pattern.compile(DialogConstants.PATH_SEPARATOR)
-                .splitAsStream(effectivePath)
-                .collect(Collectors.toCollection(LinkedList::new));
+        if (!isEscaped && pathSplitHelper.isSplittable()) {
+            Queue<String> pathChunks = pathSplitHelper.getChunks();
             Target current = this;
             while (!pathChunks.isEmpty()) {
                 String currentChunk = pathChunks.poll();
@@ -219,25 +218,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
        -------------------- */
 
     @Override
-    public List<Target> findTargets(Predicate<Target> filter) {
-        if (filter == null) {
-            return Collections.emptyList();
-        }
-        List<Target> result = new ArrayList<>();
-        collectTargets(this, filter, result);
-        return result;
-    }
-
-    private void collectTargets(Target current, Predicate<Target> filter, List<Target> collection) {
-        List<Target> matches = current.getChildren().stream().filter(filter).collect(Collectors.toList());
-        collection.addAll(matches);
-        for (Target child : current.getChildren()) {
-            collectTargets(child, filter, collection);
-        }
-    }
-
-    @Override
-    public Target findAncestor(Predicate<Target> filter) {
+    public Target findParent(Predicate<Target> filter) {
         if (filter == null) {
             return null;
         }
@@ -250,6 +231,50 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         }
         return null;
     }
+
+    @Override
+    public Target findChild(Predicate<Target> filter) {
+        if (filter == null) {
+            return null;
+        }
+        return findChild(this, filter);
+    }
+
+    private static Target findChild(Target current, Predicate<Target> filter) {
+        Target match = current.getChildren()
+            .stream()
+            .filter(filter)
+            .findFirst()
+            .orElse(null);
+        if (match != null) {
+            return match;
+        }
+        for (Target child : current.getChildren()) {
+            if ((match = findChild(child, filter)) != null) {
+                return match;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<Target> findChildren(Predicate<Target> filter) {
+        if (filter == null) {
+            return Collections.emptyList();
+        }
+        List<Target> result = new ArrayList<>();
+        findChildren(this, filter, result);
+        return result;
+    }
+
+    private static void findChildren(Target current, Predicate<Target> filter, List<Target> collection) {
+        List<Target> matches = current.getChildren().stream().filter(filter).collect(Collectors.toList());
+        collection.addAll(matches);
+        for (Target child : current.getChildren()) {
+            findChildren(child, filter, collection);
+        }
+    }
+
 
     /* -----------------
        Prefix operations

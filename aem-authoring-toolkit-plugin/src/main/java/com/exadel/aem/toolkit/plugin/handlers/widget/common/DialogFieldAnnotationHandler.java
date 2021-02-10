@@ -53,7 +53,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         // with "./" which is by default
         // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
         // That is why we must alter the default name prefix for the ongoing set of sources
-        Target multifieldAncestor = target.findAncestor(t -> ResourceTypes.MULTIFIELD.equals(t.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE)));
+        Target multifieldAncestor = target.findParent(t -> ResourceTypes.MULTIFIELD.equals(t.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE)));
         if (multifieldAncestor == null || multifieldAncestor.equals(target.getParent())) {
             prefix = DialogConstants.RELATIVE_PATH_PREFIX + prefix;
         }

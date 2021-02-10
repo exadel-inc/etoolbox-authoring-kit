@@ -46,7 +46,7 @@ class SelectHandler implements BiConsumer<Source, Target> {
         if (ArrayUtils.isNotEmpty(select.options())) {
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             for (Option option: select.options()) {
-                List<Target> existing = items.findTargets(t -> option.value().equals(t.getAttribute(DialogConstants.PN_VALUE)));
+                List<Target> existing = items.findChildren(t -> option.value().equals(t.getAttribute(DialogConstants.PN_VALUE)));
                 Target item = existing.isEmpty()
                     ? items.createTarget(DialogConstants.DOUBLE_QUOTE + option.value() + DialogConstants.DOUBLE_QUOTE)
                     : items.getTarget(DialogConstants.DOUBLE_QUOTE + option.value() + DialogConstants.DOUBLE_QUOTE);

@@ -59,7 +59,7 @@ public class DomAdapter {
                 return null;
             }
         }
-        sourceDocument.appendChild(createDocumentElement(sourceDocument, target));
+        sourceDocument.appendChild(createElement(sourceDocument, target, true));
         return sourceDocument;
     }
 
@@ -82,23 +82,27 @@ public class DomAdapter {
                 return null;
             }
         }
-        return createDocumentElement(sourceDocument, target);
+        return createElement(sourceDocument, target, true);
     }
 
     /**
-     * Implements creating a root document element with the {@code Document} source and {@code Target} provided
+     * Implements creating a DOM element with the {@code Document} source and {@code Target} provided
      * @param sourceDocument Document used as a factory for new elements
      * @param target {@code Target} instance holding the data for rendering
+     * @param isRoot True to create a document element; false to create an ordinary nested element
      * @return {@code Element} instance
      */
-    private static Element createDocumentElement(Document sourceDocument, Target target) {
+    private static Element createElement(Document sourceDocument, Target target, boolean isRoot) {
         String name = PluginNamingUtility.getValidNodeName(target.getName());
         Element element = sourceDocument.createElement(name);
         for (Map.Entry<String, String> entry : target.getAttributes().entrySet()) {
             element.setAttribute(entry.getKey(), entry.getValue());
         }
-        target.getChildren().forEach(child -> element.appendChild(createDocumentElement(sourceDocument, child)));
-        XmlFactory.XML_NAMESPACES.forEach((key, value) -> element.setAttribute(XmlFactory.XML_NAMESPACE_PREFIX + key, value));
+        target.getChildren().forEach(child -> element.appendChild(createElement(sourceDocument, child, false)));
+        if (isRoot) {
+            XmlFactory.XML_NAMESPACES.forEach((key, value) ->
+                element.setAttribute(XmlFactory.XML_NAMESPACE_PREFIX + key, value));
+        }
         return element;
     }
 }
