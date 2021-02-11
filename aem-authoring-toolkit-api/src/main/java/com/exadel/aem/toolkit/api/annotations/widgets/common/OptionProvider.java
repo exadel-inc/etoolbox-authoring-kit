@@ -21,6 +21,7 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -36,5 +37,6 @@ public @interface OptionProvider {
 
     String selectedValue() default "";
 
+    @PropertyRendering(ignoreValues = "false")
     boolean sorted() default false;
 }

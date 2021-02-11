@@ -41,31 +41,37 @@ abstract class OptionProviderHandler {
 
         int pathItemOrdinal = 1;
         for (OptionSource item : optionProvider.sources()) {
-            String pathSuffix = optionProvider.sources().length > 1 ? Integer.toString(pathItemOrdinal++) : StringUtils.EMPTY;
-            datasource.attribute(DialogConstants.PN_PATH + pathSuffix, item.path());
-            if (StringUtils.isNotBlank(item.fallbackPath())) {
-                datasource.attribute(DialogConstants.PN_FALLBACK_PATH + pathSuffix, item.fallbackPath());
-            }
-            if (StringUtils.isNotBlank(item.textMember())) {
-                datasource.attribute(DialogConstants.PN_TEXT_MEMBER + pathSuffix, item.textMember());
-            }
-            if (StringUtils.isNotBlank(item.valueMember())) {
-                datasource.attribute(DialogConstants.PN_VALUE_MEMBER + pathSuffix, item.valueMember());
-            }
-            if (ArrayUtils.isNotEmpty(item.attributes())) {
-                datasource.attribute(DialogConstants.PN_ATTRIBUTES + pathSuffix, item.attributes());
-            }
-            if (StringUtils.isNotBlank(item.textTransform())) {
-                datasource.attribute(DialogConstants.PN_TEXT_TRANSFORM + pathSuffix, item.textTransform());
-            }
-            if (StringUtils.isNotBlank(item.valueTransform())) {
-                datasource.attribute(DialogConstants.PN_VALUE_TRANSFORM + pathSuffix, item.valueTransform());
-            }
+            String pathPostfix = optionProvider.sources().length > 1
+                ? Integer.toString(pathItemOrdinal++)
+                : StringUtils.EMPTY;
+            populateSourceAttributes(datasource, item, pathPostfix);
         }
     }
 
     static boolean hasProvidedOptions(OptionProvider optionProvider) {
         return ArrayUtils.isNotEmpty(optionProvider.sources())
             && Arrays.stream(optionProvider.sources()).anyMatch(source -> StringUtils.isNotBlank(source.path()));
+    }
+
+    private static void populateSourceAttributes(Target datasource, OptionSource optionSource, String postfix) {
+        datasource.attribute(DialogConstants.PN_PATH + postfix, optionSource.path());
+        if (StringUtils.isNotBlank(optionSource.fallbackPath())) {
+            datasource.attribute(DialogConstants.PN_FALLBACK_PATH + postfix, optionSource.fallbackPath());
+        }
+        if (StringUtils.isNotBlank(optionSource.textMember())) {
+            datasource.attribute(DialogConstants.PN_TEXT_MEMBER + postfix, optionSource.textMember());
+        }
+        if (StringUtils.isNotBlank(optionSource.valueMember())) {
+            datasource.attribute(DialogConstants.PN_VALUE_MEMBER + postfix, optionSource.valueMember());
+        }
+        if (ArrayUtils.isNotEmpty(optionSource.attributes())) {
+            datasource.attribute(DialogConstants.PN_ATTRIBUTES + postfix, optionSource.attributes());
+        }
+        if (StringUtils.isNotBlank(optionSource.textTransform())) {
+            datasource.attribute(DialogConstants.PN_TEXT_TRANSFORM + postfix, optionSource.textTransform());
+        }
+        if (StringUtils.isNotBlank(optionSource.valueTransform())) {
+            datasource.attribute(DialogConstants.PN_VALUE_TRANSFORM + postfix, optionSource.valueTransform());
+        }
     }
 }
