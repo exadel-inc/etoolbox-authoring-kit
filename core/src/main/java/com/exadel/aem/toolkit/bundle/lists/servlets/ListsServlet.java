@@ -58,7 +58,7 @@ import com.adobe.granite.ui.components.ds.EmptyDataSource;
         "sling.servlet.methods=" + HttpConstants.METHOD_GET
     }
 )
-public class ChildResourcesDataSource extends SlingSafeMethodsServlet {
+public class ListsServlet extends SlingSafeMethodsServlet {
     private static final String LIST_TEMPLATE_NAME = "/conf/authoring-toolkit/settings/wcm/templates/list";
     private static final String PN_PATH = "path";
     private static final String PN_OFFSET = "offset";
@@ -171,7 +171,10 @@ public class ChildResourcesDataSource extends SlingSafeMethodsServlet {
         return bindings.getSling();
     }
 
-    public static class PagingDataSource extends AbstractDataSource {
+    /**
+     * Implements the {@code DataSource} pattern for displaying matched resources in pages
+     */
+    private static class PagingDataSource extends AbstractDataSource {
         private final List<Resource> resources;
         private final int offset;
         private final int limit;

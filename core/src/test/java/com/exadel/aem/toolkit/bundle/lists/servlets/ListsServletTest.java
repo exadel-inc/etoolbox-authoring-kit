@@ -38,7 +38,7 @@ import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ChildResourcesDataSourceTest {
+public class ListsServletTest {
     private static final String SIMPLE_LIST_PATH = "/content/authoring-toolkit/lists/simpleList";
     private static final String CUSTOM_LIST_PATH = "/content/authoring-toolkit/lists/aat-lists/customList";
     private static final String DATASOURCE_PATH = "/datasource";
@@ -50,7 +50,7 @@ public class ChildResourcesDataSourceTest {
     private ExpressionResolver expressionResolver;
 
     @InjectMocks
-    private ChildResourcesDataSource servlet;
+    private ListsServlet servlet;
 
     @Before
     public void setUp() {

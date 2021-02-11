@@ -51,8 +51,8 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
         "sling.servlet.methods=" + HttpConstants.METHOD_GET
     }
 )
-public class ItemComponentDataSource extends SlingSafeMethodsServlet {
-    private static final Logger LOG = LoggerFactory.getLogger(ItemComponentDataSource.class);
+public class ItemComponentsServlet extends SlingSafeMethodsServlet {
+    private static final Logger LOG = LoggerFactory.getLogger(ItemComponentsServlet.class);
 
     private static final String SELECT_STATEMENT = "SELECT * FROM [cq:Component] AS s WHERE ISDESCENDANTNODE(s,'/apps') AND [aatListItem] = 'true'";
 

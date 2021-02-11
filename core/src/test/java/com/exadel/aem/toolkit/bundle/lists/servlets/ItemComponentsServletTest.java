@@ -25,7 +25,7 @@ import com.adobe.granite.ui.components.ds.DataSource;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 
-public class ItemComponentDataSourceTest {
+public class ItemComponentsServletTest {
 
     private static final String GENERIC_ITEM_PATH = "/apps/authoring-toolkit/lists/components/content/genericItem";
     private static final String SIMPLE_ITEM_PATH = "/etc/authoring-toolkit/lists/components/content/simpleItem";
@@ -41,7 +41,7 @@ public class ItemComponentDataSourceTest {
 
     @Test
     public void shouldReturnDataSourceFromApps() {
-        ItemComponentDataSource servlet = new ItemComponentDataSource();
+        ItemComponentsServlet servlet = new ItemComponentsServlet();
         servlet.doGet(context.request(), context.response());
 
         DataSource dataSource = (DataSource) context.request().getAttribute(DataSource.class.getName());
