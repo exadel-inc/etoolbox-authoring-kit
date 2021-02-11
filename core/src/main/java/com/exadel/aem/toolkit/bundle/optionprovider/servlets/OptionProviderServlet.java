@@ -42,7 +42,7 @@ import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderServi
 /**
  * Allows to set custom data source for a TouchUI widget supporting Granite datasources, such as a RadioGroup or a Select.
  * Supports a number of settings that are either stored as attributes of {@code datasource} node in TouchUI dialog,
- * or passed in HTTP request as query arguments. Selection options are rendered from either a node tree, an ACS List -like
+ * or passed in HTTP request as query arguments. Datasource options are rendered from either a node tree, an ACS List -like
  * node structure ({@code [...]/node/jcr:content/list/[items]}), or a tag folder
  */
 @Component(

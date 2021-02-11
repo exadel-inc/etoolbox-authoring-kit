@@ -74,7 +74,7 @@ class OptionSourceResolver {
         if (StringUtils.isBlank(path)) {
             return null;
         }
-        // path containing "@" is considered path-and-attribute and is further parsed at the second method's overload
+        // Path containing "@" is considered path-and-attribute and is further parsed at the second method's overload
         if (path.contains(OptionSourceParameters.SEPARATOR_AT)) {
             return resolvePath(request,
                     StringUtils.substringBefore(path, OptionSourceParameters.SEPARATOR_AT),
@@ -83,41 +83,42 @@ class OptionSourceResolver {
 
         Resource result;
         if (path.startsWith(OptionSourceParameters.SEPARATOR_SLASH)) {
-            // path starting with "/" is considered absolute so it is resolved directly  via ResourceResolver
+            // Path starting with "/" is considered absolute so it is resolved directly  via ResourceResolver
             result = request.getResourceResolver().resolve(path);
         } else {
-            // for a non-absolute path, we must resolve *target* content resource
+            // For a non-absolute path, we must resolve *target* content resource
             // (whilst the current resource is rather the Granite node of the component's structure under /apps)
             // the target resource path is passed via request suffix
             result = resolvePathViaRequestSuffix(request, path);
         }
 
-        // early return in case result is not resolvable
+        // Early return in case result is not resolvable
         if (result == null || result instanceof NonExistingResource) {
             return null;
         }
 
-        // return tag root
+        // Return tag root
         if (isTagCollection(result)) {
             return result;
         }
 
-        // if this is an ACS List -like structure, return the jcr:content/list subnode as datasource root
+        // If this is an ACS List -like structure, return the jcr:content/list subnode as datasource root
         Resource listingChild = result.getResourceResolver().getResource(result, NODE_NAME_LIST);
         if (listingChild != null) {
             return listingChild;
         }
 
-        // otherwise, return the retrieved Resource as is
+        // Otherwise, return the retrieved Resource as is
         return result;
     }
 
     /**
-     * Tries to retrieve {@code Resource} instance representing datasource based path to node where datasource path is stored,
-     * and the name of node's attribute. Both absolute and relative paths supported, and so are direct and referenced paths
+     * Tries to retrieve {@code Resource} instance representing datasource based path to node where datasource path is
+     * stored, and the name of node's attribute. Both absolute and relative paths supported, and so are direct and
+     * referenced paths
      * @param request Current {@code SlingHttpServletRequest}
      * @param referencePath Path to {@code Resource} that contains user-authored path to actual datasource
-     * @param referenceAttribute Name of the attribute storing user-authored path to actual datasource
+     * @param referenceAttribute Name of the attribute that exposes user-authored path to actual datasource
      * @return {@code Resource} instance, or null
      */
     private static Resource resolvePath(SlingHttpServletRequest request, String referencePath, String referenceAttribute) {

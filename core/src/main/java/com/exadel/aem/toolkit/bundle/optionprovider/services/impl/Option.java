@@ -214,66 +214,66 @@ class Option {
      * Gets a builder for a new {@link Option} instance
      * @return {@code DataSourceEntryBuilder} object
      */
-    static OptionBuilder builder() {
-        return new OptionBuilder();
+    static Builder builder() {
+        return new Builder();
     }
 
     /**
      * Implements builder pattern for the {@link Option}. Ensures that {@code DataSourceEntry} fields
      * are initialized with proper defaults
      */
-    static class OptionBuilder {
+    static class Builder {
         private final Option dataSourceOption = new Option();
 
-        private OptionBuilder() {
+        private Builder() {
         }
 
-        OptionBuilder resource(Resource value) {
+        Builder resource(Resource value) {
             dataSourceOption.resource = value;
             return this;
         }
 
-        OptionBuilder resourceResolver(ResourceResolver value) {
+        Builder resourceResolver(ResourceResolver value) {
             dataSourceOption.resourceResolver = value;
             return this;
         }
 
-        OptionBuilder text(String value) {
+        Builder text(String value) {
             dataSourceOption.text = value;
             return this;
         }
 
-        OptionBuilder textMember(String value) {
+        Builder textMember(String value) {
             dataSourceOption.textMember = value;
             return this;
         }
 
-        OptionBuilder value(String value) {
+        Builder value(String value) {
             dataSourceOption.value = value;
             return this;
         }
 
-        OptionBuilder valueMember(String value) {
+        Builder valueMember(String value) {
             dataSourceOption.valueMember = value;
             return this;
         }
 
-        OptionBuilder attributeMembers(String[] value) {
+        Builder attributeMembers(String[] value) {
             dataSourceOption.attributeMembers = value;
             return this;
         }
 
-        OptionBuilder attributes(String[] value) {
+        Builder attributes(String[] value) {
             dataSourceOption.attributes = value;
             return this;
         }
 
-        OptionBuilder textTransform(StringTransform value) {
+        Builder textTransform(StringTransform value) {
             dataSourceOption.textTransform = value;
             return this;
         }
 
-        OptionBuilder valueTransform(StringTransform value) {
+        Builder valueTransform(StringTransform value) {
             dataSourceOption.valueTransform = value;
             return this;
         }

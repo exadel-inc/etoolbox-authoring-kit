@@ -37,8 +37,8 @@ import com.day.cq.commons.jcr.JcrConstants;
 import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderService;
 
 /**
- * Implements {@link OptionProviderService} to prepare option sets for Granite-compliant custom data sources used in authoring
- * dialog widgets
+ * Implements {@link OptionProviderService} to prepare option sets for Granite-compliant custom data sources
+ * used in TouchUI dialog widgets
  */
 @Component(service = OptionProviderService.class)
 public class OptionProviderServiceImpl implements OptionProviderService {
@@ -48,11 +48,11 @@ public class OptionProviderServiceImpl implements OptionProviderService {
         Set<Option> options = new LinkedHashSet<>();
         List<Option> result;
 
-        // parse user-specified datasource settings from the request and/or underlying "datasource" resource,
+        // Parse user-specified datasource settings from the request and/or underlying "datasource" resource,
         OptionSourceParameters parameters = OptionSourceParameters.forRequest(request);
 
-        // for each of the datasource paths, try retrieve a list of JCR-stored options
-        for (OptionSourcePathParameters pathParameters : parameters.getPathParameters()) {
+        // For each of the datasource paths, try retrieve a list of JCR-stored options
+        for (PathParameters pathParameters : parameters.getPathParameters()) {
             Resource datasourceResource = OptionSourceResolver.resolve(request, pathParameters.getPath(), pathParameters.getFallbackPath());
             if (datasourceResource == null || datasourceResource instanceof NonExistingResource) {
                 continue;
@@ -60,13 +60,13 @@ public class OptionProviderServiceImpl implements OptionProviderService {
             options.addAll(getOptions(datasourceResource, pathParameters));
         }
 
-        // transform the resulting collection to sortable list and sort it as optioned by user
+        // Transform the resulting collection to sortable list and sort it as optioned by user
         result = new ArrayList<>(options);
         if (parameters.isSorted()) {
             result.sort(Option.COMPARATOR);
         }
 
-        // extract "prepended" and "appended" options from the user-provided params; preserve only those of them
+        // Extract "prepended" and "appended" options from the user-provided params; preserve only those of them
         // that do not have values already present in the "original" list
         result.addAll(0, getExtraOptions(request.getResource().getResourceResolver(),
                 parameters.getPrependOptions(),
@@ -75,7 +75,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
                 parameters.getAppendOptions(),
                 options));
 
-        // set "selected" flag to appropriate option(s) if "selected value" parameter is specified
+        // Set "selected" flag to appropriate option(s) if "selected value" parameter is specified
         if (StringUtils.isNotBlank(parameters.getSelectedValue())) {
             result.stream()
                     .filter(option -> StringUtils.equals(option.getValue(), parameters.getSelectedValue())
@@ -83,7 +83,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
                     .forEach(Option::select);
         }
 
-        // render the resulting collection
+        // Render the resulting collection
         return result.stream()
                 .map(Option::toValueMapEntry)
                 .filter(Objects::nonNull)
@@ -98,13 +98,13 @@ public class OptionProviderServiceImpl implements OptionProviderService {
      * @return {@code List<DataSourceOption>} object, or an empty list
      */
     private List<Option> getOptions(Resource dataSource,
-                                    OptionSourcePathParameters parameters) {
+                                    PathParameters parameters) {
         final String defaultValueMember = !OptionSourceResolver.isTagCollection(dataSource)
                 ? Option.PARAMETER_VALUE
                 : Option.PARAMETER_ID;
         return StreamSupport.stream(dataSource.getChildren().spliterator(), false)
                 .filter(child -> !child.getName().equals(JcrConstants.JCR_CONTENT)) // jcr:content nodes are excluded
-                .map(child -> Option.builder()                            // from the option sources
+                .map(child -> Option.builder()                                      // from the option sources
                         .resource(child)
                         .textMember(parameters.getTextMember())
                         .valueMember(StringUtils.defaultString(parameters.getValueMember(), defaultValueMember))
@@ -122,7 +122,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
      * @param resourceResolver {@code ResourceResolver} instance to create "virtual" datasource entry resource
      * @param optionStrings Array of Strings representing extra options
      * @param skip List of the [already existing] options to omit in the extra options collection
-     * @return List of "virtual" datasource items resources that are able to be merged to the original resource list
+     * @return List of "virtual" datasource items resources that can be merged to the original resource list
      */
     private static List<Option> getExtraOptions(ResourceResolver resourceResolver,
                                                 String[] optionStrings,

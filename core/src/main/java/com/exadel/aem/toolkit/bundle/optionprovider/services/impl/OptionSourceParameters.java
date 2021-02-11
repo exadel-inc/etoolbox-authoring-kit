@@ -65,7 +65,7 @@ public class OptionSourceParameters {
 
     private static final String NODE_NAME_DATASOURCE = "datasource";
 
-    private final List<OptionSourcePathParameters> pathParameters;
+    private final List<PathParameters> pathParameters;
     private String[] appendOptions;
     private String[] prependOptions;
     private String selectedValue;
@@ -77,9 +77,9 @@ public class OptionSourceParameters {
 
     /**
      * Gets the collection of user-specified settings specific for a datasource path
-     * @return List of {@link OptionSourcePathParameters} objects
+     * @return List of {@link PathParameters} objects
      */
-    List<OptionSourcePathParameters> getPathParameters() {
+    List<PathParameters> getPathParameters() {
         return pathParameters;
     }
 
@@ -133,7 +133,7 @@ public class OptionSourceParameters {
         for (String pathKey: pathRelatedKeys) {
             String suffix = StringUtils.substringAfter(pathKey, QUERY_KEY_PATH);
             result.pathParameters.add(
-                    OptionSourcePathParameters.builder()
+                    PathParameters.builder()
                             .path(repository.get(pathKey, String.class))
                             .fallbackPath(
                                     repository.get(QUERY_KEY_FALLBACK_PATH + suffix, String.class),
@@ -177,11 +177,11 @@ public class OptionSourceParameters {
     }
 
     /**
-     * Called from {@link OptionSourceParameters#forRequest(SlingHttpServletRequest)} routine to initialize
-     * a collection of user-set parameters stored in current {@code Resource}'s {@code datasource} node, if such exists,
-     * and then in current {@code SlingHttpServletRequest}'s query parameter map (so that the latter overlay the previous).
+     * Called from {@link OptionSourceParameters#forRequest(SlingHttpServletRequest)} to compile a collection of user-set
+     * parameters that are stored in the current {@code SlingHttpServletRequest}'s query parameter map, or else in the
+     * current {@code Resource}'s {@code datasource} node, if such exists (so that the former overlays the latter).
      * From {@code datasource} node, array-types values are extracted, and from the request, string values are extracted
-     * and split by comma
+     * and split by a comma
      * @param request {@code SlingHttpServletRequest} instance
      * @return {@code ValueMap} value
      */

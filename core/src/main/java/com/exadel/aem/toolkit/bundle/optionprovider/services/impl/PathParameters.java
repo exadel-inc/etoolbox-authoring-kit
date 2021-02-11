@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderServi
  * @see OptionSourceParameters
  * @see OptionProviderService
  */
-class OptionSourcePathParameters {
+class PathParameters {
     private String path;
     private String fallbackPath;
 
@@ -39,7 +39,7 @@ class OptionSourcePathParameters {
     /**
      * Default (private) constructor
      */
-    private OptionSourcePathParameters() {
+    private PathParameters() {
     }
 
     /**
@@ -107,64 +107,64 @@ class OptionSourcePathParameters {
     }
 
     /**
-     * Gets a builder for a new {@link OptionSourcePathParameters} instance
+     * Gets a builder for a new {@link PathParameters} instance
      * @return {@code DataSourcePathParameter} object
      */
-    static OptionSourcePathParameterBuilder builder() {
-        return new OptionSourcePathParameterBuilder();
+    static Builder builder() {
+        return new Builder();
     }
 
 
     /**
-     * Implements builder pattern for the {@link OptionSourcePathParameters}
+     * Implements builder pattern for the {@link PathParameters}
      */
-    static class OptionSourcePathParameterBuilder {
-        private final OptionSourcePathParameters optionSourcePathParameters = new OptionSourcePathParameters();
+    static class Builder {
+        private final PathParameters optionSourcePathParameters = new PathParameters();
 
-        private OptionSourcePathParameterBuilder() {
+        private Builder() {
         }
 
-        OptionSourcePathParameterBuilder path(String value) {
+        Builder path(String value) {
             optionSourcePathParameters.path = value;
             return this;
         }
 
-        OptionSourcePathParameterBuilder fallbackPath(String value, String defaultValue) {
+        Builder fallbackPath(String value, String defaultValue) {
             optionSourcePathParameters.fallbackPath = StringUtils.isNotBlank(value) ? value : defaultValue;
             return this;
         }
 
-        OptionSourcePathParameterBuilder textMember(String value, String defaultValue) {
+        Builder textMember(String value, String defaultValue) {
             optionSourcePathParameters.textMember = StringUtils.isNotBlank(value) ? value : defaultValue;
             return this;
         }
 
-        OptionSourcePathParameterBuilder valueMember(String value, String defaultValue) {
+        Builder valueMember(String value, String defaultValue) {
             optionSourcePathParameters.valueMember = StringUtils.isNotBlank(value) ? value : defaultValue;
             return this;
         }
 
-        OptionSourcePathParameterBuilder attributeMembers(String[] value, String[] defaultValue) {
+        Builder attributeMembers(String[] value, String[] defaultValue) {
             optionSourcePathParameters.attributeMembers = ArrayUtils.isNotEmpty(value) ? value : defaultValue;
             return this;
         }
 
-        OptionSourcePathParameterBuilder attributes(String[] value, String[] defaultValue) {
+        Builder attributes(String[] value, String[] defaultValue) {
             optionSourcePathParameters.attributes = ArrayUtils.isNotEmpty(value) ? value : defaultValue;
             return this;
         }
 
-        OptionSourcePathParameterBuilder textTransform(StringTransform value) {
+        Builder textTransform(StringTransform value) {
             optionSourcePathParameters.textTransform = value;
             return this;
         }
 
-        OptionSourcePathParameterBuilder valueTransform(StringTransform value) {
+        Builder valueTransform(StringTransform value) {
             optionSourcePathParameters.valueTransform = value;
             return this;
         }
 
-        OptionSourcePathParameters build() {
+        PathParameters build() {
             return optionSourcePathParameters;
         }
     }

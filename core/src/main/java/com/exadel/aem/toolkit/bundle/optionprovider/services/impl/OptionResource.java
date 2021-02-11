@@ -34,12 +34,12 @@ class OptionResource extends ValueMapResource {
     private Resource graniteDataChild;
 
     /**
-     * Creates a new Sling synthetic resource intended to be processed as a Granite datasource
+     * Creates a new synthetic Sling resource intended to be processed as a Granite datasource
      * @param resourceResolver {@code ResourceResolver} associated with this synthetic resource
      * @param valueMap {@code Map<String, Object>} decorated to a {@code ValueMap} that represents
-     *                                            mandatory attributes of this resource, namely <i>text</i> and <i>value</i>
+     *                 mandatory attributes of this resource, namely <i>text</i> and <i>value</i>
      * @param customAttributes {@code Map<String, Object>} that represents custom attributes of this datasource option,
-     *                                                    may be null or empty
+     *                         can be null or empty
      */
     OptionResource(ResourceResolver resourceResolver,
                    ValueMap valueMap,
