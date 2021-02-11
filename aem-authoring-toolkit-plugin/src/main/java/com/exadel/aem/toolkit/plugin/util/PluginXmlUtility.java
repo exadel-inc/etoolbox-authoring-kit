@@ -98,8 +98,8 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     /**
-     * Replaces and retrieves the current {@code Document}. If the document sotred has been populated with data
-     * it is discarded in foavor of another document itsnatce; otherwise returned as is
+     * Replaces and retrieves the current {@code Document}. If the document has been populated with data
+     * it is discarded in favor of another document instance; otherwise returned as is
      * @return {@code Document} instance
      */
     public Document resetDocument() {

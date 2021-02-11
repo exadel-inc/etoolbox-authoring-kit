@@ -20,11 +20,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.target.Targets;
+import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
 public class TargetsTest {
@@ -32,6 +34,7 @@ public class TargetsTest {
     private static final String NN_ITEM = "item";
     private static final String NN_SUBITEM = "subitem";
     private static final String NN_SUBSUBITEM = "subsubitem";
+    private static final String PN_ARRAY = "array";
     private static final String PN_ORDINAL = "ordinal";
 
     private static final int TIER_1_CHILD_COUNT = 10;
@@ -46,10 +49,10 @@ public class TargetsTest {
             if (i % 2 == 0) {
                 item.getOrCreateTarget(NN_SUBITEM + i)
                     .attribute(PN_ORDINAL, i-1)
-                    .attribute(PN_ORDINAL, i)
-                    .namePostfix("_checked");
+                    .attribute(PN_ORDINAL, i);
                 if (i == 0) {
-                    item.createTarget(NN_SUBITEM + i + "/" + NN_SUBSUBITEM + i).attribute(PN_ORDINAL, i);
+                    item.attribute(PN_ARRAY, new long[] {1, 2, 3})
+                        .createTarget(NN_SUBITEM + i + DialogConstants.PATH_SEPARATOR + NN_SUBSUBITEM + i).attribute(PN_ORDINAL, i);
                 }
             }
         }
@@ -102,5 +105,6 @@ public class TargetsTest {
     public void testXmlExport() throws ParserConfigurationException {
         Document document = testable.adaptTo(DomAdapter.class).composeDocument(XmlFactory.newDocument());
         Assert.assertEquals(NN_ROOT, document.getDocumentElement().getTagName());
+        Assert.assertEquals("{Long}[1,2,3]", ((Element) document.getDocumentElement().getFirstChild()).getAttribute(PN_ARRAY));
     }
 }

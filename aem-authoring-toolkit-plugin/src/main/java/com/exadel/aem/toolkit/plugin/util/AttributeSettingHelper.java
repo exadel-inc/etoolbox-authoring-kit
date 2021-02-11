@@ -41,7 +41,7 @@ import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
 /**
  * Helper class for validating and rendering typed attributes to XML nodes
- * @see com.exadel.aem.toolkit.api.runtime.XmlUtility#setAttribute(Element, String, Annotation, BinaryOperator)
+ * @see PluginXmlUtility#setAttribute(Element, String, Annotation, BinaryOperator)
  * @param <T> Type of value to be rendered as XML attribute
  */
 public class AttributeSettingHelper<T> {

@@ -43,7 +43,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 import com.exadel.aem.toolkit.plugin.util.AttributeSettingHelper;
@@ -339,9 +338,28 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
     @Override
+    public Target attribute(String name, String[] value) {
+        if (value != null) {
+            String stringValues = String.join(DialogConstants.ITEM_SEPARATOR_COMMA, value);
+            this.attributes.put(
+                name,
+                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Long.class.getSimpleName())
+                    + String.format(ATTRIBUTE_LIST_TEMPLATE, stringValues));
+        }
+        return this;
+    }
+
+    @Override
     public Target attribute(String name, boolean[] value) {
         if (value != null) {
-            this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Boolean.class.getSimpleName()) + Arrays.toString(value));
+            String booleanValues = IntStream.range(0, value.length)
+                .mapToObj(index -> value[index])
+                .map(String::valueOf)
+                .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
+            this.attributes.put(
+                name,
+                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Boolean.class.getSimpleName())
+                    + String.format(ATTRIBUTE_LIST_TEMPLATE, booleanValues));
         }
         return this;
     }
@@ -355,7 +373,13 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     @Override
     public Target attribute(String name, long[] value) {
         if (value != null) {
-            this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Long.class.getSimpleName()) + Arrays.toString(value));
+            String longValues = Arrays.stream(value)
+                .mapToObj(String::valueOf)
+                .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
+            this.attributes.put(
+                name,
+                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Long.class.getSimpleName())
+                    + String.format(ATTRIBUTE_LIST_TEMPLATE, longValues));
         }
         return this;
     }
@@ -369,7 +393,13 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     @Override
     public Target attribute(String name, double[] value) {
         if (value != null) {
-            this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Double.class.getSimpleName()) + Arrays.toString(value));
+            String doubleValues = Arrays.stream(value)
+                .mapToObj(String::valueOf)
+                .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
+            this.attributes.put(
+                name,
+                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Double.class.getSimpleName())
+                    + String.format(ATTRIBUTE_LIST_TEMPLATE, doubleValues));
         }
         return this;
     }
@@ -397,7 +427,8 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
             .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
         this.attributes.put(
             name,
-            String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Date.class.getSimpleName()) + dateValues);
+            String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Date.class.getSimpleName())
+                + String.format(ATTRIBUTE_LIST_TEMPLATE, dateValues));
         return this;
     }
 
@@ -529,6 +560,6 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         result.addAll(new HashSet<>(Arrays.asList(StringUtils
             .strip(second, ATTRIBUTE_LIST_SURROUND)
             .split(ATTRIBUTE_LIST_SPLIT_PATTERN))));
-        return String.format(ATTRIBUTE_LIST_TEMPLATE, String.join(RteFeatures.FEATURE_SEPARATOR, result));
+        return String.format(ATTRIBUTE_LIST_TEMPLATE, String.join(DialogConstants.ITEM_SEPARATOR_COMMA, result));
     }
 }

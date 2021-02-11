@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.api.handlers;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -71,12 +70,7 @@ public interface Target {
 
     Target attribute(String name, String value);
 
-    default Target attribute(String name, String[] value) {
-        if (value == null) {
-            return this;
-        }
-        return attribute(name, Arrays.toString(value));
-    }
+    Target attribute(String name, String[] value);
 
     Target attribute(String name, boolean value);
 
