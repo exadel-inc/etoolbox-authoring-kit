@@ -50,7 +50,8 @@
                         disabled="{Boolean}false"
                         name="./testCustomAnnotationAuto"
                         renderHidden="{Boolean}false"
-                        required="{Boolean}false">
+                        required="{Boolean}false"
+                        cq:levelUp="Level up value">
                         <granite:data jcr:primaryType="nt:unstructured" cq:custom="Overridden value"/>
                     </testCustomAnnotationAuto>
                     <testCustomAnnotationAutoDefault
@@ -59,7 +60,8 @@
                         disabled="{Boolean}false"
                         name="./testCustomAnnotationAutoDefault"
                         renderHidden="{Boolean}false"
-                        required="{Boolean}false">
+                        required="{Boolean}false"
+                        cq:levelUp="Level up value">
                         <granite:data jcr:primaryType="nt:unstructured" cq:custom="Non-overridden value"/>
                     </testCustomAnnotationAutoDefault>
                     <testAutoOrder jcr:primaryType="nt:unstructured"

@@ -428,31 +428,50 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
     private static void populateAnnotationProperty(Annotation context, Method method, Target target) {
-        String methodName = method.getName();
         boolean ignorePrefix = false;
+
+        // Extract property name
+        String propertyName = method.getName();
         if (method.isAnnotationPresent(PropertyRendering.class)) {
-            PropertyRendering propertyRendering = method.getAnnotation(PropertyRendering.class);
-            methodName = StringUtils.defaultIfBlank(propertyRendering.name(), methodName);
-            ignorePrefix = propertyRendering.ignorePrefix();
+            PropertyRendering propertyRenderingAnnotation = method.getAnnotation(PropertyRendering.class);
+            propertyName = PluginNamingUtility.getValidFieldName(StringUtils.defaultIfBlank(propertyRenderingAnnotation.name(), propertyName));
+            ignorePrefix = propertyRenderingAnnotation.ignorePrefix();
         } else if (method.isAnnotationPresent(PropertyName.class)) {
-            PropertyName propertyName = method.getAnnotation(PropertyName.class);
-            methodName = propertyName.value();
-            ignorePrefix = propertyName.ignorePrefix();
+            PropertyName propertyNameAnnotation = method.getAnnotation(PropertyName.class);
+            propertyName = PluginNamingUtility.getValidFieldName(propertyNameAnnotation.value());
+            ignorePrefix = propertyNameAnnotation.ignorePrefix();
         }
-        String propertyPrefix = Optional.ofNullable(context.annotationType().getAnnotation(PropertyMapping.class))
+
+        // Extract property prefix and prepend it to the name
+        String prefixByPropertyMapping = Optional.ofNullable(context.annotationType().getAnnotation(PropertyMapping.class))
             .map(PropertyMapping::prefix)
             .orElse(StringUtils.EMPTY);
-        String namePrefix = propertyPrefix.contains(DialogConstants.PATH_SEPARATOR)
-            ? StringUtils.substringAfterLast(propertyPrefix, DialogConstants.PATH_SEPARATOR)
-            : propertyPrefix;
-        if (!ignorePrefix && StringUtils.isNotBlank(propertyPrefix)) {
-            methodName = namePrefix + methodName;
+        String namePrefix = prefixByPropertyMapping.contains(DialogConstants.PATH_SEPARATOR)
+            ? StringUtils.substringAfterLast(prefixByPropertyMapping, DialogConstants.PATH_SEPARATOR)
+            : prefixByPropertyMapping;
+        if (!ignorePrefix && StringUtils.isNotBlank(prefixByPropertyMapping)) {
+            if (propertyName.contains(DialogConstants.PATH_SEPARATOR)) {
+                propertyName = StringUtils.substringBeforeLast(propertyName, DialogConstants.PATH_SEPARATOR)
+                    + DialogConstants.PATH_SEPARATOR
+                    + namePrefix
+                    + StringUtils.substringAfterLast(propertyName, DialogConstants.PATH_SEPARATOR);
+            } else {
+                propertyName = namePrefix + propertyName;
+            }
         }
+
+        // Adjust target if the property name contains a relative path
+        Target effectiveTarget = target;
+        if (propertyName.contains(DialogConstants.PATH_SEPARATOR)) {
+            effectiveTarget = target.getOrCreateTarget(StringUtils.substringBeforeLast(propertyName, DialogConstants.PATH_SEPARATOR));
+            propertyName = StringUtils.substringAfterLast(propertyName, DialogConstants.PATH_SEPARATOR);
+        }
+
         BinaryOperator<String> merger = TargetImpl::mergeStringAttributes;
         AttributeSettingHelper.forMethod(context, method)
-            .withName(methodName)
+            .withName(propertyName)
             .withMerger(merger)
-            .setAttribute(target);
+            .setAttribute(effectiveTarget);
     }
 
     private static String mergeStringAttributes(String first, String second) {

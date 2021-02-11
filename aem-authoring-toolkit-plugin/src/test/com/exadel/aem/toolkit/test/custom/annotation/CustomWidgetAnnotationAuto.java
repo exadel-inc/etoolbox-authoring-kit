@@ -35,6 +35,9 @@ public @interface CustomWidgetAnnotationAuto {
     @PropertyRendering(name = "custom")
     String customField() default "Non-overridden value";
 
+    @PropertyRendering(name = "../levelUp")
+    String customLevelUpField() default "Level up value";
+
     @ValueRestriction("com.exadel.aem.toolkit.test.custom.CustomValidator")
     String customColor() default "";
 }
