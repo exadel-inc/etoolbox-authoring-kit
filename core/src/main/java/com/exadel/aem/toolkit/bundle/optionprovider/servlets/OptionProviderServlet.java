@@ -49,7 +49,7 @@ import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderServi
     service = Servlet.class,
     property = {
         "sling.servlet.paths=/apps/" + ResourceTypes.OPTION_PROVIDER,
-        "sling.servlet.resourceTypes=" + ResourceTypes.OPTION_PROVIDER,
+        "sling.servlet.resourceTypes=/apps/" + ResourceTypes.OPTION_PROVIDER,
         "sling.servlet.methods=get"
     })
 public class OptionProviderServlet extends SlingSafeMethodsServlet {

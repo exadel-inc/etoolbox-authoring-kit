@@ -59,7 +59,7 @@ public class OptionProviderTest {
             + "&valueMember2=" + valueMember2
             + "&sorted=true"
             + "&textTransform=uppercase"
-            + "&valueTransform2=lowercase"
+            + "&valueTransform1=lowercase"
             + "&prepend=None:none"
             + "&append=More:prefix\\\\:value"
             + "&attributes=a:value,b:value";

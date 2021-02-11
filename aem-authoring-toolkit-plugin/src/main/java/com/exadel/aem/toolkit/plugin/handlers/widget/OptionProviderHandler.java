@@ -28,13 +28,15 @@ import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 abstract class OptionProviderHandler {
 
+    private static final String RESOURCE_TYPE_PREFIX = "/apps/";
+
     void appendOptionProvider(OptionProvider optionProvider, Target target) {
         if (!hasProvidedOptions(optionProvider)) {
             return;
         }
         Target datasource = target
             .getOrCreateTarget(DialogConstants.NN_DATASOURCE)
-            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.OPTION_PROVIDER)
+            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, RESOURCE_TYPE_PREFIX + ResourceTypes.OPTION_PROVIDER)
             .attributes(optionProvider, PluginAnnotationUtility.getPropertyMappingFilter(optionProvider));
 
         int pathItemOrdinal = 1;
