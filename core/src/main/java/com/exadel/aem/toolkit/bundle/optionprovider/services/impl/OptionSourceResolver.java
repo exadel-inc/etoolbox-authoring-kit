@@ -25,10 +25,12 @@ import org.apache.sling.api.resource.Resource;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.tagging.TagConstants;
 
+import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderService;
+
 /**
  * This utility class encapsulates methods for resolving paths to datasources specified directly or via a reference
  * to path-containing node/attribute
- * @see com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProvider
+ * @see OptionProviderService
  */
 class OptionSourceResolver {
     private static final String NODE_NAME_LIST = "jcr:content/list";

@@ -33,10 +33,11 @@ import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderService;
 
 /**
  * Parses and serves user-specified settings for arranging the datasource for the current request
- * @see com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProvider
+ * @see OptionProviderService
  */
 public class OptionSourceParameters {
 

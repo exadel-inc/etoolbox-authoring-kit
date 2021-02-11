@@ -24,7 +24,7 @@ import org.apache.sling.api.wrappers.ValueMapDecorator;
  * Prepares option sets for Granite-compliant custom data sources used in authoring dialog widgets.
  * Works with a companion Sling Http Servlet to serve option sets to Adobe Granite UI frontend
  */
-public interface OptionProvider {
+public interface OptionProviderService {
     /**
      * Prepares Adobe Granite datasource options in the form of a synthetic resource
      * @param request {@code SlingHttpServletRequest} object

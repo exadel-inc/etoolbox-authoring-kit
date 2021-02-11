@@ -37,20 +37,20 @@ import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.SimpleDataSource;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProvider;
+import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderService;
 
 /**
  * Allows to set custom data source for a TouchUI widget supporting Granite datasources, such as a RadioGroup or a Select.
- * Supports a number of settings that are either stored as attributes of {@code datasource} node in TouchUI dialog markup,
+ * Supports a number of settings that are either stored as attributes of {@code datasource} node in TouchUI dialog,
  * or passed in HTTP request as query arguments. Selection options are rendered from either a node tree, an ACS List -like
  * node structure ({@code [...]/node/jcr:content/list/[items]}), or a tag folder
  */
 @Component(
     service = Servlet.class,
     property = {
-        "sling.servlet.methods=get",
         "sling.servlet.paths=/apps/" + ResourceTypes.OPTION_PROVIDER,
-        "sling.servlet.resourceTypes=" + ResourceTypes.OPTION_PROVIDER
+        "sling.servlet.resourceTypes=" + ResourceTypes.OPTION_PROVIDER,
+        "sling.servlet.methods=get"
     })
 public class OptionProviderServlet extends SlingSafeMethodsServlet {
     private static final String CONTENT_TYPE_JSON = "application/json;charset=utf-8";
@@ -64,7 +64,7 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
     private static final String NODE_GRANITE_DATA = "granite:data";
 
     @Reference
-    private transient OptionProvider optionProvider;
+    private transient OptionProviderService optionProvider;
 
     /**
      * Processes HTTP GET request to the current endpoint and outputs a {@link SimpleDataSource} or a JSON string

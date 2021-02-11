@@ -17,10 +17,12 @@ package com.exadel.aem.toolkit.bundle.optionprovider.services.impl;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderService;
+
 /**
  * Contains user-specified parameters for a particular {@code datasource} path
  * @see OptionSourceParameters
- * @see com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProvider
+ * @see OptionProviderService
  */
 class OptionSourcePathParameters {
     private String path;

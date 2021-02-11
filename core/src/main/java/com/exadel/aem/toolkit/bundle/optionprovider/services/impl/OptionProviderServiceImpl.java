@@ -34,14 +34,14 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Component;
 import com.day.cq.commons.jcr.JcrConstants;
 
-import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProvider;
+import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderService;
 
 /**
- * Implements {@link OptionProvider} to prepare option sets for Granite-compliant custom data sources used in authoring
+ * Implements {@link OptionProviderService} to prepare option sets for Granite-compliant custom data sources used in authoring
  * dialog widgets
  */
-@Component(service = OptionProvider.class)
-public class OptionProviderImpl implements OptionProvider {
+@Component(service = OptionProviderService.class)
+public class OptionProviderServiceImpl implements OptionProviderService {
 
     @Override
     public List<Resource> getOptions(SlingHttpServletRequest request) {
@@ -91,7 +91,7 @@ public class OptionProviderImpl implements OptionProvider {
     }
 
     /**
-     * Called from {@link OptionProviderImpl#getOptions(SlingHttpServletRequest)} to extract list
+     * Called from {@link OptionProviderServiceImpl#getOptions(SlingHttpServletRequest)} to extract list
      * of {@link Option} items from the particular datasource
      * @param dataSource {@code Resource} instance representing selected datasource
      * @param parameters Path-related user settings that came with the request
