@@ -118,7 +118,7 @@
                 } else if (!select.attr('data-noCache')) {
                     $.get(resourceEndpoint)
                         .then(function (resource) {
-                            var storedValue = resource[valueMember];
+                            const storedValue = resource[valueMember];
                             select.attr('data-stored-value', storedValue);
                             replaceOptions(select, newOptions, select.attr('data-stored-value'));
                         })
