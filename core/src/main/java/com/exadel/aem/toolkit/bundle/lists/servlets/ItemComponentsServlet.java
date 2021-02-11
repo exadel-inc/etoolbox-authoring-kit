@@ -47,7 +47,7 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 @Component(
     service = Servlet.class,
     property = {
-        "sling.servlet.resourceTypes=/apps/authoring-toolkit/lists/datasources/list-items",
+        "sling.servlet.resourceTypes=/apps/authoring-toolkit/datasources/list-items",
         "sling.servlet.methods=" + HttpConstants.METHOD_GET
     }
 )
