@@ -23,8 +23,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import io.wcm.testing.mock.aem.junit.AemContext;
+import com.exadel.aem.toolkit.bundle.lists.models.internal.ListItem;
 
+import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 
 public class ListEntryTest {
@@ -34,13 +35,13 @@ public class ListEntryTest {
 
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
-    private ListEntry listEntry;
+    private ListItem listEntry;
 
     @Before
     public void setUp() {
         ResourceResolver resolver = context.resourceResolver();
         context.load().json("/com/exadel/aem/toolkit/bundle/lists/util/simpleList.json", SIMPLE_LIST_PATH);
-        listEntry = resolver.resolve(SIMPLE_LIST_PATH + LIST_ITEM_PATH).adaptTo(ListEntry.class);
+        listEntry = resolver.resolve(SIMPLE_LIST_PATH + LIST_ITEM_PATH).adaptTo(ListItem.class);
     }
 
     @Test

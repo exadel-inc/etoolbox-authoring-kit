@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.bundle.lists.models;
+package com.exadel.aem.toolkit.bundle.lists.models.internal;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,14 +27,13 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
-
 import com.day.cq.commons.jcr.JcrConstants;
 
 /**
  * Represents a wrapper model for a list item
  */
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class ListEntry {
+public class ListItem {
     private static final String FIELD_ITEM_RESOURCE_TYPE = "itemResourceType";
     private static final List<String> SYSTEM_PROPERTIES = Arrays.asList(
         JcrConstants.JCR_CREATED,
