@@ -25,6 +25,7 @@ import org.apache.sling.api.resource.Resource;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.tagging.TagConstants;
 
+import com.exadel.aem.toolkit.bundle.CoreConstants;
 import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderService;
 
 /**
@@ -33,7 +34,7 @@ import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderServi
  * @see OptionProviderService
  */
 class OptionSourceResolver {
-    private static final String NODE_NAME_LIST = "jcr:content/list";
+    private static final String NN_JCR_CONTENT_LIST = "jcr:content/list";
 
     /**
      * Default (private) constructor
@@ -75,14 +76,14 @@ class OptionSourceResolver {
             return null;
         }
         // Path containing "@" is considered path-and-attribute and is further parsed at the second method's overload
-        if (path.contains(OptionSourceParameters.SEPARATOR_AT)) {
+        if (path.contains(CoreConstants.SEPARATOR_AT)) {
             return resolvePath(request,
-                    StringUtils.substringBefore(path, OptionSourceParameters.SEPARATOR_AT),
-                    StringUtils.substringAfter(path, OptionSourceParameters.SEPARATOR_AT));
+                    StringUtils.substringBefore(path, CoreConstants.SEPARATOR_AT),
+                    StringUtils.substringAfter(path, CoreConstants.SEPARATOR_AT));
         }
 
         Resource result;
-        if (path.startsWith(OptionSourceParameters.SEPARATOR_SLASH)) {
+        if (path.startsWith(CoreConstants.SEPARATOR_SLASH)) {
             // Path starting with "/" is considered absolute so it is resolved directly  via ResourceResolver
             result = request.getResourceResolver().resolve(path);
         } else {
@@ -103,7 +104,7 @@ class OptionSourceResolver {
         }
 
         // If this is an ACS List -like structure, return the jcr:content/list subnode as datasource root
-        Resource listingChild = result.getResourceResolver().getResource(result, NODE_NAME_LIST);
+        Resource listingChild = result.getResourceResolver().getResource(result, NN_JCR_CONTENT_LIST);
         if (listingChild != null) {
             return listingChild;
         }
@@ -122,7 +123,7 @@ class OptionSourceResolver {
      * @return {@code Resource} instance, or null
      */
     private static Resource resolvePath(SlingHttpServletRequest request, String referencePath, String referenceAttribute) {
-        Resource contentResource = referencePath.startsWith(OptionSourceParameters.SEPARATOR_SLASH)
+        Resource contentResource = referencePath.startsWith(CoreConstants.SEPARATOR_SLASH)
                 ? request.getResourceResolver().resolve(referencePath)
                 : resolvePathViaRequestSuffix(request, referencePath);
         if (contentResource == null || contentResource instanceof NonExistingResource) {

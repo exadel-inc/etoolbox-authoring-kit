@@ -34,6 +34,8 @@ import com.day.cq.tagging.Tag;
 import com.day.cq.tagging.TagConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 
+import com.exadel.aem.toolkit.bundle.CoreConstants;
+
 /**
  * Represents a particular text-value pair to be extracted from a {@code Resource} and then transformed into
  * a datasource option
@@ -43,8 +45,6 @@ class Option {
 
     static final String PARAMETER_ID = "@id";
     private static final String PARAMETER_NAME = "@name";
-    private static final String PARAMETER_TEXT = "text";
-    static final String PARAMETER_VALUE = "value";
 
     private Resource resource;
     private ResourceResolver resourceResolver;
@@ -63,7 +63,7 @@ class Option {
     private StringTransform valueTransform;
 
     /**
-     * Default (private) constructor
+     * Default (hiding) constructor
      */
     private Option() {
     }
@@ -79,10 +79,10 @@ class Option {
         }
         ResourceResolver effectiveResourceResolver = resourceResolver != null ? resourceResolver : resource.getResourceResolver();
         ValueMap valueMap = new ValueMapDecorator(new HashMap<>());
-        valueMap.put(PARAMETER_TEXT, getText());
-        valueMap.put(PARAMETER_VALUE, getValue());
+        valueMap.put(CoreConstants.PN_TEXT, getText());
+        valueMap.put(CoreConstants.PN_VALUE, getValue());
         if (selected) {
-            valueMap.put(OptionSourceParameters.QUERY_KEY_SELECTED, true);
+            valueMap.put(CoreConstants.PN_SELECTED, true);
         }
         return new OptionResource(effectiveResourceResolver, valueMap, getCustomAttributes());
     }
@@ -151,7 +151,7 @@ class Option {
                     .forEach(attributeMember -> {
                         String attributeValue = getCustomAttribute(attributeMember, StringTransform.NONE);
                         if (StringUtils.isNotBlank(attributeValue)) {
-                            result.put(attributeMember.replace(OptionSourceParameters.SEPARATOR_COLON, OptionSourceParameters.SEPARATOR_HYPHEN), attributeValue);
+                            result.put(attributeMember.replace(CoreConstants.SEPARATOR_COLON, CoreConstants.SEPARATOR_HYPHEN), attributeValue);
                         }
                     });
         }
@@ -160,7 +160,7 @@ class Option {
                     .map(attr -> attr.split(OptionSourceParameters.KEV_VALUE_SEPARATOR_PATTERN, 2))
                     .filter(parts -> ArrayUtils.getLength(parts) == 2 && StringUtils.isNotBlank(parts[0]))
                     .forEach(parts -> result.put(
-                            parts[0].replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, OptionSourceParameters.SEPARATOR_HYPHEN).trim(),
+                            parts[0].replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, CoreConstants.SEPARATOR_HYPHEN).trim(),
                             parts[1].trim()));
         }
         return result;
@@ -283,7 +283,7 @@ class Option {
                 dataSourceOption.textMember = JcrConstants.JCR_TITLE;
             }
             if (StringUtils.isBlank(dataSourceOption.valueMember) && StringUtils.isEmpty(dataSourceOption.value)) {
-                dataSourceOption.valueMember = PARAMETER_VALUE;
+                dataSourceOption.valueMember = CoreConstants.PN_VALUE;
             }
             if (dataSourceOption.textTransform == null) {
                 dataSourceOption.textTransform = StringTransform.NONE;

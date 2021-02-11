@@ -28,6 +28,7 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.json.JSONException;
 import org.json.JSONWriter;
@@ -50,7 +51,7 @@ import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderServi
     property = {
         "sling.servlet.paths=/apps/" + ResourceTypes.OPTION_PROVIDER,
         "sling.servlet.resourceTypes=/apps/" + ResourceTypes.OPTION_PROVIDER,
-        "sling.servlet.methods=get"
+        "sling.servlet.methods=" + HttpConstants.METHOD_GET
     })
 public class OptionProviderServlet extends SlingSafeMethodsServlet {
     private static final String CONTENT_TYPE_JSON = "application/json;charset=utf-8";

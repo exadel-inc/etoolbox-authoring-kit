@@ -29,12 +29,14 @@ import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
 import com.day.cq.commons.jcr.JcrConstants;
 
+import com.exadel.aem.toolkit.bundle.CoreConstants;
+
 /**
- * Represents a wrapper model for a list item
+ * Adapter class for a Sling resource representing a generic list item
  */
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ListItem {
-    private static final String FIELD_ITEM_RESOURCE_TYPE = "itemResourceType";
+
     private static final List<String> SYSTEM_PROPERTIES = Arrays.asList(
         JcrConstants.JCR_CREATED,
         JcrConstants.JCR_CREATED_BY,
@@ -61,7 +63,7 @@ public class ListItem {
 
         Resource pageRes = getPageResource();
         if (pageRes != null) {
-            itemResType = pageRes.getValueMap().get(FIELD_ITEM_RESOURCE_TYPE, StringUtils.EMPTY);
+            itemResType = pageRes.getValueMap().get(CoreConstants.PN_ITEM_RESOURCE_TYPE, StringUtils.EMPTY);
         }
     }
 

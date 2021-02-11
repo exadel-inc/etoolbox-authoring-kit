@@ -34,6 +34,7 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Component;
 import com.day.cq.commons.jcr.JcrConstants;
 
+import com.exadel.aem.toolkit.bundle.CoreConstants;
 import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderService;
 
 /**
@@ -100,7 +101,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
     private List<Option> getOptions(Resource dataSource,
                                     PathParameters parameters) {
         final String defaultValueMember = !OptionSourceResolver.isTagCollection(dataSource)
-                ? Option.PARAMETER_VALUE
+                ? CoreConstants.PN_VALUE
                 : Option.PARAMETER_ID;
         return StreamSupport.stream(dataSource.getChildren().spliterator(), false)
                 .filter(child -> !child.getName().equals(JcrConstants.JCR_CONTENT)) // jcr:content nodes are excluded
@@ -134,8 +135,8 @@ public class OptionProviderServiceImpl implements OptionProviderService {
                 .map(option -> option.split(OptionSourceParameters.KEV_VALUE_SEPARATOR_PATTERN, 2))
                 .filter(parts -> ArrayUtils.getLength(parts) == 2 && StringUtils.isNotBlank(parts[0]))
                 .map(parts -> Pair.of(
-                        parts[0].trim().replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, OptionSourceParameters.SEPARATOR_COLON),
-                        parts[1].trim().replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, OptionSourceParameters.SEPARATOR_COLON)))
+                        parts[0].trim().replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, CoreConstants.SEPARATOR_COLON),
+                        parts[1].trim().replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, CoreConstants.SEPARATOR_COLON)))
                 .filter(partsPair -> skip.stream().noneMatch(opt -> partsPair.getRight().equals(opt.getValue())))
                 .map(partsPair -> Option.builder()
                         .resourceResolver(resourceResolver)

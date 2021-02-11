@@ -32,6 +32,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 
+import com.exadel.aem.toolkit.bundle.CoreConstants;
 import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderService;
 
 /**
@@ -43,19 +44,12 @@ public class OptionSourceParameters {
     static final String KEV_VALUE_SEPARATOR_PATTERN = "(?<!\\\\):";
     static final String INLINE_COLON_PATTERN = "\\\\?:";
 
-    static final String SEPARATOR_AT = "@";
-    static final String SEPARATOR_COLON = ":";
-    private static final String SEPARATOR_COMMA = ",";
-    static final String SEPARATOR_HYPHEN = "-";
-    static final String SEPARATOR_SLASH = "/";
-
     private static final String QUERY_KEY_APPEND_OPTIONS = "append";
     private static final String QUERY_KEY_ATTRIBUTE_MEMBERS = "attributeMembers";
     private static final String QUERY_KEY_ATTRIBUTES = "attributes";
     private static final String QUERY_KEY_PATH = "path";
     private static final String QUERY_KEY_FALLBACK_PATH = "fallbackPath";
     private static final String QUERY_KEY_PREPEND_OPTIONS = "prepend";
-    static final String QUERY_KEY_SELECTED = "selected";
     private static final String QUERY_KEY_SORTED = "sorted";
     private static final String QUERY_KEY_TEXT_MEMBER = "textMember";
     private static final String QUERY_KEY_TEXT_TRANSFORM = "textTransform";
@@ -169,7 +163,7 @@ public class OptionSourceParameters {
         result.appendOptions = repository.get(QUERY_KEY_APPEND_OPTIONS, String[].class);
         result.prependOptions = repository.get(QUERY_KEY_PREPEND_OPTIONS, String[].class);
 
-        result.selectedValue = repository.get(QUERY_KEY_SELECTED, String.class);
+        result.selectedValue = repository.get(CoreConstants.PN_SELECTED, String.class);
         result.sorted = repository.get(QUERY_KEY_SORTED, Boolean.FALSE.toString()).equalsIgnoreCase(Boolean.TRUE.toString());
 
         return result;
@@ -191,8 +185,8 @@ public class OptionSourceParameters {
             result.putAll(datasourceChild.getValueMap());
         }
         request.getRequestParameterMap().forEach((k,v) -> extractRequestParameter(v)
-            .ifPresent(value -> result.put(k, value.contains(SEPARATOR_COMMA)
-                ? value.split(SEPARATOR_COMMA)
+            .ifPresent(value -> result.put(k, value.contains(CoreConstants.SEPARATOR_COMMA)
+                ? value.split(CoreConstants.SEPARATOR_COMMA)
                 : value)));
         return result;
     }
