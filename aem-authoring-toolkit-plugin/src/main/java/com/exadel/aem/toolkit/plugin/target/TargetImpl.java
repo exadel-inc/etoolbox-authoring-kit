@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -54,6 +55,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     private static final String ATTRIBUTE_LIST_TEMPLATE = "[%s]";
     private static final String ATTRIBUTE_LIST_SPLIT_PATTERN = "\\s*,\\s*";
     private static final String ATTRIBUTE_LIST_SURROUND = "[]";
+    private static final String ATTRIBUTE_TYPE_HINT_TEMPLATE = "{%s}";
     private static final Pattern ATTRIBUTE_LIST_PATTERN = Pattern.compile("^\\[.+]$");
 
     private static final String PARENT_PATH = "..";
@@ -332,27 +334,70 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     @Override
     public Target attribute(String name, boolean value) {
-        this.attributes.put(name, "{Boolean}" + value);
+        this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Boolean.class.getSimpleName()) + value);
+        return this;
+    }
+
+    @Override
+    public Target attribute(String name, boolean[] value) {
+        if (value != null) {
+            this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Boolean.class.getSimpleName()) + Arrays.toString(value));
+        }
         return this;
     }
 
     @Override
     public Target attribute(String name, long value) {
-        this.attributes.put(name, "{Long}" + value);
+        this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Long.class.getSimpleName()) + value);
+        return this;
+    }
+
+    @Override
+    public Target attribute(String name, long[] value) {
+        if (value != null) {
+            this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Long.class.getSimpleName()) + Arrays.toString(value));
+        }
         return this;
     }
 
     @Override
     public Target attribute(String name, double value) {
-        this.attributes.put(name, "{Double}" + value);
+        this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Double.class.getSimpleName()) + value);
+        return this;
+    }
+
+    @Override
+    public Target attribute(String name, double[] value) {
+        if (value != null) {
+            this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Double.class.getSimpleName()) + Arrays.toString(value));
+        }
         return this;
     }
 
     @Override
     public Target attribute(String name, Date value) {
         if (value != null) {
-            this.attributes.put(name, "{Date}" + new SimpleDateFormat(DATE_FORMAT).format(value));
+            this.attributes.put(
+                name,
+                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Date.class.getSimpleName())
+                    + new SimpleDateFormat(DATE_FORMAT).format(value));
         }
+        return this;
+    }
+
+    @Override
+    public Target attribute(String name, Date[] value) {
+        if (value == null) {
+            return this;
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        String dateValues = Arrays.stream(value)
+            .filter(Objects::nonNull)
+            .map(date -> dateFormat.format(value))
+            .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
+        this.attributes.put(
+            name,
+            String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Date.class.getSimpleName()) + dateValues);
         return this;
     }
 

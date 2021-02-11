@@ -71,20 +71,28 @@ public interface Target {
 
     Target attribute(String name, String value);
 
-    Target attribute(String name, boolean value);
-
-    Target attribute(String name, long value);
-
-    Target attribute(String name, double value);
-
-    Target attribute(String name, Date value);
-
     default Target attribute(String name, String[] value) {
         if (value == null) {
             return this;
         }
         return attribute(name, Arrays.toString(value));
     }
+
+    Target attribute(String name, boolean value);
+
+    Target attribute(String name, boolean[] value);
+
+    Target attribute(String name, long value);
+
+    Target attribute(String name, long[] value);
+
+    Target attribute(String name, double value);
+
+    Target attribute(String name, double[] value);
+
+    Target attribute(String name, Date value);
+
+    Target attribute(String name, Date[] value);
 
     Target attributes(Map<String, Object> map);
 
