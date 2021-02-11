@@ -23,16 +23,15 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderService;
 
 /**
@@ -191,12 +190,10 @@ public class OptionSourceParameters {
         if (datasourceChild != null) {
             result.putAll(datasourceChild.getValueMap());
         }
-        if (StringUtils.equals(request.getRequestPathInfo().getResourcePath(),  "/apps/" + ResourceTypes.OPTION_PROVIDER)) {
-            request.getRequestParameterMap().forEach((k,v) -> extractRequestParameter(v)
-                    .ifPresent(value -> result.put(k, value.contains(SEPARATOR_COMMA)
-                            ? value.split(SEPARATOR_COMMA)
-                            : value)));
-        }
+        request.getRequestParameterMap().forEach((k,v) -> extractRequestParameter(v)
+            .ifPresent(value -> result.put(k, value.contains(SEPARATOR_COMMA)
+                ? value.split(SEPARATOR_COMMA)
+                : value)));
         return result;
     }
 
