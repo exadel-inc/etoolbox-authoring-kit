@@ -130,17 +130,17 @@ class PathParameters {
         }
 
         Builder fallbackPath(String value, String defaultValue) {
-            optionSourcePathParameters.fallbackPath = StringUtils.isNotBlank(value) ? value : defaultValue;
+            optionSourcePathParameters.fallbackPath = StringUtils.defaultIfBlank(value, defaultValue);
             return this;
         }
 
         Builder textMember(String value, String defaultValue) {
-            optionSourcePathParameters.textMember = StringUtils.isNotBlank(value) ? value : defaultValue;
+            optionSourcePathParameters.textMember = StringUtils.defaultIfBlank(value, defaultValue);
             return this;
         }
 
         Builder valueMember(String value, String defaultValue) {
-            optionSourcePathParameters.valueMember = StringUtils.isNotBlank(value) ? value : defaultValue;
+            optionSourcePathParameters.valueMember = StringUtils.defaultIfBlank(value, defaultValue);
             return this;
         }
 

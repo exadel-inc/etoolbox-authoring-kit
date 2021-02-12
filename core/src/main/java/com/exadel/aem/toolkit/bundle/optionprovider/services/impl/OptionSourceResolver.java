@@ -49,7 +49,7 @@ class OptionSourceResolver {
      * @param path Path to {@code Resource} that either represents datasource or contains user-authored path to actual
      *             datasource
      * @param fallbackPath Path to {@code Resource} that either represents datasource or contains user-authored path
-     *                     to actual datasource. Applied to if {@code path} resolves oto null
+     *                     to actual datasource. Applied to if {@code path} resolves to null
      * @return {@code Resource} instance, or null
      */
     static Resource resolve(SlingHttpServletRequest request, String path, String fallbackPath) {
