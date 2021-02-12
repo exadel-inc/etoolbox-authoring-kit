@@ -13,6 +13,8 @@
  */
 
 /**
+ * @author Stepan Miakchilo
+ *
  * Action to refresh the option set of a Coral3 Select widget with an OptionProvider.
  * Used in cases when path to options node is authored via another widget. Change of this widget's value triggers s
  * new query for options
@@ -62,7 +64,7 @@
     }
 
     /**
-     * Registers {@code update-datasource} action in DependsOn registry.
+     * Registers {@code update-options} action in DependsOn registry.
      * This action performs updating of the option set of the current Select widget
 
      * @param path      Path value as set in the foreign widget (a path picker) this widget depends on
