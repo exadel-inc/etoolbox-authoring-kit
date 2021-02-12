@@ -60,7 +60,7 @@
     function createDataSourceRequestAddress(options) {
         const datasourceEndpoint = Granite.HTTP.externalize(OPTION_PROVIDER_ENDPOINT);
         const searchParams = new URLSearchParams();
-        $.each(options, function (key, value) {
+        $.each(options, (key, value) => {
             searchParams.append(key, value);
         });
         return datasourceEndpoint + '?' + searchParams.toString();
@@ -121,12 +121,12 @@
      */
     function setOptionsAndRestoreSelected($select, options, resourceAddr, valueMember) {
         $.get(resourceAddr)
-            .then(function (resource) {
+            .then(resource => {
                 const storedValue = resource[valueMember];
                 $select.attr(STORED_VALUE_ATTRIBUTE, storedValue);
                 setOptions($select, options, storedValue);
             })
-            .fail(function() {
+            .fail(() => {
                 setOptions($select, options);
             });
 
@@ -179,10 +179,10 @@
         const dataSourceAddress = createDataSourceRequestAddress(options);
 
         $.get(dataSourceAddress)
-            .then(function(newOptions) {
+            .then(newOptions => {
                 processNewOptions($select, newOptions, resourceAddress, valueMember);
             })
-            .fail(function() {
+            .fail(() => {
                 setOptions($select, []);
             });
     });
