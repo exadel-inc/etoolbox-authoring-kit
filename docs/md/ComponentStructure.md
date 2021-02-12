@@ -1,13 +1,13 @@
 ## Component annotation
-In order to create .content(?) file you need to create a Java class and mark it with `@Component` annotation. Views represents ?"authoring nodes"? (e.g. cq:dialog, cq:design_dialog, cq:editConfig, cq:childEditConfig, cq:htmlTag). Все файлы будут записаны по пути, который указан в path
+In order to create .content(?) file you need to create a Java class and mark it with `@Component` annotation. Views represents authoring nodes(?) (e.g. cq:dialog, cq:design_dialog, cq:editConfig, cq:childEditConfig, cq:htmlTag). All files will be written to the path that is specified by path property.
 
 `@Component` possesses properties that are translated into common attributes of AEM component itself, according to the Adobe specification, thus covering most of the use-cases. See the code snippet below:
 ```java
 @Component(
-    path = TestConstants.DEFAULT_COMPONENT_NAME,
-    title = ComplexComponentHolder.COMPONENT_TITLE,
+    path = "content/my-component",
+    title = "My AEM Component",
     description = "test component",
-    componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
+    componentGroup = "My Component Group",
     resourceSuperType = "resource/super/type",
     disableTargeting = true,
     views = {
@@ -32,7 +32,7 @@ In order to create a dialog you need create a Java class and mark it with `@Dial
     width = 800,
     height = 600,
     extraClientlibs = "cq.common.wcm",
-    layout = DialogLayout.TABS ?
+    layout = DialogLayout.TABS (?)
 )
 public class MyComponentDialog { /* ... */ }
 ```
@@ -42,7 +42,7 @@ In order to create a design dialog you need create a Java class and mark it with
 
 ```java
 @DesignDialog(
-    title = TestConstants.DEFAULT_COMPONENT_TITLE,
+    title = "My AEM Component",
     width = 800,
     height = 600,
     layout = DialogLayout.TABS,
