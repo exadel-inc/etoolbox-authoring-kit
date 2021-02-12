@@ -27,7 +27,7 @@ As the Toolkit was developed, thorough comparative investigation of Coral v.2 an
        - [Common attributes of felds](#common-attributes-of-fields)
        - [Implementing RichTextEditor](#implementing-richtexteditor)
    - [Altering field's decoration tag with @HtmlTag](#altering-fields-decoration-tag-with-htmltag)
-   - [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it)
+   - [Fields inheritance and ways to cancel it](#members-inheritance-and-ways-to-cancel-it)
    - [@Extends-ing fields annotations](#extends-ing-fields-annotations)
    - [EditConfig settings](#editconfig-settings)
    - [ChildEditConfig settings](#childeditconfig-settings)
@@ -41,6 +41,24 @@ As the Toolkit was developed, thorough comparative investigation of Coral v.2 an
 6. [Extra features and assets](#extra-features-and-assets)
     - [DependsOn](#dependson)
 7. [Samples](#samples)
+
+I. Enhanced component management
+1. [Component structure](docs/md/ComponentStructure.md)
+2. [Widget annotations A-Z](docs/md/WidgetAnnotations.md)
+   - [Configuring RichTextEditor](docs/md/ConfiguringRichTextEditor.md)
+   - [Grouping fields with Fieldset](docs/md/GroupingFieldsWithFieldset.md)
+   - [Multiplying Fields](docs/md/MultiplyingFields.md)
+   - [Laying out your components with Tabs](docs/md/Tabs.md)
+   - [Laying out your components with Accordion](docs/md/Accordion.md)
+3. [Additional properties components and dialogs](docs/md/AdditionalProperties.md)
+4. [Programming dynamic dialog behavior:  DependsOn](./ui.apps/src/main/content/jcr_root/apps/authoring-toolkit/depends-on/README.md)
+5. [Reusing code and making it brief](docs/md/ReusingCode.md)
+6. [Customizing Toolkit to your needs](docs/md/CustomizingToolkit.md)
+7. [Additional properties components and dialogs](docs/md/AdditionalProperties.md)
+
+II. Enhanced authoring experience
+1. [Managing structured data with AEM Authoring Toolkit Lists](docs/md/AATLists.md)
+2. [Samples](#samples)
 
 ***
 
@@ -63,6 +81,14 @@ The **Toolkit**
 The **Toolkit** has been developed in the course of _Exadel&trade; Digital Marketing Practice_. It is an evolving project that has yet to reach its maturity. Many new features are planned to be implemented, and more testing for the present features is required.
 
 The authors heartily welcome the creative input from the AEM community worldwide to bring the best of programming techniques and design for creating best authoring and user experience.
+
+## Installation
+
+### Compiling project by hand
+Feel free to clone the project sources and run ```mvn clean install``` from the project's root folder. The plugin and the API artifacts will be installed in local .m2 repository. The compiled _aem-authoring-toolkit-assets_ package will be found under _/distrib_ folder of the project. You may then deploy it to your AEM authoring instance as usual.
+
+### dependency to your content package's _POM_ file
+
 
 ## Installation
 
