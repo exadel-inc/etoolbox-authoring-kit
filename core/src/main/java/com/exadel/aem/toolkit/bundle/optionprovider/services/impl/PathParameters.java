@@ -14,8 +14,8 @@
 
 package com.exadel.aem.toolkit.bundle.optionprovider.services.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderService;
 
