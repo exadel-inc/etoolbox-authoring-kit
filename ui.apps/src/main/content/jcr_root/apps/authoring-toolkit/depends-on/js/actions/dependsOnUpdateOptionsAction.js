@@ -20,7 +20,6 @@
  * new query for options
  */
 (function (Granite, $, DependsOn) {
-
     'use strict';
 
     const ACTION_NAME = 'update-options';
@@ -80,8 +79,8 @@
         // and early return in such a case
         const existingOptions = $select
             .find('coral-select-item')
-            .map(function(index, item) {
-                return {value: $(item).val()};
+            .map((index, item) => {
+                return { value: $(item).val() };
             })
             .toArray();
         if (DependsOn.isEqual(existingOptions, options)) {
@@ -129,7 +128,6 @@
             .fail(() => {
                 setOptions($select, options);
             });
-
     }
 
     /**
@@ -145,7 +143,7 @@
                 textContent: src.text
             },
             selected: (!selectedValue && !src.value) || selectedValue === src.value
-        }
+        };
     }
 
     /**
@@ -156,8 +154,7 @@
      * @param options   Options to be passed with an async HTTP request to the custom datasource (same as described
      *                  in the {@code CustomDataSourceServlet} javadoc
      */
-    DependsOn.ActionRegistry.register(ACTION_NAME, function(path, options) {
-
+    DependsOn.ActionRegistry.register(ACTION_NAME, function (path, options) {
         // Initialize and check whether critical requisites are accessible; early return if not
         const $select = this.$el;
 
@@ -165,10 +162,10 @@
             $select.closest('form').attr('action'),
             $select.attr('name'));
 
-        if ($select[0].tagName !== ALLOWED_TAG
-            || !path
-            || resourceAddress === ENDPOINT_EXTENSION
-            || !valueMember) {
+        if ($select[0].tagName !== ALLOWED_TAG ||
+            !path ||
+            resourceAddress === ENDPOINT_EXTENSION ||
+            !valueMember) {
             return;
         }
 
@@ -186,5 +183,4 @@
                 setOptions($select, []);
             });
     });
-
 })(Granite, Granite.$, Granite.DependsOnPlugin);
