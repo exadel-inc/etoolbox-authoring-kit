@@ -26,6 +26,9 @@ public class CoreConstants {
     public static final String PN_TEXT = "text";
     public static final String PN_VALUE = "value";
 
+    public static final String PARAMETER_ID = "@id";
+    public static final String PARAMETER_NAME = "@name";
+
     public static final String SEPARATOR_AT = "@";
     public static final String SEPARATOR_COLON = ":";
     public static final String SEPARATOR_COMMA = ",";

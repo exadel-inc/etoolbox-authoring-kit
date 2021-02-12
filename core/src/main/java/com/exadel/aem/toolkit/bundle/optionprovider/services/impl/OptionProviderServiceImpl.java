@@ -102,7 +102,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
                                     PathParameters parameters) {
         final String defaultValueMember = !OptionSourceResolver.isTagCollection(dataSource)
                 ? CoreConstants.PN_VALUE
-                : Option.PARAMETER_ID;
+                : CoreConstants.PARAMETER_ID;
         return StreamSupport.stream(dataSource.getChildren().spliterator(), false)
                 .filter(child -> !child.getName().equals(JcrConstants.JCR_CONTENT)) // jcr:content nodes are excluded
                 .map(child -> Option.builder()                                      // from the option sources

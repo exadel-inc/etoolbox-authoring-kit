@@ -62,7 +62,7 @@ import com.exadel.aem.toolkit.bundle.CoreConstants;
 )
 public class ListsServlet extends SlingSafeMethodsServlet {
     private static final String LIST_TEMPLATE_NAME = "/conf/authoring-toolkit/settings/wcm/templates/list";
-    private static final String NN_JCR_CONTENT = CoreConstants.SEPARATOR_SLASH + JcrConstants.JCR_CONTENT;
+    private static final String PATH_JCR_CONTENT = CoreConstants.SEPARATOR_SLASH + JcrConstants.JCR_CONTENT;
     private static final String PREFIX_REP = "rep:";
 
     @Reference
@@ -123,7 +123,7 @@ public class ListsServlet extends SlingSafeMethodsServlet {
      * @return True or false
      */
     private static boolean isList(ResourceResolver resolver, Resource resource) {
-        Resource childParameters = resolver.getResource(resource.getPath() + NN_JCR_CONTENT);
+        Resource childParameters = resolver.getResource(resource.getPath() + PATH_JCR_CONTENT);
         if (childParameters != null) {
             String template = childParameters.getValueMap().get(NameConstants.NN_TEMPLATE, String.class);
             return template != null && template.equals(LIST_TEMPLATE_NAME);

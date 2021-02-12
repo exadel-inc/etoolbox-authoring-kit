@@ -34,7 +34,7 @@ import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderServi
  * @see OptionProviderService
  */
 class OptionSourceResolver {
-    private static final String NN_JCR_CONTENT_LIST = "jcr:content/list";
+    private static final String PATH_JCR_CONTENT_LIST = "jcr:content/list";
 
     /**
      * Default (private) constructor
@@ -104,7 +104,7 @@ class OptionSourceResolver {
         }
 
         // If this is an ACS List -like structure, return the jcr:content/list subnode as datasource root
-        Resource listingChild = result.getResourceResolver().getResource(result, NN_JCR_CONTENT_LIST);
+        Resource listingChild = result.getResourceResolver().getResource(result, PATH_JCR_CONTENT_LIST);
         if (listingChild != null) {
             return listingChild;
         }

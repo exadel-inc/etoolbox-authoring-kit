@@ -23,13 +23,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.bundle.CoreConstants;
 import com.exadel.aem.toolkit.bundle.optionprovider.services.OptionProviderService;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
 
 public class OptionProviderTest {
-
-    private static final String PROPERTY_VALUE = "value";
 
     private OptionProviderService optionProvider;
 
@@ -98,6 +97,6 @@ public class OptionProviderTest {
 
         Assert.assertEquals(7, options.size());
         Assert.assertEquals("value4", options.get(5).getValueMap().get("value"));
-        Assert.assertEquals("prefix:more", options.get(options.size() - 1).getValueMap().get(PROPERTY_VALUE));
+        Assert.assertEquals("prefix:more", options.get(options.size() - 1).getValueMap().get(CoreConstants.PN_VALUE));
     }
 }

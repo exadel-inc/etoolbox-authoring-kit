@@ -43,9 +43,6 @@ import com.exadel.aem.toolkit.bundle.CoreConstants;
 class Option {
     static final Comparator<Option> COMPARATOR = new OptionComparator();
 
-    static final String PARAMETER_ID = "@id";
-    private static final String PARAMETER_NAME = "@name";
-
     private Resource resource;
     private ResourceResolver resourceResolver;
 
@@ -175,9 +172,9 @@ class Option {
     private String getCustomAttribute(String attributeMember, StringTransform attributeTransform) {
         if (!isValid(resource)) {
             return StringUtils.EMPTY;
-        } else if (PARAMETER_ID.equals(attributeMember)) {
+        } else if (CoreConstants.PARAMETER_ID.equals(attributeMember)) {
             return getResourceId();
-        } else if (PARAMETER_NAME.equals(attributeMember)) {
+        } else if (CoreConstants.PARAMETER_NAME.equals(attributeMember)) {
             return resource.getName();
         }
         // if [textMember]-valued or [valueMember]-valued attribute not found within this Resource, there's still
