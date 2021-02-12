@@ -18,6 +18,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.exadel.aem.toolkit.plugin.util.ordering.OrderingTest;
+
+/**
+ * Shortcut class for running all available test cases in a batch
+ */
 @RunWith(Suite.class)
 @SuiteClasses({
     ComponentsTest.class,
@@ -25,10 +30,8 @@ import org.junit.runners.Suite.SuiteClasses;
     ValidationsTest.class,
     IgnoreTest.class,
     ExceptionsTest.class,
-    DependsOnTest.class
+    DependsOnTest.class,
+    OrderingTest.class
 })
-/**
- * Shortcut class for running all available test cases in a batch
- */
 public class AllTests {
 }

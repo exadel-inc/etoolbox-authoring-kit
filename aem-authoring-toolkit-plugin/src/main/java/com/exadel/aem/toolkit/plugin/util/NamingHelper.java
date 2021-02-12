@@ -26,21 +26,22 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 /**
  * Helper class for creating standard compliant names for XML entities designed to work together
- * with a {@link com.exadel.aem.toolkit.api.runtime.XmlUtility} implementation
+ * with the {@link PluginNamingUtility}
  */
 class NamingHelper {
     private static final String VERB_SEPARATOR = "_";
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
     private static final Pattern NODE_NAME_INDEX_PATTERN = Pattern.compile("\\d*$");
+    private static final Pattern NAMESPACE_PATTERN = Pattern.compile("^\\w+:");
 
     private static final Pattern INVALID_FIELD_NAME_PATTERN = Pattern.compile("^\\W+|[^\\w-/]$|[^\\w-/:]+");
-    private static final Pattern INVALID_NODE_NAME_PATTERN = Pattern.compile("\\W+");
-    private static final Pattern INVALID_NAMESPACE_NODE_NAME_PATTERN = Pattern.compile("^\\W*:|\\W+:$|[^\\w:]+");
+    private static final Pattern INVALID_NODE_NAME_NS_PATTERN = Pattern.compile("^\\W*:|\\W+:$|[^\\w:]+");
 
     private static final Pattern PARENT_PATH_PREFIX_PATTERN = Pattern.compile("^(?:\\.\\./)+");
 
     private boolean lowercaseFirst;
     private boolean preserveParentPath;
+    private boolean checkNamespace;
     private Pattern clearingPattern;
 
     /**
@@ -48,6 +49,10 @@ class NamingHelper {
      */
     private NamingHelper() {
     }
+
+    /* -----------------
+       Interface methods
+       ----------------- */
 
     /**
      * Checks whether the given string argument is compliant to XML entity naming rules and either returns it as is or
@@ -87,8 +92,12 @@ class NamingHelper {
             result = StringUtils.defaultString(defaultValue) +  result;
         }
 
+        if (checkNamespace) {
+            result = removeInvalidNamespaces(result);
+        }
+
         if (lowercaseFirst && !result.chars().allMatch(Character::isUpperCase)) {
-            return StringUtils.uncapitalize(result);
+            result = StringUtils.uncapitalize(result);
         }
 
         if (StringUtils.isNotEmpty(parentPathPrefix)) {
@@ -111,7 +120,7 @@ class NamingHelper {
             return result;
         }
         int index = 1;
-        while (context.hasChild(result)) {
+        while (context.exists(result)) {
             result = NODE_NAME_INDEX_PATTERN.matcher(result).replaceFirst(String.valueOf(index++));
         }
         return result;
@@ -130,6 +139,27 @@ class NamingHelper {
     }
 
     /**
+     * Called by {@link NamingHelper#getValidName(String, String)} to remove namespace sign ("{@code :}") from a name
+     * source when a namespace prefix does not correspond to any registered XML namespace
+     * @param value Name source
+     * @return Same value if no invalid namespace detected, or a transformed string
+     */
+    private static String removeInvalidNamespaces(String value) {
+        Matcher namespaceMatcher = NAMESPACE_PATTERN.matcher(value);
+        String namespaceCapture = namespaceMatcher.find()
+            ? namespaceMatcher.group().substring(0, namespaceMatcher.end() - 1)
+            : null;
+        if (namespaceCapture != null && !XmlFactory.XML_NAMESPACES.containsKey(namespaceCapture)) {
+            return value.replace(namespaceMatcher.group(), namespaceCapture);
+        }
+        return value;
+    }
+
+    /* ---------------
+       Factory methods
+       --------------- */
+
+    /**
      * Creates and initializes an instance of {@link NamingHelper} to deal with field names
      * @return {@code XmlNamingHelper} object
      */
@@ -138,18 +168,7 @@ class NamingHelper {
         helper.lowercaseFirst = false;
         helper.preserveParentPath = true;
         helper.clearingPattern = INVALID_FIELD_NAME_PATTERN;
-        return helper;
-    }
-
-    /**
-     * Creates and initializes an instance of {@link NamingHelper} to deal with simple (non-namespaced) node names
-     * and attribute names
-     * @return {@code XmlNamingHelper} object
-     */
-    static NamingHelper forSimpleName() {
-        NamingHelper helper = new NamingHelper();
-        helper.lowercaseFirst = true;
-        helper.clearingPattern = INVALID_NODE_NAME_PATTERN;
+        helper.checkNamespace = false;
         return helper;
     }
 
@@ -158,10 +177,11 @@ class NamingHelper {
      * names and attribute names
      * @return {@code XmlNamingHelper} object
      */
-    static NamingHelper forNamespaceAndName() {
+    static NamingHelper forNodeName() {
         NamingHelper helper = new NamingHelper();
         helper.lowercaseFirst = true;
-        helper.clearingPattern = INVALID_NAMESPACE_NODE_NAME_PATTERN;
+        helper.clearingPattern = INVALID_NODE_NAME_NS_PATTERN;
+        helper.checkNamespace = true;
         return helper;
     }
 }

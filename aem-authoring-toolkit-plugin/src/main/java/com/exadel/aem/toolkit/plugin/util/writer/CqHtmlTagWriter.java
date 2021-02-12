@@ -20,6 +20,7 @@ import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing decoration tag properties,
@@ -40,7 +41,7 @@ class CqHtmlTagWriter extends PackageEntryWriter {
      * @return {@link XmlScope} value
      */
     @Override
-    XmlScope getXmlScope() {
+    XmlScope getScope() {
         return XmlScope.CQ_HTML_TAG;
     }
 
@@ -63,8 +64,8 @@ class CqHtmlTagWriter extends PackageEntryWriter {
     @Override
     void populateTarget(Class<?> componentClass, Target root) {
         HtmlTag htmlTag = componentClass.getDeclaredAnnotation(HtmlTag.class);
-        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
-            .mapProperties(htmlTag)
-            .scope(getXmlScope());
+        root
+            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
+            .attributes(htmlTag, PluginAnnotationUtility.getPropertyMappingFilter(htmlTag));
     }
 }

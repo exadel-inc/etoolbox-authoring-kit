@@ -15,20 +15,17 @@
 package com.exadel.aem.toolkit.plugin.util.writer;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 import javax.xml.transform.Transformer;
 
 import org.w3c.dom.Document;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.handlers.lists.ListItemHandler;
+import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing component-wide attributes (writes data to the
@@ -48,7 +45,7 @@ class ContentXmlWriter extends PackageEntryWriter {
      * @return {@link XmlScope} value
      */
     @Override
-    XmlScope getXmlScope() {
+    XmlScope getScope() {
         return XmlScope.COMPONENT;
     }
 
@@ -75,21 +72,18 @@ class ContentXmlWriter extends PackageEntryWriter {
         if (annotation == null) {
             annotation = componentClass.getDeclaredAnnotation(Dialog.class);
         }
-        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT)
-            .mapProperties(annotation, Arrays.stream(Dialog.class.getDeclaredMethods())
-                .filter(m -> !fitsInScope(m, getXmlScope())).map(Method::getName).collect(Collectors.toList()))
-            .scope(getXmlScope());
+        root
+            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT)
+            .attributes(
+                annotation,
+                PluginAnnotationUtility
+                    .getPropertyMappingFilter(annotation)
+                    .and(member -> fitsInScope(member, getScope())));
+
         if ((annotation instanceof Component && ((Component) annotation).isContainer())
             || (annotation instanceof Dialog && ((Dialog) annotation).isContainer())) {
             root.attribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
         }
         new ListItemHandler().accept(componentClass, root);
-    }
-
-    private static boolean fitsInScope(Method method, XmlScope scope) {
-        if (!method.isAnnotationPresent(PropertyScope.class)) {
-            return true;
-        }
-        return Arrays.asList(method.getAnnotation(PropertyScope.class).value()).contains(scope);
     }
 }

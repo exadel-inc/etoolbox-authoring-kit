@@ -9,15 +9,14 @@ public class PluginNamingUtility {
     private static final String PREFIX_GET = "get";
 
     private static final NamingHelper FIELD_HELPER = NamingHelper.forFieldName();
-    private static final NamingHelper SIMPLE_HELPER = NamingHelper.forSimpleName();
-    private static final NamingHelper NAMESPACE_HELPER = NamingHelper.forNamespaceAndName();
+    private static final NamingHelper NODE_NAME_HELPER = NamingHelper.forNodeName();
 
     public static String getValidName(String name) {
-        return NAMESPACE_HELPER.getValidName(name, DialogConstants.NN_ITEM);
+        return NODE_NAME_HELPER.getValidName(name, DialogConstants.NN_ITEM);
     }
 
     public static String getValidName(String name, String defaultName) {
-        return NAMESPACE_HELPER.getValidName(name, defaultName);
+        return NODE_NAME_HELPER.getValidName(name, defaultName);
     }
 
     public static String getValidFieldName(String name) {
@@ -25,11 +24,11 @@ public class PluginNamingUtility {
     }
 
     public static String getUniqueName(String name, String defaultValue, Target context) {
-        return SIMPLE_HELPER.getUniqueName(name, defaultValue, context);
+        return NODE_NAME_HELPER.getUniqueName(name, defaultValue, context);
     }
 
     public static String getUniqueName(String name, String defaultValue, Element context) {
-        return SIMPLE_HELPER.getUniqueName(name, defaultValue, context);
+        return NODE_NAME_HELPER.getUniqueName(name, defaultValue, context);
     }
 
     public static String stripGetterPrefix(String name) {

@@ -19,32 +19,116 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.Temporal;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.UnaryOperator;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
+import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.source.Sources;
 
 /**
  * Contains utility methods to perform {@code annotation - to - plain Java object} and {@code annotation - to - annotation}
  * value conversions for the sake of proper dialog markup rendering
  */
-public class PluginObjectUtility {
-    private PluginObjectUtility() {
+public class PluginAnnotationUtility {
+    private static final String INVOCATION_EXCEPTION_MESSAGE_TEMPLATE = "Could not invoke method '%s' on %s";
+
+    private static final Predicate<Method> MAP_ALL_PROPERTIES = member -> true;
+
+    /**
+     * Default (hiding) constructor
+     */
+    private PluginAnnotationUtility() {
+    }
+
+    /**
+     * Gets the properties exposed by a given {@code Annotation} as a key-value map. The keys are the method names
+     * this annotation possesses, and the values are the results of methods' invocation
+     * @param annotation {@code Annotation} object to retrieve values for
+     * @return {@code Map<String, Object>} instance
+     */
+    public static Map<String, Object> getProperties(Annotation annotation) {
+        return getProperties(annotation, method -> true);
+    }
+
+    /**
+     * Retrieves list of properties of an {@code Annotation} object as a key-value map. The keys are the method names
+     * this annotation possesses, and the values are the results of methods' invocation
+     * @param annotation The annotation instance to analyze
+     * @param filter {@code Predicate<Method>} do decide whether the current method is eligible for collection
+     * @return {@code Map<String, Object>} instance containing property names and values
+     */
+    private static Map<String, Object> getProperties(Annotation annotation, Predicate<Method> filter) {
+        Map<String, Object> result = new HashMap<>();
+        for (Method method : Arrays.stream(annotation.annotationType().getDeclaredMethods()).filter(filter).collect(Collectors.toList())) {
+            try {
+                Object value = method.invoke(annotation, (Object[]) null);
+                result.put(method.getName(), value);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
+                    String.format(INVOCATION_EXCEPTION_MESSAGE_TEMPLATE, method.getName(), annotation.annotationType().getName()),
+                    e));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
+     * as a key-value map. The keys are the method names this annotation possesses, and the values are the results
+     * of methods' invocation
+     * @param annotation The annotation instance to analyze
+     * @return List of {@code Method} instances that represent properties initialized with non-defaults
+     */
+    public static Map<String, Object> getNonDefaultProperties(Annotation annotation) {
+        return getProperties(annotation, method -> propertyIsNotDefault(annotation, method));
+    }
+
+    /**
+     * Gets whether any of the {@code Annotation}'s properties has a value which is not default
+     * @param annotation The annotation to analyze
+     * @return True or false
+     */
+    public static boolean isNotDefault(Annotation annotation) {
+        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
+            .anyMatch(method -> propertyIsNotDefault(annotation, method));
+    }
+
+    /**
+     * Gets whether an {@code Annotation} property has a value which is not default
+     * @param annotation The annotation to analyze
+     * @param method The method representing the property
+     * @return True or false
+     */
+    public static boolean propertyIsNotDefault(Annotation annotation, Method method) {
+        if (annotation == null) {
+            return false;
+        }
+        try {
+            Object defaultValue = method.getDefaultValue();
+            if (defaultValue == null) {
+                return true;
+            }
+            Object invocationResult = method.invoke(annotation);
+            if (method.getReturnType().isArray() && ArrayUtils.isEmpty((Object[]) invocationResult)) {
+                return false;
+            }
+            return !defaultValue.equals(invocationResult);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            return true;
+        }
     }
 
     /**
@@ -55,7 +139,7 @@ public class PluginObjectUtility {
      * @param <T>    Particular type of the annotation facade
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
-    public static <T extends Annotation> T create(Class<T> type, Map<String, Object> values) {
+    public static <T extends Annotation> T createInstance(Class<T> type, Map<String, Object> values) {
         Map<String, BiFunction<Annotation, Object[], Object>> methods = new HashMap<>();
         Arrays.stream(type.getDeclaredMethods())
             .forEach(method -> {
@@ -79,7 +163,7 @@ public class PluginObjectUtility {
      * @param <T>          Particular type of the annotation facade
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
-    public static <T extends Annotation> T filter(Annotation source, Class<T> type, List<String> voidedFields) {
+    public static <T extends Annotation> T filterInstance(Annotation source, Class<T> type, List<String> voidedFields) {
         Map<String, BiFunction<Annotation, Object[], Object>> methods = new HashMap<>();
         if (voidedFields != null) {
             voidedFields.stream()
@@ -91,103 +175,28 @@ public class PluginObjectUtility {
         return genericModify(source, type, methods);
     }
 
-
     /**
-     * Creates in runtime a {@code <T extends Annotation>}-typed facade for the specified annotation and assigns to its
-     * specified field  the provided updated value in case it currently contains the specified "old" value
-     * @param source {@code Annotation} instance to produce a facade for
-     * @param type Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
-     * @param transformations {@code Map} consisting of String-typed keys representing annotation properties,
-     *                                   and {@code UnaryOperator}-typed routines that should swap an existing property
-     *                                   value with a newly computed value
-     * @param <T> Type of the annotation facade
-     * @return Facade annotation instance, a subtype of the {@code Annotation} class
+     * Gets a filter routine typically passed to {@link com.exadel.aem.toolkit.api.handlers.Target#attributes(Annotation, Predicate)}.
+     * If {@link PropertyMapping} is present in the annotation given, the filter passes combs through the methods
+     * as regulated by the property mapping; otherwise a neutral (pass-all) filtering is imposed
+     * @param annotation {@code Annotation} object to use methods from
+     * @return {@code Predicate<Method>} instance
      */
-    @SuppressWarnings("SameParameterValue") // for the consistency of API
-    static <T extends Annotation> T modify(Annotation source, Class<T> type, Map<String, UnaryOperator<Object>> transformations) {
-        if (transformations == null || transformations.isEmpty()) {
-            return type.cast(source);
+    public static Predicate<Method> getPropertyMappingFilter(Annotation annotation) {
+        PropertyMapping propMapping = Optional.ofNullable(annotation)
+            .map(Annotation::annotationType)
+            .map(annotationType -> annotationType.getAnnotation(PropertyMapping.class))
+            .orElse(null);
+
+        if (propMapping == null) {
+            return MAP_ALL_PROPERTIES;
         }
-        Map<String, BiFunction<Annotation, Object[], Object>> methods = new HashMap<>();
-        transformations.forEach((methodName, routine) -> {
-            Object currentValue;
-            try {
-                currentValue = source.annotationType().getDeclaredMethod(methodName).invoke(source);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                currentValue = null;
-            }
-            Object fixedValue = routine.apply(currentValue);
-            methods.put(methodName, (annotation, args) -> fixedValue);
-        });
-        return genericModify(source, type, methods);
-    }
-
-    /**
-     * Creates in runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with the new value
-     * for the given property that will be assigned in case the current value equals to this property's default
-     * @param source {@code Annotation} instance to produce a facade for
-     * @param type   Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
-     * @param name   String representing the method to check for default value, non-blank
-     * @param value  The value to use in case the method above returns its default
-     * @param <T>    Type of the annotation facade
-     * @param <R>    Return type of a fallback method / methods
-     * @return Facade annotation instance, a subtype of the {@code Annotation} class
-     */
-    public static <T extends Annotation, R> T modifyIfDefault(Annotation source, Class<T> type, String name, R value) {
-        return modifyIfDefault(source, type, Collections.singletonMap(name, value));
-    }
-
-
-    /**
-     * Creates in runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with new values
-     * for the given properties (specified in {@code method name -> value} map that will be used in case these methods
-     * return default values
-     * @param source         {@code Annotation} instance to produce a facade for
-     * @param type           Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
-     * @param fallbackValues {@code Map<String, Object>} representing values to be returned by the annotation methods
-     *                       whether they have now their default values
-     * @param <T>            Particular type of the annotation facade
-     * @param <R>            Return type of a fallback method / methods
-     * @return Facade annotation instance, a subtype of the {@code Annotation} class
-     */
-    private static <T extends Annotation, R> T modifyIfDefault(Annotation source, Class<T> type, Map<String, R> fallbackValues) {
-        Map<String, BiFunction<Annotation, Object[], Object>> methods = new HashMap<>();
-        if (fallbackValues != null) {
-            fallbackValues.keySet().stream()
-                .map(methodName -> getMethodInstance(type, methodName))
-                .filter(Objects::nonNull)
-                .filter(method -> !PluginReflectionUtility.annotationPropertyIsNotDefault(source, method))
-                .forEach(method -> methods.put(method.getName(),
-                    (annotation, args) -> fallbackValues.get(method.getName())));
-        }
-        return genericModify(source, type, methods);
-    }
-
-
-    public static Map<String, Object> getAnnotationFields(Annotation annotation) throws IllegalAccessException, InvocationTargetException {
-        Map<String, Object> result = new HashMap<>();
-        for (Method method : annotation.annotationType().getDeclaredMethods()) {
-            Object value = method.invoke(annotation, (Object[]) null);
-            result.put(method.getName(), value);
-        }
-        return result;
-    }
-
-    /**
-     * Creates Java {@code Temporal} from {@code DateTimeValue} annotation
-     * @param obj {@code DateTimeValue} annotation instance
-     * @return Canonical Temporal instance, or null
-     */
-    public static Temporal getDateTimeInstance(Object obj) {
-        DateTimeValue dt = (DateTimeValue) obj;
-        try {
-            if (StringUtils.isNotBlank(dt.timezone())) { // the following induces exception if any of DateTime parameters is invalid
-                return ZonedDateTime.of(dt.year(), dt.month(), dt.day(), dt.hour(), dt.minute(), 0, 0, ZoneId.of(dt.timezone()));
-            }
-            return LocalDateTime.of(dt.year(), dt.month(), dt.day(), dt.hour(), dt.minute());
-        } catch (DateTimeException e) {
-            return null;
-        }
+        return method -> {
+            boolean isAllowedByPropertyMapping = ArrayUtils.isEmpty(propMapping.mappings())
+                || ArrayUtils.contains(propMapping.mappings(), method.getName());
+            boolean isAllowedByIgnorePropertyMapping = Sources.fromMember(method).adaptTo(IgnorePropertyMapping.class) == null;
+            return isAllowedByPropertyMapping && isAllowedByIgnorePropertyMapping;
+        };
     }
 
     /**
@@ -201,7 +210,7 @@ public class PluginObjectUtility {
      * @param <T>          The {@code Class} of the source object
      * @param <U>          The interface exposing modified methods that the {@code value} implements, or an interface bearing
      *                     newly added methods that extends one of the interfaces implemented by {@code value}
-     * @param <R>          The return type of extension methods. Must be fallen back to {@code Object} type of a narrower generic
+     * @param <R>          The return type of extension methods. Must be fallen back to {@code Object} type of narrower generic
      *                     type in case returns are to be differently typed
      * @return The {@code <U>}-typed extension object, or else null if {@code modification} is null, or else
      * the {@code methods} map is empty
@@ -240,14 +249,13 @@ public class PluginObjectUtility {
 
     /**
      * Implements {@link InvocationHandler} mechanism for creating object extension
-     * per the {@link PluginObjectUtility#genericModify(Object, Class, Map)} signature
+     * per the {@link PluginAnnotationUtility#genericModify(Object, Class, Map)} signature
      * @param <T> The {@code Class} of the source object
      * @param <R> The return type of the extension methods defined for this instance
      */
     private static class ExtensionInvocationHandler<T, U, R> implements InvocationHandler {
         private static final String METHOD_TO_STRING = "toString";
         private static final String METHOD_ANNOTATION_TYPE = "annotationType";
-        private static final String INVOCATION_EXCEPTION_MESSAGE_TEMPLATE = "Could not invoke method '%s' on object %s";
 
         private final T source;
         private final Class<U> targetType;

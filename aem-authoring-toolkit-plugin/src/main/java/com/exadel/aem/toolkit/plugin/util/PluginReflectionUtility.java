@@ -215,21 +215,11 @@ public class PluginReflectionUtility {
      * @return {@link List<T>} of instances
      */
     private <T> List<T> getHandlers(Class<? extends T> handlerClass) {
-        List<T> list = reflections.getSubTypesOf(handlerClass).stream()
+        return reflections.getSubTypesOf(handlerClass).stream()
                 .map(PluginReflectionUtility::getHandlerInstance)
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(handler -> handler.getClass().getCanonicalName())) // to provide stable handlers sequence between runs
                 .collect(Collectors.toList());
-        Graph classGraph = new Graph(list);
-        for (T item : list) {
-            Class<?> after = item.getClass().isAnnotationPresent(Handles.class) ? item.getClass().getDeclaredAnnotation(Handles.class).after() : item.getClass();
-            Class<?> before = item.getClass().isAnnotationPresent(Handles.class) ? item.getClass().getDeclaredAnnotation(Handles.class).before() : item.getClass();
-            classGraph.addEdge(item.getClass(), before);
-            classGraph.addEdge(after, item.getClass());
-        }
-        List<T> sortedList = (List<T>) classGraph.topologicalSort();
-        return listCorrectOrder(list, sortedList);
-
     }
 
     /**
@@ -380,82 +370,6 @@ public class PluginReflectionUtility {
         return result;
     }
 
-    /**
-     * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
-     * @param annotation The annotation instance to analyze
-     * @return List of {@code Method} instances that represent properties initialized with non-defaults
-     */
-    public static List<Method> getAnnotationNonDefaultProperties(Annotation annotation) {
-        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .filter(method -> annotationPropertyIsNotDefault(annotation, method))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Gets whether any of the {@code Annotation}'s properties has a value which is not default
-     * @param annotation The annotation to analyze
-     * @return True or false
-     */
-    public static boolean annotationIsNotDefault(Annotation annotation) {
-        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .anyMatch(method -> annotationPropertyIsNotDefault(annotation, method));
-    }
-
-    /**
-     * Gets whether an {@code Annotation} property has a value which is not default
-     * @param annotation The annotation to analyze
-     * @param name Name of the property
-     * @return True or false
-     */
-    public static boolean annotationPropertyIsNotDefault(Annotation annotation, String name) {
-        Method method;
-        try {
-            method = annotation.annotationType().getMethod(name);
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
-        return annotationPropertyIsNotDefault(annotation, method);
-    }
-
-    /**
-     * Gets whether an {@code Annotation} property has a value which is not default
-     * @param annotation The annotation to analyze
-     * @param method The method representing the property
-     * @return True or false
-     */
-    public static boolean annotationPropertyIsNotDefault(Annotation annotation, Method method) {
-        if (annotation == null) {
-            return false;
-        }
-        try {
-            Object defaultValue = method.getDefaultValue();
-            if (defaultValue == null) {
-                return true;
-            }
-            Object invocationResult = method.invoke(annotation);
-            if (method.getReturnType().isArray() && ArrayUtils.isEmpty((Object[]) invocationResult)) {
-                return false;
-            }
-            return !defaultValue.equals(invocationResult);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            return true;
-        }
-    }
-
-    /**
-     * Converts {@link URI} parameter, such as of a classpath element, to an {@link URL} instance used by {@link Reflections}
-     * @param uri {@code URI} value
-     * @return {@code URL} value
-     */
-    private static URL toUrl(URI uri) {
-        try {
-            return uri.toURL();
-        } catch (MalformedURLException e) {
-            PluginRuntime.context().getExceptionHandler().handle(e);
-        }
-        return null;
-    }
-
     private <T> List<T> listCorrectOrder(List<T> list, List<T> sortedList) {
         List<T> finalList = new ArrayList<>();
         int i = 0;
@@ -520,5 +434,19 @@ public class PluginReflectionUtility {
         } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
             return defaultValue;
         }
+    }
+
+    /**
+     * Converts {@link URI} parameter, such as of a classpath element, to an {@link URL} instance used by {@link Reflections}
+     * @param uri {@code URI} value
+     * @return {@code URL} value
+     */
+    private static URL toUrl(URI uri) {
+        try {
+            return uri.toURL();
+        } catch (MalformedURLException e) {
+            PluginRuntime.context().getExceptionHandler().handle(e);
+        }
+        return null;
     }
 }

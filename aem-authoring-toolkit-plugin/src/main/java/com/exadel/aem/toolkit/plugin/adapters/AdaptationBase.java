@@ -19,13 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.exadel.aem.toolkit.api.handlers.Adaptable;
-import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 public abstract class AdaptationBase<T> {
 
-    private static final String ADAPTER_EXCEPTION_MESSAGE = "Could not create adapter for ";
+    private static final String ADAPTER_EXCEPTION_MESSAGE = "Could not create an adapter for ";
 
     private final Class<T> reflectedClass;
     private Map<Class<?>, Object> adaptationsCache;
@@ -34,12 +33,12 @@ public abstract class AdaptationBase<T> {
         this.reflectedClass = reflectedClass;
     }
 
-    protected <A> A getAdaptation(Class<A> adaptation) {
+    public <A> A adaptTo(Class<A> adaptation) {
         if (adaptationsCache != null && adaptationsCache.containsKey(adaptation)) {
             return adaptation.cast(adaptationsCache.get(adaptation));
         }
         if (adaptation.isAnnotationPresent(Adaptable.class)
-            && Source.class.equals(adaptation.getAnnotation(Adaptable.class).value())) {
+            && reflectedClass.equals(adaptation.getAnnotation(Adaptable.class).value())) {
             try {
                 Object result = adaptation.getConstructor(reflectedClass).newInstance(this);
                 if (adaptationsCache == null) {
@@ -55,5 +54,4 @@ public abstract class AdaptationBase<T> {
         }
         return null;
     }
-
 }

@@ -43,7 +43,7 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.Difference;
 
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
+import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
 class FilesComparator {
     private static final Logger LOG = LoggerFactory.getLogger(FilesComparator.class);
@@ -103,7 +103,7 @@ class FilesComparator {
     }
 
     private static String getXmlString(Element element) throws TransformerException {
-        PluginXmlUtility.XML_NAMESPACES.forEach(element::setAttribute);
+        XmlFactory.XML_NAMESPACES.forEach((key, value) -> element.setAttribute(XmlFactory.XML_NAMESPACE_PREFIX + key, value));
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         Transformer transformer = transformerFactory.newTransformer();

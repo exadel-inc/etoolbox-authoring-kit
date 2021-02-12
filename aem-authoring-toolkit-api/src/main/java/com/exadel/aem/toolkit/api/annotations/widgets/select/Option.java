@@ -68,14 +68,14 @@ public @interface Option {
     String statusVariant() default "";
     /**
      * When set to true, maps to the 'selected' attribute of this TouchUI dialog component's node.
-     * Defines the the current option is selected by default
+     * Defines that the current option is selected by default
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")
     boolean selected() default false;
     /**
      * When set to true, maps to the 'disabled' attribute of this TouchUI dialog component's node.
-     * Defines the the current option is shown in disabled state
+     * Defines that the current option is shown in disabled state
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

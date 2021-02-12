@@ -20,6 +20,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
@@ -34,16 +35,22 @@ class AutocompleteHandler implements BiConsumer<Source, Target> {
     @Override
     public void accept(Source source, Target target) {
         Autocomplete autocomplete = source.adaptTo(Autocomplete.class);
-        target.getOrCreate(DialogConstants.NN_DATASOURCE)
+        target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
-                .mapProperties(autocomplete.datasource())
-                .parent()
-                .getOrCreate(DialogConstants.NN_OPTIONS)
+                .attributes(
+                    autocomplete.datasource(),
+                    PluginAnnotationUtility.getPropertyMappingFilter(autocomplete.datasource()))
+                .getParent()
+                .getOrCreateTarget(DialogConstants.NN_OPTIONS)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.options().annotationType().getAnnotation(ResourceType.class).value())
-                .mapProperties(autocomplete.options())
-                .parent()
-                .getOrCreate(DialogConstants.NN_VALUES)
+                .attributes(
+                    autocomplete.options(),
+                    PluginAnnotationUtility.getPropertyMappingFilter(autocomplete.options()))
+                .getParent()
+                .getOrCreateTarget(DialogConstants.NN_VALUES)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.values().annotationType().getAnnotation(ResourceType.class).value())
-                .mapProperties(autocomplete.values());
+                .attributes(
+                    autocomplete.values(),
+                    PluginAnnotationUtility.getPropertyMappingFilter(autocomplete.values()));
     }
 }

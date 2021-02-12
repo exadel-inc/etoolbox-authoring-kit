@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
           xmlns:cq="http://www.day.com/jcr/cq/1.0"
-          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           width="{Double}560.0"
@@ -197,10 +196,10 @@
                             </paraformat>
                             <format jcr:primaryType="nt:unstructured" features="[bold,italic,underline]"/>
                             <control jcr:primaryType="nt:unstructured" features="[save,close]"/>
-                            <undo jcr:primaryType="nt:unstructured" features="[undo,redo]" maxUndoSteps="{Long}20"/>
+                            <undo jcr:primaryType="nt:unstructured" features="[undo,redo]"/>
                             <fullscreen jcr:primaryType="nt:unstructured" features="toggle"/>
                             <spellcheck jcr:primaryType="nt:unstructured" features="checktext"/>
-                            <lists jcr:primaryType="nt:unstructured" features="[ordered,unordered,indent,outdent]" indentSize="{Long}4"/>
+                            <lists jcr:primaryType="nt:unstructured" features="[ordered,unordered,indent,outdent]"/>
                             <justify jcr:primaryType="nt:unstructured" features="[justifyleft,justifycenter,justifyright]"/>
                             <links jcr:primaryType="nt:unstructured" features="[modifylink,unlink]"/>
                             <styles jcr:primaryType="cq:WidgetCollection" features="*">

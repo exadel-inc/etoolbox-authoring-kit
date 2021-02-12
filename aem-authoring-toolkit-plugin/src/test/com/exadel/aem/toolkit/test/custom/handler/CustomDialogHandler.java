@@ -26,10 +26,12 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.api.runtime.Injected;
+import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
 
-@Handles(before = CustomNonMappingWidgetHandler.class, after = CustomWidgetHandler.class, value = CustomDialogAnnotation.class)
+@Handles(value = CustomDialogAnnotation.class)
 @SuppressWarnings("unused") // Used by AAT Plugin logic
 public class CustomDialogHandler implements DialogHandler {
 
@@ -37,6 +39,10 @@ public class CustomDialogHandler implements DialogHandler {
     public String getName() {
         return "customDialogProcessing";
     }
+
+    @Injected
+    private RuntimeContext runtimeContext;
+
 
     @Override
     public void accept(Element element, Class<?> cls) {
@@ -47,6 +53,12 @@ public class CustomDialogHandler implements DialogHandler {
                 elt.setAttribute("multifieldSpecial", "This is added to top-level Multifields");
             }
         });
+        Element customChild = runtimeContext.getXmlUtility().createNodeElement("customChild");
+        Element content = runtimeContext.getXmlUtility().getChildElement(element, "content");
+        Element extItems = runtimeContext.getXmlUtility().getChildElement(content, "items");
+        Element column = runtimeContext.getXmlUtility().getChildElement(extItems, "column");
+        Element intItems = runtimeContext.getXmlUtility().getChildElement(column, "items");
+        intItems.appendChild(customChild);
     }
 
     @Override
@@ -68,9 +80,9 @@ public class CustomDialogHandler implements DialogHandler {
     }
 
     private static boolean isTopLevelMultifield(Target target) {
-        String resourceType = Optional.ofNullable(target.parent())
-            .map(Target::parent)
-            .map(Target::parent)
+        String resourceType = Optional.ofNullable(target.getParent())
+            .map(Target::getParent)
+            .map(Target::getParent)
             .map(t -> t.getAttributes().get(DialogConstants.PN_SLING_RESOURCE_TYPE))
             .orElse(StringUtils.EMPTY);
         return !resourceType.equals(ResourceTypes.MULTIFIELD);

@@ -36,9 +36,9 @@ class PasswordHandler implements BiConsumer<Source, Target> {
         Password password = source.adaptTo(Password.class);
         if(!password.retype().isEmpty()) {
             target.attribute(DialogConstants.PN_RETYPE,
-                    DialogConstants.RELATIVE_PATH_PREFIX + target.getPrefix() +
+                    DialogConstants.RELATIVE_PATH_PREFIX + target.getNamePrefix() +
                             PluginNamingUtility.getValidFieldName(password.retype()) +
-                            target.getPostfix());
+                            target.getNamePostfix());
         }
     }
 }

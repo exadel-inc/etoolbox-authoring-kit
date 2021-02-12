@@ -35,13 +35,13 @@ public class FixedColumnsHandler implements BiConsumer<Class<?>, Target> {
      */
     @Override
     public void accept(Class<?> componentClass, Target target) {
-        Target contentItemsColumn = target.getOrCreate(DialogConstants.NN_CONTENT)
+        Target contentItemsColumn = target.getOrCreateTarget(DialogConstants.NN_CONTENT)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
-                .getOrCreate(DialogConstants.NN_LAYOUT)
+                .getOrCreateTarget(DialogConstants.NN_LAYOUT)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.FIXED_COLUMNS)
-                .parent()
-                .getOrCreate(DialogConstants.NN_ITEMS)
-                .getOrCreate(DialogConstants.NN_COLUMN)
+                .getParent()
+                .getOrCreateTarget(DialogConstants.NN_ITEMS)
+                .getOrCreateTarget(DialogConstants.NN_COLUMN)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 
         List<Source> allSources = PluginReflectionUtility.getAllSources(componentClass);

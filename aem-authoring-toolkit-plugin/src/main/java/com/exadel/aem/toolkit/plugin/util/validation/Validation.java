@@ -37,7 +37,7 @@ public class Validation {
     private static final Validator NO_RESTRICTION = new PermissiveValidator();
 
     private Method reflectedMethod;
-    private Validator testRoutine;
+    private final Validator testRoutine;
 
     /**
      * Default constructor
