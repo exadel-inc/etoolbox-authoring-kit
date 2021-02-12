@@ -23,44 +23,129 @@
 
     'use strict';
 
+    const ACTION_NAME = 'update-options';
+
+    const ADDRESS_TERMINATORS = /^[./]+|\/+$/g;
+
+    const OPTION_PROVIDER_ENDPOINT = '/apps/authoring-toolkit/datasources/option-provider';
+    const ENDPOINT_EXTENSION = '.json';
+
+    const STORED_VALUE_ATTRIBUTE = 'data-stored-value';
+
+    const ALLOWED_TAG = 'CORAL-SELECT';
+
     /**
-     * Finds out whether the two option sets are equal, e.g. to check if the
-     * newly collected options are the same as options already present in the option container
+     * Retrieves a valid HTTP endpoint address and a valid property name from the provided address string, which is typically
+     * the value of a form's 'action' property, and the provided name parameter that can have a relative path prefix
      *
-     * @param optionSet0 First option set
-     * @param optionSet1 Second option set
-     * @returns {boolean}
+     * @param address Raw address value
+     * @param name    Raw property name parameter
      */
-    function optionsAreSame(optionSet0, optionSet1) {
-        if (!Array.isArray(optionSet0) || !Array.isArray(optionSet1) || optionSet0.length !== optionSet1.length) {
-            return false;
+    function extractRequestRequisites(address, name) {
+        let resourceAddress = address || '';
+        let valueMember = (name || '').replace(ADDRESS_TERMINATORS, '');
+        if (valueMember.indexOf('/') > -1) {
+            resourceAddress += '/' + valueMember.substring(0, valueMember.lastIndexOf('/'));
+            valueMember = valueMember.substring(valueMember.lastIndexOf('/') + 1);
         }
-        for (let i = 0; i < optionSet0.length; i++) {
-            if (optionSet0[i].value !== optionSet1[i].value) {
-                return false;
-            }
-        }
-        return true;
+        resourceAddress += ENDPOINT_EXTENSION;
+        return [resourceAddress, valueMember];
     }
 
     /**
-     * Replaces existing option set with a new one in DOM
+     * Constructs a request address string with the query options provided
      *
-     * @param select        Select widget to set options for
-     * @param newOptions    New option set
+     * @param options Collection of options authored via DependsOn
+     */
+    function createDataSourceRequestAddress(options) {
+        const datasourceEndpoint = Granite.HTTP.externalize(OPTION_PROVIDER_ENDPOINT);
+        const searchParams = new URLSearchParams();
+        $.each(options, function (key, value) {
+            searchParams.append(key, value);
+        });
+        return datasourceEndpoint + '?' + searchParams.toString();
+    }
+
+    /**
+     * Checks the new options retrieved via an HTTP request and assigns them to the Granite Select component provided,
+     * optionally restores the selected value
+     *
+     * @param $select       Select widget to set options for
+     * @param options       New option set, represented by "raw" (non-Granite) entities
+     * @param resourceAddr  Path to the JCR resource where the currently authored value resides
+     * @param valueMember   Property of the JCR resource containing the authored value
+     */
+    function processNewOptions($select, options, resourceAddr, valueMember) {
+        // Receive new options from the datasource; check if they are the same as options already present,
+        // and early return in such a case
+        const existingOptions = $select
+            .find('coral-select-item')
+            .map(function(index, item) {
+                return {value: $(item).val()};
+            })
+            .toArray();
+        if (DependsOn.isEqual(existingOptions, options)) {
+            return;
+        }
+
+        // If option set needs to be changed, cache the currently selected value for this widget from the underlying
+        // resource (so that a new option may be be assigned the "selected" state if its value matches),
+        // and then replace the option set in DOM
+        if ($select.attr(STORED_VALUE_ATTRIBUTE)) {
+            setOptions($select, options, $select.attr(STORED_VALUE_ATTRIBUTE));
+        } else {
+            setOptionsAndRestoreSelected($select, options, resourceAddr, valueMember);
+        }
+    }
+
+    /**
+     * Sets a new option set to the Granite Select component
+     *
+     * @param $select       Select widget to set options for
+     * @param options       New option set, represented by "raw" (non-Granite) entities
      * @param selectedValue The value to mark as selected in the option set
      */
-    function replaceOptions(select, newOptions, selectedValue) {
-        select.get(0).items.clear();
-        newOptions.forEach(function(item) {
-            select.get(0).items.add({
-                value: item.value,
-                content: {
-                    textContent: item.text
-                },
-                selected: (!selectedValue && !item.value) || selectedValue === item.value
+    function setOptions($select, options, selectedValue) {
+        const itemCollection = $select.get(0).items;
+        itemCollection.clear();
+        options.map(src => createOption(src, selectedValue)).forEach(option => itemCollection.add(option));
+    }
+
+    /**
+     * Queries for a stored JCR resource to find the currently selected value and assigns to the Granite select if found
+     *
+     * @param $select       Select widget to set options for
+     * @param options       New option set, represented by "raw" (non-Granite) entities
+     * @param resourceAddr  Path to the JCR resource where the currently authored value resides
+     * @param valueMember   Property of the JCR resource containing the authored value
+     */
+    function setOptionsAndRestoreSelected($select, options, resourceAddr, valueMember) {
+        $.get(resourceAddr)
+            .then(function (resource) {
+                const storedValue = resource[valueMember];
+                $select.attr(STORED_VALUE_ATTRIBUTE, storedValue);
+                setOptions($select, options, storedValue);
+            })
+            .fail(function() {
+                setOptions($select, options);
             });
-        });
+
+    }
+
+    /**
+     * Creates a new Granite option
+     *
+     * @param src           An object having a {@code text} and a {@code value} attribute
+     * @param selectedValue The match value to trigger 'selected' state of the option
+     */
+    function createOption(src, selectedValue) {
+        return {
+            value: src.value,
+            content: {
+                textContent: src.text
+            },
+            selected: (!selectedValue && !src.value) || selectedValue === src.value
+        }
     }
 
     /**
@@ -71,20 +156,19 @@
      * @param options   Options to be passed with an async HTTP request to the custom datasource (same as described
      *                  in the {@code CustomDataSourceServlet} javadoc
      */
-    DependsOn.ActionRegistry.register('update-options', function(path, options) {
+    DependsOn.ActionRegistry.register(ACTION_NAME, function(path, options) {
 
         // Initialize and check whether critical requisites are accessible; early return if not
-        const select = this.$el;
+        const $select = this.$el;
 
-        let resourceEndpoint = select.closest('form').attr('action') || '';
-        let valueMember = (select.attr('name') || '').replace(/^[./]+|\/+$/g, '');
-        if (valueMember.indexOf('/') > -1 && resourceEndpoint) {
-            resourceEndpoint += '/' + valueMember.substring(0, valueMember.lastIndexOf('/'));
-            valueMember = valueMember.substring(valueMember.lastIndexOf('/') + 1);
-        }
-        resourceEndpoint += '.json';
+        const [resourceAddress, valueMember] = extractRequestRequisites(
+            $select.closest('form').attr('action'),
+            $select.attr('name'));
 
-        if (select[0].tagName !== 'CORAL-SELECT' || !path || resourceEndpoint === '.json' || !valueMember) {
+        if ($select[0].tagName !== ALLOWED_TAG
+            || !path
+            || resourceAddress === ENDPOINT_EXTENSION
+            || !valueMember) {
             return;
         }
 
@@ -92,47 +176,14 @@
         // and compose a HTTP query string
         options.path = path;
         options.output = 'json';
+        const dataSourceAddress = createDataSourceRequestAddress(options);
 
-        let datasourceEndpoint = Granite.HTTP.externalize('/apps/authoring-toolkit/datasources/option-provider');
-        $.each(options, function (key, value) {
-            datasourceEndpoint += (datasourceEndpoint.indexOf('?') > -1 ? '&' : '?') + key + '=' + value;
-        });
-
-        // Receive new options from the datasource; check if they are the same as options already present,
-        // and early return in such a case
-        $.get(datasourceEndpoint)
+        $.get(dataSourceAddress)
             .then(function(newOptions) {
-                const existingOptions = select
-                    .find('coral-select-item')
-                    .map(function(index, item) {
-                        return {value: $(item).val()};
-                    })
-                    .toArray();
-                if (optionsAreSame(existingOptions, newOptions)) {
-                    return;
-                }
-
-                // If option set needs to be changed, cache the currently selected value for this widget from the underlying
-                // resource (so that a new option may be be assigned the "selected" state if its value matches),
-                // and then replace the option set in DOM
-                if (select.attr('data-stored-value')) {
-                    replaceOptions(select, newOptions, select.attr('data-stored-value'));
-                } else if (!select.attr('data-noCache')) {
-                    $.get(resourceEndpoint)
-                        .then(function (resource) {
-                            const storedValue = resource[valueMember];
-                            select.attr('data-stored-value', storedValue);
-                            replaceOptions(select, newOptions, select.attr('data-stored-value'));
-                        })
-                        .fail(function() {
-                            replaceOptions(select, newOptions, undefined);
-                        });
-                } else {
-                    replaceOptions(select, newOptions, undefined);
-                }
+                processNewOptions($select, newOptions, resourceAddress, valueMember);
             })
             .fail(function() {
-                select.get(0).items.clear();
+                setOptions($select, []);
             });
     });
 
