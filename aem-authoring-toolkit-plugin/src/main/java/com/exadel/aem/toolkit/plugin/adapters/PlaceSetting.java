@@ -22,12 +22,12 @@ import com.exadel.aem.toolkit.api.handlers.Adaptable;
 import com.exadel.aem.toolkit.api.handlers.Source;
 
 @Adaptable(Source.class)
-public class PlaceOnSetting {
+public class PlaceSetting {
 
     private Place wrappedPlace;
     private PlaceOnTab wrappedPlaceOnTab;
 
-    public PlaceOnSetting(Source source) {
+    public PlaceSetting(Source source) {
         if (source == null) {
             return;
         }
