@@ -116,7 +116,7 @@ public @interface FileUpload {
     @EnumValue()
     ButtonSize buttonSize() default ButtonSize.MEDIUM;
     /**
-     * When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the 'icon' attribute of this TouchUI dialog component's node.
      * Used to define component's icon
      * @return String value
      */
