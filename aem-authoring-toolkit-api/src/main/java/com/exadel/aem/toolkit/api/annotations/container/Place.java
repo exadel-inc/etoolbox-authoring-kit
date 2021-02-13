@@ -24,11 +24,11 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @SuppressWarnings("unused")
-public @interface PlaceOn {
+public @interface Place {
     /**
-     * String equal to appropriate {@link AccordionPanel#title()} value or {@link Tab #title()}
+     * String equal to appropriate {@link AccordionPanel#title()} value or {@link Tab#title()}
      *
      * @return String value
      */
-    String value();
+    String in() default "";
 }

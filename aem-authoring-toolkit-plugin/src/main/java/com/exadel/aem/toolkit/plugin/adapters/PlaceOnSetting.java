@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.plugin.adapters;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
+import com.exadel.aem.toolkit.api.annotations.container.Place;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.handlers.Adaptable;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -24,20 +24,20 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 @Adaptable(Source.class)
 public class PlaceOnSetting {
 
-    private PlaceOn wrappedPlaceOn;
+    private Place wrappedPlace;
     private PlaceOnTab wrappedPlaceOnTab;
 
     public PlaceOnSetting(Source source) {
         if (source == null) {
             return;
         }
-        this.wrappedPlaceOn = source.adaptTo(PlaceOn.class);
+        this.wrappedPlace = source.adaptTo(Place.class);
         this.wrappedPlaceOnTab = source.adaptTo(PlaceOnTab.class);
     }
 
     public String getValue() {
-        if (wrappedPlaceOn != null) {
-            return wrappedPlaceOn.value();
+        if (wrappedPlace != null) {
+            return wrappedPlace.in();
         } else if (wrappedPlaceOnTab != null) {
             return wrappedPlaceOnTab.value();
         }
