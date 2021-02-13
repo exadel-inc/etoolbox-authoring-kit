@@ -131,7 +131,8 @@
                                name="./customAnnotation"
                                disabled="{Boolean}false"
                                renderHidden="{Boolean}false"
-                               required="{Boolean}false"/>
+                               required="{Boolean}false"
+                               cq:levelUp="Level up value"/>
                     </customAnnotation>
 
                     <customChild jcr:primaryType="nt:unstructured"/>

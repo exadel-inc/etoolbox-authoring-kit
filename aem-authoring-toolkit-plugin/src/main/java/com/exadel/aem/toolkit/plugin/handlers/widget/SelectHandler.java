@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -45,9 +46,11 @@ class SelectHandler implements BiConsumer<Source, Target> {
         if (ArrayUtils.isNotEmpty(select.options())) {
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             for (Option option: select.options()) {
-                items
-                    .createTarget(option.value())
-                    .attributes(option, PluginAnnotationUtility.getPropertyMappingFilter(option));
+                List<Target> existing = items.findChildren(t -> option.value().equals(t.getAttribute(DialogConstants.PN_VALUE)));
+                Target item = existing.isEmpty()
+                    ? items.createTarget(DialogConstants.DOUBLE_QUOTE + option.value() + DialogConstants.DOUBLE_QUOTE)
+                    : items.getTarget(DialogConstants.DOUBLE_QUOTE + option.value() + DialogConstants.DOUBLE_QUOTE);
+                item.attributes(option, PluginAnnotationUtility.getPropertyMappingFilter(option));
             }
         }
         Target dataSourceElement = PluginXmlUtility.appendDataSource(

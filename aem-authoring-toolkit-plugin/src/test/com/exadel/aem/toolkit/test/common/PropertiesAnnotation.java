@@ -42,6 +42,7 @@ public class PropertiesAnnotation {
     @Properties({
             @Property(name = "simpleProperty", value = "value"),
             @Property(name = "../emptyValueProperty", value = ""),
+            @Property(name = "../siblingNode/newProperty", value = "value"),
             @Property(name = "ad/wrong f@ield! NamE", value = "non-latin символы"),
     })
     String field;

@@ -49,16 +49,38 @@
                                  sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
                                  fieldLabel="Multifield 3"
                                  fieldDescription="Multifield definition with collection-typed source"
+                                 composite="{Boolean}true"
                                  disabled="{Boolean}false"
                                  renderHidden="{Boolean}false"
                                  required="{Boolean}false"
                                  multifieldSpecial="This is added to Multifields">
                         <field jcr:primaryType="nt:unstructured"
-                               sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                               name="./dialogItem"
-                               disabled="{Boolean}false"
-                               renderHidden="{Boolean}false"
-                               required="{Boolean}false"/>
+                               sling:resourceType="granite/ui/components/coral/foundation/container"
+                               name="./multiField3">
+                            <items jcr:primaryType="nt:unstructured">
+                                <dialogItem jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                            name="dialogItem"
+                                            disabled="{Boolean}false"
+                                            renderHidden="{Boolean}false"
+                                            required="{Boolean}false"/>
+                                <nestedFieldSet jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
+                                                name="nestedFieldSet"
+                                                disabled="{Boolean}false"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}false">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <nestedItem jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                    name="nestedItem"
+                                                    disabled="{Boolean}false"
+                                                    renderHidden="{Boolean}false"
+                                                    required="{Boolean}false"/>
+                                    </items>
+                                </nestedFieldSet>
+                            </items>
+                        </field>
                     </multiField3>
                 </items>
             </column>

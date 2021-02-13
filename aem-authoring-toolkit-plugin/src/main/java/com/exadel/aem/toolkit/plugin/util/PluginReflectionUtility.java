@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.MalformedParameterizedTypeException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
@@ -31,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +60,6 @@ import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
 import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
@@ -370,23 +371,31 @@ public class PluginReflectionUtility {
         return result;
     }
 
-    private <T> List<T> listCorrectOrder(List<T> list, List<T> sortedList) {
-        List<T> finalList = new ArrayList<>();
-        int i = 0;
-        int k = 0;
-        while (finalList.size() != list.size()) {
-            if (sortedList.get(k).equals(_Default.class)) {
-                k++;
+    /**
+     * Retrieves values of public constant fields originating from the given constant class as a key-value map
+     * @param targetClass {@code Class<?>} object representing the constants class
+     * @return {@code Map<String, Object>} containing the key-value pairs. An empty map can be returned if no valid
+     * constants found
+     */
+    public static Map<String, Object> getConstantValues(Class<?> targetClass) {
+        Map<String, Object> result = new HashMap<>();
+        for (Field field : targetClass.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())
+                || !Modifier.isFinal(field.getModifiers())
+                || !Modifier.isPublic(field.getModifiers())) {
+                continue;
             }
-            if (list.get(i).getClass().equals(sortedList.get(k))) {
-                finalList.add(list.get(i));
-                k++;
-                i = 0;
-            } else {
-                i++;
+            Object fieldValue;
+            try {
+                fieldValue = field.get(targetClass);
+            } catch (IllegalAccessException e) {
+                fieldValue = null;
+            }
+            if (fieldValue != null) {
+                result.put(field.getName(), fieldValue);
             }
         }
-        return finalList;
+        return result;
     }
 
     /**

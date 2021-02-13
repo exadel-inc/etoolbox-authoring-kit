@@ -19,6 +19,7 @@ import java.util.List;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
@@ -50,11 +51,23 @@ public class MultiFieldWidget {
         description = "Multifield definition with collection-typed source"
     )
     @MultiField
-    List<MultiFieldContainer> multiField3;
+    List<ExtendedMultiFieldContainer> multiField3;
 
     private static class MultiFieldContainer {
         @DialogField
         @TextField
         String dialogItem;
+    }
+
+    private static class ExtendedMultiFieldContainer extends MultiFieldContainer {
+        @DialogField
+        @FieldSet(source = MultifieldContainerNestedFieldSet.class)
+        String nestedFieldSet;
+    }
+
+    private static class MultifieldContainerNestedFieldSet {
+        @DialogField
+        @TextField
+        String nestedItem;
     }
 }

@@ -26,5 +26,5 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 @Retention(RetentionPolicy.RUNTIME)
 @DialogWidgetAnnotation
 @ResourceType("test")
-public @interface CustomAnnotationForOrderTest {
+public @interface CustomAnnotationForOrderingTest {
 }

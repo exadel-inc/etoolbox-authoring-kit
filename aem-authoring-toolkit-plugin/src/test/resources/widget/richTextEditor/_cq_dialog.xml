@@ -210,6 +210,7 @@
                             <misctools jcr:primaryType="nt:unstructured" features="[specialchars,sourceedit]">
                                 <specialCharsConfig jcr:primaryType="nt:unstructured">
                                     <chars jcr:primaryType="nt:unstructured">
+                                        <inputTypequotbuttonquotValuequotokquot entity="&lt;input type=&amp;quot;button&amp;quot; value=&amp;quot;OK&amp;quot;/&gt;" jcr:primaryType="nt:unstructured" name="Complex entity"/>
                                         <copy jcr:primaryType="nt:unstructured" entity="&amp;copy" name="Copyright"/>
                                         <x20AC jcr:primaryType="nt:unstructured" entity="&amp;#x20AC" name="Euro sign"/>
                                         <x00AE jcr:primaryType="nt:unstructured" entity="&amp;#x00AE" name="Registered"/>

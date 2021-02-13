@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -48,8 +49,11 @@ class RadioGroupHandler implements BiConsumer<Source, Target> {
         PluginXmlUtility.appendDataSource(target, radioGroup.datasource(), radioGroup.acsListPath(), radioGroup.acsListResourceType());
     }
 
-    private void renderButton(RadioButton buttonInstance, Target parentElement) {
-        parentElement.createTarget(buttonInstance.value())
-                .attributes(buttonInstance, PluginAnnotationUtility.getPropertyMappingFilter(buttonInstance));
+    private void renderButton(RadioButton button, Target parentElement) {
+        List<Target> existing = parentElement.findChildren(t -> button.value().equals(t.getAttribute(DialogConstants.PN_VALUE)));
+        Target item = existing.isEmpty()
+            ? parentElement.createTarget(DialogConstants.DOUBLE_QUOTE + button.value() + DialogConstants.DOUBLE_QUOTE)
+            : parentElement.getTarget(DialogConstants.DOUBLE_QUOTE + button.value() + DialogConstants.DOUBLE_QUOTE);
+        item.attributes(button, PluginAnnotationUtility.getPropertyMappingFilter(button));
     }
 }

@@ -25,13 +25,14 @@ import com.exadel.aem.toolkit.plugin.util.ordering.OrderingTest;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
+    TargetsTest.class,
+    OrderingTest.class,
     ComponentsTest.class,
     WidgetsTest.class,
     ValidationsTest.class,
     IgnoreTest.class,
     ExceptionsTest.class,
-    DependsOnTest.class,
-    OrderingTest.class
+    DependsOnTest.class
 })
 public class AllTests {
 }

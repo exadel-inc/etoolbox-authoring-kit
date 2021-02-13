@@ -17,7 +17,6 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -77,12 +76,11 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         accept(source.adaptTo(RichTextEditor.class), target);
     }
 
-/**
+    /**
      * Processes the user-defined data and writes it to XML entity
      * @param target Current {@code TargetFacade} instance
      * @param rteAnnotation Current {@link RichTextEditor} instance
      */
-
     public void accept(RichTextEditor rteAnnotation, Target target) {
         this.rteAnnotation = rteAnnotation;
         // create the four basic builders: for ./uiSettings/cui/inline, ./uiSettings/cui/dialogFullScreen,
@@ -175,7 +173,6 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
      * @param tableEditBuilder Additional {@code XmlNodeBuilder} for the tables node
      * @param pluginsBuilder Additional {@code XmlNodeBuilder} for the plugins node
      */
-
     private static void processFeatureItem(
             ImmutablePair<XmlNodeWithListBuilder,String> featureItem,
             XmlNodeWithListBuilder tableEditBuilder,
@@ -212,11 +209,10 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         }
     }
 
-/**
+    /**
      * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create if necessary and then retrieve
      * the {@code icons} node for the RichTextEditor XML markup
      */
-
     private void getIconsNode(Target parent) {
         Target icons = parent.getOrCreateTarget(DialogConstants.NN_ICONS);
         Arrays.stream(rteAnnotation.icons()).forEach(
@@ -225,11 +221,10 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
             .attributes(iconMapping, PluginAnnotationUtility.getPropertyMappingFilter(iconMapping)));
     }
 
-/**
+    /**
      * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create if necessary and then retrieve
      * the {@code formats} node for the RichTextEditor XML markup
      */
-
     private void getFormatNode(Target parent) {
         Target formats = parent.getOrCreateTarget(DialogConstants.NN_FORMATS).attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION);
         Arrays.stream(rteAnnotation.formats()).forEach(paragraphFormat -> Validation.forType(paragraphFormat.annotationType()).test(paragraphFormat));
@@ -244,16 +239,11 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
     }
 
 
-/**
+    /**
      * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create if necessary and then retrieve
      * the {@code specialCharsConfig} node for the RichTextEditor XML markup
      */
-
     private void getSpecialCharactersNode(Target parent) {
-        Function<Annotation, String> childNodeNameProvider = c -> {
-            Characters chars = (Characters) c;
-            return chars.rangeStart() > 0 ? String.valueOf(chars.rangeStart()) : chars.entity();
-        };
         Target charsConfigNode = parent.getOrCreateTarget(DialogConstants.NN_SPECIAL_CHARS_CONFIG).getOrCreateTarget(DialogConstants.NN_CHARS);
         CharactersObjectValidator validator = new CharactersObjectValidator();
         Annotation[] validCharactersAnnotations = Arrays.stream(rteAnnotation.specialCharacters())
@@ -263,13 +253,12 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
         Arrays.stream(validCharactersAnnotations).forEach(
             annotation ->
                 charsConfigNode
-                    .getOrCreateTarget(childNodeNameProvider.apply(annotation))
+                    .getOrCreateTarget(getCharactersTagName((Characters) annotation))
                     .attributes(
                         annotation,
                         PluginAnnotationUtility.getPropertyMappingFilter(annotation))
         );
     }
-
 
     /**
      * Populates with attributes the {@code styles} node
@@ -327,7 +316,6 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
      * {@code htmlRules} to the RichTextEditor XML markup
      * @param parent {@code Target} instance representing the RichTextEditor node
      */
-
     private void populateHtmlLinkRules(Target parent) {
         HtmlLinkRules rulesAnnotation = this.rteAnnotation.htmlLinkRules();
         if (!PluginAnnotationUtility.isNotDefault(rulesAnnotation)) {
@@ -346,15 +334,6 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Extracts tokens within a {@code [feature#token, feature#token2]} unit
-     * @param array String representing a multitude of feature tokens
-     * @return {@code String[]} array with the extracted feature tokens
-     */
-    private static String[] getNestedTokens(String array) {
-        return StringUtils.strip(array, PluginXmlUtility.ATTRIBUTE_LIST_SURROUND).split(PluginXmlUtility.ATTRIBUTE_LIST_SPLIT_PATTERN);
-    }
-
-    /**
      * Gets whether a certain feature exists in the feature set
      * @param matcher Feature token predicate
      * @return True or false
@@ -365,14 +344,46 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
                 .anyMatch(matcher);
     }
 
-    private boolean isEmpty(Target target) {
+    /**
+     * Extracts tokens within a {@code [feature#token, feature#token2]} unit
+     * @param array String representing a multitude of feature tokens
+     * @return {@code String[]} array with the extracted feature tokens
+     */
+    private static String[] getNestedTokens(String array) {
+        return StringUtils.strip(array, PluginXmlUtility.ATTRIBUTE_LIST_SURROUND).split(PluginXmlUtility.ATTRIBUTE_LIST_SPLIT_PATTERN);
+    }
+
+    /**
+     * Gets whether the provided target can only produce an empty XML markup node (the one without any attributes or children)
+     * @param target {@code Target} object to test
+     * @return True or false
+     */
+    private static boolean isEmpty(Target target) {
         return target.getAttributes().size() == 1 &&
             target.getAttributes().containsKey(DialogConstants.PN_PRIMARY_TYPE) &&
             target.getChildren().isEmpty();
     }
 
-    private void clearEmpty(Target target) {
-        target.getChildren().forEach(this::clearEmpty);
-        target.getChildren().removeIf(this::isEmpty);
+    /**
+     * Modifies the provided {@code Target} object  by removing its children that comply with
+     * {@link RichTextEditorHandler#isEmpty(Target)} method
+     * @param target {@code Target} object to test
+     */
+    private static void clearEmpty(Target target) {
+        target.getChildren().forEach(RichTextEditorHandler::clearEmpty);
+        target.getChildren().removeIf(RichTextEditorHandler::isEmpty);
+    }
+
+    /**
+     * Gets a string representation of a {@link Characters} object for using with child targets creation. The return
+     * value differs depending on whether it is a character range or a particular entity
+     * @param characters {@code Characters} annotation
+     * @return String value
+     */
+    private static String getCharactersTagName(Characters characters) {
+        String result = characters.rangeStart() > 0
+            ? String.valueOf(characters.rangeStart())
+            : characters.entity();
+        return DialogConstants.DOUBLE_QUOTE + result + DialogConstants.DOUBLE_QUOTE;
     }
 }

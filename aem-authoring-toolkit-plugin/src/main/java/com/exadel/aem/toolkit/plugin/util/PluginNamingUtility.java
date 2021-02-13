@@ -11,11 +11,13 @@ public class PluginNamingUtility {
     private static final NamingHelper FIELD_HELPER = NamingHelper.forFieldName();
     private static final NamingHelper NODE_NAME_HELPER = NamingHelper.forNodeName();
 
-    public static String getValidName(String name) {
+    private PluginNamingUtility() {}
+
+    public static String getValidNodeName(String name) {
         return NODE_NAME_HELPER.getValidName(name, DialogConstants.NN_ITEM);
     }
 
-    public static String getValidName(String name, String defaultName) {
+    public static String getValidNodeName(String name, String defaultName) {
         return NODE_NAME_HELPER.getValidName(name, defaultName);
     }
 
@@ -37,6 +39,4 @@ public class PluginNamingUtility {
         }
         return name;
     }
-
-    private PluginNamingUtility() {}
 }

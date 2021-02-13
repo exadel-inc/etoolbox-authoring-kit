@@ -43,6 +43,22 @@ import com.exadel.aem.toolkit.plugin.util.ordering.PluginOrderingUtility;
  * to a Granite UI target
  */
 public class CustomHandlingHandler implements BiConsumer<Source, Target> {
+    private List<DialogWidgetHandler> predefinedHandlers;
+
+    /**
+     * Default constructor
+     */
+    public CustomHandlingHandler() {
+    }
+
+    /**
+     * Alternative constructor that accepts the list of handlers to process to be used instead of handlers extracted from
+     * the passed {@code Source}
+     * @param handlers Pre-defined handlers list
+     */
+    public CustomHandlingHandler(List<DialogWidgetHandler> handlers) {
+        this.predefinedHandlers = handlers;
+    }
 
     /**
      * Processes the user-defined data and writes it to {@link Target}
@@ -51,20 +67,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
      */
     @Override
     public void accept(Source source, Target target) {
-        List<Class<? extends Annotation>> sourceAnnotations = PluginReflectionUtility.getSourceAnnotations(source);
-        List<DialogWidgetHandler> handlers;
-
-        // Modern handlers mapping approach -- via @Handles annotation
-        handlers = new ArrayList<>(PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers(sourceAnnotations));
-
-        // Legacy handlers mapping approach -- via source<->name mapping
-        List<DialogWidgetHandler> sourceToNameMappingHandlers = PluginReflectionUtility.getSourceAnnotations(source)
-            .stream()
-            .filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
-            .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
-            .flatMap(CustomHandlingHandler::getMatchedHandlersByName)
-            .collect(Collectors.toList());
-        handlers.addAll(sourceToNameMappingHandlers);
+        List<DialogWidgetHandler> handlers = getEffectiveHandlers(source);
 
         // Extract legacy handlers that accept(Element, Field)
         List<DialogWidgetHandler> legacyHandlers = handlers.stream().filter(CustomHandlingHandler::isLegacyHandler).collect(Collectors.toList());
@@ -82,6 +85,29 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
         // Process modern handlers that accept(Source, Target)
         Collection<DialogWidgetHandler> modernHandlers = CollectionUtils.subtract(handlers, legacyHandlers);
         PluginOrderingUtility.sort(new ArrayList<>(modernHandlers)).forEach(handler -> handler.accept(source, target));
+    }
+
+    private List<DialogWidgetHandler> getEffectiveHandlers(Source source) {
+        if (predefinedHandlers != null && !predefinedHandlers.isEmpty()) {
+            return predefinedHandlers;
+        }
+
+        List<Class<? extends Annotation>> sourceAnnotations = PluginReflectionUtility.getSourceAnnotations(source);
+        List<DialogWidgetHandler> handlers;
+
+        // Modern handlers mapping approach -- via @Handles annotation
+        handlers = new ArrayList<>(PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers(sourceAnnotations));
+
+        // Legacy handlers mapping approach -- via source<->name mapping
+        List<DialogWidgetHandler> sourceToNameMappingHandlers = PluginReflectionUtility.getSourceAnnotations(source)
+            .stream()
+            .filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
+            .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
+            .flatMap(CustomHandlingHandler::getMatchedHandlersByName)
+            .collect(Collectors.toList());
+        handlers.addAll(sourceToNameMappingHandlers);
+
+        return handlers;
     }
 
     private static Stream<DialogWidgetHandler> getMatchedHandlersByName(String source) {
