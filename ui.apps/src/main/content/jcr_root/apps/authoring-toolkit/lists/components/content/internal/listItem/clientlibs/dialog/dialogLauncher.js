@@ -19,7 +19,7 @@
 
     ns.AATLists = ns.AATLists || {};
 
-    ns.AATLists.WRAPPER_RES_TYPE = 'authoring-toolkit/lists/components/content/listEntry';
+    ns.AATLists.WRAPPER_RES_TYPE = 'authoring-toolkit/lists/components/content/internal/listItem';
 
     ns.AATLists.launchReferenceDialog = function (editable, itemPath) {
         const dialogConfig = getDialogConfig(editable, itemPath);
