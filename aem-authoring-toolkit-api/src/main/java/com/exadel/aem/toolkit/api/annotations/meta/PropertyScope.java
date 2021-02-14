@@ -18,10 +18,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
 
 /**
- * Used to specify one or more {@link XmlScope}s this annotation or annotation property is rendered in, i.e. whether
+ * Used to specify one or more {@link Scope}s this annotation or annotation property is rendered in, i.e. whether
  * this is rendered to {@code cq:Component} (component root), {@code cq:dialog}, {@code cq:editorConfig}, or {@code cq:htmlTag} JCR nodes.
  * Mind that it applies only to values that technically may be rendered to multiple JCR nodes,
  * such as {@link com.exadel.aem.toolkit.api.annotations.main.Dialog} annotation properties
@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 public @interface PropertyScope {
     /**
      * Defines valid {@code XmlScope} or scopes
-     * @return Array of {@link XmlScope} values
+     * @return Array of {@link Scope} values
      */
-    XmlScope[] value() default {XmlScope.COMPONENT, XmlScope.CQ_DIALOG, XmlScope.CQ_EDIT_CONFIG, XmlScope.CQ_HTML_TAG};
+    Scope[] value() default {Scope.COMPONENT, Scope.CQ_DIALOG, Scope.CQ_EDIT_CONFIG, Scope.CQ_HTML_TAG};
 }

@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
 
 /**
  * Used to store generic properties of TouchUI Dialog and most common properties of AEM Component according to the
@@ -50,7 +50,7 @@ public @interface Dialog {
      * @return String value
      */
     @PropertyRendering(name = JcrConstants.PN_DESCRIPTION)
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyScope(Scope.COMPONENT)
     @Deprecated
     String description() default "";
 
@@ -59,7 +59,7 @@ public @interface Dialog {
      * @return String value
      */
     @PropertyRendering(name = JcrConstants.PN_CELL_NAME)
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyScope(Scope.COMPONENT)
     @Deprecated
     String cellName() default "";
 
@@ -67,7 +67,7 @@ public @interface Dialog {
      * When set to non-blank, maps to the 'componentGroup' attribute of the component root node
      * @return String value
      */
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyScope(Scope.COMPONENT)
     @Deprecated
     String componentGroup() default "";
 
@@ -75,7 +75,7 @@ public @interface Dialog {
      * Maps to the 'dialogPath' attribute of the component root node. Must represent a valid JCR path
      * @return String value
      */
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyScope(Scope.COMPONENT)
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     @Deprecated
     String dialogPath() default "";
@@ -85,7 +85,7 @@ public @interface Dialog {
      * @return True or false
      */
     @PropertyRendering(name = JcrConstants.PN_NO_DECORATION, ignoreValues = "false")
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyScope(Scope.COMPONENT)
     @Deprecated
     boolean noDecoration() default false;
 
@@ -94,7 +94,7 @@ public @interface Dialog {
      * @return String value
      */
     @PropertyRendering(name = JcrConstants.PN_RESOURCE_SUPER_TYPE)
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyScope(Scope.COMPONENT)
     @Deprecated
     String resourceSuperType() default "";
 
@@ -103,7 +103,7 @@ public @interface Dialog {
      * @return String value
      */
     @PropertyRendering(name = JcrConstants.PN_TEMPLATE_PATH)
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyScope(Scope.COMPONENT)
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     @Deprecated
     String templatePath() default "";
@@ -112,7 +112,7 @@ public @interface Dialog {
      * When set to non-blank, renders as the `helpPath` attribute of component's {@code cq:dialog} node
      * @return String value
      */
-    @PropertyScope(XmlScope.CQ_DIALOG)
+    @PropertyScope(Scope.CQ_DIALOG)
     String helpPath() default "";
 
     /**
@@ -120,7 +120,7 @@ public @interface Dialog {
      * @return Numeric value
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
-    @PropertyScope(XmlScope.CQ_DIALOG)
+    @PropertyScope(Scope.CQ_DIALOG)
     double height() default 480;
 
     /**
@@ -128,7 +128,7 @@ public @interface Dialog {
      * @return Numeric value
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
-    @PropertyScope(XmlScope.CQ_DIALOG)
+    @PropertyScope(Scope.CQ_DIALOG)
     double width() default 560;
 
     /**
@@ -136,7 +136,7 @@ public @interface Dialog {
      * @return True or false
      * @deprecated Use {@link Component} to set this value
      */
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyScope(Scope.COMPONENT)
     @PropertyRendering(ignoreValues = "false")
     @Deprecated
     boolean disableTargeting() default false;
@@ -172,7 +172,7 @@ public @interface Dialog {
      * of component's {@code cq:dialog} node
      * @return String value, or an array of strings
      */
-    @PropertyScope(XmlScope.CQ_DIALOG)
+    @PropertyScope(Scope.CQ_DIALOG)
     String[] extraClientlibs() default {};
 
     /**

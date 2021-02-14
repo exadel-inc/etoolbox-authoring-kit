@@ -9,7 +9,7 @@ import java.util.function.BinaryOperator;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
 import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
@@ -159,12 +159,12 @@ public interface XmlUtility {
 
     /**
      * Populates {@code Element} node with all eligible property values of an {@code Annotation} instance,
-     * honoring {@link XmlScope} specified for an annotation or a particular annotation method
+     * honoring {@link Scope} specified for an annotation or a particular annotation method
      * @param element Element node
      * @param annotation Annotation to take property values from
      * @param scope Current {@code XmlScope}
      */
-    void mapProperties(Element element, Annotation annotation, XmlScope scope);
+    void mapProperties(Element element, Annotation annotation, Scope scope);
 
     /**
      * Populates {@code Element} node with property values of an {@code Annotation} instance,

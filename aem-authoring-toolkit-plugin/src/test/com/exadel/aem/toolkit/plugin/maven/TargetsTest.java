@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.target.Targets;
@@ -43,7 +43,7 @@ public class TargetsTest {
 
     @Before
     public void initTarget() {
-        testable = Targets.newInstance(NN_ROOT, XmlScope.COMPONENT);
+        testable = Targets.newInstance(NN_ROOT, Scope.COMPONENT);
         for (int i = 0; i < TIER_1_CHILD_COUNT; i++) {
             Target item = testable.createTarget(NN_ITEM + i).attribute(PN_ORDINAL, i);
             if (i % 2 == 0) {
@@ -61,7 +61,7 @@ public class TargetsTest {
     @Test
     public void testGenericProperties() {
         Assert.assertEquals("root", testable.getName());
-        Assert.assertEquals(XmlScope.COMPONENT, testable.getScope());
+        Assert.assertEquals(Scope.COMPONENT, testable.getScope());
         Assert.assertEquals(TIER_1_CHILD_COUNT, testable.getChildren().size());
         Assert.assertEquals(testable, testable.getChildren().get(0).getParent());
         Assert.assertEquals(testable, testable.getChildren().get(0).getChildren().get(0).getParent().getParent());

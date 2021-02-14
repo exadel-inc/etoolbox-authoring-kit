@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -45,24 +45,24 @@ import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
  */
 class CqDialogWriter extends PackageEntryWriter {
 
-    private final XmlScope scope;
+    private final Scope scope;
     /**
      * Basic constructor
      *
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
      * @param scope Current XmlScope
      */
-    CqDialogWriter(Transformer transformer, XmlScope scope) {
+    CqDialogWriter(Transformer transformer, Scope scope) {
         super(transformer);
         this.scope = scope;
     }
 
     /**
      * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
-     * @return {@link XmlScope} value
+     * @return {@link Scope} value
      */
     @Override
-    XmlScope getScope() {
+    Scope getScope() {
         return scope;
     }
 
@@ -73,7 +73,7 @@ class CqDialogWriter extends PackageEntryWriter {
      */
     @Override
     boolean canProcess(Class<?> componentClass) {
-        return XmlScope.CQ_DIALOG.equals(scope)
+        return Scope.CQ_DIALOG.equals(scope)
             ? componentClass.isAnnotationPresent(Dialog.class)
             : componentClass.isAnnotationPresent(DesignDialog.class);
     }
@@ -90,7 +90,7 @@ class CqDialogWriter extends PackageEntryWriter {
     @Override
     void populateTarget(Class<?> componentClass, Target target) {
 
-        Annotation dialogAnnotation = XmlScope.CQ_DIALOG.equals(scope)
+        Annotation dialogAnnotation = Scope.CQ_DIALOG.equals(scope)
             ? componentClass.getDeclaredAnnotation(Dialog.class)
             : componentClass.getDeclaredAnnotation(DesignDialog.class);
 

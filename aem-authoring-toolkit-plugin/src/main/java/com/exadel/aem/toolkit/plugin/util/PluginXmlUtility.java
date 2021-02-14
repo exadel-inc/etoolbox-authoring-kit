@@ -51,7 +51,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -315,7 +315,7 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     @Override
-    public void mapProperties(Element element, Annotation annotation, XmlScope scope) {
+    public void mapProperties(Element element, Annotation annotation, Scope scope) {
         List<String> skippedFields = Arrays.stream(annotation.annotationType().getDeclaredMethods())
                 .filter(m -> !fitsInScope(m, scope))
                 .map(Method::getName)
@@ -399,7 +399,7 @@ public class PluginXmlUtility implements XmlUtility {
      * @param scope {@code PropertyScope} value
      * @return True or false
      */
-    private static boolean fitsInScope(Method method, XmlScope scope) {
+    private static boolean fitsInScope(Method method, Scope scope) {
         if (!method.isAnnotationPresent(PropertyScope.class)) {
             return true;
         }

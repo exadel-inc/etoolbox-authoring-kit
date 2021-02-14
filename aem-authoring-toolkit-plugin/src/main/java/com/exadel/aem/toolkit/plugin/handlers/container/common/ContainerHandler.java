@@ -41,7 +41,7 @@ import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.PlaceOnSetting;
@@ -137,7 +137,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param scope           Current XML scope
      * @return Map of entries, each specified by a container item title and containing a {@link ContainerSection} aggregate object
      */
-    private Map<String, ContainerSection> getContainerSections(List<Class<?>> classes, Class<? extends Annotation> annotationClass, XmlScope scope) {
+    private Map<String, ContainerSection> getContainerSections(List<Class<?>> classes, Class<? extends Annotation> annotationClass, Scope scope) {
         Map<String, ContainerSection> result = new LinkedHashMap<>();
         Map<String, Object> annotationMap;
         for (Class<?> cls : classes) {
@@ -165,9 +165,9 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param result {@code Map<String,ContainerInfo>} map containing all container items
      * @param cls {@code Class<?>} current class that contains container elements
      */
-    private void appendSectionsFromClass(Map<String, ContainerSection> result, Class<?> cls, XmlScope scope) {
+    private void appendSectionsFromClass(Map<String, ContainerSection> result, Class<?> cls, Scope scope) {
         Map<String, Object> map;
-        if (XmlScope.CQ_DIALOG.equals(scope)) {
+        if (Scope.CQ_DIALOG.equals(scope)) {
             map = PluginAnnotationUtility.getProperties(cls.getDeclaredAnnotation(Dialog.class));
         } else {
             map = PluginAnnotationUtility.getProperties(cls.getDeclaredAnnotation(DesignDialog.class));

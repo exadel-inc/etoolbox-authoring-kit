@@ -37,7 +37,7 @@ import com.exadel.aem.toolkit.api.annotations.main.CommonProperties;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -69,11 +69,11 @@ abstract class PackageEntryWriter {
      */
     void writeXml(Class<?> componentClass, Path componentPath) {
         try (Writer writer = Files.newBufferedWriter(componentPath.resolve(getScope().toString()), StandardOpenOption.CREATE)) {
-            if (getScope() != XmlScope.COMPONENT) {
+            if (getScope() != Scope.COMPONENT) {
                 // markup can be stored by hand in a _cq_dialog/.content.xml structure instead of _cq_dialog.xml file
                 // at first, folder-like storage must be deleted, or we might end up with two versions of component markup within same package
                 Path nestedFolderPath = componentPath.resolve(StringUtils.substringBeforeLast(getScope().toString(), DialogConstants.EXTENSION_SEPARATOR));
-                Path nestedFilePath = nestedFolderPath.resolve(XmlScope.COMPONENT.toString());
+                Path nestedFilePath = nestedFolderPath.resolve(Scope.COMPONENT.toString());
                 Files.deleteIfExists(nestedFilePath);
                 Files.deleteIfExists(nestedFolderPath);
             }
@@ -99,10 +99,10 @@ abstract class PackageEntryWriter {
     }
 
     /**
-     * Gets {@link XmlScope} associated with this {@code PackageEntryWriter} instance
+     * Gets {@link Scope} associated with this {@code PackageEntryWriter} instance
      * @return One of {@code XmlScope} values
      */
-    abstract XmlScope getScope();
+    abstract Scope getScope();
 
     /**
      * Gets whether this component {@code Class} is processable by this particular {@code PackageEntryWriter} implementation
@@ -131,7 +131,7 @@ abstract class PackageEntryWriter {
             .adaptTo(DomAdapter.class)
             .composeDocument(PluginRuntime.context().getXmlUtility().resetDocument());
         writeCommonProperties(componentClass, getScope(), result);
-        if (XmlScope.CQ_DIALOG.equals(getScope())) {
+        if (Scope.CQ_DIALOG.equals(getScope())) {
             processLegacyDialogHandlers(result.getDocumentElement(), componentClass);
         }
 
@@ -144,14 +144,14 @@ abstract class PackageEntryWriter {
      * @param componentClass Current {@code Class} instance
      * @param scope Current {@code XmlScope}
      */
-    static void writeCommonProperties(Class<?> componentClass, XmlScope scope, Document document) {
+    static void writeCommonProperties(Class<?> componentClass, Scope scope, Document document) {
         Arrays.stream(componentClass.getAnnotationsByType(CommonProperty.class))
                 .filter(p -> p.scope().equals(scope))
                 .forEach(p -> writeCommonProperty(p, PluginXmlUtility.getElementNodes(p.path(), document)));
     }
 
     /**
-     * Called by {@link PackageEntryWriter#writeCommonProperties(Class, XmlScope, Document)} for each {@link CommonProperty}
+     * Called by {@link PackageEntryWriter#writeCommonProperties(Class, Scope, Document)} for each {@link CommonProperty}
      * instance
      * @param property {@code CommonProperty} instance
      * @param targets Target {@code Node}s selected via an XPath
@@ -168,12 +168,12 @@ abstract class PackageEntryWriter {
             .forEach(handler -> handler.accept(element, cls));
     }
 
-    static boolean fitsInScope(Member member, XmlScope scope) {
-        List<XmlScope> activeScopes = Sources.fromMember(member)
+    static boolean fitsInScope(Member member, Scope scope) {
+        List<Scope> activeScopes = Sources.fromMember(member)
             .tryAdaptTo(PropertyScope.class)
             .map(PropertyScope::value)
             .map(Arrays::asList)
-            .orElse(EnumUtils.getEnumList(XmlScope.class));
+            .orElse(EnumUtils.getEnumList(Scope.class));
 
         return activeScopes.contains(scope);
     }

@@ -39,7 +39,7 @@ import com.google.common.collect.Streams;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.UnknownComponentException;
@@ -104,7 +104,7 @@ public class PackageWriter implements AutoCloseable {
 
         Map<PackageEntryWriter, Class<?>> viewsByWriter = getComponentViews(componentClass);
 
-        if (viewsByWriter.keySet().stream().noneMatch(writer -> writer.getScope() == XmlScope.COMPONENT)) {
+        if (viewsByWriter.keySet().stream().noneMatch(writer -> writer.getScope() == Scope.COMPONENT)) {
             InvalidSettingException ex = new InvalidSettingException(
                 COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE + componentClass.getName());
             PluginRuntime.context().getExceptionHandler().handle(ex);
@@ -148,7 +148,7 @@ public class PackageWriter implements AutoCloseable {
             }
 
             for (PackageEntryWriter matchedWriter : matchedWriters) {
-                if (result.containsKey(matchedWriter) && matchedWriter.getScope() != XmlScope.COMPONENT) {
+                if (result.containsKey(matchedWriter) && matchedWriter.getScope() != Scope.COMPONENT) {
                     InvalidSettingException ex = new InvalidSettingException(String.format(
                         MULTIPLE_MODULES_EXCEPTION_MESSAGE,
                         matchedWriter.getScope(),
@@ -203,8 +203,8 @@ public class PackageWriter implements AutoCloseable {
             Transformer transformer = XmlFactory.newDocumentTransformer();
             writers = Arrays.asList(
                     new ContentXmlWriter(transformer),
-                    new CqDialogWriter(transformer, XmlScope.CQ_DIALOG),
-                    new CqDialogWriter(transformer, XmlScope.CQ_DESIGN_DIALOG),
+                    new CqDialogWriter(transformer, Scope.CQ_DIALOG),
+                    new CqDialogWriter(transformer, Scope.CQ_DESIGN_DIALOG),
                     new CqEditConfigWriter(transformer),
                     new CqChildEditConfigWriter(transformer),
                     new CqHtmlTagWriter(transformer)

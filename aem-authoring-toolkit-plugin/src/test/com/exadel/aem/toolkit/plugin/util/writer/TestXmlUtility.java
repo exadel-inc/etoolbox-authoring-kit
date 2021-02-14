@@ -56,58 +56,6 @@ public class TestXmlUtility {
         return compare(actualFiles, expectedFiles, pathToExpectedFiles.toString());
     }
 
-
-
-/*
-    private static Map<String, String> getActualFiles(Class<?> componentClass, List<PackageEntryWriter> writers) {
-        Map<String, String> actualFiles = new HashMap<>();
-        List<Class<?>> views = new LinkedList<>(Collections.singletonList(componentClass));
-        Optional.ofNullable(componentClass.getAnnotation(Component.class)).ifPresent(component -> Collections.addAll(views, component.views()));
-        writers.forEach(packageEntryWriter -> {
-            try (StringWriter stringWriter = new StringWriter()) {
-                if (packageEntryWriter instanceof ContentXmlWriter) {
-                    writeContent(packageEntryWriter, stringWriter, views);
-                    actualFiles.put(packageEntryWriter.getXmlScope().toString(), stringWriter.toString());
-                    return;
-                }
-                List<Class<?>> processedClasses = views.stream().filter(packageEntryWriter::canProcess).collect(Collectors.toList());
-                if (processedClasses.size() > 1) {
-                    throw new IOException();
-                }
-                if (processedClasses.isEmpty()) {
-                    return;
-                }
-                packageEntryWriter.writeXml(processedClasses.get(0), stringWriter);
-                actualFiles.put(packageEntryWriter.getXmlScope().toString(), stringWriter.toString());
-            } catch (PluginException pe) {
-                // Deliberately re-throwing to distinguish from an unanticipated exception (needed for exceptions testcases)
-                throw pe;
-            } catch (Exception e) {
-                LOG.error("Could not implement test writer", e);
-            }
-        });
-        return actualFiles;
-    }
-
-    private static void writeContent(PackageEntryWriter writer, StringWriter stringWriter, List<Class<?>> views) throws Exception {
-        List<Class<?>> processedClasses = views.stream().filter(writer::canProcess).collect(Collectors.toList());
-        if (processedClasses.size() > 2) {
-            throw new IOException();
-        }
-        if (processedClasses.size() == 2) {
-            if (processedClasses.get(0).getDeclaredAnnotation(Component.class) != null) {
-                writer.writeXml(processedClasses.get(0), stringWriter);
-            } else {
-                writer.writeXml(processedClasses.get(1), stringWriter);
-            }
-            return;
-        }
-        if (!processedClasses.isEmpty()) {
-            writer.writeXml(processedClasses.get(0), stringWriter);
-        }
-    }
-*/
-
     private static Map<String, String> getFiles(Path componentPath) {
         Map<String, String> files = new HashMap<>();
         try {

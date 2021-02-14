@@ -18,7 +18,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
  * @see com.exadel.aem.toolkit.api.annotations.meta.PropertyScope
  */
 @SuppressWarnings("unused")
-public enum XmlScope {
+public enum Scope {
     COMPONENT {
         @Override
         public String toString() {
