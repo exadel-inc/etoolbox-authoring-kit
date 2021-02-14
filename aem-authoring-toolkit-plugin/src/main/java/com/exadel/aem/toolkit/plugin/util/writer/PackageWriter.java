@@ -64,6 +64,11 @@ public class PackageWriter implements AutoCloseable {
     private static final String MULTIPLE_MODULES_EXCEPTION_MESSAGE = "Multiple modules available for %s while processing component %s";
     private static final String UNRECOGNIZED_MODULE_EXCEPTION_MESSAGE = "Unrecognized component module %s while processing component %s";
 
+
+    /* -----------------------------
+       Class fields and constructors
+       ----------------------------- */
+
     private final String componentsBasePath;
     private final FileSystem fileSystem;
     private final List<PackageEntryWriter> writers;
@@ -74,6 +79,11 @@ public class PackageWriter implements AutoCloseable {
         this.writers = writers;
     }
 
+
+    /* ------------------------
+       Public interface members
+       ------------------------ */
+
     @Override
     public void close() {
         try {
@@ -82,6 +92,11 @@ public class PackageWriter implements AutoCloseable {
             throw new PluginException(CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE, e);
         }
     }
+
+
+    /* ----------------
+       Instance members
+       ---------------- */
 
     /**
      * Stores AEM component's authoring markup into a package. For this, several package entry writers,
@@ -110,7 +125,10 @@ public class PackageWriter implements AutoCloseable {
             PluginRuntime.context().getExceptionHandler().handle(ex);
         }
 
-        viewsByWriter.forEach((writer, view) -> writer.writeXml(view, componentPath));
+        viewsByWriter.forEach((writer, view) -> {
+            writer.cleanUp(componentPath);
+            writer.writeXml(view, componentPath);
+        });
     }
 
     /**
@@ -155,12 +173,18 @@ public class PackageWriter implements AutoCloseable {
                         componentClass.getName()
                     ));
                     PluginRuntime.context().getExceptionHandler().handle(ex);
+                } else if (!result.containsKey(matchedWriter)) {
+                    result.put(matchedWriter, view);
                 }
-                result.put(matchedWriter, view);
             }
         }
         return result;
     }
+
+
+    /* ------------------------
+       Static (utility) methods
+       ------------------------ */
 
     /**
      * Initializes an instance of {@link PackageWriter} profiled for the current {@link MavenProject} and the tree of
@@ -216,6 +240,11 @@ public class PackageWriter implements AutoCloseable {
         return new PackageWriter(fileSystem, componentsBasePath, writers);
     }
 
+    /**
+     * Retrieves the path specified for the current component class in either {@link Component} or {@link Dialog} annotation
+     * @param componentClass The {@code Class<?>} to get the path for
+     * @return String value
+     */
     private static String getComponentPath(Class<?> componentClass) {
         String pathByComponent = Optional.ofNullable(componentClass.getAnnotation(Component.class))
             .map(Component::path)
