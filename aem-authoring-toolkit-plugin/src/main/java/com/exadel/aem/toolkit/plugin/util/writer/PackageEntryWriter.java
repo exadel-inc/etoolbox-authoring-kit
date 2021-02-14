@@ -100,16 +100,15 @@ abstract class PackageEntryWriter {
     final void cleanUp(Path componentPath) {
         try {
             Path existingFilePath = componentPath.resolve(getScope().toString());
-            if (Files.exists(existingFilePath)) {
-                Files.delete(existingFilePath);
-            }
             Files.deleteIfExists(existingFilePath);
             if (!getScope().equals(Scope.COMPONENT)) {
                 // We take into account that the markup could be stored by hand in e.g. _cq_dialog/.content.xml structure
                 // instead of _cq_dialog.xml file. Therefore, both the "file" and the "folder" must be deleted,
                 // or we might end up with two versions of component markup within same package
-                Path nestedFolderPath = componentPath.resolve(StringUtils.substringBeforeLast(getScope().toString(), DialogConstants.EXTENSION_SEPARATOR));
-                Path nestedFilePath = nestedFolderPath.resolve(getScope().toString());
+                Path nestedFolderPath = componentPath.resolve(StringUtils.substringBeforeLast(
+                    getScope().toString(),
+                    DialogConstants.EXTENSION_SEPARATOR));
+                Path nestedFilePath = nestedFolderPath.resolve(Scope.COMPONENT.toString()); // we just use the '.content.xml' value here as a constant
                 Files.deleteIfExists(nestedFilePath);
                 Files.deleteIfExists(nestedFolderPath);
             }

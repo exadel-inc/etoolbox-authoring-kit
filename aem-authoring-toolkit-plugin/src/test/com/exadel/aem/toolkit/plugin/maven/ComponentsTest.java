@@ -14,8 +14,19 @@
 
 package com.exadel.aem.toolkit.plugin.maven;
 
-import org.junit.Test;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.exadel.aem.toolkit.plugin.util.TestConstants;
 import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
 import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
@@ -27,6 +38,8 @@ import com.exadel.aem.toolkit.test.component.InheritanceTestCases;
 import com.exadel.aem.toolkit.test.component.viewPattern.component1.ComplexComponentHolder;
 
 public class ComponentsTest extends DefaultTestBase {
+    private static final Logger LOG = LoggerFactory.getLogger(ComponentsTest.class);
+
     @Test
     public void testComponentWithRichTextAndExternalClasses() {
         test(ComponentWithRichTextAndExternalClasses.class);
@@ -63,12 +76,34 @@ public class ComponentsTest extends DefaultTestBase {
     }
 
     @Test
-    public void testComponentViewPattern() {
-        test(ComplexComponentHolder.class, "component/viewPattern/component1");
+    public void testInheritanceOverride() {
+        test(InheritanceTestCases.Child.class, "component/inheritanceOverride");
     }
 
     @Test
-    public void testInheritanceOverride() {
-        test(InheritanceTestCases.Child.class, "component/inheritanceOverride");
+    public void testComponentViewPattern() {
+        Path targetPath = Paths.get(TestConstants.CONTENT_ROOT_PATH, "component/viewPattern/component1").toAbsolutePath();
+        String outdatedContentXml = readFile(Paths.get(TestConstants.CONTENT_ROOT_PATH, "common/editConfig/.content.xml"));
+        test(
+            ComplexComponentHolder.class,
+            targetPath,
+            fileSystem -> writeFile(fileSystem.getPath(TestConstants.DEFAULT_COMPONENT_NAME, ".content.xml"), outdatedContentXml));
+    }
+
+    private static String readFile(Path path) {
+        try {
+            return String.join(StringUtils.EMPTY, Files.readAllLines(path));
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+        return StringUtils.EMPTY;
+    }
+
+    private static void writeFile(Path path, String content) {
+        try(BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE)) {
+            writer.write(content);
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
     }
 }
