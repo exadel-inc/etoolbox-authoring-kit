@@ -37,7 +37,7 @@ import org.apache.maven.project.MavenProject;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Streams;
 
-import com.exadel.aem.toolkit.api.annotations.main.Component;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
@@ -140,8 +140,8 @@ public class PackageWriter implements AutoCloseable {
      */
     private Map<PackageEntryWriter, Class<?>> getComponentViews(Class<?> componentClass) {
         Class<?>[] referencedViews = Optional
-            .ofNullable(componentClass.getAnnotation(Component.class))
-            .map(Component::views)
+            .ofNullable(componentClass.getAnnotation(AemComponent.class))
+            .map(AemComponent::views)
             .orElse(ArrayUtils.EMPTY_CLASS_ARRAY);
 
         List<Class<?>> allViews = Streams
@@ -241,13 +241,13 @@ public class PackageWriter implements AutoCloseable {
     }
 
     /**
-     * Retrieves the path specified for the current component class in either {@link Component} or {@link Dialog} annotation
+     * Retrieves the path specified for the current component class in either {@link AemComponent} or {@link Dialog} annotation
      * @param componentClass The {@code Class<?>} to get the path for
      * @return String value
      */
     private static String getComponentPath(Class<?> componentClass) {
-        String pathByComponent = Optional.ofNullable(componentClass.getAnnotation(Component.class))
-            .map(Component::path)
+        String pathByComponent = Optional.ofNullable(componentClass.getAnnotation(AemComponent.class))
+            .map(AemComponent::path)
             .orElse(null);
         String pathByDialog = Optional.ofNullable(componentClass.getAnnotation(Dialog.class))
             .map(Dialog::name)

@@ -48,7 +48,7 @@ public @interface Dialog {
     /**
      * When set to non-blank, maps to the 'jcr:description' attribute of the component's root node
      * @return String value
-     * @deprecated Use {@link Component#description()} to set this value
+     * @deprecated Use {@link AemComponent#description()} to set this value
      */
     @PropertyRendering(
         name = "jcr:description",
@@ -60,7 +60,7 @@ public @interface Dialog {
     /**
      * When set to non-blank, maps to the 'cq:cellName' attribute of the component's root node
      * @return String value
-     * @deprecated Use {@link Component#cellName()} to set this value
+     * @deprecated Use {@link AemComponent#cellName()} to set this value
      */
     @PropertyRendering(
         name = "cq:cellName",
@@ -72,7 +72,7 @@ public @interface Dialog {
     /**
      * When set to non-blank, maps to the 'componentGroup' attribute of the component root node
      * @return String value
-     * @deprecated Use {@link Component#componentGroup()} to set this value
+     * @deprecated Use {@link AemComponent#componentGroup()} to set this value
      */
     @PropertyRendering(scope = Scope.COMPONENT)
     @Deprecated
@@ -81,7 +81,7 @@ public @interface Dialog {
     /**
      * Maps to the 'dialogPath' attribute of the component root node. Must represent a valid JCR path
      * @return String value
-     * @deprecated Use {@link Component#dialogPath()} to set this value
+     * @deprecated Use {@link AemComponent#dialogPath()} to set this value
      */
     @PropertyRendering(scope = Scope.COMPONENT)
     @ValueRestriction(ValueRestrictions.JCR_PATH)
@@ -91,7 +91,7 @@ public @interface Dialog {
     /**
      * When set to true, renders as the 'cq:noDecoration' attribute of the component root node with `true` value
      * @return True or false
-     * @deprecated Use {@link Component#noDecoration()} to set this value
+     * @deprecated Use {@link AemComponent#noDecoration()} to set this value
      */
     @PropertyRendering(
         name = "cq:noDecoration",
@@ -104,7 +104,7 @@ public @interface Dialog {
     /**
      * When set to non-blank, renders as the 'sling:resourceSuperType' attribute of the component root node
      * @return String value
-     * @deprecated Use {@link Component#resourceSuperType()} to set this value
+     * @deprecated Use {@link AemComponent#resourceSuperType()} to set this value
      */
     @PropertyRendering(
         name = "sling:resourceSuperType",
@@ -116,7 +116,7 @@ public @interface Dialog {
     /**
      * Maps to the 'cq:templatePath' attribute of the component root node. Must represent a valid JCR path
      * @return String value
-     * @deprecated Use {@link Component#templatePath()} to set this value
+     * @deprecated Use {@link AemComponent#templatePath()} to set this value
      */
     @PropertyRendering(
         name = "cq:templatePath",
@@ -152,7 +152,7 @@ public @interface Dialog {
     /**
      * When set to true, renders as the `disableTargeting` attribute of the component root node with `true` value
      * @return True or false
-     * @deprecated Use {@link Component#disableTargeting()} to set this value
+     * @deprecated Use {@link AemComponent#disableTargeting()} to set this value
      */
     @PropertyRendering(
         scope = Scope.COMPONENT,
@@ -164,7 +164,7 @@ public @interface Dialog {
     /**
      * Renders as the 'isContainer' attribute of the component root node
      * @return True or false
-     * @deprecated Use {@link Component#isContainer()} to set this value
+     * @deprecated Use {@link AemComponent#isContainer()} to set this value
      */
     @IgnorePropertyMapping
     @Deprecated
@@ -174,7 +174,7 @@ public @interface Dialog {
      * Used to set path to the node/folder of component to create TouchUI dialog for. The path is relative to the {@code componentsPathBase}
      * config setting in package's POM file
      * @return String value
-     * @deprecated Use {@link Component#path()} to set this value
+     * @deprecated Use {@link AemComponent#path()} to set this value
      */
     @IgnorePropertyMapping
     @ValueRestriction(ValueRestrictions.NOT_BLANK)

@@ -44,7 +44,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping
-public @interface Component {
+public @interface AemComponent {
 
     /**
      * The path to the folder of the current component in an AEM package,
