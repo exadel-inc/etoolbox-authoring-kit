@@ -26,8 +26,9 @@ import com.exadel.aem.toolkit.test.component.viewPattern.component1.views.HtmlTa
     title = ComplexComponentHolder.COMPONENT_TITLE,
     description = "test component",
     componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
-    resourceSuperType = "resource/super/type",
+    resourceSuperType = "resource/super/type2",
     disableTargeting = true,
+    isContainer = true,
     views = {
         DesignDialogView.class,
         ComplexComponent1.class,

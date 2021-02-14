@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,6 +71,10 @@ public class TestXmlUtility {
 
     private static boolean compare(Map<String, String> actualFiles, Map<String, String> expectedFiles, String resourcePath) {
         if (!filesetsAreSame(actualFiles, expectedFiles)) {
+            LOG.error(
+                "File sets differ: expected {}, received {}",
+                Arrays.toString(expectedFiles.keySet().toArray()),
+                Arrays.toString(actualFiles.keySet().toArray()));
             return false;
         }
         Collection<String> fileNames = expectedFiles.keySet();
