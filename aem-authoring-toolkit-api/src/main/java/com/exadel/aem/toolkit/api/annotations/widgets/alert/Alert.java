@@ -13,14 +13,17 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.alert;
 
-import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
-import com.exadel.aem.toolkit.api.annotations.meta.*;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
 
 /**
  * Used to set up
@@ -47,7 +50,6 @@ public @interface Alert {
      * @return One of {@code AlertSize} values
      * @see AlertSize
      */
-    @EnumValue()
     AlertSize size() default AlertSize.SMALL;
 
     /**

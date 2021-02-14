@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.api.annotations.widgets;
 
 import java.lang.annotation.ElementType;
@@ -20,8 +21,8 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.container.enums.AccordionVariant;
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
@@ -60,7 +61,7 @@ public @interface AccordionWidget {
      * @return One of {@code AccordionVariant} values
      * @see AccordionVariant
      */
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
+    @PropertyRendering(transform = StringTransformation.LOWERCASE)
     AccordionVariant variant() default AccordionVariant.DEFAULT;
 
     /**

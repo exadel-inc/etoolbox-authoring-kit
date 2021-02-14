@@ -19,7 +19,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
@@ -46,7 +45,7 @@ public @interface Button {
      * @see ButtonType
      * @return One of {@code ButtonType} values
      */
-    @EnumValue(transformation = StringTransformation.CAMELCASE)
+    @PropertyRendering(transform = StringTransformation.CAMELCASE)
     ButtonType type() default ButtonType.BUTTON;
 
     /**

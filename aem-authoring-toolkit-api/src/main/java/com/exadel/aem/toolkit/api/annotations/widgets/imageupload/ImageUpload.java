@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.api.annotations.widgets.imageupload;
 
 import java.lang.annotation.ElementType;
@@ -18,7 +19,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
@@ -179,8 +179,10 @@ public @interface ImageUpload {
      *
      * @deprecated This property will be removed starting from version 2.0.0
      */
-    @PropertyRendering(name = "variant")
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
+    @PropertyRendering(
+        name = "variant",
+        transform = StringTransformation.LOWERCASE
+    )
     @Deprecated
     @SuppressWarnings("squid:S1133")
     ButtonVariant buttonVariant() default ButtonVariant.SECONDARY;

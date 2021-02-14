@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.api.annotations.editconfig;
 
 import java.lang.annotation.ElementType;
@@ -19,8 +20,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 
 /**
@@ -39,7 +40,7 @@ public @interface EditConfig {
      * of {@code cq:editConfig} node
      * @return String / array value
      */
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
+    @PropertyRendering(transform = StringTransformation.LOWERCASE)
     String[] actions() default {};
 
     /**

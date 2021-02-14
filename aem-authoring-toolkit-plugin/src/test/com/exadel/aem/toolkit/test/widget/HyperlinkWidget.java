@@ -17,15 +17,19 @@ package com.exadel.aem.toolkit.test.widget;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.hyperlink.Hyperlink;
+import com.exadel.aem.toolkit.plugin.util.TestConstants;
 
 @Dialog(
-    name = "test-component",
-    title = "test-component-dialog",
+    name = TestConstants.DEFAULT_COMPONENT_NAME,
+    title = TestConstants.DEFAULT_COMPONENT_TITLE,
     layout = DialogLayout.FIXED_COLUMNS
 )
 @SuppressWarnings("unused")
 public class HyperlinkWidget {
 
-    @Hyperlink(href = "http://localhost:4502/editor.html/content/toolkit-samples/toolkit-samples-sandbox.html", text = "Link Text")
+    @Hyperlink(
+        href = "http://localhost:4502/content/page.html",
+        text = "Link Text"
+    )
     String field;
 }

@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.api.annotations.widgets.anchorbutton;
 
 import java.lang.annotation.ElementType;
@@ -18,14 +19,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizeConstants;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariantConstants;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.Linkchecker;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.LinkCheckerVariant;
 
 /**
  * Used to set up
@@ -37,6 +38,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Linkchecker;
 @ResourceType(ResourceTypes.ANCHOR_BUTTON)
 @PropertyMapping
 public @interface AnchorButton {
+
     /**
      * Maps to the href attribute of this TouchUI dialog component's node
      * @return String value
@@ -71,12 +73,15 @@ public @interface AnchorButton {
     boolean hideText() default false;
 
     /**
-     * Maps to the x-cq-linkchecker attribute of this TouchUI dialog component's node
-     * @return One of {@code HyperlinkLinkchecker} values
-     * @see Linkchecker
+     * Maps to the 'x-cq-linkchecker' attribute of this TouchUI dialog component's node
+     * @return One of {@link LinkCheckerVariant} values
      */
-    @PropertyRendering(ignoreValues = "NONE")
-    Linkchecker xCqLinkchecker() default Linkchecker.NONE;
+    @PropertyRendering(
+        name = "x-cq-linkchecker",
+        ignoreValues = "none",
+        transform = StringTransformation.LOWERCASE
+    )
+    LinkCheckerVariant linkChecker() default LinkCheckerVariant.NONE;
 
     /**
      * Maps to the icon name. e.g. “search” of this TouchUI dialog component's node
@@ -96,7 +101,6 @@ public @interface AnchorButton {
      * @return One of {@code Size} values
      * @see Size
      */
-    @EnumValue
     Size size() default Size.M;
 
     /**

@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
@@ -102,8 +101,10 @@ public @interface Select {
      * @see SelectVariant
      * @return One of {@code SelectVariant} values
      */
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
-    @PropertyRendering(ignoreValues = "default")
+    @PropertyRendering(
+        ignoreValues = "default",
+        transform = StringTransformation.LOWERCASE
+    )
     SelectVariant variant() default SelectVariant.DEFAULT;
 
     /**

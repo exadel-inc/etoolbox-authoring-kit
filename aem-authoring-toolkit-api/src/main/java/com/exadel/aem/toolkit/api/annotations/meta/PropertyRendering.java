@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.api.annotations.meta;
 
 import java.lang.annotation.ElementType;
@@ -21,9 +22,8 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 
 /**
- * Defines settings for rendering a specific value of an annotation to an XML attribute, such as, the name of the attribute,
- * and whether to render attribute with a particular value or not (typically, blank strings and values which are default
- * according to Adobe specifications don't need to be explicitly set and hence rendered)
+ * Defines settings for rendering a specific value of an annotation to an Granite/XML attribute, such as, the name of the
+ * attribute, lexical form of the attribute's value, or whether to render attribute with a particular value or not
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -71,4 +71,11 @@ public @interface PropertyRendering {
      * @return True or false
      */
     boolean allowBlank() default false;
+
+    /**
+     * Defines whether the string value is stored as is, or else is rendered in uppercase, lowercase or came-lase. Most
+     * of the time this setting is used for transforming {@code Enum} values
+     * @return One of {@link StringTransformation} variants
+     */
+    StringTransformation transform() default StringTransformation.NONE;
 }
