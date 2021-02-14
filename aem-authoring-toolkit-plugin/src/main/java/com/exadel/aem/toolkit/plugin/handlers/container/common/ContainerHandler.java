@@ -37,7 +37,6 @@ import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
@@ -286,7 +285,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
 
         String nodeName = PluginNamingUtility.getUniqueName(containerItem.getTitle(), containerItemName, container);
         Target containerItemsNode = container.createTarget(nodeName)
-            .attribute(JcrConstants.PN_TITLE, containerItem.getTitle())
+            .attribute(DialogConstants.PN_JCR_TITLE, containerItem.getTitle())
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
         if (containerItemName.equals(DialogConstants.NN_TAB)) {
             Tab newTab = PluginAnnotationUtility.createInstance(Tab.class,
@@ -308,7 +307,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param tab {@link Tab} annotation that contains settings
      */
     private static void appendTabAttributes(Target tabElement, Tab tab) {
-        tabElement.attribute(JcrConstants.PN_TITLE, tab.title());
+        tabElement.attribute(DialogConstants.PN_JCR_TITLE, tab.title());
         Attribute attribute = tab.attribute();
         tabElement.attributes(attribute, PluginAnnotationUtility.getPropertyMappingFilter(attribute));
         PluginXmlUtility.appendDataAttributes(tabElement, attribute.data());

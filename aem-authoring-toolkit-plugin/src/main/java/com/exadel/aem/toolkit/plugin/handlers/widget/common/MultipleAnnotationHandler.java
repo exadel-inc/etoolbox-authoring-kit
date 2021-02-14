@@ -25,7 +25,6 @@ import java.util.function.BiConsumer;
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.ImmutableMap;
 
-import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -213,7 +212,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         // Need to override policy for "name" as has been stored in a loop above
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_NAME, PropertyTransferPolicy.MOVE);
         // Some attribute values are expected to be moved or copied though have set to "skipped" above
-        transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + JcrConstants.PN_PRIMARY_TYPE, PropertyTransferPolicy.COPY);
+        transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_PRIMARY_TYPE, PropertyTransferPolicy.COPY);
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_DISABLED, PropertyTransferPolicy.COPY);
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_RENDER_HIDDEN, PropertyTransferPolicy.COPY);
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_REQUIRED, PropertyTransferPolicy.MOVE);

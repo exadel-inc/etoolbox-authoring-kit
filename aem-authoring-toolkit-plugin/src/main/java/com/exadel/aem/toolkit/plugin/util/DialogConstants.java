@@ -134,12 +134,14 @@ public class DialogConstants {
     public static final String PN_IGNORE_MODE = "ignoreMode";
     public static final String PN_INDENT_SIZE = "indentSize";
     public static final String PN_IS_CONTAINER = "cq:isContainer";
+    public static final String PN_JCR_TITLE = "jcr:title";
     public static final String PN_MAX_DATE = "maxDate";
     public static final String PN_MAX_UNDO_STEPS = "maxUndoSteps";
     public static final String PN_MIN_DATE = "minDate";
     public static final String PN_MODE = "mode";
     public static final String PN_NAME = "name";
     public static final String PN_PATH = "path";
+    public static final String PN_PRIMARY_TITLE = "jcr:primaryTitle";
     public static final String PN_PRIMARY_TYPE = "jcr:primaryType";
     public static final String PN_PROPERTY_NAME = "propertyName";
     public static final String PN_PROTOCOLS = "protocols";

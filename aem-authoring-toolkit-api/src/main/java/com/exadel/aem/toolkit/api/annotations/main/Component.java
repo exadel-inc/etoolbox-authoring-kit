@@ -69,14 +69,14 @@ public @interface Component {
      * When set to a non-blank string, maps to the 'jcr:description' attribute of the component's root node
      * @return String value
      */
-    @PropertyRendering(name = JcrConstants.PN_DESCRIPTION)
+    @PropertyRendering(name = "jcr:description")
     String description() default "";
 
     /**
      * When set to non-blank, maps to the 'cq:cellName' attribute of the component's root node
      * @return String value
      */
-    @PropertyRendering(name = JcrConstants.PN_CELL_NAME)
+    @PropertyRendering(name = "cq:cellName")
     String cellName() default "";
 
     /**
@@ -96,21 +96,24 @@ public @interface Component {
      * When set to true, renders as the 'cq:noDecoration' attribute of the component root node with `true` value
      * @return True or false
      */
-    @PropertyRendering(name = JcrConstants.PN_NO_DECORATION, ignoreValues = "false")
+    @PropertyRendering(
+        name = "cq:noDecoration",
+        ignoreValues = "false"
+    )
     boolean noDecoration() default false;
 
     /**
      * When set to a non-blank string, renders as the 'sling:resourceSuperType' attribute of the component root node
      * @return String value
      */
-    @PropertyRendering(name = JcrConstants.PN_RESOURCE_SUPER_TYPE)
+    @PropertyRendering(name = "sling:resourceSuperType")
     String resourceSuperType() default "";
 
     /**
      * Maps to the 'cq:templatePath' attribute of the component root node. Must represent a valid JCR path
      * @return String value
      */
-    @PropertyRendering(name = JcrConstants.PN_TEMPLATE_PATH)
+    @PropertyRendering(name = "cq:templatePath")
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     String templatePath() default "";
 
@@ -125,7 +128,7 @@ public @interface Component {
      * Maps to the 'jcr:title' attributes of the component root node
      * @return String value, non-blank
      */
-    @PropertyRendering(name = JcrConstants.PN_TITLE)
+    @PropertyRendering(name = "jcr:title")
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String title();
 

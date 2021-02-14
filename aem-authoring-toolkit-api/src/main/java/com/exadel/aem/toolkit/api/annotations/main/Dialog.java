@@ -41,7 +41,7 @@ public @interface Dialog {
      * Maps to the 'jcr:title' attributes of both the component root node and its {@code cq:dialog} node
      * @return String value, non-blank
      */
-    @PropertyRendering(name = JcrConstants.PN_TITLE)
+    @PropertyRendering(name = "jcr:title")
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String title();
 
@@ -50,7 +50,7 @@ public @interface Dialog {
      * @return String value
      */
     @PropertyRendering(
-        name = JcrConstants.PN_DESCRIPTION,
+        name = "jcr:description",
         scope = Scope.COMPONENT
     )
     @Deprecated
@@ -61,7 +61,7 @@ public @interface Dialog {
      * @return String value
      */
     @PropertyRendering(
-        name = JcrConstants.PN_CELL_NAME,
+        name = "cq:cellName",
         scope = Scope.COMPONENT
     )
     @Deprecated
@@ -89,7 +89,7 @@ public @interface Dialog {
      * @return True or false
      */
     @PropertyRendering(
-        name = JcrConstants.PN_NO_DECORATION,
+        name = "cq:noDecoration",
         scope = Scope.COMPONENT,
         ignoreValues = "false"
     )
@@ -101,7 +101,7 @@ public @interface Dialog {
      * @return String value
      */
     @PropertyRendering(
-        name = JcrConstants.PN_RESOURCE_SUPER_TYPE,
+        name = "sling:resourceSuperType",
         scope = Scope.COMPONENT
     )
     @Deprecated
@@ -112,7 +112,7 @@ public @interface Dialog {
      * @return String value
      */
     @PropertyRendering(
-        name = JcrConstants.PN_TEMPLATE_PATH,
+        name = "cq:templatePath",
         scope = Scope.COMPONENT
     )
     @ValueRestriction(ValueRestrictions.JCR_PATH)
