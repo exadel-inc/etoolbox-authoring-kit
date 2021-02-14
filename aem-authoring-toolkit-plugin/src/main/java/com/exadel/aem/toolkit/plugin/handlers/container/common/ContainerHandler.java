@@ -44,7 +44,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.adapters.PlaceOnSetting;
+import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.Sources;
@@ -322,10 +322,10 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @return True or false
      */
     private static boolean isFieldForContainerItem(Source source, String containerItemTitle, boolean isDefaultContainerItem) {
-        if (StringUtils.isBlank(source.adaptTo(PlaceOnSetting.class).getValue())) {
+        if (StringUtils.isBlank(source.adaptTo(PlaceSetting.class).getValue())) {
             return isDefaultContainerItem;
         }
-        return containerItemTitle.equalsIgnoreCase(source.adaptTo(PlaceOnSetting.class).getValue());
+        return containerItemTitle.equalsIgnoreCase(source.adaptTo(PlaceSetting.class).getValue());
     }
 
     /**
@@ -336,7 +336,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      */
     static void handleInvalidContainerException(List<Source> sources, String containerName) {
         for (Source source : sources) {
-            InvalidContainerException ex = new InvalidContainerException(source.adaptTo(PlaceOnSetting.class).getValue(), containerName);
+            InvalidContainerException ex = new InvalidContainerException(source.adaptTo(PlaceSetting.class).getValue(), containerName);
             PluginRuntime.context().getExceptionHandler().handle(ex);
         }
     }

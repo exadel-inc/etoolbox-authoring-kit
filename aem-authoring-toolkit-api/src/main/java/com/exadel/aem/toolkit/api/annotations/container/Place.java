@@ -24,11 +24,13 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @SuppressWarnings("unused")
-public @interface PlaceOn {
+public @interface Place {
     /**
-     * String equal to appropriate {@link AccordionPanel#title()} value or {@link Tab #title()}
+     * If specified, must contain the string that is equal to a {@link Tab} or an {@link AccordionPanel} title
+     * in order to place the current widget in the appropriate container.
+     * Skip this value if you don't need any specific placement
      *
      * @return String value
      */
-    String value();
+    String in() default "";
 }

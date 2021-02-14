@@ -34,16 +34,14 @@ public class PluginOrderingUtility {
         }
 
         for (int i = 0; i < handlers.size(); i++) {
-            list.get(i).setValue(handlers.get(i));
-
             // This lines should be changed, after "before/after" rules appear in the PlaceOn annotation
             Handles handles = handlers.get(i).getClass().getDeclaredAnnotation(Handles.class);
             if (!_Default.class.equals(handles.before())) {
-                Orderable<T> before = find(handles.before().getSimpleName(), list);
+                Orderable<T> before = find(handles.before().getName(), list);
                 list.get(i).setBefore(before);
             }
             if (!_Default.class.equals(handles.after())) {
-                Orderable<T> after = find(handles.after().getSimpleName(), list);
+                Orderable<T> after = find(handles.after().getName(), list);
                 list.get(i).setAfter(after);
             }
         }

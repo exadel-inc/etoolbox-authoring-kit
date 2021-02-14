@@ -15,7 +15,7 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
+import com.exadel.aem.toolkit.api.annotations.container.Place;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -36,17 +36,17 @@ public class Accordion {
 
     @DialogField(label = "Field 1")
     @TextField
-    @PlaceOn("Basic")
+    @Place(in = "Basic")
     String field1;
 
     @AccordionWidget(
         name = "Field",
         panels = {@AccordionPanel(title = "Accordion Widget Panel 1", disabled = true)})
-    @PlaceOn("Basic2")
+    @Place(in = "Basic2")
     AccordionFieldSet accordion;
 
     static class AccordionFieldSet {
-        @PlaceOn("Accordion Widget Panel 1")
+        @Place(in = "Accordion Widget Panel 1")
         @DialogField
         @TextField
         String field6;

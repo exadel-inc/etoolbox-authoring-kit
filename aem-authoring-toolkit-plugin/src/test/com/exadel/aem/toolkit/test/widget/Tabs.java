@@ -15,7 +15,7 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
+import com.exadel.aem.toolkit.api.annotations.container.Place;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
@@ -50,7 +50,7 @@ public class Tabs {
             @Tab(title = "First Inner"),
             @Tab(title = "Second Inner")
         })
-    @PlaceOn("First tab")
+    @Place(in = "First tab")
     TabsExample tabsField;
 
     @DialogField(label = "Field on the second tab")
@@ -66,17 +66,17 @@ public class Tabs {
     static class TabsExample {
         @DialogField(label = "Field 1 on the inner Tab")
         @TextField
-        @PlaceOn("First Inner")
+        @Place(in = "First Inner")
         String innerFieldInTab;
 
         @AccordionWidget(name = "Field 2 on the inner Tab", panels = {@AccordionPanel(title = "First Panel")})
-        @PlaceOn("Second Inner")
+        @Place(in = "Second Inner")
         AccordionExample accordion;
 
         static class AccordionExample {
             @DialogField
             @TextField
-            @PlaceOn("First Panel")
+            @Place(in = "First Panel")
             String field6;
         }
     }
