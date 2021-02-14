@@ -47,7 +47,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
@@ -393,17 +392,17 @@ public class PluginXmlUtility implements XmlUtility {
     }
 
     /**
-     * Gets whether this annotation method falls within the specified {@link PropertyScope}. True if no scope specified
+     * Gets whether this annotation method falls within the specified {@link Scope}. True if no scope specified
      * for method (that is, the method is applicable to any scope
      * @param method {@code Method} instance representing a property of an annotation
      * @param scope {@code PropertyScope} value
      * @return True or false
      */
     private static boolean fitsInScope(Method method, Scope scope) {
-        if (!method.isAnnotationPresent(PropertyScope.class)) {
+        if (!method.isAnnotationPresent(PropertyRendering.class)) {
             return true;
         }
-        return Arrays.asList(method.getAnnotation(PropertyScope.class).value()).contains(scope);
+        return Arrays.asList(method.getAnnotation(PropertyRendering.class).scope()).contains(scope);
     }
 
 

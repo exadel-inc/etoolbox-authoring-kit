@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperties;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
@@ -170,8 +170,8 @@ abstract class PackageEntryWriter {
 
     static boolean fitsInScope(Member member, Scope scope) {
         List<Scope> activeScopes = Sources.fromMember(member)
-            .tryAdaptTo(PropertyScope.class)
-            .map(PropertyScope::value)
+            .tryAdaptTo(PropertyRendering.class)
+            .map(PropertyRendering::scope)
             .map(Arrays::asList)
             .orElse(EnumUtils.getEnumList(Scope.class));
 

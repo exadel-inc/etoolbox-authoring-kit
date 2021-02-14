@@ -25,12 +25,6 @@ public enum Scope {
             return ".content.xml";
         }
     },
-    CQ_EDIT_CONFIG {
-        @Override
-        public String toString() {
-            return "_cq_editConfig.xml";
-        }
-    },
     CQ_DIALOG {
         @Override
         public String toString() {
@@ -43,16 +37,22 @@ public enum Scope {
             return "_cq_design_dialog.xml";
         }
     },
-    CQ_HTML_TAG {
+    CQ_EDIT_CONFIG {
         @Override
         public String toString() {
-            return "_cq_htmlTag.xml";
+            return "_cq_editConfig.xml";
         }
     },
     CQ_CHILD_EDIT_CONFIG {
         @Override
         public String toString() {
             return "_cq_childEditConfig.xml";
+        }
+    },
+    CQ_HTML_TAG {
+        @Override
+        public String toString() {
+            return "_cq_htmlTag.xml";
         }
     }
 }

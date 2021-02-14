@@ -23,7 +23,6 @@ import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
@@ -37,6 +36,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @PropertyMapping
 @SuppressWarnings("unused")
 public @interface Dialog {
+
     /**
      * Maps to the 'jcr:title' attributes of both the component root node and its {@code cq:dialog} node
      * @return String value, non-blank
@@ -49,8 +49,10 @@ public @interface Dialog {
      * When set to non-blank, maps to the 'jcr:description' attribute of the component's root node
      * @return String value
      */
-    @PropertyRendering(name = JcrConstants.PN_DESCRIPTION)
-    @PropertyScope(Scope.COMPONENT)
+    @PropertyRendering(
+        name = JcrConstants.PN_DESCRIPTION,
+        scope = Scope.COMPONENT
+    )
     @Deprecated
     String description() default "";
 
@@ -58,8 +60,10 @@ public @interface Dialog {
      * When set to non-blank, maps to the 'cq:cellName' attribute of the component's root node
      * @return String value
      */
-    @PropertyRendering(name = JcrConstants.PN_CELL_NAME)
-    @PropertyScope(Scope.COMPONENT)
+    @PropertyRendering(
+        name = JcrConstants.PN_CELL_NAME,
+        scope = Scope.COMPONENT
+    )
     @Deprecated
     String cellName() default "";
 
@@ -67,7 +71,7 @@ public @interface Dialog {
      * When set to non-blank, maps to the 'componentGroup' attribute of the component root node
      * @return String value
      */
-    @PropertyScope(Scope.COMPONENT)
+    @PropertyRendering(scope = Scope.COMPONENT)
     @Deprecated
     String componentGroup() default "";
 
@@ -75,7 +79,7 @@ public @interface Dialog {
      * Maps to the 'dialogPath' attribute of the component root node. Must represent a valid JCR path
      * @return String value
      */
-    @PropertyScope(Scope.COMPONENT)
+    @PropertyRendering(scope = Scope.COMPONENT)
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     @Deprecated
     String dialogPath() default "";
@@ -84,8 +88,11 @@ public @interface Dialog {
      * When set to true, renders as the 'cq:noDecoration' attribute of the component root node with `true` value
      * @return True or false
      */
-    @PropertyRendering(name = JcrConstants.PN_NO_DECORATION, ignoreValues = "false")
-    @PropertyScope(Scope.COMPONENT)
+    @PropertyRendering(
+        name = JcrConstants.PN_NO_DECORATION,
+        scope = Scope.COMPONENT,
+        ignoreValues = "false"
+    )
     @Deprecated
     boolean noDecoration() default false;
 
@@ -93,8 +100,10 @@ public @interface Dialog {
      * When set to non-blank, renders as the 'sling:resourceSuperType' attribute of the component root node
      * @return String value
      */
-    @PropertyRendering(name = JcrConstants.PN_RESOURCE_SUPER_TYPE)
-    @PropertyScope(Scope.COMPONENT)
+    @PropertyRendering(
+        name = JcrConstants.PN_RESOURCE_SUPER_TYPE,
+        scope = Scope.COMPONENT
+    )
     @Deprecated
     String resourceSuperType() default "";
 
@@ -102,8 +111,10 @@ public @interface Dialog {
      * Maps to the 'cq:templatePath' attribute of the component root node. Must represent a valid JCR path
      * @return String value
      */
-    @PropertyRendering(name = JcrConstants.PN_TEMPLATE_PATH)
-    @PropertyScope(Scope.COMPONENT)
+    @PropertyRendering(
+        name = JcrConstants.PN_TEMPLATE_PATH,
+        scope = Scope.COMPONENT
+    )
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     @Deprecated
     String templatePath() default "";
@@ -112,23 +123,23 @@ public @interface Dialog {
      * When set to non-blank, renders as the `helpPath` attribute of component's {@code cq:dialog} node
      * @return String value
      */
-    @PropertyScope(Scope.CQ_DIALOG)
+    @PropertyRendering(scope = Scope.CQ_DIALOG)
     String helpPath() default "";
 
     /**
      * Renders as the `height` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal to zero provided, default 480 is used
      * @return Numeric value
      */
+    @PropertyRendering(scope = Scope.CQ_DIALOG)
     @ValueRestriction(ValueRestrictions.POSITIVE)
-    @PropertyScope(Scope.CQ_DIALOG)
     double height() default 480;
 
     /**
      * Renders as the `width` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal to zero provided, default 560 is used
      * @return Numeric value
      */
+    @PropertyRendering(scope = Scope.CQ_DIALOG)
     @ValueRestriction(ValueRestrictions.POSITIVE)
-    @PropertyScope(Scope.CQ_DIALOG)
     double width() default 560;
 
     /**
@@ -136,8 +147,10 @@ public @interface Dialog {
      * @return True or false
      * @deprecated Use {@link Component} to set this value
      */
-    @PropertyScope(Scope.COMPONENT)
-    @PropertyRendering(ignoreValues = "false")
+    @PropertyRendering(
+        scope = Scope.COMPONENT,
+        ignoreValues = "false"
+    )
     @Deprecated
     boolean disableTargeting() default false;
 
@@ -172,7 +185,7 @@ public @interface Dialog {
      * of component's {@code cq:dialog} node
      * @return String value, or an array of strings
      */
-    @PropertyScope(Scope.CQ_DIALOG)
+    @PropertyRendering(scope = Scope.CQ_DIALOG)
     String[] extraClientlibs() default {};
 
     /**

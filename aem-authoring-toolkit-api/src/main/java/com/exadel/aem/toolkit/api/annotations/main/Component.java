@@ -22,8 +22,6 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
@@ -72,7 +70,6 @@ public @interface Component {
      * @return String value
      */
     @PropertyRendering(name = JcrConstants.PN_DESCRIPTION)
-    @PropertyScope(Scope.COMPONENT)
     String description() default "";
 
     /**
@@ -80,21 +77,18 @@ public @interface Component {
      * @return String value
      */
     @PropertyRendering(name = JcrConstants.PN_CELL_NAME)
-    @PropertyScope(Scope.COMPONENT)
     String cellName() default "";
 
     /**
      * When set to a non-blank string, maps to the 'componentGroup' attribute of the component root node
      * @return String value
      */
-    @PropertyScope(Scope.COMPONENT)
     String componentGroup() default "";
 
     /**
      * When set to a non-blank string, maps to the 'dialogPath' attribute of the component root node. Must represent a valid JCR path
      * @return String value
      */
-    @PropertyScope(Scope.COMPONENT)
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     String dialogPath() default "";
 
@@ -103,7 +97,6 @@ public @interface Component {
      * @return True or false
      */
     @PropertyRendering(name = JcrConstants.PN_NO_DECORATION, ignoreValues = "false")
-    @PropertyScope(Scope.COMPONENT)
     boolean noDecoration() default false;
 
     /**
@@ -111,7 +104,6 @@ public @interface Component {
      * @return String value
      */
     @PropertyRendering(name = JcrConstants.PN_RESOURCE_SUPER_TYPE)
-    @PropertyScope(Scope.COMPONENT)
     String resourceSuperType() default "";
 
     /**
@@ -119,7 +111,6 @@ public @interface Component {
      * @return String value
      */
     @PropertyRendering(name = JcrConstants.PN_TEMPLATE_PATH)
-    @PropertyScope(Scope.COMPONENT)
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     String templatePath() default "";
 
@@ -127,7 +118,6 @@ public @interface Component {
      * When set to true, renders as the `disableTargeting` attribute of the component root node with `true` value
      * @return True or false
      */
-    @PropertyScope(Scope.COMPONENT)
     @PropertyRendering(ignoreValues = "false")
     boolean disableTargeting() default false;
 

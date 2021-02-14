@@ -30,10 +30,26 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 public @interface PropertyRendering {
 
     /**
-     * When set, maps to the 'name' attribute of a field node
+     * When set, maps to the 'name' attribute of a dialog field node
      * @return String value
      */
     String name() default "";
+
+    /**
+     * When set, used to specify one or more {@link Scope}s this annotation or annotation property is rendered in,
+     * i.e. whether this is rendered to {@code cq:Component} (component root), {@code cq:dialog}, {@code cq:editorConfig},
+     * or any other appropriate JCR node.
+     * This setting applies only to values that technically can be rendered to multiple JCR nodes,
+     * such as {@link com.exadel.aem.toolkit.api.annotations.main.Dialog} annotation properties
+     */
+    Scope[] scope() default {
+        Scope.COMPONENT,
+        Scope.CQ_DIALOG,
+        Scope.CQ_DESIGN_DIALOG,
+        Scope.CQ_EDIT_CONFIG,
+        Scope.CQ_HTML_TAG,
+        Scope.CQ_CHILD_EDIT_CONFIG
+    };
 
     /**
      * When set to true, allows overriding prefix set for this field name
