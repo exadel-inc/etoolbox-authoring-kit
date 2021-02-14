@@ -21,7 +21,7 @@ import org.w3c.dom.Document;
 
 import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.lists.ListItemHandler;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;

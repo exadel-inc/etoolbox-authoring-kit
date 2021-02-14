@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 
 public interface Target {
 

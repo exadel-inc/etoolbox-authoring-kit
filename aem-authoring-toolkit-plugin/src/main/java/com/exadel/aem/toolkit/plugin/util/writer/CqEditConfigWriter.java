@@ -19,7 +19,7 @@ import javax.xml.transform.Transformer;
 import org.w3c.dom.Document;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.editconfig.EditConfigHandlingHelper;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;

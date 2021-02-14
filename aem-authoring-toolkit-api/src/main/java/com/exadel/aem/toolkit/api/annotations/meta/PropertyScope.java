@@ -18,8 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
-
 /**
  * Used to specify one or more {@link Scope}s this annotation or annotation property is rendered in, i.e. whether
  * this is rendered to {@code cq:Component} (component root), {@code cq:dialog}, {@code cq:editorConfig}, or {@code cq:htmlTag} JCR nodes.

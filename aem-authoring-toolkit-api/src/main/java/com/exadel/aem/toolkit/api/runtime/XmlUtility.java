@@ -8,8 +8,8 @@ import java.util.function.BinaryOperator;
 
 import org.w3c.dom.Element;
 
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
 import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**

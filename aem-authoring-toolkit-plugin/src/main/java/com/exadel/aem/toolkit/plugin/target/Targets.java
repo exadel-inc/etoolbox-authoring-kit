@@ -14,7 +14,7 @@
 
 package com.exadel.aem.toolkit.plugin.target;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.common.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 /**
