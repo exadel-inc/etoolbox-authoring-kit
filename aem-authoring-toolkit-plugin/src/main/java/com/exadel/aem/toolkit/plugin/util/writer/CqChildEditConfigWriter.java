@@ -19,7 +19,7 @@ import javax.xml.transform.Transformer;
 import org.w3c.dom.Document;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.editconfig.EditConfigHandlingHelper;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
@@ -41,11 +41,11 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
 
     /**
      * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
-     * @return {@link XmlScope} value
+     * @return {@link Scope} value
      */
     @Override
-    XmlScope getScope() {
-        return XmlScope.CQ_CHILD_EDIT_CONFIG;
+    Scope getScope() {
+        return Scope.CQ_CHILD_EDIT_CONFIG;
     }
 
     /**

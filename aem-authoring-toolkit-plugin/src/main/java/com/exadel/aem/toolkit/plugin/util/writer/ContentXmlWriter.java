@@ -19,9 +19,9 @@ import javax.xml.transform.Transformer;
 
 import org.w3c.dom.Document;
 
-import com.exadel.aem.toolkit.api.annotations.main.Component;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.lists.ListItemHandler;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
@@ -42,22 +42,22 @@ class ContentXmlWriter extends PackageEntryWriter {
 
     /**
      * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
-     * @return {@link XmlScope} value
+     * @return {@link Scope} value
      */
     @Override
-    XmlScope getScope() {
-        return XmlScope.COMPONENT;
+    Scope getScope() {
+        return Scope.COMPONENT;
     }
 
     /**
      * Gets whether current {@code Class} is eligible for populating {@code .content.xml} structure
      * @param componentClass The {@code Class} under consideration
-     * @return True if current {@code Class} is annotated with {@link Dialog} or {@link Component}; otherwise, false
+     * @return True if current {@code Class} is annotated with {@link Dialog} or {@link AemComponent}; otherwise, false
      */
     @Override
     boolean canProcess(Class<?> componentClass) {
         return componentClass.isAnnotationPresent(Dialog.class)
-            || componentClass.isAnnotationPresent(Component.class);
+            || componentClass.isAnnotationPresent(AemComponent.class);
     }
 
     /**
@@ -68,7 +68,7 @@ class ContentXmlWriter extends PackageEntryWriter {
      */
     @Override
     void populateTarget(Class<?> componentClass, Target root) {
-        Annotation annotation = componentClass.getDeclaredAnnotation(Component.class);
+        Annotation annotation = componentClass.getDeclaredAnnotation(AemComponent.class);
         if (annotation == null) {
             annotation = componentClass.getDeclaredAnnotation(Dialog.class);
         }
@@ -80,7 +80,7 @@ class ContentXmlWriter extends PackageEntryWriter {
                     .getPropertyMappingFilter(annotation)
                     .and(member -> fitsInScope(member, getScope())));
 
-        if ((annotation instanceof Component && ((Component) annotation).isContainer())
+        if ((annotation instanceof AemComponent && ((AemComponent) annotation).isContainer())
             || (annotation instanceof Dialog && ((Dialog) annotation).isContainer())) {
             root.attribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
         }

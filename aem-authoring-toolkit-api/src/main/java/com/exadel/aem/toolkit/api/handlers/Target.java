@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 
 public interface Target {
 
@@ -34,7 +34,7 @@ public interface Target {
         return getTarget(path) != null;
     }
 
-    XmlScope getScope();
+    Scope getScope();
 
     Target getTarget(String path);
 

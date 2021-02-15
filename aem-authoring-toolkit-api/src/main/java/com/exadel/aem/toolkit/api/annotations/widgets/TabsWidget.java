@@ -21,8 +21,8 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.container.enums.TabsOrientation;
 import com.exadel.aem.toolkit.api.annotations.container.enums.TabsSize;
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
@@ -48,7 +48,7 @@ public @interface TabsWidget {
      * @return One of {@code TabsOrientation} values
      * @see TabsOrientation
      */
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
+    @PropertyRendering(transform = StringTransformation.LOWERCASE)
     TabsOrientation variant() default TabsOrientation.HORIZONTAL;
 
     /**
@@ -56,7 +56,6 @@ public @interface TabsWidget {
      * @return One of {@code TabsSize} values
      * @see TabsSize
      */
-    @EnumValue
     TabsSize size() default TabsSize.M;
 
     /**

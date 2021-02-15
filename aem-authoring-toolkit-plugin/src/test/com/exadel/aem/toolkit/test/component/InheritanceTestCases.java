@@ -14,8 +14,8 @@
 
 package com.exadel.aem.toolkit.test.component;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
-import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -100,7 +100,7 @@ public class InheritanceTestCases {
         private String text4;
     }
 
-    @Component(
+    @AemComponent(
         path = TestConstants.DEFAULT_COMPONENT_NAME,
         resourceSuperType = TestConstants.DEFAULT_COMPONENT_SUPERTYPE,
         title = TestConstants.DEFAULT_COMPONENT_TITLE

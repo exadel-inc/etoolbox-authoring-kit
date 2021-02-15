@@ -17,7 +17,7 @@ package com.exadel.aem.toolkit.plugin.util.writer;
 import javax.xml.transform.Transformer;
 
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
@@ -38,11 +38,11 @@ class CqHtmlTagWriter extends PackageEntryWriter {
 
     /**
      * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
-     * @return {@link XmlScope} value
+     * @return {@link Scope} value
      */
     @Override
-    XmlScope getScope() {
-        return XmlScope.CQ_HTML_TAG;
+    Scope getScope() {
+        return Scope.CQ_HTML_TAG;
     }
 
     /**
