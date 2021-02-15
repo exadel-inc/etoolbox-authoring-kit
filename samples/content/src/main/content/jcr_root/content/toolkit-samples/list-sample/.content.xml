@@ -13,19 +13,19 @@
             <list_item_1 jcr:primaryType="nt:unstructured"
                          jcr:title="Add"
                          value="add"
-                         sling:resourceType="authoring-toolkit/lists/components/content/listEntry"/>
+                         sling:resourceType="authoring-toolkit/lists/components/content/internal/listItem"/>
             <list_item_2 jcr:primaryType="nt:unstructured"
                          jcr:title="Square Brackets"
                          value="bracketsSquare"
-                         sling:resourceType="authoring-toolkit/lists/components/content/listEntry"/>
+                         sling:resourceType="authoring-toolkit/lists/components/content/internal/listItem"/>
             <list_item_3 jcr:primaryType="nt:unstructured"
                          jcr:title="Share file"
                          value="fileShare"
-                         sling:resourceType="authoring-toolkit/lists/components/content/listEntry"/>
+                         sling:resourceType="authoring-toolkit/lists/components/content/internal/listItem"/>
             <list_item_4 jcr:primaryType="nt:unstructured"
                          jcr:title="Delete Filter"
                          value="filterDelete"
-                         sling:resourceType="authoring-toolkit/lists/components/content/listEntry"/>
+                         sling:resourceType="authoring-toolkit/lists/components/content/internal/listItem"/>
         </list>
     </jcr:content>
 </jcr:root>
