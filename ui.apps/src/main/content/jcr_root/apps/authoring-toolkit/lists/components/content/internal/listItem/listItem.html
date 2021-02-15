@@ -20,11 +20,11 @@
 
 <div class="item-component">
     <div class="item-error" data-sly-test="${listItem.properties.empty}">
-        Please configure Item properties
+        Please configure List Item properties
     </div>
     <sly data-sly-list="${listItem.properties}">
         <div class="item-property">
-            <div><strong>${item}</strong> : ${listItem.properties[item]}</div>
+            <div><strong>${item}</strong>: ${listItem.properties[item]}</div>
         </div>
     </sly>
 </div>
