@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.layouts;
 
 /**
- * Contains possible values of {@link TabsWidget#orientation()} property
+ * Contains possible values of {@link Tabs#orientation()} property
  */
 @SuppressWarnings("unused")
 public enum TabsOrientation {

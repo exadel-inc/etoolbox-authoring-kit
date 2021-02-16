@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.layouts;
 
 /**
- * Contains possible values of {@link TabsWidget#size()} property
+ * Contains possible values of {@link Tabs#size()} property
  */
 @SuppressWarnings("unused")
 public enum TabsSize {

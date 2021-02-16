@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 @ResourceType(ResourceTypes.TABS)
 @PropertyMapping
 @SuppressWarnings("unused")
-public @interface TabsWidget {
+public @interface Tabs {
 
     /**
      * Name of current tabs widget

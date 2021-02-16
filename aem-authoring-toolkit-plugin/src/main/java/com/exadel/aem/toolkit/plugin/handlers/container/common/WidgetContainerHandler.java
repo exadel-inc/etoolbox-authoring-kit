@@ -10,8 +10,8 @@ import java.util.function.BiConsumer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.api.annotations.layouts.AccordionWidget;
-import com.exadel.aem.toolkit.api.annotations.layouts.TabsWidget;
+import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
@@ -29,9 +29,9 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
      * @param annotationClass class of container
      */
     protected void populateContainer(Source source, Target target, Class<? extends Annotation> annotationClass) {
-        String containerName = annotationClass.equals(TabsWidget.class) ? DialogConstants.NN_TABS : DialogConstants.NN_ACCORDION;
-        String containerSectionName = annotationClass.equals(TabsWidget.class) ? DialogConstants.NN_TAB : DialogConstants.NN_ACCORDION;
-        String exceptionMessage = annotationClass.equals(TabsWidget.class) ? ContainerHandler.TABS_EXCEPTION : ContainerHandler.ACCORDION_EXCEPTION;
+        String containerName = annotationClass.equals(Tabs.class) ? DialogConstants.NN_TABS : DialogConstants.NN_ACCORDION;
+        String containerSectionName = annotationClass.equals(Tabs.class) ? DialogConstants.NN_TAB : DialogConstants.NN_ACCORDION;
+        String exceptionMessage = annotationClass.equals(Tabs.class) ? ContainerHandler.TABS_EXCEPTION : ContainerHandler.ACCORDION_EXCEPTION;
 
         target.createTarget(DialogConstants.NN_ITEMS);
 
@@ -58,22 +58,22 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
     /**
      * Retrieves container sections declared by the current source, such as a class member
      * @param source Current {@link Source} instance
-     * @param annotationClass Container annotation to look for, such as a {@link TabsWidget} or {@link AccordionWidget}
+     * @param annotationClass Container annotation to look for, such as a {@link Tabs} or {@link Accordion}
      */
     private static Map<String, ContainerSection> getContainerSections(Source source, Class<? extends Annotation> annotationClass) {
         Map<String, ContainerSection> result = new LinkedHashMap<>();
         if (source.adaptTo(annotationClass) == null) {
             return result;
         }
-        if (annotationClass.equals(TabsWidget.class)) {
-            Arrays.stream(source.adaptTo(TabsWidget.class).tabs())
+        if (annotationClass.equals(Tabs.class)) {
+            Arrays.stream(source.adaptTo(Tabs.class).tabs())
                 .forEach(tab -> {
                     ContainerSection containerInfo = new ContainerSection(tab.title());
                     containerInfo.setAttributes(PluginAnnotationUtility.getProperties(tab));
                     result.put(tab.title(), containerInfo);
                 });
-        } else if (annotationClass.equals(AccordionWidget.class)) {
-            Arrays.stream(source.adaptTo(AccordionWidget.class).panels())
+        } else if (annotationClass.equals(Accordion.class)) {
+            Arrays.stream(source.adaptTo(Accordion.class).panels())
                 .forEach(accordionPanel -> {
                     ContainerSection containerInfo = new ContainerSection(accordionPanel.title());
                     containerInfo.setAttributes(PluginAnnotationUtility.getProperties(accordionPanel));

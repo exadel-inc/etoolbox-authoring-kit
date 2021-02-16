@@ -29,9 +29,9 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.plugin.util.TestConstants;
-import com.exadel.aem.toolkit.test.widget.Accordion;
+import com.exadel.aem.toolkit.test.widget.AccordionWidget;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
-import com.exadel.aem.toolkit.test.widget.Tabs;
+import com.exadel.aem.toolkit.test.widget.TabsWidget;
 
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_2;
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_3;
@@ -57,11 +57,11 @@ public class IgnoreTestCases {
             layout = DialogLayout.TABS
     )
     @IgnoreFields({
-            @ClassField(source = Tabs.class, field = "field3"),
+            @ClassField(source = TabsWidget.class, field = "field3"),
             @ClassField(field = "field4") // source value falls back to the annotated class'es type
     })
     @IgnoreTabs(LABEL_TAB_3)
-    public static class IgnoreMembersTabsLayout extends Tabs {
+    public static class IgnoreMembersTabsLayout extends TabsWidget {
         @DialogField
         @TextField
         private String field4;
@@ -75,9 +75,9 @@ public class IgnoreTestCases {
     )
     @Ignore(
         sections = "Basic2",
-        members = @ClassMember(source = Accordion.class, name = "field1")
+        members = @ClassMember(source = AccordionWidget.class, name = "field1")
     )
-    public static class IgnoreMembersAccordionLayout extends Accordion {
+    public static class IgnoreMembersAccordionLayout extends AccordionWidget {
         @DialogField
         @TextField
         private String field2;

@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 @ResourceType(ResourceTypes.ACCORDION)
 @PropertyMapping
 @SuppressWarnings("unused")
-public @interface AccordionWidget {
+public @interface Accordion {
 
     /**
      * Name of current accordion widget

@@ -14,12 +14,11 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
-import com.exadel.aem.toolkit.api.annotations.layouts.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
-import com.exadel.aem.toolkit.api.annotations.layouts.TabsWidget;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -38,13 +37,13 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
     }
 )
 @SuppressWarnings("unused")
-public class Tabs {
+public class TabsWidget {
     @DialogField(label = "Field on the first tab")
     @TextField
-    @PlaceOnTab("First tab")
+    @Place(in = "First tab")
     String field1;
 
-    @TabsWidget(
+    @Tabs(
         name = "innerTabs",
         tabs = {
             @Tab(title = "First Inner"),
@@ -55,12 +54,12 @@ public class Tabs {
 
     @DialogField(label = "Field on the second tab")
     @TextField
-    @PlaceOnTab("Second tab")
+    @Place(in = "Second tab")
     String field2;
 
     @DialogField(description = "Field on the third tab")
     @TextField
-    @PlaceOnTab("Third tab")
+    @Place(in = "Third tab")
     String field3;
 
     static class TabsExample {
@@ -69,7 +68,7 @@ public class Tabs {
         @Place(in = "First Inner")
         String innerFieldInTab;
 
-        @AccordionWidget(name = "Field 2 on the inner Tab", panels = {@AccordionPanel(title = "First Panel")})
+        @Accordion(name = "Field 2 on the inner Tab", panels = {@AccordionPanel(title = "First Panel")})
         @Place(in = "Second Inner")
         AccordionExample accordion;
 

@@ -13,7 +13,7 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
-import com.exadel.aem.toolkit.api.annotations.layouts.TabsWidget;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.container.common.WidgetContainerHandler;
@@ -24,13 +24,13 @@ import com.exadel.aem.toolkit.plugin.handlers.container.common.WidgetContainerHa
 public class TabsWidgetHandler extends WidgetContainerHandler {
 
     /**
-     * Implements the {@code BiConsumer<Source, Target} pattern to process user input data specific for {@link TabsWidget}
+     * Implements the {@code BiConsumer<Source, Target} pattern to process user input data specific for {@link Tabs}
      * and provide data for widget rendering
      * @param source Member that defines a {@code Tabs} widget
      * @param target Data structure used for rendering
      */
     @Override
     public void accept(Source source, Target target) {
-        populateContainer(source, target, TabsWidget.class);
+        populateContainer(source, target, Tabs.class);
     }
 }
