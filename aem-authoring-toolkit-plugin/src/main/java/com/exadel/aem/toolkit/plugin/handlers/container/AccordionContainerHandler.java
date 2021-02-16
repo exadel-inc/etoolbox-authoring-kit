@@ -13,7 +13,7 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.container;
 
-import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.container.common.ContainerHandler;
 

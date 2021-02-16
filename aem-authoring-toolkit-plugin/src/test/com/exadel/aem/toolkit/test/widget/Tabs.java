@@ -14,15 +14,15 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
-import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
-import com.exadel.aem.toolkit.api.annotations.container.Place;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionWidget;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.layouts.TabsWidget;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
-import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.TabsWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;

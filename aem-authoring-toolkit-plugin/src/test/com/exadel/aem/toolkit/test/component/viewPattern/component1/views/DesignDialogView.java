@@ -14,8 +14,8 @@
 
 package com.exadel.aem.toolkit.test.component.viewPattern.component1.views;
 
-import com.exadel.aem.toolkit.api.annotations.container.Place;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;

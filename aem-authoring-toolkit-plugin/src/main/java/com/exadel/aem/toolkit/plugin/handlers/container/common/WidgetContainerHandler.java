@@ -10,8 +10,8 @@ import java.util.function.BiConsumer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
-import com.exadel.aem.toolkit.api.annotations.widgets.TabsWidget;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionWidget;
+import com.exadel.aem.toolkit.api.annotations.layouts.TabsWidget;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;

@@ -13,7 +13,7 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.TabsWidget;
+import com.exadel.aem.toolkit.api.annotations.layouts.TabsWidget;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.container.common.WidgetContainerHandler;

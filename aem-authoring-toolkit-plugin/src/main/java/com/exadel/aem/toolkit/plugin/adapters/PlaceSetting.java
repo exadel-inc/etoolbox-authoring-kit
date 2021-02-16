@@ -16,8 +16,8 @@ package com.exadel.aem.toolkit.plugin.adapters;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.api.annotations.container.Place;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.handlers.Adaptable;
 import com.exadel.aem.toolkit.api.handlers.Source;
 

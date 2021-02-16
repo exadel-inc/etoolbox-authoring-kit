@@ -32,9 +32,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;

@@ -19,6 +19,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 
 /**
@@ -43,7 +44,7 @@ public @interface Ignore {
      * Enumerates container sections, such as Tabs or Accordion panels, to be skipped when rendering a dialog
      * or a dialog part. Each section is specified by its title
      * @see com.exadel.aem.toolkit.api.annotations.container.Tab
-     * @see com.exadel.aem.toolkit.api.annotations.container.AccordionPanel
+     * @see AccordionPanel
      * @return One or more String values
      */
     String[] sections() default {};

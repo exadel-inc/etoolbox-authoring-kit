@@ -14,10 +14,10 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
-import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
-import com.exadel.aem.toolkit.api.annotations.container.Place;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionWidget;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 

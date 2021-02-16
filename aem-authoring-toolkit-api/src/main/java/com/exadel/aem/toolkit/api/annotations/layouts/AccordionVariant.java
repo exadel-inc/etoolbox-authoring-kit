@@ -11,12 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.container.enums;
+package com.exadel.aem.toolkit.api.annotations.layouts;
 
 /**
- * Contains possible values of {@link com.exadel.aem.toolkit.api.annotations.widgets.TabsWidget#orientation()} property
+ * Contains possible values of {@link AccordionWidget#variant()} property
  */
 @SuppressWarnings("unused")
-public enum TabsOrientation {
-    HORIZONTAL, VERTICAL
+public enum AccordionVariant {
+    DEFAULT, QUIET, LARGE
 }
