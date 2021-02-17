@@ -23,10 +23,9 @@ import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 
 /**
  * Used to store generic properties of TouchUI Dialog and most common properties of AEM Component according to the
@@ -37,45 +36,54 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 @PropertyMapping
 @SuppressWarnings("unused")
 public @interface Dialog {
+
     /**
      * Maps to the 'jcr:title' attributes of both the component root node and its {@code cq:dialog} node
      * @return String value, non-blank
      */
-    @PropertyRendering(name = JcrConstants.PN_TITLE)
+    @PropertyRendering(name = "jcr:title")
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String title();
 
     /**
      * When set to non-blank, maps to the 'jcr:description' attribute of the component's root node
      * @return String value
+     * @deprecated Use {@link AemComponent#description()} to set this value
      */
-    @PropertyRendering(name = JcrConstants.PN_DESCRIPTION)
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyRendering(
+        name = "jcr:description",
+        scope = Scope.COMPONENT
+    )
     @Deprecated
     String description() default "";
 
     /**
      * When set to non-blank, maps to the 'cq:cellName' attribute of the component's root node
      * @return String value
+     * @deprecated Use {@link AemComponent#cellName()} to set this value
      */
-    @PropertyRendering(name = JcrConstants.PN_CELL_NAME)
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyRendering(
+        name = "cq:cellName",
+        scope = Scope.COMPONENT
+    )
     @Deprecated
     String cellName() default "";
 
     /**
      * When set to non-blank, maps to the 'componentGroup' attribute of the component root node
      * @return String value
+     * @deprecated Use {@link AemComponent#componentGroup()} to set this value
      */
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyRendering(scope = Scope.COMPONENT)
     @Deprecated
     String componentGroup() default "";
 
     /**
      * Maps to the 'dialogPath' attribute of the component root node. Must represent a valid JCR path
      * @return String value
+     * @deprecated Use {@link AemComponent#dialogPath()} to set this value
      */
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyRendering(scope = Scope.COMPONENT)
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     @Deprecated
     String dialogPath() default "";
@@ -83,27 +91,37 @@ public @interface Dialog {
     /**
      * When set to true, renders as the 'cq:noDecoration' attribute of the component root node with `true` value
      * @return True or false
+     * @deprecated Use {@link AemComponent#noDecoration()} to set this value
      */
-    @PropertyRendering(name = JcrConstants.PN_NO_DECORATION, ignoreValues = "false")
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyRendering(
+        name = "cq:noDecoration",
+        scope = Scope.COMPONENT,
+        ignoreValues = "false"
+    )
     @Deprecated
     boolean noDecoration() default false;
 
     /**
      * When set to non-blank, renders as the 'sling:resourceSuperType' attribute of the component root node
      * @return String value
+     * @deprecated Use {@link AemComponent#resourceSuperType()} to set this value
      */
-    @PropertyRendering(name = JcrConstants.PN_RESOURCE_SUPER_TYPE)
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyRendering(
+        name = "sling:resourceSuperType",
+        scope = Scope.COMPONENT
+    )
     @Deprecated
     String resourceSuperType() default "";
 
     /**
      * Maps to the 'cq:templatePath' attribute of the component root node. Must represent a valid JCR path
      * @return String value
+     * @deprecated Use {@link AemComponent#templatePath()} to set this value
      */
-    @PropertyRendering(name = JcrConstants.PN_TEMPLATE_PATH)
-    @PropertyScope(XmlScope.COMPONENT)
+    @PropertyRendering(
+        name = "cq:templatePath",
+        scope = Scope.COMPONENT
+    )
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     @Deprecated
     String templatePath() default "";
@@ -112,39 +130,41 @@ public @interface Dialog {
      * When set to non-blank, renders as the `helpPath` attribute of component's {@code cq:dialog} node
      * @return String value
      */
-    @PropertyScope(XmlScope.CQ_DIALOG)
+    @PropertyRendering(scope = Scope.CQ_DIALOG)
     String helpPath() default "";
 
     /**
      * Renders as the `height` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal to zero provided, default 480 is used
      * @return Numeric value
      */
+    @PropertyRendering(scope = Scope.CQ_DIALOG)
     @ValueRestriction(ValueRestrictions.POSITIVE)
-    @PropertyScope(XmlScope.CQ_DIALOG)
     double height() default 480;
 
     /**
      * Renders as the `width` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal to zero provided, default 560 is used
      * @return Numeric value
      */
+    @PropertyRendering(scope = Scope.CQ_DIALOG)
     @ValueRestriction(ValueRestrictions.POSITIVE)
-    @PropertyScope(XmlScope.CQ_DIALOG)
     double width() default 560;
 
     /**
      * When set to true, renders as the `disableTargeting` attribute of the component root node with `true` value
      * @return True or false
-     * @deprecated Use {@link Component} to set this value
+     * @deprecated Use {@link AemComponent#disableTargeting()} to set this value
      */
-    @PropertyScope(XmlScope.COMPONENT)
-    @PropertyRendering(ignoreValues = "false")
+    @PropertyRendering(
+        scope = Scope.COMPONENT,
+        ignoreValues = "false"
+    )
     @Deprecated
     boolean disableTargeting() default false;
 
     /**
      * Renders as the 'isContainer' attribute of the component root node
      * @return True or false
-     * @deprecated Use {@link Component} to set this value
+     * @deprecated Use {@link AemComponent#isContainer()} to set this value
      */
     @IgnorePropertyMapping
     @Deprecated
@@ -154,9 +174,11 @@ public @interface Dialog {
      * Used to set path to the node/folder of component to create TouchUI dialog for. The path is relative to the {@code componentsPathBase}
      * config setting in package's POM file
      * @return String value
+     * @deprecated Use {@link AemComponent#path()} to set this value
      */
     @IgnorePropertyMapping
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
+    @Deprecated
     String name() default "";
 
     /**
@@ -172,7 +194,7 @@ public @interface Dialog {
      * of component's {@code cq:dialog} node
      * @return String value, or an array of strings
      */
-    @PropertyScope(XmlScope.CQ_DIALOG)
+    @PropertyRendering(scope = Scope.CQ_DIALOG)
     String[] extraClientlibs() default {};
 
     /**

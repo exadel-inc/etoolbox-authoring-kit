@@ -50,7 +50,7 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
-import com.exadel.aem.toolkit.api.annotations.main.Component;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
@@ -196,12 +196,12 @@ public class PluginReflectionUtility {
         List<Class<?>> classesAnnotatedWithDialog = reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
             .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
             .collect(Collectors.toList());
-        List<Class<?>> classesAnnotatedWithComponent = reflections.getTypesAnnotatedWith(Component.class, true).stream()
+        List<Class<?>> classesAnnotatedWithComponent = reflections.getTypesAnnotatedWith(AemComponent.class, true).stream()
             .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
             .collect(Collectors.toList());
 
         List<Class<?>> componentViews = new ArrayList<>();
-        classesAnnotatedWithComponent.forEach(cls -> componentViews.addAll(Arrays.asList(cls.getAnnotation(Component.class).views())));
+        classesAnnotatedWithComponent.forEach(cls -> componentViews.addAll(Arrays.asList(cls.getAnnotation(AemComponent.class).views())));
         classesAnnotatedWithComponent.addAll(classesAnnotatedWithDialog.stream().filter(cls -> !componentViews.contains(cls)).collect(Collectors.toList()));
 
         return classesAnnotatedWithComponent;

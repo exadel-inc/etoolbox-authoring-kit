@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.api.annotations.widgets.datepicker;
 
 import java.lang.annotation.ElementType;
@@ -18,9 +19,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
@@ -37,19 +38,21 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
 @PropertyMapping
 @SuppressWarnings("unused")
 public @interface DatePicker {
+
     /**
      * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
      * Used to define text hint for an empty DatePicker
      * @return String value
      */
     String emptyText() default "";
+
     /**
      * Maps to the 'type' attribute of this TouchUI dialog component's node.
      * Used to specify whether this DatePicker allows picking date, time, or both
      * @see DatePickerType
      * @return One of {@code DatePickerType} values
      */
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
+    @PropertyRendering(transform = StringTransformation.LOWERCASE)
     DatePickerType type() default DatePickerType.DATE;
     /**
      * Maps to the 'displayedFormat' attribute of this TouchUI dialog component's node.

@@ -17,18 +17,21 @@ package com.exadel.aem.toolkit.test.widget;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.anchorbutton.AnchorButton;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.LinkCheckerVariant;
+import com.exadel.aem.toolkit.plugin.util.TestConstants;
 
 @Dialog(
-    name = "test-component",
-    title = "test-component-dialog",
+    name = TestConstants.DEFAULT_COMPONENT_NAME,
+    title = TestConstants.DEFAULT_COMPONENT_TITLE,
     layout = DialogLayout.FIXED_COLUMNS
 )
 @SuppressWarnings("unused")
 public class AnchorButtonWidget {
 
     @AnchorButton(
-        href = "http://localhost:4502/editor.html/content/toolkit-samples/toolkit-samples-sandbox.html",
+        href = "http://localhost:4502/content/page.html",
         text = "Link Text",
+        linkChecker = LinkCheckerVariant.SKIP,
         icon = "search")
     String field;
 }

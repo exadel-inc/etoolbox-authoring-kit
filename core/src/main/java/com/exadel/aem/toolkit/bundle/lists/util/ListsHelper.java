@@ -33,6 +33,7 @@ import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 
+import com.exadel.aem.toolkit.bundle.CoreConstants;
 import com.exadel.aem.toolkit.bundle.lists.models.SimpleListItem;
 
 /**
@@ -40,7 +41,11 @@ import com.exadel.aem.toolkit.bundle.lists.models.SimpleListItem;
  */
 public class ListsHelper {
 
-    private static final String PN_VALUE = "value";
+    /**
+     * Default (hiding) constructor
+     */
+    private ListsHelper() {
+    }
 
     /**
      * Retrieves the list of item resources from {@code listPagePath}
@@ -101,7 +106,7 @@ public class ListsHelper {
      */
     public static Map<String, String> getMap(ResourceResolver resourceResolver, String listPagePath) {
         return getMap(resourceResolver, listPagePath, JcrConstants.JCR_TITLE,
-            res -> res.getValueMap().get(PN_VALUE, StringUtils.EMPTY));
+            res -> res.getValueMap().get(CoreConstants.PN_VALUE, StringUtils.EMPTY));
     }
 
     /**
@@ -141,8 +146,5 @@ public class ListsHelper {
             .map(Page::getContentResource)
             .map(contentRes -> contentRes.getChild("list"))
             .orElse(null);
-    }
-
-    private ListsHelper() {
     }
 }

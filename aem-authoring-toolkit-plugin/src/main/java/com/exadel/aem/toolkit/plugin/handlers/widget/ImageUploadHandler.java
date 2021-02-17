@@ -39,5 +39,9 @@ class ImageUploadHandler implements BiConsumer<Source, Target> {
         if (StringUtils.isNotBlank(imageUpload.clas())) {
             target.attribute(DialogConstants.PN_CLASS, imageUpload.clas());
         }
+        String fileRef = target.getAttribute(DialogConstants.PN_FILE_REFERENCE_PARAMETER);
+        if (StringUtils.isNotBlank(fileRef) && !StringUtils.startsWith(fileRef, DialogConstants.RELATIVE_PATH_PREFIX)) {
+            target.attribute(DialogConstants.PN_FILE_REFERENCE_PARAMETER, DialogConstants.RELATIVE_PATH_PREFIX + fileRef);
+        }
     }
 }

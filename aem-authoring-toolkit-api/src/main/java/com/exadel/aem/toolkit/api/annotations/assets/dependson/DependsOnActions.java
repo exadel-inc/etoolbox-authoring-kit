@@ -43,6 +43,10 @@ public class DependsOnActions {
      * Asynchronous action to set value from request result
      */
     public static final String FETCH = "fetch";
+    /**
+     * Refreshes the option set of a Coral3 Select widget with an OptionProvider
+     */
+    public static final String UPDATE_OPTIONS = "update-options";
 
     private DependsOnActions() {}
 }

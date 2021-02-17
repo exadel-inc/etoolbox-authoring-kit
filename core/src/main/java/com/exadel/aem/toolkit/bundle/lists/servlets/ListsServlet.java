@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.bundle.lists.datasource;
+package com.exadel.aem.toolkit.bundle.lists.servlets;
 
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +37,6 @@ import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.NameConstants;
 import com.adobe.granite.ui.components.Config;
@@ -48,6 +47,8 @@ import com.adobe.granite.ui.components.ds.AbstractDataSource;
 import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.EmptyDataSource;
 
+import com.exadel.aem.toolkit.bundle.CoreConstants;
+
 /**
  * Provides the collection of AEM resources that either represent AAT Lists or serve as folders for AAT lists
  * to be displayed in the AAT Lists console
@@ -55,18 +56,14 @@ import com.adobe.granite.ui.components.ds.EmptyDataSource;
 @Component(
     service = Servlet.class,
     property = {
-        "sling.servlet.resourceTypes=/apps/authoring-toolkit/lists/datasources/list",
+        "sling.servlet.resourceTypes=/apps/authoring-toolkit/datasources/lists",
         "sling.servlet.methods=" + HttpConstants.METHOD_GET
     }
 )
-public class ChildResourcesDataSource extends SlingSafeMethodsServlet {
+public class ListsServlet extends SlingSafeMethodsServlet {
     private static final String LIST_TEMPLATE_NAME = "/conf/authoring-toolkit/settings/wcm/templates/list";
-    private static final String PN_PATH = "path";
-    private static final String PN_OFFSET = "offset";
-    private static final String PN_LIMIT = "limit";
-    private static final String REP_PREFIX = "rep:";
-    private static final String PN_RESOURCE_TYPE = "itemResourceType";
-    private static final String PATH_TO_JCR_CONTENT = String.format("/%s", JcrConstants.JCR_CONTENT);
+    private static final String PATH_JCR_CONTENT = CoreConstants.SEPARATOR_SLASH + JcrConstants.JCR_CONTENT;
+    private static final String PREFIX_REP = "rep:";
 
     @Reference
     private transient ExpressionResolver expressionResolver;
@@ -90,10 +87,10 @@ public class ChildResourcesDataSource extends SlingSafeMethodsServlet {
             ExpressionHelper expressionHelper = new ExpressionHelper(expressionResolver, request);
             Config dsCfg = new Config(request.getResource().getChild(Config.DATASOURCE));
 
-            String parentPath = expressionHelper.getString(dsCfg.get(PN_PATH, String.class));
-            int offset = expressionHelper.get(dsCfg.get(PN_OFFSET, String.class), Integer.class);
-            int limit = expressionHelper.get(dsCfg.get(PN_LIMIT, String.class), Integer.class);
-            String itemResourceType = dsCfg.get(PN_RESOURCE_TYPE, String.class);
+            String parentPath = expressionHelper.getString(dsCfg.get(CoreConstants.PN_PATH, String.class));
+            int offset = expressionHelper.get(dsCfg.get(CoreConstants.PN_OFFSET, String.class), Integer.class);
+            int limit = expressionHelper.get(dsCfg.get(CoreConstants.PN_LIMIT, String.class), Integer.class);
+            String itemResourceType = dsCfg.get(CoreConstants.PN_ITEM_RESOURCE_TYPE, String.class);
 
             Resource parent = parentPath != null ? resolver.getResource(parentPath) : null;
             if (parent != null) {
@@ -126,7 +123,7 @@ public class ChildResourcesDataSource extends SlingSafeMethodsServlet {
      * @return True or false
      */
     private static boolean isList(ResourceResolver resolver, Resource resource) {
-        Resource childParameters = resolver.getResource(resource.getPath() + PATH_TO_JCR_CONTENT);
+        Resource childParameters = resolver.getResource(resource.getPath() + PATH_JCR_CONTENT);
         if (childParameters != null) {
             String template = childParameters.getValueMap().get(NameConstants.NN_TEMPLATE, String.class);
             return template != null && template.equals(LIST_TEMPLATE_NAME);
@@ -154,7 +151,7 @@ public class ChildResourcesDataSource extends SlingSafeMethodsServlet {
      * @return True or false
      */
     private static boolean isServiceNode(Resource resource) {
-        return resource.getName().startsWith(REP_PREFIX) || resource.getName().equals(JcrConstants.JCR_CONTENT);
+        return resource.getName().startsWith(PREFIX_REP) || resource.getName().equals(JcrConstants.JCR_CONTENT);
     }
 
     private static Stream<Resource> getChildrenStream(Resource resource) {
@@ -172,7 +169,10 @@ public class ChildResourcesDataSource extends SlingSafeMethodsServlet {
         return bindings.getSling();
     }
 
-    public static class PagingDataSource extends AbstractDataSource {
+    /**
+     * Implements the {@code DataSource} pattern for displaying matched resources in pages
+     */
+    private static class PagingDataSource extends AbstractDataSource {
         private final List<Resource> resources;
         private final int offset;
         private final int limit;

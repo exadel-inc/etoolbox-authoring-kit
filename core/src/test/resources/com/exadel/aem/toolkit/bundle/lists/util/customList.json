@@ -13,13 +13,13 @@
         "jcr:primaryType": "nt:unstructured",
         "textValue": "Hello",
         "booleanValue": true,
-        "sling:resourceType": "authoring-toolkit/lists/components/content/listEntry"
+        "sling:resourceType": "authoring-toolkit/lists/components/content/internal/listItem"
       },
       "list_item_938979398": {
         "jcr:primaryType": "nt:unstructured",
         "textValue": "World",
         "booleanValue": false,
-        "sling:resourceType": "authoring-toolkit/lists/components/content/listEntry"
+        "sling:resourceType": "authoring-toolkit/lists/components/content/internal/listItem"
       }
     }
   }

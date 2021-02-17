@@ -14,20 +14,21 @@
 
 package com.exadel.aem.toolkit.test.component.viewPattern.component1;
 
-import com.exadel.aem.toolkit.api.annotations.main.Component;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.plugin.util.TestConstants;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
 import com.exadel.aem.toolkit.test.component.viewPattern.component1.views.ChildEditConfigView;
 import com.exadel.aem.toolkit.test.component.viewPattern.component1.views.DesignDialogView;
 import com.exadel.aem.toolkit.test.component.viewPattern.component1.views.HtmlTagView;
 
-@Component(
+@AemComponent(
     path = TestConstants.DEFAULT_COMPONENT_NAME,
     title = ComplexComponentHolder.COMPONENT_TITLE,
     description = "test component",
     componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
-    resourceSuperType = "resource/super/type",
+    resourceSuperType = "resource/super/type2",
     disableTargeting = true,
+    isContainer = true,
     views = {
         DesignDialogView.class,
         ComplexComponent1.class,

@@ -11,44 +11,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.api.annotations.main;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyScope;
-
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.annotation.Repeatable;
+
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 
 /**
- * Used to populate {@link CommonProperties} value with set of name-value string pairs. They are rendered as XML nodes' attributes
- * To define appropriate XML node, {@link XmlScope} and node's {@code XPath} can be specified
+ * Used to populate {@link CommonProperties} value with set of name-value string pairs. They are rendered as XML nodes'
+ * attributes
+ * To define appropriate XML node, node's {@link Scope}, and {@code XPath} can be specified
  * @see CommonProperties
- * @see PropertyScope
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(CommonProperties.class)
 @SuppressWarnings("unused")
 public @interface CommonProperty {
+
     /**
      * Indicates the attribute name
      * @return String value, non-blank
      */
     String name();
+
     /**
      * Indicates the attribute value
      * @return String value
      */
     String value();
+
     /**
-     * Specifies the scope to deal with, i.e. whether
-     * this attribute is rendered to {@code cq:Component} (component root), {@code ca:dialog}, or {@code cq:editorConfig} JCR nodes
+     * Specifies the scope to deal with, i.e. whether this attribute is rendered to {@code cq:Component} (component root),
+     * {@code cq:dialog}, {@code cq:editorConfig} or any other appropriate JCR node
      * @return One of {@code XmlScope} values
      */
-    XmlScope scope() default XmlScope.COMPONENT;
+    Scope scope() default Scope.COMPONENT;
+
     /**
      * Specifies the path to target node relative to node defined by {@link CommonProperty#scope()}
      * @return String representing JCR path, namespace-agnostic (i.e. 'editConfig' instead of 'cq:editConfig', etc.)

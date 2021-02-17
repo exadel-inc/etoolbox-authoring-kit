@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.bundle.lists.models;
+package com.exadel.aem.toolkit.bundle.lists.models.internal;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,29 +24,28 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
-
 import static org.junit.Assert.assertEquals;
 
-public class ListEntryTest {
+public class ListItemTest {
 
     private static final String SIMPLE_LIST_PATH = "/content/authoring-toolkit/lists/simpleList";
     private static final String LIST_ITEM_PATH = "/jcr:content/list/list_item_1006003058";
 
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
-    private ListEntry listEntry;
+    private ListItem listItem;
 
     @Before
     public void setUp() {
         ResourceResolver resolver = context.resourceResolver();
         context.load().json("/com/exadel/aem/toolkit/bundle/lists/util/simpleList.json", SIMPLE_LIST_PATH);
-        listEntry = resolver.resolve(SIMPLE_LIST_PATH + LIST_ITEM_PATH).adaptTo(ListEntry.class);
+        listItem = resolver.resolve(SIMPLE_LIST_PATH + LIST_ITEM_PATH).adaptTo(ListItem.class);
     }
 
     @Test
     public void getItemResType() {
         final String expected = "/apps/authoring-toolkit/lists/components/content/simpleItem";
-        String actual1 = listEntry.getItemResType();
+        String actual1 = listItem.getItemResType();
         assertEquals(expected, actual1);
     }
 
@@ -55,7 +54,7 @@ public class ListEntryTest {
         Map<String, Object> expected = new HashMap<>();
         expected.put("jcr:title", "key1");
         expected.put("value", "value1");
-        Map<String, Object> actual = listEntry.getProperties();
+        Map<String, Object> actual = listItem.getProperties();
         assertEquals(expected, actual);
     }
 }
