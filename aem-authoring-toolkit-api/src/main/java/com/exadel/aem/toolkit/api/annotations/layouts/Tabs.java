@@ -19,42 +19,44 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 
 /**
- * Used to set up tabs container widget inside dialog
+ * Used to define tabbed layout for a TouchUI dialog and/or to set up
+ * a <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/tabs/index.html">
+ * Tabs</a> widget inside dialog
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TABS)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Tabs {
 
     /**
-     * Name of current tabs widget
-     * @return String value, required
+     * Enumerates the tabs to be rendered within this container
+     * @return One or more {@code Tab} annotations
+     * @see Tab
      */
-    String name();
+    Tab[] tabs();
 
     /**
-     * Determines the orientation of the tabs
+     * Determines the orientation of the {@code tabs} when used as a dialog widget
      * @return One of {@code TabsOrientation} values
      * @see TabsOrientation
      */
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
-    TabsOrientation variant() default TabsOrientation.HORIZONTAL;
+    @PropertyRendering(transform = StringTransformation.LOWERCASE)
+    TabsOrientation orientation() default TabsOrientation.HORIZONTAL;
 
     /**
      * Determines the size of the tabs
      * @return One of {@code TabsSize} values
      * @see TabsSize
      */
-    @EnumValue
+    @PropertyRendering(transform = StringTransformation.LOWERCASE)
     TabsSize size() default TabsSize.M;
 
     /**
@@ -82,11 +84,4 @@ public @interface Tabs {
      * @return String value
      */
     String trackingWidgetName() default "";
-
-    /**
-     * Enumerates the tabs to be rendered within this container
-     * @return One or more {@code Tab} annotations
-     * @see Tab
-     */
-    Tab[] tabs();
 }

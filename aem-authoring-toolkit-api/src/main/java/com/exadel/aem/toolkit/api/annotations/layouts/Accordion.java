@@ -25,7 +25,9 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 
 /**
- * Used to set up accordion container widget inside dialog
+ * Used to define the accordion-shaped layout for a TouchUI dialog and/or to set up
+ * a <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html">
+ * Tabs</a> widget inside dialog
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -33,12 +35,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 @PropertyMapping
 @SuppressWarnings("unused")
 public @interface Accordion {
-
-    /**
-     * Name of current accordion widget
-     * @return String value, required
-     */
-    String name();
 
     /**
      * For the accordion-shaped TouchUI dialog layout, enumerates the accordion panels to be rendered
