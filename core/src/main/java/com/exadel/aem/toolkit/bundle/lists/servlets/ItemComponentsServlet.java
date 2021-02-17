@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.bundle.lists.datasource;
+package com.exadel.aem.toolkit.bundle.lists.servlets;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.jcr.query.Query;
 import javax.servlet.Servlet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingException;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -34,12 +35,13 @@ import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.day.cq.commons.jcr.JcrConstants;
 import com.adobe.cq.commerce.common.ValueMapDecorator;
 import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.SimpleDataSource;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
+
+import com.exadel.aem.toolkit.bundle.CoreConstants;
 
 /**
  * Provides the collection of AEM resources that represent AAT Lists items
@@ -48,17 +50,14 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 @Component(
     service = Servlet.class,
     property = {
-        "sling.servlet.resourceTypes=/apps/authoring-toolkit/lists/datasources/list-items",
+        "sling.servlet.resourceTypes=/apps/authoring-toolkit/datasources/list-items",
         "sling.servlet.methods=" + HttpConstants.METHOD_GET
     }
 )
-public class ItemComponentDataSource extends SlingSafeMethodsServlet {
-    private static final Logger LOG = LoggerFactory.getLogger(ItemComponentDataSource.class);
+public class ItemComponentsServlet extends SlingSafeMethodsServlet {
+    private static final Logger LOG = LoggerFactory.getLogger(ItemComponentsServlet.class);
 
     private static final String SELECT_STATEMENT = "SELECT * FROM [cq:Component] AS s WHERE ISDESCENDANTNODE(s,'/apps') AND [aatListItem] = 'true'";
-
-    private static final String PN_VALUE = "value";
-    private static final String PN_TEXT = "text";
 
     /**
      * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest}
@@ -76,8 +75,8 @@ public class ItemComponentDataSource extends SlingSafeMethodsServlet {
             while (resources.hasNext()) {
                 Resource item = resources.next();
                 ValueMap valueMap = new ValueMapDecorator(new HashMap<>());
-                valueMap.put(PN_VALUE, item.getPath());
-                valueMap.put(PN_TEXT, item.getValueMap().get(JcrConstants.JCR_TITLE, ""));
+                valueMap.put(CoreConstants.PN_VALUE, item.getPath());
+                valueMap.put(CoreConstants.PN_TEXT, item.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
                 actualList.add(new ValueMapResource(resolver, new ResourceMetadata(), JcrConstants.NT_UNSTRUCTURED, valueMap));
             }
             DataSource dataSource = new SimpleDataSource(actualList.iterator());

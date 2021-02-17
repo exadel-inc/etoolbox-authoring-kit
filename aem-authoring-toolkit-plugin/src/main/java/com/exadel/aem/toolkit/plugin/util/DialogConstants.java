@@ -98,6 +98,8 @@ public class DialogConstants {
     public static final String PN_ADD_NONE = "addNone";
     public static final String PN_ALLOW = "allow";
     public static final String PN_ALLOW_BLOCK_TAGS = "allowBlockTags";
+    public static final String PN_ATTRIBUTE_MEMBERS = "attributeMembers";
+    public static final String PN_ATTRIBUTES = "attributes";
     public static final String PN_AUTOGENERATE_COLORS = "autogenerateColors";
     public static final String PN_AUTOCREATE_TAG = "autocreateTag";
     public static final String PN_CHECKED = "checked";
@@ -122,7 +124,9 @@ public class DialogConstants {
     public static final String PN_EDITOR_TYPE = "editorType";
     public static final String PN_EXTERNAL_STYLESHEETS = "externalStyleSheets";
     public static final String PN_FALLBACK_BLOCK_TAG = "fallbackBlockTag";
+    public static final String PN_FALLBACK_PATH = "fallbackPath";
     public static final String PN_FEATURES = "features";
+    public static final String PN_FILE_REFERENCE_PARAMETER = "fileReferenceParameter";
     public static final String PN_GRANITE_CLASS = "granite:class";
     public static final String PN_GROUPS = "groups";
     public static final String PN_HEIGHT = "height";
@@ -130,12 +134,14 @@ public class DialogConstants {
     public static final String PN_IGNORE_MODE = "ignoreMode";
     public static final String PN_INDENT_SIZE = "indentSize";
     public static final String PN_IS_CONTAINER = "cq:isContainer";
+    public static final String PN_JCR_TITLE = "jcr:title";
     public static final String PN_MAX_DATE = "maxDate";
     public static final String PN_MAX_UNDO_STEPS = "maxUndoSteps";
     public static final String PN_MIN_DATE = "minDate";
     public static final String PN_MODE = "mode";
     public static final String PN_NAME = "name";
     public static final String PN_PATH = "path";
+    public static final String PN_PRIMARY_TITLE = "jcr:primaryTitle";
     public static final String PN_PRIMARY_TYPE = "jcr:primaryType";
     public static final String PN_PROPERTY_NAME = "propertyName";
     public static final String PN_PROTOCOLS = "protocols";
@@ -153,13 +159,17 @@ public class DialogConstants {
     public static final String PN_TARGET_EXTERNAL = "targetExternal";
     public static final String PN_TARGET_INTERNAL = "targetInternal";
     public static final String PN_TEXT = "text";
+    public static final String PN_TEXT_MEMBER = "textMember";
     public static final String PN_TEXT_PROPERTY_NAME = "textPropertyName";
+    public static final String PN_TEXT_TRANSFORM = "textTransform";
     public static final String PN_TITLE = "title";
     public static final String PN_TOOLBAR = "toolbar";
     public static final String PN_TYPE = "type";
     public static final String PN_TYPE_HINT = "typeHint";
     public static final String PN_USE_FIXED_INLINE_TOOLBAR = "useFixedInlineToolbar";
     public static final String PN_VALUE = "value";
+    public static final String PN_VALUE_MEMBER = "valueMember";
+    public static final String PN_VALUE_TRANSFORM = "valueTransform";
     public static final String PN_VARIANT = "variant";
     public static final String PN_WIDTH = "width";
 

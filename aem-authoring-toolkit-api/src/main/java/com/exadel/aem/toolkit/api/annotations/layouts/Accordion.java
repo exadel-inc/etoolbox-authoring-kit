@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.api.annotations.layouts;
 
 import java.lang.annotation.ElementType;
@@ -33,7 +34,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.ACCORDION)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Accordion {
 
     /**
@@ -54,7 +54,7 @@ public @interface Accordion {
      * @return One of {@code AccordionVariant} values
      * @see AccordionVariant
      */
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
+    @PropertyRendering(transform = StringTransformation.LOWERCASE)
     AccordionVariant variant() default AccordionVariant.DEFAULT;
 
     /**

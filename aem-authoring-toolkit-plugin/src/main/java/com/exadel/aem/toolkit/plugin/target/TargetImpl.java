@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -41,8 +42,7 @@ import org.w3c.dom.Element;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 import com.exadel.aem.toolkit.plugin.util.AttributeSettingHelper;
@@ -54,6 +54,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     private static final String ATTRIBUTE_LIST_TEMPLATE = "[%s]";
     private static final String ATTRIBUTE_LIST_SPLIT_PATTERN = "\\s*,\\s*";
     private static final String ATTRIBUTE_LIST_SURROUND = "[]";
+    private static final String ATTRIBUTE_TYPE_HINT_TEMPLATE = "{%s}";
     private static final Pattern ATTRIBUTE_LIST_PATTERN = Pattern.compile("^\\[.+]$");
 
     private static final String PARENT_PATH = "..";
@@ -70,7 +71,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     private String name;
     private String prefix;
     private String postfix;
-    private XmlScope scope;
+    private Scope scope;
 
 
     /* ------------
@@ -83,7 +84,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         this.parent = parent;
         this.attributes = new HashMap<>();
         this.children = new LinkedList<>();
-        this.scope = parent != null ? parent.getScope() : XmlScope.CQ_DIALOG;
+        this.scope = parent != null ? parent.getScope() : Scope.CQ_DIALOG;
         this.attributes.put(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
     }
 
@@ -113,11 +114,11 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
        ---------------- */
 
     @Override
-    public XmlScope getScope() {
+    public Scope getScope() {
         return scope;
     }
 
-    void setScope(XmlScope scope) {
+    void setScope(Scope scope) {
         this.scope = scope;
     }
 
@@ -332,27 +333,102 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     @Override
     public Target attribute(String name, boolean value) {
-        this.attributes.put(name, "{Boolean}" + value);
+        this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Boolean.class.getSimpleName()) + value);
+        return this;
+    }
+
+    @Override
+    public Target attribute(String name, String[] value) {
+        if (value != null) {
+            String stringValues = String.join(DialogConstants.ITEM_SEPARATOR_COMMA, value);
+            this.attributes.put(
+                name,
+                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Long.class.getSimpleName())
+                    + String.format(ATTRIBUTE_LIST_TEMPLATE, stringValues));
+        }
+        return this;
+    }
+
+    @Override
+    public Target attribute(String name, boolean[] value) {
+        if (value != null) {
+            String booleanValues = IntStream.range(0, value.length)
+                .mapToObj(index -> value[index])
+                .map(String::valueOf)
+                .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
+            this.attributes.put(
+                name,
+                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Boolean.class.getSimpleName())
+                    + String.format(ATTRIBUTE_LIST_TEMPLATE, booleanValues));
+        }
         return this;
     }
 
     @Override
     public Target attribute(String name, long value) {
-        this.attributes.put(name, "{Long}" + value);
+        this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Long.class.getSimpleName()) + value);
+        return this;
+    }
+
+    @Override
+    public Target attribute(String name, long[] value) {
+        if (value != null) {
+            String longValues = Arrays.stream(value)
+                .mapToObj(String::valueOf)
+                .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
+            this.attributes.put(
+                name,
+                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Long.class.getSimpleName())
+                    + String.format(ATTRIBUTE_LIST_TEMPLATE, longValues));
+        }
         return this;
     }
 
     @Override
     public Target attribute(String name, double value) {
-        this.attributes.put(name, "{Double}" + value);
+        this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Double.class.getSimpleName()) + value);
+        return this;
+    }
+
+    @Override
+    public Target attribute(String name, double[] value) {
+        if (value != null) {
+            String doubleValues = Arrays.stream(value)
+                .mapToObj(String::valueOf)
+                .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
+            this.attributes.put(
+                name,
+                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Double.class.getSimpleName())
+                    + String.format(ATTRIBUTE_LIST_TEMPLATE, doubleValues));
+        }
         return this;
     }
 
     @Override
     public Target attribute(String name, Date value) {
         if (value != null) {
-            this.attributes.put(name, "{Date}" + new SimpleDateFormat(DATE_FORMAT).format(value));
+            this.attributes.put(
+                name,
+                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Date.class.getSimpleName())
+                    + new SimpleDateFormat(DATE_FORMAT).format(value));
         }
+        return this;
+    }
+
+    @Override
+    public Target attribute(String name, Date[] value) {
+        if (value == null) {
+            return this;
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        String dateValues = Arrays.stream(value)
+            .filter(Objects::nonNull)
+            .map(date -> dateFormat.format(value))
+            .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
+        this.attributes.put(
+            name,
+            String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Date.class.getSimpleName())
+                + String.format(ATTRIBUTE_LIST_TEMPLATE, dateValues));
         return this;
     }
 
@@ -484,6 +560,6 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         result.addAll(new HashSet<>(Arrays.asList(StringUtils
             .strip(second, ATTRIBUTE_LIST_SURROUND)
             .split(ATTRIBUTE_LIST_SPLIT_PATTERN))));
-        return String.format(ATTRIBUTE_LIST_TEMPLATE, String.join(RteFeatures.FEATURE_SEPARATOR, result));
+        return String.format(ATTRIBUTE_LIST_TEMPLATE, String.join(DialogConstants.ITEM_SEPARATOR_COMMA, result));
     }
 }

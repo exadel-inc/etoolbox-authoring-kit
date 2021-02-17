@@ -44,9 +44,9 @@
                                                                    sling:resourceType="granite/ui/components/coral/foundation/form/select"
                                                                    name="./itemResourceType"
                                                                    fieldLabel="Item Component"
-                                                                   emptyText="Select component">
+                                                                   required="{Boolean}true">
                                                         <datasource jcr:primaryType="nt:unstructured"
-                                                                    sling:resourceType="/apps/authoring-toolkit/lists/datasources/list-items"/>
+                                                                    sling:resourceType="/apps/authoring-toolkit/datasources/list-items"/>
                                                     </itemcomponent>
                                                 </items>
                                             </well>

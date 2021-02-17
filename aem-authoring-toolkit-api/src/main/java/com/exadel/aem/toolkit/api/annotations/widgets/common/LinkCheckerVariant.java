@@ -17,6 +17,6 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
  * Contains possible values of {@code xCqLinkchecker} property
  */
 @SuppressWarnings("unused")
-public enum Linkchecker {
+public enum LinkCheckerVariant {
     NONE, SKIP, VALID
 }

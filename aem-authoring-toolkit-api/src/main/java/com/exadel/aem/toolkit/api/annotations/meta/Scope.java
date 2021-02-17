@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -11,24 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets.common;
+package com.exadel.aem.toolkit.api.annotations.meta;
 
 /**
  * Contains possible values of {@link com.exadel.aem.toolkit.api.annotations.meta.PropertyScope} annotation
  * @see com.exadel.aem.toolkit.api.annotations.meta.PropertyScope
  */
 @SuppressWarnings("unused")
-public enum XmlScope {
+public enum Scope {
     COMPONENT {
         @Override
         public String toString() {
             return ".content.xml";
-        }
-    },
-    CQ_EDIT_CONFIG {
-        @Override
-        public String toString() {
-            return "_cq_editConfig.xml";
         }
     },
     CQ_DIALOG {
@@ -43,16 +37,22 @@ public enum XmlScope {
             return "_cq_design_dialog.xml";
         }
     },
-    CQ_HTML_TAG {
+    CQ_EDIT_CONFIG {
         @Override
         public String toString() {
-            return "_cq_htmlTag.xml";
+            return "_cq_editConfig.xml";
         }
     },
     CQ_CHILD_EDIT_CONFIG {
         @Override
         public String toString() {
             return "_cq_childEditConfig.xml";
+        }
+    },
+    CQ_HTML_TAG {
+        @Override
+        public String toString() {
+            return "_cq_htmlTag.xml";
         }
     }
 }

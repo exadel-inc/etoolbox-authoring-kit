@@ -20,7 +20,6 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
@@ -44,7 +43,7 @@ public @interface Tabs {
     Tab[] tabs();
 
     /**
-     * Determines the orientation of the {@code tabs} when used as a dialog widget
+     * Determines the orientation of {@code tabs} when used as a dialog widget
      * @return One of {@code TabsOrientation} values
      * @see TabsOrientation
      */

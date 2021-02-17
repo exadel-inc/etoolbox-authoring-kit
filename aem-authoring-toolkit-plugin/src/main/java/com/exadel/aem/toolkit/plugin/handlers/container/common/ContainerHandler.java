@@ -37,11 +37,10 @@ import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
@@ -137,7 +136,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param scope           Current XML scope
      * @return Map of entries, each specified by a container item title and containing a {@link ContainerSection} aggregate object
      */
-    private Map<String, ContainerSection> getContainerSections(List<Class<?>> classes, Class<? extends Annotation> annotationClass, XmlScope scope) {
+    private Map<String, ContainerSection> getContainerSections(List<Class<?>> classes, Class<? extends Annotation> annotationClass, Scope scope) {
         Map<String, ContainerSection> result = new LinkedHashMap<>();
         Map<String, Object> annotationMap;
         for (Class<?> cls : classes) {
@@ -165,9 +164,9 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param result {@code Map<String,ContainerInfo>} map containing all container items
      * @param cls {@code Class<?>} current class that contains container elements
      */
-    private void appendSectionsFromClass(Map<String, ContainerSection> result, Class<?> cls, XmlScope scope) {
+    private void appendSectionsFromClass(Map<String, ContainerSection> result, Class<?> cls, Scope scope) {
         Map<String, Object> map;
-        if (XmlScope.CQ_DIALOG.equals(scope)) {
+        if (Scope.CQ_DIALOG.equals(scope)) {
             map = PluginAnnotationUtility.getProperties(cls.getDeclaredAnnotation(Dialog.class));
         } else {
             map = PluginAnnotationUtility.getProperties(cls.getDeclaredAnnotation(DesignDialog.class));
@@ -286,7 +285,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
 
         String nodeName = PluginNamingUtility.getUniqueName(containerItem.getTitle(), containerItemName, container);
         Target containerItemsNode = container.createTarget(nodeName)
-            .attribute(JcrConstants.PN_TITLE, containerItem.getTitle())
+            .attribute(DialogConstants.PN_JCR_TITLE, containerItem.getTitle())
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
         if (containerItemName.equals(DialogConstants.NN_TAB)) {
             Tab newTab = PluginAnnotationUtility.createInstance(Tab.class,
@@ -308,7 +307,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param tab {@link Tab} annotation that contains settings
      */
     private static void appendTabAttributes(Target tabElement, Tab tab) {
-        tabElement.attribute(JcrConstants.PN_TITLE, tab.title());
+        tabElement.attribute(DialogConstants.PN_JCR_TITLE, tab.title());
         Attribute attribute = tab.attribute();
         tabElement.attributes(attribute, PluginAnnotationUtility.getPropertyMappingFilter(attribute));
         PluginXmlUtility.appendDataAttributes(tabElement, attribute.data());

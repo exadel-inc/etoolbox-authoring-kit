@@ -29,7 +29,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 import com.google.common.base.CaseFormat;
 
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnoreValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
@@ -41,7 +40,7 @@ import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
 /**
  * Helper class for validating and rendering typed attributes to XML nodes
- * @see com.exadel.aem.toolkit.api.runtime.XmlUtility#setAttribute(Element, String, Annotation, BinaryOperator)
+ * @see PluginXmlUtility#setAttribute(Element, String, Annotation, BinaryOperator)
  * @param <T> Type of value to be rendered as XML attribute
  */
 public class AttributeSettingHelper<T> {
@@ -60,7 +59,7 @@ public class AttributeSettingHelper<T> {
     private boolean blankValuesAllowed;
 
     private boolean isEnum;
-    private EnumValue enumModifier;
+    private StringTransformation transformation;
 
     private Validation validationChecker = Validation.defaultChecker();
     private BinaryOperator<String> valueMerger = PluginXmlUtility.DEFAULT_ATTRIBUTE_MERGER;
@@ -92,13 +91,11 @@ public class AttributeSettingHelper<T> {
         attributeSetter.isEnum = method.getReturnType().isEnum()
                 || (method.getReturnType().getComponentType() != null
                 && method.getReturnType().getComponentType().isEnum());
-        if (method.isAnnotationPresent(EnumValue.class)) {
-            attributeSetter.enumModifier = method.getDeclaredAnnotation(EnumValue.class);
-        }
         if (method.isAnnotationPresent(PropertyRendering.class)) {
             PropertyRendering propertyRendering = method.getAnnotation(PropertyRendering.class);
             attributeSetter.ignoredValues = propertyRendering.ignoreValues();
             attributeSetter.blankValuesAllowed = propertyRendering.allowBlank();
+            attributeSetter.transformation = propertyRendering.transform();
         } else if (method.isAnnotationPresent(IgnoreValue.class)) {
             attributeSetter.ignoredValues = new String[] {method.getAnnotation(IgnoreValue.class).value()};
         }
@@ -313,13 +310,16 @@ public class AttributeSettingHelper<T> {
         if (!validationChecker.test(value)) {
             return null;
         }
-        if (enumModifier != null) {
-            return valueType.cast(transform(value.toString(), enumModifier.transformation()));
+        if (value == null) {
+            return null;
         }
         if (isEnum) {
-            return valueType.cast(value.toString());
+            return valueType.cast(transform(value.toString(), transformation));
+        } else if (valueType.equals(String.class)) {
+            String result = transform(valueType.cast(value).toString(), transformation);
+            return valueType.cast(result);
         }
-        return value != null ? valueType.cast(value) : null;
+        return valueType.cast(value);
     }
 
     /**
@@ -377,7 +377,7 @@ public class AttributeSettingHelper<T> {
      * @return Transformed string value
      */
     private static String transform(String value, StringTransformation transformation) {
-        if (StringUtils.isBlank(value)) {
+        if (transformation == null || StringUtils.isBlank(value)) {
             return value;
         }
         switch (transformation) {

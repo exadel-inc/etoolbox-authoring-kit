@@ -37,9 +37,9 @@ import org.apache.maven.project.MavenProject;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Streams;
 
-import com.exadel.aem.toolkit.api.annotations.main.Component;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.UnknownComponentException;
@@ -64,6 +64,11 @@ public class PackageWriter implements AutoCloseable {
     private static final String MULTIPLE_MODULES_EXCEPTION_MESSAGE = "Multiple modules available for %s while processing component %s";
     private static final String UNRECOGNIZED_MODULE_EXCEPTION_MESSAGE = "Unrecognized component module %s while processing component %s";
 
+
+    /* -----------------------------
+       Class fields and constructors
+       ----------------------------- */
+
     private final String componentsBasePath;
     private final FileSystem fileSystem;
     private final List<PackageEntryWriter> writers;
@@ -74,6 +79,11 @@ public class PackageWriter implements AutoCloseable {
         this.writers = writers;
     }
 
+
+    /* ------------------------
+       Public interface members
+       ------------------------ */
+
     @Override
     public void close() {
         try {
@@ -82,6 +92,11 @@ public class PackageWriter implements AutoCloseable {
             throw new PluginException(CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE, e);
         }
     }
+
+
+    /* ----------------
+       Instance members
+       ---------------- */
 
     /**
      * Stores AEM component's authoring markup into a package. For this, several package entry writers,
@@ -104,13 +119,16 @@ public class PackageWriter implements AutoCloseable {
 
         Map<PackageEntryWriter, Class<?>> viewsByWriter = getComponentViews(componentClass);
 
-        if (viewsByWriter.keySet().stream().noneMatch(writer -> writer.getScope() == XmlScope.COMPONENT)) {
+        if (viewsByWriter.keySet().stream().noneMatch(writer -> writer.getScope() == Scope.COMPONENT)) {
             InvalidSettingException ex = new InvalidSettingException(
                 COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE + componentClass.getName());
             PluginRuntime.context().getExceptionHandler().handle(ex);
         }
 
-        viewsByWriter.forEach((writer, view) -> writer.writeXml(view, componentPath));
+        viewsByWriter.forEach((writer, view) -> {
+            writer.cleanUp(componentPath);
+            writer.writeXml(view, componentPath);
+        });
     }
 
     /**
@@ -122,8 +140,8 @@ public class PackageWriter implements AutoCloseable {
      */
     private Map<PackageEntryWriter, Class<?>> getComponentViews(Class<?> componentClass) {
         Class<?>[] referencedViews = Optional
-            .ofNullable(componentClass.getAnnotation(Component.class))
-            .map(Component::views)
+            .ofNullable(componentClass.getAnnotation(AemComponent.class))
+            .map(AemComponent::views)
             .orElse(ArrayUtils.EMPTY_CLASS_ARRAY);
 
         List<Class<?>> allViews = Streams
@@ -148,19 +166,25 @@ public class PackageWriter implements AutoCloseable {
             }
 
             for (PackageEntryWriter matchedWriter : matchedWriters) {
-                if (result.containsKey(matchedWriter) && matchedWriter.getScope() != XmlScope.COMPONENT) {
+                if (result.containsKey(matchedWriter) && matchedWriter.getScope() != Scope.COMPONENT) {
                     InvalidSettingException ex = new InvalidSettingException(String.format(
                         MULTIPLE_MODULES_EXCEPTION_MESSAGE,
                         matchedWriter.getScope(),
                         componentClass.getName()
                     ));
                     PluginRuntime.context().getExceptionHandler().handle(ex);
+                } else if (!result.containsKey(matchedWriter)) {
+                    result.put(matchedWriter, view);
                 }
-                result.put(matchedWriter, view);
             }
         }
         return result;
     }
+
+
+    /* ------------------------
+       Static (utility) methods
+       ------------------------ */
 
     /**
      * Initializes an instance of {@link PackageWriter} profiled for the current {@link MavenProject} and the tree of
@@ -203,8 +227,8 @@ public class PackageWriter implements AutoCloseable {
             Transformer transformer = XmlFactory.newDocumentTransformer();
             writers = Arrays.asList(
                     new ContentXmlWriter(transformer),
-                    new CqDialogWriter(transformer, XmlScope.CQ_DIALOG),
-                    new CqDialogWriter(transformer, XmlScope.CQ_DESIGN_DIALOG),
+                    new CqDialogWriter(transformer, Scope.CQ_DIALOG),
+                    new CqDialogWriter(transformer, Scope.CQ_DESIGN_DIALOG),
                     new CqEditConfigWriter(transformer),
                     new CqChildEditConfigWriter(transformer),
                     new CqHtmlTagWriter(transformer)
@@ -216,9 +240,14 @@ public class PackageWriter implements AutoCloseable {
         return new PackageWriter(fileSystem, componentsBasePath, writers);
     }
 
+    /**
+     * Retrieves the path specified for the current component class in either {@link AemComponent} or {@link Dialog} annotation
+     * @param componentClass The {@code Class<?>} to get the path for
+     * @return String value
+     */
     private static String getComponentPath(Class<?> componentClass) {
-        String pathByComponent = Optional.ofNullable(componentClass.getAnnotation(Component.class))
-            .map(Component::path)
+        String pathByComponent = Optional.ofNullable(componentClass.getAnnotation(AemComponent.class))
+            .map(AemComponent::path)
             .orElse(null);
         String pathByDialog = Optional.ofNullable(componentClass.getAnnotation(Dialog.class))
             .map(Dialog::name)

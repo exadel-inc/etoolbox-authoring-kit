@@ -11,19 +11,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */-->
-<sly data-sly-use.listEntry="com.exadel.aem.toolkit.bundle.lists.models.ListEntry"></sly>
+
+<sly data-sly-use.listItem="com.exadel.aem.toolkit.bundle.lists.models.internal.ListItem"></sly>
 <sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"
      data-sly-call="${clientlib.all @ categories='aat-lists.item-content'}"></sly>
 
-<div class="item-config" data-dialog-path="${listEntry.itemResType}"></div>
+<div class="item-config" data-dialog-path="${listItem.itemResType}"></div>
 
 <div class="item-component">
-    <div class="item-error" data-sly-test="${listEntry.properties.empty}">
-        Please configure Item properties
+    <div class="item-error" data-sly-test="${listItem.properties.empty}">
+        Please configure List Item properties
     </div>
-    <sly data-sly-list="${listEntry.properties}">
+    <sly data-sly-list="${listItem.properties}">
         <div class="item-property">
-            <div><strong>${item}</strong> : ${listEntry.properties[item]}</div>
+            <div><strong>${item}</strong>: ${listItem.properties[item]}</div>
         </div>
     </sly>
 </div>

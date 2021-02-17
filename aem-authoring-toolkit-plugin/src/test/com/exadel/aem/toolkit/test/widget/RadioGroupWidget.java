@@ -18,6 +18,8 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 
@@ -41,6 +43,19 @@ public class RadioGroupWidget {
     String group1;
 
     @DialogField
-    @RadioGroup(datasource = @DataSource(path = "new/path", resourceType = "my/res/type"))
+    @RadioGroup(
+        datasource = @DataSource(path = "new/path", resourceType = "my/res/type")
+    )
     String group2;
+
+
+    @DialogField
+    @RadioGroup(buttonProvider = @OptionProvider(
+        sources = @OptionSource(
+            path = "/path/to/tags",
+            textMember = "jcr:title",
+            valueMember = "name",
+            textTransform = "capitalize")
+    ))
+    String group3;
 }
