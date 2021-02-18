@@ -1,3 +1,4 @@
+[Main page](../../README.md)
 ## Fields annotations
 The plugin makes use of `@DialogField`  annotation and the set of specific annotations, such as `@TextField`, `@Checkbox`, `@DatePicker`, etc., discussed further. The latter are referred as field-specific annotations.
 
@@ -136,7 +137,7 @@ public class DatePickerDialog {
 ### FileUpload
 @FileUpload (Granite name: FileUpload, resource type: /libs/granite/ui/components/coral/foundation/form/fileupload)
 
-Used to render the FileUpload components in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on FileUpload](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/numberfield/index.html). You can specify MIME types of files acceptable, graphic styles of the created component. It is required to specify uploadUrl to an actual and accessible JCR path (may also specify a sub-node of an existing node that will be created as needed). Sling shortcut  *${suffix.path}* for component-relative JCR path is also supported.
+Used to render the FileUpload components in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on FileUpload](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fileupload/index.html). You can specify MIME types of files acceptable, graphic styles of the created component. It is required to specify uploadUrl to an actual and accessible JCR path (may also specify a sub-node of an existing node that will be created as needed). Sling shortcut  *${suffix.path}* for component-relative JCR path is also supported.
 ```java
 public class FileUploadDialog {
     @DialogField
@@ -190,11 +191,11 @@ Used to render hidden inputs in TouchUI dialogs. Exposes properties as described
 ### Hyperlink
 @Hyperlink (Granite name: Hyperlink, resource type: /libs/granite/ui/components/coral/foundation/hyperlink)
 
-Used to represent a HTML hyperlinks (<a>) in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hyperlink](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html).
+Used to represent a HTML hyperlinks`(<a>)`in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hyperlink](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html).
 ### AnchorButton
 @AnchorButton (Granite name: AnchorButton, resource type: /libs/granite/ui/components/coral/foundation/anchorbutton)
 
-AnchorButton is a component to represent a standard HTML hyperlink (<a>), but to look like a button in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on AnchorButton](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html).
+AnchorButton is a component to represent a standard HTML hyperlink`(<a>)`, but to look like a button in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on AnchorButton](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html).
 ### NumberField
 @NumberField (Granite name: NumberField, resource type: /libs/granite/ui/components/coral/foundation/form/numberfield)
 

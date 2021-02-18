@@ -1,9 +1,10 @@
-## Component annotation
-In order to create .content(?) file you need to create a Java class and mark it with `@Component` annotation. Views represents authoring nodes(?) (e.g. cq:dialog, cq:design_dialog, cq:editConfig, cq:childEditConfig, cq:htmlTag). All files will be written to the path that is specified by path property.
+[Main page](../../README.md)
+## AemComponent annotation
+In order to create .content.xml(?) file you need to create a Java class and mark it with `@AemComponent` annotation. Views represents authoring nodes(?) (e.g. cq:dialog, cq:design_dialog, cq:editConfig, cq:childEditConfig, cq:htmlTag). All files will be written to the path that is specified by path property.
 
-`@Component` possesses properties that are translated into common attributes of AEM component itself, according to the Adobe specification, thus covering most of the use-cases. See the code snippet below:
+`@AemComponent` possesses properties that are translated into common attributes of AEM component itself, according to the Adobe specification, thus covering most of the use-cases. See the code snippet below:
 ```java
-@Component(
+@AemComponent(
     path = "content/my-component",
     title = "My AEM Component",
     description = "test component",
@@ -32,7 +33,7 @@ In order to create a dialog you need create a Java class and mark it with `@Dial
     width = 800,
     height = 600,
     extraClientlibs = "cq.common.wcm",
-    layout = DialogLayout.TABS (?)
+    layout = DialogLayout.TABS //(?)
 )
 public class MyComponentDialog { /* ... */ }
 ```

@@ -1,3 +1,4 @@
+[Main page](../../README.md)
 ## Laying out your components with Tabs
 ### Tab
 @Tab annotation
@@ -73,5 +74,5 @@ public class TestTabsExtension { /* ... */}
 
 Note that `@IgnoreTabs` setting is *not* inherited, unlike fields themselves, and works only for the class where it was specified.
 
-See also: [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it)
+See also: [Fields inheritance and ways to cancel it](ReusingCode.md)
 
