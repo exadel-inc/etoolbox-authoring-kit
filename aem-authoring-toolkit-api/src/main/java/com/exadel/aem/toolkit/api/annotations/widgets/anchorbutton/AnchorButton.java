@@ -31,7 +31,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.LinkCheckerVariant;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html">
- * AnchorButton is a component to represent a standard HTML hyperlink (<a>), but to look like a button in TouchUI dialog
+ * AnchorButton</a> component in a TouchUI dialog.
+ * AnchorButton represents a standard HTML hyperlink (<a>) that is styled like a button
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

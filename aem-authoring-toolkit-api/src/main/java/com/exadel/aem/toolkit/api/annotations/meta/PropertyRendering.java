@@ -41,6 +41,7 @@ public @interface PropertyRendering {
      * or any other appropriate JCR node.
      * This setting applies only to values that technically can be rendered to multiple JCR nodes,
      * such as {@link com.exadel.aem.toolkit.api.annotations.main.Dialog} annotation properties
+     * @return {@code Scope} value
      */
     Scope[] scope() default {
         Scope.COMPONENT,

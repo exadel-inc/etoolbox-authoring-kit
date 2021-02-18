@@ -14,8 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.meta;
 
 /**
- * Contains possible values of {@link com.exadel.aem.toolkit.api.annotations.meta.PropertyScope} annotation
- * @see com.exadel.aem.toolkit.api.annotations.meta.PropertyScope
+ * Contains possible values of {@link com.exadel.aem.toolkit.api.annotations.meta.Scope} annotation
  */
 @SuppressWarnings("unused")
 public enum Scope {
