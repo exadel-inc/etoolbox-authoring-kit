@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
@@ -29,17 +28,16 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
  * a <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/tabs/index.html">
  * Tabs</a> widget inside dialog
  */
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TABS)
-@PropertyMapping
 public @interface Tabs {
 
     /**
      * Enumerates the tabs to be rendered within this container
      * @return One or more {@link Tab} annotations
      */
-    Tab[] tabs();
+    Tab[] value();
 
     /**
      * Determines the orientation of {@code tabs} when used as a dialog widget.
