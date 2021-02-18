@@ -13,15 +13,26 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
+import java.lang.reflect.Method;
+import java.util.function.Predicate;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.container.common.WidgetContainerHandler;
+import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
  * {@link WidgetContainerHandler} implementation used to prepare data needed for {@code Tabs} widget functionality
  */
 public class TabsWidgetHandler extends WidgetContainerHandler {
+    private static final Predicate<Method> WIDGET_PROPERTIES_FILTER = method ->
+        !StringUtils.equalsAny(
+            method.getName(),
+            DialogConstants.PN_TYPE,
+            DialogConstants.PN_PADDING);
 
     /**
      * Implements the {@code BiConsumer<Source, Target} pattern to process user input data specific for {@link Tabs}
@@ -31,6 +42,7 @@ public class TabsWidgetHandler extends WidgetContainerHandler {
      */
     @Override
     public void accept(Source source, Target target) {
+        target.attributes(source.adaptTo(Tabs.class), WIDGET_PROPERTIES_FILTER);
         populateContainer(source, target, Tabs.class);
     }
 }

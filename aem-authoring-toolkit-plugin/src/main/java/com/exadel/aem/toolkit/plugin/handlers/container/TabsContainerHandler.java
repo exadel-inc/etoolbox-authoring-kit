@@ -13,14 +13,28 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.container;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.function.Predicate;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.container.common.ContainerHandler;
+import com.exadel.aem.toolkit.plugin.target.Targets;
+import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
  * The {@code Handler} for a tabbed TouchUI dialog
  */
 public class TabsContainerHandler extends ContainerHandler {
+    private static final Predicate<Method> LAYOUT_PROPERTIES_FILTER = method ->
+        StringUtils.equalsAny(
+            method.getName(),
+            DialogConstants.PN_TYPE,
+            DialogConstants.PN_PADDING);
 
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
@@ -30,6 +44,20 @@ public class TabsContainerHandler extends ContainerHandler {
      */
     @Override
     public void accept(Class<?> componentClass, Target parentElement) {
-        populateContainer(componentClass, parentElement, Tab.class);
+        populateContainer(
+            componentClass,
+            parentElement,
+            Arrays.asList(Tab.class,
+                com.exadel.aem.toolkit.api.annotations.container.Tab.class)
+        );
+        Tabs tabsAnnotation = componentClass.getDeclaredAnnotation(Tabs.class);
+        Target layoutContainer = null;
+        if (tabsAnnotation != null) {
+            layoutContainer = Targets.newInstance(DialogConstants.NN_LAYOUT)
+                .attributes(tabsAnnotation, LAYOUT_PROPERTIES_FILTER);
+        }
+        if (layoutContainer != null && !layoutContainer.isEmpty() && parentElement.exists(DialogConstants.NN_CONTENT)) {
+            parentElement.getTarget(DialogConstants.NN_CONTENT).addTarget(layoutContainer, 0);
+        }
     }
 }
