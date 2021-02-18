@@ -108,6 +108,15 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return this.children;
     }
 
+    @Override
+    public boolean isEmpty() {
+        if (!children.isEmpty() || attributes.size() > 1) {
+            return false;
+        }
+        return attributes.isEmpty()
+            || attributes.getOrDefault(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
+                .equals(DialogConstants.NT_UNSTRUCTURED);
+    }
 
     /* ----------------
        Scope operations

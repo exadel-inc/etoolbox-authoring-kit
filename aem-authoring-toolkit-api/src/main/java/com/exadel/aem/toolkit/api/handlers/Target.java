@@ -30,17 +30,59 @@ public interface Target {
 
     List<Target> getChildren();
 
+    boolean isEmpty();
+
+    Scope getScope();
+
     default boolean exists(String path) {
         return getTarget(path) != null;
     }
-
-    Scope getScope();
 
     Target getTarget(String path);
 
     Target getOrCreateTarget(String path);
 
     Target createTarget(String path);
+
+    default void addTarget(Target other) {
+        if (other != null && other.getParent() != null) {
+            other.getParent().getChildren().remove(other);
+        }
+        if (other != null) {
+            getChildren().add(other);
+        }
+    }
+
+    default void addTarget(Target other, int position) {
+        if (other != null && other.getParent() != null) {
+            other.getParent().getChildren().remove(other);
+        }
+        if (other != null) {
+            getChildren().add(position, other);
+        }
+    }
+
+    default void addTarget(Target other, Target near) {
+        int position = near != null ? getChildren().indexOf(near) : -1;
+        if (position > -1) {
+            addTarget(other, position);
+        } else {
+            addTarget(other);
+        }
+    }
+
+    default void addTarget(Target other, Target near, boolean placeAfter) {
+        if (!placeAfter) {
+            addTarget(other, near);
+            return;
+        }
+        int position = near != null ? getChildren().indexOf(near) : -1;
+        if (position > -1 && position < getChildren().size() - 1) {
+            addTarget(other, position + 1);
+        } else {
+            addTarget(other);
+        }
+    }
 
     void removeTarget(String path);
 
