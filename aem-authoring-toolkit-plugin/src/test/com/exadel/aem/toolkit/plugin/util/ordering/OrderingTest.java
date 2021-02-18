@@ -25,6 +25,8 @@ import java.util.stream.IntStream;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.api.handlers.OrderableValue;
+
 public class OrderingTest {
 
     private static final List<String> CYCLED_GRAPH_SEQUENCE_2 = Arrays.asList(
@@ -73,7 +75,7 @@ public class OrderingTest {
     // Test, that size will be equal to initial size and ordered list consists of unique nodes
     @Test
     public void testRandomOrderableList() {
-        List<Orderable<String>> list = getRandomList(100);
+        List<OrderableValue<String>> list = getRandomList(100);
 
         List<String> answer = getSortedByValues(list);
 
@@ -84,7 +86,7 @@ public class OrderingTest {
     // Test graph with cycle inside
     @Test
     public void testGraphWithCycleInside1() {
-        List<Orderable<String>> list = getList(5);
+        List<OrderableValue<String>> list = getList(5);
 
         list.get(0).setBefore(list.get(1));
         list.get(1).setBefore(list.get(2));
@@ -101,7 +103,7 @@ public class OrderingTest {
     // Test graph with cycle inside
     @Test
     public void testGraphWithCycleInside2() {
-        List<Orderable<String>> list = getList(7);
+        List<OrderableValue<String>> list = getList(7);
 
         list.get(0).setBefore(list.get(1));
         list.get(1).setBefore(list.get(2));
@@ -119,7 +121,7 @@ public class OrderingTest {
     // Test cycle graph
     @Test
     public void testSimpleCycleGraph() {
-        List<Orderable<String>> list = getList(4);
+        List<OrderableValue<String>> list = getList(4);
 
         list.get(0).setBefore(list.get(1));
         list.get(1).setBefore(list.get(2));
@@ -133,7 +135,7 @@ public class OrderingTest {
 
     @Test
     public void testExampleGraph1() {
-        List<Orderable<String>> list = getList(10);
+        List<OrderableValue<String>> list = getList(10);
 
         list.get(1).setBefore(list.get(0));
         list.get(2).setBefore(list.get(6));
@@ -143,7 +145,7 @@ public class OrderingTest {
         list.get(7).setAfter(list.get(6));
         list.get(9).setBefore(list.get(5));
 
-        List<Orderable<String>> answer = getTopologicalSorted(list);
+        List<OrderableValue<String>> answer = getTopologicalSorted(list);
         List<String> answerValues = getSortedByValues(list);
 
         assertOrdered(answer, list);
@@ -153,9 +155,9 @@ public class OrderingTest {
     // Test graph without edges
     @Test
     public void testExampleGraph2() {
-        List<Orderable<String>> list = getList(7);
+        List<OrderableValue<String>> list = getList(7);
 
-        List<Orderable<String>> answer = getTopologicalSorted(list);
+        List<OrderableValue<String>> answer = getTopologicalSorted(list);
         List<String> answerValues = getSortedByValues(list);
 
         assertOrdered(answer, list);
@@ -163,19 +165,19 @@ public class OrderingTest {
     }
 
     // Inits list without edges
-    private List<Orderable<String>> getList(int size) {
+    private List<OrderableValue<String>> getList(int size) {
         return IntStream.range(0, size)
-            .mapToObj(i -> new Orderable<>("Handler" + i, "Handler" + i))
+            .mapToObj(i -> new OrderableValue<>("Handler" + i, "Handler" + i))
             .collect(Collectors.toList());
     }
 
     // Inits list with random edges
     @SuppressWarnings("SameParameterValue")
-    private List<Orderable<String>> getRandomList(int size) {
-        List<Orderable<String>> list = new ArrayList<>(size);
+    private List<OrderableValue<String>> getRandomList(int size) {
+        List<OrderableValue<String>> list = new ArrayList<>(size);
         Random random = new Random();
         for (int i = 0; i < size; i++) {
-            list.add(new Orderable<>("Handler" + i, "Handler" + i));
+            list.add(new OrderableValue<>("Handler" + i, "Handler" + i));
         }
         for (int i = 0; i < size; i++) {
             int mode = random.nextInt(3);
@@ -199,16 +201,16 @@ public class OrderingTest {
         return list;
     }
 
-    private List<Orderable<String>> getTopologicalSorted(List<Orderable<String>> list) {
+    private List<OrderableValue<String>> getTopologicalSorted(List<OrderableValue<String>> list) {
         return new TopologicalSorter<>(list).topologicalSort();
     }
 
-    private List<String> getSortedByValues(List<Orderable<String>> list) {
-        return getTopologicalSorted(list).stream().map(Orderable::getValue).collect(Collectors.toList());
+    private List<String> getSortedByValues(List<OrderableValue<String>> list) {
+        return getTopologicalSorted(list).stream().map(OrderableValue::getValue).collect(Collectors.toList());
     }
 
-    private void assertOrdered(List<Orderable<String>> answer, List<Orderable<String>> initial) {
-        for (Orderable<String> node : initial) {
+    private void assertOrdered(List<OrderableValue<String>> answer, List<OrderableValue<String>> initial) {
+        for (OrderableValue<String> node : initial) {
             int currentPosition = answer.indexOf(node);
             int beforePosition = node.getBefore() != null
                 ? answer.indexOf(node.getBefore())
