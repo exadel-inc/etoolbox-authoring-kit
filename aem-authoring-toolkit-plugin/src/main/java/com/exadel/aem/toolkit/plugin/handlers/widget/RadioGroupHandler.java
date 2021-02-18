@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -30,7 +31,7 @@ import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for {@code RadioGroup} widget functionality
  * within the {@code cq:dialog} node
  */
-class RadioGroupHandler implements BiConsumer<Source, Target> {
+class RadioGroupHandler extends OptionProviderHandler implements BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to {@link Target}
      * @param source Current {@link Source} instance
@@ -41,6 +42,10 @@ class RadioGroupHandler implements BiConsumer<Source, Target> {
     // .acsListPath() and .acsListResourceType() method calls remain for compatibility reasons until v.2.0.0
     public void accept(Source source, Target target) {
         RadioGroup radioGroup = source.adaptTo(RadioGroup.class);
+        if (hasProvidedOptions(radioGroup.buttonProvider())) {
+            appendOptionProvider(radioGroup.buttonProvider(), target);
+            return;
+        }
         if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));
@@ -48,8 +53,11 @@ class RadioGroupHandler implements BiConsumer<Source, Target> {
         PluginXmlUtility.appendDataSource(target, radioGroup.datasource(), radioGroup.acsListPath(), radioGroup.acsListResourceType());
     }
 
-    private void renderButton(RadioButton buttonInstance, Target parentElement) {
-        parentElement.createTarget(buttonInstance.value())
-                .attributes(buttonInstance, PluginAnnotationUtility.getPropertyMappingFilter(buttonInstance));
+    private void renderButton(RadioButton button, Target parentElement) {
+        List<Target> existing = parentElement.findChildren(t -> button.value().equals(t.getAttribute(DialogConstants.PN_VALUE)));
+        Target item = existing.isEmpty()
+            ? parentElement.createTarget(DialogConstants.DOUBLE_QUOTE + button.value() + DialogConstants.DOUBLE_QUOTE)
+            : parentElement.getTarget(DialogConstants.DOUBLE_QUOTE + button.value() + DialogConstants.DOUBLE_QUOTE);
+        item.attributes(button, PluginAnnotationUtility.getPropertyMappingFilter(button));
     }
 }

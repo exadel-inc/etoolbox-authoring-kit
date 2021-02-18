@@ -71,11 +71,12 @@ public class RichTextEditorWidget {
                     @IconMapping(command = "#misctools", icon = "fileCode")
             },
             specialCharacters = {
+                    @Characters(name = "Complex entity", entity = "<input type=&quot;button&quot; value=&quot;OK&quot;/>"),
                     @Characters(name = "Copyright", entity = "&copy"),
                     @Characters(name = "Euro sign", entity = "&#x20AC"),
                     @Characters(name = "Registered", entity = "&#x00AE"),
                     @Characters(name = "Trademark", entity = "&#x2122"),
-                    @Characters(rangeStart = 998, rangeEnd = 1020),
+                    @Characters(rangeStart = 998, rangeEnd = 1020)
             },
             htmlPasteRules = @HtmlPasteRules(
                     allowBold = false,

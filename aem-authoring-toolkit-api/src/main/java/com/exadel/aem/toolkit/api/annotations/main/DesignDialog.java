@@ -42,7 +42,7 @@ public @interface DesignDialog {
      *
      * @return String value, non-blank
      */
-    @PropertyRendering(name = JcrConstants.PN_TITLE)
+    @PropertyRendering(name = "jcr:title")
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String title();
 

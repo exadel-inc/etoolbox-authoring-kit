@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
@@ -89,8 +88,10 @@ public @interface FileUpload {
      * @see ButtonVariant
      * @return One of {@code ButtonVariant} values
      */
-    @PropertyRendering(name = "variant")
-    @EnumValue(transformation = StringTransformation.CAMELCASE)
+    @PropertyRendering(
+        name = "variant",
+        transform = StringTransformation.CAMELCASE
+    )
     ButtonVariant buttonVariant() default ButtonVariant.PRIMARY;
     /**
      * Maps to the 'text' attribute of this TouchUI dialog component's node.
@@ -113,10 +114,9 @@ public @interface FileUpload {
      * @return One of {@code ButtonSize} values
      */
     @PropertyRendering(name = "size")
-    @EnumValue()
     ButtonSize buttonSize() default ButtonSize.MEDIUM;
     /**
-     * When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the 'icon' attribute of this TouchUI dialog component's node.
      * Used to define component's icon
      * @return String value
      */
@@ -127,7 +127,6 @@ public @interface FileUpload {
      * @see IconSize
      * @return One of {@code IconSize} values
      */
-    @EnumValue()
     IconSize iconSize() default IconSize.SMALL;
 }
 

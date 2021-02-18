@@ -38,7 +38,20 @@ public class ImageUploadWidget {
             buttonVariant = ButtonVariant.QUIET,
             fileNameParameter = "./image/fileName",
             multiple = true,
-            className = "css-class-name"
+            className = "css-class-name",
+            fileReferenceParameter = "./image/fileRef"
     )
     String file1;
+
+    @DialogField
+    @ImageUpload(
+        mimeTypes=".png",
+        sizeLimit = 100000,
+        fileNameParameter = "./image/fileName",
+        fileReferenceParameter = "image/fileRef",
+        allowUpload = true,
+        viewInAdminURI = "admin/uri",
+        icon = "search"
+    )
+    String file2;
 }

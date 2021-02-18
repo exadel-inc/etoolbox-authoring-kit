@@ -14,8 +14,8 @@
 
 package com.exadel.aem.toolkit.test.component;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
-import com.exadel.aem.toolkit.api.annotations.main.Component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -23,6 +23,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Replace;
+import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
+import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.api.markers._Super;
 import com.exadel.aem.toolkit.plugin.util.TestConstants;
 
@@ -98,7 +100,7 @@ public class InheritanceTestCases {
         private String text4;
     }
 
-    @Component(
+    @AemComponent(
         path = TestConstants.DEFAULT_COMPONENT_NAME,
         resourceSuperType = TestConstants.DEFAULT_COMPONENT_SUPERTYPE,
         title = TestConstants.DEFAULT_COMPONENT_TITLE
@@ -146,7 +148,7 @@ public class InheritanceTestCases {
     private static class FieldsetParent extends FieldsetGrandparent {
         @DialogField(
             label = "Fieldset parent",
-            ranking = 3 // will not be effective because overridden by FieldsetChil#fiseldsetText3
+            ranking = 3 // will not be effective because overridden by FieldsetChild#fiseldsetText3
         )
         @TextField
         // Will override the same-named parent "as is"
@@ -158,6 +160,19 @@ public class InheritanceTestCases {
         )
         @TextField
         private String fieldsetText2;
+
+        @DialogField(
+            label = "Fieldset parent",
+            ranking = 4
+        )
+        @Select(
+            options = {
+                @Option(text = "Default option", value = ""),
+                @Option(text = "Parent option 1", value = "option-1"),
+                @Option(text = "Parent option 2", value = "option 2")
+            }
+        )
+        private String fieldsetSelect;
     }
 
     private static class FieldsetChild extends FieldsetParent {
@@ -176,5 +191,18 @@ public class InheritanceTestCases {
         )
         @TextField
         private String fieldsetText3;
+
+        @DialogField(
+            label = "Fieldset child",
+            ranking = 4
+        )
+
+        @Select(
+            options = {
+                @Option(text = "Child option 1", value = "option-1"),
+                @Option(text = "Child option 2", value = "option 2")
+            }
+        )
+        private String fieldsetSelect;
     }
 }

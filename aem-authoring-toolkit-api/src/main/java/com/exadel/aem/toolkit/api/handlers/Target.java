@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.common.XmlScope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 
 public interface Target {
 
@@ -34,7 +34,7 @@ public interface Target {
         return getTarget(path) != null;
     }
 
-    XmlScope getScope();
+    Scope getScope();
 
     Target getTarget(String path);
 
@@ -43,6 +43,12 @@ public interface Target {
     Target createTarget(String path);
 
     void removeTarget(String path);
+
+    Target findParent(Predicate<Target> filter);
+
+    Target findChild(Predicate<Target> filter);
+
+    List<Target> findChildren(Predicate<Target> filter);
 
     String getNamePrefix();
 
@@ -54,15 +60,33 @@ public interface Target {
 
     Map<String, String> getAttributes();
 
+    default String getAttribute(String name) {
+        return getAttributes().get(name);
+    }
+
+    default String getAttribute(String name, String defaultValue) {
+        return getAttributes().getOrDefault(name, defaultValue);
+    }
+
     Target attribute(String name, String value);
+
+    Target attribute(String name, String[] value);
 
     Target attribute(String name, boolean value);
 
+    Target attribute(String name, boolean[] value);
+
     Target attribute(String name, long value);
+
+    Target attribute(String name, long[] value);
 
     Target attribute(String name, double value);
 
+    Target attribute(String name, double[] value);
+
     Target attribute(String name, Date value);
+
+    Target attribute(String name, Date[] value);
 
     Target attributes(Map<String, Object> map);
 

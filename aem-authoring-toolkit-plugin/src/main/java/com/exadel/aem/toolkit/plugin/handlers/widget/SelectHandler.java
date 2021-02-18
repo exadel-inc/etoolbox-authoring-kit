@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -30,7 +31,7 @@ import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite {@code Select} widget functionality
  * within the {@code cq:dialog} node
  */
-class SelectHandler implements BiConsumer<Source, Target> {
+class SelectHandler extends OptionProviderHandler implements BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to {@link Target}
      * @param source Current {@link Source} instance
@@ -42,12 +43,18 @@ class SelectHandler implements BiConsumer<Source, Target> {
     // remain for compatibility reasons until v.2.0.0
     public void accept(Source source, Target target) {
         Select select = source.adaptTo(Select.class);
+        if (hasProvidedOptions(select.optionProvider())) {
+            appendOptionProvider(select.optionProvider(), target);
+            return;
+        }
         if (ArrayUtils.isNotEmpty(select.options())) {
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             for (Option option: select.options()) {
-                items
-                    .createTarget(option.value())
-                    .attributes(option, PluginAnnotationUtility.getPropertyMappingFilter(option));
+                List<Target> existing = items.findChildren(t -> option.value().equals(t.getAttribute(DialogConstants.PN_VALUE)));
+                Target item = existing.isEmpty()
+                    ? items.createTarget(DialogConstants.DOUBLE_QUOTE + option.value() + DialogConstants.DOUBLE_QUOTE)
+                    : items.getTarget(DialogConstants.DOUBLE_QUOTE + option.value() + DialogConstants.DOUBLE_QUOTE);
+                item.attributes(option, PluginAnnotationUtility.getPropertyMappingFilter(option));
             }
         }
         Target dataSourceElement = PluginXmlUtility.appendDataSource(

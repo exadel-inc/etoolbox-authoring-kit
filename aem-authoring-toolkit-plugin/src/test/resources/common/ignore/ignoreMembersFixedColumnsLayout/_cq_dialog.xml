@@ -19,7 +19,7 @@
                             name="./acsListOptions"
                             deleteHint="{Boolean}false"
                             disabled="{Boolean}false"
-                            fieldLabel="ACS List Options"
+                            fieldLabel="ACS options list"
                             renderHidden="{Boolean}false"
                             required="{Boolean}false">
                         <datasource

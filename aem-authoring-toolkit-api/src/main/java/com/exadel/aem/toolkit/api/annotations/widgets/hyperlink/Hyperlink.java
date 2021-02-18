@@ -22,8 +22,9 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizeConstants;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.Linkchecker;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.LinkCheckerVariant;
 
 /**
  * Used to set up
@@ -78,11 +79,15 @@ public @interface Hyperlink {
 
     /**
      * Maps to the x-cq-linkchecker attribute of this TouchUI dialog component's node
-     * @return One of {@code HyperlinkLinkchecker} values
-     * @see Linkchecker
+     * @return One of {@link LinkCheckerVariant} values
+     * @see LinkCheckerVariant
      */
-    @PropertyRendering(ignoreValues = "NONE")
-    Linkchecker xCqLinkchecker() default Linkchecker.NONE;
+    @PropertyRendering(
+        name = "x-cq-linkchecker",
+        ignoreValues = "none",
+        transform = StringTransformation.LOWERCASE
+    )
+    LinkCheckerVariant linkChecker() default LinkCheckerVariant.NONE;
 
     /**
      * Maps to the icon name. e.g. “search” of this TouchUI dialog component's node

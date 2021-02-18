@@ -72,11 +72,6 @@ public class MultiFieldHandler implements BiConsumer<Source, Target> {
         Target multifieldContainerElement = target.getOrCreateTarget(DialogConstants.NN_FIELD)
                 .attribute(DialogConstants.PN_NAME, name)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
-
-        // In case there are multiple sources in multifield container, their "name" values must not be preceded
-        // with "./" which is by default
-        // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
-        // That is why we must alter the default name prefix for the ongoing set of sources
         PluginContainerUtility.appendToContainer(multifieldContainerElement, sources);
     }
 

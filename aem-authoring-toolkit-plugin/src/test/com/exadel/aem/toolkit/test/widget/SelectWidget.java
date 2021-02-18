@@ -18,6 +18,8 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
@@ -32,6 +34,8 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 )
 @SuppressWarnings("unused")
 public class SelectWidget {
+    private static final String ACS_LIST_PATH = "/path/to/acs/list";
+
     @DialogField(label = "Rating")
     @Select(options = {
             @Option(text = "Empty", value = ""),
@@ -67,11 +71,24 @@ public class SelectWidget {
             emptyOption = true)
     String timezone;
 
-    @DialogField(label="ACS List Options")
+    @DialogField(label = "Provided options list")
+    @Select(
+        optionProvider = @OptionProvider(
+            sources = {
+                @OptionSource(path = ACS_LIST_PATH),
+                @OptionSource(path = ACS_LIST_PATH + "2", fallbackPath = ACS_LIST_PATH + "3", textMember = "pageTitle"),
+            },
+            prepend = "None:none",
+            sorted = true
+        )
+    )
+    String optionList;
+
+    @DialogField(label="ACS options list")
     @Select(
             datasource = @DataSource(
                     resourceType = "acs/list/resource/type",
-                    path = "/path/to/acs/list"
+                    path = ACS_LIST_PATH
             ),
             deleteHint = false
     )

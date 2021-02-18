@@ -15,10 +15,12 @@
 package com.exadel.aem.toolkit.plugin.maven;
 
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -87,14 +89,21 @@ public abstract class DefaultTestBase {
     }
 
     void test(Class<?> testable, String... pathElements) {
-        Path pathToExpectedContent = Paths.get(TestConstants.CONTENT_ROOT_PATH, pathElements).toAbsolutePath();
+        test(testable, Paths.get(TestConstants.CONTENT_ROOT_PATH, pathElements).toAbsolutePath(), null);
+    }
+
+    void test(Class<?> testable, Path path, Consumer<FileSystem> preparation) {
+        if (preparation != null) {
+            preparation.accept(fileSystemHelper.getFileSystem());
+        }
         try {
-            boolean result = TestXmlUtility.doTest(fileSystemHelper.getFileSystem(), testable.getName(), pathToExpectedContent);
+            boolean result = TestXmlUtility.doTest(fileSystemHelper.getFileSystem(), testable.getName(), path);
             Assert.assertTrue(result);
-        } catch (ClassNotFoundException cnfe) {
-            LOG.error(INSTANTIATION_EXCEPTION_MESSAGE + testable.getName(), cnfe);
-        } catch (IOException ioe) {
-            LOG.error(CLEANUP_EXCEPTION_MESSAGE + testable.getName(), ioe);
+        } catch (ClassNotFoundException cnfEx) {
+            LOG.error(INSTANTIATION_EXCEPTION_MESSAGE + testable.getName(), cnfEx);
+        } catch (IOException ioEx) {
+            LOG.error(CLEANUP_EXCEPTION_MESSAGE + testable.getName(), ioEx);
         }
     }
+
 }

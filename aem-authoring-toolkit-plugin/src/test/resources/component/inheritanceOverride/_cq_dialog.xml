@@ -49,6 +49,19 @@
                                 disabled="{Boolean}false"
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}false"/>
+                            <fieldsetSelect jcr:primaryType="nt:unstructured"
+                                      sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                      name="./fieldsetSelect"
+                                      fieldLabel="Fieldset child"
+                                      disabled="{Boolean}false"
+                                      renderHidden="{Boolean}false"
+                                      required="{Boolean}false">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <item jcr:primaryType="nt:unstructured" text="Default option" value=""/>
+                                    <option1 jcr:primaryType="nt:unstructured" text="Child option 1" value="option-1"/>
+                                    <option2 jcr:primaryType="nt:unstructured" text="Child option 2" value="option 2"/>
+                                </items>
+                            </fieldsetSelect>
                         </items>
                     </fieldsetChild>
                     <text jcr:primaryType="nt:unstructured"

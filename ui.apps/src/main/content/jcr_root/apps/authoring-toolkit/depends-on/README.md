@@ -26,7 +26,7 @@ DependsOn workflow consists of the following steps:
 
 **QueryObserver** holds and process **Query** and initiates **Action** on **ObservedReferences** change.
 
-**ObservedReferences** are external elements or group of elements whose values can be used inside of **Query**.
+**ObservedReferences** are external elements or group of elements whose values can be used inside **Query**.
 
 More detailed DependsOn structure is presented below.
 ![DependsOn Structure](./docs/structure.jpg)
@@ -35,7 +35,7 @@ More detailed DependsOn structure is presented below.
 
 "DependsOn" plugin is based on the following data attributes.
 
-For dependent field:
+For a dependent field:
 
 * `data-dependson` - to provide Query with condition or expression for the Action.
 * `data-dependsonaction` - (optional) to define Action that should be executed.
@@ -60,6 +60,8 @@ Built-in plugin actions are:
  * `required` - set the required marker of the field from the query result.
  * `validate` - set the validation state of the field from the query result.
  * `disabled` - set the field's disabled state from the query result.
+* `update-options` - changes the option set of a Granite Select component if it depends on a value of a foreign component (e.g. another component can alter the JCR path from which current Select's options are taken).
+
 
 If the action is not specified then `visibility` is used by default.
 
@@ -163,7 +165,7 @@ class MyComponent {
     private String field1;
 }
 ```
-But, if you write directly to XML or HTML, you should escape them by hand:
+However, if you write directly to XML or HTML, you should escape them by hand:
 ```xml
 <granite:data dependson="@field === '\\;'"></granite:data>
 ```

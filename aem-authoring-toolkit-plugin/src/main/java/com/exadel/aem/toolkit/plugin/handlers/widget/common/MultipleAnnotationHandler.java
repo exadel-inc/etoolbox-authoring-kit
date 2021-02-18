@@ -25,18 +25,19 @@ import java.util.function.BiConsumer;
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.ImmutableMap;
 
-import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
+import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.target.Targets;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
 /**
  * Handler for creating ad-hoc {@code Multifield}s for {@link Multiple}-marked dialog fields
@@ -79,8 +80,11 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
 
         // Since this targetFacade has just "emerged" as a multifield, we need to check if there are multifield bound
         // (custom) handlers and run such one more time
-        PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers(Collections.singletonList(MultiField.class))
-                .forEach(handler -> handler.accept(source, target));
+        List<DialogWidgetHandler> multifieldHandlers = PluginRuntime
+            .context()
+            .getReflectionUtility()
+            .getCustomDialogWidgetHandlers(Collections.singletonList(MultiField.class));
+        new CustomHandlingHandler(multifieldHandlers).accept(source, target);
     }
 
     /**
@@ -101,9 +105,19 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * @return True or false
      */
     private boolean isMultifield(Target target) {
-        return StringUtils.equals(target.getAttributes().get(DialogConstants.PN_SLING_RESOURCE_TYPE), ResourceTypes.MULTIFIELD)
-            && target.getTarget(DialogConstants.NN_FIELD) != null
-            && !target.getTarget(DialogConstants.NN_FIELD).getChildren().isEmpty();
+        if (StringUtils.equals(target.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE), ResourceTypes.MULTIFIELD)) {
+            return true;
+        }
+        boolean hasSingularFieldNode = target.getChildren().size() == 1
+            && DialogConstants.NN_FIELD.equals(target.getChildren().get(0).getName());
+        if (!hasSingularFieldNode) {
+            return false;
+        }
+        // Assuming this is a custom multifield, i.e. the target does not match any of the known resource types
+        return PluginReflectionUtility.getConstantValues(ResourceTypes.class).values()
+            .stream()
+            .map(Object::toString)
+            .noneMatch(restype -> restype.equals(target.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE)));
     }
 
     /**
@@ -198,7 +212,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         // Need to override policy for "name" as has been stored in a loop above
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_NAME, PropertyTransferPolicy.MOVE);
         // Some attribute values are expected to be moved or copied though have set to "skipped" above
-        transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + JcrConstants.PN_PRIMARY_TYPE, PropertyTransferPolicy.COPY);
+        transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_PRIMARY_TYPE, PropertyTransferPolicy.COPY);
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_DISABLED, PropertyTransferPolicy.COPY);
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_RENDER_HIDDEN, PropertyTransferPolicy.COPY);
         transferPolicies.put(DialogConstants.ATTRIBUTE_PREFIX + DialogConstants.PN_REQUIRED, PropertyTransferPolicy.MOVE);
