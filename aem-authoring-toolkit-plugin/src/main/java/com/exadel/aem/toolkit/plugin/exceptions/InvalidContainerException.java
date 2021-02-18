@@ -14,25 +14,20 @@
 
 package com.exadel.aem.toolkit.plugin.exceptions;
 
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-
 /**
- * Represents the plugin-specific exception thrown when there is no possibility to operate a particular tab
- * (the tab with such name does not exists, or there are no tabs in the current setup)
+ * Represents the plugin-specific exception thrown when there is no possibility to operate a particular container section
+ * (the container sections, such as a Tab or an AccordionPanel, with such name does not exist, or there are no tabs
+ * in the current setup)
  */
 public class InvalidContainerException extends RuntimeException {
-    private static final String TABS_NOT_DEFINED_MESSAGE = "No tabs defined for the current component";
-    private static final String TAB_NOT_DEFINED_MESSAGE_TEMPLATE = "Tab \"%s\" is not defined";
-    private static final String ACCORDION_PANEL_NOT_DEFINED_MESSAGE_TEMPLATE = "Accordion Panel \"%s\" is not defined";
+    private static final String SECTIONS_NOT_DEFINED_MESSAGE = "No container sections defined for the dialog";
+    private static final String SECTION_NOT_DEFINED_MESSAGE_TEMPLATE = "Container section \"%s\" is not defined";
 
     public InvalidContainerException() {
-        super(TABS_NOT_DEFINED_MESSAGE);
+        super(SECTIONS_NOT_DEFINED_MESSAGE);
     }
 
-    public InvalidContainerException(String tabTitle, String containerName) {
-        super(containerName.equals(DialogConstants.NN_TABS) ?
-            String.format(TAB_NOT_DEFINED_MESSAGE_TEMPLATE, tabTitle) :
-            String.format(ACCORDION_PANEL_NOT_DEFINED_MESSAGE_TEMPLATE, tabTitle));
-
+    public InvalidContainerException(String tabTitle) {
+        super(String.format(SECTION_NOT_DEFINED_MESSAGE_TEMPLATE, tabTitle));
     }
 }
