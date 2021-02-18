@@ -93,6 +93,23 @@ public class TargetsTest {
     }
 
     @Test
+    public void testNodeInjection() {
+        testable.getTarget("item0").addTarget(testable.getTarget("item1"));
+        Assert.assertNotNull(testable.getTarget("item0/item1"));
+        Assert.assertEquals(TIER_1_CHILD_COUNT - 1, testable.getChildren().size());
+
+        testable.getTarget("item0").addTarget(testable.getTarget("item2"), testable.getTarget("item0/item1"));
+        testable.getTarget("item0").addTarget(testable.getTarget("item3"), testable.getTarget("item0/item1"), true);
+        Assert.assertEquals(TIER_1_CHILD_COUNT - 3, testable.getChildren().size());
+        Assert.assertEquals("item2", testable.getTarget("item0").getChildren().get(1).getName());
+        Assert.assertEquals("item3", testable.getTarget("item0").getChildren().get(3).getName());
+
+        testable.addTarget(testable.getTarget("item0"));
+        Assert.assertEquals(TIER_1_CHILD_COUNT - 3, testable.getChildren().size());
+        Assert.assertEquals("item0", testable.getChildren().get(TIER_1_CHILD_COUNT - 4).getName());
+    }
+
+    @Test
     public void testNodeTraversing() {
         Assert.assertEquals(TIER_1_CHILD_COUNT / 2, testable.findChildren(t -> t.getName().startsWith(NN_SUBITEM)).size());
         Assert.assertEquals(3, testable.findChildren(t -> t.getAttribute(PN_ORDINAL).equals("{Long}0")).size());

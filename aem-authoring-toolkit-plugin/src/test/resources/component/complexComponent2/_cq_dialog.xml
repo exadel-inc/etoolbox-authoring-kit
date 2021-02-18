@@ -16,7 +16,6 @@
                 sling:resourceType="granite/ui/components/coral/foundation/tabs">
                 <items jcr:primaryType="nt:unstructured">
                     <firstTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="First tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -117,7 +116,6 @@
                         </items>
                     </firstTab>
                     <secondTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Second tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -139,7 +137,6 @@
                         </items>
                     </secondTab>
                     <thirdTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Third tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -165,7 +162,6 @@
                         </items>
                     </thirdTab>
                     <fourthTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Fourth tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -468,7 +464,6 @@
                         </items>
                     </fourthTab>
                     <fifthTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Fifth tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -802,7 +797,6 @@
                         </items>
                     </fifthTab>
                     <sixthTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Sixth tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -843,7 +837,6 @@
                         </items>
                     </sixthTab>
                     <seventhTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Seventh tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">

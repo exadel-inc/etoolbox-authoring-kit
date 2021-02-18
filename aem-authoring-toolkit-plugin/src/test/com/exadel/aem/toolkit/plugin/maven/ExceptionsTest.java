@@ -42,14 +42,14 @@ public class ExceptionsTest extends ExceptionsTestBase {
     @Test
     public void testComponentWithNonexistentTab() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidContainerException.class));
-        exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
+        exceptionRule.expectMessage("Container section \"Zeroth tab\" is not defined");
         test(ExceptionsTestCases.ComponentWithNonexistentTab.class);
     }
 
     @Test
     public void testComponentWithWrongDependsOnTab() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidContainerException.class));
-        exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
+        exceptionRule.expectMessage("Container section \"Zeroth tab\" is not defined");
         test(ExceptionsTestCases.ComponentWithNonexistentDependsOnTab.class);
     }
 

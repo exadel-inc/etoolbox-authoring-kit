@@ -14,10 +14,11 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.layouts.LayoutType;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
@@ -31,9 +32,9 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
     title = "Tabs Test Dialog",
     layout = DialogLayout.TABS,
     tabs = {
-        @Tab(title = "First tab"),
-        @Tab(title = "Second tab"),
-        @Tab(title = "Third tab")
+        @com.exadel.aem.toolkit.api.annotations.container.Tab(title = "First tab"),
+        @com.exadel.aem.toolkit.api.annotations.container.Tab(title = "Second tab"),
+        @com.exadel.aem.toolkit.api.annotations.container.Tab(title = "Third tab")
     }
 )
 @SuppressWarnings("unused")
@@ -44,11 +45,16 @@ public class TabsWidget {
     String field1;
 
     @Tabs(
-        name = "innerTabs",
-        tabs = {
-            @Tab(title = "First Inner"),
-            @Tab(title = "Second Inner")
-        })
+        value = {
+            @Tab(title = "First Inner", trackingElement = "first"),
+            @Tab(title = "Second Inner", trackingElement = "second", active = true, icon = "some/icon", padding = true)
+        },
+        maximized = true,
+        trackingFeature = "feature1",
+        trackingWidgetName = "widget1",
+        type = LayoutType.LARGE, // this one should be ignored
+        padding = false // this one should be ignored
+    )
     @Place(in = "First tab")
     TabsExample tabsField;
 
@@ -68,7 +74,7 @@ public class TabsWidget {
         @Place(in = "First Inner")
         String innerFieldInTab;
 
-        @Accordion(name = "Field 2 on the inner Tab", panels = {@AccordionPanel(title = "First Panel")})
+        @Accordion(value = @AccordionPanel(title = "First Panel"))
         @Place(in = "Second Inner")
         AccordionExample accordion;
 

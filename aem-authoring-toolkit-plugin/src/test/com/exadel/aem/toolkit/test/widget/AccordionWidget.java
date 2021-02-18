@@ -25,13 +25,14 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 
 @Dialog(
     name = DEFAULT_COMPONENT_NAME,
-    title = "Accordion Test Dialog",
-    panels = {
+    title = "Accordion Test Dialog"
+)
+@Accordion(
+    value = {
         @AccordionPanel(title = "Basic", disabled = true),
         @AccordionPanel(title = "Basic2")
     }
 )
-@SuppressWarnings("unused")
 public class AccordionWidget {
 
     @DialogField(label = "Field 1")
@@ -40,8 +41,7 @@ public class AccordionWidget {
     String field1;
 
     @Accordion(
-        name = "Field",
-        panels = {@AccordionPanel(title = "Accordion Widget Panel 1", disabled = true)})
+        value = @AccordionPanel(title = "Accordion Widget Panel 1", disabled = true))
     @Place(in = "Basic2")
     AccordionFieldSet accordion;
 

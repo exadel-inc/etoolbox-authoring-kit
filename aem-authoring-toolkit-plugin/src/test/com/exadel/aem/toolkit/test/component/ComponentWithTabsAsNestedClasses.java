@@ -44,7 +44,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_6;
 @SuppressWarnings("unused")
 public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedClassesAncestor {
 
-    @Tab(title = LABEL_TAB_1)
+    @com.exadel.aem.toolkit.api.annotations.layouts.Tab(title = LABEL_TAB_1)
     private static class Tab1 {
         @DialogField(
                 label = "Field 1",
@@ -54,7 +54,7 @@ public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedC
         String field1;
     }
 
-    @Tab(title = LABEL_TAB_2)
+    @com.exadel.aem.toolkit.api.annotations.layouts.Tab(title = LABEL_TAB_2)
     private static class Tab2 {
         @DialogField(label="Field 2")
         @PathField(rootPath = "/content")
@@ -62,7 +62,7 @@ public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedC
         String field2;
     }
 
-    @Tab(title = LABEL_TAB_3)
+    @com.exadel.aem.toolkit.api.annotations.layouts.Tab(title = LABEL_TAB_3)
     private static class Tab3 extends Tab1 {
         @DialogField(
                 label="Field 3",
