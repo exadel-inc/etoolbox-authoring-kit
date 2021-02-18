@@ -54,13 +54,14 @@ public class PluginAnnotationUtility {
     }
 
     /**
-     * Gets the properties exposed by a given {@code Annotation} as a key-value map. The keys are the method names
-     * this annotation possesses, and the values are the results of methods' invocation
-     * @param annotation {@code Annotation} object to retrieve values for
-     * @return {@code Map<String, Object>} instance
+     * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
+     * as a key-value map. The keys are the method names this annotation possesses, and the values are the results
+     * of methods' invocation
+     * @param annotation The annotation instance to analyze
+     * @return List of {@code Method} instances that represent properties initialized with non-defaults
      */
-    public static Map<String, Object> getProperties(Annotation annotation) {
-        return getProperties(annotation, method -> true);
+    public static Map<String, Object> getNonDefaultProperties(Annotation annotation) {
+        return getProperties(annotation, method -> propertyIsNotDefault(annotation, method));
     }
 
     /**
@@ -83,17 +84,6 @@ public class PluginAnnotationUtility {
             }
         }
         return result;
-    }
-
-    /**
-     * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
-     * as a key-value map. The keys are the method names this annotation possesses, and the values are the results
-     * of methods' invocation
-     * @param annotation The annotation instance to analyze
-     * @return List of {@code Method} instances that represent properties initialized with non-defaults
-     */
-    public static Map<String, Object> getNonDefaultProperties(Annotation annotation) {
-        return getProperties(annotation, method -> propertyIsNotDefault(annotation, method));
     }
 
     /**

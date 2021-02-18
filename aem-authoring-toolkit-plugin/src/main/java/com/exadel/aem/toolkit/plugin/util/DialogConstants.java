@@ -58,12 +58,14 @@ public class DialogConstants {
     public static final String NN_FULLSCREEN = "fullscreen";
     public static final String NN_KEYS = "keys";
     public static final String NN_LAYOUT = "layout";
+    public static final String NN_LAYOUT_CONFIG = "layoutConfig";
     public static final String NN_LINKS = "links";
     public static final String NN_LIST = "list";
     public static final String NN_LISTENERS = "cq:listeners";
     public static final String NN_LISTS = "lists";
     public static final String NN_MISCTOOLS = "misctools";
     public static final String NN_OPTIONS = "options";
+    public static final String NN_PANEL = "panel";
     public static final String NN_PANELS = "panels";
     public static final String NN_PARAFORMAT = "paraformat";
     public static final String NN_PARENT_CONFIG = "parentConfig";
@@ -140,6 +142,7 @@ public class DialogConstants {
     public static final String PN_MIN_DATE = "minDate";
     public static final String PN_MODE = "mode";
     public static final String PN_NAME = "name";
+    public static final String PN_PADDING = "padding";
     public static final String PN_PATH = "path";
     public static final String PN_PRIMARY_TITLE = "jcr:primaryTitle";
     public static final String PN_PRIMARY_TYPE = "jcr:primaryType";
@@ -164,6 +167,7 @@ public class DialogConstants {
     public static final String PN_TEXT_TRANSFORM = "textTransform";
     public static final String PN_TITLE = "title";
     public static final String PN_TOOLBAR = "toolbar";
+    public static final String PN_TRACKING_ELEMENT = "trackingElement";
     public static final String PN_TYPE = "type";
     public static final String PN_TYPE_HINT = "typeHint";
     public static final String PN_USE_FIXED_INLINE_TOOLBAR = "useFixedInlineToolbar";

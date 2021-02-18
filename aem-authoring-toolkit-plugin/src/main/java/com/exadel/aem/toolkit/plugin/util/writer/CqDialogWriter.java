@@ -17,13 +17,15 @@ package com.exadel.aem.toolkit.plugin.util.writer;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.stream.Collectors;
 import javax.xml.transform.Transformer;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 
+import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
@@ -38,6 +40,7 @@ import com.exadel.aem.toolkit.plugin.handlers.container.DialogContainer;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
+import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing AEM TouchUI dialog definition (writes data to the
@@ -102,7 +105,7 @@ class CqDialogWriter extends PackageEntryWriter {
                     .and(member -> fitsInScope(member, scope)))
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
 
-        DialogLayout dialogLayout = getLayout(dialogAnnotation);
+        DialogLayout dialogLayout = getLayout(componentClass, scope);
         DialogContainer.getContainer(dialogLayout).build(componentClass, target);
 
         new DependsOnTabHandler().accept(componentClass, target);
@@ -116,25 +119,41 @@ class CqDialogWriter extends PackageEntryWriter {
                 .forEach(handler -> handler.accept(componentClass, target));
     }
 
-    private static DialogLayout getLayout(Annotation annotation) {
-        if (annotation instanceof Dialog) {
-            Dialog dialog = ((Dialog) annotation);
-            if (!ArrayUtils.isEmpty(dialog.tabs())) {
-                return DialogLayout.TABS;
+    /**
+     * Retrieves the {@link DialogLayout} for the component class provided. The value is computed based
+     * on layout annotations provided for the component class. If no specific annotations found, the default layout,
+     * which is {@link DialogLayout#FIXED_COLUMNS}, returned
+     * @param componentClass The {@code Class} being processed
+     * @param scope Indicates whether to look for a {@code Dialog}, or {@code DesignDialog} annotation as a possible
+     *              source of layout
+     * @return {@code DialogLayout} value
+     */
+    private static DialogLayout getLayout(Class<?> componentClass, Scope scope) {
+        DialogLayout result = DialogLayout.FIXED_COLUMNS;
+
+        List<Class<?>> hierarchy = PluginReflectionUtility.getClassHierarchy(componentClass, true);
+        ListIterator<Class<?>> hierarchyIterator = hierarchy.listIterator(hierarchy.size());
+
+        while (hierarchyIterator.hasPrevious()) {
+            Class<?> current = hierarchyIterator.previous();
+            if (scope.equals(Scope.CQ_DIALOG)
+                && current.isAnnotationPresent(Dialog.class)
+                && current.getDeclaredAnnotation(Dialog.class).tabs().length > 0) {
+                result = DialogLayout.TABS;
             }
-            if (!ArrayUtils.isEmpty(dialog.panels())) {
-                return DialogLayout.ACCORDION;
+            Tabs tabsAnnotation = current.getDeclaredAnnotation(Tabs.class);
+            if (tabsAnnotation != null && tabsAnnotation.value().length > 0) {
+                result = DialogLayout.TABS;
             }
-            return dialog.layout();
+            Accordion accordionAnnotation = current.getDeclaredAnnotation(Accordion.class);
+            if (accordionAnnotation != null && accordionAnnotation.value().length > 0) {
+                result = DialogLayout.ACCORDION;
+            }
+            if (!result.equals(DialogLayout.FIXED_COLUMNS)) {
+                return result;
+            }
         }
-        DesignDialog dialog = ((DesignDialog) annotation);
-        if (!ArrayUtils.isEmpty(dialog.tabs())) {
-            return DialogLayout.TABS;
-        }
-        if (!ArrayUtils.isEmpty(dialog.panels())) {
-            return DialogLayout.ACCORDION;
-        }
-        return dialog.layout();
+        return result;
     }
 
     /**

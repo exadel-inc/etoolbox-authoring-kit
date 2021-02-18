@@ -19,8 +19,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
-import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
@@ -70,19 +68,4 @@ public @interface DesignDialog {
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
     double width() default 560;
-
-    /**
-     * For the tabbed TouchUI dialog layout, enumerates the tabs to be rendered
-     *
-     * @return One or more {@code Tab} annotations
-     * @see Tab
-     */
-    Tab[] tabs() default {};
-
-    /**
-     * For the accordion-shaped TouchUI dialog layout, enumerates the panels to be rendered
-     * @return Zero or more {@code AccordionPanel} annotations
-     * @see AccordionPanel
-     */
-    AccordionPanel[] panels() default {};
 }

@@ -33,7 +33,7 @@ public class Sources {
 
     /**
      * Creates a {@link Source} facade for a Java class member
-     * @param member A {@code Method} or a {@code Field} for which a source facade is cledayed
+     * @param member A {@code Method} or a {@code Field} for which a source facade is created
      * @return {@code Source instance}
      */
     public static Source fromMember(Member member) {
@@ -42,10 +42,10 @@ public class Sources {
 
     /**
      * Creates a {@link Source} facade for a Java class member
-     * @param member A {@code Method} or a {@code Field} for which a source facade is cledayed
-     * @param reportingClass {@code Class<?>} pointer determing the class that "reports" the AEM Authpring Toolkit's plugin
+     * @param member A {@code Method} or a {@code Field} for which a source facade is created
+     * @param reportingClass {@code Class<?>} pointer determining the class that "reports" the AEM Authoring Toolkit's plugin
      *                       of current member (can be a class where this member was declared or a descendant of
-     *                       some superclass that uses the memeber for UI rendering)
+     *                       some superclass that uses the member for UI rendering)
      * @return {@code Source instance}
      */
     public static Source fromMember(Member member, Class<?> reportingClass) {
