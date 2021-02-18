@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          jcr:title="Test Component"
+          width="{Double}560.0"
+          height="{Double}480.0">
+    <content jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <accordion jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/accordion">
+                <items jcr:primaryType="nt:unstructured">
+                    <firstPanel jcr:primaryType="nt:unstructured"
+                              sling:resourceType="granite/ui/components/coral/foundation/container"
+                              jcr:title="First panel">
+                        <items jcr:primaryType="nt:unstructured">
+                            <field1 jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./field1"
+                                    fieldLabel="Field 1"
+                                    fieldDescription="This is the first field."
+                                    disabled="{Boolean}false"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"/>
+                        </items>
+                    </firstPanel>
+                    <secondPanel jcr:primaryType="nt:unstructured"
+                               sling:resourceType="granite/ui/components/coral/foundation/container"
+                               jcr:title="Second panel">
+                        <items jcr:primaryType="nt:unstructured">
+                            <field2 jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./field2"
+                                    fieldLabel="Field 2"
+                                    fieldDescription="This is the second field."
+                                    disabled="{Boolean}false"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"/>
+                        </items>
+                    </secondPanel>
+                </items>
+            </accordion>
+        </items>
+    </content>
+</jcr:root>

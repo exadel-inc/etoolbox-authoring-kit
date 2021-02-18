@@ -74,7 +74,7 @@ public class TabsWidget {
         @Place(in = "First Inner")
         String innerFieldInTab;
 
-        @Accordion(value = @AccordionPanel(title = "First Panel"))
+        @Accordion(value = @AccordionPanel(title = "First Panel", active = true))
         @Place(in = "Second Inner")
         AccordionExample accordion;
 

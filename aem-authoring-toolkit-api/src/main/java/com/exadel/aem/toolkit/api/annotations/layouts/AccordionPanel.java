@@ -19,13 +19,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
  * Used to set up as specific
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html">
  * Accordion panel</a>  item in multi-tab TouchUI dialog setup or within an {@code Accordion} widget
  */
-@Target(ElementType.FIELD)
+@Target(value = ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping
 @SuppressWarnings("unused")
@@ -41,11 +42,13 @@ public @interface AccordionPanel {
      * True to open the item initially; false otherwise
      * @return True or false
      */
+    @PropertyRendering(ignoreValues = "false")
     boolean active() default false;
 
     /**
      * True to disable the item; false otherwise
      * @return True or false
      */
+    @PropertyRendering(ignoreValues = "false")
     boolean disabled() default false;
 }

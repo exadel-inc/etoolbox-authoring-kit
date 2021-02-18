@@ -68,8 +68,7 @@
                                                                 sling:resourceType="granite/ui/components/coral/foundation/container"
                                                                 jcr:title="First Panel">
                                                         <parentConfig jcr:primaryType="nt:unstructured"
-                                                                      active="{Boolean}false"
-                                                                      disabled="{Boolean}false"/>
+                                                                      active="{Boolean}true"/>
                                                         <items jcr:primaryType="nt:unstructured">
                                                             <field6 disabled="{Boolean}false"
                                                                     jcr:primaryType="nt:unstructured"

@@ -18,8 +18,7 @@
                         jcr:title="Basic"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
                         <parentConfig jcr:primaryType="nt:unstructured"
-                                      disabled="{Boolean}true"
-                                      active="{Boolean}false"/>
+                                      disabled="{Boolean}true"/>
                         <items jcr:primaryType="nt:unstructured">
                             <field2 jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"

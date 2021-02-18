@@ -30,9 +30,10 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 @Accordion(
     value = {
         @AccordionPanel(title = "Basic", disabled = true),
-        @AccordionPanel(title = "Basic2")
+        @AccordionPanel(title = "Basic2", active = true)
     }
 )
+@SuppressWarnings("unused")
 public class AccordionWidget {
 
     @DialogField(label = "Field 1")
