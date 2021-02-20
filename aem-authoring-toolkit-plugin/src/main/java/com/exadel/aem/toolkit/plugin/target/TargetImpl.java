@@ -553,10 +553,10 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         }
 
         BinaryOperator<String> merger = TargetImpl::mergeStringAttributes;
-        AttributeSettingHelper.forMethod(context, method)
+        AttributeSettingHelper.forAnnotationProperty(context, method)
             .withName(propertyName)
             .withMerger(merger)
-            .setAttribute(effectiveTarget);
+            .setTo(effectiveTarget);
     }
 
     private static String mergeStringAttributes(String first, String second) {

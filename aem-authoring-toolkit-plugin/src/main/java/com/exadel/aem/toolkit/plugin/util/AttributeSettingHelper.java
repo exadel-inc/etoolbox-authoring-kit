@@ -36,17 +36,23 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
 /**
- * Helper class for validating and rendering typed attributes to XML nodes
- * @see PluginXmlUtility#setAttribute(Element, String, Annotation, BinaryOperator)
- * @param <T> Type of value to be rendered as XML attribute
+ * Helper class for storing authored attributes to entities, such as {@link Target} or an XML element
+ * @param <T> Type of managed entity
+ * @param <V> Type of value to set
  */
-public class AttributeSettingHelper<T> {
+public class AttributeSettingHelper<T, V> {
     private static final String TYPE_TOKEN_TEMPLATE = "{%s}%s";
     private static final String TYPE_TOKEN_ARRAY_TEMPLATE = "{%s}[%s]";
     private static final String STRING_ESCAPE = "\\";
-    private static final String REFLECTION_EXCEPTION_MESSAGE_TEMPLATE = "Error accessing property '%s' of @%s";
 
-    private final Class<T> valueType;
+
+    /* ------------------------------------------
+       Instance fields and constructors/modifiers
+       ------------------------------------------ */
+
+
+    private final Class<T> holderType;
+    private final Class<V> valueType;
     private boolean valueTypeIsSupported;
 
     private Annotation annotation;
@@ -62,61 +68,13 @@ public class AttributeSettingHelper<T> {
     private BinaryOperator<String> valueMerger = PluginXmlUtility.DEFAULT_ATTRIBUTE_MERGER;
 
     /**
-     * Creates XmlAttributeSettingHelper instance parametrized with value type
-     * @param valueType Type of value to be rendered as XML attribute
+     * Creates a new {@code AttributeSettingHelper} instance parametrized with holder type and value type
+     * @param holderType Type of attribute holder
+     * @param valueType Type of value to be stored
      */
-    private AttributeSettingHelper(Class<T> valueType) {
+    private AttributeSettingHelper(Class<T> holderType, Class<V> valueType) {
+        this.holderType = holderType;
         this.valueType = valueType;
-    }
-
-    /**
-     * Retrieves XmlAttributeSettingHelper for particular {@code Annotation}'s property
-     * @param annotation Target annotation
-     * @param method Method representing target annotation's property
-     * @return New {@code XmlAttributeSettingHelper} instance
-     */
-    @SuppressWarnings({"deprecation", "squid:S1874"}) // IgnoreValue processing remains for compatibility reasons until v.2.0.0
-    public static AttributeSettingHelper forMethod(Annotation annotation, Method method) {
-        AttributeSettingHelper attributeSetter = new AttributeSettingHelper<>(getMethodWrappedType(method));
-        if (!fits(method)) {
-            return attributeSetter;
-        }
-        attributeSetter.valueTypeIsSupported = true;
-        attributeSetter.method = method;
-        attributeSetter.annotation = annotation;
-        attributeSetter.name = method.getName();
-        attributeSetter.isEnum = method.getReturnType().isEnum()
-                || (method.getReturnType().getComponentType() != null
-                && method.getReturnType().getComponentType().isEnum());
-        if (method.isAnnotationPresent(PropertyRendering.class)) {
-            PropertyRendering propertyRendering = method.getAnnotation(PropertyRendering.class);
-            attributeSetter.ignoredValues = propertyRendering.ignoreValues();
-            attributeSetter.blankValuesAllowed = propertyRendering.allowBlank();
-            attributeSetter.transformation = propertyRendering.transform();
-        } else if (method.isAnnotationPresent(IgnoreValue.class)) {
-            attributeSetter.ignoredValues = new String[] {method.getAnnotation(IgnoreValue.class).value()};
-        }
-
-        if (PluginAnnotationUtility.propertyIsNotDefault(annotation, method)) {
-            attributeSetter.validationChecker = Validation.forMethod(method);
-        }
-        return attributeSetter;
-    }
-
-    /**
-     * Retrieves XmlAttributeSettingHelper for specified attribute name and type
-     * @param name Target attribute name
-     * @param valueType Target value type
-     * @return New typed {@code XmlAttributeSettingHelper} instance
-     */
-    static <T> AttributeSettingHelper<T> forNamedValue(String name, Class<T> valueType) {
-        AttributeSettingHelper<T> attributeSetter = new AttributeSettingHelper<>(valueType);
-        if (!fits(valueType)) {
-            return attributeSetter;
-        }
-        attributeSetter.valueTypeIsSupported = true;
-        attributeSetter.name = name;
-        return attributeSetter;
     }
 
     /**
@@ -124,7 +82,7 @@ public class AttributeSettingHelper<T> {
      * @param name Provisional name
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    public AttributeSettingHelper<T> withName(String name) {
+    public AttributeSettingHelper<T,V> withName(String name) {
         this.name = name;
         return this;
     }
@@ -135,12 +93,22 @@ public class AttributeSettingHelper<T> {
      *               or combine/merge)
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    public AttributeSettingHelper<T> withMerger(BinaryOperator<String> merger) {
+    public AttributeSettingHelper<T,V> withMerger(BinaryOperator<String> merger) {
         this.valueMerger = merger;
         return this;
     }
 
-    public void setAttribute(Target target) {
+
+    /* --------------
+       Values setting
+       -------------- */
+
+
+    /**
+     * Stores attribute value defined by the wrapped {@code Annotation} property to the given target
+     * @param target Value holder instance
+     */
+    public void setTo(T target) {
         if (!valueTypeIsSupported) {
             return;
         }
@@ -149,70 +117,49 @@ public class AttributeSettingHelper<T> {
             return;
         }
         if (method.getReturnType().isArray()) {
-            List<T> invocationResultList = Arrays.stream(castToArray(invocationResult))
+            List<V> invocationResultList = Arrays.stream(castToArray(invocationResult))
                 .map(this::cast)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-            setAttribute(target, invocationResultList);
+            setValue(invocationResultList, target);
         } else {
-            setAttribute(target, cast(invocationResult));
+            setValue(cast(invocationResult), target);
         }
     }
 
     /**
-     * Implements {@code Element}'s attribute rendering logic
-     * @param element Element node instance
+     * Stores provided attribute value to the given target
+     * @param value  Value to store
+     * @param target Value holder instance
      */
-    void setAttribute(Element element) {
+    public void setValue(V value, T target) {
         if (!valueTypeIsSupported) {
             return;
         }
-        Object invocationResult = PluginAnnotationUtility.getProperty(annotation, method);
-        if (invocationResult == null) {
+        String valueString = value != null ? value.toString() : StringUtils.EMPTY;
+
+        if (!isValid(valueString)) {
+            removeAttributeFrom(target);
             return;
         }
-        if (method.getReturnType().isArray()) {
-            List<T> invocationResultList = Arrays.stream(castToArray(invocationResult))
-                .map(this::cast)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-            setAttribute(element, invocationResultList);
-        } else {
-            setAttribute(element, cast(invocationResult));
-        }
+
+        setValue(
+            valueType.equals(String.class)
+                ? valueString
+                : String.format(TYPE_TOKEN_TEMPLATE, valueType.getSimpleName(), valueString),
+            target);
     }
 
     /**
-     * Implements {@code Element}'s attribute rendering logic
-     * @param element Element node instance
-     * @param value Particular value to be rendered
+     * Stores provided attribute value collection to the given target
+     * @param value  Value to store
+     * @param target Value holder instance
      */
-    void setAttribute(Target element, T value) {
-        if (!valueTypeIsSupported) {
+    public void setValue(List<V> value, T target) {
+        if (!valueTypeIsSupported || value == null || value.isEmpty()) {
             return;
         }
-        String stringifiedValue = value != null ? value.toString() : StringUtils.EMPTY;
-
-        if (!isValid(stringifiedValue)) {
-            element.getAttributes().remove(name);
-            return;
-        }
-
-        setAttribute(element, valueType.equals(String.class)
-                ? stringifiedValue
-                : String.format(TYPE_TOKEN_TEMPLATE, valueType.getSimpleName(), stringifiedValue));
-    }
-
-    /**
-     * Implements {@code Element}'s attribute rendering logic
-     * @param element Element node instance
-     * @param values List of values to be rendered
-     */
-    void setAttribute(Target element, List<T> values) {
-        if (!valueTypeIsSupported || values == null || values.isEmpty()) {
-            return;
-        }
-        String valueString = values.stream()
+        String valueString = value.stream()
                 .map(Object::toString)
                 .filter(this::isValid)
                 .map(s -> s.startsWith(RteFeatures.BEGIN_POPOVER) && s.endsWith(RteFeatures.END_POPOVER) ? STRING_ESCAPE + s : s)
@@ -220,64 +167,43 @@ public class AttributeSettingHelper<T> {
         if (valueString.isEmpty()) {
             return;
         }
-        setAttribute(element, valueType.equals(String.class)
+        setValue(
+            valueType.equals(String.class)
                 ? String.format(PluginXmlUtility.ATTRIBUTE_LIST_TEMPLATE, valueString)
-                : String.format(TYPE_TOKEN_ARRAY_TEMPLATE, valueType.getSimpleName(), valueString));
+                : String.format(TYPE_TOKEN_ARRAY_TEMPLATE, valueType.getSimpleName(), valueString),
+            target);
+    }
+
+
+    /**
+     * Assigns {@code String}-casted attribute value to the given target
+     * @param value String to store as the attribute
+     * @param target Value holder instance
+     */
+    private void setValue(String value, T target) {
+        if (Element.class.equals(holderType)) {
+            Element element = (Element) target;
+            String oldAttributeValue = element.hasAttribute(name)
+                ? element.getAttribute(name)
+                : StringUtils.EMPTY;
+            element.setAttribute(name, valueMerger.apply(oldAttributeValue, value));
+        } else if (Target.class.equals(holderType)) {
+            Target castedTarget = (Target) target;
+            String oldAttributeValue = castedTarget.getAttributes().getOrDefault(name, StringUtils.EMPTY);
+            castedTarget.attribute(name, valueMerger.apply(oldAttributeValue, value));
+        }
     }
 
     /**
-     * Sets String-casted attribute value to an {@code Element} node
-     * @param element Element node instance
-     * @param value String to store as the attribute
+     * Removes the attribute known by {@code name} from the media provided
+     * @param target Value holder instance
      */
-    private void setAttribute(Target element, String value) {
-        String oldAttributeValue = element.getAttributes().getOrDefault(name, StringUtils.EMPTY);
-        element.attribute(name, valueMerger.apply(oldAttributeValue, value));
-    }
-
-    void setAttribute(Element element, T value) {
-        if (!valueTypeIsSupported) {
-            return;
+    private void removeAttributeFrom(T target) {
+        if (Element.class.equals(holderType)) {
+            ((Element) target).removeAttribute(name);
+        } else if (Target.class.equals(holderType)){
+            ((Target) target).getAttributes().remove(name);
         }
-        String stringifiedValue = value != null ? value.toString() : StringUtils.EMPTY;
-
-        if (!isValid(stringifiedValue)) {
-            element.removeAttribute(name);
-            return;
-        }
-
-        setAttribute(element, valueType.equals(String.class)
-            ? stringifiedValue
-            : String.format(TYPE_TOKEN_TEMPLATE, valueType.getSimpleName(), stringifiedValue));
-    }
-
-    void setAttribute(Element element, List<T> values) {
-        if (!valueTypeIsSupported || values == null || values.isEmpty()) {
-            return;
-        }
-        String valueString = values.stream()
-            .map(Object::toString)
-            .filter(this::isValid)
-            .map(s -> s.startsWith(RteFeatures.BEGIN_POPOVER) && s.endsWith(RteFeatures.END_POPOVER) ? STRING_ESCAPE + s : s)
-            .collect(Collectors.joining(RteFeatures.FEATURE_SEPARATOR));
-        if (valueString.isEmpty()) {
-            return;
-        }
-        setAttribute(element, valueType.equals(String.class)
-            ? String.format(PluginXmlUtility.ATTRIBUTE_LIST_TEMPLATE, valueString)
-            : String.format(TYPE_TOKEN_ARRAY_TEMPLATE, valueType.getSimpleName(), valueString));
-    }
-
-    /**
-     * Sets String-casted attribute value to an {@code Element} node
-     * @param element Element node instance
-     * @param value String to store as the attribute
-     */
-    private void setAttribute(Element element, String value) {
-        String oldAttributeValue = element.hasAttribute(name)
-            ? element.getAttribute(name)
-            : "";
-        element.setAttribute(name, valueMerger.apply(oldAttributeValue, value));
     }
 
     /**
@@ -292,12 +218,18 @@ public class AttributeSettingHelper<T> {
         return !ArrayUtils.contains(ignoredValues, value);
     }
 
+
+    /* --------------
+       Values casting
+       -------------- */
+
+
     /**
      * Tries to cast generic value to current instance's type
      * @param value Raw value
      * @return Type-casted value, or null
      */
-    private T cast(Object value) {
+    private V cast(Object value) {
         if (!validationChecker.test(value)) {
             return null;
         }
@@ -318,7 +250,7 @@ public class AttributeSettingHelper<T> {
      * @param value Raw value
      * @return Array of type-casted values
      */
-    private Object[] castToArray(Object value) {
+    private static Object[] castToArray(Object value) {
         Object[] result = new Object[Array.getLength(value)];
         for (int i = 0; i < result.length; i++) {
             result[i] = Array.get(value, i);
@@ -327,41 +259,7 @@ public class AttributeSettingHelper<T> {
     }
 
     /**
-     * Gets whether specific annotation property/method can be rendered to XML
-     * @param method {@code Method} instance representing an annotation property
-     * @return True or false
-     */
-    private static boolean fits(Method method) {
-        return fits(ClassUtils.primitiveToWrapper(getMethodWrappedType(method)));
-    }
-
-    /**
-     * Gets whether value of specific type can be rendered to XML
-     * @param valueType Annotation's property {@code Class}
-     * @return True or false
-     */
-    private static boolean fits(Class<?> valueType) {
-        return valueType.equals(String.class)
-                || valueType.equals(Long.class)
-                || valueType.equals(Double.class)
-                || valueType.equals(Boolean.class);
-    }
-
-    /**
-     * Retrieves an eligible object type for a method ({@code Enum}s being casted to Strings)
-     * @param method {@code Method} instance representing an annotation property
-     * @return Object type
-     */
-    private static Class<?> getMethodWrappedType(Method method) {
-        Class<?> effectiveType = PluginReflectionUtility.getPlainType(method);
-        if (effectiveType.isEnum()) {
-            return String.class;
-        }
-        return ClassUtils.primitiveToWrapper(effectiveType);
-    }
-
-    /**
-     * Utility method to transform a stringified enum value to uppercase, lowercase or camel-case
+     * Transform an {@code enum} value to uppercase, lowercase or camel-case
      * depending on particular AEM component's specification
      * @param value Raw string value
      * @param transformation {@link StringTransformation} variant
@@ -380,6 +278,131 @@ public class AttributeSettingHelper<T> {
                 return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, value.toLowerCase());
             default:
                 return value;
+        }
+    }
+
+
+    /* -------------
+       Factory logic
+       ------------- */
+
+
+    /**
+     * Retrieves an {@link AttributeSettingHelper.Builder} aimed at creating helper object for manipulation with XML
+     * elements. This is mainly to be used with notation such as
+     * {@code AttributeSettingHelper.forXmlTarget().forAnnotationProperty(...)}
+     * @return {@link AttributeSettingHelper.Builder} instance
+     */
+    public static Builder<Element> forXmlTarget() {
+        return new Builder<>(Element.class);
+    }
+
+    /**
+     * Retrieves an AttributeSettingHelper instance for a particular {@code Annotation}'s property
+     * @param annotation {@code Annotation} object to handle
+     * @param property     {@code Method} that represents the annotation's property
+     * @return New {@code AttributeSettingHelper} instance
+     */
+    public static AttributeSettingHelper<Target,?> forAnnotationProperty(Annotation annotation, Method property) {
+        return new Builder<>(Target.class).forAnnotationProperty(annotation, property);
+    }
+
+    /**
+     * Builds instances of {@link AttributeSettingHelper} for a particular attribute-storing media type
+     */
+    public static class Builder<T> {
+        private final Class<T> holderType;
+
+        /**
+         * Creates a new {@code Builder} instance
+         * @param holderType {@code Class<?>} reference representing the type of media where attributes values are stored
+         */
+        private Builder(Class<T> holderType) {
+            this.holderType = holderType;
+        }
+
+        /**
+         * Retrieves an AttributeSettingHelper instance for a particular {@code Annotation}'s property
+         * @param annotation {@code Annotation} object to handle
+         * @param property     {@code Method} that represents the annotation's property
+         * @return New {@code AttributeSettingHelper} instance
+         */
+        @SuppressWarnings({"deprecation", "squid:S1874"}) // IgnoreValue processing remains for compatibility reasons until v.2.0.0
+        public AttributeSettingHelper<T,?> forAnnotationProperty(Annotation annotation, Method property) {
+            AttributeSettingHelper<T,?> attributeSetter = new AttributeSettingHelper<>(holderType, getMethodWrappedType(property));
+            if (!fits(property)) {
+                return attributeSetter;
+            }
+            attributeSetter.valueTypeIsSupported = true;
+            attributeSetter.method = property;
+            attributeSetter.annotation = annotation;
+            attributeSetter.name = property.getName();
+            attributeSetter.isEnum = property.getReturnType().isEnum()
+                || (property.getReturnType().getComponentType() != null
+                && property.getReturnType().getComponentType().isEnum());
+            if (property.isAnnotationPresent(PropertyRendering.class)) {
+                PropertyRendering propertyRendering = property.getAnnotation(PropertyRendering.class);
+                attributeSetter.ignoredValues = propertyRendering.ignoreValues();
+                attributeSetter.blankValuesAllowed = propertyRendering.allowBlank();
+                attributeSetter.transformation = propertyRendering.transform();
+            } else if (property.isAnnotationPresent(IgnoreValue.class)) {
+                attributeSetter.ignoredValues = new String[] {property.getAnnotation(IgnoreValue.class).value()};
+            }
+
+            if (PluginAnnotationUtility.propertyIsNotDefault(annotation, property)) {
+                attributeSetter.validationChecker = Validation.forMethod(property);
+            }
+            return attributeSetter;
+        }
+
+        /**
+         * Retrieves an AttributeSettingHelper instance for a specified attribute name and value type
+         * @param name      Target attribute name
+         * @param valueType Target value type
+         * @return New {@code AttributeSettingHelper} instance
+         */
+        public <V> AttributeSettingHelper<T,V> forNamedValue(String name, Class<V> valueType) {
+            AttributeSettingHelper<T,V> attributeSetter = new AttributeSettingHelper<>(holderType, valueType);
+            if (!fits(valueType)) {
+                return attributeSetter;
+            }
+            attributeSetter.valueTypeIsSupported = true;
+            attributeSetter.name = name;
+            return attributeSetter;
+        }
+
+        /**
+         * Gets whether specific annotation property/method can be rendered to XML
+         * @param method {@code Method} instance representing an annotation property
+         * @return True or false
+         */
+        private static boolean fits(Method method) {
+            return fits(ClassUtils.primitiveToWrapper(getMethodWrappedType(method)));
+        }
+
+        /**
+         * Retrieves an eligible object type for a method ({@code Enum}s being casted to Strings)
+         * @param method {@code Method} instance representing an annotation property
+         * @return Object type
+         */
+        private static Class<?> getMethodWrappedType(Method method) {
+            Class<?> effectiveType = PluginReflectionUtility.getPlainType(method);
+            if (effectiveType.isEnum()) {
+                return String.class;
+            }
+            return ClassUtils.primitiveToWrapper(effectiveType);
+        }
+
+        /**
+         * Gets whether value of specific type can be rendered to XML
+         * @param valueType Annotation's property {@code Class}
+         * @return True or false
+         */
+        private static boolean fits(Class<?> valueType) {
+            return valueType.equals(String.class)
+                || valueType.equals(Long.class)
+                || valueType.equals(Double.class)
+                || valueType.equals(Boolean.class);
         }
     }
 }

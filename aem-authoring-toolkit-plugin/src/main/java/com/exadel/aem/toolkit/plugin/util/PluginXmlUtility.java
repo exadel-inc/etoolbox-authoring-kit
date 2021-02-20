@@ -183,7 +183,7 @@ public class PluginXmlUtility implements XmlUtility {
         }
         Element newNode = createNodeElement(nameProvider.apply(source));
         Arrays.stream(source.annotationType().getDeclaredMethods())
-                .forEach(method -> AttributeSettingHelper.forMethod(source, method).setAttribute(newNode));
+                .forEach(method -> AttributeSettingHelper.forXmlTarget().forAnnotationProperty(source, method).setTo(newNode));
         return newNode;
     }
 
@@ -219,22 +219,34 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public void setAttribute(Element element, String name, Double value) {
-        AttributeSettingHelper.forNamedValue(name, Double.class).setAttribute(element, value);
+        AttributeSettingHelper
+            .forXmlTarget()
+            .forNamedValue(name, Double.class)
+            .setValue(value, element);
     }
 
     @Override
     public void setAttribute(Element element, String name, Long value) {
-        AttributeSettingHelper.forNamedValue(name, Long.class).setAttribute(element, value);
+        AttributeSettingHelper
+            .forXmlTarget()
+            .forNamedValue(name, Long.class)
+            .setValue(value, element);
     }
 
     @Override
     public void setAttribute(Element element, String name, Boolean value) {
-        AttributeSettingHelper.forNamedValue(name, Boolean.class).setAttribute(element, value);
+        AttributeSettingHelper
+            .forXmlTarget()
+            .forNamedValue(name, Boolean.class)
+            .setValue(value, element);
     }
 
     @Override
     public void setAttribute(Element element, String name, String value) {
-        AttributeSettingHelper.forNamedValue(name, String.class).setAttribute(element, value);
+        AttributeSettingHelper
+            .forXmlTarget()
+            .forNamedValue(name, String.class)
+            .setValue(value, element);
     }
 
     @Override
@@ -244,7 +256,11 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public void setAttribute(Element element, String name, List<String> values, BinaryOperator<String> attributeMerger) {
-        AttributeSettingHelper.forNamedValue(name, String.class).withMerger(attributeMerger).setAttribute(element, values);
+        AttributeSettingHelper
+            .forXmlTarget()
+            .forNamedValue(name, String.class)
+            .withMerger(attributeMerger)
+            .setValue(values, element);
     }
 
     @Override
@@ -294,10 +310,12 @@ public class PluginXmlUtility implements XmlUtility {
             } else if (propertyName != null) {
                 effectiveName = StringUtils.defaultIfBlank(propertyName.value(), name);
             }
-            AttributeSettingHelper.forMethod(source, sourceMethod)
-                    .withName(effectiveName)
-                    .withMerger(attributeMerger)
-                    .setAttribute(elementSupplier.get());
+            AttributeSettingHelper
+                .forXmlTarget()
+                .forAnnotationProperty(source, sourceMethod)
+                .withName(effectiveName)
+                .withMerger(attributeMerger)
+                .setTo(elementSupplier.get());
         } catch (NoSuchMethodException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(source.getClass(), name));
         }
@@ -370,10 +388,12 @@ public class PluginXmlUtility implements XmlUtility {
             name = namePrefix + name;
         }
         BinaryOperator<String> merger = PluginXmlUtility::mergeStringAttributes;
-        AttributeSettingHelper.forMethod(annotation, method)
-                .withName(name)
-                .withMerger(merger)
-                .setAttribute(element);
+        AttributeSettingHelper
+            .forXmlTarget()
+            .forAnnotationProperty(annotation, method)
+            .withName(name)
+            .withMerger(merger)
+            .setTo(element);
     }
 
     /**
@@ -457,9 +477,11 @@ public class PluginXmlUtility implements XmlUtility {
     private static Element mergeAttributes(Element first, Element second, BinaryOperator<String> attributeMerger) {
         NamedNodeMap newAttributes = second.getAttributes();
         for (int i = 0; i < newAttributes.getLength(); i++) {
-            AttributeSettingHelper.forNamedValue(newAttributes.item(i).getNodeName(), String.class)
-                    .withMerger(attributeMerger)
-                    .setAttribute(first, newAttributes.item(i).getNodeValue());
+            AttributeSettingHelper
+                .forXmlTarget()
+                .forNamedValue(newAttributes.item(i).getNodeName(), String.class)
+                .withMerger(attributeMerger)
+                .setValue(newAttributes.item(i).getNodeValue(), first);
         }
         return first;
     }
