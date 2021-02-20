@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,14 +21,14 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
+import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.PluginContainerUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
 /**
  * Handler used to prepare data for {@link FieldSet} widget rendering
  */
-class FieldSetHandler implements BiConsumer<Source, Target> {
+class FieldSetHandler extends WidgetContainerHandler {
 
     private static final String EMPTY_FIELDSET_EXCEPTION_MESSAGE = "No valid fields found in fieldset class ";
 
@@ -41,11 +40,10 @@ class FieldSetHandler implements BiConsumer<Source, Target> {
      */
     @Override
     public void accept(Source source, Target target) {
-        // Define the working @FieldSet annotation instance and the fieldset type
         FieldSet fieldSet = source.adaptTo(FieldSet.class);
         Class<?> fieldSetType = source.getValueType();
 
-        List<Source> fieldSetEntries = PluginContainerUtility.getContainerEntries(source, true);
+        List<Source> fieldSetEntries = getEntriesForContainer(source, true);
 
         if (fieldSetEntries.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(
@@ -59,7 +57,6 @@ class FieldSetHandler implements BiConsumer<Source, Target> {
                 .namePrefix(PluginNamingUtility.getValidFieldName(fieldSet.namePrefix()))
                 .namePostfix(fieldSet.namePostfix());
         }
-        // Append the valid sources to the container
-        PluginContainerUtility.appendToContainer(target, fieldSetEntries);
+        populateContainer(fieldSetEntries, target);
     }
 }

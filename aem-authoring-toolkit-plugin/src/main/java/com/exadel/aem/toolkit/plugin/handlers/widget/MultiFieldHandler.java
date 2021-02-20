@@ -14,21 +14,20 @@
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
 import java.util.List;
-import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
+import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginContainerUtility;
 
 /**
  * Handler used to prepare data for {@link MultiField} widget rendering
  */
-public class MultiFieldHandler implements BiConsumer<Source, Target> {
+public class MultiFieldHandler extends WidgetContainerHandler {
 
     private static final String EMPTY_MULTIFIELD_EXCEPTION_MESSAGE = "No valid fields found in multifield class ";
 
@@ -45,7 +44,7 @@ public class MultiFieldHandler implements BiConsumer<Source, Target> {
         target.getAttributes().remove(DialogConstants.PN_NAME);
 
         // Get the filtered members collection for the current container; early return if collection is empty
-        List<Source> members = PluginContainerUtility.getContainerEntries(source, true);
+        List<Source> members = getEntriesForContainer(source, true);
         if (members.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.getValueType().getName()
@@ -72,7 +71,7 @@ public class MultiFieldHandler implements BiConsumer<Source, Target> {
         Target multifieldContainerElement = target.getOrCreateTarget(DialogConstants.NN_FIELD)
                 .attribute(DialogConstants.PN_NAME, name)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
-        PluginContainerUtility.appendToContainer(multifieldContainerElement, sources);
+        populateContainer(sources, multifieldContainerElement);
     }
 
     /**

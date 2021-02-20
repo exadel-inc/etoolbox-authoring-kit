@@ -51,7 +51,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param target            The root of rendering for the current component
      * @param annotationClass   {@code Class<?>} object representing types of container sections to process
      */
-    @SuppressWarnings("SameParameterValue") //annotationClass is used as param in view of further code scaling
+    @SuppressWarnings("SameParameterValue") // annotationClass is used as param in view of code scalability
     protected void populateContainer(
         Class<?> componentClass,
         Target target,

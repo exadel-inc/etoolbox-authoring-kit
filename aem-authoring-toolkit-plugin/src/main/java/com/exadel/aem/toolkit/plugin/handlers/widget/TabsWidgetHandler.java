@@ -43,6 +43,6 @@ public class TabsWidgetHandler extends WidgetContainerHandler {
     @Override
     public void accept(Source source, Target target) {
         target.attributes(source.adaptTo(Tabs.class), WIDGET_PROPERTIES_FILTER);
-        populateContainer(source, target, Tabs.class);
+        populateNestedContainer(source, target, Tabs.class);
     }
 }

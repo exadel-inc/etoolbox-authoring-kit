@@ -31,6 +31,6 @@ class AccordionWidgetHandler extends WidgetContainerHandler {
      */
     @Override
     public void accept(Source source, Target target) {
-        populateContainer(source, target, Accordion.class);
+        populateNestedContainer(source, target, Accordion.class);
     }
 }
