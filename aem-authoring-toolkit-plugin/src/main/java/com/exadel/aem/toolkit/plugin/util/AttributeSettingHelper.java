@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.plugin.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -34,8 +33,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
-import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
 /**
@@ -147,21 +144,18 @@ public class AttributeSettingHelper<T> {
         if (!valueTypeIsSupported) {
             return;
         }
-        try {
-            Object invocationResult = method.invoke(annotation);
-            if (method.getReturnType().isArray()) {
-                List<T> invocationResultList = Arrays.stream(castToArray(invocationResult))
-                        .map(this::cast)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-                setAttribute(target, invocationResultList);
-            } else {
-                setAttribute(target, cast(invocationResult));
-            }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
-                    String.format(REFLECTION_EXCEPTION_MESSAGE_TEMPLATE, method.getName(), annotation.annotationType().getSimpleName()),
-                    e));
+        Object invocationResult = PluginAnnotationUtility.getProperty(annotation, method);
+        if (invocationResult == null) {
+            return;
+        }
+        if (method.getReturnType().isArray()) {
+            List<T> invocationResultList = Arrays.stream(castToArray(invocationResult))
+                .map(this::cast)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+            setAttribute(target, invocationResultList);
+        } else {
+            setAttribute(target, cast(invocationResult));
         }
     }
 
@@ -173,21 +167,18 @@ public class AttributeSettingHelper<T> {
         if (!valueTypeIsSupported) {
             return;
         }
-        try {
-            Object invocationResult = method.invoke(annotation);
-            if (method.getReturnType().isArray()) {
-                List<T> invocationResultList = Arrays.stream(castToArray(invocationResult))
-                        .map(this::cast)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-                setAttribute(element, invocationResultList);
-            } else {
-                setAttribute(element, cast(invocationResult));
-            }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
-                    String.format(REFLECTION_EXCEPTION_MESSAGE_TEMPLATE, method.getName(), annotation.annotationType().getSimpleName()),
-                    e));
+        Object invocationResult = PluginAnnotationUtility.getProperty(annotation, method);
+        if (invocationResult == null) {
+            return;
+        }
+        if (method.getReturnType().isArray()) {
+            List<T> invocationResultList = Arrays.stream(castToArray(invocationResult))
+                .map(this::cast)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+            setAttribute(element, invocationResultList);
+        } else {
+            setAttribute(element, cast(invocationResult));
         }
     }
 
