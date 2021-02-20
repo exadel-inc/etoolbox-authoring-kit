@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.plugin.handlers.widget;
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.container.common.WidgetContainerHandler;
+import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
 
 /**
  * Handler used to prepare data for {@link Accordion} widget rendering

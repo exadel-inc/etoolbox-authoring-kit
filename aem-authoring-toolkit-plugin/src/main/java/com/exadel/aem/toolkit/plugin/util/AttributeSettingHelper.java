@@ -123,7 +123,7 @@ public class AttributeSettingHelper<T> {
     }
 
     /**
-     * Sets {@param name} of current instance. Suitable for chained initialization of XmlAttributeSettingHelper
+     * Sets name of current instance. Suitable for chained initialization of XmlAttributeSettingHelper
      * @param name Provisional name
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
@@ -133,7 +133,7 @@ public class AttributeSettingHelper<T> {
     }
 
     /**
-     * Sets {@param merger} of current instance. Suitable for chained initialization of XmlAttributeSettingHelper
+     * Sets merger of current instance. Suitable for chained initialization of XmlAttributeSettingHelper
      * @param merger Function that manages an existing attribute value, and a new one (whether to keep only one of them
      *               or combine/merge)
      * @return Current {@code XmlAttributeSettingHelper} instance

@@ -54,7 +54,7 @@ public class MultiFieldHandler implements BiConsumer<Source, Target> {
         }
 
         // Process separately the multiple-source and the single-source modes of multifield
-        if (members.size() > 1){
+        if (members.size() > 1) {
             process(members, target, name);
         } else {
             process(members.get(0), target);

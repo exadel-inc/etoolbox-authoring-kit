@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.container;
+package com.exadel.aem.toolkit.plugin.handlers.layouts;
 
 import java.util.List;
 import java.util.function.BiConsumer;

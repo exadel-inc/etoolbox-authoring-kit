@@ -11,11 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.container;
+package com.exadel.aem.toolkit.plugin.handlers.layouts;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.container.common.ContainerHandler;
+import com.exadel.aem.toolkit.plugin.handlers.layouts.common.ContainerHandler;
 
 /**
  * The {@code Handler} for a accordion-shaped TouchUI dialog

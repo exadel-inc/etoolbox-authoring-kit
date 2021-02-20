@@ -12,32 +12,29 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.handlers.container.common;
+package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.target.Targets;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
-class LegacyTabFacade extends SectionFacade {
-
-    private final Tab tab;
+class AccordionPanelFacade extends SectionFacade {
+    private final AccordionPanel panel;
 
     /**
-     * Creates a new {@code SectionHelper} wrapped around the specified {@link Tab} object
+     * Creates a new {@code SectionHelper} wrapped around the specified {@link AccordionPanel} object
      *
-     * @param tab {@code Tab} object
+     * @param panel {@code AccordionPanel} object
      * @param isLayout   True if the current section is a dialog layout section; false if it is a dialog widget section
      */
-    LegacyTabFacade(Tab tab, boolean isLayout) {
+    AccordionPanelFacade(AccordionPanel panel, boolean isLayout) {
         super(isLayout);
-        this.tab = tab;
+        this.panel = panel;
     }
 
     /**
@@ -45,10 +42,10 @@ class LegacyTabFacade extends SectionFacade {
      */
     @Override
     String getTitle() {
-        if (tab == null) {
+        if (panel == null) {
             return StringUtils.EMPTY;
         }
-        return tab.title();
+        return panel.title();
     }
 
     /**
@@ -56,18 +53,18 @@ class LegacyTabFacade extends SectionFacade {
      */
     @Override
     Target createItemsContainer(Target container) {
-        if (tab == null) {
+        if (panel == null) {
             return container;
         }
         String nodeName = PluginNamingUtility.getUniqueName(getTitle(), DialogConstants.NN_TAB, container);
         Target itemsContainer = container.createTarget(nodeName);
-        itemsContainer
-            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
+        itemsContainer.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
             .attribute(DialogConstants.PN_JCR_TITLE, getTitle());
-        Attribute attributeAnnotation = tab.attribute();
-        itemsContainer.attributes(attributeAnnotation, PluginAnnotationUtility.getPropertyMappingFilter(attributeAnnotation));
-        PluginXmlUtility.appendDataAttributes(itemsContainer, attributeAnnotation.data());
-
+        Target configContainer = Targets.newInstance(DialogConstants.NN_PARENT_CONFIG);
+        configContainer.attributes(panel, method -> !method.getName().equals(DialogConstants.PN_TITLE));
+        if (!configContainer.isEmpty()) {
+            itemsContainer.addTarget(configContainer);
+        }
         return itemsContainer;
     }
 }

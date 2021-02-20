@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.handlers.container.common;
+package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
 
 import java.lang.reflect.Method;
 import java.util.function.Predicate;

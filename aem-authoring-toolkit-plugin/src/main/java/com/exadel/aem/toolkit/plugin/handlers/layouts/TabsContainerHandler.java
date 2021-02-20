@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.container;
+package com.exadel.aem.toolkit.plugin.handlers.layouts;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.container.common.ContainerHandler;
+import com.exadel.aem.toolkit.plugin.handlers.layouts.common.ContainerHandler;
 import com.exadel.aem.toolkit.plugin.target.Targets;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 

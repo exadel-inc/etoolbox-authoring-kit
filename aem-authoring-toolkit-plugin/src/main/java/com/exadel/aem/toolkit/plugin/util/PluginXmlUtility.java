@@ -539,6 +539,7 @@ public class PluginXmlUtility implements XmlUtility {
     /**
      * Retrieves list of {@link Element} nodes from the current document selected by {@link XPath}
      * @param xPath String xPath representation
+     * @param document The document to search for nodes
      * @return List of {@code Element}s, or an empty list
      */
     public static List<Element> getElementNodes(String xPath, Document document) {

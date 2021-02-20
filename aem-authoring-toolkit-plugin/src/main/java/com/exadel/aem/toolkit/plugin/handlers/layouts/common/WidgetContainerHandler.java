@@ -1,4 +1,4 @@
-package com.exadel.aem.toolkit.plugin.handlers.container.common;
+package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
