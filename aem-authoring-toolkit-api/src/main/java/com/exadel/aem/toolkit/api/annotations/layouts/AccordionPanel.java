@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 /**
  * Used to set up as specific
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html">
- * Accordion panel</a>  item in multi-tab TouchUI dialog setup or within an {@code Accordion} widget
+ * Accordion panel</a> item in accordion-shaped TouchUI dialog setup or within an {@code Accordion} widget
  */
 @Target(value = ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

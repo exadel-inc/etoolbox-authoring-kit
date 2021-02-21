@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 /**
  * Used to define the accordion-shaped layout for a TouchUI dialog and/or to set up
  * a <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html">
- * Tabs</a> widget inside dialog
+ * Accordion</a> widget inside dialog
  */
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
