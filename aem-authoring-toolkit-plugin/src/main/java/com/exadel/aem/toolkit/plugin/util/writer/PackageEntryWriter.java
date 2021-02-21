@@ -94,7 +94,8 @@ abstract class PackageEntryWriter {
     abstract void populateTarget(Class<?> componentClass, Target target);
 
     /**
-     *
+     * Called by {@link PackageWriter#write(Class)} before storing new XML entities into the component's folder
+     * to remove redundant and obsolete XML entries
      * @param componentPath {@link Path} representing a file within a file system the data is written to
      */
     final void cleanUp(Path componentPath) {

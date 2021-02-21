@@ -46,10 +46,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
-import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
-import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
-import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -598,63 +595,9 @@ public class PluginXmlUtility implements XmlUtility {
             return;
         }
         Element graniteDataNode = getOrAddChildElement(element,
-                DialogConstants.NN_DATA);
+                DialogConstants.NN_GRANITE_DATA);
         data.entrySet().stream()
                 .filter(entry -> StringUtils.isNotBlank(entry.getKey()))
                 .forEach(entry -> graniteDataNode.setAttribute(entry.getKey(), entry.getValue()));
-    }
-
-
-    /* ----------------------------------
-       Plugin internals - utility methods
-       ---------------------------------- */
-
-
-    public static void appendDataAttributes(Target target, Data[] data) {
-        if (ArrayUtils.isEmpty(data)) {
-            return;
-        }
-        appendDataAttributes(target, Arrays.stream(data).collect(Collectors.toMap(Data::name, Data::value)));
-    }
-
-    public static void appendDataAttributes(Target target, Map<String, String> data) {
-        if (data == null || data.isEmpty()) {
-            return;
-        }
-        Target graniteDataNode = target.getOrCreateTarget(DialogConstants.NN_DATA);
-        data.entrySet().stream()
-                .filter(entry -> StringUtils.isNotBlank(entry.getKey()))
-                .forEach(entry -> graniteDataNode.attribute(entry.getKey(), entry.getValue()));
-    }
-
-    /**
-     * Appends {@link DataSource} value and, for compatibility reasons, deprecated {@code acsListPath}
-     * and {@code acsListResourceType} values to an {@code Element} node
-     * @param target TargetFacade to store data in
-     * @param dataSource Provided values as a {@code DataSource} annotation
-     * @return Appended {@code datasource} node
-     */
-    public static Target appendDataSource(Target target, DataSource dataSource) {
-        Map<String, Object> arbitraryProperties = Arrays.stream(dataSource.properties())
-                .collect(Collectors.toMap(Property::name, Property::value));
-        return appendDataSource(target, dataSource.path(), dataSource.resourceType(), arbitraryProperties);
-    }
-
-    /**
-     * Appends to the current {@code Element} node and returns a child {@code datasource} node
-     * @param target Element to store data in
-     * @param path Path to targetFacade
-     * @param resourceType Use this to set {@code sling:resourceType} of data source
-     * @return Appended {@code datasource} node, or null if the provided {@code resourceType} is invalid
-     */
-    private static Target appendDataSource(Target target, String path, String resourceType, Map<String, Object> properties) {
-        if (StringUtils.isBlank(resourceType)) {
-            return null;
-        }
-        properties.put(DialogConstants.PN_PATH, path);
-
-        return target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
-                .attributes(properties);
     }
 }

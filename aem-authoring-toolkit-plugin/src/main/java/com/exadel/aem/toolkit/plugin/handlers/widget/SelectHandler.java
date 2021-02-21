@@ -25,7 +25,6 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite {@code Select} widget functionality
@@ -54,6 +53,6 @@ class SelectHandler extends OptionProviderHandler implements BiConsumer<Source, 
                 item.attributes(option, PluginAnnotationUtility.getPropertyMappingFilter(option));
             }
         }
-        PluginXmlUtility.appendDataSource(target, select.datasource());
+        appendDataSource(select.datasource(), target);
     }
 }

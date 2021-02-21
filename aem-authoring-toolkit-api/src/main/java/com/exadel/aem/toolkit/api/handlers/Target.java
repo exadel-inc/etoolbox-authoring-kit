@@ -134,5 +134,9 @@ public interface Target {
 
     Target attributes(Annotation annotation, Predicate<Method> filter);
 
+    default Target attributes(Annotation annotation) {
+        return attributes(annotation, null);
+    }
+
     <T> T adaptTo(Class<T> adaptation);
 }

@@ -25,7 +25,6 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for {@code RadioGroup} widget functionality
@@ -48,7 +47,7 @@ class RadioGroupHandler extends OptionProviderHandler implements BiConsumer<Sour
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));
         }
-        PluginXmlUtility.appendDataSource(target, radioGroup.datasource());
+        appendDataSource(radioGroup.datasource(), target);
     }
 
     private void renderButton(RadioButton button, Target parentElement) {

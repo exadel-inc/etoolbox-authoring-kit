@@ -39,12 +39,12 @@ public class DialogConstants {
     public static final String NN_CONFIG = "config";
     public static final String NN_CONTENT = "content";
     public static final String NN_CUI = "cui";
-    public static final String NN_DATA = "granite:data";
     public static final String NN_DATASOURCE = "datasource";
     public static final String NN_DIALOG_FULL_SCREEN = "dialogFullScreen";
     public static final String NN_DROP_TARGETS = "cq:dropTargets";
     public static final String NN_EDIT = "edit";
     public static final String NN_FORM_PARAMETERS = "cq:formParameters";
+    public static final String NN_GRANITE_DATA = "granite:data";
     public static final String NN_HTML_PASTE_RULES = "htmlPasteRules";
     public static final String NN_HTML_RULES = "htmlRules";
     public static final String NN_ICONS = "icons";
