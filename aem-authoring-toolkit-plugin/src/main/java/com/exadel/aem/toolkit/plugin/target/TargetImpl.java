@@ -179,7 +179,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
             return null;
         }
         boolean isEscaped = path.startsWith(DialogConstants.DOUBLE_QUOTE) && path.endsWith(DialogConstants.DOUBLE_QUOTE);
-        String effectivePath = isEscaped ? StringUtils.strip(path, DialogConstants.DOUBLE_QUOTE) : path;
+        String effectivePath = StringUtils.strip(path, DialogConstants.DOUBLE_QUOTE);
         PathSplitHelper pathSplitHelper = PathSplitHelper.of(effectivePath);
 
         if (!isEscaped && pathSplitHelper.isSplittable()) {
@@ -189,7 +189,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
                 String currentChunk = pathChunks.poll();
                 current = ((TargetImpl) current).getTarget(currentChunk, createIfMissing);
                 if (current == null) {
-                    return null;
+                    break;
                 }
             }
             return current;
@@ -327,7 +327,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     @Override
     public Target attribute(String name, String value) {
-        if (value != null) this.attributes.put(name, value);
+        if (value != null) {
+            this.attributes.put(name, value);
+        }
         return this;
     }
 
