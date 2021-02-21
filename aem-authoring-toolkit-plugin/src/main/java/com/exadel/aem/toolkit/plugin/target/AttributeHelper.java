@@ -28,14 +28,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 import com.google.common.base.CaseFormat;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnoreValue;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
+import com.exadel.aem.toolkit.plugin.util.StringUtil;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
 /**
@@ -44,15 +43,10 @@ import com.exadel.aem.toolkit.plugin.util.validation.Validation;
  * @param <V> Type of value to set
  */
 public class AttributeHelper<T, V> {
-    private static final String TYPE_TOKEN_TEMPLATE = "{%s}%s";
-    private static final String TYPE_TOKEN_ARRAY_TEMPLATE = "{%s}[%s]";
-    private static final String STRING_ESCAPE = "\\";
-
 
     /* ------------------------------------------
        Instance fields and constructors/modifiers
        ------------------------------------------ */
-
 
     private final Class<T> holderType;
     private final Class<V> valueType;
@@ -146,11 +140,7 @@ public class AttributeHelper<T, V> {
             return;
         }
 
-        setValue(
-            valueType.equals(String.class)
-                ? valueString
-                : String.format(TYPE_TOKEN_TEMPLATE, valueType.getSimpleName(), valueString),
-            target);
+        setValue(StringUtil.format(value, valueType), target);
     }
 
     /**
@@ -162,19 +152,15 @@ public class AttributeHelper<T, V> {
         if (!valueTypeIsSupported || value == null || value.isEmpty()) {
             return;
         }
-        String valueString = value.stream()
-                .map(Object::toString)
-                .filter(this::isValid)
-                .map(s -> s.startsWith(RteFeatures.BEGIN_POPOVER) && s.endsWith(RteFeatures.END_POPOVER) ? STRING_ESCAPE + s : s)
-                .collect(Collectors.joining(RteFeatures.FEATURE_SEPARATOR));
-        if (valueString.isEmpty()) {
+
+        List<V> validValues = value.stream()
+            .filter(Objects::nonNull)
+            .filter(obj -> isValid(obj.toString()))
+            .collect(Collectors.toList());
+        if (validValues.isEmpty()) {
             return;
         }
-        setValue(
-            valueType.equals(String.class)
-                ? String.format(PluginXmlUtility.ATTRIBUTE_LIST_TEMPLATE, valueString)
-                : String.format(TYPE_TOKEN_ARRAY_TEMPLATE, valueType.getSimpleName(), valueString),
-            target);
+        setValue(StringUtil.format(validValues, valueType), target);
     }
 
 
@@ -306,7 +292,7 @@ public class AttributeHelper<T, V> {
      * @param property     {@code Method} that represents the annotation's property
      * @return New {@code AttributeSettingHelper} instance
      */
-    public static AttributeHelper<Target,?> forAnnotationProperty(Annotation annotation, Method property) {
+    public static AttributeHelper<Target, Object> forAnnotationProperty(Annotation annotation, Method property) {
         return new Builder<>(Target.class).forAnnotationProperty(annotation, property);
     }
 
@@ -330,11 +316,11 @@ public class AttributeHelper<T, V> {
          * @param property     {@code Method} that represents the annotation's property
          * @return New {@code AttributeSettingHelper} instance
          */
-        @SuppressWarnings({"deprecation", "squid:S1874"}) // IgnoreValue processing remains for compatibility reasons until v.2.0.0
-        public AttributeHelper<T,?> forAnnotationProperty(Annotation annotation, Method property) {
-            AttributeHelper<T,?> attributeSetter = new AttributeHelper<>(holderType, getMethodWrappedType(property));
+        @SuppressWarnings("unchecked")
+        public AttributeHelper<T, Object> forAnnotationProperty(Annotation annotation, Method property) {
+            AttributeHelper<T, ?> attributeSetter = new AttributeHelper<>(holderType, getMethodWrappedType(property));
             if (!fits(property)) {
-                return attributeSetter;
+                return (AttributeHelper<T, Object>) attributeSetter;
             }
             attributeSetter.valueTypeIsSupported = true;
             attributeSetter.method = property;
@@ -348,14 +334,11 @@ public class AttributeHelper<T, V> {
                 attributeSetter.ignoredValues = propertyRendering.ignoreValues();
                 attributeSetter.blankValuesAllowed = propertyRendering.allowBlank();
                 attributeSetter.transformation = propertyRendering.transform();
-            } else if (property.isAnnotationPresent(IgnoreValue.class)) {
-                attributeSetter.ignoredValues = new String[] {property.getAnnotation(IgnoreValue.class).value()};
             }
-
             if (PluginAnnotationUtility.propertyIsNotDefault(annotation, property)) {
                 attributeSetter.validationChecker = Validation.forMethod(property);
             }
-            return attributeSetter;
+            return (AttributeHelper<T, Object>) attributeSetter;
         }
 
         /**
@@ -364,7 +347,7 @@ public class AttributeHelper<T, V> {
          * @param valueType Target value type
          * @return New {@code AttributeSettingHelper} instance
          */
-        public <V> AttributeHelper<T,V> forNamedValue(String name, Class<V> valueType) {
+        public <V> AttributeHelper<T, V> forNamedValue(String name, Class<V> valueType) {
             AttributeHelper<T,V> attributeSetter = new AttributeHelper<>(holderType, valueType);
             if (!fits(valueType)) {
                 return attributeSetter;

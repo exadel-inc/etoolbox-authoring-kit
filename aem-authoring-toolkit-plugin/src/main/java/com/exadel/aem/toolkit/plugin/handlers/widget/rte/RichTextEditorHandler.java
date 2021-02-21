@@ -17,7 +17,6 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,7 +35,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
+import com.exadel.aem.toolkit.plugin.util.StringUtil;
 import com.exadel.aem.toolkit.plugin.util.validation.CharactersObjectValidator;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
@@ -266,15 +265,12 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
      */
     private void populateStylesNode(Target parent) {
         Target styles = parent.getOrCreateTarget(DialogConstants.NN_STYLES).attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION);
-        if (!featureExists(RteFeatures.Popovers.STYLES::equals)) {
+        if (!featureExists(RteFeatures.Popovers.STYLES)) {
             return;
         }
         Arrays.stream(rteAnnotation.styles()).forEach(style ->
-                styles
-                    .getOrCreateTarget(style.cssName())
-                    .attributes(
-                        style,
-                        PluginAnnotationUtility.getPropertyMappingFilter(style)));
+                styles.getOrCreateTarget(style.cssName())
+                    .attributes(style, PluginAnnotationUtility.getPropertyMappingFilter(style)));
     }
 
     /**
@@ -335,13 +331,14 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
 
     /**
      * Gets whether a certain feature exists in the feature set
-     * @param matcher Feature token predicate
+     * @param value Feature token
      * @return True or false
      */
-    private boolean featureExists(Predicate<String> matcher) {
+    @SuppressWarnings("SameParameterValue")
+    private boolean featureExists(String value) {
         return Stream.concat(Arrays.stream(rteAnnotation.features()), Arrays.stream(rteAnnotation.fullscreenFeatures()))
-                .flatMap(s -> Arrays.stream(s.split(PluginXmlUtility.ATTRIBUTE_LIST_SPLIT_PATTERN)))
-                .anyMatch(matcher);
+                .flatMap(s -> StringUtil.parseCollection(s).stream())
+                .anyMatch(s -> s.equals(value) || s.equals(StringUtil.parseCollection(value).get(0)));
     }
 
     /**
@@ -350,7 +347,7 @@ public class RichTextEditorHandler implements BiConsumer<Source, Target> {
      * @return {@code String[]} array with the extracted feature tokens
      */
     private static String[] getNestedTokens(String array) {
-        return StringUtils.strip(array, PluginXmlUtility.ATTRIBUTE_LIST_SURROUND).split(PluginXmlUtility.ATTRIBUTE_LIST_SPLIT_PATTERN);
+        return StringUtil.parseCollection(array).toArray(new String[0]);
     }
 
     /**
