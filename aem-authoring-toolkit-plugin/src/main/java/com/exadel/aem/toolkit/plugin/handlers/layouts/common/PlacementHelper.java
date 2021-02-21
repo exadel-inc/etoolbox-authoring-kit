@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
 import com.exadel.aem.toolkit.plugin.adapters.ResourceTypeSetting;
-import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
+import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidget;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -48,8 +48,10 @@ import com.exadel.aem.toolkit.plugin.util.stream.Sorter;
 public class PlacementHelper {
 
     private static final String NAMING_COLLISION_MESSAGE_TEMPLATE = "Field named \"%s\" in class \"%s\" " +
-        "collides with the field having same name in class \"%s\". This may cause unexpected behavior";
+        "collides with the field having same name in class \"%s\" (%s). This may cause unexpected behavior";
 
+    private static final String REASON_DISORDER = "parent class field will be shown";
+    private static final String REASON_DIFFERENT_RESTYPE = "different resource types provided";
 
     /* -------------------------------
        Private fields and constructors
@@ -210,11 +212,12 @@ public class PlacementHelper {
             PluginRuntime
                 .context()
                 .getExceptionHandler()
-                .handle(new InvalidFieldContainerException(String.format(
+                .handle(new InvalidLayoutException(String.format(
                     NAMING_COLLISION_MESSAGE_TEMPLATE,
                     sameNameFieldsByOrigin.getLast().getName(),
                     sameNameFieldsByOrigin.getLast().getDeclaringClass().getSimpleName(),
-                    sameNameFields.getLast().getDeclaringClass().getSimpleName())));
+                    sameNameFields.getLast().getDeclaringClass().getSimpleName(),
+                    REASON_DISORDER)));
         }
 
         Map<String, Source> resourceTypeCollisions = sameNameFields
@@ -230,11 +233,12 @@ public class PlacementHelper {
             PluginRuntime
                 .context()
                 .getExceptionHandler()
-                .handle(new InvalidFieldContainerException(String.format(
+                .handle(new InvalidLayoutException(String.format(
                     NAMING_COLLISION_MESSAGE_TEMPLATE,
                     contenders[1].getName(),
                     contenders[1].getDeclaringClass().getSimpleName(),
-                    contenders[0].getDeclaringClass().getSimpleName())));
+                    contenders[0].getDeclaringClass().getSimpleName(),
+                    REASON_DIFFERENT_RESTYPE)));
         }
     }
 

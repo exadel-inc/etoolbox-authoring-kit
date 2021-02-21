@@ -19,7 +19,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
+import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
@@ -46,7 +46,7 @@ public class MultiFieldHandler extends WidgetContainerHandler {
         // Get the filtered members collection for the current container; early return if collection is empty
         List<Source> members = getEntriesForContainer(source, true);
         if (members.isEmpty()) {
-            PluginRuntime.context().getExceptionHandler().handle(new InvalidFieldContainerException(
+            PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.getValueType().getName()
             ));
             return;
