@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.util;
+package com.exadel.aem.toolkit.plugin.target;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -33,6 +33,9 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
+import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
 /**
@@ -40,7 +43,7 @@ import com.exadel.aem.toolkit.plugin.util.validation.Validation;
  * @param <T> Type of managed entity
  * @param <V> Type of value to set
  */
-public class AttributeSettingHelper<T, V> {
+public class AttributeHelper<T, V> {
     private static final String TYPE_TOKEN_TEMPLATE = "{%s}%s";
     private static final String TYPE_TOKEN_ARRAY_TEMPLATE = "{%s}[%s]";
     private static final String STRING_ESCAPE = "\\";
@@ -72,7 +75,7 @@ public class AttributeSettingHelper<T, V> {
      * @param holderType Type of attribute holder
      * @param valueType Type of value to be stored
      */
-    private AttributeSettingHelper(Class<T> holderType, Class<V> valueType) {
+    private AttributeHelper(Class<T> holderType, Class<V> valueType) {
         this.holderType = holderType;
         this.valueType = valueType;
     }
@@ -82,7 +85,7 @@ public class AttributeSettingHelper<T, V> {
      * @param name Provisional name
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    public AttributeSettingHelper<T,V> withName(String name) {
+    public AttributeHelper<T,V> withName(String name) {
         this.name = name;
         return this;
     }
@@ -93,7 +96,7 @@ public class AttributeSettingHelper<T, V> {
      *               or combine/merge)
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    public AttributeSettingHelper<T,V> withMerger(BinaryOperator<String> merger) {
+    public AttributeHelper<T,V> withMerger(BinaryOperator<String> merger) {
         this.valueMerger = merger;
         return this;
     }
@@ -288,10 +291,10 @@ public class AttributeSettingHelper<T, V> {
 
 
     /**
-     * Retrieves an {@link AttributeSettingHelper.Builder} aimed at creating helper object for manipulation with XML
+     * Retrieves an {@link AttributeHelper.Builder} aimed at creating helper object for manipulation with XML
      * elements. This is mainly to be used with notation such as
      * {@code AttributeSettingHelper.forXmlTarget().forAnnotationProperty(...)}
-     * @return {@link AttributeSettingHelper.Builder} instance
+     * @return {@link AttributeHelper.Builder} instance
      */
     public static Builder<Element> forXmlTarget() {
         return new Builder<>(Element.class);
@@ -303,12 +306,12 @@ public class AttributeSettingHelper<T, V> {
      * @param property     {@code Method} that represents the annotation's property
      * @return New {@code AttributeSettingHelper} instance
      */
-    public static AttributeSettingHelper<Target,?> forAnnotationProperty(Annotation annotation, Method property) {
+    public static AttributeHelper<Target,?> forAnnotationProperty(Annotation annotation, Method property) {
         return new Builder<>(Target.class).forAnnotationProperty(annotation, property);
     }
 
     /**
-     * Builds instances of {@link AttributeSettingHelper} for a particular attribute-storing media type
+     * Builds instances of {@link AttributeHelper} for a particular attribute-storing media type
      */
     public static class Builder<T> {
         private final Class<T> holderType;
@@ -328,8 +331,8 @@ public class AttributeSettingHelper<T, V> {
          * @return New {@code AttributeSettingHelper} instance
          */
         @SuppressWarnings({"deprecation", "squid:S1874"}) // IgnoreValue processing remains for compatibility reasons until v.2.0.0
-        public AttributeSettingHelper<T,?> forAnnotationProperty(Annotation annotation, Method property) {
-            AttributeSettingHelper<T,?> attributeSetter = new AttributeSettingHelper<>(holderType, getMethodWrappedType(property));
+        public AttributeHelper<T,?> forAnnotationProperty(Annotation annotation, Method property) {
+            AttributeHelper<T,?> attributeSetter = new AttributeHelper<>(holderType, getMethodWrappedType(property));
             if (!fits(property)) {
                 return attributeSetter;
             }
@@ -361,8 +364,8 @@ public class AttributeSettingHelper<T, V> {
          * @param valueType Target value type
          * @return New {@code AttributeSettingHelper} instance
          */
-        public <V> AttributeSettingHelper<T,V> forNamedValue(String name, Class<V> valueType) {
-            AttributeSettingHelper<T,V> attributeSetter = new AttributeSettingHelper<>(holderType, valueType);
+        public <V> AttributeHelper<T,V> forNamedValue(String name, Class<V> valueType) {
+            AttributeHelper<T,V> attributeSetter = new AttributeHelper<>(holderType, valueType);
             if (!fits(valueType)) {
                 return attributeSetter;
             }
