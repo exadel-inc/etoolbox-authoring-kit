@@ -49,7 +49,7 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
     @Override
     public void handle(String message, Exception cause) {
         if (shouldTerminateOn(cause.getClass())) {
-            throw new PluginException(cause);
+            throw new PluginException(message, cause);
         }
         super.handle(message, cause);
     }

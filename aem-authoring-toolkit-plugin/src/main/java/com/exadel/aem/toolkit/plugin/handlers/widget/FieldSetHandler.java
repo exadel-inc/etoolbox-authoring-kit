@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
+import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
@@ -47,7 +47,7 @@ class FieldSetHandler extends WidgetContainerHandler {
 
         if (fieldSetEntries.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(
-                new InvalidFieldContainerException(EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName())
+                new InvalidLayoutException(EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName())
             );
             return;
         }

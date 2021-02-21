@@ -18,8 +18,8 @@ package com.exadel.aem.toolkit.plugin.exceptions;
  * Represents the plugin-specific exception thrown when there is an error in a field container (dialog, or fieldset) setup:
  * no valid fields present, duplicate field entries detected, etc.
  */
-public class InvalidFieldContainerException extends RuntimeException {
-    public InvalidFieldContainerException(String message) {
+public class InvalidLayoutException extends RuntimeException {
+    public InvalidLayoutException(String message) {
         super(message);
     }
 }
