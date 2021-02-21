@@ -61,6 +61,13 @@ public class ExceptionsTest extends ExceptionsTestBase {
     }
 
     @Test
+    public void testComponentWithShadowingResourceType() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidFieldContainerException.class));
+        exceptionRule.expectMessage("Field named \"text1\" in class \"Child2\"");
+        test(InheritanceExceptionTestCases.Child2.class);
+    }
+
+    @Test
     public void testTerminateOnSettings() {
         // Test non-terminating cases
         Map<String, Exception> nonTerminatingCases = ImmutableMap.of(

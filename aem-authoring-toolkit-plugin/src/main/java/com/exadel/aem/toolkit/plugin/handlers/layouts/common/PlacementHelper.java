@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
+import com.exadel.aem.toolkit.plugin.adapters.ResourceTypeSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidget;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
@@ -47,7 +48,7 @@ import com.exadel.aem.toolkit.plugin.util.stream.Sorter;
 public class PlacementHelper {
 
     private static final String NAMING_COLLISION_MESSAGE_TEMPLATE = "Field named \"%s\" in class \"%s\" " +
-        "collides with the field having same name in superclass \"%s\". This may cause unexpected behavior";
+        "collides with the field having same name in class \"%s\". This may cause unexpected behavior";
 
 
     /* -------------------------------
@@ -195,25 +196,46 @@ public class PlacementHelper {
      *                       to corresponding tag names
      */
     private static void checkForCollisions(String tagName, Map<Source, String> managedMembers) {
-        LinkedList<Source> sameNameFields = managedMembers.entrySet().stream()
+        LinkedList<Source> sameNameFields = managedMembers.entrySet()
+            .stream()
             .filter(entry -> entry.getValue().equals(tagName))
             .map(Map.Entry::getKey)
             .collect(Collectors.toCollection(LinkedList::new));
-        LinkedList<Source> sameNameFieldsByOrigin = sameNameFields.stream()
+        LinkedList<Source> sameNameFieldsByOrigin = sameNameFields
+            .stream()
             .sorted(Sorter::compareByOrigin)
             .collect(Collectors.toCollection(LinkedList::new));
 
-        if (sameNameFields.getLast().equals(sameNameFieldsByOrigin.getLast())) {
-            return;
+        if (!sameNameFields.getLast().equals(sameNameFieldsByOrigin.getLast())) {
+            PluginRuntime
+                .context()
+                .getExceptionHandler()
+                .handle(new InvalidFieldContainerException(String.format(
+                    NAMING_COLLISION_MESSAGE_TEMPLATE,
+                    sameNameFieldsByOrigin.getLast().getName(),
+                    sameNameFieldsByOrigin.getLast().getDeclaringClass().getSimpleName(),
+                    sameNameFields.getLast().getDeclaringClass().getSimpleName())));
         }
-        PluginRuntime
-            .context()
-            .getExceptionHandler()
-            .handle(new InvalidFieldContainerException(String.format(
-                NAMING_COLLISION_MESSAGE_TEMPLATE,
-                sameNameFieldsByOrigin.getLast().getName(),
-                sameNameFieldsByOrigin.getLast().getReportingClass().getSimpleName(),
-                sameNameFields.getLast().getReportingClass().getSimpleName())));
+
+        Map<String, Source> resourceTypeCollisions = sameNameFields
+            .stream()
+            .collect(Collectors.toMap(
+                source -> source.adaptTo(ResourceTypeSetting.class).getValue(),
+                source -> source,
+                (first, second) -> second,
+                LinkedHashMap::new));
+
+        if (resourceTypeCollisions.size() > 1) {
+            Source[] contenders = resourceTypeCollisions.values().toArray(new Source[0]);
+            PluginRuntime
+                .context()
+                .getExceptionHandler()
+                .handle(new InvalidFieldContainerException(String.format(
+                    NAMING_COLLISION_MESSAGE_TEMPLATE,
+                    contenders[1].getName(),
+                    contenders[1].getDeclaringClass().getSimpleName(),
+                    contenders[0].getDeclaringClass().getSimpleName())));
+        }
     }
 
 
