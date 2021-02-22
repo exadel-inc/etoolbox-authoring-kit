@@ -24,8 +24,10 @@ import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import com.day.cq.commons.jcr.JcrConstants;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.lists.ListItem;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
@@ -33,13 +35,12 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 /**
  * Represents the basic list item which consists of "jct:title" and "value" fields
  */
-@Dialog(
-    name = "content/simpleListItem",
-    title = "Simple List Item",
-    tabs = {
-        @Tab(title = "Main Config")
-    }
+@AemComponent(
+    path = "content/simpleListItem",
+    title = "Simple List Item"
 )
+@Dialog
+@Tabs(@Tab(title = "My Config"))
 @ListItem
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class SimpleListItem {
