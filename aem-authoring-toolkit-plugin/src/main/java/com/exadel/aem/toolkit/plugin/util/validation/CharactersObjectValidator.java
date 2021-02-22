@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.plugin.util.validation;
 
 import java.util.Arrays;
@@ -71,6 +72,9 @@ public class CharactersObjectValidator extends AllNotBlankValidator {
         return PluginAnnotationUtility.filterInstance(source, Characters.class, Arrays.asList(METHOD_NAME, METHOD_ENTITY));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getWarningMessage() {
         return MSG_VALID_PARAMS_EXPECTED;

@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.plugin.util.validation;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +53,9 @@ public class NumberValidator implements Validator {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getWarningMessage() {
         return MSG_NUMBER_EXPECTED;

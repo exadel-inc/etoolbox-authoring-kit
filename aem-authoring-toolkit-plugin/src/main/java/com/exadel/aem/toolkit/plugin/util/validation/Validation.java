@@ -126,7 +126,7 @@ public class Validation {
     }
 
     /**
-     * Formats log warnings according to particular {@link Validator}s output
+     * Formats log warnings according to the particular {@link Validator}'s output
      * @param value Value to test
      * @return Message string
      */
