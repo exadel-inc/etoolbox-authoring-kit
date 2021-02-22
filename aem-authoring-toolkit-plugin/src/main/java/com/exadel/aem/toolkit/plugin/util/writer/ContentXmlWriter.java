@@ -64,26 +64,21 @@ class ContentXmlWriter extends PackageEntryWriter {
      * Overrides {@link PackageEntryWriter#populateTarget(Class, Target)} abstract method to write down contents
      * of {@code .content.xml} file
      * @param componentClass The {@code Class} being processed
-     * @param root The root element of DOM {@link Document} to feed data to
+     * @param target         The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateTarget(Class<?> componentClass, Target root) {
+    void populateTarget(Class<?> componentClass, Target target) {
         Annotation annotation = componentClass.getDeclaredAnnotation(AemComponent.class);
         if (annotation == null) {
             annotation = componentClass.getDeclaredAnnotation(Dialog.class);
         }
-        root
+        target
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT)
             .attributes(
                 annotation,
                 PluginAnnotationUtility
                     .getPropertyMappingFilter(annotation)
                     .and(member -> fitsInScope(member, getScope())));
-
-        if ((annotation instanceof AemComponent && ((AemComponent) annotation).isContainer())
-            || (annotation instanceof Dialog && ((Dialog) annotation).isContainer())) {
-            root.attribute(DialogConstants.PN_IS_CONTAINER, String.valueOf(true));
-        }
-        new ListItemHandler().accept(componentClass, root);
+        new ListItemHandler().accept(componentClass, target);
     }
 }
