@@ -45,13 +45,12 @@ import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
 
     /**
-     * Processes container-backing Java class and append the results to the root {@link Target} object
-     * to process component-backing Java class and append the results to the root {@link Target} object
+     * Processes container-backing Java class and appends the results to the root {@link Target} object
      * @param componentClass    {@code Class<?>} instance used as the source of markup
      * @param target            The root of rendering for the current component
      * @param annotationClass   {@code Class<?>} object representing types of container sections to process
      */
-    @SuppressWarnings("SameParameterValue") // annotationClass is used as param in view of code scalability
+    @SuppressWarnings("SameParameterValue") // annotationClass is used as a parameter in view of code scalability
     protected void populateContainer(
         Class<?> componentClass,
         Target target,
@@ -60,7 +59,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     }
 
     /**
-     * Processes container-backing Java class and append the results to the root {@link Target} object
+     * Processes container-backing Java class and appends the results to the root {@link Target} object
      * @param componentClass    {@code Class<?>} instance used as the source of markup
      * @param target            The root of rendering for the current component
      * @param annotationClasses Collection of {@code Class<?>} objects representing types of container sections to process
@@ -242,7 +241,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     }
 
     /**
-     * Compose the "overall" collection of container sections (such as tabs or accordion panels) by merging sections
+     * Composes the "overall" collection of container sections (such as tabs or accordion panels) by merging sections
      * from the current class and from the hierarchy of superclasses in the proper order
      * @param sectionsFromCurrentClass Collection of sections defined in the current class
      * @param sectionsFromSuperClasses Collection of sections defined in the hierarchy of superclasses
