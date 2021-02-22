@@ -93,7 +93,8 @@
             </build>
         </profile>
 
-        <profile><id>deploy</id>
+        <profile>
+            <id>deploy</id>
             <build>
                 <plugins>
                     <plugin>
