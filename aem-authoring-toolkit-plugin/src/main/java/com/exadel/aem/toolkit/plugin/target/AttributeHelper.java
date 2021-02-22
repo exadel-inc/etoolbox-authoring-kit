@@ -58,7 +58,7 @@ public class AttributeHelper<T, V> {
     private String name;
     private String[] ignoredValues;
     private boolean blankValuesAllowed;
-    private Class<?> castingValueType;
+    private Class<?> typeHintValueType;
 
     private boolean isEnum;
     private StringTransformation transformation;
@@ -142,7 +142,7 @@ public class AttributeHelper<T, V> {
             return;
         }
 
-        setValue(StringUtil.format(value, castingValueType), target);
+        setValue(StringUtil.format(value, getTypeHintValueType()), target);
     }
 
     /**
@@ -162,7 +162,7 @@ public class AttributeHelper<T, V> {
         if (validValues.isEmpty()) {
             return;
         }
-        setValue(StringUtil.format(validValues, castingValueType), target);
+        setValue(StringUtil.format(validValues, getTypeHintValueType()), target);
     }
 
 
@@ -207,6 +207,16 @@ public class AttributeHelper<T, V> {
             return false;
         }
         return !ArrayUtils.contains(ignoredValues, value);
+    }
+
+    /**
+     * Gets the {@code Class} object used for type hinting when rendering a value as a JCR string
+     * @return {@code Class<?>} reference
+     */
+    private Class<?> getTypeHintValueType() {
+        return typeHintValueType != null
+            ? typeHintValueType
+            : valueType;
     }
 
 
@@ -321,7 +331,6 @@ public class AttributeHelper<T, V> {
             if (!fits(property)) {
                 return (AttributeHelper<T, Object>) attributeSetter;
             }
-            attributeSetter.castingValueType = attributeSetter.valueType;
             attributeSetter.valueTypeIsSupported = true;
             attributeSetter.method = property;
             attributeSetter.annotation = annotation;
@@ -336,7 +345,7 @@ public class AttributeHelper<T, V> {
                 attributeSetter.blankValuesAllowed = propertyRendering.allowBlank();
                 attributeSetter.transformation = propertyRendering.transform();
                 if (!propertyRendering.valueType().equals(_Default.class)) {
-                    attributeSetter.castingValueType = propertyRendering.valueType();
+                    attributeSetter.typeHintValueType = propertyRendering.valueType();
                 }
             }
             if (PluginAnnotationUtility.propertyIsNotDefault(annotation, property)) {
