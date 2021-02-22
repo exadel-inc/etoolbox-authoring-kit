@@ -36,8 +36,8 @@ import static org.junit.Assert.assertEquals;
 
 public class ListsHelperTest {
 
-    private static final String SIMPLE_LIST_PATH = "/content/aat-lists/simpleList";
-    private static final String CUSTOM_LIST_PATH = "/content/aat-lists/customList";
+    private static final String SIMPLE_LIST_PATH = "/content/aembox-lists/simpleList";
+    private static final String CUSTOM_LIST_PATH = "/content/aembox-lists/customList";
 
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
