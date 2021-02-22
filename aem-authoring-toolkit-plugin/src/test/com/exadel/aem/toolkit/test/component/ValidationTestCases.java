@@ -32,8 +32,11 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 
 @SuppressWarnings("unused")
 public class ValidationTestCases {
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = "")
+    @Dialog(name = DEFAULT_COMPONENT_NAME, title = " ")
     public static class InvalidTitleDialog {}
+
+    @Dialog(name = DEFAULT_COMPONENT_NAME)
+    public static class MissingTitleDialog {}
 
     @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     public static class InvalidNumberFieldDialog {

@@ -20,7 +20,6 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.layouts.TabsSize;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
@@ -39,8 +38,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_2;
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_3;
 
 @DesignDialog(
-    title = TestConstants.DEFAULT_COMPONENT_TITLE,
-    layout = DialogLayout.TABS
+    title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
 @Tabs(
     value = {

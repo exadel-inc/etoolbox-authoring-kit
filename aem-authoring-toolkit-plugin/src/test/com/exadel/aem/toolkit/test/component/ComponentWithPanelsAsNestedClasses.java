@@ -25,9 +25,7 @@ import com.exadel.aem.toolkit.plugin.util.TestConstants;
     path = TestConstants.DEFAULT_COMPONENT_NAME,
     title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
-@Dialog(
-    title = TestConstants.DEFAULT_COMPONENT_TITLE
-)
+@Dialog
 @SuppressWarnings("unused")
 public class ComponentWithPanelsAsNestedClasses {
 
