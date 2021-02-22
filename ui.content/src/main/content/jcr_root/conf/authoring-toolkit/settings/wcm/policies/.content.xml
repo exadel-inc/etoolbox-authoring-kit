@@ -13,6 +13,7 @@
                             jcr:title="List"
                             sling:resourceType="wcm/core/components/policy/policy"
                             components="[authoring-toolkit/lists/components/content/internal/listItem]"
+                            cq:styleDefaultClasses="aembox-list"
                             policyResourceType="wcm/foundation/components/responsivegrid">
                     </list>
                 </responsivegrid>
