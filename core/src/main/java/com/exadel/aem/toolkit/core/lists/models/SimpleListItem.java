@@ -24,8 +24,6 @@ import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import com.day.cq.commons.jcr.JcrConstants;
 
-import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
-import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.lists.ListItem;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
@@ -40,7 +38,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
     title = "Simple List Item"
 )
 @Dialog
-@Tabs(@Tab(title = "My Config"))
 @ListItem
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class SimpleListItem {
