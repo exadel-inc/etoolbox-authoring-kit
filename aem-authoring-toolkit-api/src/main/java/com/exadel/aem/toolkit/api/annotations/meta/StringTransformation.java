@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.api.annotations.meta;
 
 /**
  * Enumerates valid transformations of a string value while rendering as an XML attribute
- * @see EnumValue
  */
 public enum StringTransformation {
     NONE,

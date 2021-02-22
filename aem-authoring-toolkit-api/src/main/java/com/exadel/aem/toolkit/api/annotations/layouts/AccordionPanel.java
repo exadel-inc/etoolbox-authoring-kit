@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.container;
+package com.exadel.aem.toolkit.api.annotations.layouts;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,17 +19,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
- * Used to set up
+ * Used to set up as specific
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html">
- * accordion element</a> in TouchUI dialog
+ * Accordion panel</a> item in accordion-shaped TouchUI dialog setup or within an {@code Accordion} widget
  */
-@Target(ElementType.FIELD)
+@Target(value = ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ResourceType(ResourceTypes.ACCORDION)
 @PropertyMapping
 @SuppressWarnings("unused")
 public @interface AccordionPanel {
@@ -41,14 +39,16 @@ public @interface AccordionPanel {
     String title();
 
     /**
-     * True to disable the item; false otherwise
-     * @return True or false
-     */
-    boolean disabled() default false;
-
-    /**
      * True to open the item initially; false otherwise
      * @return True or false
      */
+    @PropertyRendering(ignoreValues = "false")
     boolean active() default false;
+
+    /**
+     * True to disable the item; false otherwise
+     * @return True or false
+     */
+    @PropertyRendering(ignoreValues = "false")
+    boolean disabled() default false;
 }

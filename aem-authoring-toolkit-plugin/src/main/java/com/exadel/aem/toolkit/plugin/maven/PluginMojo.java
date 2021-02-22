@@ -35,7 +35,7 @@ import com.exadel.aem.toolkit.plugin.util.writer.PackageWriter;
 @SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
 public class PluginMojo extends AbstractMojo {
     private static final String DEPENDENCY_RESOLUTION_EXCEPTION_MESSAGE = "Could not resolve dependencies of project %s: %s";
-    private static final String PLUGIN_EXECUTION_EXCEPTION_MESSAGE = "Terminated due to %s in module %s: %s";
+    private static final String PLUGIN_EXECUTION_EXCEPTION_MESSAGE = "%s in module %s: %s";
 
     @Parameter(readonly = true, defaultValue = "${project}")
     private MavenProject project;

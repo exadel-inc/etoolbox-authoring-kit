@@ -3,7 +3,7 @@
  * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http:www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -11,16 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.container;
+package com.exadel.aem.toolkit.plugin.handlers.layouts;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.container.common.ContainerHandler;
+import com.exadel.aem.toolkit.plugin.handlers.layouts.common.ContainerHandler;
 
 /**
- * The {@code Handler} for a tabbed TouchUI dialog
+ * The {@code Handler} for a accordion-shaped TouchUI dialog
  */
-public class TabsContainerHandler extends ContainerHandler {
+public class AccordionContainerHandler extends ContainerHandler {
 
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
@@ -30,6 +30,6 @@ public class TabsContainerHandler extends ContainerHandler {
      */
     @Override
     public void accept(Class<?> componentClass, Target parentElement) {
-        populateContainer(componentClass, parentElement, Tab.class);
+        populateContainer(componentClass, parentElement, AccordionPanel.class);
     }
 }

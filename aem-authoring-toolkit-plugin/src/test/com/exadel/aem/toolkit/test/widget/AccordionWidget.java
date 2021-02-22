@@ -14,10 +14,10 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
-import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
-import com.exadel.aem.toolkit.api.annotations.container.Place;
+import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
@@ -25,23 +25,24 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 
 @Dialog(
     name = DEFAULT_COMPONENT_NAME,
-    title = "Accordion Test Dialog",
-    panels = {
+    title = "Accordion Test Dialog"
+)
+@Accordion(
+    value = {
         @AccordionPanel(title = "Basic", disabled = true),
-        @AccordionPanel(title = "Basic2")
+        @AccordionPanel(title = "Basic2", active = true)
     }
 )
 @SuppressWarnings("unused")
-public class Accordion {
+public class AccordionWidget {
 
     @DialogField(label = "Field 1")
     @TextField
     @Place(in = "Basic")
     String field1;
 
-    @AccordionWidget(
-        name = "Field",
-        panels = {@AccordionPanel(title = "Accordion Widget Panel 1", disabled = true)})
+    @Accordion(
+        value = @AccordionPanel(title = "Accordion Widget Panel 1", disabled = true))
     @Place(in = "Basic2")
     AccordionFieldSet accordion;
 

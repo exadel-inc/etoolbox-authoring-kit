@@ -11,12 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.container.enums;
+
+package com.exadel.aem.toolkit.api.annotations.layouts;
 
 /**
- * Contains possible values of {@link com.exadel.aem.toolkit.api.annotations.widgets.TabsWidget#size()} property
+ * Enumerates available layout modes for such layouts as {@link Tabs}
  */
-@SuppressWarnings("unused")
-public enum TabsSize {
-    M, L
+public enum LayoutType {
+    DEFAULT,
+    STACKED,
+    LARGE
 }

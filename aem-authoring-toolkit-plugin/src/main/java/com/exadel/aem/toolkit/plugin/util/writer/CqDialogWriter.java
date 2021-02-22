@@ -17,6 +17,7 @@ package com.exadel.aem.toolkit.plugin.util.writer;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.stream.Collectors;
 import javax.xml.transform.Transformer;
 
@@ -24,6 +25,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 
+import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
@@ -34,10 +39,11 @@ import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnTabHandler;
-import com.exadel.aem.toolkit.plugin.handlers.container.DialogContainer;
+import com.exadel.aem.toolkit.plugin.handlers.layouts.DialogContainer;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
+import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing AEM TouchUI dialog definition (writes data to the
@@ -102,7 +108,7 @@ class CqDialogWriter extends PackageEntryWriter {
                     .and(member -> fitsInScope(member, scope)))
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
 
-        DialogLayout dialogLayout = getLayout(dialogAnnotation);
+        DialogLayout dialogLayout = getLayout(componentClass, scope);
         DialogContainer.getContainer(dialogLayout).build(componentClass, target);
 
         new DependsOnTabHandler().accept(componentClass, target);
@@ -116,25 +122,80 @@ class CqDialogWriter extends PackageEntryWriter {
                 .forEach(handler -> handler.accept(componentClass, target));
     }
 
-    private static DialogLayout getLayout(Annotation annotation) {
-        if (annotation instanceof Dialog) {
-            Dialog dialog = ((Dialog) annotation);
-            if (!ArrayUtils.isEmpty(dialog.tabs())) {
+    /**
+     * Retrieves the {@link DialogLayout} for the component class provided. The value is computed based
+     * on layout annotations provided for the component class. If no specific annotations found, the default layout,
+     * which is {@link DialogLayout#FIXED_COLUMNS}, returned
+     * @param componentClass The {@code Class} being processed
+     * @param scope Indicates whether to look for a {@code Dialog}, or {@code DesignDialog} annotation as a possible
+     *              source of layout
+     * @return {@code DialogLayout} value
+     */
+    private static DialogLayout getLayout(Class<?> componentClass, Scope scope) {
+        DialogLayout result = DialogLayout.FIXED_COLUMNS;
+
+        List<Class<?>> hierarchy = PluginReflectionUtility.getClassHierarchy(componentClass, true);
+        ListIterator<Class<?>> hierarchyIterator = hierarchy.listIterator(hierarchy.size());
+
+        while (hierarchyIterator.hasPrevious()) {
+            Class<?> current = hierarchyIterator.previous();
+            if (scope.equals(Scope.CQ_DIALOG)
+                && current.isAnnotationPresent(Dialog.class)
+                && current.getDeclaredAnnotation(Dialog.class).tabs().length > 0) {
+                result = DialogLayout.TABS;
+                break;
+            }
+            Tabs tabsAnnotation = current.getDeclaredAnnotation(Tabs.class);
+            if (tabsAnnotation != null && tabsAnnotation.value().length > 0) {
+                result = DialogLayout.TABS;
+                break;
+            }
+            Accordion accordionAnnotation = current.getDeclaredAnnotation(Accordion.class);
+            if (accordionAnnotation != null && accordionAnnotation.value().length > 0) {
+                result = DialogLayout.ACCORDION;
+                break;
+            }
+            result = getLayoutFromNestedClasses(componentClass);
+            if (!result.equals(DialogLayout.FIXED_COLUMNS)) {
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Called from {@link CqDialogWriter#getLayout(Class, Scope)} to search for an appropriate {@code DialogLayout} value
+     * in case it is defined as an annotation to nested class. If such annotation is found, the appropriate value is
+     * immediately returned; otherwise the fallback value {@link DialogLayout#FIXED_COLUMNS} is returned
+     * @param componentClass The {@code Class} being processed
+     * @return {@code DialogLayout} value
+     */
+    private static DialogLayout getLayoutFromNestedClasses(Class<?> componentClass) {
+        if (ArrayUtils.isEmpty(componentClass.getDeclaredClasses())) {
+            return DialogLayout.FIXED_COLUMNS;
+        }
+        for (Class<?> nested : componentClass.getDeclaredClasses()) {
+            if (nested.isAnnotationPresent(Tab.class)
+                || nested.isAnnotationPresent(com.exadel.aem.toolkit.api.annotations.container.Tab.class)) {
                 return DialogLayout.TABS;
             }
-            if (!ArrayUtils.isEmpty(dialog.panels())) {
+            if (nested.isAnnotationPresent(AccordionPanel.class)) {
                 return DialogLayout.ACCORDION;
             }
-            return dialog.layout();
         }
-        DesignDialog dialog = ((DesignDialog) annotation);
-        if (!ArrayUtils.isEmpty(dialog.tabs())) {
-            return DialogLayout.TABS;
-        }
-        if (!ArrayUtils.isEmpty(dialog.panels())) {
-            return DialogLayout.ACCORDION;
-        }
-        return dialog.layout();
+        return DialogLayout.FIXED_COLUMNS;
+    }
+
+    /**
+     * Gets whether current {@code Class} has a custom dialog annotation attached
+     *
+     * @param componentClass The {@code Class} being processed
+     * @return True or false
+     */
+    private static boolean classHasCustomDialogAnnotation(Class<?> componentClass) {
+        return Arrays.stream(componentClass.getDeclaredAnnotations())
+            .anyMatch(a -> a.annotationType().getDeclaredAnnotation(DialogAnnotation.class) != null);
     }
 
     /**
@@ -148,17 +209,6 @@ class CqDialogWriter extends PackageEntryWriter {
                 .filter(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class) != null)
                 .map(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class))
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Gets whether current {@code Class} has a custom dialog annotation attached
-     *
-     * @param componentClass The {@code Class} being processed
-     * @return True or false
-     */
-    private static boolean classHasCustomDialogAnnotation(Class<?> componentClass) {
-        return Arrays.stream(componentClass.getDeclaredAnnotations())
-                .anyMatch(a -> a.annotationType().getDeclaredAnnotation(DialogAnnotation.class) != null);
     }
 
     /**

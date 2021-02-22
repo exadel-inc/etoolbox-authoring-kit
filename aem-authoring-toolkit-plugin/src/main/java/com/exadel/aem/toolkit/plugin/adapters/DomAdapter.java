@@ -35,7 +35,7 @@ public class DomAdapter {
     private final Target target;
 
     /**
-     * Default constructor per {@link Adaptable} contract
+     * Constructor per {@link Adaptable} contract
      * @param target {@code Target} object that will be used as a source of data for rendering
      */
     public DomAdapter(Target target) {

@@ -31,6 +31,7 @@ import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
 import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
 import com.exadel.aem.toolkit.test.component.ComplexComponent2;
+import com.exadel.aem.toolkit.test.component.ComponentWithPanelsAsNestedClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
@@ -53,6 +54,11 @@ public class ComponentsTest extends DefaultTestBase {
     @Test
     public void testDialogWithTabsAsNestedClasses() {
         test(ComponentWithTabsAsNestedClasses.class);
+    }
+
+    @Test
+    public void testDialogWithPanelsAsNestedClasses() {
+        test(ComponentWithPanelsAsNestedClasses.class);
     }
 
     @Test

@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,21 +51,17 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.target.AttributeHelper;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
 /**
  * Utility methods to process, verify and store AEM TouchUI dialog-related data to XML markup
  */
 public class PluginXmlUtility implements XmlUtility {
-    public static final String ATTRIBUTE_LIST_TEMPLATE = "[%s]";
-    public static final String ATTRIBUTE_LIST_SPLIT_PATTERN = "\\s*,\\s*";
-    public static final String ATTRIBUTE_LIST_SURROUND = "[]";
-    public static final Pattern ATTRIBUTE_LIST_PATTERN = Pattern.compile("^\\[.+]$");
 
     /**
      * Default routine to manage merging two values of an XML attribute by suppressing existing value with a non-empty new one
@@ -183,7 +178,7 @@ public class PluginXmlUtility implements XmlUtility {
         }
         Element newNode = createNodeElement(nameProvider.apply(source));
         Arrays.stream(source.annotationType().getDeclaredMethods())
-                .forEach(method -> AttributeSettingHelper.forMethod(source, method).setAttribute(newNode));
+                .forEach(method -> AttributeHelper.forXmlTarget().forAnnotationProperty(source, method).setTo(newNode));
         return newNode;
     }
 
@@ -219,22 +214,34 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public void setAttribute(Element element, String name, Double value) {
-        AttributeSettingHelper.forNamedValue(name, Double.class).setAttribute(element, value);
+        AttributeHelper
+            .forXmlTarget()
+            .forNamedValue(name, Double.class)
+            .setValue(value, element);
     }
 
     @Override
     public void setAttribute(Element element, String name, Long value) {
-        AttributeSettingHelper.forNamedValue(name, Long.class).setAttribute(element, value);
+        AttributeHelper
+            .forXmlTarget()
+            .forNamedValue(name, Long.class)
+            .setValue(value, element);
     }
 
     @Override
     public void setAttribute(Element element, String name, Boolean value) {
-        AttributeSettingHelper.forNamedValue(name, Boolean.class).setAttribute(element, value);
+        AttributeHelper
+            .forXmlTarget()
+            .forNamedValue(name, Boolean.class)
+            .setValue(value, element);
     }
 
     @Override
     public void setAttribute(Element element, String name, String value) {
-        AttributeSettingHelper.forNamedValue(name, String.class).setAttribute(element, value);
+        AttributeHelper
+            .forXmlTarget()
+            .forNamedValue(name, String.class)
+            .setValue(value, element);
     }
 
     @Override
@@ -244,7 +251,11 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public void setAttribute(Element element, String name, List<String> values, BinaryOperator<String> attributeMerger) {
-        AttributeSettingHelper.forNamedValue(name, String.class).withMerger(attributeMerger).setAttribute(element, values);
+        AttributeHelper
+            .forXmlTarget()
+            .forNamedValue(name, String.class)
+            .withMerger(attributeMerger)
+            .setValue(values, element);
     }
 
     @Override
@@ -294,10 +305,12 @@ public class PluginXmlUtility implements XmlUtility {
             } else if (propertyName != null) {
                 effectiveName = StringUtils.defaultIfBlank(propertyName.value(), name);
             }
-            AttributeSettingHelper.forMethod(source, sourceMethod)
-                    .withName(effectiveName)
-                    .withMerger(attributeMerger)
-                    .setAttribute(elementSupplier.get());
+            AttributeHelper
+                .forXmlTarget()
+                .forAnnotationProperty(source, sourceMethod)
+                .withName(effectiveName)
+                .withMerger(attributeMerger)
+                .setTo(elementSupplier.get());
         } catch (NoSuchMethodException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(source.getClass(), name));
         }
@@ -370,10 +383,12 @@ public class PluginXmlUtility implements XmlUtility {
             name = namePrefix + name;
         }
         BinaryOperator<String> merger = PluginXmlUtility::mergeStringAttributes;
-        AttributeSettingHelper.forMethod(annotation, method)
-                .withName(name)
-                .withMerger(merger)
-                .setAttribute(element);
+        AttributeHelper
+            .forXmlTarget()
+            .forAnnotationProperty(annotation, method)
+            .withName(name)
+            .withMerger(merger)
+            .setTo(element);
     }
 
     /**
@@ -457,9 +472,11 @@ public class PluginXmlUtility implements XmlUtility {
     private static Element mergeAttributes(Element first, Element second, BinaryOperator<String> attributeMerger) {
         NamedNodeMap newAttributes = second.getAttributes();
         for (int i = 0; i < newAttributes.getLength(); i++) {
-            AttributeSettingHelper.forNamedValue(newAttributes.item(i).getNodeName(), String.class)
-                    .withMerger(attributeMerger)
-                    .setAttribute(first, newAttributes.item(i).getNodeValue());
+            AttributeHelper
+                .forXmlTarget()
+                .forNamedValue(newAttributes.item(i).getNodeName(), String.class)
+                .withMerger(attributeMerger)
+                .setValue(newAttributes.item(i).getNodeValue(), first);
         }
         return first;
     }
@@ -473,17 +490,13 @@ public class PluginXmlUtility implements XmlUtility {
      * @param second Second (e.g. rendered anew) Element node
      * @return {@code Element} node with merged attribute values
      */
-    public static String mergeStringAttributes(String first, String second) {
-        if (!ATTRIBUTE_LIST_PATTERN.matcher(first).matches() || !ATTRIBUTE_LIST_PATTERN.matcher(second).matches()) {
+    private static String mergeStringAttributes(String first, String second) {
+        if (!StringUtil.isCollection(first) || !StringUtil.isCollection(second)) {
             return DEFAULT_ATTRIBUTE_MERGER.apply(first, second);
         }
-        Set<String> result = new HashSet<>(Arrays.asList(StringUtils
-                .strip(first, ATTRIBUTE_LIST_SURROUND)
-                .split(ATTRIBUTE_LIST_SPLIT_PATTERN)));
-        result.addAll(new HashSet<>(Arrays.asList(StringUtils
-                .strip(second, ATTRIBUTE_LIST_SURROUND)
-                .split(ATTRIBUTE_LIST_SPLIT_PATTERN))));
-        return String.format(ATTRIBUTE_LIST_TEMPLATE, String.join(RteFeatures.FEATURE_SEPARATOR, result));
+        Set<String> result = StringUtil.parseSet(first);
+        result.addAll(StringUtil.parseSet(second));
+        return StringUtil.format(result, String.class);
     }
 
     @Override
@@ -539,6 +552,7 @@ public class PluginXmlUtility implements XmlUtility {
     /**
      * Retrieves list of {@link Element} nodes from the current document selected by {@link XPath}
      * @param xPath String xPath representation
+     * @param document The document to search for nodes
      * @return List of {@code Element}s, or an empty list
      */
     public static List<Element> getElementNodes(String xPath, Document document) {

@@ -17,6 +17,7 @@ package com.exadel.aem.toolkit.test.component;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.plugin.util.TestConstants;
 
 @SuppressWarnings("unused")
@@ -55,6 +56,16 @@ public class InheritanceExceptionTestCases {
         @DialogField(description = "Child.text2")
         @TextField
         private String text2; // *will* cause an exception because placed above the field from grandparent class by ranking
+    }
+
+    @Dialog(
+        name = TestConstants.DEFAULT_COMPONENT_NAME,
+        title = TestConstants.DEFAULT_COMPONENT_TITLE
+    )
+    public static class Child2 extends Parent {
+        @DialogField(description = "Child.text1")
+        @TextArea
+        private String text1; // *will* cause an exception because exposing different resource type
     }
 }
 

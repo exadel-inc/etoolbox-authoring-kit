@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
@@ -185,8 +184,11 @@ public @interface Dialog {
      * Used to specify TouchUI dialog layout
      * @return One of the FIXED_COLUMNS and TABS values
      * @see DialogLayout
+     * @deprecated This property is no longer needed. The proper layout is set based on the container annotations,
+     * such as {@code Tabs} or {@code Accordion} added directly to the dialog class or one of its superclasses
      */
     @IgnorePropertyMapping
+    @Deprecated
     DialogLayout layout() default DialogLayout.FIXED_COLUMNS;
 
     /**
@@ -201,13 +203,9 @@ public @interface Dialog {
      * For the tabbed TouchUI dialog layout, enumerates the tabs to be rendered
      * @return Zero or more {@code Tab} annotations
      * @see Tab
+     * @deprecated This property is for compatibility purposes. It's recommended that you add {@code @Tabs} annotation
+     * to your dialog class instead
      */
+    @Deprecated
     Tab[] tabs() default {};
-
-    /**
-     * For the accordion-shaped TouchUI dialog layout, enumerates the panels to be rendered
-     * @return Zero or more {@code AccordionPanel} annotations
-     * @see AccordionPanel
-     */
-    AccordionPanel[] panels() default {};
 }

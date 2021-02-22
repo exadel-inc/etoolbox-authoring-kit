@@ -54,46 +54,33 @@ public class PluginAnnotationUtility {
     }
 
     /**
-     * Gets the properties exposed by a given {@code Annotation} as a key-value map. The keys are the method names
-     * this annotation possesses, and the values are the results of methods' invocation
-     * @param annotation {@code Annotation} object to retrieve values for
-     * @return {@code Map<String, Object>} instance
+     * Retrieves property value of the specified annotation. This method wraps up exception handling, therefore, can be
+     * used within functional calls, etc
+     * @param annotation The annotation used for value retrieval
+     * @param method {@code Method} object representing the annotation's property
+     * @return Method invocation result, or null if an internal exception was thrown
      */
-    public static Map<String, Object> getProperties(Annotation annotation) {
-        return getProperties(annotation, method -> true);
+    public static Object getProperty(Annotation annotation, Method method) {
+        return getProperty(annotation, method, null);
     }
-
+    
     /**
-     * Retrieves list of properties of an {@code Annotation} object as a key-value map. The keys are the method names
-     * this annotation possesses, and the values are the results of methods' invocation
-     * @param annotation The annotation instance to analyze
-     * @param filter {@code Predicate<Method>} do decide whether the current method is eligible for collection
-     * @return {@code Map<String, Object>} instance containing property names and values
+     * Retrieves property value of the specified annotation. This method wraps up exception handling, therefore, can be
+     * used within functional calls, etc
+     * @param annotation The annotation used for value retrieval
+     * @param method {@code Method} object representing the annotation's property
+     * @param defaultValue Value to return in case of an exception
+     * @return Method invocation result, or the default value if an internal exception was thrown
      */
-    private static Map<String, Object> getProperties(Annotation annotation, Predicate<Method> filter) {
-        Map<String, Object> result = new HashMap<>();
-        for (Method method : Arrays.stream(annotation.annotationType().getDeclaredMethods()).filter(filter).collect(Collectors.toList())) {
-            try {
-                Object value = method.invoke(annotation, (Object[]) null);
-                result.put(method.getName(), value);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
-                    String.format(INVOCATION_EXCEPTION_MESSAGE_TEMPLATE, method.getName(), annotation.annotationType().getName()),
-                    e));
-            }
+    public static Object getProperty(Annotation annotation, Method method, Object defaultValue) {
+        try {
+            return method.invoke(annotation);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
+                String.format(INVOCATION_EXCEPTION_MESSAGE_TEMPLATE, method.getName(), annotation.annotationType().getName()),
+                e));
         }
-        return result;
-    }
-
-    /**
-     * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
-     * as a key-value map. The keys are the method names this annotation possesses, and the values are the results
-     * of methods' invocation
-     * @param annotation The annotation instance to analyze
-     * @return List of {@code Method} instances that represent properties initialized with non-defaults
-     */
-    public static Map<String, Object> getNonDefaultProperties(Annotation annotation) {
-        return getProperties(annotation, method -> propertyIsNotDefault(annotation, method));
+        return defaultValue;
     }
 
     /**
@@ -129,6 +116,39 @@ public class PluginAnnotationUtility {
         } catch (IllegalAccessException | InvocationTargetException e) {
             return true;
         }
+    }
+
+    /**
+     * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
+     * as a key-value map. The keys are the method names this annotation possesses, and the values are the results
+     * of methods' invocation
+     * @param annotation The annotation instance to analyze
+     * @return List of {@code Method} instances that represent properties initialized with non-defaults
+     */
+    public static Map<String, Object> getNonDefaultProperties(Annotation annotation) {
+        return getProperties(annotation, method -> propertyIsNotDefault(annotation, method));
+    }
+
+    /**
+     * Retrieves list of properties of an {@code Annotation} object as a key-value map. The keys are the method names
+     * this annotation possesses, and the values are the results of methods' invocation
+     * @param annotation The annotation instance to analyze
+     * @param filter {@code Predicate<Method>} do decide whether the current method is eligible for collection
+     * @return {@code Map<String, Object>} instance containing property names and values
+     */
+    private static Map<String, Object> getProperties(Annotation annotation, Predicate<Method> filter) {
+        Map<String, Object> result = new HashMap<>();
+        for (Method method : Arrays.stream(annotation.annotationType().getDeclaredMethods()).filter(filter).collect(Collectors.toList())) {
+            try {
+                Object value = method.invoke(annotation, (Object[]) null);
+                result.put(method.getName(), value);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
+                    String.format(INVOCATION_EXCEPTION_MESSAGE_TEMPLATE, method.getName(), annotation.annotationType().getName()),
+                    e));
+            }
+        }
+        return result;
     }
 
     /**

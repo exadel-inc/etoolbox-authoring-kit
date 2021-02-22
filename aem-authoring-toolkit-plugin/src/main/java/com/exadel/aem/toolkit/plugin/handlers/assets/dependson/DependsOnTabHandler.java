@@ -76,8 +76,9 @@ public class DependsOnTabHandler implements BiConsumer<Class<?>, Target> {
                     DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
             ));
         } else {
-            PluginRuntime.context().getExceptionHandler()
-                    .handle(new InvalidContainerException(value.tabTitle(), DialogConstants.NN_TABS));
+            PluginRuntime.context()
+                .getExceptionHandler()
+                .handle(new InvalidContainerException(value.tabTitle()));
         }
     }
 

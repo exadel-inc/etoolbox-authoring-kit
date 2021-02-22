@@ -13,24 +13,24 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
+import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.container.common.WidgetContainerHandler;
+import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
 
 /**
- * Handler used to prepare data for {@link AccordionWidget} widget rendering
+ * Handler used to prepare data for {@link Accordion} widget rendering
  */
 class AccordionWidgetHandler extends WidgetContainerHandler {
 
     /**
-     * Implements the {@code BiConsumer<Source, Target} pattern to process settings specified by {@link AccordionWidget}
+     * Implements the {@code BiConsumer<Source, Target} pattern to process settings specified by {@link Accordion}
      * and provide data for widget rendering
      * @param source Member that defines an {@code Accordion}
      * @param target Data structure used for rendering
      */
     @Override
     public void accept(Source source, Target target) {
-        populateContainer(source, target, AccordionWidget.class);
+        populateNestedContainer(source, target, Accordion.class);
     }
 }

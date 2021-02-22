@@ -16,25 +16,23 @@ package com.exadel.aem.toolkit.plugin.target;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
@@ -45,24 +43,21 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
-import com.exadel.aem.toolkit.plugin.util.AttributeSettingHelper;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
+import com.exadel.aem.toolkit.plugin.util.StringUtil;
 
 public class TargetImpl extends AdaptationBase<Target> implements Target {
-
-    private static final String ATTRIBUTE_LIST_TEMPLATE = "[%s]";
-    private static final String ATTRIBUTE_LIST_SPLIT_PATTERN = "\\s*,\\s*";
-    private static final String ATTRIBUTE_LIST_SURROUND = "[]";
-    private static final String ATTRIBUTE_TYPE_HINT_TEMPLATE = "{%s}";
-    private static final Pattern ATTRIBUTE_LIST_PATTERN = Pattern.compile("^\\[.+]$");
 
     private static final String PARENT_PATH = "..";
     private static final String SELF_PATH = ".";
 
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
-
     private static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
+
+
+    /* -----------------------------
+       Local fields and constructors
+       ----------------------------- */
 
     private final Target parent;
     private final Map<String, String> attributes;
@@ -73,10 +68,6 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     private String postfix;
     private Scope scope;
 
-
-    /* ------------
-       Constructors
-       ------------ */
 
     TargetImpl(String name, Target parent) {
         super(Target.class);
@@ -108,6 +99,15 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return this.children;
     }
 
+    @Override
+    public boolean isEmpty() {
+        if (!children.isEmpty() || attributes.size() > 1) {
+            return false;
+        }
+        return attributes.isEmpty()
+            || attributes.getOrDefault(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
+                .equals(DialogConstants.NT_UNSTRUCTURED);
+    }
 
     /* ----------------
        Scope operations
@@ -179,7 +179,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
             return null;
         }
         boolean isEscaped = path.startsWith(DialogConstants.DOUBLE_QUOTE) && path.endsWith(DialogConstants.DOUBLE_QUOTE);
-        String effectivePath = isEscaped ? StringUtils.strip(path, DialogConstants.DOUBLE_QUOTE) : path;
+        String effectivePath = StringUtils.strip(path, DialogConstants.DOUBLE_QUOTE);
         PathSplitHelper pathSplitHelper = PathSplitHelper.of(effectivePath);
 
         if (!isEscaped && pathSplitHelper.isSplittable()) {
@@ -189,7 +189,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
                 String currentChunk = pathChunks.poll();
                 current = ((TargetImpl) current).getTarget(currentChunk, createIfMissing);
                 if (current == null) {
-                    return null;
+                    break;
                 }
             }
             return current;
@@ -327,79 +327,65 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     @Override
     public Target attribute(String name, String value) {
-        if (value != null) this.attributes.put(name, value);
-        return this;
-    }
-
-    @Override
-    public Target attribute(String name, boolean value) {
-        this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Boolean.class.getSimpleName()) + value);
+        if (value != null) {
+            this.attributes.put(name, value);
+        }
         return this;
     }
 
     @Override
     public Target attribute(String name, String[] value) {
         if (value != null) {
-            String stringValues = String.join(DialogConstants.ITEM_SEPARATOR_COMMA, value);
-            this.attributes.put(
-                name,
-                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Long.class.getSimpleName())
-                    + String.format(ATTRIBUTE_LIST_TEMPLATE, stringValues));
+            this.attributes.put(name, StringUtil.format(value, String.class));
         }
+        return this;
+    }
+
+    @Override
+    public Target attribute(String name, boolean value) {
+        this.attributes.put(name, StringUtil.format(value, Boolean.class));
         return this;
     }
 
     @Override
     public Target attribute(String name, boolean[] value) {
         if (value != null) {
-            String booleanValues = IntStream.range(0, value.length)
-                .mapToObj(index -> value[index])
-                .map(String::valueOf)
-                .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
-            this.attributes.put(
-                name,
-                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Boolean.class.getSimpleName())
-                    + String.format(ATTRIBUTE_LIST_TEMPLATE, booleanValues));
+            List<Boolean> booleanValues = IntStream.range(0, value.length)
+                .mapToObj(pos -> value[pos])
+                .collect(Collectors.toList());
+            this.attributes.put(name, StringUtil.format(booleanValues, Boolean.class));
         }
         return this;
     }
 
     @Override
     public Target attribute(String name, long value) {
-        this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Long.class.getSimpleName()) + value);
+        this.attributes.put(name, StringUtil.format(value, Long.class));
         return this;
     }
 
     @Override
     public Target attribute(String name, long[] value) {
         if (value != null) {
-            String longValues = Arrays.stream(value)
-                .mapToObj(String::valueOf)
-                .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
             this.attributes.put(
                 name,
-                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Long.class.getSimpleName())
-                    + String.format(ATTRIBUTE_LIST_TEMPLATE, longValues));
+                StringUtil.format(LongStream.of(value).boxed().collect(Collectors.toList()), Long.class));
         }
         return this;
     }
 
     @Override
     public Target attribute(String name, double value) {
-        this.attributes.put(name, String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Double.class.getSimpleName()) + value);
+        this.attributes.put(name, StringUtil.format(value, Double.class));
         return this;
     }
 
     @Override
     public Target attribute(String name, double[] value) {
         if (value != null) {
-            String doubleValues = Arrays.stream(value)
-                .mapToObj(String::valueOf)
-                .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
             this.attributes.put(
                 name,
-                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Double.class.getSimpleName())
-                    + String.format(ATTRIBUTE_LIST_TEMPLATE, doubleValues));
+                StringUtil.format(DoubleStream.of(value).boxed().collect(Collectors.toList()), Double.class));
         }
         return this;
     }
@@ -407,28 +393,16 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     @Override
     public Target attribute(String name, Date value) {
         if (value != null) {
-            this.attributes.put(
-                name,
-                String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Date.class.getSimpleName())
-                    + new SimpleDateFormat(DATE_FORMAT).format(value));
+            this.attributes.put(name, StringUtil.format(value, Date.class));
         }
         return this;
     }
 
     @Override
     public Target attribute(String name, Date[] value) {
-        if (value == null) {
-            return this;
+        if (value != null) {
+            this.attributes.put(name, StringUtil.format(value, Date.class));
         }
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        String dateValues = Arrays.stream(value)
-            .filter(Objects::nonNull)
-            .map(date -> dateFormat.format(value))
-            .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
-        this.attributes.put(
-            name,
-            String.format(ATTRIBUTE_TYPE_HINT_TEMPLATE, Date.class.getSimpleName())
-                + String.format(ATTRIBUTE_LIST_TEMPLATE, dateValues));
         return this;
     }
 
@@ -544,22 +518,18 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         }
 
         BinaryOperator<String> merger = TargetImpl::mergeStringAttributes;
-        AttributeSettingHelper.forMethod(context, method)
+        AttributeHelper.forAnnotationProperty(context, method)
             .withName(propertyName)
             .withMerger(merger)
-            .setAttribute(effectiveTarget);
+            .setTo(effectiveTarget);
     }
 
     private static String mergeStringAttributes(String first, String second) {
-        if (!ATTRIBUTE_LIST_PATTERN.matcher(first).matches() || !ATTRIBUTE_LIST_PATTERN.matcher(second).matches()) {
+        if (!StringUtil.isCollection(first) || !StringUtil.isCollection(second)) {
             return DEFAULT_ATTRIBUTE_MERGER.apply(first, second);
         }
-        Set<String> result = new HashSet<>(Arrays.asList(StringUtils
-            .strip(first, ATTRIBUTE_LIST_SURROUND)
-            .split(ATTRIBUTE_LIST_SPLIT_PATTERN)));
-        result.addAll(new HashSet<>(Arrays.asList(StringUtils
-            .strip(second, ATTRIBUTE_LIST_SURROUND)
-            .split(ATTRIBUTE_LIST_SPLIT_PATTERN))));
-        return String.format(ATTRIBUTE_LIST_TEMPLATE, String.join(DialogConstants.ITEM_SEPARATOR_COMMA, result));
+        Set<String> result = StringUtil.parseSet(first);
+        result.addAll(StringUtil.parseSet(second));
+        return StringUtil.format(result, String.class);
     }
 }

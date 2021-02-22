@@ -19,7 +19,7 @@ import org.junit.Test;
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
 import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
-import com.exadel.aem.toolkit.test.widget.Accordion;
+import com.exadel.aem.toolkit.test.widget.AccordionWidget;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
 import com.exadel.aem.toolkit.test.widget.AnchorButtonWidget;
 import com.exadel.aem.toolkit.test.widget.ButtonWidget;
@@ -39,7 +39,7 @@ import com.exadel.aem.toolkit.test.widget.PasswordWidget;
 import com.exadel.aem.toolkit.test.widget.RadioGroupWidget;
 import com.exadel.aem.toolkit.test.widget.RichTextEditorWidget;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
-import com.exadel.aem.toolkit.test.widget.Tabs;
+import com.exadel.aem.toolkit.test.widget.TabsWidget;
 import com.exadel.aem.toolkit.test.widget.TagFieldWidget;
 import com.exadel.aem.toolkit.test.widget.TextAreaWidget;
 import com.exadel.aem.toolkit.test.widget.TextWidget;
@@ -165,7 +165,7 @@ public class WidgetsTest extends DefaultTestBase {
 
     @Test
     public void testTabs() {
-        test(Tabs.class, RESOURCE_FOLDER_WIDGET, "tabs");
+        test(TabsWidget.class, RESOURCE_FOLDER_WIDGET, "tabs");
     }
 
     @Test
@@ -180,6 +180,6 @@ public class WidgetsTest extends DefaultTestBase {
 
     @Test
     public void testAccordion() {
-        test(Accordion.class, RESOURCE_FOLDER_WIDGET, "accordion");
+        test(AccordionWidget.class, RESOURCE_FOLDER_WIDGET, "accordion");
     }
 }

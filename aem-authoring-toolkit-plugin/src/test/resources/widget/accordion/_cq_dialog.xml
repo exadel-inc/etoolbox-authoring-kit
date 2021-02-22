@@ -19,8 +19,7 @@
                             jcr:title="Basic"
                             sling:resourceType="granite/ui/components/coral/foundation/container">
                         <parentConfig jcr:primaryType="nt:unstructured"
-                                      disabled="{Boolean}true"
-                                      active="{Boolean}false"/>
+                                      disabled="{Boolean}true"/>
                         <items jcr:primaryType="nt:unstructured">
                             <field1 jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
@@ -36,13 +35,11 @@
                             jcr:title="Basic2"
                             sling:resourceType="granite/ui/components/coral/foundation/container">
                         <parentConfig jcr:primaryType="nt:unstructured"
-                                      disabled="{Boolean}false"
-                                      active="{Boolean}false"/>
+                                      active="{Boolean}true"/>
                         <items jcr:primaryType="nt:unstructured">
                             <accordion jcr:primaryType="nt:unstructured"
                                        margin="{Boolean}false"
                                        multiple="{Boolean}false"
-                                       name="Field"
                                        variant="default"
                                        sling:resourceType="granite/ui/components/coral/foundation/accordion">
                                 <items jcr:primaryType="nt:unstructured">
@@ -51,8 +48,7 @@
                                                            jcr:title="Accordion Widget Panel 1">
                                         <parentConfig
                                                 jcr:primaryType="nt:unstructured"
-                                                disabled="{Boolean}true"
-                                                active="{Boolean}false"/>
+                                                disabled="{Boolean}true"/>
                                         <items jcr:primaryType="nt:unstructured">
                                             <field6 disabled="{Boolean}false" jcr:primaryType="nt:unstructured"
                                                     name="./field6"

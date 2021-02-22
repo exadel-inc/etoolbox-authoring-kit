@@ -11,12 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.container.enums;
+
+package com.exadel.aem.toolkit.plugin.exceptions;
 
 /**
- * Contains possible values of {@link com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget#variant()} property
+ * Represents the plugin-specific exception thrown when there is an error in a field container (dialog, or fieldset) setup:
+ * no valid fields present, duplicate field entries detected, etc.
  */
-@SuppressWarnings("unused")
-public enum AccordionVariant {
-    DEFAULT, QUIET, LARGE
+public class InvalidLayoutException extends RuntimeException {
+    public InvalidLayoutException(String message) {
+        super(message);
+    }
 }

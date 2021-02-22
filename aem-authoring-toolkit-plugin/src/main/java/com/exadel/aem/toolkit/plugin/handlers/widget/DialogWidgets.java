@@ -18,8 +18,9 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
@@ -29,7 +30,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
-import com.exadel.aem.toolkit.api.annotations.widgets.TabsWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Text;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
@@ -82,8 +82,8 @@ public enum DialogWidgets implements DialogWidget {
     HEADING(Heading.class),
     ALERT(Alert.class),
     BUTTON(Button.class),
-    ACCORDION(AccordionWidget.class, new AccordionWidgetHandler()),
-    TABS(TabsWidget.class, new TabsWidgetHandler()),
+    ACCORDION(Accordion.class, new AccordionWidgetHandler()),
+    TABS(Tabs.class, new TabsWidgetHandler()),
     ANCHOR_BUTTON(AnchorButton.class);
 
     private static final String NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE = "No valid dialog component for field '%s' in class %s";

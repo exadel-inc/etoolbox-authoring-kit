@@ -11,15 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.exadel.aem.toolkit.plugin.exceptions;
+package com.exadel.aem.toolkit.api.annotations.layouts;
 
 /**
- * Represents the plugin-specific exception thrown when there is an error in a field container (dialog, or fieldset) setup:
- * no valid fields present, duplicate field entries detected, etc.
+ * Contains possible values of {@link Tabs#size()} property
  */
-public class InvalidFieldContainerException extends RuntimeException {
-    public InvalidFieldContainerException(String message) {
-        super(message);
-    }
+@SuppressWarnings("unused")
+public enum TabsSize {
+    M, L
 }

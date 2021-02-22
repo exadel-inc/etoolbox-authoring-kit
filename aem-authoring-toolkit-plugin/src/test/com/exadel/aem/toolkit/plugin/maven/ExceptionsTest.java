@@ -26,7 +26,7 @@ import org.junit.rules.ExpectedException;
 import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
-import com.exadel.aem.toolkit.plugin.exceptions.InvalidFieldContainerException;
+import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
 import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
@@ -42,22 +42,29 @@ public class ExceptionsTest extends ExceptionsTestBase {
     @Test
     public void testComponentWithNonexistentTab() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidContainerException.class));
-        exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
+        exceptionRule.expectMessage("Container section \"Zeroth tab\" is not defined");
         test(ExceptionsTestCases.ComponentWithNonexistentTab.class);
     }
 
     @Test
     public void testComponentWithWrongDependsOnTab() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidContainerException.class));
-        exceptionRule.expectMessage("Tab \"Zeroth tab\" is not defined");
+        exceptionRule.expectMessage("Container section \"Zeroth tab\" is not defined");
         test(ExceptionsTestCases.ComponentWithNonexistentDependsOnTab.class);
     }
 
     @Test
     public void testComponentWithDuplicateFields() {
-        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidFieldContainerException.class));
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
         exceptionRule.expectMessage("Field named \"text2\" in class \"Child\"");
         test(InheritanceExceptionTestCases.Child.class);
+    }
+
+    @Test
+    public void testComponentWithShadowingResourceType() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
+        exceptionRule.expectMessage("Field named \"text1\" in class \"Child2\"");
+        test(InheritanceExceptionTestCases.Child2.class);
     }
 
     @Test

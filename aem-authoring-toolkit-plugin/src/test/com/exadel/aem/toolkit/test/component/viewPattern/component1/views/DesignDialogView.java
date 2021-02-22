@@ -14,8 +14,11 @@
 
 package com.exadel.aem.toolkit.test.component.viewPattern.component1.views;
 
-import com.exadel.aem.toolkit.api.annotations.container.Place;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.LayoutType;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.layouts.TabsSize;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
@@ -37,14 +40,19 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_3;
 
 @DesignDialog(
     title = TestConstants.DEFAULT_COMPONENT_TITLE,
-    layout = DialogLayout.TABS,
-    tabs = {
+    layout = DialogLayout.TABS
+)
+@Tabs(
+    value = {
         @Tab(title = LABEL_TAB_1),
         @Tab(title = LABEL_TAB_2),
         @Tab(title = LABEL_TAB_3)
-    }
+    },
+    type = LayoutType.LARGE,
+    padding = false,
+    size = TabsSize.L, // this one will not render
+    trackingFeature = "unused" // this one will not render
 )
-@SuppressWarnings("unused")
 public class DesignDialogView implements Addition, Addition2 {
 
     @DialogField(
