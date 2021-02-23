@@ -31,6 +31,7 @@ import com.google.common.base.CaseFormat;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
@@ -57,6 +58,7 @@ public class AttributeHelper<T, V> {
     private String name;
     private String[] ignoredValues;
     private boolean blankValuesAllowed;
+    private Class<?> typeHintValueType;
 
     private boolean isEnum;
     private StringTransformation transformation;
@@ -140,7 +142,7 @@ public class AttributeHelper<T, V> {
             return;
         }
 
-        setValue(StringUtil.format(value, valueType), target);
+        setValue(StringUtil.format(value, getTypeHintValueType()), target);
     }
 
     /**
@@ -160,7 +162,7 @@ public class AttributeHelper<T, V> {
         if (validValues.isEmpty()) {
             return;
         }
-        setValue(StringUtil.format(validValues, valueType), target);
+        setValue(StringUtil.format(validValues, getTypeHintValueType()), target);
     }
 
 
@@ -207,6 +209,16 @@ public class AttributeHelper<T, V> {
         return !ArrayUtils.contains(ignoredValues, value);
     }
 
+    /**
+     * Gets the {@code Class} object used for type hinting when rendering a value as a JCR string
+     * @return {@code Class<?>} reference
+     */
+    private Class<?> getTypeHintValueType() {
+        return typeHintValueType != null
+            ? typeHintValueType
+            : valueType;
+    }
+
 
     /* --------------
        Values casting
@@ -219,10 +231,7 @@ public class AttributeHelper<T, V> {
      * @return Type-casted value, or null
      */
     private V cast(Object value) {
-        if (!validationChecker.test(value)) {
-            return null;
-        }
-        if (value == null) {
+        if (!validationChecker.test(value) || value == null) {
             return null;
         }
         if (isEnum) {
@@ -326,6 +335,7 @@ public class AttributeHelper<T, V> {
             attributeSetter.method = property;
             attributeSetter.annotation = annotation;
             attributeSetter.name = property.getName();
+
             attributeSetter.isEnum = property.getReturnType().isEnum()
                 || (property.getReturnType().getComponentType() != null
                 && property.getReturnType().getComponentType().isEnum());
@@ -334,6 +344,9 @@ public class AttributeHelper<T, V> {
                 attributeSetter.ignoredValues = propertyRendering.ignoreValues();
                 attributeSetter.blankValuesAllowed = propertyRendering.allowBlank();
                 attributeSetter.transformation = propertyRendering.transform();
+                if (!propertyRendering.valueType().equals(_Default.class)) {
+                    attributeSetter.typeHintValueType = propertyRendering.valueType();
+                }
             }
             if (PluginAnnotationUtility.propertyIsNotDefault(annotation, property)) {
                 attributeSetter.validationChecker = Validation.forMethod(property);

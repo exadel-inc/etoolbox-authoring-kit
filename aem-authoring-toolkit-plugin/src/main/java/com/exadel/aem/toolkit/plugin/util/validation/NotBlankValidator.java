@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.plugin.util.validation;
 
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,9 @@ public class NotBlankValidator implements Validator {
         return obj != null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getWarningMessage() {
         return MSG_STRING_EXPECTED;

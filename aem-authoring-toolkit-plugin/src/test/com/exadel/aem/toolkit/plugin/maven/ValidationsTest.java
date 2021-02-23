@@ -31,7 +31,7 @@ public class ValidationsTest extends ExceptionsTestBase {
     @Test
     public void testNonBlankValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
-        exceptionRule.expectMessage("'' provided");
+        exceptionRule.expectMessage("' ' provided");
         test(ValidationTestCases.InvalidTitleDialog.class);
     }
 
@@ -109,4 +109,10 @@ public class ValidationsTest extends ExceptionsTestBase {
         test(ValidationTestCases.ComponentWithWrongHtmlTag2.class);
     }
 
+    @Test
+    public void testDialogTitleMissing() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
+        exceptionRule.expectMessage("Title property is missing for dialog");
+        test(ValidationTestCases.MissingTitleDialog.class);
+    }
 }

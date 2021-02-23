@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.plugin.util.validation;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
@@ -20,6 +21,7 @@ import com.exadel.aem.toolkit.plugin.adapters.DateTimeSetting;
 /**
  * {@link Validator} implementation for testing that provided DateTimeValue is valid
  */
+@SuppressWarnings("unused") // Invoked indirectly via reflection
 public class DateTimeValidator implements Validator {
     private static final String MSG_DATETIME_EXPECTED = "valid date/time value expected";
 
@@ -46,6 +48,9 @@ public class DateTimeValidator implements Validator {
         return obj instanceof DateTimeValue;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getWarningMessage() {
         return MSG_DATETIME_EXPECTED;

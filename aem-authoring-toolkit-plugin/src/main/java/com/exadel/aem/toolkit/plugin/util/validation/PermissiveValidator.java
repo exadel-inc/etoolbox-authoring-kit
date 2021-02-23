@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.plugin.util.validation;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
@@ -35,6 +36,9 @@ public final class PermissiveValidator implements Validator {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getWarningMessage() {
         return null;

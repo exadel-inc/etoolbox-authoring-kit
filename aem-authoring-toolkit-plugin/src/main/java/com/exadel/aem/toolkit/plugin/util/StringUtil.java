@@ -66,7 +66,7 @@ public class StringUtil {
      * @param <T>       Type of the value
      * @return String representing the value. If {@code null} reference was passed, empty string is returned
      */
-    public static <T> String format(T value, Class<T> valueType) {
+    public static <T> String format(T value, Class<?> valueType) {
         if (value == null) {
             return StringUtils.EMPTY;
         }
@@ -90,7 +90,7 @@ public class StringUtil {
      * @param <T>       Type of the value
      * @return String representing the value. If {@code null} reference was passed, empty string is returned
      */
-    public static <T> String format(T[] value, Class<T> valueType) {
+    public static <T> String format(T[] value, Class<?> valueType) {
         if (value == null || value.length == 0) {
             return StringUtils.EMPTY;
         }
@@ -104,7 +104,7 @@ public class StringUtil {
      * @param <T>       Type of the value
      * @return String representing the value. If {@code null} reference was passed, empty string is returned
      */
-    public static <T> String format(Collection<T> value, Class<T> valueType) {
+    public static <T> String format(Collection<T> value, Class<?> valueType) {
         Function<Object, String> conversion = CONVERSIONS.getOrDefault(valueType, DEFAULT_CONVERSION);
         return format(value, valueType, conversion);
     }
@@ -118,7 +118,7 @@ public class StringUtil {
      * @param <T>        Type of the value
      * @return String representing the value. If {@code null} reference was passed, empty string is returned
      */
-    private static <T> String format(Collection<T> value, Class<T> valueType, Function<Object, String> conversion) {
+    private static <T> String format(Collection<T> value, Class<?> valueType, Function<Object, String> conversion) {
         if (value == null || value.isEmpty()) {
             return StringUtils.EMPTY;
         }

@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.plugin.util.validation;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,9 +19,9 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 
 /**
- *  {@link Validator} implementation for testing that provided number is greater than zero
+ *  {@link Validator} implementation for checking that provided number is greater than zero
  */
-@SuppressWarnings("unused") // called indirectly via reflection
+@SuppressWarnings("unused") // Invoked indirectly via reflection
 public class PositiveNumberValidator extends NonNegativeNumberValidator {
     private static final String MSG_POSITIVE_EXPECTED = "number greater than zero expected";
 
@@ -37,9 +38,11 @@ public class PositiveNumberValidator extends NonNegativeNumberValidator {
         return StringUtils.isNotEmpty(obj.toString()) && Double.parseDouble(obj.toString()) > 0d;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getWarningMessage() {
         return MSG_POSITIVE_EXPECTED;
     }
-
 }

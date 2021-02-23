@@ -41,8 +41,8 @@ public @interface Dialog {
      * @return String value, non-blank
      */
     @PropertyRendering(name = "jcr:title")
-    @ValueRestriction(ValueRestrictions.NOT_BLANK)
-    String title();
+    @ValueRestriction(ValueRestrictions.NOT_BLANK_OR_DEFAULT)
+    String title() default "";
 
     /**
      * When set to non-blank, maps to the 'jcr:description' attribute of the component's root node
@@ -165,7 +165,12 @@ public @interface Dialog {
      * @return True or false
      * @deprecated Use {@link AemComponent#isContainer()} to set this value
      */
-    @IgnorePropertyMapping
+    @PropertyRendering(
+        scope = Scope.COMPONENT,
+        name = "cq:isContainer",
+        valueType = String.class,
+        ignoreValues = "false"
+    )
     @Deprecated
     boolean isContainer() default false;
 
