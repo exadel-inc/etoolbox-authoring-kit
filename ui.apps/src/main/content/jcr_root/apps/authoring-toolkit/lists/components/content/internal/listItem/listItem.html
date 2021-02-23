@@ -22,10 +22,15 @@
     <div class="item-error" data-sly-test="${listItem.properties.empty}">
         Please configure List Item properties
     </div>
-    <sly data-sly-list="${listItem.properties}">
+
+    <div class="item-preview" data-sly-test="${listItem.itemResType}"
+         data-sly-include="${'itemPreview.html' @ prependPath=listItem.itemResType, wcmmode='disabled'}"></div>
+
+    <div class="item-properties" data-sly-list="${listItem.properties}">
         <div class="item-property">
-            <div><strong>${item}</strong>: ${listItem.properties[item]}</div>
+            <strong>${item}</strong>: ${listItem.properties[item]}
         </div>
-    </sly>
+    </div>
+
 </div>
 

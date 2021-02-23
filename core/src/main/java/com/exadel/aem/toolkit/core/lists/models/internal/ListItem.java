@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
+import com.day.cq.wcm.api.NameConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -43,6 +44,9 @@ public class ListItem {
         JcrConstants.JCR_LASTMODIFIED,
         JcrConstants.JCR_LAST_MODIFIED_BY,
         JcrConstants.JCR_PRIMARYTYPE,
+        NameConstants.PN_PAGE_LAST_REPLICATED,
+        NameConstants.PN_PAGE_LAST_REPLICATED_BY,
+        NameConstants.PN_PAGE_LAST_REPLICATION_ACTION,
         ResourceResolver.PROPERTY_RESOURCE_TYPE
     );
 
