@@ -136,6 +136,10 @@ public @interface AemComponent {
      * Renders as the 'isContainer' attribute of the component root node
      * @return True or false
      */
-    @IgnorePropertyMapping
+    @PropertyRendering(
+        name = "cq:isContainer",
+        valueType = String.class,
+        ignoreValues = "false"
+    )
     boolean isContainer() default false;
 }

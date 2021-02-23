@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.plugin.util.validation;
 
 import java.lang.annotation.Annotation;
@@ -53,6 +54,9 @@ public class AllNotBlankValidator implements Validator {
         return obj instanceof Annotation;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getWarningMessage() {
         return MSG_STRINGS_NOT_BLANK;

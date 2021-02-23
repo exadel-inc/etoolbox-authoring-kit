@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.plugin.util.validation;
 
 import java.util.regex.Pattern;
@@ -40,6 +41,9 @@ public class JcrPathValidator extends NotBlankValidator {
                 || PROP_INJECT_PATTERN.matcher(obj.toString()).matches();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getWarningMessage() {
         return MSG_JCR_PATH_EXPECTED;

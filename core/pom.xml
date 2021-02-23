@@ -29,10 +29,10 @@
                     <instructions>
                         <Import-Package>javax.inject;javax.annotation;version=0.0.0,*;resolution:=optional</Import-Package>
                         <Sling-Model-Packages>
-                            com.exadel.aem.toolkit.bundle.models,
-                            com.exadel.aem.toolkit.bundle.lists.models
+                            com.exadel.aem.toolkit.core.models,
+                            com.exadel.aem.toolkit.core.lists.models
                         </Sling-Model-Packages>
-                        <Export-Package>com.exadel.aem.toolkit.bundle.*</Export-Package>
+                        <Export-Package>com.exadel.aem.toolkit.core.*</Export-Package>
                     </instructions>
                 </configuration>
                 <executions>
@@ -88,6 +88,26 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>

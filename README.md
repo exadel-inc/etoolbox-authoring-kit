@@ -1337,12 +1337,12 @@ You can customize the item's view by adding `itemPreview.html` to your Item Comp
 AEMBox Lists can be edited similarly to any other page. You may change the type of Item Component used in this list (even after the list has been populated with data) via page properties.
 
 ###### Retrieving lists' content programmatically
-[ListsHelper](core/src/main/java/com/exadel/aem/toolkit/bundle/lists/util/ListsHelper.java) is a helper class that provides the ability to retrieve any list by its path. See examples below:
+[ListsHelper](core/src/main/java/com/exadel/aem/toolkit/core/lists/util/ListsHelper.java) is a helper class that provides the ability to retrieve any list by its path. See examples below:
 ```java
    List<ItemModel> models = CustomListsHelper.getList(resolver, "/content/myList", ItemModel.class);
    Map<String, String> mapping = CustomListsHelper.getMap(resolver, "/content/myList");
 ```
-You can find more examples in [ListsHelperTest](core/src/test/java/com/exadel/aem/toolkit/bundle/lists/util/ListsHelperTest.java)
+You can find more examples in [ListsHelperTest](core/src/test/java/com/exadel/aem/toolkit/core/lists/util/ListsHelperTest.java)
 
 ###### Populating dropdown widgets from a datasource.
 AEMBox Lists can be used as a data source for any widget consuming granite datasources.

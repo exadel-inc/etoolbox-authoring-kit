@@ -29,6 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
@@ -38,6 +39,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnTabHandler;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.DialogContainer;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -50,11 +52,12 @@ import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
  * {@code _cq_dialog.xml} file within the current component folder before package is uploaded
  */
 class CqDialogWriter extends PackageEntryWriter {
+    private static final String TITLE_MISSING_EXCEPTION_MESSAGE = "Title property is missing for dialog in class ";
 
     private final Scope scope;
+
     /**
      * Basic constructor
-     *
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
      * @param scope Current XmlScope
      */
@@ -107,6 +110,7 @@ class CqDialogWriter extends PackageEntryWriter {
                     .getPropertyMappingFilter(dialogAnnotation)
                     .and(member -> fitsInScope(member, scope)))
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
+        populateTitleProperty(componentClass, target);
 
         DialogLayout dialogLayout = getLayout(componentClass, scope);
         DialogContainer.getContainer(dialogLayout).build(componentClass, target);
@@ -120,6 +124,30 @@ class CqDialogWriter extends PackageEntryWriter {
                 .filter(handler -> customAnnotations.stream()
                         .anyMatch(annotation -> customAnnotationMatchesHandler(annotation, handler)))
                 .forEach(handler -> handler.accept(componentClass, target));
+    }
+
+    /**
+     * Called by {@link CqDialogWriter#populateTarget(Class, Target)} to settle the dialog {@code title} issue.
+     * If {@code title} is set at {@code AemComponent} level, one does not need to specify it separately for a {@code Dialog}
+     * or {@code DesignDialog}. However if {@code AemComponent} is missing, {@code title} must be set to a non-blank value
+     * in the dialog annotation
+     * @param componentClass The {@code Class} being processed
+     * @param target         The root element of DOM {@link Document} to feed data to
+     */
+    private static void populateTitleProperty(Class<?> componentClass, Target target) {
+        String currentTitleValue = null;
+        if (componentClass.isAnnotationPresent(Dialog.class)) {
+            currentTitleValue = componentClass.getDeclaredAnnotation(Dialog.class).title();
+        }
+        if (StringUtils.isEmpty(currentTitleValue) && componentClass.isAnnotationPresent(DesignDialog.class)) {
+            currentTitleValue = componentClass.getDeclaredAnnotation(DesignDialog.class).title();
+        }
+        if (StringUtils.isEmpty(currentTitleValue) && !componentClass.isAnnotationPresent(AemComponent.class)) {
+            ValidationException ex = new ValidationException(TITLE_MISSING_EXCEPTION_MESSAGE + componentClass.getName());
+            PluginRuntime.context().getExceptionHandler().handle(ex);
+        } else if (StringUtils.isEmpty(currentTitleValue)) {
+            target.attribute(DialogConstants.PN_JCR_TITLE, componentClass.getDeclaredAnnotation(AemComponent.class).title());
+        }
     }
 
     /**

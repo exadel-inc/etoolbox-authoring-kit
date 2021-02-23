@@ -19,7 +19,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
@@ -41,22 +40,13 @@ public @interface DesignDialog {
      * @return String value, non-blank
      */
     @PropertyRendering(name = "jcr:title")
-    @ValueRestriction(ValueRestrictions.NOT_BLANK)
-    String title();
-
-    /**
-     * Used to specify TouchUI dialog layout
-     *
-     * @return One of the FIXED_COLUMNS and TABS values
-     * @see DialogLayout
-     */
-    @IgnorePropertyMapping
-    DialogLayout layout() default DialogLayout.FIXED_COLUMNS;
+    @ValueRestriction(ValueRestrictions.NOT_BLANK_OR_DEFAULT)
+    String title() default "";
 
     /**
      * Renders as the `height` attribute of component's {@code cq:design_dialog} node. If no value, or a value less or equal to zero provided, default 480 is used
      *
-     * @return Double
+     * @return Double-typed number
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
     double height() default 480;
@@ -64,7 +54,7 @@ public @interface DesignDialog {
     /**
      * Renders as the `width` attribute of component's {@code cq:design_dialog} node. If no value, or a value less or equal to zero provided, default 560 is used
      *
-     * @return Double
+     * @return Double-typed number
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
     double width() default 560;
