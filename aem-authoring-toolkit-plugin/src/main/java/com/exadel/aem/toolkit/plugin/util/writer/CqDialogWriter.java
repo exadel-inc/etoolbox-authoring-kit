@@ -46,6 +46,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.plugin.util.ordering.PluginOrderingUtility;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing AEM TouchUI dialog definition (writes data to the
@@ -119,11 +120,13 @@ class CqDialogWriter extends PackageEntryWriter {
         if (!classHasCustomDialogAnnotation(componentClass)) {
             return;
         }
-        List<DialogAnnotation> customAnnotations = getCustomDialogAnnotations(componentClass);
-        PluginRuntime.context().getReflectionUtility().getCustomDialogHandlers().stream()
-                .filter(handler -> customAnnotations.stream()
-                        .anyMatch(annotation -> customAnnotationMatchesHandler(annotation, handler)))
-                .forEach(handler -> handler.accept(componentClass, target));
+
+        List<DialogHandler> handlers = PluginRuntime.context().getReflectionUtility().getCustomDialogHandlers().stream()
+                .filter(dialogHandler -> dialogHandler.getClass().isAnnotationPresent(Handles.class)
+                && Arrays.stream(dialogHandler.getClass().getDeclaredAnnotation(Handles.class).value()).anyMatch(componentClass::isAnnotationPresent))
+            .collect(Collectors.toList());
+
+        PluginOrderingUtility.sort(handlers).forEach(handler -> handler.accept(componentClass, target));
     }
 
     /**
@@ -237,22 +240,5 @@ class CqDialogWriter extends PackageEntryWriter {
                 .filter(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class) != null)
                 .map(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class))
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Used while enumerating available {@code CustomDialogHandler}s to set matching between a handler and a {@code CustomDialogAnnotation},
-     * since one handler may serve for several annotations, and, optionally, vice versa
-     *
-     * @param annotation {@link DialogAnnotation} instance
-     * @param handler    {@link DialogHandler} instance
-     * @return True if the two arguments are "matching" via their properties, otherwise, false
-     */
-    private static boolean customAnnotationMatchesHandler(DialogAnnotation annotation, DialogHandler handler) {
-        if (handler.getClass().isAnnotationPresent(Handles.class)) {
-            return Arrays.stream(handler.getClass().getDeclaredAnnotation(Handles.class).value())
-                .anyMatch(aClass -> aClass.equals(annotation.getClass()));
-        } else {
-            return StringUtils.equals(annotation.source(), handler.getName());
-        }
     }
 }

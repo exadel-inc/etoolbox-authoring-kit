@@ -24,6 +24,7 @@ import com.exadel.aem.toolkit.test.custom.annotation.CustomNonMappingWidgetAnnot
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAutoOrder;
+import com.exadel.aem.toolkit.test.custom.annotation.DialogAnnotationForOrderingTest;
 
 @Dialog(
         name = "test-component",
@@ -31,6 +32,7 @@ import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAutoOrder;
         layout = DialogLayout.FIXED_COLUMNS
 )
 @CustomDialogAnnotation
+@DialogAnnotationForOrderingTest
 @SuppressWarnings("unused")
 public class CustomAnnotations {
     @DialogField
