@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -46,7 +47,6 @@ import com.exadel.aem.toolkit.plugin.target.Targets;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
-import static com.exadel.aem.toolkit.plugin.util.writer.CqDialogWriter.getCustomDialogAnnotations;
 
 /**
  * Base class for routines that render XML files inside a component folder within an AEM package
@@ -220,5 +220,18 @@ abstract class PackageEntryWriter {
             .filter(handler -> customAnnotations.stream()
                 .anyMatch(annotation -> StringUtils.equals(annotation.source(), handler.getName())))
             .forEach(handler -> handler.accept(element, annotatedClass));
+    }
+
+    /**
+     * Retrieves list of {@link DialogAnnotation} instances defined for the current {@code Class}
+     *
+     * @param componentClass The {@code Class} being processed
+     * @return List of values, empty or non-empty
+     */
+    private static List<DialogAnnotation> getCustomDialogAnnotations(Class<?> componentClass) {
+        return Arrays.stream(componentClass.getDeclaredAnnotations())
+            .filter(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class) != null)
+            .map(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class))
+            .collect(Collectors.toList());
     }
 }

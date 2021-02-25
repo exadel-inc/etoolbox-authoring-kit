@@ -33,7 +33,6 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
-import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
@@ -117,9 +116,6 @@ class CqDialogWriter extends PackageEntryWriter {
         DialogContainer.getContainer(dialogLayout).build(componentClass, target);
 
         new DependsOnTabHandler().accept(componentClass, target);
-        if (!classHasCustomDialogAnnotation(componentClass)) {
-            return;
-        }
 
         List<DialogHandler> handlers = PluginRuntime.context().getReflectionUtility().getCustomDialogHandlers().stream()
                 .filter(dialogHandler -> dialogHandler.getClass().isAnnotationPresent(Handles.class)
@@ -216,29 +212,5 @@ class CqDialogWriter extends PackageEntryWriter {
             }
         }
         return DialogLayout.FIXED_COLUMNS;
-    }
-
-    /**
-     * Gets whether current {@code Class} has a custom dialog annotation attached
-     *
-     * @param componentClass The {@code Class} being processed
-     * @return True or false
-     */
-    private static boolean classHasCustomDialogAnnotation(Class<?> componentClass) {
-        return Arrays.stream(componentClass.getDeclaredAnnotations())
-            .anyMatch(a -> a.annotationType().getDeclaredAnnotation(DialogAnnotation.class) != null);
-    }
-
-    /**
-     * Retrieves list of {@link DialogAnnotation} instances defined for the current {@code Class}
-     *
-     * @param componentClass The {@code Class} being processed
-     * @return List of values, empty or non-empty
-     */
-    public static List<DialogAnnotation> getCustomDialogAnnotations(Class<?> componentClass) {
-        return Arrays.stream(componentClass.getDeclaredAnnotations())
-                .filter(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class) != null)
-                .map(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class))
-                .collect(Collectors.toList());
     }
 }
