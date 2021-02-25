@@ -13,6 +13,7 @@
     <artifactId>aem-authoring-toolkit-samples-apps</artifactId>
     <name>AEM Authoring Toolkit - Samples Apps</name>
     <version>2.0.0-SNAPSHOT</version>
+    <packaging>content-package</packaging>
 
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
@@ -37,15 +38,6 @@
             </resource>
         </resources>
         <plugins>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-jar</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>com.day.jcr.vault</groupId>
                 <artifactId>content-package-maven-plugin</artifactId>
@@ -79,7 +71,7 @@
                         <artifactId>content-package-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>Installing AEM package</id>
+                                <id>Installing AAT Samples apps package</id>
                                 <goals>
                                     <goal>install</goal>
                                 </goals>

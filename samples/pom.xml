@@ -80,10 +80,13 @@
                     </configuration>
                     <executions>
                         <execution>
-                            <id>Creating AEM package</id>
+                            <id>Creating AAT Samples package</id>
                             <goals>
                                 <goal>package</goal>
                             </goals>
+                            <configuration>
+                                <group>authoring-toolkit-samples</group>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
