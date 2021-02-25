@@ -39,15 +39,15 @@
             const $rteContainer = $el.closest(RTE_CONTAINER);
             const $editor = $rteContainer.find(RTE_EDITOR_SELECTOR);
             const rteInstance = $editor.data(RTE_DATA_INSTANCE);
+            const updateValue = () => {
+                rteInstance.setContent && rteInstance.setContent(value);
+                notify && $editor.trigger('change');
+            };
+
+            if (!rteInstance) return;
 
             $rteContainer.find(RTE_INPUT_SELECTOR).val(value);
-            if (rteInstance && rteInstance.isActive && typeof rteInstance.setContent === 'function') {
-                rteInstance.setContent(value);
-            }
-            if (rteInstance && !rteInstance.isActive && typeof rteInstance.getTextDiv === 'function') {
-                rteInstance.getTextDiv(rteInstance.$element).html(value);
-            }
-            notify && $editor.trigger('change');
+            rteInstance.isActive ? updateValue() : rteInstance.on('editing-start', updateValue);
         },
         required: function ($el, val) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
