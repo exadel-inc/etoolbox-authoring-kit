@@ -91,7 +91,7 @@
                 <plugin>
                     <groupId>com.day.jcr.vault</groupId>
                     <artifactId>content-package-maven-plugin</artifactId>
-                    <version>0.0.24</version>
+                    <version>0.5.1</version>
                     <extensions>true</extensions>
                     <configuration>
                         <group>${project.parent.artifactId}</group>
@@ -104,6 +104,17 @@
                         <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
                         <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <id>build-package</id>
+                            <goals>
+                                <goal>package</goal>
+                            </goals>
+                            <configuration>
+                                <group>authoring-toolkit</group>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
@@ -329,8 +340,7 @@
                             <artifactId>content-package-maven-plugin</artifactId>
                             <executions>
                                 <execution>
-                                    <id>build-assets</id>
-                                    <phase>install</phase>
+                                    <id>deploy-to-instance</id>
                                     <goals>
                                         <goal>install</goal>
                                     </goals>
@@ -340,27 +350,9 @@
                     </plugins>
                 </pluginManagement>
             </build>
-
         </profile>
+
     </profiles>
-
-    <repositories>
-        <repository>
-            <id>adobe</id>
-            <name>Adobe Public Repository</name>
-            <url>http://repo.adobe.com/nexus/content/groups/public</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-		<pluginRepository>
-			<id>adobe</id>
-			<name>Adobe Public Repository</name>
-			<url>http://repo.adobe.com/nexus/content/groups/public/</url>
-			<layout>default</layout>
-		</pluginRepository>
-	</pluginRepositories>
 
     <dependencyManagement>
         <dependencies>
@@ -505,5 +497,23 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>adobe</id>
+            <name>Adobe Public Repository</name>
+            <url>http://repo.adobe.com/nexus/content/groups/public</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>adobe</id>
+            <name>Adobe Public Repository</name>
+            <url>http://repo.adobe.com/nexus/content/groups/public/</url>
+            <layout>default</layout>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>

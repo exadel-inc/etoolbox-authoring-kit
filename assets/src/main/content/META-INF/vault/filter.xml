@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <filter root="/etc/packages/authoring-toolkit"/>
+    <filter root="/etc/packages/authoring-toolkit/aem-authoring-toolkit-ui.apps-2.0.0-SNAPSHOT.zip"/>
+    <filter root="/etc/packages/authoring-toolkit/aem-authoring-toolkit-ui.content-2.0.0-SNAPSHOT.zip"/>
 </workspaceFilter>

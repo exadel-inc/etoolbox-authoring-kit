@@ -11,7 +11,7 @@
     <artifactId>aem-authoring-toolkit-assets</artifactId>
 
     <name>${project.prettyName} Assets Package</name>
-    <description>AEM Authoring Toolkit package containing provided UI and binary assets. This is the host for subsidiary "apps" and "content" packages</description>
+    <description>AEM Authoring Toolkit package containing UI and binary assets. This is the host for subsidiary "apps" and "content" packages</description>
 
     <packaging>content-package</packaging>
 
