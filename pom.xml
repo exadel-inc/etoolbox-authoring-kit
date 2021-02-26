@@ -95,14 +95,24 @@
                     <extensions>true</extensions>
                     <configuration>
                         <group>${project.parent.artifactId}</group>
+                        <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
+                        <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
                         <properties>
                             <name>${project.name}</name>
                             <description>${project.name}</description>
                             <version>${project.version}</version>
+                            <created>${maven.build.timestamp}</created>
+                            <createdBy>${project.vendor}</createdBy>
                             <packagePath>${project.artifactId}-${project.version}.zip</packagePath>
                         </properties>
-                        <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
-                        <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
+                        <archive>
+                            <manifestEntries>
+                                <Built-By>${project.vendor}</Built-By>
+                                <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
+                                <Implementation-Title>${project.name}</Implementation-Title>
+                                <Implementation-Version>${project.version}</Implementation-Version>
+                            </manifestEntries>
+                        </archive>
                     </configuration>
                     <executions>
                         <execution>
@@ -181,6 +191,7 @@
                             <manifestEntries>
                                 <Built-By>${project.vendor}</Built-By>
                                 <Build-Jdk>${java.version}</Build-Jdk>
+                                <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
                                 <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
                                 <Bundle-Name>${project.name}</Bundle-Name>
                                 <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
