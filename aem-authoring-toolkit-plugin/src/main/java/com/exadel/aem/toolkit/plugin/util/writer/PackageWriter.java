@@ -14,13 +14,16 @@
 
 package com.exadel.aem.toolkit.plugin.util.writer;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +47,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.UnknownComponentException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
+import com.exadel.aem.toolkit.plugin.maven.PluginInfo;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
@@ -55,6 +59,9 @@ public class PackageWriter implements AutoCloseable {
     private static final String PACKAGE_EXTENSION = ".zip";
     private static final String FILESYSTEM_PREFIX = "jar:";
     private static final Map<String, String> FILESYSTEM_OPTIONS = ImmutableMap.of("create", "true");
+
+    private static final String PACKAGE_INFO_DIRECTORY = "META-INF/authoring-toolkit";
+    private static final String PACKAGE_INFO_FILE_NAME = "version.info";
 
     private static final String CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE = "Cannot write to package ";
     private static final String COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE = "No data to build .content.xml file wile processing component ";
@@ -99,7 +106,37 @@ public class PackageWriter implements AutoCloseable {
        ---------------- */
 
     /**
-     * Stores AEM component's authoring markup into a package. For this, several package entry writers,
+     * Stores information about the current binary into the package for the purposes of versioning
+     * @param info {@link PluginInfo} object
+     */
+    public void writeInfo(PluginInfo info) {
+        Path rootPath = fileSystem.getRootDirectories().iterator().next();
+        if (!Files.isWritable(rootPath)) {
+            return;
+        }
+        Path infoDirPath = rootPath.resolve(PACKAGE_INFO_DIRECTORY);
+        Path infoFilePath = infoDirPath.resolve(PACKAGE_INFO_FILE_NAME);
+        try {
+            Files.createDirectories(infoDirPath);
+            Files.createFile(infoFilePath);
+        } catch (IOException e) {
+            PluginRuntime.context().getExceptionHandler().handle(e);
+        }
+
+        try (
+            BufferedWriter fileWriter = Files.newBufferedWriter(infoFilePath, StandardOpenOption.CREATE);
+            PrintWriter printWriter = new PrintWriter(fileWriter)
+        ) {
+            printWriter.println(info.getName());
+            printWriter.println(info.getVersion());
+            printWriter.println(info.getTimestamp());
+        } catch (IOException e) {
+            PluginRuntime.context().getExceptionHandler().handle(e);
+        }
+    }
+
+    /**
+     * Stores AEM component's authoring markup into the package. To do this, several package entry writers,
      * e.g. for populating {@code .content.xml}, {@code _cq_dialog.xml}, {@code _cq_editConfig.xml}, etc.
      * are called in sequence. If the component is split into several "modules" (views), each is processed separately
      * @param componentClass Current {@code Class} instance
@@ -120,9 +157,9 @@ public class PackageWriter implements AutoCloseable {
         Map<PackageEntryWriter, Class<?>> viewsByWriter = getComponentViews(componentClass);
 
         if (viewsByWriter.keySet().stream().noneMatch(writer -> writer.getScope() == Scope.COMPONENT)) {
-            InvalidSettingException ex = new InvalidSettingException(
+            InvalidSettingException e = new InvalidSettingException(
                 COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE + componentClass.getName());
-            PluginRuntime.context().getExceptionHandler().handle(ex);
+            PluginRuntime.context().getExceptionHandler().handle(e);
         }
 
         viewsByWriter.forEach((writer, view) -> {
@@ -182,9 +219,29 @@ public class PackageWriter implements AutoCloseable {
     }
 
 
-    /* ------------------------
-       Static (utility) methods
-       ------------------------ */
+    /* ---------------
+       Utility methods
+       --------------- */
+
+    /**
+     * Retrieves the path specified for the current component class in either {@link AemComponent} or {@link Dialog} annotation
+     * @param componentClass The {@code Class<?>} to get the path for
+     * @return String value
+     */
+    private static String getComponentPath(Class<?> componentClass) {
+        String pathByComponent = Optional.ofNullable(componentClass.getAnnotation(AemComponent.class))
+            .map(AemComponent::path)
+            .orElse(null);
+        String pathByDialog = Optional.ofNullable(componentClass.getAnnotation(Dialog.class))
+            .map(Dialog::name)
+            .orElse(null);
+        return StringUtils.firstNonBlank(pathByComponent, pathByDialog);
+    }
+
+
+    /* ---------------
+       Factory methods
+       --------------- */
 
     /**
      * Initializes an instance of {@link PackageWriter} profiled for the current {@link MavenProject} and the tree of
@@ -238,20 +295,5 @@ public class PackageWriter implements AutoCloseable {
             throw new PluginException(CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE + projectName, e);
         }
         return new PackageWriter(fileSystem, componentsBasePath, writers);
-    }
-
-    /**
-     * Retrieves the path specified for the current component class in either {@link AemComponent} or {@link Dialog} annotation
-     * @param componentClass The {@code Class<?>} to get the path for
-     * @return String value
-     */
-    private static String getComponentPath(Class<?> componentClass) {
-        String pathByComponent = Optional.ofNullable(componentClass.getAnnotation(AemComponent.class))
-            .map(AemComponent::path)
-            .orElse(null);
-        String pathByDialog = Optional.ofNullable(componentClass.getAnnotation(Dialog.class))
-            .map(Dialog::name)
-            .orElse(null);
-        return StringUtils.firstNonBlank(pathByComponent, pathByDialog);
     }
 }
