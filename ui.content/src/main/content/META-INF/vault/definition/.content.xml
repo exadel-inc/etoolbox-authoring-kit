@@ -8,7 +8,7 @@
     <filter jcr:primaryType="nt:unstructured">
         <f0 jcr:primaryType="nt:unstructured"
             mode="replace"
-            root="/content/authoring-toolkit"
+            root="/conf/authoring-toolkit"
             rules="[]"/>
     </filter>
     <screenshots jcr:primaryType="nt:unstructured"/>

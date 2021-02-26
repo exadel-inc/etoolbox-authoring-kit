@@ -42,6 +42,16 @@
                     <properties>
                         <description>${project.description}</description>
                     </properties>
+                    <filters>
+                        <filter>
+                            <root>/etc/packages/authoring-toolkit/aem-authoring-toolkit-ui.apps-${project.version}.zip</root>
+                            <mode>replace</mode>
+                        </filter>
+                        <filter>
+                            <root>/etc/packages/authoring-toolkit/aem-authoring-toolkit-ui.content-${project.version}.zip</root>
+                            <mode>replace</mode>
+                        </filter>
+                    </filters>
                 </configuration>
             </plugin>
             <plugin>
