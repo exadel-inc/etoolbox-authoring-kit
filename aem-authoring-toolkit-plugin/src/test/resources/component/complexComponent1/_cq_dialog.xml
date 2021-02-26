@@ -894,7 +894,7 @@
                                             disabled="{Boolean}false"
                                             fieldDescription="Content description"
                                             fieldLabel="Content label"
-                                            name="./Content"
+                                            name="./Content/fieldset/on/tab6"
                                             renderHidden="{Boolean}false"
                                             required="{Boolean}false"/>
                                 </items>

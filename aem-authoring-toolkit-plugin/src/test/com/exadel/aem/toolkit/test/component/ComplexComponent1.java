@@ -307,7 +307,7 @@ public class ComplexComponent1 extends ComplexComponent1Parent {
     private Integer sampleSecondNumberField;
 
     @DialogField
-    @FieldSet
+    @FieldSet(namePostfix = "/fieldset /on /tab#6")
     @PlaceOnTab(LABEL_TAB_6)
     private SampleFieldsetBase3 sampleFieldSet;
 }
