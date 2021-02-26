@@ -34,16 +34,25 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
     private ExceptionHandler exceptionHandler;
     private PluginXmlUtility xmlUtility;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PluginReflectionUtility getReflectionUtility() {
         return pluginReflections;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ExceptionHandler getExceptionHandler() {
         return exceptionHandler;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PluginXmlUtility getXmlUtility() {
         return xmlUtility;

@@ -27,7 +27,7 @@ class EmptyRuntimeContext implements PluginRuntimeContext {
     private static final String NOT_INITIALIZED_EXCEPTION_MESSAGE = "Plugin was not properly initialized";
 
     /**
-     * Throws a {@code PluginException} upon call, since no {@code PluginReflectionUtility} instance has been initialized
+     * Throws a {@code PluginException} upon call since the runtime has not been initialized
      */
     @Override
     public PluginReflectionUtility getReflectionUtility() {
@@ -35,7 +35,7 @@ class EmptyRuntimeContext implements PluginRuntimeContext {
     }
 
     /**
-     * Throws a {@code PluginException} upon call, since no {@code PluginReflectionUtility} instance has been initialized
+     * Throws a {@code PluginException} upon call since the runtime has not been initialized
      */
     @Override
     public ExceptionHandler getExceptionHandler() {
@@ -43,7 +43,7 @@ class EmptyRuntimeContext implements PluginRuntimeContext {
     }
 
     /**
-     * Throws a {@code PluginException} upon call, since no {@code PluginReflectionUtility} instance has been initialized
+     * Throws a {@code PluginException} upon call since the runtime has not been initialized
      */
     @Override
     public PluginXmlUtility getXmlUtility() {
