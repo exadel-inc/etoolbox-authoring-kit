@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.lists.util;
+package com.exadel.aem.toolkit.core.lists.services.impl;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,12 +39,12 @@ import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 /**
  * Helper methods for working with AAT Lists
  */
-public class ListsHelper {
+public class ListHelperImpl {
 
     /**
      * Default (hiding) constructor
      */
-    private ListsHelper() {
+    private ListHelperImpl() {
     }
 
     /**
