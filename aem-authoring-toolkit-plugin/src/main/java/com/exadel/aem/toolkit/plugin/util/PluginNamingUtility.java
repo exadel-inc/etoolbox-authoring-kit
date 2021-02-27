@@ -9,6 +9,7 @@ public class PluginNamingUtility {
     private static final String PREFIX_GET = "get";
 
     private static final NamingHelper FIELD_HELPER = NamingHelper.forFieldName();
+    private static final NamingHelper FIELD_POSTFIX_HELPER = NamingHelper.forFieldNamePostfix();
     private static final NamingHelper NODE_NAME_HELPER = NamingHelper.forNodeName();
 
     private PluginNamingUtility() {}
@@ -23,6 +24,10 @@ public class PluginNamingUtility {
 
     public static String getValidFieldName(String name) {
         return FIELD_HELPER.getValidName(name, DialogConstants.NN_FIELD);
+    }
+
+    public static String getValidFieldPostfix(String name) {
+        return FIELD_POSTFIX_HELPER.getValidName(name, StringUtils.EMPTY);
     }
 
     public static String getUniqueName(String name, String defaultValue, Target context) {
