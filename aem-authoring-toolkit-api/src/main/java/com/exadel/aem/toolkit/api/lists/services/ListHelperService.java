@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.lists.models.SimpleListItem;
 /**
  * Contains methods that assist in retrieving AEMBox Lists values
  */
-public interface ListHelper {
+public interface ListHelperService {
 
     default List<Resource> getResourceList(String path) {
         return getList(path, Resource.class);

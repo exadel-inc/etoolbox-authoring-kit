@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.lists.util;
+package com.exadel.aem.toolkit.core.lists.services;
 
 import java.util.List;
 import java.util.Map;
@@ -28,13 +28,13 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.exadel.aem.toolkit.api.lists.models.SimpleListItem;
-import com.exadel.aem.toolkit.api.lists.services.ListHelper;
-import com.exadel.aem.toolkit.core.lists.services.impl.ListHelperImpl;
+import com.exadel.aem.toolkit.api.lists.services.ListHelperService;
+import com.exadel.aem.toolkit.core.lists.services.impl.ListHelperServiceImpl;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 
-public class ListsHelperTest {
+public class ListHelperServiceTest {
 
     private static final String SIMPLE_LIST_PATH = "/content/aembox-lists/simpleList";
     private static final String CUSTOM_LIST_PATH = "/content/aembox-lists/customList";
@@ -42,11 +42,11 @@ public class ListsHelperTest {
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
 
-    private ListHelper listHelper;
+    private ListHelperService listHelper;
 
     @Before
     public void setUp() {
-        listHelper = context.registerInjectActivateService(new ListHelperImpl());
+        listHelper = context.registerInjectActivateService(new ListHelperServiceImpl());
         context.load().json("/com/exadel/aem/toolkit/core/lists/util/simpleList.json", SIMPLE_LIST_PATH);
         context.load().json("/com/exadel/aem/toolkit/core/lists/util/customList.json", CUSTOM_LIST_PATH);
         context.addModelsForClasses(ItemModel.class);

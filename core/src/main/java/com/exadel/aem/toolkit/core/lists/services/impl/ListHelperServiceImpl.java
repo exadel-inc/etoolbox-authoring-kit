@@ -43,16 +43,16 @@ import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 
 import com.exadel.aem.toolkit.api.lists.models.SimpleListItem;
-import com.exadel.aem.toolkit.api.lists.services.ListHelper;
+import com.exadel.aem.toolkit.api.lists.services.ListHelperService;
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.lists.models.SimpleListItemImpl;
+import com.exadel.aem.toolkit.core.lists.components.SimpleListItemImpl;
 
 /**
- * Implements {@link ListHelper} interface to provide an OSGi service that assists in retrieving AEMBox Lists values
+ * Implements {@link ListHelperService} interface to provide an OSGi service that assists in retrieving AEMBox Lists values
  */
-@Component(service = ListHelper.class)
-public class ListHelperImpl implements ListHelper {
-    private static final Logger LOG = LoggerFactory.getLogger(ListHelper.class);
+@Component(service = ListHelperService.class)
+public class ListHelperServiceImpl implements ListHelperService {
+    private static final Logger LOG = LoggerFactory.getLogger(ListHelperService.class);
 
     private static final Map<Class<?>, Class<?>> INTERFACE_ADAPTATIONS = ImmutableMap.of(
         SimpleListItem.class, SimpleListItemImpl.class
