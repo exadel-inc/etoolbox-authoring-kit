@@ -43,6 +43,12 @@
                     <properties>
                         <description>${project.description}</description>
                     </properties>
+                    <filters>
+                        <filter>
+                            <root>/apps/authoring-toolkit/install/aem-authoring-toolkit-bundle-${project.version}.jar</root>
+                            <mode>replace</mode>
+                        </filter>
+                    </filters>
                 </configuration>
             </plugin>
             <plugin>
