@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.lists.models.internal;
+package com.exadel.aem.toolkit.core.lists.models;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +21,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
-import com.day.cq.wcm.api.NameConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -29,6 +28,7 @@ import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
 import com.day.cq.commons.jcr.JcrConstants;
+import com.day.cq.wcm.api.NameConstants;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 

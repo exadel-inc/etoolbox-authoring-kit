@@ -17,12 +17,18 @@ package com.exadel.aem.toolkit.api.lists.services;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.sling.api.resource.Resource;
+
 import com.exadel.aem.toolkit.api.lists.models.SimpleListItem;
 
 /**
  * Contains methods that assist in retrieving AEMBox Lists values
  */
 public interface ListHelper {
+
+    default List<Resource> getResourceList(String path) {
+        return getList(path, Resource.class);
+    }
 
     /**
      * Retrieves collection of {@link SimpleListItem} values representing list entries stored under given {@code path}

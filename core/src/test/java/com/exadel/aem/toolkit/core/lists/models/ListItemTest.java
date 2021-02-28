@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.lists.models.internal;
+package com.exadel.aem.toolkit.core.lists.models;
 
 import java.util.HashMap;
 import java.util.Map;
