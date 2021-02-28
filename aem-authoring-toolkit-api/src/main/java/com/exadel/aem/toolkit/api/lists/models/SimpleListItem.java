@@ -14,20 +14,33 @@
 
 package com.exadel.aem.toolkit.api.lists.models;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Default;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
+import com.day.cq.commons.jcr.JcrConstants;
+
 /**
  * Represents basic AEMBox List item which consists of "jct:title" and "value" fields
  */
+@Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public interface SimpleListItem {
 
     /**
      * Gets the {@code title} part of this item
      * @return String value (non-null)
      */
-    public String getTitle();
+    @ValueMapValue(name = JcrConstants.JCR_TITLE)
+    @Default(values = StringUtils.EMPTY)
+    String getTitle();
 
     /**
      * Gets the {@code value} part of this item
      * @return String value (non-null)
      */
-    public String getValue();
+    @ValueMapValue
+    @Default(values = StringUtils.EMPTY)
+    String getValue();
 }

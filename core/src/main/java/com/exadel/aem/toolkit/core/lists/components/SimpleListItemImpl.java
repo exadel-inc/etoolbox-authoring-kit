@@ -12,16 +12,8 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.lists.models;
+package com.exadel.aem.toolkit.core.lists.components;
 
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.Default;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import com.exadel.aem.toolkit.api.annotations.lists.ListItem;
@@ -40,11 +32,8 @@ import com.exadel.aem.toolkit.api.lists.models.SimpleListItem;
 )
 @Dialog
 @ListItem
-@Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class SimpleListItemImpl implements SimpleListItem {
 
-    @ValueMapValue(name = JcrConstants.JCR_TITLE)
-    @Default(values = StringUtils.EMPTY)
     @DialogField(
         name = JcrConstants.JCR_TITLE,
         label = "Title",
@@ -52,8 +41,6 @@ public class SimpleListItemImpl implements SimpleListItem {
     @TextField
     private String title;
 
-    @ValueMapValue
-    @Default(values = StringUtils.EMPTY)
     @DialogField(
         label = "Value",
         description = "Provide item value.")
@@ -66,22 +53,5 @@ public class SimpleListItemImpl implements SimpleListItem {
 
     public String getValue() {
         return value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        SimpleListItemImpl that = (SimpleListItemImpl) o;
-        return Objects.equals(title, that.title) && Objects.equals(value, that.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(title, value);
     }
 }
