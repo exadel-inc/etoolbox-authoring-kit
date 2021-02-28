@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:rep="internal"
+          jcr:primaryType="rep:SystemUser"
+          jcr:uuid="6f6b5720-ae8f-3cb8-8108-a0d83be1631b"
+          rep:authorizableId="authoring-toolkit-service"
+          rep:principalName="authoring-toolkit-service"/>
