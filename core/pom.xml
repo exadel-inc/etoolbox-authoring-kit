@@ -32,6 +32,14 @@
                         <Export-Package>com.exadel.aem.toolkit.core.*</Export-Package>
                     </instructions>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-scr-metadata-for-test</id>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
