@@ -14,9 +14,11 @@
 
 package com.exadel.aem.toolkit.core.lists.services.impl;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -27,124 +29,174 @@ import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.google.common.collect.ImmutableMap;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 
+import com.exadel.aem.toolkit.api.lists.models.SimpleListItem;
+import com.exadel.aem.toolkit.api.lists.services.ListHelper;
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
+import com.exadel.aem.toolkit.core.lists.models.SimpleListItemImpl;
 
 /**
- * Helper methods for working with AAT Lists
+ * Implements {@link ListHelper} interface to provide an OSGi service that assists in retrieving AEMBox Lists values
  */
-public class ListHelperImpl {
+@Component(service = ListHelper.class)
+public class ListHelperImpl implements ListHelper {
+    private static final Logger LOG = LoggerFactory.getLogger(ListHelper.class);
+
+    private static final Map<Class<?>, Class<?>> INTERFACE_ADAPTATIONS = ImmutableMap.of(
+        SimpleListItem.class, SimpleListItemImpl.class
+    );
+
+    @Reference
+    ResourceResolverFactory resourceResolverFactory;
+
+    /* ------------------------
+       Public interface members
+       ------------------------ */
 
     /**
-     * Default (hiding) constructor
+     * {@inheritDoc}
      */
-    private ListHelperImpl() {
-    }
-
-    /**
-     * Retrieves the list of item resources from {@code listPagePath}
-     * @param resourceResolver An instance of ResourceResolver
-     * @param listPagePath     The path to List page
-     * @return A list of {@link Resource}s
-     */
-    public static List<Resource> getResourceList(ResourceResolver resourceResolver, String listPagePath) {
-        return getList(resourceResolver, listPagePath, Function.identity());
-    }
-
-    /**
-     * Retrieves the list of item resources from {@code listPagePath} and adapts them to {@link SimpleListItem} model
-     * @param resourceResolver An instance of ResourceResolver
-     * @param listPagePath     The path to List page
-     * @return A list of {@link SimpleListItem}s
-     */
-    public static List<SimpleListItem> getList(ResourceResolver resourceResolver, String listPagePath) {
-        return getList(resourceResolver, listPagePath, res -> res.adaptTo(SimpleListItem.class));
-    }
-
-    /**
-     * Retrieves the list of item resources from {@code listPagePath} and adapts them to the specified {@code itemClass}
-     * @param resourceResolver An instance of ResourceResolver
-     * @param listPagePath     The path to List page
-     * @param itemClass        Parametrized model class
-     * @param <T>              Model which represents a list item
-     * @return A list of {@code <T>} instances
-     */
-    public static <T> List<T> getList(ResourceResolver resourceResolver, String listPagePath, Class<T> itemClass) {
-        return getList(resourceResolver, listPagePath, res -> res.adaptTo(itemClass));
-    }
-
-    private static <T> List<T> getList(ResourceResolver resourceResolver, String listPagePath, Function<Resource, T> mapper) {
-        return getItemsStream(resourceResolver, listPagePath)
-            .map(mapper)
+    @Override
+    public <T> List<T> getList(String path, Class<T> itemType) {
+        return getItemsStream(path)
+            .map(getMapperFunction(itemType))
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
     /**
-     * Retrieves the list of item resources from {@code listPagePath} and maps values from the specified {@code keyName} property to items' {@link Resource}s.
-     * If several items have the same key, the last value overrides all the previous ones
-     * @param resourceResolver An instance of ResourceResolver
-     * @param listPagePath     The path to List page
-     * @param keyName          Item property that holds the resulting map's keys
-     * @return A map of item {@link Resource}s
+     * {@inheritDoc}
      */
-    public static Map<String, Resource> getResourceMap(ResourceResolver resourceResolver, String listPagePath, String keyName) {
-        return getMap(resourceResolver, listPagePath, keyName, Function.identity());
+    @Override
+    public Map<String, String> getMap(String path) {
+        return getMap(
+            path,
+            JcrConstants.JCR_TITLE,
+            resource -> resource.getValueMap().get(CoreConstants.PN_VALUE, StringUtils.EMPTY));
     }
 
     /**
-     * Retrieves the list of item resources from {@code listPagePath} and maps {@code jcr:title}s to {@code value}s.
-     * If several items have the same {@code jcr:title}, the last value overrides all the previous ones
-     * @param resourceResolver An instance of ResourceResolver
-     * @param listPagePath     The path to List page
-     * @return A map representing title-to-value pairs
+     * {@inheritDoc}
      */
-    public static Map<String, String> getMap(ResourceResolver resourceResolver, String listPagePath) {
-        return getMap(resourceResolver, listPagePath, JcrConstants.JCR_TITLE,
-            res -> res.getValueMap().get(CoreConstants.PN_VALUE, StringUtils.EMPTY));
+    @Override
+    public <T> Map<String, T> getMap(String path, String keyName, Class<T> itemType) {
+        return getMap(path, keyName, getMapperFunction(itemType));
+    }
+
+    /* ---------------
+       Utility methods
+       --------------- */
+
+    /**
+     * Retrieves a {@code Map} collected from list entries under the provided path. Map keys are defined by
+     * the {@code keyName}, while the values are defined by the provided {@code mapper} function
+     * @param path     JCR path of the items list
+     * @param keyName  Item resource property that holds the key of the resulting map
+     * @param mapper   {@code Function} that converts a list item resource into the object of required type
+     * @param <T>      Type of map values
+     * @return Map containing {@code <T>}-typed instances
+     */
+    private <T> Map<String, T> getMap(String path, String keyName, Function<Resource, T> mapper) {
+        return getItemsStream(path)
+            .map(resource -> new ImmutablePair<>(
+                resource.getValueMap().get(keyName, StringUtils.EMPTY),
+                mapper.apply(resource)))
+            .filter(pair -> pair.getRight() != null)
+            .collect(Collectors.toMap(
+                ImmutablePair::getLeft,
+                ImmutablePair::getRight,
+                (a, b) -> b,
+                LinkedHashMap::new));
     }
 
     /**
-     * Retrieves the list of item resources from {@code listPagePath} and maps values from the specified {@code keyName} to the {@code itemClass} model, adapted from item resource.
-     * If several items have the same key, the last value overrides all the previous ones
-     * @param resourceResolver An instance of ResourceResolver
-     * @param listPagePath     The path to List page
-     * @param keyName          Item property that holds the resulting map's keys
-     * @param itemClass        Parametrized model class
-     * @param <T>              Model which represents a list item
-     * @return A map that represents items as {@code <T>} instances
+     * Retrieves a {@code ResourceResolver} instance and gets  a sequence of {@code Resource}s under the provided path
+     * as a Java {@code Stream} for further processing
+     * @param path JCR path of the items list
+     * @return {@code Stream} or resource objects, or an empty stream
      */
-    public static <T> Map<String, T> getMap(ResourceResolver resourceResolver, String listPagePath, String keyName, Class<T> itemClass) {
-        return getMap(resourceResolver, listPagePath, keyName, res -> res.adaptTo(itemClass));
+    private Stream<Resource> getItemsStream(String path) {
+        ResourceResolver resourceResolver = getResourceResolver();
+        if (resourceResolver == null) {
+            return Stream.empty();
+        }
+        Resource listResource = getListResource(path, resourceResolver);
+        Stream<Resource> result = listResource != null
+            ? StreamSupport.stream(Spliterators.spliteratorUnknownSize(listResource.listChildren(), Spliterator.ORDERED), false)
+            : Stream.empty();
+        resourceResolver.close();
+        return result;
     }
 
-    private static <T> Map<String, T> getMap(ResourceResolver resourceResolver, String listPagePath, String keyName, Function<Resource, T> mapper) {
-        return getItemsStream(resourceResolver, listPagePath)
-            .map(res -> new ImmutablePair<>(res.getValueMap().get(keyName, StringUtils.EMPTY), mapper.apply(res)))
-            .collect(Collectors.toMap(ImmutablePair::getLeft, ImmutablePair::getRight, (a, b) -> b, LinkedHashMap::new));
+    /**
+     * Creates a {@code ResourceResolver} instance bound to AEM Authoring Toolkit services
+     * @return {@code ResourceResolver} object, or null
+     */
+    private ResourceResolver getResourceResolver() {
+        try {
+            return resourceResolverFactory.getResourceResolver(
+                Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, CoreConstants.SUBSERVICE_READ));
+        } catch (LoginException e) {
+            LOG.error(e.getMessage());
+        }
+        return null;
     }
 
-    private static Stream<Resource> getItemsStream(ResourceResolver resourceResolver, String listPagePath) {
-        Resource listResource = getListResource(resourceResolver, listPagePath);
-        return listResource == null ?
-            Stream.empty() :
-            StreamSupport.stream(Spliterators.spliteratorUnknownSize(listResource.listChildren(), Spliterator.ORDERED), false);
-    }
-
-    private static Resource getListResource(ResourceResolver resourceResolver, String listPagePath) {
-        if (resourceResolver == null || StringUtils.isBlank(listPagePath)) {
+    /**
+     * Retrieves an AEMBox List page resource by the provided JCR {@code path}
+     * @param path JCR path of the items list
+     * @param resourceResolver {@code ResourceResolver} used to retrieve the resource
+     * @return {@code Resource object, or null if the resource resolver is missing or the path in unresolvable}
+     */
+    private static Resource getListResource(String path, ResourceResolver resourceResolver) {
+        if (resourceResolver == null || StringUtils.isBlank(path)) {
             return null;
         }
         return Optional.of(resourceResolver)
             .map(resolver -> resolver.adaptTo(PageManager.class))
-            .map(pageManager -> pageManager.getPage(listPagePath))
+            .map(pageManager -> pageManager.getPage(path))
             .map(Page::getContentResource)
             .map(contentRes -> contentRes.getChild("list"))
             .orElse(null);
+    }
+
+
+    /**
+     * Retrieves a {@code Function} used to convert a {@code Resource} object into the required value type
+     * @param itemType {@code Class} reference representing type of entries required
+     * @param <T>      Type of value
+     * @return {@code Function} object
+     */
+    private static <T> Function<Resource, T> getMapperFunction(Class<T> itemType) {
+        return getMapperFunction(resource -> resource.adaptTo(itemType), itemType);
+    }
+
+    /**
+     * Retrieves a {@code Function} used to convert a {@code Resource} object into the required value type
+     * @param source   Source {@code Function} object that may need further amending
+     * @param itemType {@code Class} reference representing required type of items
+     * @param <T>      Type of items
+     * @return Amended {@code Function} object
+     */
+    private static <T> Function<Resource, T> getMapperFunction(Function<Resource, T> source, Class<T> itemType) {
+        Function<Resource, T> mapper = source;
+        if (Resource.class.equals(itemType)) {
+            mapper = itemType::cast;
+        } else if (INTERFACE_ADAPTATIONS.containsKey(itemType)) {
+            mapper = resource -> itemType.cast(resource.adaptTo(INTERFACE_ADAPTATIONS.get(itemType)));
+        }
+        return mapper;
     }
 }

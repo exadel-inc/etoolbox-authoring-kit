@@ -29,6 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.lists.models.SimpleListItem;
 
 /**
  * Represents the basic list item which consists of "jct:title" and "value" fields
@@ -40,7 +41,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 @Dialog
 @ListItem
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class SimpleListItem {
+public class SimpleListItemImpl implements SimpleListItem {
 
     @ValueMapValue(name = JcrConstants.JCR_TITLE)
     @Default(values = StringUtils.EMPTY)
@@ -75,7 +76,7 @@ public class SimpleListItem {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        SimpleListItem that = (SimpleListItem) o;
+        SimpleListItemImpl that = (SimpleListItemImpl) o;
         return Objects.equals(title, that.title) && Objects.equals(value, that.value);
     }
 
