@@ -24,8 +24,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizeConstants;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariantConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariant;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 
 /**
  * Used to set up
@@ -42,8 +42,9 @@ public @interface Button {
     /**
      * Maps to the 'type' attribute of this TouchUI dialog component's node.
      * Used to define button type
-     * @see ButtonType
+     *
      * @return One of {@code ButtonType} values
+     * @see ButtonType
      */
     @PropertyRendering(transform = StringTransformation.CAMELCASE)
     ButtonType type() default ButtonType.BUTTON;
@@ -51,6 +52,7 @@ public @interface Button {
     /**
      * When set to true, maps to the 'disabled' attribute of this TouchUI dialog component's node.
      * Defines the the current option is shown in disabled state
+     *
      * @return True or false
      */
     boolean disabled() default false;
@@ -64,6 +66,7 @@ public @interface Button {
     /**
      * When set to a non-blank string, maps to the 'formId' attribute of this TouchUI dialog component's node.
      * Used to identify the {@code form} this button is bound to
+     *
      * @return String value
      */
     String formId() default "";
@@ -71,6 +74,7 @@ public @interface Button {
     /**
      * When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
      * Used to define the text of the button
+     *
      * @return String value, non-blank
      */
     String text() default "";
@@ -78,6 +82,7 @@ public @interface Button {
     /**
      *  When set to a non-blank string, maps to the 'text_commentI18n' attribute of this TouchUI dialog component's node.
      *  Used to define I18n comment for the body text
+     *
      *  @return String value, non-blank
      */
     @PropertyRendering(name = "text_commentI18n")
@@ -86,13 +91,15 @@ public @interface Button {
     /**
      * Maps to the 'hideText' attribute of this TouchUI dialog component's node.
      * Used to define whether text is hidden
+     *
      * @return True or false
      */
     boolean hideText() default false;
 
     /**
      * Maps to the 'active' attribute of this TouchUI dialog component's node.
-     * Used to define initial state of the button.
+     * Used to define initial state of the button
+     *
      * @return True or false
      */
     boolean active() default false;
@@ -100,7 +107,8 @@ public @interface Button {
     /**
      * When set to a non-blank string, maps to the 'icon' attribute of this TouchUI dialog component's node.
      * Used to define component's icon.
-     * When set, override actionConfigName.
+     * When set, override actionConfigName
+     *
      * @return String value
      */
     String icon() default "";
@@ -108,22 +116,26 @@ public @interface Button {
     /**
      * When set to a non-blank string, maps to the 'iconSize' attribute of this TouchUI dialog component's node.
      * Used to specify icon size
-     * @see ElementSizeConstants
-     * @return String value, non-blank
+     *
+     * @return One of {@code Size} values
+     * @see Size
      */
-    String iconSize() default ElementSizeConstants.SMALL;
+    Size iconSize() default Size.SMALL;
 
     /**
      * When set to a non-blank string, maps to the 'size' attribute of this TouchUI dialog component's node.
      * Used to define button size
-     * @see ElementSizeConstants
-     * @return String value, non-blank
+     * <p><u>Note:</u> only {@code "medium"} and {@code "large"} values are officially supported</p>
+     *
+     * @return One of {@code Size} values
+     * @see Size
      */
-    String size() default ElementSizeConstants.MEDIUM;
+    Size size() default Size.MEDIUM;
 
     /**
      * Maps to the 'block' attribute of this TouchUI dialog component's node.
      * Used to ensure the button is rendered as a block element
+     *
      * @return True or false
      */
     boolean block() default false;
@@ -131,14 +143,16 @@ public @interface Button {
     /**
      * Maps to the 'variant' attribute of this TouchUI dialog component's node.
      * Used to define button variant
-     * @see com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariantConstants
-     * @return One of {@code ButtonVariant} values
+     *
+     * @return One of {@code ElementVariant} values
+     * @see ElementVariant
      */
-    String variant() default ElementVariantConstants.PRIMARY;
+    ElementVariant variant() default ElementVariant.PRIMARY;
 
     /**
      *  When set to a non-blank string, maps to the 'command' attribute of this TouchUI dialog component's node.
      *  Used to define keyboard shortcut for the action. Overrides 'actionConfigName' value
+     *
      *  @return String value, non-blank
      */
     String command() default "";
@@ -146,23 +160,26 @@ public @interface Button {
     /**
      *  When set to a non-blank string, maps to the 'actionConfigName' attribute of this TouchUI dialog component's node.
      *  Used to define standard definitions of command, icon and text
+     *
      *  @return String value, non-blank
      */
     String actionConfigName() default "";
 
     /**
      *  When set to a non-blank string, maps to the 'trackingFeature' attribute of this TouchUI dialog component's node.
-     *  Used to define name of the feature that the interaction takes place.
-     *  @see <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">foundation-tracking</a>
+     *  Used to define name of the feature that the interaction takes place
+     *
      *  @return String value, non-blank
+     *  @see <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">foundation-tracking</a>
      */
     String trackingFeature() default "";
 
     /**
      *  When set to a non-blank string, maps to the 'trackingElement' attribute of this TouchUI dialog component's node.
-     *  Used to element this component represents for the purpose of tracking.
-     *  @see <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">foundation-tracking</a>
+     *  Used to element this component represents for the purpose of tracking
+     *
      *  @return String value, non-blank
+     *  @see <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">foundation-tracking</a>
      */
     String trackingElement() default "";
 }

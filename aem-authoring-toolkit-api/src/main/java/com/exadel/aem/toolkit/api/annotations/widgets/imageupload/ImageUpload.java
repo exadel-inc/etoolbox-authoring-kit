@@ -24,7 +24,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
@@ -171,21 +170,6 @@ public @interface ImageUpload {
     @SuppressWarnings("squid:S1133")
     String buttonText() default ImageUploadConstants.DEFAULT_BUTTON_TEXT;
 
-    /**
-     * Maps to the 'variant' attribute of this TouchUI dialog component's node.
-     * Used to define button variant
-     * @see ButtonVariant
-     * @return One of {@code ButtonVariant} values
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @PropertyRendering(
-        name = "variant",
-        transform = StringTransformation.LOWERCASE
-    )
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    ButtonVariant buttonVariant() default ButtonVariant.SECONDARY;
     /**
      * Maps to the 'multiple' attribute of this TouchUI dialog component's node.
      * Used to set possibility for multiple files upload

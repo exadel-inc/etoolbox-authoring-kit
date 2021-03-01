@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -11,7 +11,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets.hyperlink;
+
+package com.exadel.aem.toolkit.api.annotations.widgets;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,19 +24,21 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizeConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariant;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.LinkCheckerVariant;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 
 /**
  * Used to set up
- * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html">
- * Hyperlink</a> component in a TouchUI dialog. It represents an HTML hyperlink {@code <a>} in the user interface
+ * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html">
+ * AnchorButton</a> component in a TouchUI dialog.
+ * AnchorButton represents a standard HTML hyperlink ({@code <a>}) that is styled like a button
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@ResourceType(ResourceTypes.HYPERLINK)
+@ResourceType(ResourceTypes.ANCHOR_BUTTON)
 @PropertyMapping
-public @interface Hyperlink {
+public @interface AnchorButton {
 
     /**
      * Maps to the href attribute of this TouchUI dialog component's node
@@ -44,23 +47,17 @@ public @interface Hyperlink {
     String href();
 
     /**
-     * Maps to the body text of the element of this TouchUI dialog component's node
-     * @return String value
-     */
-    String text();
-
-    /**
      * Maps to the href attribute of this TouchUI dialog component's node.
-     * This is commonly used to produce different value based on locale
+     * This is usually used to produce different value based on locale
      * @return String value
      */
     String hrefI18n() default "";
 
     /**
-     * Maps to the rel attribute of this TouchUI dialog component's node
+     * Maps to the body text of the element of this TouchUI dialog component's node
      * @return String value
      */
-    String rel() default "";
+    String text();
 
     /**
      * Maps to the target attribute of this TouchUI dialog component's node
@@ -77,9 +74,8 @@ public @interface Hyperlink {
     boolean hideText() default false;
 
     /**
-     * Maps to the x-cq-linkchecker attribute of this TouchUI dialog component's node
+     * Maps to the 'x-cq-linkchecker' attribute of this TouchUI dialog component's node
      * @return One of {@link LinkCheckerVariant} values
-     * @see LinkCheckerVariant
      */
     @PropertyRendering(
         name = "x-cq-linkchecker",
@@ -97,7 +93,44 @@ public @interface Hyperlink {
     /**
      * Maps to the size of the icon of this TouchUI dialog component's node
      * @return String value, non-blank
-     * @see ElementSizeConstants
+     * @see Size
      */
-    String iconSize() default ElementSizeConstants.SMALL;
+    Size iconSize() default Size.SMALL;
+
+    /**
+     * Maps to the size of the button of this TouchUI dialog component's node.
+     * <p><u>Note:</u> only {@code "medium"} and {@code "large"} values are officially supported</p>
+     * @return One of {@code Size} values
+     * @see Size
+     */
+    Size size() default Size.MEDIUM;
+
+    /**
+     * Maps to the 'block' attribute of this TouchUI dialog component's node.
+     * Used to ensure the button is rendered as a block element
+     * @return True or false
+     */
+    boolean block() default false;
+
+    /**
+     * Maps to the 'variant' attribute of this TouchUI dialog component's node.
+     * Used to define button variant
+     * @return One of {@code ElementVariant} values
+     * @see ElementVariant
+     */
+    ElementVariant variant() default ElementVariant.PRIMARY;
+
+    /**
+     * When set to a non-blank string, maps to the 'command' attribute of this TouchUI dialog component's node.
+     * Used to define keyboard shortcut for the action. Overrides 'actionConfigName' value
+     * @return String value, non-blank
+     */
+    String command() default "";
+
+    /**
+     * When set to a non-blank string, maps to the 'actionConfigName' attribute of this TouchUI dialog component's node.
+     * Used to define standard definitions of command, icon and text
+     * @return String value, non-blank
+     */
+    String actionConfigName() default "";
 }
