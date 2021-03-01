@@ -34,7 +34,7 @@
             notify && $el.trigger('change');
         },
         visibility: function ($el, state) {
-            $el.find(SWITCH_INPUT_SELECTOR).attr('type', state ? 'checkbox' : 'hidden');
+            $el.find(SWITCH_INPUT_SELECTOR).attr('readonly', state ? null : '');
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($el, state);
         }
     });
