@@ -28,6 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TABS)
+@Deprecated
 public @interface Tab {
 
     /**

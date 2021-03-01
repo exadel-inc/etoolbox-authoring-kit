@@ -11,12 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.layouts;
 
-/**
- * Contains possible values of {@link Tabs#size()} property
- */
-@SuppressWarnings("unused")
-public enum TabsSize {
-    M, L
+package com.exadel.aem.toolkit.plugin.util.writer;
+
+public enum DialogLayout {
+    FIXED_COLUMNS, TABS, ACCORDION
 }

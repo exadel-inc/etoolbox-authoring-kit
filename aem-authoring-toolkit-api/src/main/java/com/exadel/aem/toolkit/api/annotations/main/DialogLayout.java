@@ -15,7 +15,10 @@ package com.exadel.aem.toolkit.api.annotations.main;
 
 /**
  * Enumerates available AEM TouchUI dialog layouts
+ * @deprecated This values are no longer needed. The proper layout is set based on the container annotations,
+ * such as {@code Tabs} or {@code Accordion} added directly to the dialog class or one of its superclasses
  */
+@Deprecated
 public enum DialogLayout {
     FIXED_COLUMNS, TABS, ACCORDION
 }
