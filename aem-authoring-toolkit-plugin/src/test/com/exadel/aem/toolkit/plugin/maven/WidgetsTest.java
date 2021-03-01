@@ -140,8 +140,13 @@ public class WidgetsTest extends DefaultTestBase {
     }
 
     @Test
-    public void testPlace() {
-        test(PlaceWidget.class);
+    public void testPlace1() {
+        test(PlaceWidget.Test1.class, "widget/place1");
+    }
+
+    @Test
+    public void testPlace2() {
+        test(PlaceWidget.Test2.class, "widget/place2");
     }
 
     @Test
