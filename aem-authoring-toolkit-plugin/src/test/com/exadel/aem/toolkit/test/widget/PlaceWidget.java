@@ -30,41 +30,41 @@ public class PlaceWidget {
     @Dialog
     public static class Test1 {
         @TextField
-        String field0;
+        private String field0;
 
         @Place(before = @ClassMember(name = "field0"))
         @TextField
-        String field1;
+        private String field1;
 
         @Place(before = @ClassMember(name = "field6"))
         @TextField
-        String field2;
+        private String field2;
 
         @Place(before = @ClassMember(name = "field2"))
         @TextField
-        String field3;
+        private String field3;
 
         @Place(after = @ClassMember(name = "field2"))
         @TextField
-        String field4;
+        private String field4;
 
         @TextField
-        String field5;
+        private String field5;
 
         @Place(before = @ClassMember(name = "field0"))
         @TextField
-        String field6;
+        private String field6;
 
         @Place(after = @ClassMember(name = "field6"))
         @TextField
-        String field7;
+        private String field7;
 
         @TextField
-        String field8;
+        private String field8;
 
         @Place(before = @ClassMember(name = "field5"))
         @TextField
-        String field9;
+        private String field9;
     }
 
     @AemComponent(
@@ -75,26 +75,26 @@ public class PlaceWidget {
     public static class Test2 implements ITest2 {
 
         @Place(
-            before = @ClassMember(name = "field1()", source = ITest2.class)
+            before = @ClassMember(name = "getField1", source = ITest2.class)
         )
         @TextField
-        String field0;
+        private String field0;
 
         @Place(
             after = @ClassMember(name = "field0"),
-            before = @ClassMember(name = "field3()", source = ITest2.class)
+            before = @ClassMember(name = "getField3", source = ITest2.class)
         )
         @TextField
-        String field2;
+        private String field2;
 
         @TextField
-        String field4;
+        private String field4;
 
         @TextField
-        String field6;
+        private String field6;
 
         @TextField
-        String field8;
+        private String field8;
     }
 
     public interface ITest2 {
