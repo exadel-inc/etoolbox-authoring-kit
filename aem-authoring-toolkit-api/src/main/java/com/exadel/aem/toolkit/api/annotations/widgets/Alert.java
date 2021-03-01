@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets.alert;
+package com.exadel.aem.toolkit.api.annotations.widgets;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,39 +22,37 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html">
  * Alert element</a> in TouchUI dialog
- *
- * @deprecated This annotation is deprecated and will be removed in a version after 2.0.0.
- * Please use {@link com.exadel.aem.toolkit.api.annotations.widgets.Alert}
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.ALERT)
 @PropertyMapping
-@Deprecated
 public @interface Alert {
 
     /**
      * Maps to the 'variant' attribute of this TouchUI dialog component's node.
      *
-     * @return Alert style
-     * @see StatusVariantConstants
+     * @return One of {@code StatusVariant} values
+     * @see StatusVariant
      */
-    String variant() default "";
+    @PropertyRendering(ignoreValues = "info")
+    StatusVariant variant() default StatusVariant.INFO;
 
     /**
-     * Maps to the 'size' attribute of this TouchUI dialog component's node.
-     * Used to define Alert size
+     * Maps to the 'size' attribute of this TouchUI dialog component's node. Used to define Alert size
+     * <p><u>Note:</u> only {@code "small"} and {@code "large"} values are officially supported</p>
      *
-     * @return One of {@code AlertSize} values
-     * @see AlertSize
+     * @return One of {@code Size} values
+     * @see Size
      */
-    AlertSize size() default AlertSize.SMALL;
+    Size size() default Size.SMALL;
 
     /**
      * When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.

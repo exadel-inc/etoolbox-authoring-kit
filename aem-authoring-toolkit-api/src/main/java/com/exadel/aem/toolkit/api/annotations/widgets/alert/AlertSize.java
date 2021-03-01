@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -15,8 +15,11 @@ package com.exadel.aem.toolkit.api.annotations.widgets.alert;
 
 /**
  * Contains possible values of {@link Alert#size()} property
+ *
+ * @deprecated This is deprecated in favour of {@link com.exadel.aem.toolkit.api.annotations.widgets.common.Size} enum
+ * and will be removed in a version after 2.0.0
  */
-@SuppressWarnings("unused")
+@Deprecated
 public enum AlertSize {
     SMALL {
         @Override
