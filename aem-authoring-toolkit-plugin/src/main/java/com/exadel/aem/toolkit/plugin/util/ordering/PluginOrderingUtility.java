@@ -25,6 +25,8 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
+import com.exadel.aem.toolkit.plugin.source.MethodSourceImpl;
+import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
 public class PluginOrderingUtility {
 
@@ -73,7 +75,7 @@ public class PluginOrderingUtility {
                     Orderable<Source> before = find(createName(classMemberBefore, sources.get(i).getDeclaringClass()), list);
                     list.get(i).setBefore(before);
                 }
-                ClassMember classMemberAfter = place.before();
+                ClassMember classMemberAfter = place.after();
                 if (StringUtils.isNotBlank(classMemberAfter.name())) {
                     Orderable<Source> after = find(createName(classMemberAfter, sources.get(i).getDeclaringClass()), list);
                     list.get(i).setAfter(after);
@@ -97,7 +99,10 @@ public class PluginOrderingUtility {
     }
 
     private static String createName(Source source) {
-        return createName(source.getDeclaringClass(), source.getName());
+        String name = source instanceof MethodSourceImpl
+            ? PluginNamingUtility.stripGetterPrefix(source.getName()) + "()"
+            : source.getName();
+        return createName(source.getDeclaringClass(), name);
     }
 
     private static String createName(ClassMember classMember, Class<?> defaultClass) {
