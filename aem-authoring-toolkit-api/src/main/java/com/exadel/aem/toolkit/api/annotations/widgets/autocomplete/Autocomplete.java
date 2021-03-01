@@ -43,7 +43,7 @@ public @interface Autocomplete {
     /**
      * Maps to the 'mode' attribute of this TouchUI dialog component's node.
      * Used to specify string matching mode for autocomplete proposals
-     * @return True or false
+     * @return String value (non-null)
      */
     String mode() default "contains";
     /**
