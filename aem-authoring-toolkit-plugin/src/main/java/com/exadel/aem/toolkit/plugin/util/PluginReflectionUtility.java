@@ -67,7 +67,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeContext;
 import com.exadel.aem.toolkit.plugin.source.Sources;
-import com.exadel.aem.toolkit.plugin.util.ordering.PluginOrderingUtility;
+import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
 import com.exadel.aem.toolkit.plugin.util.stream.Filter;
 import com.exadel.aem.toolkit.plugin.util.stream.Replacer;
 import com.exadel.aem.toolkit.plugin.util.stream.Sorter;
@@ -220,7 +220,7 @@ public class PluginReflectionUtility {
         return reflections.getSubTypesOf(handlerClass).stream()
                 .map(PluginReflectionUtility::getHandlerInstance)
                 .filter(Objects::nonNull)
-                .sorted(Comparator.comparing(handler -> handler.getClass().getCanonicalName())) // to provide stable handlers sequence between runs
+                .sorted(Comparator.comparing(handler -> handler.getClass().getName())) // to provide stable handlers sequence between runs
                 .collect(Collectors.toList());
     }
 
@@ -333,7 +333,7 @@ public class PluginReflectionUtility {
             .stream()
             .collect(Replacer.processSourceReplace());
 
-        return PluginOrderingUtility.sortPlace(reducedWithReplacements
+        return OrderingUtil.sortMembers(reducedWithReplacements
             .stream()
             .filter(Filter.getNotIgnoredSourcesPredicate(ignoredClassMembers))
             .sorted(Sorter::compareByRank)

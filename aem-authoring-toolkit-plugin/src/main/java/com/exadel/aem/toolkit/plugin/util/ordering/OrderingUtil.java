@@ -25,12 +25,10 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
-import com.exadel.aem.toolkit.plugin.source.MethodSourceImpl;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
-public class PluginOrderingUtility {
+public class OrderingUtil {
 
-    public static <T> List<T> sortHandles(List<T> handlers) {
+    public static <T> List<T> sortHandlers(List<T> handlers) {
         if (handlers.size() < 2) {
             return handlers;
         }
@@ -57,7 +55,7 @@ public class PluginOrderingUtility {
             .collect(Collectors.toList());
     }
 
-    public static List<Source> sortPlace(List<Source> sources) {
+    public static List<Source> sortMembers(List<Source> sources) {
         if (sources.size() < 2) {
             return sources;
         }
@@ -99,10 +97,7 @@ public class PluginOrderingUtility {
     }
 
     private static String createName(Source source) {
-        String name = source instanceof MethodSourceImpl
-            ? PluginNamingUtility.stripGetterPrefix(source.getName()) + "()"
-            : source.getName();
-        return createName(source.getDeclaringClass(), name);
+        return createName(source.getDeclaringClass(), source.getName());
     }
 
     private static String createName(ClassMember classMember, Class<?> defaultClass) {
@@ -116,7 +111,7 @@ public class PluginOrderingUtility {
         return cls.getName() + "." + name;
     }
 
-    private PluginOrderingUtility() {
+    private OrderingUtil() {
 
     }
 }
