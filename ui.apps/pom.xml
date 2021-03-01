@@ -45,7 +45,11 @@
                     </properties>
                     <filters>
                         <filter>
-                            <root>/apps/authoring-toolkit/install/aem-authoring-toolkit-bundle-${project.version}.jar</root>
+                            <root>/apps/authoring-toolkit/install/aem-authoring-toolkit-api-${project.version}.jar</root>
+                            <mode>replace</mode>
+                        </filter>
+                        <filter>
+                            <root>/apps/authoring-toolkit/install/aem-authoring-toolkit-core-${project.version}.jar</root>
                             <mode>replace</mode>
                         </filter>
                     </filters>
@@ -73,6 +77,12 @@
                             <resources>
                                 <resource>
                                     <directory>${project.parent.basedir}/core/target</directory>
+                                    <includes>
+                                        <include>*.jar</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${project.parent.basedir}/aem-authoring-toolkit-api/target</directory>
                                     <includes>
                                         <include>*.jar</include>
                                     </includes>

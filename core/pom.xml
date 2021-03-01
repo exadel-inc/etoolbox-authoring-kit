@@ -8,10 +8,10 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>aem-authoring-toolkit-bundle</artifactId>
+    <artifactId>aem-authoring-toolkit-core</artifactId>
 
-    <name>${project.prettyName} Bundle</name>
-    <description>Contains AEM Authoring Toolkit classes and interfaces intended for use within an OSGi container</description>
+    <name>${project.prettyName} Core</name>
+    <description>Contains AEM Authoring Toolkit core implementation logic</description>
 
     <packaging>jar</packaging>
 
@@ -32,14 +32,6 @@
                         <Export-Package>com.exadel.aem.toolkit.core.*</Export-Package>
                     </instructions>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>generate-scr-metadata-for-test</id>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

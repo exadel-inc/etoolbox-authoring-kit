@@ -144,6 +144,7 @@
                 <groupId>com.exadel.aem</groupId>
                 <artifactId>aem-authoring-toolkit-api</artifactId>
                 <version>${aat.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.exadel.aem</groupId>
