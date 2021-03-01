@@ -44,14 +44,7 @@ public @interface PropertyRendering {
      * such as {@link com.exadel.aem.toolkit.api.annotations.main.Dialog} annotation properties
      * @return {@code Scope} value
      */
-    Scope[] scope() default {
-        Scope.COMPONENT,
-        Scope.CQ_DIALOG,
-        Scope.CQ_DESIGN_DIALOG,
-        Scope.CQ_EDIT_CONFIG,
-        Scope.CQ_HTML_TAG,
-        Scope.CQ_CHILD_EDIT_CONFIG
-    };
+    Scope[] scope() default Scope.ALL;
 
     /**
      * When set to true, allows overriding prefix set for this field name

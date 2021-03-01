@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
@@ -29,7 +30,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -181,9 +181,9 @@ abstract class PackageEntryWriter {
             .tryAdaptTo(PropertyRendering.class)
             .map(PropertyRendering::scope)
             .map(Arrays::asList)
-            .orElse(EnumUtils.getEnumList(Scope.class));
+            .orElse(Collections.singletonList(Scope.ALL));
 
-        return activeScopes.contains(scope);
+        return activeScopes.contains(scope) || activeScopes.contains(Scope.ALL);
     }
 
     /**
