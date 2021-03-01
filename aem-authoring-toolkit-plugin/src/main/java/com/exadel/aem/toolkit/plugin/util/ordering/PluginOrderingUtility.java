@@ -18,23 +18,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 public class PluginOrderingUtility {
 
-    public static <T> List<T> sort(List<T> handlers) {
+    public static <T> List<T> sortHandles(List<T> handlers) {
         if (handlers.size() < 2) {
             return handlers;
         }
 
-        List<Orderable<T>> list = new ArrayList<>();
+        List<Orderable<T>> list = new ArrayList<>(handlers.size());
         for (T handler : handlers) {
             list.add(new Orderable<>(handler.getClass().getName(), handler));
         }
 
         for (int i = 0; i < handlers.size(); i++) {
-            // This lines should be changed, after "before/after" rules appear in the PlaceOn annotation
             Handles handles = handlers.get(i).getClass().getDeclaredAnnotation(Handles.class);
             if (!_Default.class.equals(handles.before())) {
                 Orderable<T> before = find(handles.before().getName(), list);
@@ -51,6 +55,37 @@ public class PluginOrderingUtility {
             .collect(Collectors.toList());
     }
 
+    public static List<Source> sortPlace(List<Source> sources) {
+        if (sources.size() < 2) {
+            return sources;
+        }
+
+        List<Orderable<Source>> list = new ArrayList<>(sources.size());
+        for (Source source : sources) {
+            list.add(new Orderable<>(createName(source), source));
+        }
+
+        for (int i = 0; i < sources.size(); i++) {
+            Place place = sources.get(i).adaptTo(Place.class);
+            if (place != null) {
+                ClassMember classMemberBefore = place.before();
+                if (StringUtils.isNotBlank(classMemberBefore.name())) {
+                    Orderable<Source> before = find(createName(classMemberBefore, sources.get(i).getDeclaringClass()), list);
+                    list.get(i).setBefore(before);
+                }
+                ClassMember classMemberAfter = place.before();
+                if (StringUtils.isNotBlank(classMemberAfter.name())) {
+                    Orderable<Source> after = find(createName(classMemberAfter, sources.get(i).getDeclaringClass()), list);
+                    list.get(i).setAfter(after);
+                }
+            }
+        }
+
+        return new TopologicalSorter<>(list).topologicalSort().stream()
+            .map(Orderable::getValue)
+            .collect(Collectors.toList());
+    }
+
     // Gets the Orderable object from list to store valid links in before/after fields
     private static <T> Orderable<T> find(String find, List<Orderable<T>> list) {
         for (Orderable<T> orderable : list) {
@@ -59,6 +94,21 @@ public class PluginOrderingUtility {
             }
         }
         return null;
+    }
+
+    private static String createName(Source source) {
+        return createName(source.getDeclaringClass(), source.getName());
+    }
+
+    private static String createName(ClassMember classMember, Class<?> defaultClass) {
+        if (_Default.class.equals(classMember.source())) {
+            return createName(defaultClass, classMember.name());
+        }
+        return createName(classMember.source(), classMember.name());
+    }
+
+    private static String createName(Class<?> cls, String name) {
+        return cls.getName() + "." + name;
     }
 
     private PluginOrderingUtility() {

@@ -67,6 +67,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeContext;
 import com.exadel.aem.toolkit.plugin.source.Sources;
+import com.exadel.aem.toolkit.plugin.util.ordering.PluginOrderingUtility;
 import com.exadel.aem.toolkit.plugin.util.stream.Filter;
 import com.exadel.aem.toolkit.plugin.util.stream.Replacer;
 import com.exadel.aem.toolkit.plugin.util.stream.Sorter;
@@ -332,11 +333,11 @@ public class PluginReflectionUtility {
             .stream()
             .collect(Replacer.processSourceReplace());
 
-        return reducedWithReplacements
+        return PluginOrderingUtility.sortPlace(reducedWithReplacements
             .stream()
             .filter(Filter.getNotIgnoredSourcesPredicate(ignoredClassMembers))
             .sorted(Sorter::compareByRank)
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()));
     }
 
     /**

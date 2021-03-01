@@ -122,7 +122,7 @@ class CqDialogWriter extends PackageEntryWriter {
                 && Arrays.stream(dialogHandler.getClass().getDeclaredAnnotation(Handles.class).value()).anyMatch(componentClass::isAnnotationPresent))
             .collect(Collectors.toList());
 
-        PluginOrderingUtility.sort(handlers).forEach(handler -> handler.accept(componentClass, target));
+        PluginOrderingUtility.sortHandles(handlers).forEach(handler -> handler.accept(componentClass, target));
     }
 
     /**
