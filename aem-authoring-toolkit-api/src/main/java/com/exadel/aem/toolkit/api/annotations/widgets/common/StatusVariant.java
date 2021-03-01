@@ -14,19 +14,21 @@
 
 package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
-/**
- * Contains common strings used to define {@code variant} property of a dialog widget when referring
- * display/design variant of an interactive element
- */
-@SuppressWarnings("unused")
-public class ElementVariantConstants {
-    public static final String PRIMARY = "primary";
-    public static final String SECONDARY = "secondary";
-    public static final String WARNING = "warning";
-    public static final String QUIET = "quiet";
-    public static final String MINIMAL = "minimal";
-    public static final String ACTION_BAR = "actionBar";
+public enum StatusVariant {
+    ERROR("error"),
+    WARNING("warning"),
+    SUCCESS("success"),
+    HELP("help"),
+    INFO("info");
 
-    private ElementVariantConstants() {
+    private final String value;
+
+    StatusVariant(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return value;
     }
 }

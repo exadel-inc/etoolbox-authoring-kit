@@ -17,8 +17,12 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
 /**
  * Contains common strings used to define {@code variant/statusVariant} property of a dialog widget when referring
  * status of an option or a message
+ *
+ * @deprecated These constants are deprecated in favour of {@link StatusVariant} enum and will be removed
+ * in a version after 2.0.0
  */
-@SuppressWarnings("unused")
+@Deprecated
+@SuppressWarnings({"unused", "squid:S1133"})
 public class StatusVariantConstants {
     public static final String ERROR = "error";
     public static final String WARNING = "warning";
