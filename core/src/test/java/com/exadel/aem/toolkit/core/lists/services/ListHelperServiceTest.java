@@ -62,10 +62,13 @@ public class ListHelperServiceTest {
 
         List<Resource> actual3 = listHelper.getResourceList(context.resourceResolver(), "non-existing-path");
         assertEquals(0, actual3.size());
+
+        List<Resource> actual4 = listHelper.getResourceList(null, CUSTOM_LIST_PATH);
+        assertEquals(0, actual4.size());
     }
 
     @Test
-    public void getList() {
+    public void shouldRetrieveBasicList() {
         List<SimpleListItem> actual = listHelper.getList(context.resourceResolver(), SIMPLE_LIST_PATH);
         assertEquals(5, actual.size());
         assertEquals("key1", actual.get(0).getTitle());
@@ -85,7 +88,7 @@ public class ListHelperServiceTest {
     }
 
     @Test
-    public void getResourcesList() {
+    public void shouldRetrieveResourceList() {
         List<Resource> actual = listHelper.getList(context.resourceResolver(), CUSTOM_LIST_PATH, Resource.class);
         assertEquals("Hello", actual.get(0).getValueMap().get("textValue"));
         assertEquals(true, actual.get(0).getValueMap().get("booleanValue"));
@@ -95,14 +98,14 @@ public class ListHelperServiceTest {
     }
 
     @Test
-    public void getListModels() {
+    public void shouldAdaptListItemsToModel() {
         List<ItemModel> actual = listHelper.getList(context.resourceResolver(), CUSTOM_LIST_PATH, ItemModel.class);
         assertEquals(new ItemModel("Hello", true), actual.get(0));
         assertEquals(new ItemModel("World", false), actual.get(1));
     }
 
     @Test
-    public void getMap() {
+    public void shouldRetrieveBasicMap() {
         Map<String, String> actual = listHelper.getMap(context.resourceResolver(), SIMPLE_LIST_PATH);
         assertEquals(3, actual.size());
         assertEquals("value3", actual.get("key1"));
@@ -111,7 +114,7 @@ public class ListHelperServiceTest {
     }
 
     @Test
-    public void getResourceMap() {
+    public void shouldRetrieveResourceMap() {
         Map<String, Resource> actual = listHelper.getResourceMap(
             context.resourceResolver(),
             CUSTOM_LIST_PATH,
@@ -124,7 +127,7 @@ public class ListHelperServiceTest {
     }
 
     @Test
-    public void getMapModels() {
+    public void shouldAdaptMapItemToModel() {
         Map<String, ItemModel> actual = listHelper.getMap(
             context.resourceResolver(),
             CUSTOM_LIST_PATH,

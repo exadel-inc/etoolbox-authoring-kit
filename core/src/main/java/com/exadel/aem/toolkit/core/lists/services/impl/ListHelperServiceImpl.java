@@ -14,7 +14,6 @@
 
 package com.exadel.aem.toolkit.core.lists.services.impl;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,14 +28,9 @@ import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
@@ -49,10 +43,6 @@ import com.exadel.aem.toolkit.core.CoreConstants;
  */
 @Component(service = ListHelperService.class)
 public class ListHelperServiceImpl implements ListHelperService {
-    private static final Logger LOG = LoggerFactory.getLogger(ListHelperServiceImpl.class);
-
-    @Reference
-    ResourceResolverFactory resourceResolverFactory;
 
     /* ------------------------
        Public interface members
@@ -128,34 +118,13 @@ public class ListHelperServiceImpl implements ListHelperService {
      * @return {@code Stream} or resource objects, or an empty stream
      */
     private Stream<Resource> getItemsStream(ResourceResolver resourceResolver, String path) {
-        ResourceResolver effectiveResourceResolver = resourceResolver != null
-            ? resourceResolver
-            : createResourceResolver();
-        if (effectiveResourceResolver == null) {
+        if (resourceResolver == null) {
             return Stream.empty();
         }
-        Resource listResource = getListResource(effectiveResourceResolver, path);
-        Stream<Resource> result = listResource != null
+        Resource listResource = getListResource(resourceResolver, path);
+        return listResource != null
             ? StreamSupport.stream(Spliterators.spliteratorUnknownSize(listResource.listChildren(), Spliterator.ORDERED), false)
             : Stream.empty();
-        if (!effectiveResourceResolver.equals(resourceResolver)) {
-            effectiveResourceResolver.close();
-        }
-        return result;
-    }
-
-    /**
-     * Creates a {@code ResourceResolver} instance bound to AEM Authoring Toolkit services
-     * @return {@code ResourceResolver} object, or null
-     */
-    private ResourceResolver createResourceResolver() {
-        try {
-            return resourceResolverFactory.getResourceResolver(
-                Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, CoreConstants.SUBSERVICE_READ));
-        } catch (LoginException e) {
-            LOG.error(e.getMessage());
-        }
-        return null;
     }
 
     /**
