@@ -24,7 +24,7 @@
     ns.ElementAccessors.registerAccessor({
         selector: `${COLORFIELD_SELECTOR}`,
         visibility: function ($el, state) {
-            $el.find(COLORFIELD_INPUT_SELECTOR).attr('type', state ? 'text' : 'hidden');
+            $el.find(COLORFIELD_INPUT_SELECTOR).attr('readonly', state ? null : '');
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($el, state);
         }
     });

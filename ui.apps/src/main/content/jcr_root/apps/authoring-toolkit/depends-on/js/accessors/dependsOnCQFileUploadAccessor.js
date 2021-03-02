@@ -28,11 +28,8 @@
         get: function ($el) {
             return $el.find(FILEUPLOAD_FILE_REFERENCE).val();
         },
-        // set: function ($el, value) {
-        //     return $el.find(FILEUPLOAD_FILE_REFERENCE).val(value);
-        // },
         visibility: function ($el, state) {
-            $el.find(FILEUPLOAD_INPUT_SELECTOR).attr('type', state ? 'file' : 'hidden');
+            $el.find(FILEUPLOAD_INPUT_SELECTOR).attr('readonly', state ? null : '');
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($el, state);
         },
         disabled: function ($el, val) {
