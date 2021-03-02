@@ -187,7 +187,7 @@ public class ComponentWithRichTextAndExternalClasses {
             name = FIELD_LINKS,
             label = LABEL_LINKS
     )
-    @MultiField(field = SampleMultifieldBase.class)
+    @MultiField(source = SampleMultifieldBase.class)
     @PlaceOnTab(TAB_LINKS)
     private List<SampleMultifieldBase> links;
 

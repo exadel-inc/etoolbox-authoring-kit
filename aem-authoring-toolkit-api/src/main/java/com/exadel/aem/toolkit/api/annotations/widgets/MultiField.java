@@ -35,6 +35,15 @@ public @interface MultiField {
     /**
      * Used to specify a class that provides fields for this Multifield
      * @return Reference to a class
+     * @deprecated Please use {@link MultiField#source()} instead
      */
+    @Deprecated
+    @SuppressWarnings("squid:S1133")
     Class<?> field() default _Default.class;
+
+    /**
+     * Used to specify a class that provides fields for this Multifield
+     * @return Reference to a class
+     */
+    Class<?> source() default _Default.class;
 }
