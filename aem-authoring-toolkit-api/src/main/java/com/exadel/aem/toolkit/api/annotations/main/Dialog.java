@@ -18,6 +18,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
+import com.day.cq.commons.jcr.JcrConstants;
+import com.day.cq.wcm.api.NameConstants;
+
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
@@ -40,7 +44,7 @@ public @interface Dialog {
      * Maps to the 'jcr:title' attributes of both the component root node and its {@code cq:dialog} node
      * @return String value, non-blank
      */
-    @PropertyRendering(name = "jcr:title")
+    @PropertyRendering(name = JcrConstants.JCR_TITLE)
     @ValueRestriction(ValueRestrictions.NOT_BLANK_OR_DEFAULT)
     String title() default "";
 
@@ -50,7 +54,7 @@ public @interface Dialog {
      * @deprecated Use {@link AemComponent#description()} to set this value
      */
     @PropertyRendering(
-        name = "jcr:description",
+        name = JcrConstants.JCR_DESCRIPTION,
         scope = Scope.COMPONENT
     )
     @Deprecated
@@ -62,7 +66,7 @@ public @interface Dialog {
      * @deprecated Use {@link AemComponent#cellName()} to set this value
      */
     @PropertyRendering(
-        name = "cq:cellName",
+        name = NameConstants.PN_CELL_NAME,
         scope = Scope.COMPONENT
     )
     @Deprecated
@@ -93,7 +97,7 @@ public @interface Dialog {
      * @deprecated Use {@link AemComponent#noDecoration()} to set this value
      */
     @PropertyRendering(
-        name = "cq:noDecoration",
+        name = NameConstants.PN_NO_DECORATION,
         scope = Scope.COMPONENT,
         ignoreValues = "false"
     )
@@ -106,7 +110,7 @@ public @interface Dialog {
      * @deprecated Use {@link AemComponent#resourceSuperType()} to set this value
      */
     @PropertyRendering(
-        name = "sling:resourceSuperType",
+        name = JcrResourceConstants.SLING_RESOURCE_SUPER_TYPE_PROPERTY,
         scope = Scope.COMPONENT
     )
     @Deprecated
@@ -118,7 +122,7 @@ public @interface Dialog {
      * @deprecated Use {@link AemComponent#templatePath()} to set this value
      */
     @PropertyRendering(
-        name = "cq:templatePath",
+        name = NameConstants.PN_TEMPLATE_PATH,
         scope = Scope.COMPONENT
     )
     @ValueRestriction(ValueRestrictions.JCR_PATH)
@@ -167,7 +171,7 @@ public @interface Dialog {
      */
     @PropertyRendering(
         scope = Scope.COMPONENT,
-        name = "cq:isContainer",
+        name = NameConstants.PN_IS_CONTAINER,
         valueType = String.class,
         ignoreValues = "false"
     )
