@@ -32,7 +32,7 @@ public class FieldSetWidget {
             label="Fieldset 1",
             description = "Fieldset definition with source class specified"
     )
-    @FieldSet(source = SampleFieldSet.class)
+    @FieldSet(SampleFieldSet.class)
     String fieldSet1;
 
     @DialogField(

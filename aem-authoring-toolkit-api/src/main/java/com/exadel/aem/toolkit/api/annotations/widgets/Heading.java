@@ -44,10 +44,21 @@ public @interface Heading {
     long level() default 1;
 
     /**
+     * When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
+     * Used to define text within header tag.
+     * @return String value, non-blank
+     * @deprecated Please use {@link Heading#value()}
+     */
+    @ValueRestriction(value = ValueRestrictions.NOT_BLANK)
+    @SuppressWarnings("squid:S1133")
+    @Deprecated
+    String text();
+
+    /**
      *  When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
      *  Used to define text within header tag.
      *  @return String value, non-blank
      */
     @ValueRestriction(value = ValueRestrictions.NOT_BLANK)
-    String text();
+    String value();
 }

@@ -42,14 +42,14 @@ public abstract class SourceImpl extends AdaptationBase<Source> implements Sourc
         Class<?> result = getPlainReturnType();
         // Then switch to directly specified type, if any
         if (getDeclaredAnnotation(MultiField.class) != null
-            && getDeclaredAnnotation(MultiField.class).source() != _Default.class) {
-            result = getDeclaredAnnotation(MultiField.class).source();
+            && getDeclaredAnnotation(MultiField.class).value() != _Default.class) {
+            result = getDeclaredAnnotation(MultiField.class).value();
         } else if (getDeclaredAnnotation(MultiField.class) != null
             && getDeclaredAnnotation(MultiField.class).field() != _Default.class) {
             result = getDeclaredAnnotation(MultiField.class).field();
         } else if (getDeclaredAnnotation(FieldSet.class) != null
-            && getDeclaredAnnotation(FieldSet.class).source() != _Default.class) {
-            result = getDeclaredAnnotation(FieldSet.class).source();
+            && getDeclaredAnnotation(FieldSet.class).value() != _Default.class) {
+            result = getDeclaredAnnotation(FieldSet.class).value();
         }
         return result;
     }
