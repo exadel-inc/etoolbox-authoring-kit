@@ -101,7 +101,8 @@ public class PlacementTestCases {
     }
 
     public interface Test2Interface {
-
+        @Place(
+            before = @ClassMember(value = "field2", source = Test2.class))
         @TextField
         default String getField1() {
             return null;
