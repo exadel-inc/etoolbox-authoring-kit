@@ -17,9 +17,10 @@ package com.exadel.aem.toolkit.api.annotations.widgets.alert;
  * Contains possible values of {@link Alert#size()} property
  *
  * @deprecated This is deprecated in favour of {@link com.exadel.aem.toolkit.api.annotations.widgets.common.Size} enum
- * and will be removed in a version after 2.0.0
+ * and will be removed in a version after 2.0.1
  */
 @Deprecated
+@SuppressWarnings("squid:S1133")
 public enum AlertSize {
     SMALL {
         @Override

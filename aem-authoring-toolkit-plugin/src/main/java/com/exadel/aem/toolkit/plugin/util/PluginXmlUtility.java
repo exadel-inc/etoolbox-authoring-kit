@@ -44,9 +44,7 @@ import org.w3c.dom.NodeList;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
@@ -286,7 +284,6 @@ public class PluginXmlUtility implements XmlUtility {
      * @param attributeMerger Function that manages an existing attribute value and a new one
      *                        in case when a new value is set to an existing {@code Element}
      */
-    @SuppressWarnings({"deprecation", "squid:S1874"})
     // PropertyName processing remains for compatibility reasons until v.2.0.0
     private static void setAttribute(Supplier<Element> elementSupplier,
                                      String name,
@@ -298,12 +295,9 @@ public class PluginXmlUtility implements XmlUtility {
                 return;
             }
             PropertyRendering propertyRendering = sourceMethod.getAnnotation(PropertyRendering.class);
-            PropertyName propertyName = sourceMethod.getAnnotation(PropertyName.class);
             String effectiveName = name;
             if (propertyRendering != null) {
                 effectiveName = StringUtils.defaultIfBlank(propertyRendering.name(), name);
-            } else if (propertyName != null) {
-                effectiveName = StringUtils.defaultIfBlank(propertyName.value(), name);
             }
             AttributeHelper
                 .forXmlTarget()
@@ -361,7 +355,6 @@ public class PluginXmlUtility implements XmlUtility {
      * @param element Element node
      * @param annotation Annotation to look for a value in
      */
-    @SuppressWarnings({"deprecation", "squid:S1874"})
     // PropertyName processing remains for compatibility reasons until v.2.0.0
     private static void populateProperty(Method method, Element element, Annotation annotation) {
         String name = method.getName();
@@ -370,10 +363,6 @@ public class PluginXmlUtility implements XmlUtility {
             PropertyRendering propertyRendering = method.getAnnotation(PropertyRendering.class);
             name = StringUtils.defaultIfBlank(propertyRendering.name(), name);
             ignorePrefix = propertyRendering.ignorePrefix();
-        } else if (method.isAnnotationPresent(PropertyName.class)) {
-            PropertyName propertyName = method.getAnnotation(PropertyName.class);
-            name = propertyName.value();
-            ignorePrefix = propertyName.ignorePrefix();
         }
         String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
         String namePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
@@ -643,18 +632,12 @@ public class PluginXmlUtility implements XmlUtility {
      * and {@code acsListResourceType} values to an {@code Element} node
      * @param target TargetFacade to store data in
      * @param dataSource Provided values as a {@code DataSource} annotation
-     * @param acsListPath Path to ACS Commons List in JCR repository
-     * @param acsListResourceType Use this to set {@code sling:resourceType} of data source, other than standard
      * @return Appended {@code datasource} node
      */
-    public static Target appendDataSource(Target target, DataSource dataSource, String acsListPath, String acsListResourceType) {
+    public static Target appendDataSource(Target target, DataSource dataSource) {
         Map<String, Object> arbitraryProperties = Arrays.stream(dataSource.properties())
                 .collect(Collectors.toMap(Property::name, Property::value));
-        Target dataSourceElement = appendDataSource(target, dataSource.path(), dataSource.resourceType(), arbitraryProperties);
-        if (dataSourceElement == null) {
-            dataSourceElement = appendAcsCommonsList(target, acsListPath, acsListResourceType);
-        }
-        return dataSourceElement;
+        return appendDataSource(target, dataSource.path(), dataSource.resourceType(), arbitraryProperties);
     }
 
     /**
@@ -673,21 +656,5 @@ public class PluginXmlUtility implements XmlUtility {
         return target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
                 .attributes(properties);
-    }
-
-    /**
-     * Appends to the current {@code Element} node and returns a child {@code datasource} node bearing link to an ACS Commons list
-     * @param target {@code TargetFacade} to store data in
-     * @param path Path to ACS Commons List in JCR repository
-     * @param resourceType Use this to set {@code sling:resourceType} of data source, other than standard
-     * @return Appended {@code datasource} node, or null if the provided {@code path} is invalid
-     */
-    private static Target appendAcsCommonsList(Target target, String path, String resourceType) {
-        if (StringUtils.isBlank(path)) {
-            return null;
-        }
-        return target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
-                .attribute(DialogConstants.PN_PATH, path)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType.isEmpty() ? ResourceTypes.ACS_LIST : resourceType);
     }
 }

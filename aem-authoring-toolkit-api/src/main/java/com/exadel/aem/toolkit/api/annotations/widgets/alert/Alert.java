@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConsta
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html">
  * Alert element</a> in TouchUI dialog
  *
- * @deprecated This annotation is deprecated and will be removed in a version after 2.0.0.
+ * @deprecated This annotation is deprecated and will be removed in a version after 2.0.1.
  * Please use {@link com.exadel.aem.toolkit.api.annotations.widgets.Alert}
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
@@ -37,6 +37,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConsta
 @ResourceType(ResourceTypes.ALERT)
 @PropertyMapping
 @Deprecated
+@SuppressWarnings("squid:S1133")
 public @interface Alert {
 
     /**

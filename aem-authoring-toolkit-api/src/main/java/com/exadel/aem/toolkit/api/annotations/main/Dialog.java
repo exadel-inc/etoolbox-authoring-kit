@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping
-@SuppressWarnings("unused")
+@SuppressWarnings("squid:S1133")
 public @interface Dialog {
 
     /**
