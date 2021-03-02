@@ -12,16 +12,8 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.lists.models;
+package com.exadel.aem.toolkit.core.lists.components;
 
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.Default;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import com.exadel.aem.toolkit.api.annotations.lists.ListItem;
@@ -29,6 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.lists.models.SimpleListItem;
 
 /**
  * Represents the basic list item which consists of "jct:title" and "value" fields
@@ -39,11 +32,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 )
 @Dialog
 @ListItem
-@Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class SimpleListItem {
+public class SimpleListItemImpl implements SimpleListItem {
 
-    @ValueMapValue(name = JcrConstants.JCR_TITLE)
-    @Default(values = StringUtils.EMPTY)
     @DialogField(
         name = JcrConstants.JCR_TITLE,
         label = "Title",
@@ -51,8 +41,6 @@ public class SimpleListItem {
     @TextField
     private String title;
 
-    @ValueMapValue
-    @Default(values = StringUtils.EMPTY)
     @DialogField(
         label = "Value",
         description = "Provide item value.")
@@ -65,22 +53,5 @@ public class SimpleListItem {
 
     public String getValue() {
         return value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        SimpleListItem that = (SimpleListItem) o;
-        return Objects.equals(title, that.title) && Objects.equals(value, that.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(title, value);
     }
 }

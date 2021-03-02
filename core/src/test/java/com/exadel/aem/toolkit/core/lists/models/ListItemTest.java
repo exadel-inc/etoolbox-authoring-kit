@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.lists.models.internal;
+package com.exadel.aem.toolkit.core.lists.models;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class ListItemTest {
     @Before
     public void setUp() {
         ResourceResolver resolver = context.resourceResolver();
-        context.load().json("/com/exadel/aem/toolkit/core/lists/util/simpleList.json", SIMPLE_LIST_PATH);
+        context.load().json("/com/exadel/aem/toolkit/core/lists/services/simpleList.json", SIMPLE_LIST_PATH);
         listItem = resolver.resolve(SIMPLE_LIST_PATH + LIST_ITEM_PATH).adaptTo(ListItem.class);
     }
 

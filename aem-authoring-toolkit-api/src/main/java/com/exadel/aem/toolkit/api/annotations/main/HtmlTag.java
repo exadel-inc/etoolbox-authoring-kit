@@ -18,6 +18,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.day.cq.wcm.api.NameConstants;
+
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
@@ -44,7 +46,7 @@ public @interface HtmlTag {
      * Maps to the 'cq:tagName' attribute of the cq:htmlTag node
      * @return String value, non-blank
      */
-    @PropertyRendering(name = "cq:tagName")
+    @PropertyRendering(name = NameConstants.PN_TAG_NAME)
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String tagName() default "div";
 }

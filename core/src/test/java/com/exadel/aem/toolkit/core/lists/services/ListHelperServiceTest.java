@@ -12,14 +12,13 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.lists.util;
+package com.exadel.aem.toolkit.core.lists.services;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
@@ -28,40 +27,49 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
+import com.exadel.aem.toolkit.api.lists.models.SimpleListItem;
+import com.exadel.aem.toolkit.api.lists.services.ListHelperService;
+import com.exadel.aem.toolkit.core.lists.services.impl.ListHelperServiceImpl;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 
-public class ListsHelperTest {
+public class ListHelperServiceTest {
 
     private static final String SIMPLE_LIST_PATH = "/content/aembox-lists/simpleList";
     private static final String CUSTOM_LIST_PATH = "/content/aembox-lists/customList";
 
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
-    private ResourceResolver resolver;
+
+    private ListHelperService listHelper;
 
     @Before
     public void setUp() {
-        resolver = context.resourceResolver();
-        context.load().json("/com/exadel/aem/toolkit/core/lists/util/simpleList.json", SIMPLE_LIST_PATH);
-        context.load().json("/com/exadel/aem/toolkit/core/lists/util/customList.json", CUSTOM_LIST_PATH);
-        context.addModelsForClasses(ItemModel.class);
+        listHelper = context.registerInjectActivateService(new ListHelperServiceImpl());
+        context.load().json("/com/exadel/aem/toolkit/core/lists/services/simpleList.json", SIMPLE_LIST_PATH);
+        context.load().json("/com/exadel/aem/toolkit/core/lists/services/customList.json", CUSTOM_LIST_PATH);
+        context.addModelsForClasses(SimpleListItem.class, ItemModel.class);
     }
 
     @Test
     public void shouldReturnEmptyListForInvalidInputs() {
-        List<Resource> actual = ListsHelper.getResourceList(null, CUSTOM_LIST_PATH);
+        List<NonModel> actual = listHelper.getList(context.resourceResolver(), CUSTOM_LIST_PATH, NonModel.class);
         assertEquals(0, actual.size());
 
-        List<Resource> actual2 = ListsHelper.getResourceList(resolver, "non-existing-path");
+        Map<String, NonModel> actual2 = listHelper.getMap(context.resourceResolver(), CUSTOM_LIST_PATH, "title", NonModel.class);
         assertEquals(0, actual2.size());
+
+        List<Resource> actual3 = listHelper.getResourceList(context.resourceResolver(), "non-existing-path");
+        assertEquals(0, actual3.size());
+
+        List<Resource> actual4 = listHelper.getResourceList(null, CUSTOM_LIST_PATH);
+        assertEquals(0, actual4.size());
     }
 
     @Test
-    public void getList() {
-        List<SimpleListItem> actual = ListsHelper.getList(resolver, SIMPLE_LIST_PATH);
+    public void shouldRetrieveBasicList() {
+        List<SimpleListItem> actual = listHelper.getList(context.resourceResolver(), SIMPLE_LIST_PATH);
         assertEquals(5, actual.size());
         assertEquals("key1", actual.get(0).getTitle());
         assertEquals("value1", actual.get(0).getValue());
@@ -80,8 +88,8 @@ public class ListsHelperTest {
     }
 
     @Test
-    public void getResourcesList() {
-        List<Resource> actual = ListsHelper.getResourceList(resolver, CUSTOM_LIST_PATH);
+    public void shouldRetrieveResourceList() {
+        List<Resource> actual = listHelper.getList(context.resourceResolver(), CUSTOM_LIST_PATH, Resource.class);
         assertEquals("Hello", actual.get(0).getValueMap().get("textValue"));
         assertEquals(true, actual.get(0).getValueMap().get("booleanValue"));
 
@@ -90,15 +98,15 @@ public class ListsHelperTest {
     }
 
     @Test
-    public void getListModels() {
-        List<ItemModel> actual = ListsHelper.getList(resolver, CUSTOM_LIST_PATH, ItemModel.class);
+    public void shouldAdaptListItemsToModel() {
+        List<ItemModel> actual = listHelper.getList(context.resourceResolver(), CUSTOM_LIST_PATH, ItemModel.class);
         assertEquals(new ItemModel("Hello", true), actual.get(0));
         assertEquals(new ItemModel("World", false), actual.get(1));
     }
 
     @Test
-    public void getMap() {
-        Map<String, String> actual = ListsHelper.getMap(resolver, SIMPLE_LIST_PATH);
+    public void shouldRetrieveBasicMap() {
+        Map<String, String> actual = listHelper.getMap(context.resourceResolver(), SIMPLE_LIST_PATH);
         assertEquals(3, actual.size());
         assertEquals("value3", actual.get("key1"));
         assertEquals("value2", actual.get("key2"));
@@ -106,8 +114,11 @@ public class ListsHelperTest {
     }
 
     @Test
-    public void getResourceMap() {
-        Map<String, Resource> actual = ListsHelper.getResourceMap(resolver, CUSTOM_LIST_PATH, "textValue");
+    public void shouldRetrieveResourceMap() {
+        Map<String, Resource> actual = listHelper.getResourceMap(
+            context.resourceResolver(),
+            CUSTOM_LIST_PATH,
+            "textValue");
         assertEquals("Hello", actual.get("Hello").getValueMap().get("textValue"));
         assertEquals(true, actual.get("Hello").getValueMap().get("booleanValue"));
 
@@ -116,8 +127,12 @@ public class ListsHelperTest {
     }
 
     @Test
-    public void getMapModels() {
-        Map<String, ItemModel> actual = ListsHelper.getMap(resolver, CUSTOM_LIST_PATH, "textValue", ItemModel.class);
+    public void shouldAdaptMapItemToModel() {
+        Map<String, ItemModel> actual = listHelper.getMap(
+            context.resourceResolver(),
+            CUSTOM_LIST_PATH,
+            "textValue",
+            ItemModel.class);
         assertEquals(new ItemModel("Hello", true), actual.get("Hello"));
         assertEquals(new ItemModel("World", false), actual.get("World"));
     }
@@ -152,5 +167,8 @@ public class ListsHelperTest {
         public int hashCode() {
             return Objects.hash(textValue, booleanValue);
         }
+    }
+
+    public static class NonModel {
     }
 }
