@@ -27,7 +27,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(DependsOnTabConfig.class)
-@SuppressWarnings("unused")
 public @interface DependsOnTab {
     /**
      * Defines the 'dependsOn' attribute

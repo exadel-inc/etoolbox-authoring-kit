@@ -27,7 +27,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(DependsOnConfig.class)
-@SuppressWarnings("unused")
 public @interface DependsOn {
     /**
      * Defines the 'dependsOn' attribute

@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.editconfig;
 /**
  * Defines possible values of {@link EditConfig#dialogLayout()} property
  */
-@SuppressWarnings("unused")
 public enum EditConfigLayout {
     FULLSCREEN, DEFAULT
 }

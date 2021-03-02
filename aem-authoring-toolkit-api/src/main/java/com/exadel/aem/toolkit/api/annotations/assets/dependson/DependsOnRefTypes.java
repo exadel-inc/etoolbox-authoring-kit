@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.assets.dependson;
 /**
  * Represents acceptable {@code dependsOnRef} values for use with {@link DependsOnRef} annotation
  */
-@SuppressWarnings("unused")
 public enum DependsOnRefTypes {
     /**
      * Type will be chosen automatically based on element widget type

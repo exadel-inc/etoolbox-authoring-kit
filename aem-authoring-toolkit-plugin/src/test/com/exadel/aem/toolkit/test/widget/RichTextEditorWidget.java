@@ -76,6 +76,9 @@ public class RichTextEditorWidget {
             },
             htmlPasteRules = @HtmlPasteRules(
                     allowBold = false,
+                    allowItalic = false,
+                    allowUnderline = false,
+                    allowAnchors = false,
                     allowImages = false,
                     allowLists = AllowElement.ALLOW,
                     allowTables = AllowElement.REPLACE_WITH_PARAGRAPHS,
@@ -94,6 +97,8 @@ public class RichTextEditorWidget {
                     @ParagraphFormat(tag = "h4", description = "H4 tagged paragraph")
             },
             tabSize = 8,
+            indentSize = 1,
+            maxUndoSteps = 25,
             htmlLinkRules = @HtmlLinkRules(
                     targetInternal = LinkTarget.MANUAL,
                     targetExternal = LinkTarget.BLANK,

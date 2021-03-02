@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.editconfig.listener;
 /**
  * Used to define {@code cq:listeners} node of TouchUI component configuration
  */
-@SuppressWarnings("unused")
 public @interface Listener {
     /**
      * Name of a {@code cq:listeners} attribute

@@ -18,7 +18,6 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 /**
  * Contains possible values of {@link Tabs#orientation()} property
  */
-@SuppressWarnings("unused")
 public enum Orientation {
     HORIZONTAL, VERTICAL
 }
