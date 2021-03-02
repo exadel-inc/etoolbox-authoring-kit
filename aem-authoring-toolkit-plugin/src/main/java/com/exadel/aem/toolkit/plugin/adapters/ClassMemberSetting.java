@@ -53,7 +53,7 @@ public class ClassMemberSetting {
             return overridingName;
         }
         if (wrappedClassMember != null) {
-            return wrappedClassMember.name();
+            return wrappedClassMember.value();
         }
         return (wrappedClassField != null) ? wrappedClassField.field() : StringUtils.EMPTY;
     }

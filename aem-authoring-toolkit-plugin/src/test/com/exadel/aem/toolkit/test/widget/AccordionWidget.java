@@ -38,16 +38,16 @@ public class AccordionWidget {
 
     @DialogField(label = "Field 1")
     @TextField
-    @Place(value = "Basic")
+    @Place("Basic")
     String field1;
 
     @Accordion(
         value = @AccordionPanel(title = "Accordion Widget Panel 1", disabled = true))
-    @Place(value = "Basic2")
+    @Place("Basic2")
     AccordionFieldSet accordion;
 
     static class AccordionFieldSet {
-        @Place(value = "Accordion Widget Panel 1")
+        @Place("Accordion Widget Panel 1")
         @DialogField
         @TextField
         String field6;

@@ -69,12 +69,12 @@ public class OrderingUtil {
             Place place = sources.get(i).adaptTo(Place.class);
             if (place != null) {
                 ClassMember classMemberBefore = place.before();
-                if (StringUtils.isNotBlank(classMemberBefore.name())) {
+                if (StringUtils.isNotBlank(classMemberBefore.value())) {
                     Orderable<Source> before = find(createName(classMemberBefore, sources.get(i).getDeclaringClass()), list);
                     list.get(i).setBefore(before);
                 }
                 ClassMember classMemberAfter = place.after();
-                if (StringUtils.isNotBlank(classMemberAfter.name())) {
+                if (StringUtils.isNotBlank(classMemberAfter.value())) {
                     Orderable<Source> after = find(createName(classMemberAfter, sources.get(i).getDeclaringClass()), list);
                     list.get(i).setAfter(after);
                 }
@@ -102,9 +102,9 @@ public class OrderingUtil {
 
     private static String createName(ClassMember classMember, Class<?> defaultClass) {
         if (_Default.class.equals(classMember.source())) {
-            return createName(defaultClass, classMember.name());
+            return createName(defaultClass, classMember.value());
         }
-        return createName(classMember.source(), classMember.name());
+        return createName(classMember.source(), classMember.value());
     }
 
     private static String createName(Class<?> cls, String name) {

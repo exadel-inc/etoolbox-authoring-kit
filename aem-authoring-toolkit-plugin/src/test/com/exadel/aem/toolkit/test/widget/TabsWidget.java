@@ -39,7 +39,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 public class TabsWidget {
     @DialogField(label = "Field on the first tab")
     @TextField
-    @Place(value = "First tab")
+    @Place("First tab")
     String field1;
 
     @Tabs(
@@ -53,33 +53,33 @@ public class TabsWidget {
         type = LayoutType.LARGE, // this one should be ignored
         padding = false // this one should be ignored
     )
-    @Place(value = "First tab")
+    @Place("First tab")
     TabsExample tabsField;
 
     @DialogField(label = "Field on the second tab")
     @TextField
-    @Place(value = "Second tab")
+    @Place("Second tab")
     String field2;
 
     @DialogField(description = "Field on the third tab")
     @TextField
-    @Place(value = "Third tab")
+    @Place("Third tab")
     String field3;
 
     static class TabsExample {
         @DialogField(label = "Field 1 on the inner Tab")
         @TextField
-        @Place(value = "First Inner")
+        @Place("First Inner")
         String innerFieldInTab;
 
         @Accordion(value = @AccordionPanel(title = "First Panel", active = true))
-        @Place(value = "Second Inner")
+        @Place("Second Inner")
         AccordionExample accordion;
 
         static class AccordionExample {
             @DialogField
             @TextField
-            @Place(value = "First Panel")
+            @Place("First Panel")
             String field6;
         }
     }

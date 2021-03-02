@@ -24,7 +24,7 @@
     ns.ElementAccessors.registerAccessor({
         selector: `${NUMBERINPUT_SELECTOR}`,
         visibility: function ($el, state) {
-            $el.find(NUMBERINPUT_INPUT_SELECTOR).attr('type', state ? 'number' : 'hidden');
+            $el.find(NUMBERINPUT_INPUT_SELECTOR).attr('readonly', state ? null : '');
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($el, state);
         }
     });

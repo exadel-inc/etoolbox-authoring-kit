@@ -332,12 +332,13 @@ public class PluginReflectionUtility {
         List<Source> reducedWithReplacements = raw
             .stream()
             .collect(Replacer.processSourceReplace());
-
-        return OrderingUtil.sortMembers(reducedWithReplacements
+        List<Source> preSortedByRank = reducedWithReplacements
             .stream()
             .filter(Filter.getNotIgnoredSourcesPredicate(ignoredClassMembers))
             .sorted(Sorter::compareByRank)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList());
+
+        return OrderingUtil.sortMembers(preSortedByRank);
     }
 
     /**

@@ -24,7 +24,7 @@
     ns.ElementAccessors.registerAccessor({
         selector: `${DATEPICKER_SELECTOR}`,
         visibility: function ($el, state) {
-            $el.find(DATEPICKER_INPUT_SELECTOR).attr('type', state ? 'text' : 'hidden');
+            $el.find(DATEPICKER_INPUT_SELECTOR).attr('readonly', state ? null : '');
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($el, state);
         }
     });

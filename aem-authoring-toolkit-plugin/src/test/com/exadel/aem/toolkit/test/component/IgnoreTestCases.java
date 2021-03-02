@@ -43,9 +43,9 @@ public class IgnoreTestCases {
     )
     @Ignore(
         members ={
-                    @ClassMember(source = SelectWidget.class, name = "timezone"),
-                    @ClassMember(source = SelectWidget.class, name = "optionList"),
-                    @ClassMember(source = SelectWidget.class, name = "rating")
+                    @ClassMember(source = SelectWidget.class, value = "timezone"),
+                    @ClassMember(source = SelectWidget.class, value = "optionList"),
+                    @ClassMember(source = SelectWidget.class, value = "rating")
     })
     public static class IgnoreMembersFixedColumnsLayout extends SelectWidget {}
 
@@ -72,7 +72,7 @@ public class IgnoreTestCases {
     )
     @Ignore(
         sections = "Basic2",
-        members = @ClassMember(source = AccordionWidget.class, name = "field1")
+        members = @ClassMember(source = AccordionWidget.class, value = "field1")
     )
     public static class IgnoreMembersAccordionLayout extends AccordionWidget {
         @DialogField
@@ -86,10 +86,10 @@ public class IgnoreTestCases {
     )
     @Ignore(
         members = {
-            @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "field1"),
-            @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "field2"),
-            @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "dropdown"),
-            @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "fieldSet")
+            @ClassMember(source = ComponentWithTabsAndInnerClass.class, value = "field1"),
+            @ClassMember(source = ComponentWithTabsAndInnerClass.class, value = "field2"),
+            @ClassMember(source = ComponentWithTabsAndInnerClass.class, value = "dropdown"),
+            @ClassMember(source = ComponentWithTabsAndInnerClass.class, value = "fieldSet")
     })
     public static class IgnoreMembersInFieldSet extends ComponentWithTabsAndInnerClass {
         @FieldSet(title = "Field set example")
@@ -97,7 +97,7 @@ public class IgnoreTestCases {
         FieldSetExampleCut fieldSet;
 
         @Ignore(
-            members = @ClassMember(source = FieldSetExample.class, name = "field6")
+            members = @ClassMember(source = FieldSetExample.class, value = "field6")
         )
         private static class FieldSetExampleCut extends FieldSetExample {}
     }
@@ -117,7 +117,7 @@ public class IgnoreTestCases {
         @FieldSet(title = "Field set example")
         @PlaceOnTab(LABEL_TAB_2)
         @Ignore(
-            members = @ClassMember(name = "field6")
+            members = @ClassMember(value = "field6")
         ) // sourceClass value falls back to the annotated field's type
         FieldSetExample fieldSet;
 
@@ -132,10 +132,10 @@ public class IgnoreTestCases {
     )
     @Ignore(
         members = {
-            @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "field1"),
-            @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "field2"),
-            @ClassMember(source = ComponentWithTabsAndInnerClass.class, name = "dropdown"),
-            @ClassMember(source = ComponentWithTabsAndInnerClass.FieldSetExample.class, name = "field6")
+            @ClassMember(source = ComponentWithTabsAndInnerClass.class, value = "field1"),
+            @ClassMember(source = ComponentWithTabsAndInnerClass.class, value = "field2"),
+            @ClassMember(source = ComponentWithTabsAndInnerClass.class, value = "dropdown"),
+            @ClassMember(source = ComponentWithTabsAndInnerClass.FieldSetExample.class, value = "field6")
     })
     public static class IgnoreMembersImposedOnFieldSetClassLevel extends ComponentWithTabsAndInnerClass {}
 
@@ -150,8 +150,8 @@ public class IgnoreTestCases {
 
         @Ignore(
             members = {
-                @ClassMember(source = SampleMultifieldBase.class, name = "checkbox"),
-                @ClassMember(source = SampleMultifieldBase.class, name = "iconName")
+                @ClassMember(source = SampleMultifieldBase.class, value = "checkbox"),
+                @ClassMember(source = SampleMultifieldBase.class, value = "iconName")
         })
         private static class SampleMultifieldCut extends SampleMultifieldBase {}
     }
@@ -165,8 +165,8 @@ public class IgnoreTestCases {
         @MultiField(value = SampleMultifieldBase.class)
         @Ignore(
             members = {
-                @ClassMember(source = SampleMultifieldBase.class, name = "checkbox"),
-                @ClassMember(name = "iconName")
+                @ClassMember(source = SampleMultifieldBase.class, value = "checkbox"),
+                @ClassMember(value = "iconName")
         })
         private List<SampleMultifieldBase> links;
     }
@@ -177,16 +177,16 @@ public class IgnoreTestCases {
     )
     @Ignore(
         members = {
-            @ClassMember(source = SampleMultifieldBase.class, name = "checkbox"),
-            @ClassMember(source = SampleMultifieldBase.class, name = "iconName"),
+            @ClassMember(source = SampleMultifieldBase.class, value = "checkbox"),
+            @ClassMember(source = SampleMultifieldBase.class, value = "iconName"),
     })
     public static class IgnoreMembersImposedOnMultifieldClassLevel {
         @DialogField
         @MultiField(value = SampleMultifieldBase.class)
         @Ignore(
             members = {
-                @ClassMember(name = "additionalLabel"),
-                @ClassMember(name = "additionalInfo"),
+                @ClassMember(value = "additionalLabel"),
+                @ClassMember(value = "additionalInfo"),
         })
         private List<SampleMultifieldExtension> links;
     }

@@ -27,12 +27,13 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Place {
+
     /**
-     * If specified, must contain the string that is equal to a {@link Tab} or an {@link AccordionPanel} title
+     * If specified, contains the string that is equal to a {@link Tab} or an {@link AccordionPanel} title
      * in order to place the current widget in the appropriate container.
      * Skip this value if you don't need any specific placement
      *
-     * @return String value
+     * @return String value (optional)
      */
     String value() default "";
 
