@@ -16,13 +16,15 @@
                 <items jcr:primaryType="nt:unstructured">
                     <field sling:resourceType="granite/ui/components/coral/foundation/anchorbutton"
                            jcr:primaryType="nt:unstructured"
-                           href="http://localhost:4502/content/page.html"
-                           icon="search"
+                           href="http://acme.com/en/content/page.html"
+                           hrefI18n="http://acme.com/fr/content/page.html"
+                           actionConfigName="actionConfig"
                            block="{Boolean}false"
-                           size="M"
-                           variant="primary"
-                           text="Link Text"
+                           icon="search"
                            iconSize="S"
+                           size="M"
+                           text="Link Text"
+                           variant="primary"
                            x-cq-linkchecker="skip"/>
                 </items>
             </column>

@@ -15,6 +15,7 @@
 package com.exadel.aem.toolkit.plugin.handlers.assets.dependson;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +30,6 @@ import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
@@ -71,10 +71,13 @@ public class DependsOnTabHandler implements BiConsumer<Class<?>, Target> {
             return;
         }
         if (target.exists(TAB_ITEMS_NODE_PATH + "/" + PluginNamingUtility.getValidNodeName(value.tabTitle()))) {
-            PluginXmlUtility.appendDataAttributes(target.getTarget(TAB_ITEMS_NODE_PATH + "/" + PluginNamingUtility.getValidNodeName(value.tabTitle())), ImmutableMap.of(
-                    DialogConstants.PN_DEPENDS_ON, value.query(),
-                    DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY
-            ));
+            Map<String, Object> dependsOnAttributes = ImmutableMap.of(
+                DialogConstants.PN_DEPENDS_ON, value.query(),
+                DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY);
+            target
+                .getTarget(TAB_ITEMS_NODE_PATH  + DialogConstants.PATH_SEPARATOR  + value.tabTitle())
+                .getOrCreateTarget(DialogConstants.NN_GRANITE_DATA)
+                .attributes(dependsOnAttributes);
         } else {
             PluginRuntime.context()
                 .getExceptionHandler()

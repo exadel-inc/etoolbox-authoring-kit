@@ -26,7 +26,6 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@SuppressWarnings("unused")
 public @interface Place {
     /**
      * If specified, must contain the string that is equal to a {@link Tab} or an {@link AccordionPanel} title
@@ -35,6 +34,7 @@ public @interface Place {
      *
      * @return String value
      */
+    String value() default "";
     String in() default "";
 
     ClassMember before() default @ClassMember;

@@ -33,7 +33,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.NUMBERFIELD)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface NumberField {
     /**
      * When set to a non-blank string, maps to the 'value' attribute of this TouchUI dialog component's node.

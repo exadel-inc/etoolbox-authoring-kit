@@ -14,16 +14,14 @@
 
 package com.exadel.aem.toolkit.test.dependson;
 
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 
 @Dialog(
         name = "test-component",
-        title = "test-component-dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "test-component-dialog"
 )
 @SuppressWarnings("unused")
 public class DependsOnSetFragmentReference {

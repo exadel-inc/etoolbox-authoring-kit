@@ -15,7 +15,6 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
@@ -27,8 +26,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "RadioGroup Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "RadioGroup Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class RadioGroupWidget {
@@ -51,10 +49,11 @@ public class RadioGroupWidget {
 
     @DialogField
     @RadioGroup(buttonProvider = @OptionProvider(
-        sources = @OptionSource(
-            path = "/path/to/tags",
+        value = @OptionSource(
+            value = "/path/to/tags",
             textMember = "jcr:title",
             valueMember = "name",
+            attributeMembers = {"first", "second"},
             textTransform = "capitalize")
     ))
     String group3;

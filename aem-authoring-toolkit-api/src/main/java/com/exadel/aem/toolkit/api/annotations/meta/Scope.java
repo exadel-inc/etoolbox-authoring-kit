@@ -16,8 +16,8 @@ package com.exadel.aem.toolkit.api.annotations.meta;
 /**
  * Contains possible values of {@link com.exadel.aem.toolkit.api.annotations.meta.Scope} annotation
  */
-@SuppressWarnings("unused")
 public enum Scope {
+    ALL,
     COMPONENT {
         @Override
         public String toString() {

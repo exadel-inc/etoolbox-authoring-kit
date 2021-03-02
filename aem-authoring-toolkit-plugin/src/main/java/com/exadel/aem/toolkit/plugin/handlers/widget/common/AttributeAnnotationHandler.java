@@ -13,12 +13,13 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widget.common;
 
+import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
+import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
  * Handler for storing {@link Attribute} properties to a Granite UI widget node
@@ -31,10 +32,12 @@ public class AttributeAnnotationHandler implements BiConsumer<Source, Target> {
      */
     @Override
     public void accept(Source source, Target target) {
-        Attribute attribute = source.adaptTo(Attribute.class);
-        if (attribute == null) {
+        Attribute attributeAnnotation = source.adaptTo(Attribute.class);
+        if (attributeAnnotation == null || attributeAnnotation.data().length == 0) {
             return;
         }
-        PluginXmlUtility.appendDataAttributes(target, attribute.data());
+        Target graniteDataElement = target.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA);
+        Arrays.stream(attributeAnnotation.data())
+            .forEach(data -> graniteDataElement.attribute(data.name(), data.value()));
     }
 }

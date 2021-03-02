@@ -15,7 +15,6 @@
 package com.exadel.aem.toolkit.test.custom;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomAnnotationForOrderingTest;
@@ -28,8 +27,7 @@ import com.exadel.aem.toolkit.test.custom.annotation.DialogAnnotationForOrdering
 
 @Dialog(
         name = "test-component",
-        title = "test-component-dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "test-component-dialog"
 )
 @CustomDialogAnnotation
 @DialogAnnotationForOrderingTest

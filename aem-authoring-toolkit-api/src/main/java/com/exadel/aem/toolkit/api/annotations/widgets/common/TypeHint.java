@@ -18,7 +18,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 /**
  * Contains possible values of {@link DatePicker#typeHint()} property and similar properties of other TouchUI dialog components
  */
-@SuppressWarnings("unused")
 public enum TypeHint {
     NONE,
     BOOLEAN {

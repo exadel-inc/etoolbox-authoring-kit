@@ -17,7 +17,6 @@ package com.exadel.aem.toolkit.api.annotations.widgets.button;
 /**
  * Contains possible values of {@link Button#type()} property
  */
-@SuppressWarnings("unused")
 public enum ButtonType {
     SUBMIT,
     BUTTON,

@@ -11,12 +11,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.layouts;
+package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
-/**
- * Contains possible values of {@link Tabs#orientation()} property
- */
-@SuppressWarnings("unused")
-public enum TabsOrientation {
-    HORIZONTAL, VERTICAL
+public enum StatusVariant {
+    ERROR("error"),
+    WARNING("warning"),
+    SUCCESS("success"),
+    HELP("help"),
+    INFO("info");
+
+    private final String value;
+
+    StatusVariant(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }

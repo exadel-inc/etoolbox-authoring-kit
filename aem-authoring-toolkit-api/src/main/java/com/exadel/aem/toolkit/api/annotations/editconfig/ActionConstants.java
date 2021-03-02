@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.editconfig;
 /**
  * Contains most common string values for the {@link EditConfig#actions()} property
  */
-@SuppressWarnings("unused")
 public class ActionConstants {
     public static final String EDIT = "edit";
     public static final String DELETE = "delete";

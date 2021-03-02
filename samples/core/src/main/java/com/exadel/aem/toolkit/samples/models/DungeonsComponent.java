@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
-import com.exadel.aem.toolkit.api.annotations.widgets.hyperlink.Hyperlink;
+import com.exadel.aem.toolkit.api.annotations.widgets.Hyperlink;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;

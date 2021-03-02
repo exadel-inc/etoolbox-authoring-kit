@@ -25,7 +25,6 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for {@code RadioGroup} widget functionality
@@ -38,8 +37,6 @@ class RadioGroupHandler extends OptionProviderHandler implements BiConsumer<Sour
      * @param target Current {@link Target} instance
      */
     @Override
-    @SuppressWarnings({"deprecation", "squid:S1874"})
-    // .acsListPath() and .acsListResourceType() method calls remain for compatibility reasons until v.2.0.0
     public void accept(Source source, Target target) {
         RadioGroup radioGroup = source.adaptTo(RadioGroup.class);
         if (hasProvidedOptions(radioGroup.buttonProvider())) {
@@ -50,7 +47,7 @@ class RadioGroupHandler extends OptionProviderHandler implements BiConsumer<Sour
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));
         }
-        PluginXmlUtility.appendDataSource(target, radioGroup.datasource(), radioGroup.acsListPath(), radioGroup.acsListResourceType());
+        appendDataSource(radioGroup.datasource(), target);
     }
 
     private void renderButton(RadioButton button, Target parentElement) {

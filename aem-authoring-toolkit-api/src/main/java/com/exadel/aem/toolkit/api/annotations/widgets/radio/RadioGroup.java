@@ -34,7 +34,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.RADIOGROUP)
 @PropertyMapping(mappings = "vertical")
-@SuppressWarnings("unused")
 public @interface RadioGroup {
 
     /**
@@ -63,21 +62,4 @@ public @interface RadioGroup {
      * @return {@code @DataSource} instance
      */
     DataSource datasource() default @DataSource;
-
-    /**
-     * @deprecated Use {@code datasource:resourceType} instead
-     * When set to a non-blank string, allows overriding {@code sling:resourceType} attribute of a {@code datasource node}
-     * which points to an ACS Commons list
-     * @return String value
-     */
-    @Deprecated
-    String acsListResourceType() default "";
-    /**
-     * @deprecated Use {@code datasource:path} instead
-     * When set to a non-blank string, a {@code datasource} node which points to an ACS Commons list is appended
-     * to the JCR buildup of this component
-     * @return Valid JCR path, or an empty string
-     */
-    @Deprecated
-    String acsListPath() default "";
 }

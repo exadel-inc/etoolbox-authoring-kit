@@ -32,7 +32,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TEXT)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Text {
     /**
      * Maps to the 'text' attribute of this TouchUI dialog component's node

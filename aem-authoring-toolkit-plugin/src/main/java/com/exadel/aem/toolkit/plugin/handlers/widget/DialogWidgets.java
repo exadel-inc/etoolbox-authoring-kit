@@ -21,10 +21,14 @@ import java.util.function.BiConsumer;
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
+import com.exadel.aem.toolkit.api.annotations.widgets.Alert;
+import com.exadel.aem.toolkit.api.annotations.widgets.AnchorButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.annotations.widgets.FileUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
 import com.exadel.aem.toolkit.api.annotations.widgets.Hidden;
+import com.exadel.aem.toolkit.api.annotations.widgets.Hyperlink;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
@@ -33,14 +37,10 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
 import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Text;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
-import com.exadel.aem.toolkit.api.annotations.widgets.anchorbutton.AnchorButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
-import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
-import com.exadel.aem.toolkit.api.annotations.widgets.hyperlink.Hyperlink;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
@@ -81,6 +81,7 @@ public enum DialogWidgets implements DialogWidget {
     PASSWORD(Password.class, new PasswordHandler()),
     HEADING(Heading.class),
     ALERT(Alert.class),
+    LEGACY_ALERT(com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert.class),
     BUTTON(Button.class),
     ACCORDION(Accordion.class, new AccordionWidgetHandler()),
     TABS(Tabs.class, new TabsWidgetHandler()),

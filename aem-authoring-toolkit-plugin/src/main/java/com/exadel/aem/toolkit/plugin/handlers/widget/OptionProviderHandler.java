@@ -20,58 +20,102 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
+import com.exadel.aem.toolkit.plugin.util.StringUtil;
 
+/**
+ * Represents a common ancestor for handlers that render rendering the option-providing widgets
+ * such as {@link com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup} or {@link com.exadel.aem.toolkit.api.annotations.widgets.select.Select}
+ */
 abstract class OptionProviderHandler {
 
     private static final String RESOURCE_TYPE_PREFIX = "/apps/";
 
+    /**
+     * Gets whether the given {@link OptionProvider} contains one or more path settings to be rendered
+     * @param optionProvider Values provided by a {@code OptionProvider} annotation
+     * @return True or false
+     */
+    boolean hasProvidedOptions(OptionProvider optionProvider) {
+        return ArrayUtils.isNotEmpty(optionProvider.value())
+            && Arrays.stream(optionProvider.value()).anyMatch(source -> StringUtils.isNotBlank(source.value()));
+    }
+
+    /**
+     * Appends data structure related to {@link DataSource} value to the provided {@link Target}
+     * @param dataSource Values provided by a {@code DataSource} annotation
+     * @param target     {@code Target} instance to store data in
+     */
+    void appendDataSource(DataSource dataSource, Target target) {
+        if (StringUtils.isAnyBlank(dataSource.path(), dataSource.resourceType())) {
+            return;
+        }
+        Target datasourceElement = target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
+            .attribute(DialogConstants.PN_PATH, dataSource.path())
+            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, dataSource.resourceType());
+        Arrays.stream(dataSource.properties())
+            .forEach(property -> datasourceElement.attribute(property.name(), property.value()));
+    }
+
+    /**
+     * Appends data structure related to {@link OptionProvider} value to the provided {@link Target}
+     * @param optionProvider Values provided by a {@code OptionProvider} annotation
+     * @param target         {@code Target} instance to store data in
+     */
     void appendOptionProvider(OptionProvider optionProvider, Target target) {
         if (!hasProvidedOptions(optionProvider)) {
             return;
         }
-        Target datasource = target
+        Target datasourceElement = target
             .getOrCreateTarget(DialogConstants.NN_DATASOURCE)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, RESOURCE_TYPE_PREFIX + ResourceTypes.OPTION_PROVIDER)
             .attributes(optionProvider, PluginAnnotationUtility.getPropertyMappingFilter(optionProvider));
 
         int pathItemOrdinal = 1;
-        for (OptionSource item : optionProvider.sources()) {
-            String pathPostfix = optionProvider.sources().length > 1
+        for (OptionSource item : optionProvider.value()) {
+            String pathPostfix = optionProvider.value().length > 1
                 ? Integer.toString(pathItemOrdinal++)
                 : StringUtils.EMPTY;
-            populateSourceAttributes(datasource, item, pathPostfix);
+            populateSourceAttributes(item, datasourceElement, pathPostfix);
         }
     }
 
-    static boolean hasProvidedOptions(OptionProvider optionProvider) {
-        return ArrayUtils.isNotEmpty(optionProvider.sources())
-            && Arrays.stream(optionProvider.sources()).anyMatch(source -> StringUtils.isNotBlank(source.path()));
-    }
-
-    private static void populateSourceAttributes(Target datasource, OptionSource optionSource, String postfix) {
-        datasource.attribute(DialogConstants.PN_PATH + postfix, optionSource.path());
+    /**
+     * Called by {@link OptionProviderHandler#appendOptionProvider(OptionProvider, Target)} to store options related
+     * to the particular option path into the given datasource {@code Target}
+     * @param optionSource Values provided by an {@code OptionSource} member of an {@code OptionProvider} annotation
+     * @param datasourceElement       {@code Target} instance to store data in
+     * @param postfix      Special key added to every attribute name to distinguish it from the others
+     */
+    private static void populateSourceAttributes(OptionSource optionSource, Target datasourceElement, String postfix) {
+        datasourceElement.attribute(DialogConstants.PN_PATH + postfix, optionSource.value());
         if (StringUtils.isNotBlank(optionSource.fallbackPath())) {
-            datasource.attribute(DialogConstants.PN_FALLBACK_PATH + postfix, optionSource.fallbackPath());
+            datasourceElement.attribute(DialogConstants.PN_FALLBACK_PATH + postfix, optionSource.fallbackPath());
         }
         if (StringUtils.isNotBlank(optionSource.textMember())) {
-            datasource.attribute(DialogConstants.PN_TEXT_MEMBER + postfix, optionSource.textMember());
+            datasourceElement.attribute(DialogConstants.PN_TEXT_MEMBER + postfix, optionSource.textMember());
         }
         if (StringUtils.isNotBlank(optionSource.valueMember())) {
-            datasource.attribute(DialogConstants.PN_VALUE_MEMBER + postfix, optionSource.valueMember());
+            datasourceElement.attribute(DialogConstants.PN_VALUE_MEMBER + postfix, optionSource.valueMember());
+        }
+        if (ArrayUtils.isNotEmpty(optionSource.attributeMembers())) {
+            datasourceElement.attribute(
+                DialogConstants.PN_ATTRIBUTE_MEMBERS + postfix,
+                StringUtil.format(optionSource.attributeMembers(), String.class));
         }
         if (ArrayUtils.isNotEmpty(optionSource.attributes())) {
-            datasource.attribute(DialogConstants.PN_ATTRIBUTES + postfix, optionSource.attributes());
+            datasourceElement.attribute(DialogConstants.PN_ATTRIBUTES + postfix, optionSource.attributes());
         }
         if (StringUtils.isNotBlank(optionSource.textTransform())) {
-            datasource.attribute(DialogConstants.PN_TEXT_TRANSFORM + postfix, optionSource.textTransform());
+            datasourceElement.attribute(DialogConstants.PN_TEXT_TRANSFORM + postfix, optionSource.textTransform());
         }
         if (StringUtils.isNotBlank(optionSource.valueTransform())) {
-            datasource.attribute(DialogConstants.PN_VALUE_TRANSFORM + postfix, optionSource.valueTransform());
+            datasourceElement.attribute(DialogConstants.PN_VALUE_TRANSFORM + postfix, optionSource.valueTransform());
         }
     }
 }

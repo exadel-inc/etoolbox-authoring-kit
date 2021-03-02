@@ -18,7 +18,6 @@ import java.util.List;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
@@ -34,8 +33,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "Dialog with Multiple-Annotated Fields",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "Dialog with Multiple-Annotated Fields"
 )
 @CustomDialogAnnotation
 @SuppressWarnings("unused")

@@ -38,7 +38,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyName;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -486,10 +485,6 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
             PropertyRendering propertyRenderingAnnotation = method.getAnnotation(PropertyRendering.class);
             propertyName = PluginNamingUtility.getValidFieldName(StringUtils.defaultIfBlank(propertyRenderingAnnotation.name(), propertyName));
             ignorePrefix = propertyRenderingAnnotation.ignorePrefix();
-        } else if (method.isAnnotationPresent(PropertyName.class)) {
-            PropertyName propertyNameAnnotation = method.getAnnotation(PropertyName.class);
-            propertyName = PluginNamingUtility.getValidFieldName(propertyNameAnnotation.value());
-            ignorePrefix = propertyNameAnnotation.ignorePrefix();
         }
 
         // Extract property prefix and prepend it to the name

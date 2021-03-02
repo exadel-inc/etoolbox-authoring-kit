@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.exadel.aem.toolkit.api.runtime;
 
 import java.lang.annotation.Target;
@@ -8,10 +21,11 @@ import com.exadel.aem.toolkit.api.handlers.Source;
  * An abstraction of AEM Authoring Toolkit's Maven plugin runtime context. Provides access to {@link XmlUtility}, and
  * {@link ExceptionHandler}
  *
- * @deprecated Since AEM Authoring Toolkit v. 2.0.0 users are encouraged to use new custom handlers API that is based
+ * @deprecated Since AEM Authoring Toolkit v. 2.0.1 users are encouraged to use new custom handlers API that is based
  * on {@link Source} and {@link Target} objects handling. Legacy API will be revoked in the versions to come
  */
 @Deprecated
+@SuppressWarnings("squid:S1133")
 public interface RuntimeContext {
 
     /**

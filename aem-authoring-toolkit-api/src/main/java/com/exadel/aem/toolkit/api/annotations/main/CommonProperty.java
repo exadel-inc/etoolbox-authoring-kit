@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.main;
 
 import java.lang.annotation.ElementType;
@@ -31,7 +30,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(CommonProperties.class)
-@SuppressWarnings("unused")
 public @interface CommonProperty {
 
     /**

@@ -34,7 +34,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.COLORFIELD)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface ColorField {
     /**
      * Maps to the 'value' attribute of this TouchUI dialog component's node.

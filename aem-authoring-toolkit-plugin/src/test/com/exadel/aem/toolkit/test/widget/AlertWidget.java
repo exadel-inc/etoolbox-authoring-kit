@@ -15,17 +15,15 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
-import com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert;
-import com.exadel.aem.toolkit.api.annotations.widgets.alert.AlertSize;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.Alert;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "Alert Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "Alert Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class AlertWidget {
@@ -33,8 +31,8 @@ public class AlertWidget {
     @Alert(
             text = "Alert content",
             title = "Alert title",
-            size = AlertSize.LARGE,
-            variant = StatusVariantConstants.SUCCESS
+            size = Size.LARGE,
+            variant = StatusVariant.SUCCESS
     )
     String alertField;
 }

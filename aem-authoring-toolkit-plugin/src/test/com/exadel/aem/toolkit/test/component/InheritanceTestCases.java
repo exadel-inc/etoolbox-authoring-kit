@@ -17,7 +17,6 @@ package com.exadel.aem.toolkit.test.component;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
@@ -105,10 +104,7 @@ public class InheritanceTestCases {
         resourceSuperType = TestConstants.DEFAULT_COMPONENT_SUPERTYPE,
         title = TestConstants.DEFAULT_COMPONENT_TITLE
     )
-    @Dialog(
-        title = TestConstants.DEFAULT_COMPONENT_TITLE,
-        layout = DialogLayout.FIXED_COLUMNS
-    )
+    @Dialog(title = TestConstants.DEFAULT_COMPONENT_TITLE)
     @Ignore(
         members = {
             @ClassMember(source = _Super.class, name = "text3"),

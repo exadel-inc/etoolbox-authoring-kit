@@ -31,14 +31,15 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.PATHFIELD)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface PathField {
+
     /**
      * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
      * Used to define text hint for an empty PathField
      * @return String value
      */
     String emptyText() default "";
+
     /**
      * Maps to the 'root' attribute of this TouchUI dialog component's node.
      * Used to define the root node from which PathField navigation starts
