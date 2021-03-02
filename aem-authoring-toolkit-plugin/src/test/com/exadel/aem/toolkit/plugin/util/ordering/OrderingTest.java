@@ -25,6 +25,7 @@ import java.util.stream.IntStream;
 import org.junit.Assert;
 import org.junit.Test;
 
+
 public class OrderingTest {
 
     private static final List<String> CYCLED_GRAPH_SEQUENCE_2 = Arrays.asList(

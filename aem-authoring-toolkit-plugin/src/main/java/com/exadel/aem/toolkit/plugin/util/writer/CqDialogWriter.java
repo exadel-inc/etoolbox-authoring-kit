@@ -45,7 +45,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
-import com.exadel.aem.toolkit.plugin.util.ordering.PluginOrderingUtility;
+import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing AEM TouchUI dialog definition (writes data to the
@@ -122,7 +122,7 @@ class CqDialogWriter extends PackageEntryWriter {
                 && Arrays.stream(dialogHandler.getClass().getDeclaredAnnotation(Handles.class).value()).anyMatch(componentClass::isAnnotationPresent))
             .collect(Collectors.toList());
 
-        PluginOrderingUtility.sort(handlers).forEach(handler -> handler.accept(componentClass, target));
+        OrderingUtil.sortHandlers(handlers).forEach(handler -> handler.accept(componentClass, target));
     }
 
     /**

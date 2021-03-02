@@ -19,6 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 
 /**
  * In multi-tab or multi-panel TouchUI Dialog setup, used to specify on which tab or accordion panel a dialog field is placed
@@ -35,4 +36,8 @@ public @interface Place {
      * @return String value
      */
     String in() default "";
+
+    ClassMember before() default @ClassMember;
+
+    ClassMember after() default @ClassMember;
 }
