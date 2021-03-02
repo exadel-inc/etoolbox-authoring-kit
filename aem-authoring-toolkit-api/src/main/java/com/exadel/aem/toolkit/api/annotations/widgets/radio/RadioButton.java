@@ -13,14 +13,13 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.radio;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
  * Used to define an option within {@link RadioGroup#buttons()} set
  */
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface RadioButton {
     /**
      * Maps to the 'text' attribute of this TouchUI dialog component's node.
@@ -28,6 +27,7 @@ public @interface RadioButton {
      * @return String value
      */
     String text();
+
     /**
      * Maps to the 'value' attribute of this TouchUI dialog component's node.
      * Used to define value to be stored when this option is checked
@@ -35,6 +35,7 @@ public @interface RadioButton {
      */
     @PropertyRendering(allowBlank = true)
     String value();
+
     /**
      * When set to true, maps to the 'checked' attribute of this TouchUI dialog component's node.
      * Defines the current option is selected by default
@@ -42,6 +43,7 @@ public @interface RadioButton {
      */
     @PropertyRendering(ignoreValues = "false")
     boolean checked() default false;
+
     /**
      * When set to true, maps to the 'disabled' attribute of this TouchUI dialog component's node.
      * Defines the current option is shown in disabled state

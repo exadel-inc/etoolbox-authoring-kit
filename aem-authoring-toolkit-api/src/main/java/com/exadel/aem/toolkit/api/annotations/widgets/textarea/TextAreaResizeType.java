@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.widgets.textarea;
 /**
  * Contains possible values of {@link TextArea#resize()} property
  */
-@SuppressWarnings("unused")
 public enum  TextAreaResizeType {
     NONE,
     BOTH,

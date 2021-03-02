@@ -34,7 +34,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.HEADING)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Heading {
     /**
      * Maps to the 'level' attribute of this TouchUI dialog component's node.

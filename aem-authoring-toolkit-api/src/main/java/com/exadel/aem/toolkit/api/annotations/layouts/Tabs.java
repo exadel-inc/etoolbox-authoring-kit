@@ -101,7 +101,6 @@ public @interface Tabs {
     )
     LayoutType type() default LayoutType.DEFAULT;
 
-
     /**
      * Determines whether to add padding to each panel.
      * <p>Note that the property is effective for <i>Tabs layout</i> and not the widget</p>

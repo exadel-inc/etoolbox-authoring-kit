@@ -18,8 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.markers._Default;
@@ -32,13 +30,11 @@ import com.exadel.aem.toolkit.api.markers._Default;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.MULTIFIELD)
-@PropertyMapping
-@SuppressWarnings("unused")
 public @interface MultiField {
+
     /**
      * Used to specify a class that provides fields for this Multifield
      * @return Reference to a class
      */
-    @IgnorePropertyMapping
     Class<?> field() default _Default.class;
 }

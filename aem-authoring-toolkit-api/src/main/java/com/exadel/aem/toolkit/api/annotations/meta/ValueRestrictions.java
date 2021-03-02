@@ -17,7 +17,6 @@ package com.exadel.aem.toolkit.api.annotations.meta;
  * Contains value restrictions processed by built-in {@link Validator} implementations
  * @see ValueRestriction
  */
-@SuppressWarnings("unused")
 public class ValueRestrictions {
     private static final String BUILTIN_VALIDATORS_PACKAGE = "com.exadel.aem.toolkit.plugin.util.validation.";
 

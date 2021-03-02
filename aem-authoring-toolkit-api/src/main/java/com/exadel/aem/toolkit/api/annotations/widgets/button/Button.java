@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.widgets.button;
 
 import java.lang.annotation.ElementType;
@@ -36,7 +35,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.BUTTON)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Button {
 
     /**

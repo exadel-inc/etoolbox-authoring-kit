@@ -30,7 +30,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Option {
 
     /**

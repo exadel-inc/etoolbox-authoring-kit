@@ -29,7 +29,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 @Target(value = ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface AccordionPanel {
 
     /**

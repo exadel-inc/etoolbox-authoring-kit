@@ -32,7 +32,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.AUTOCOMPLETE)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Autocomplete {
     /**
      * Maps to the 'forceSelection' attribute of this TouchUI dialog component's node.
