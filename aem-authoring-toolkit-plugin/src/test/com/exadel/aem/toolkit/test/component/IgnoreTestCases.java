@@ -145,7 +145,7 @@ public class IgnoreTestCases {
     )
     public static class IgnoreMembersInMultifield {
         @DialogField
-        @MultiField(field = SampleMultifieldCut.class)
+        @MultiField(source = SampleMultifieldCut.class)
         private List<SampleMultifieldCut> links;
 
         @Ignore(
@@ -162,7 +162,7 @@ public class IgnoreTestCases {
     )
     public static class IgnoreMembersImposedOnMultifield {
         @DialogField
-        @MultiField(field = SampleMultifieldBase.class)
+        @MultiField(source = SampleMultifieldBase.class)
         @Ignore(
             members = {
                 @ClassMember(source = SampleMultifieldBase.class, name = "checkbox"),
@@ -182,7 +182,7 @@ public class IgnoreTestCases {
     })
     public static class IgnoreMembersImposedOnMultifieldClassLevel {
         @DialogField
-        @MultiField(field = SampleMultifieldBase.class)
+        @MultiField(source = SampleMultifieldBase.class)
         @Ignore(
             members = {
                 @ClassMember(name = "additionalLabel"),
