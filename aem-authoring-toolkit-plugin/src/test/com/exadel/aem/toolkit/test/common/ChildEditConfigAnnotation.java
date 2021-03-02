@@ -19,7 +19,6 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.ListenerConstants;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
 
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.COPYMOVE;
@@ -30,8 +29,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "FileUpload Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "FileUpload Widget Dialog"
 )
 @ChildEditConfig(
         actions = {

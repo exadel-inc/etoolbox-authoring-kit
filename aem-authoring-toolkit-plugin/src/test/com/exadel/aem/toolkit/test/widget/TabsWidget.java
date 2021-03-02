@@ -21,7 +21,6 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
@@ -30,7 +29,6 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 @Dialog(
     name = DEFAULT_COMPONENT_NAME,
     title = "Tabs Test Dialog",
-    layout = DialogLayout.TABS,
     tabs = {
         @com.exadel.aem.toolkit.api.annotations.container.Tab(title = "First tab"),
         @com.exadel.aem.toolkit.api.annotations.container.Tab(title = "Second tab"),

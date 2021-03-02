@@ -25,7 +25,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@SuppressWarnings("unused")
 public @interface HtmlPasteRules {
     /**
      * Defines whether bold formatting is preserved in the pasted text

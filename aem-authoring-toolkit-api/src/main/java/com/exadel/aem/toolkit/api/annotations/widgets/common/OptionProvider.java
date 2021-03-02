@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 import java.lang.annotation.ElementType;
@@ -29,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 public @interface OptionProvider {
 
     @IgnorePropertyMapping
-    OptionSource[] sources() default {};
+    OptionSource[] value() default {};
 
     String[] prepend() default {};
 

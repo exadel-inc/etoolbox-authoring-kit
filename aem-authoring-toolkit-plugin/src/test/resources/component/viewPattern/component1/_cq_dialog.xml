@@ -19,8 +19,7 @@
                 <items jcr:primaryType="nt:unstructured">
                     <firstTab jcr:primaryType="nt:unstructured"
                               sling:resourceType="granite/ui/components/coral/foundation/container"
-                              jcr:title="First tab"
-                              granite:hidden="{Boolean}false">
+                              jcr:title="First tab">
                         <items jcr:primaryType="nt:unstructured">
                             <firstField
                                 jcr:primaryType="nt:unstructured"
@@ -99,8 +98,7 @@
                     </firstTab>
                     <secondTab jcr:primaryType="nt:unstructured"
                                sling:resourceType="granite/ui/components/coral/foundation/container"
-                               jcr:title="Second tab"
-                               granite:hidden="{Boolean}false">
+                               jcr:title="Second tab">
                         <items jcr:primaryType="nt:unstructured">
                             <firstPrimaryDialog
                                 jcr:primaryType="nt:unstructured"
@@ -114,19 +112,13 @@
                                         jcr:primaryType="nt:unstructured"
                                         sling:resourceType="cq/gui/components/authoring/dialog/fileupload"
                                         allowUpload="{Boolean}false"
-                                        chunkUploadSupported="{Boolean}false"
                                         disabled="{Boolean}false"
                                         fieldDescription="Description to first primary field"
                                         fieldLabel="Label to first primary field"
                                         mimeTypes="[image]"
-                                        multiple="{Boolean}false"
                                         name="./primary1First_Field_Primary_Fieldpostfix"
                                         renderHidden="{Boolean}false"
-                                        required="{Boolean}true"
-                                        text="Upload"
-                                        uploadUrl="${suffix.path}"
-                                        useHTML5="{Boolean}true"
-                                        variant="secondary"/>
+                                        required="{Boolean}true"/>
                                     <secondFieldPrimaryField
                                         jcr:primaryType="nt:unstructured"
                                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
@@ -262,19 +254,13 @@
                                         jcr:primaryType="nt:unstructured"
                                         sling:resourceType="cq/gui/components/authoring/dialog/fileupload"
                                         allowUpload="{Boolean}false"
-                                        chunkUploadSupported="{Boolean}false"
                                         disabled="{Boolean}false"
                                         fieldDescription="Description to first primary field"
                                         fieldLabel="Label to first primary field"
                                         mimeTypes="[image]"
-                                        multiple="{Boolean}false"
                                         name="./primary2First_Field_Primary_Field"
                                         renderHidden="{Boolean}false"
-                                        required="{Boolean}true"
-                                        text="Upload"
-                                        uploadUrl="${suffix.path}"
-                                        useHTML5="{Boolean}true"
-                                        variant="secondary"/>
+                                        required="{Boolean}true"/>
                                     <secondFieldPrimaryField
                                         jcr:primaryType="nt:unstructured"
                                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
@@ -410,19 +396,13 @@
                                         jcr:primaryType="nt:unstructured"
                                         sling:resourceType="cq/gui/components/authoring/dialog/fileupload"
                                         allowUpload="{Boolean}false"
-                                        chunkUploadSupported="{Boolean}false"
                                         disabled="{Boolean}false"
                                         fieldDescription="Description to first primary field"
                                         fieldLabel="Label to first primary field"
                                         mimeTypes="[image]"
-                                        multiple="{Boolean}false"
                                         name="./primary3First_Field_Primary_Field"
                                         renderHidden="{Boolean}false"
-                                        required="{Boolean}true"
-                                        text="Upload"
-                                        uploadUrl="${suffix.path}"
-                                        useHTML5="{Boolean}true"
-                                        variant="secondary"/>
+                                        required="{Boolean}true"/>
                                     <secondFieldPrimaryField
                                         jcr:primaryType="nt:unstructured"
                                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
@@ -550,8 +530,7 @@
                     </secondTab>
                     <thirdTab jcr:primaryType="nt:unstructured"
                               sling:resourceType="granite/ui/components/coral/foundation/container"
-                              jcr:title="Third tab"
-                              granite:hidden="{Boolean}false">
+                              jcr:title="Third tab">
                         <items jcr:primaryType="nt:unstructured">
                             <firstSecondaryDialogEnabled
                                 jcr:primaryType="nt:unstructured"
@@ -837,15 +816,12 @@
                     </thirdTab>
                     <fourthTab jcr:primaryType="nt:unstructured"
                                sling:resourceType="granite/ui/components/coral/foundation/container"
-                               jcr:title="Fourth tab"
-                               granite:hidden="{Boolean}true"
-                               granite:rel="me">
+                               jcr:title="Fourth tab">
                         <items jcr:primaryType="nt:unstructured"/>
                     </fourthTab>
                     <fifthTab jcr:primaryType="nt:unstructured"
                               sling:resourceType="granite/ui/components/coral/foundation/container"
-                              jcr:title="Fifth tab"
-                              granite:hidden="{Boolean}false">
+                              jcr:title="Fifth tab">
                         <items jcr:primaryType="nt:unstructured">
                             <sampleFirstNumberField
                                 jcr:primaryType="nt:unstructured"
@@ -877,8 +853,7 @@
                     </fifthTab>
                     <sixthTab jcr:primaryType="nt:unstructured"
                               sling:resourceType="granite/ui/components/coral/foundation/container"
-                              jcr:title="Sixth tab"
-                              granite:hidden="{Boolean}false">
+                              jcr:title="Sixth tab">
                         <items jcr:primaryType="nt:unstructured">
                             <sampleFieldSet
                                 jcr:primaryType="nt:unstructured"
@@ -894,7 +869,7 @@
                                         disabled="{Boolean}false"
                                         fieldDescription="Content description"
                                         fieldLabel="Content label"
-                                        name="./Content"
+                                        name="./Content/fieldset/on/tab6"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"/>
                                 </items>

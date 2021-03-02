@@ -21,7 +21,6 @@ import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
@@ -40,8 +39,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_3;
 public class IgnoreTestCases {
     @Dialog(
             name = TestConstants.DEFAULT_COMPONENT_NAME,
-            title = TestConstants.DEFAULT_COMPONENT_NAME,
-            layout = DialogLayout.FIXED_COLUMNS
+            title = TestConstants.DEFAULT_COMPONENT_NAME
     )
     @Ignore(
         members ={
@@ -54,8 +52,7 @@ public class IgnoreTestCases {
 
     @Dialog(
             name = TestConstants.DEFAULT_COMPONENT_NAME,
-            title = TestConstants.DEFAULT_COMPONENT_NAME,
-            layout = DialogLayout.TABS
+            title = TestConstants.DEFAULT_COMPONENT_NAME
     )
     @IgnoreFields({
             @ClassField(source = TabsWidget.class, field = "field3"),
@@ -71,8 +68,7 @@ public class IgnoreTestCases {
 
     @Dialog(
         name = TestConstants.DEFAULT_COMPONENT_NAME,
-        title = TestConstants.DEFAULT_COMPONENT_NAME,
-        layout = DialogLayout.ACCORDION
+        title = TestConstants.DEFAULT_COMPONENT_NAME
     )
     @Ignore(
         sections = "Basic2",
@@ -86,8 +82,7 @@ public class IgnoreTestCases {
 
     @Dialog(
             name = TestConstants.DEFAULT_COMPONENT_NAME,
-            title = TestConstants.DEFAULT_COMPONENT_NAME,
-            layout = DialogLayout.TABS
+            title = TestConstants.DEFAULT_COMPONENT_NAME
     )
     @Ignore(
         members = {
@@ -109,8 +104,7 @@ public class IgnoreTestCases {
 
     @Dialog(
             name = TestConstants.DEFAULT_COMPONENT_NAME,
-            title = TestConstants.DEFAULT_COMPONENT_NAME,
-            layout = DialogLayout.TABS
+            title = TestConstants.DEFAULT_COMPONENT_NAME
     )
     @IgnoreFields({
             @ClassField(source = ComponentWithTabsAndInnerClass.class, field = "field1"),
@@ -134,8 +128,7 @@ public class IgnoreTestCases {
 
     @Dialog(
             name = TestConstants.DEFAULT_COMPONENT_NAME,
-            title = TestConstants.DEFAULT_COMPONENT_NAME,
-            layout = DialogLayout.TABS
+            title = TestConstants.DEFAULT_COMPONENT_NAME
     )
     @Ignore(
         members = {
@@ -148,12 +141,11 @@ public class IgnoreTestCases {
 
     @Dialog(
             name = TestConstants.DEFAULT_COMPONENT_NAME,
-            title = TestConstants.DEFAULT_COMPONENT_NAME,
-            layout = DialogLayout.FIXED_COLUMNS
+            title = TestConstants.DEFAULT_COMPONENT_NAME
     )
     public static class IgnoreMembersInMultifield {
         @DialogField
-        @MultiField(field = SampleMultifieldCut.class)
+        @MultiField(source = SampleMultifieldCut.class)
         private List<SampleMultifieldCut> links;
 
         @Ignore(
@@ -166,12 +158,11 @@ public class IgnoreTestCases {
 
     @Dialog(
             name = TestConstants.DEFAULT_COMPONENT_NAME,
-            title = TestConstants.DEFAULT_COMPONENT_NAME,
-            layout = DialogLayout.FIXED_COLUMNS
+            title = TestConstants.DEFAULT_COMPONENT_NAME
     )
     public static class IgnoreMembersImposedOnMultifield {
         @DialogField
-        @MultiField(field = SampleMultifieldBase.class)
+        @MultiField(source = SampleMultifieldBase.class)
         @Ignore(
             members = {
                 @ClassMember(source = SampleMultifieldBase.class, value = "checkbox"),
@@ -182,8 +173,7 @@ public class IgnoreTestCases {
 
     @Dialog(
             name = TestConstants.DEFAULT_COMPONENT_NAME,
-            title = TestConstants.DEFAULT_COMPONENT_NAME,
-            layout = DialogLayout.FIXED_COLUMNS
+            title = TestConstants.DEFAULT_COMPONENT_NAME
     )
     @Ignore(
         members = {
@@ -192,7 +182,7 @@ public class IgnoreTestCases {
     })
     public static class IgnoreMembersImposedOnMultifieldClassLevel {
         @DialogField
-        @MultiField(field = SampleMultifieldBase.class)
+        @MultiField(source = SampleMultifieldBase.class)
         @Ignore(
             members = {
                 @ClassMember(value = "additionalLabel"),

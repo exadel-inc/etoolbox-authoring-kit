@@ -23,6 +23,7 @@ import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
  * provides access to {@link PluginReflectionUtility}, and the extended {@link PluginXmlUtility}
  */
 public interface PluginRuntimeContext extends RuntimeContext {
+
     /**
      * Provides the reference to the active {@link PluginReflectionUtility} instance
      * @return {@code PluginReflectionUtility} initialized for this context

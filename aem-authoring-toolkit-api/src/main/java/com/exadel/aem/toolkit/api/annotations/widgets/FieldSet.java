@@ -34,7 +34,6 @@ import com.exadel.aem.toolkit.api.markers._Default;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.FIELDSET)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface FieldSet {
 
     /**

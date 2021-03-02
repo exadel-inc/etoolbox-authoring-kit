@@ -252,7 +252,7 @@
                                             checked="{Boolean}true"
                                             disabled="{Boolean}false"
                                             fieldLabel="switch label name"
-                                            ignoreData="{Boolean}false"
+                                            ignoreData="{Boolean}true"
                                             name="./feedFirstswitch_field"
                                             offText="Off"
                                             onText="On"
@@ -407,7 +407,7 @@
                                             checked="{Boolean}true"
                                             disabled="{Boolean}false"
                                             fieldLabel="switch label name"
-                                            ignoreData="{Boolean}false"
+                                            ignoreData="{Boolean}true"
                                             name="./feed/second/switch_field/postfix"
                                             offText="Off"
                                             onText="On"
@@ -656,19 +656,13 @@
                                                     jcr:primaryType="nt:unstructured"
                                                     sling:resourceType="cq/gui/components/authoring/dialog/fileupload"
                                                     allowUpload="{Boolean}false"
-                                                    chunkUploadSupported="{Boolean}false"
                                                     disabled="{Boolean}false"
                                                     fieldDescription="Description to first primary field"
                                                     fieldLabel="Label to first primary field"
                                                     mimeTypes="[image]"
-                                                    multiple="{Boolean}false"
                                                     name="./prefixFirst_Field_Primary_Fieldpostfix"
                                                     renderHidden="{Boolean}false"
-                                                    required="{Boolean}true"
-                                                    text="Upload"
-                                                    uploadUrl="${suffix.path}"
-                                                    useHTML5="{Boolean}true"
-                                                    variant="secondary"/>
+                                                    required="{Boolean}true"/>
                                             <secondFieldPrimaryField
                                                     jcr:primaryType="nt:unstructured"
                                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
@@ -805,35 +799,23 @@
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="cq/gui/components/authoring/dialog/fileupload"
                                     allowUpload="{Boolean}false"
-                                    chunkUploadSupported="{Boolean}false"
                                     disabled="{Boolean}false"
                                     fieldLabel="label image"
                                     mimeTypes="[image]"
-                                    multiple="{Boolean}false"
                                     name="./fieldImage"
                                     renderHidden="{Boolean}false"
                                     required="{Boolean}true"
-                                    text="Upload"
-                                    sizeLimit="{Long}100"
-                                    uploadUrl="${suffix.path}"
-                                    useHTML5="{Boolean}true"
-                                    variant="secondary"/>
+                                    sizeLimit="{Long}100"/>
                             <productImagePath
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="cq/gui/components/authoring/dialog/fileupload"
                                     allowUpload="{Boolean}false"
-                                    chunkUploadSupported="{Boolean}false"
                                     disabled="{Boolean}false"
                                     fieldLabel="label product image"
                                     mimeTypes="[image]"
-                                    multiple="{Boolean}false"
                                     name="./fieldProductImage"
                                     renderHidden="{Boolean}false"
-                                    required="{Boolean}true"
-                                    text="Upload"
-                                    uploadUrl="${suffix.path}"
-                                    useHTML5="{Boolean}true"
-                                    variant="secondary"/>
+                                    required="{Boolean}true"/>
                         </items>
                     </sixthTab>
                     <seventhTab

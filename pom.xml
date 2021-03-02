@@ -95,14 +95,24 @@
                     <extensions>true</extensions>
                     <configuration>
                         <group>${project.parent.artifactId}</group>
+                        <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
+                        <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
                         <properties>
                             <name>${project.name}</name>
                             <description>${project.name}</description>
                             <version>${project.version}</version>
+                            <created>${maven.build.timestamp}</created>
+                            <createdBy>${project.vendor}</createdBy>
                             <packagePath>${project.artifactId}-${project.version}.zip</packagePath>
                         </properties>
-                        <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
-                        <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
+                        <archive>
+                            <manifestEntries>
+                                <Built-By>${project.vendor}</Built-By>
+                                <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
+                                <Implementation-Title>${project.name}</Implementation-Title>
+                                <Implementation-Version>${project.version}</Implementation-Version>
+                            </manifestEntries>
+                        </archive>
                     </configuration>
                     <executions>
                         <execution>
@@ -120,17 +130,23 @@
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>5.1.1</version>
-                    <inherited>true</inherited>
                     <extensions>true</extensions>
                     <configuration>
                         <exportScr>true</exportScr>
                         <instructions>
                             <Import-Package>*;resolution:=optional</Import-Package>
-                            <exportScr>true</exportScr>
                             <_dsannotations>*</_dsannotations>
                             <_metatypeannotations>*</_metatypeannotations>
                         </instructions>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <id>generate-scr-metadata</id>
+                            <goals>
+                                <goal>manifest</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -181,6 +197,7 @@
                             <manifestEntries>
                                 <Built-By>${project.vendor}</Built-By>
                                 <Build-Jdk>${java.version}</Build-Jdk>
+                                <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
                                 <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
                                 <Bundle-Name>${project.name}</Bundle-Name>
                                 <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
@@ -365,7 +382,7 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>30.0-jre</version>
-                <scope>compile</scope>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.jimfs</groupId>
@@ -398,17 +415,10 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.8.1</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-core</artifactId>
                 <version>3.6.1</version>
                 <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.plugin-tools</groupId>

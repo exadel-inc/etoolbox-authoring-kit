@@ -33,7 +33,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 @Target(ElementType.TYPE)
 @ValueRestriction("com.exadel.aem.toolkit.plugin.util.validation.CharactersObjectValidator")
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Characters {
     /**
      * In a name-entity buildup, represents the name of a character entry

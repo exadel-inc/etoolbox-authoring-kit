@@ -24,7 +24,6 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@SuppressWarnings("unused")
 public @interface Properties {
     Property[] value();
 }

@@ -29,7 +29,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TAG)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface TagField {
     /**
      *  When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.

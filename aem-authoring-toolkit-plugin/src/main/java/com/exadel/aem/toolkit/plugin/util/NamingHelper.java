@@ -35,6 +35,7 @@ class NamingHelper {
     private static final Pattern NAMESPACE_PATTERN = Pattern.compile("^\\w+:");
 
     private static final Pattern INVALID_FIELD_NAME_PATTERN = Pattern.compile("^\\W+|[^\\w-/]$|[^\\w-/:]+");
+    private static final Pattern INVALID_FIELD_NAME_POSTFIX_PATTERN = Pattern.compile("^[^\\w-/]+|[^\\w-/]$|[^\\w-/:]+");
     private static final Pattern INVALID_NODE_NAME_NS_PATTERN = Pattern.compile("^\\W*:|\\W+:$|[^\\w:]+");
 
     private static final Pattern PARENT_PATH_PREFIX_PATTERN = Pattern.compile("^(?:\\.\\./)+");
@@ -160,7 +161,7 @@ class NamingHelper {
        --------------- */
 
     /**
-     * Creates and initializes an instance of {@link NamingHelper} to deal with field names
+     * Creates and initializes an instance of {@link NamingHelper} to deal with regular field names and name prefixes
      * @return {@code XmlNamingHelper} object
      */
     static NamingHelper forFieldName() {
@@ -168,6 +169,19 @@ class NamingHelper {
         helper.lowercaseFirst = false;
         helper.preserveParentPath = true;
         helper.clearingPattern = INVALID_FIELD_NAME_PATTERN;
+        helper.checkNamespace = false;
+        return helper;
+    }
+
+    /**
+     * Creates and initializes an instance of {@link NamingHelper} to deal with field name postfix parts
+     * @return {@code XmlNamingHelper} object
+     */
+    static NamingHelper forFieldNamePostfix() {
+        NamingHelper helper = new NamingHelper();
+        helper.lowercaseFirst = false;
+        helper.preserveParentPath = false;
+        helper.clearingPattern = INVALID_FIELD_NAME_POSTFIX_PATTERN;
         helper.checkNamespace = false;
         return helper;
     }

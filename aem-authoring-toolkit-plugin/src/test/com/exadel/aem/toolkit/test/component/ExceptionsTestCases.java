@@ -17,7 +17,6 @@ package com.exadel.aem.toolkit.test.component;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
@@ -30,8 +29,7 @@ public class ExceptionsTestCases {
 
     @Dialog(
             name = DEFAULT_COMPONENT_NAME,
-            title = DEFAULT_COMPONENT_TITLE,
-            layout = DialogLayout.TABS
+            title = DEFAULT_COMPONENT_TITLE
     )
     public static class ComponentWithNonexistentTab extends ComplexComponent1 {
         @TextField
@@ -45,8 +43,7 @@ public class ExceptionsTestCases {
 
     @Dialog(
             name = DEFAULT_COMPONENT_NAME,
-            title = DEFAULT_COMPONENT_TITLE,
-            layout = DialogLayout.TABS
+            title = DEFAULT_COMPONENT_TITLE
     )
     @DependsOnTab(tabTitle = LABEL_TAB_1, query = "true")
     @DependsOnTab(tabTitle = LABEL_TAB_0, query = "true")

@@ -34,7 +34,6 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
@@ -70,17 +69,17 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
         }
-        Map<String, String> valueMap = Maps.newHashMap();
+        Map<String, Object> valueMap = Maps.newHashMap();
         String escapedQuery = StringUtils.replace(value.query(), ";", "\\\\;");
         valueMap.put(DialogConstants.PN_DEPENDS_ON, escapedQuery);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, value.action());
         valueMap.putAll(buildParamsMap(value, 0));
-        PluginXmlUtility.appendDataAttributes(target, valueMap);
+        target.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA).attributes(valueMap);
     }
 
     /**
      * Called by {@link DependsOnHandler#accept(Source, Target)} to store {@code DependsOnConfig} value in {@link Target}
-     * @param value Current {@link DependsOnConfig} value
+     * @param value  Current {@link DependsOnConfig} value
      * @param target Current {@link Target} instance
      */
     private void handleDependsOnConfig(DependsOnConfig value, Target target) {
@@ -93,7 +92,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
                     .handle(new ValidationException(EMPTY_VALUES_EXCEPTION_MESSAGE));
         }
 
-        Map<String, String> valueMap = new HashMap<>();
+        Map<String, Object> valueMap = new HashMap<>();
 
         String queries = validDeclarations.stream()
                 .map(DependsOn::query)
@@ -112,17 +111,16 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
                 .map(dependsOn -> DependsOnHandler.buildParamsMap(dependsOn, counter.merge(dependsOn.action(), 1, Integer::sum) - 1))
                 .forEach(valueMap::putAll);
 
-        PluginXmlUtility.appendDataAttributes(target, valueMap);
+        target.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA).attributes(valueMap);
     }
 
     /**
      * Build {@code DependsOnParam} parameters for the passed {@code DependsOn} annotation
-     * Param pattern:
-     * - for the first action (index = 0): dependson-{action}-{param}
+     * Param pattern:<br>
+     * - for the first action (index = 0): dependson-{action}-{param}<br>
      * - otherwise: dependson-{action}-{param}-{index}
-     *
      * @param dependsOn current {@link DependsOn} value
-     * @param index index of action
+     * @param index     index of action
      */
     private static Map<String, String> buildParamsMap(DependsOn dependsOn, int index){
         Map<String, String> valueMap = new HashMap<>();
@@ -153,7 +151,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
             dependsOnRefName = source.getName();
         }
 
-        Map<String, String> valueMap = Maps.newHashMap();
+        Map<String, Object> valueMap = Maps.newHashMap();
         valueMap.put(DialogConstants.PN_DEPENDS_ON_REF, dependsOnRefName);
         if (!value.type().toString().equals(DependsOnRefTypes.AUTO.toString())) {
             valueMap.put(DialogConstants.PN_DEPENDS_ON_REFTYPE, value.type().toString().toLowerCase());
@@ -161,6 +159,6 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
         if (value.lazy()) {
             valueMap.put(DialogConstants.PN_DEPENDS_ON_REFLAZY, StringUtils.EMPTY);
         }
-        PluginXmlUtility.appendDataAttributes(target, valueMap);
+        target.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA).attributes(valueMap);
     }
 }

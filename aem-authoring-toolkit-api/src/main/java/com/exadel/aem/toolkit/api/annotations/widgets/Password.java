@@ -31,7 +31,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.PASSFIELD)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Password {
     /**
      * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
@@ -39,18 +38,21 @@ public @interface Password {
      * @return String value
      */
     String emptyText() default "";
+
     /**
      * When set to a non-blank string, maps to the 'autocomplete' attribute of this TouchUI dialog component's node.
      * Used to indicate if the value can be automatically completed by the browser
      * @return String value
      */
     String autocomplete() default "off";
+
     /**
      * When set to true, maps to the 'autofocus' attribute of this TouchUI dialog component's node.
      * Used to specify that this component will have focus after page load/refresh
      * @return True or false
      */
     boolean autofocus() default false;
+
     /**
      * When set to a non-blank string, maps to the 'retype' attribute of this TouchUI dialog component's node.
      * Used to specify the name of the other password field that is used to verify this field

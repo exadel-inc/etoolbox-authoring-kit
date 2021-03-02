@@ -25,7 +25,7 @@
                            renderHidden="{Boolean}false"
                            required="{Boolean}false"
                            showSwatches="{Boolean}false"
-                           showProperties="{Boolean}true"
+                           showProperties="{Boolean}false"
                            showDefaultColors="{Boolean}false"
                            validation="[foundation.jcr.name]"
                            variant="swatch">

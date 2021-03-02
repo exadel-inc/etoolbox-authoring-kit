@@ -11,13 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.main;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
+import com.day.cq.commons.jcr.JcrConstants;
+import com.day.cq.wcm.api.NameConstants;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
@@ -69,14 +72,14 @@ public @interface AemComponent {
      * When set to a non-blank string, maps to the 'jcr:description' attribute of the component's root node
      * @return String value
      */
-    @PropertyRendering(name = "jcr:description")
+    @PropertyRendering(name = JcrConstants.JCR_DESCRIPTION)
     String description() default "";
 
     /**
      * When set to non-blank, maps to the 'cq:cellName' attribute of the component's root node
      * @return String value
      */
-    @PropertyRendering(name = "cq:cellName")
+    @PropertyRendering(name = NameConstants.PN_CELL_NAME)
     String cellName() default "";
 
     /**
@@ -97,7 +100,7 @@ public @interface AemComponent {
      * @return True or false
      */
     @PropertyRendering(
-        name = "cq:noDecoration",
+        name = NameConstants.PN_NO_DECORATION,
         ignoreValues = "false"
     )
     boolean noDecoration() default false;
@@ -106,14 +109,14 @@ public @interface AemComponent {
      * When set to a non-blank string, renders as the 'sling:resourceSuperType' attribute of the component root node
      * @return String value
      */
-    @PropertyRendering(name = "sling:resourceSuperType")
+    @PropertyRendering(name = JcrResourceConstants.SLING_RESOURCE_SUPER_TYPE_PROPERTY)
     String resourceSuperType() default "";
 
     /**
      * Maps to the 'cq:templatePath' attribute of the component root node. Must represent a valid JCR path
      * @return String value
      */
-    @PropertyRendering(name = "cq:templatePath")
+    @PropertyRendering(name = NameConstants.PN_TEMPLATE_PATH)
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     String templatePath() default "";
 
@@ -128,7 +131,7 @@ public @interface AemComponent {
      * Maps to the 'jcr:title' attributes of the component root node
      * @return String value, non-blank
      */
-    @PropertyRendering(name = "jcr:title")
+    @PropertyRendering(name = JcrConstants.JCR_TITLE)
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String title();
 
@@ -137,7 +140,7 @@ public @interface AemComponent {
      * @return True or false
      */
     @PropertyRendering(
-        name = "cq:isContainer",
+        name = NameConstants.PN_IS_CONTAINER,
         valueType = String.class,
         ignoreValues = "false"
     )

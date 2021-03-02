@@ -48,9 +48,9 @@ public class ParentSelectComponent {
             @Option(text = "B", value = "b")
     })
     @ValueMapValue
-    private String dungeon;
+    private String dungeonBase;
 
     public String getParentSelect() {
-        return StringUtils.defaultIfBlank(dungeon, DEFAULT_SELECT_TEXT);
+        return StringUtils.defaultIfBlank(dungeonBase, DEFAULT_SELECT_TEXT);
     }
 }

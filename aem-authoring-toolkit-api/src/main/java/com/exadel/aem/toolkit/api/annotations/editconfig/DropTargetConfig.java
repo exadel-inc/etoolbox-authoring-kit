@@ -25,7 +25,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping(mappings = "propertyName")
-@SuppressWarnings("unused")
 public @interface DropTargetConfig {
 
     /**

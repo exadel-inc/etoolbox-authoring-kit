@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -26,8 +25,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.color.GenerateColorsState;
 
 @Dialog(
         name = "test-component",
-        title = "test-component-dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "test-component-dialog"
 )
 @HtmlTag(
         className = "wrapper",
@@ -47,6 +45,7 @@ public class ColorFieldWidget {
             autogenerateColors = GenerateColorsState.SHADES,
             showSwatches = false,
             showDefaultColors = false,
+            showProperties = false,
             customColors = {"#FF0000", "#00FF00", "#0000FF"}
     )
     String color;

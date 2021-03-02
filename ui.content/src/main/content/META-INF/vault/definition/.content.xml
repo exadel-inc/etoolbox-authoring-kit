@@ -5,11 +5,5 @@
           jcr:primaryType="vlt:PackageDefinition"
           jcr:description="AEM Authoring Toolkit - UI Content">
     <thumbnail.png/>
-    <filter jcr:primaryType="nt:unstructured">
-        <f0 jcr:primaryType="nt:unstructured"
-            mode="replace"
-            root="/content/authoring-toolkit"
-            rules="[]"/>
-    </filter>
     <screenshots jcr:primaryType="nt:unstructured"/>
 </jcr:root>

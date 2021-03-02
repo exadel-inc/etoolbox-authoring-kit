@@ -31,7 +31,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface DesignDialog {
 
     /**

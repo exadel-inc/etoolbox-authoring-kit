@@ -8,10 +8,10 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>aem-authoring-toolkit-bundle</artifactId>
+    <artifactId>aem-authoring-toolkit-core</artifactId>
 
-    <name>${project.prettyName} Bundle</name>
-    <description>Contains AEM Authoring Toolkit classes and interfaces intended for use within an OSGi container</description>
+    <name>${project.prettyName} Core</name>
+    <description>Contains AEM Authoring Toolkit core implementation logic</description>
 
     <packaging>jar</packaging>
 
@@ -28,22 +28,10 @@
                 <configuration>
                     <instructions>
                         <Import-Package>javax.inject;javax.annotation;version=0.0.0,*;resolution:=optional</Import-Package>
-                        <Sling-Model-Packages>
-                            com.exadel.aem.toolkit.core.models,
-                            com.exadel.aem.toolkit.core.lists.models
-                        </Sling-Model-Packages>
+                        <Sling-Model-Packages>com.exadel.aem.toolkit.core.lists.models</Sling-Model-Packages>
                         <Export-Package>com.exadel.aem.toolkit.core.*</Export-Package>
                     </instructions>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>generate-metadata</id>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -117,10 +105,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.wcm</groupId>
             <artifactId>io.wcm.testing.aem-mock.junit4</artifactId>
         </dependency>
@@ -139,10 +123,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>

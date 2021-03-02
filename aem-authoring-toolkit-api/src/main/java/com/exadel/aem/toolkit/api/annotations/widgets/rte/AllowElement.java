@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.widgets.rte;
 /**
  * Contains possible values for the {@link HtmlPasteRules#allowLists()} and {@link HtmlPasteRules#allowTables()} properties
  */
-@SuppressWarnings("unused")
 public enum AllowElement {
     ALLOW,
     DISALLOW {

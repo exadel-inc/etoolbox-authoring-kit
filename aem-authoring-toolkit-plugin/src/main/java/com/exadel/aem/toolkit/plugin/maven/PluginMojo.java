@@ -74,12 +74,13 @@ public class PluginMojo extends AbstractMojo {
         pluginDependencies.stream().findFirst().ifPresent(d -> classpathElements.add(d.getFile().getPath()));
 
         PluginRuntime.contextBuilder()
-                .classPathElements(classpathElements)
-                .packageBase(componentsReferenceBase)
-                .terminateOn(terminateOn)
-                .build();
+            .classPathElements(classpathElements)
+            .packageBase(componentsReferenceBase)
+            .terminateOn(terminateOn)
+            .build();
 
         try (PackageWriter packageWriter = PackageWriter.forMavenProject(project, componentsPathBase)) {
+            packageWriter.writeInfo(PluginInfo.getInstance());
             PluginRuntime.context().getReflectionUtility().getComponentClasses().forEach(packageWriter::write);
         } catch (PluginException e) {
             throw new MojoExecutionException(String.format(PLUGIN_EXECUTION_EXCEPTION_MESSAGE,

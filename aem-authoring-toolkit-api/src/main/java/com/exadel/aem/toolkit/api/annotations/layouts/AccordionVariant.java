@@ -11,12 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.api.annotations.layouts;
 
 /**
  * Contains possible values of {@link Accordion#variant()} property
  */
-@SuppressWarnings("unused")
 public enum AccordionVariant {
     DEFAULT, QUIET, LARGE
 }

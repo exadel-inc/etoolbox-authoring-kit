@@ -18,7 +18,6 @@ import com.exadel.aem.toolkit.api.annotations.layouts.LayoutType;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
-import com.exadel.aem.toolkit.api.annotations.layouts.TabsSize;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -27,6 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
@@ -48,7 +48,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_3;
     },
     type = LayoutType.LARGE,
     padding = false,
-    size = TabsSize.L, // this one will not render
+    size = Size.LARGE, // this one will not render
     trackingFeature = "unused" // this one will not render
 )
 public class DesignDialogView implements Addition, Addition2 {

@@ -31,7 +31,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TEXTFIELD)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface TextField {
     /**
      * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.

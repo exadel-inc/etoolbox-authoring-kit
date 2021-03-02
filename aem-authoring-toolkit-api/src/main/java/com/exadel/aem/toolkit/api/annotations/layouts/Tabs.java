@@ -22,6 +22,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Orientation;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 
 /**
  * Used to define tabbed layout for a TouchUI dialog and/or to set up
@@ -42,17 +44,19 @@ public @interface Tabs {
     /**
      * Determines the orientation of {@code tabs} when used as a dialog widget.
      * <p>Note that the property is effective for <i>Tabs widget</i> and not the tabbed layout</p>
-     * @return One of {@link TabsOrientation} values
+     * @return One of {@link Orientation} values
      */
     @PropertyRendering(transform = StringTransformation.LOWERCASE)
-    TabsOrientation orientation() default TabsOrientation.HORIZONTAL;
+    Orientation orientation() default Orientation.HORIZONTAL;
 
     /**
      * Determines the size of the tabs.
-     * <p>Note that the property is effective for <i>Tabs widget</i> and not the tabbed layout</p>
-     * @return One of {@link TabsSize} values
+     * <p>The property is effective for <i>Tabs widget</i> and not the tabbed layout</p>
+     * <p><u>Note:</u> only {@code "medium"} and {@code "large"} values are officially supported</p>
+     * @return One of {@code Size} values
+     * @see Size
      */
-    TabsSize size() default TabsSize.M;
+    Size size() default Size.MEDIUM;
 
     /**
      * Determines whether to put vertical margin to the root element.
@@ -96,7 +100,6 @@ public @interface Tabs {
         ignoreValues = "default"
     )
     LayoutType type() default LayoutType.DEFAULT;
-
 
     /**
      * Determines whether to add padding to each panel.

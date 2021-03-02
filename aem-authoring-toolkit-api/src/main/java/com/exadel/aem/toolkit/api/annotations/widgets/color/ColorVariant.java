@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.widgets.color;
 /**
  * Contains possible values of {@link ColorField#variant()} property
  */
-@SuppressWarnings("unused")
 public enum ColorVariant {
     DEFAULT, SWATCH
 }

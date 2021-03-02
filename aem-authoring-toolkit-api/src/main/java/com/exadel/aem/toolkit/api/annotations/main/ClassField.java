@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.main;
 
 import java.lang.annotation.ElementType;
@@ -23,11 +22,12 @@ import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
  * Used to refer to a particular field of a class defined by the class reference and the name
- * @deprecated Use {@link ClassMember} instead
+ * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link ClassMember} instead
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Deprecated
+@SuppressWarnings("squid:S1133")
 public @interface ClassField {
 
     /**
