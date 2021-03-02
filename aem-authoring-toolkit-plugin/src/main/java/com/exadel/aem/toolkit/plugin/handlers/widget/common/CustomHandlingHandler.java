@@ -36,7 +36,7 @@ import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.target.TargetImpl;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
-import com.exadel.aem.toolkit.plugin.util.ordering.PluginOrderingUtility;
+import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
 
 /**
  * Stores properties coming from custom annotations and, optionally, processed by custom handlers
@@ -84,7 +84,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
 
         // Process modern handlers that accept(Source, Target)
         Collection<DialogWidgetHandler> modernHandlers = CollectionUtils.subtract(handlers, legacyHandlers);
-        PluginOrderingUtility.sort(new ArrayList<>(modernHandlers)).forEach(handler -> handler.accept(source, target));
+        OrderingUtil.sortHandlers(new ArrayList<>(modernHandlers)).forEach(handler -> handler.accept(source, target));
     }
 
     private List<DialogWidgetHandler> getEffectiveHandlers(Source source) {

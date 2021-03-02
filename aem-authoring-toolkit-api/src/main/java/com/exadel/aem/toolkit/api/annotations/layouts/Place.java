@@ -19,6 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 
 /**
  * In multi-tab or multi-panel TouchUI Dialog setup, used to specify on which tab or accordion panel a dialog field is placed
@@ -26,12 +27,27 @@ import com.exadel.aem.toolkit.api.annotations.container.Tab;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Place {
+
     /**
-     * If specified, must contain the string that is equal to a {@link Tab} or an {@link AccordionPanel} title
+     * If specified, contains the string that is equal to a {@link Tab} or an {@link AccordionPanel} title
      * in order to place the current widget in the appropriate container.
      * Skip this value if you don't need any specific placement
      *
-     * @return String value
+     * @return String value (optional)
      */
     String value() default "";
+
+    /**
+     * If specified, refers to a class member (a method or a field) this member must be placed <b>before</b> when situated
+     * in the same container
+     * @return {@link ClassMember} value (optional)
+     */
+    ClassMember before() default @ClassMember;
+
+    /**
+     * If specified, refers to a class member (a method or a field) this member must be placed <u>after</u> when situated
+     * in the same container
+     * @return {@link ClassMember} value (optional)
+     */
+    ClassMember after() default @ClassMember;
 }

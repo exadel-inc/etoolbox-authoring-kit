@@ -66,26 +66,26 @@ public class DesignDialogView implements Addition, Addition2 {
             @Data(name = "field1-data1", value = "value-data1"),
             @Data(name = "field1-data2", value = "value-data2")
         })
-    @Place(value = LABEL_TAB_1)
+    @Place(LABEL_TAB_1)
     String field1;
 
     @DialogField(label = "Field 2")
     @PathField(rootPath = "/content")
-    @Place(value = LABEL_TAB_2)
+    @Place(LABEL_TAB_2)
     String field2;
 
     @DialogField(label = "Field 2.1", wrapperClass = "my-wrapper-class")
     @TextField
-    @Place(value = LABEL_TAB_3)
+    @Place(LABEL_TAB_3)
     String field3;
 
     @DialogField(description = "This is the second second field")
     @Checkbox(text = "Checkbox 2")
-    @Place(value = LABEL_TAB_1)
+    @Place(LABEL_TAB_1)
     String field4;
 
     @FieldSet(title = "Field set example")
-    @Place(value = LABEL_TAB_2)
+    @Place(LABEL_TAB_2)
     FieldSetExample fieldSet;
 
     static class FieldSetExample {
@@ -108,7 +108,7 @@ public class DesignDialogView implements Addition, Addition2 {
 
     @DialogField(ranking = 200)
     @TextField
-    @Place(value = LABEL_TAB_3)
+    @Place(LABEL_TAB_3)
     String getDropdown2() {
         return null;
     }
@@ -130,7 +130,7 @@ interface Addition {
         @Option(text = "4 star", value = "4"),
         @Option(text = "5 star", value = "5")
     }, emptyText = "Select rating")
-    @Place(value = LABEL_TAB_3)
+    @Place(LABEL_TAB_3)
     default String getDropdown() {
         return null;
     }
@@ -140,6 +140,6 @@ interface Addition2 {
 
     @DialogField(ranking = 300)
     @TextField(value = "text")
-    @Place(value = LABEL_TAB_3)
+    @Place(LABEL_TAB_3)
     String getDropdown3();
 }
