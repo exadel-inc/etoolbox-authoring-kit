@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.editconfig;
 /**
  * Contains most common string values for the {@link InplaceEditingConfig#type()} property
  */
-@SuppressWarnings("unused")
 public class EditorType {
     public static final String PLAINTEXT = "plaintext";
     public static final String TITLE = "title";

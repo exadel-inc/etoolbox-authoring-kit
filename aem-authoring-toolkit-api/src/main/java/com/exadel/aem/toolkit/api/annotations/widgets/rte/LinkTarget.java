@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.widgets.rte;
 /**
  * Contains possible values of {@link HtmlLinkRules#targetExternal()} and {@link HtmlLinkRules#targetInternal()} properties
  */
-@SuppressWarnings("unused")
 public enum LinkTarget {
     AUTO {
         @Override

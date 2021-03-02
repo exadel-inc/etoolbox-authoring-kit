@@ -27,7 +27,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface InplaceEditingConfig {
     /**
      * Maps to the 'type' attribute of current {@code cq:editConfig/cq:inplaceEditing/cq:childEditors/[editorName]} node

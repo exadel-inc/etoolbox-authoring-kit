@@ -36,7 +36,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TEXTAREA)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface TextArea {
 
     /**

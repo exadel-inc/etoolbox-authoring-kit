@@ -37,7 +37,7 @@ public class PlaceSetting {
 
     public String getValue() {
         if (wrappedPlace != null) {
-            return wrappedPlace.in();
+            return wrappedPlace.value();
         } else if (wrappedPlaceOnTab != null) {
             return wrappedPlaceOnTab.value();
         }

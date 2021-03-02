@@ -32,7 +32,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping(prefix = "cq:", mappings = {"actions", "emptyText", "inherit"})
-@SuppressWarnings("unused")
 public @interface EditConfig {
 
     /**

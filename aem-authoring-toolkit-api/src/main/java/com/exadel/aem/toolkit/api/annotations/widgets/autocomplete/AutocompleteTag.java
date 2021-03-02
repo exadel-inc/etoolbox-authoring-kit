@@ -29,7 +29,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.AUTOCOMPLETE_TAG)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface AutocompleteTag {
     String title() default "";
 }

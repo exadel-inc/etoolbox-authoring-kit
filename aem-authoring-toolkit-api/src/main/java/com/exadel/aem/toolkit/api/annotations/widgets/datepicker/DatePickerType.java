@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.widgets.datepicker;
 /**
  * Contains possible values of {@link DatePicker#type()} property
  */
-@SuppressWarnings("unused")
 public enum DatePickerType {
     DATE,
     DATETIME,

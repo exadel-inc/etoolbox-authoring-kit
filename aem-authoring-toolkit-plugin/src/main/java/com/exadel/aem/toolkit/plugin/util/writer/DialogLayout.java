@@ -12,11 +12,8 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.api.annotations.layouts;
+package com.exadel.aem.toolkit.plugin.util.writer;
 
-/**
- * Contains possible values of {@link Accordion#variant()} property
- */
-public enum AccordionVariant {
-    DEFAULT, QUIET, LARGE
+public enum DialogLayout {
+    FIXED_COLUMNS, TABS, ACCORDION
 }

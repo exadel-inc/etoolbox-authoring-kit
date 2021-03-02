@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
-          xmlns:cq="http://www.day.com/jcr/cq/1.0"
-          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           width="{Double}560.0"
@@ -31,8 +29,8 @@
                           emptyText="empty text"
                           forceSelection="{Boolean}true"
                           autocreateTag="{Boolean}false"
-                          deleteHint="{Boolean}true"
-                          rootPath="/"
+                          deleteHint="{Boolean}false"
+                          rootPath="/content"
                           disabled="{Boolean}false"
                           name="./tag2"
                           renderHidden="{Boolean}false"

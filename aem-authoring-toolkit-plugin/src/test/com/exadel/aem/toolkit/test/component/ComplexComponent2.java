@@ -447,7 +447,10 @@ public class ComplexComponent2 {
                 name = "switch_field",
                 label = "switch label name"
         )
-        @Switch(checked = true)
+        @Switch(
+            checked = true,
+            ignoreData = true
+        )
         private boolean switchField;
     }
 }

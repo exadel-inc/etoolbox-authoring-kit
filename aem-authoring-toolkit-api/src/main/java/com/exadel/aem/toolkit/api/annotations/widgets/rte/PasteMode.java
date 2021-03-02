@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.widgets.rte;
 /**
  * Contains possible values of {@link RichTextEditor#defaultPasteMode()} property
  */
-@SuppressWarnings("unused")
 public enum PasteMode {
     DEFAULT,
     BROWSER,

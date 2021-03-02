@@ -15,7 +15,6 @@
 package com.exadel.aem.toolkit.test.common;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
@@ -24,8 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 @SuppressWarnings("unused")
 @Dialog(
         name = "test-component",
-        title = "test-component-dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "test-component-dialog"
 )
 public class AttributesAnnotation {
     @DialogField

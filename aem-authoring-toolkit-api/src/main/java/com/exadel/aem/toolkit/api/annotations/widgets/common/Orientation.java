@@ -11,12 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.layouts;
+package com.exadel.aem.toolkit.api.annotations.widgets.common;
+
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 
 /**
- * Contains possible values of {@link Tabs#size()} property
+ * Contains possible values of {@link Tabs#orientation()} property
  */
-@SuppressWarnings("unused")
-public enum TabsSize {
-    M, L
+public enum Orientation {
+    HORIZONTAL, VERTICAL
 }

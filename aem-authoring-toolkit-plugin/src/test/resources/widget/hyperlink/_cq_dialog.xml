@@ -16,9 +16,13 @@
                 <items jcr:primaryType="nt:unstructured">
                     <field sling:resourceType="granite/ui/components/coral/foundation/hyperlink"
                            jcr:primaryType="nt:unstructured"
-                           href="http://localhost:4502/content/page.html"
+                           href="http://acme.com/en/content/page.html"
+                           hrefI18n="http://acme.com/fr/content/page.html"
                            text="Link Text"
-                           iconSize="S"/>
+                           hideText="{Boolean}true"
+                           iconSize="S"
+                           rel="that"
+                           x-cq-linkchecker="skip"/>
                 </items>
             </column>
         </items>

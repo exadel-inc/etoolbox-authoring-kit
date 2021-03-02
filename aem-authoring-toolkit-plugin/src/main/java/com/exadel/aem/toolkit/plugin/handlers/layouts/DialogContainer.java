@@ -18,8 +18,8 @@ import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.EnumUtils;
 
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.util.writer.DialogLayout;
 import com.exadel.aem.toolkit.plugin.util.writer.PackageWriter;
 
 /**

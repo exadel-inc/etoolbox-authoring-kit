@@ -32,7 +32,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Target(ElementType.TYPE)
 @ValueRestriction(ValueRestrictions.ALL_NOT_BLANK)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface ParagraphFormat {
     /**
      * Represents the paragraph or header tag, such as p, h1, h2, h3 etc.

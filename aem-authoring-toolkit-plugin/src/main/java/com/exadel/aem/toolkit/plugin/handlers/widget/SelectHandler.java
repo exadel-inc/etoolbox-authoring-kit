@@ -25,7 +25,6 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite {@code Select} widget functionality
@@ -38,9 +37,6 @@ class SelectHandler extends OptionProviderHandler implements BiConsumer<Source, 
      * @param target Current {@link Target} instance
      */
     @Override
-    @SuppressWarnings({"deprecation", "squid:S1874"})
-    // .acsListPath() and .acsListResourceType() method calls, as well as .addNoneOption() processing
-    // remain for compatibility reasons until v.2.0.0
     public void accept(Source source, Target target) {
         Select select = source.adaptTo(Select.class);
         if (hasProvidedOptions(select.optionProvider())) {
@@ -57,13 +53,6 @@ class SelectHandler extends OptionProviderHandler implements BiConsumer<Source, 
                 item.attributes(option, PluginAnnotationUtility.getPropertyMappingFilter(option));
             }
         }
-        Target dataSourceElement = PluginXmlUtility.appendDataSource(
-                target,
-                select.datasource(),
-                select.acsListPath(),
-                select.acsListResourceType());
-        if (dataSourceElement != null && select.addNoneOption()) {
-            dataSourceElement.attribute(DialogConstants.PN_ADD_NONE, true);
-        }
+        appendDataSource(select.datasource(), target);
     }
 }

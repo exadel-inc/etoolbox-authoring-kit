@@ -183,8 +183,11 @@
                                            allow="{Boolean}false"
                                            ignoreMode="paragraph"/>
                                     <allowBasics jcr:primaryType="nt:unstructured"
+                                                 anchor="{Boolean}false"
                                                  bold="{Boolean}false"
-                                                 image="{Boolean}false"/>
+                                                 image="{Boolean}false"
+                                                 italic="{Boolean}false"
+                                                 underline="{Boolean}false"/>
                                 </htmlPasteRules>
                             </edit>
                             <paraformat jcr:primaryType="nt:unstructured" features="*">
@@ -196,10 +199,10 @@
                             </paraformat>
                             <format jcr:primaryType="nt:unstructured" features="[bold,italic,underline]"/>
                             <control jcr:primaryType="nt:unstructured" features="[save,close]"/>
-                            <undo jcr:primaryType="nt:unstructured" features="[undo,redo]"/>
+                            <undo jcr:primaryType="nt:unstructured" features="[undo,redo]" maxUndoSteps="{Long}25"/>
                             <fullscreen jcr:primaryType="nt:unstructured" features="toggle"/>
                             <spellcheck jcr:primaryType="nt:unstructured" features="checktext"/>
-                            <lists jcr:primaryType="nt:unstructured" features="[ordered,unordered,indent,outdent]"/>
+                            <lists jcr:primaryType="nt:unstructured" features="[ordered,unordered,indent,outdent]" indentSize="{Long}1"/>
                             <justify jcr:primaryType="nt:unstructured" features="[justifyleft,justifycenter,justifyright]"/>
                             <links jcr:primaryType="nt:unstructured" features="[modifylink,unlink]"/>
                             <styles jcr:primaryType="cq:WidgetCollection" features="*">

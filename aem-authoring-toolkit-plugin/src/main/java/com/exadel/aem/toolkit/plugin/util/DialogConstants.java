@@ -17,7 +17,6 @@ package com.exadel.aem.toolkit.plugin.util;
  * Contains common string constants used as AEM TouchUI Component and Dialog building blocks
  * @see <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/user-guide.html?topic=/experience-manager/6-5/sites/developing/morehelp/components.ug.js">Adobe documentation</a>
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
 public class DialogConstants {
     public static final String WILDCARD = "*";
     public static final String DOUBLE_QUOTE = "\"";
@@ -40,12 +39,12 @@ public class DialogConstants {
     public static final String NN_CONFIG = "config";
     public static final String NN_CONTENT = "content";
     public static final String NN_CUI = "cui";
-    public static final String NN_DATA = "granite:data";
     public static final String NN_DATASOURCE = "datasource";
     public static final String NN_DIALOG_FULL_SCREEN = "dialogFullScreen";
     public static final String NN_DROP_TARGETS = "cq:dropTargets";
     public static final String NN_EDIT = "edit";
     public static final String NN_FORM_PARAMETERS = "cq:formParameters";
+    public static final String NN_GRANITE_DATA = "granite:data";
     public static final String NN_HTML_PASTE_RULES = "htmlPasteRules";
     public static final String NN_HTML_RULES = "htmlRules";
     public static final String NN_ICONS = "icons";
@@ -65,8 +64,6 @@ public class DialogConstants {
     public static final String NN_LISTS = "lists";
     public static final String NN_MISCTOOLS = "misctools";
     public static final String NN_OPTIONS = "options";
-    public static final String NN_PANEL = "panel";
-    public static final String NN_PANELS = "panels";
     public static final String NN_PARAFORMAT = "paraformat";
     public static final String NN_PARENT_CONFIG = "parentConfig";
     public static final String NN_POPOVERS = "popovers";
@@ -95,19 +92,11 @@ public class DialogConstants {
 
     public static final String PN_AAT_LIST_ITEM = "aatListItem";
     public static final String PN_ACCEPT = "accept";
-    public static final String PN_ACTIONS = "actions";
     public static final String PN_ACTIVE = "active";
-    public static final String PN_ADD_NONE = "addNone";
     public static final String PN_ALLOW = "allow";
     public static final String PN_ALLOW_BLOCK_TAGS = "allowBlockTags";
     public static final String PN_ATTRIBUTE_MEMBERS = "attributeMembers";
     public static final String PN_ATTRIBUTES = "attributes";
-    public static final String PN_AUTOGENERATE_COLORS = "autogenerateColors";
-    public static final String PN_AUTOCREATE_TAG = "autocreateTag";
-    public static final String PN_CHECKED = "checked";
-    public static final String PN_CLASS = "class";
-    public static final String PN_COMPONENT_CLASS = "componentClass";
-    public static final String PN_COMPONENT_GROUP = "componentGroup";
     public static final String PN_COMPOSITE = "composite";
     public static final String PN_CSS_EXTERNAL = "cssExternal";
     public static final String PN_CSS_INTERNAL = "cssInternal";
@@ -118,7 +107,6 @@ public class DialogConstants {
     public static final String PN_DEPENDS_ON_REF = "dependsOnRef";
     public static final String PN_DEPENDS_ON_REFTYPE = "dependsOnRefType";
     public static final String PN_DEPENDS_ON_REFLAZY = "dependsOnRefLazy";
-    public static final String PN_DESCRIPTION = "description";
     public static final String PN_DIALOG_LAYOUT = "dialogLayout";
     public static final String PN_DISABLED = "disabled";
     public static final String PN_DISCONNECTED = "disconnected";
@@ -129,13 +117,9 @@ public class DialogConstants {
     public static final String PN_FALLBACK_PATH = "fallbackPath";
     public static final String PN_FEATURES = "features";
     public static final String PN_FILE_REFERENCE_PARAMETER = "fileReferenceParameter";
-    public static final String PN_GRANITE_CLASS = "granite:class";
     public static final String PN_GROUPS = "groups";
-    public static final String PN_HEIGHT = "height";
-    public static final String PN_HELP_PATH = "helpPath";
     public static final String PN_IGNORE_MODE = "ignoreMode";
     public static final String PN_INDENT_SIZE = "indentSize";
-    public static final String PN_IS_CONTAINER = "cq:isContainer";
     public static final String PN_JCR_TITLE = "jcr:title";
     public static final String PN_MAX_DATE = "maxDate";
     public static final String PN_MAX_UNDO_STEPS = "maxUndoSteps";
@@ -144,21 +128,15 @@ public class DialogConstants {
     public static final String PN_NAME = "name";
     public static final String PN_PADDING = "padding";
     public static final String PN_PATH = "path";
-    public static final String PN_PRIMARY_TITLE = "jcr:primaryTitle";
     public static final String PN_PRIMARY_TYPE = "jcr:primaryType";
     public static final String PN_PROPERTY_NAME = "propertyName";
     public static final String PN_PROTOCOLS = "protocols";
-    public static final String PN_RANKING = "ranking";
     public static final String PN_REF = "ref";
     public static final String PN_RENDER_HIDDEN = "renderHidden";
     public static final String PN_REQUIRED = "required";
     public static final String PN_RETYPE = "retype";
-    public static final String PN_SCOPE = "scope";
-    public static final String PN_SELECTED = "selected";
     public static final String PN_SLING_RESOURCE_TYPE = "sling:resourceType";
-    public static final String PN_SOURCE_CLASS = "source";
     public static final String PN_TAB_SIZE = "tabSize";
-    public static final String PN_TAG_NAME = "cq:tagName";
     public static final String PN_TARGET_EXTERNAL = "targetExternal";
     public static final String PN_TARGET_INTERNAL = "targetInternal";
     public static final String PN_TEXT = "text";
@@ -174,8 +152,6 @@ public class DialogConstants {
     public static final String PN_VALUE = "value";
     public static final String PN_VALUE_MEMBER = "valueMember";
     public static final String PN_VALUE_TRANSFORM = "valueTransform";
-    public static final String PN_VARIANT = "variant";
-    public static final String PN_WIDTH = "width";
 
     private DialogConstants() {}
 }

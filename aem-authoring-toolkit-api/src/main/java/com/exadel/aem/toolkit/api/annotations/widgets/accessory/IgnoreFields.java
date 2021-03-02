@@ -27,11 +27,12 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
  * Typically used for the case when current dialog class or a fieldset extends another class and can expose
  * one or more {@code DialogField}s from superclass that are not actually needed
  * @see ClassField
- * @deprecated Use {@link Ignore} instead
+ * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link Ignore} instead
  */
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Deprecated
+@SuppressWarnings("squid:S1133")
 public @interface IgnoreFields {
     /**
      * Enumerates class members to be skipped when rendering a dialog or a dialog part.

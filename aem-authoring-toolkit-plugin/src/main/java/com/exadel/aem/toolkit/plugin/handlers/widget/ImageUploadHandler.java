@@ -17,7 +17,6 @@ import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
@@ -33,12 +32,7 @@ class ImageUploadHandler implements BiConsumer<Source, Target> {
      * @param target Current {@link Target} instance
      */
     @Override
-    @SuppressWarnings({"deprecation", "squid:S1874"}) // the "clas" property is to remain for compatibility reasons until v.2.0.0
     public void accept(Source source, Target target) {
-        ImageUpload imageUpload = source.adaptTo(ImageUpload.class);
-        if (StringUtils.isNotBlank(imageUpload.clas())) {
-            target.attribute(DialogConstants.PN_CLASS, imageUpload.clas());
-        }
         String fileRef = target.getAttribute(DialogConstants.PN_FILE_REFERENCE_PARAMETER);
         if (StringUtils.isNotBlank(fileRef) && !StringUtils.startsWith(fileRef, DialogConstants.RELATIVE_PATH_PREFIX)) {
             target.attribute(DialogConstants.PN_FILE_REFERENCE_PARAMETER, DialogConstants.RELATIVE_PATH_PREFIX + fileRef);

@@ -17,7 +17,6 @@ package com.exadel.aem.toolkit.test.widget;
 import java.util.List;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
@@ -27,8 +26,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "MultiField Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "MultiField Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class MultiFieldWidget {

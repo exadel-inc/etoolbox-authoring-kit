@@ -50,6 +50,7 @@
                                     path="/path/to/tags"
                                     textMember="jcr:title"
                                     valueMember="name"
+                                    attributeMembers="[first,second]"
                                     textTransform="capitalize"/>
                     </group3>
                 </items>

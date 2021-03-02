@@ -17,9 +17,13 @@ package com.exadel.aem.toolkit.api.annotations.widgets.imageupload;
  * Contains common string constants used for {@link ImageUpload} setup
  */
 @SuppressWarnings("unused")
-class ImageUploadConstants {
-    static final String DEFAULT_UPLOAD_URL = "${suffix.path}";
-    static final String DEFAULT_MIME_TYPE = "image";
-    static final String DEFAULT_BUTTON_TEXT = "Upload";
-    private ImageUploadConstants(){}
+public class ImageUploadConstants {
+    public static final String DEFAULT_MIME_TYPE = "image";
+
+    public static final String MIME_TYPE_GIF = ".gig";
+    public static final String MIME_TYPE_JPG = ".jpg";
+    public static final String MIME_TYPE_PNG = ".png";
+    public static final String MIME_TYPE_SVG = ".svg";
+
+    private ImageUploadConstants() {}
 }
