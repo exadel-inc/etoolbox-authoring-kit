@@ -24,9 +24,9 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
 @SuppressWarnings("unused")
 public class HeadingWidget {
 
-    @Heading(text = "test-text")
+    @Heading("test-text")
     String heading1;
 
-    @Heading(text = "test-text", level = 6)
+    @Heading(value = "test-text", level = 6)
     String heading2;
 }

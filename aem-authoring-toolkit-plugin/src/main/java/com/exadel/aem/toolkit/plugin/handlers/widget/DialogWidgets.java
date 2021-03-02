@@ -79,7 +79,7 @@ public enum DialogWidgets implements DialogWidget {
     HYPERLINK(Hyperlink.class),
     AUTOCOMPLETE(Autocomplete.class, new AutocompleteHandler()),
     PASSWORD(Password.class, new PasswordHandler()),
-    HEADING(Heading.class),
+    HEADING(Heading.class, new HeadingHandler()),
     ALERT(Alert.class),
     LEGACY_ALERT(com.exadel.aem.toolkit.api.annotations.widgets.alert.Alert.class),
     BUTTON(Button.class),

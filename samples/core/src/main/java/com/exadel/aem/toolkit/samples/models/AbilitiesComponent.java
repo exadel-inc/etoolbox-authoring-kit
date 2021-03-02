@@ -27,10 +27,10 @@ import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
@@ -59,7 +59,7 @@ public class AbilitiesComponent {
 
     static final String TAB_ABILITIES = "Abilities";
 
-    @Heading(text = "Here you can choose abilities", level = 2)
+    @Heading(value = "Here you can choose abilities", level = 2)
     String heading;
 
     @DialogField(ranking = 2)
