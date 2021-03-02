@@ -28,11 +28,11 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 /**
  * An abstraction of class encapsulating routines for XML generation and handling
  *
- * @deprecated Since AEM Authoring Toolkit v. 2.0.0 users are encouraged to use new custom handlers API that is based
+ * @deprecated Since AEM Authoring Toolkit v. 2.0.1 users are encouraged to use new custom handlers API that is based
  * on {@link Source} and {@link Target} objects handling. Legacy API will be revoked in the versions to come
  */
-@SuppressWarnings("unused")
 @Deprecated
+@SuppressWarnings({"unused", "squid:S1133"})
 public interface XmlUtility {
 
     /**
@@ -218,7 +218,7 @@ public interface XmlUtility {
      * but if the parent's child (or any of the specified grandchildren) do not exist, null value is returned
      * @param parent Element to analyze
      * @param child  Name of child to look for, can be a simple name or a relative path e.g. {@code child/otherChild/yetAnotherChild}
-     * @return Element instance if path traversing was successfull, null otherwise
+     * @return Element instance if path traversing was successful, null otherwise
      */
     Element getChildElement(Element parent, String child);
 
