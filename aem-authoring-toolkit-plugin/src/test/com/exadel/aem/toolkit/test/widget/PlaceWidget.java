@@ -20,8 +20,11 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
-
+@SuppressWarnings("unused")
 public class PlaceWidget {
+
+    private PlaceWidget() {
+    }
 
     @AemComponent(
         path = "test-component",
@@ -32,37 +35,37 @@ public class PlaceWidget {
         @TextField
         private String field0;
 
-        @Place(before = @ClassMember(name = "field0"))
+        @Place(before = @ClassMember("field0"))
         @TextField
         private String field1;
 
-        @Place(before = @ClassMember(name = "field6"))
+        @Place(before = @ClassMember("field6"))
         @TextField
         private String field2;
 
-        @Place(before = @ClassMember(name = "field2"))
+        @Place(before = @ClassMember("field2"))
         @TextField
         private String field3;
 
-        @Place(after = @ClassMember(name = "field2"))
+        @Place(after = @ClassMember("field2"))
         @TextField
         private String field4;
 
         @TextField
         private String field5;
 
-        @Place(before = @ClassMember(name = "field0"))
+        @Place(before = @ClassMember("field0"))
         @TextField
         private String field6;
 
-        @Place(after = @ClassMember(name = "field6"))
+        @Place(after = @ClassMember("field6"))
         @TextField
         private String field7;
 
         @TextField
         private String field8;
 
-        @Place(before = @ClassMember(name = "field5"))
+        @Place(before = @ClassMember(value = "field5"))
         @TextField
         private String field9;
     }
@@ -72,17 +75,17 @@ public class PlaceWidget {
         title = "test-component-dialog"
     )
     @Dialog
-    public static class Test2 implements ITest2 {
+    public static class Test2 implements Test2Interface {
 
         @Place(
-            before = @ClassMember(name = "getField1", source = ITest2.class)
+            before = @ClassMember(value = "getField1", source = Test2Interface.class)
         )
         @TextField
         private String field0;
 
         @Place(
-            after = @ClassMember(name = "field0"),
-            before = @ClassMember(name = "getField3", source = ITest2.class)
+            after = @ClassMember(value = "field0"),
+            before = @ClassMember(value = "getField3", source = Test2Interface.class)
         )
         @TextField
         private String field2;
@@ -97,7 +100,7 @@ public class PlaceWidget {
         private String field8;
     }
 
-    public interface ITest2 {
+    public interface Test2Interface {
 
         @TextField
         default String getField1() {
@@ -105,30 +108,30 @@ public class PlaceWidget {
         }
 
         @Place(
-            after = @ClassMember(name = "field2", source = Test2.class),
-            before = @ClassMember(name = "field4", source = Test2.class))
+            after = @ClassMember(value = "field2", source = Test2.class),
+            before = @ClassMember(value = "field4", source = Test2.class))
         @TextField
         default String getField3() {
             return null;
         }
 
         @Place(
-            after = @ClassMember(name = "field4", source = Test2.class),
-            before = @ClassMember(name = "field6", source = Test2.class))
+            after = @ClassMember(value = "field4", source = Test2.class),
+            before = @ClassMember(value = "field6", source = Test2.class))
         @TextField
         default String getField5() {
             return null;
         }
 
         @Place(
-            after = @ClassMember(name = "field6", source = Test2.class),
-            before = @ClassMember(name = "field8", source = Test2.class))
+            after = @ClassMember(value = "field6", source = Test2.class),
+            before = @ClassMember(value = "field8", source = Test2.class))
         @TextField
         default String getField7() {
             return null;
         }
 
-        @Place(after = @ClassMember(name = "field8", source = Test2.class))
+        @Place(after = @ClassMember(value = "field8", source = Test2.class))
         @TextField
         default String getField9() {
             return null;

@@ -46,7 +46,7 @@ public class InheritanceTestCases {
         @TextField
         @Replace(
             // "Downward" replacement (technically possible but discouraged because breaks dependency inversion)
-            @ClassMember(source = Child.class, name = "text2")
+            @ClassMember(source = Child.class, value = "text2")
         )
         private String text2;
 
@@ -66,7 +66,7 @@ public class InheritanceTestCases {
         )
         @TextField
         @Replace(
-            @ClassMember(source = Grandparent.class, name = "text")
+            @ClassMember(source = Grandparent.class, value = "text")
         )
         private String text;
 
@@ -95,7 +95,7 @@ public class InheritanceTestCases {
         @Replace(
             // Will not replace anything, because is considered "pointing" at itself
             // Will be placed above #text2 because having some ranking but originating from a superclass
-            @ClassMember(name = "text4")
+            @ClassMember(value = "text4")
         )
         private String text4;
     }
@@ -111,8 +111,8 @@ public class InheritanceTestCases {
     )
     @Ignore(
         members = {
-            @ClassMember(source = _Super.class, name = "text3"),
-            @ClassMember(source = Grandparent.class, name = "text3")
+            @ClassMember(source = _Super.class, value = "text3"),
+            @ClassMember(source = Grandparent.class, value = "text3")
     })
     public static class Child extends Parent {
         @DialogField(name = "./fieldset")

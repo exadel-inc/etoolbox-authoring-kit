@@ -82,7 +82,6 @@ public class OrderingTest {
         assertOnlyUniqueValues(answer);
     }
 
-    // Test graph with cycle inside
     @Test
     public void testGraphWithCycleInside1() {
         List<Orderable<String>> list = getList(5);
@@ -99,7 +98,6 @@ public class OrderingTest {
         Assert.assertEquals(CYCLED_GRAPH_SEQUENCE_1, answer);
     }
 
-    // Test graph with cycle inside
     @Test
     public void testGraphWithCycleInside2() {
         List<Orderable<String>> list = getList(7);
@@ -117,7 +115,6 @@ public class OrderingTest {
         Assert.assertEquals(CYCLED_GRAPH_SEQUENCE_2, answer);
     }
 
-    // Test cycle graph
     @Test
     public void testSimpleCycleGraph() {
         List<Orderable<String>> list = getList(4);
