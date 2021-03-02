@@ -63,5 +63,5 @@ public @interface FieldSet {
      * the type of underlying {@code Field} is considered
      * @return Valid class referenced, or the {@link _Default} pseudo-reference
      */
-    Class<?> source() default _Default.class;
+    Class<?> value() default _Default.class;
 }

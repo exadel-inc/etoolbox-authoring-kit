@@ -35,7 +35,7 @@ public @interface MultiField {
     /**
      * Used to specify a class that provides fields for this Multifield
      * @return Reference to a class
-     * @deprecated Please use {@link MultiField#source()} instead
+     * @deprecated Please use {@link MultiField#value()} instead
      */
     @Deprecated
     @SuppressWarnings("squid:S1133")
@@ -45,5 +45,5 @@ public @interface MultiField {
      * Used to specify a class that provides fields for this Multifield
      * @return Reference to a class
      */
-    Class<?> source() default _Default.class;
+    Class<?> value() default _Default.class;
 }

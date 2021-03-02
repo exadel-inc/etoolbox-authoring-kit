@@ -59,7 +59,7 @@ public class MultiFieldWidget {
 
     private static class ExtendedMultiFieldContainer extends MultiFieldContainer {
         @DialogField
-        @FieldSet(source = MultifieldContainerNestedFieldSet.class)
+        @FieldSet(value = MultifieldContainerNestedFieldSet.class)
         String nestedFieldSet;
     }
 
