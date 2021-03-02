@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.test.widget;
+package com.exadel.aem.toolkit.test.component;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
@@ -21,9 +21,9 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 @SuppressWarnings("unused")
-public class PlaceWidget {
+public class PlacementTestCases {
 
-    private PlaceWidget() {
+    private PlacementTestCases() {
     }
 
     @AemComponent(

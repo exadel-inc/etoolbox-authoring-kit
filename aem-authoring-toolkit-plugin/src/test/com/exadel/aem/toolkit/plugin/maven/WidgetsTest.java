@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
 import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
+import com.exadel.aem.toolkit.test.component.PlacementTestCases;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
 import com.exadel.aem.toolkit.test.widget.AccordionWidget;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
@@ -36,7 +37,6 @@ import com.exadel.aem.toolkit.test.widget.MultipleAnnotatedWidget;
 import com.exadel.aem.toolkit.test.widget.NestedCheckboxListWidget;
 import com.exadel.aem.toolkit.test.widget.NumberFieldWidget;
 import com.exadel.aem.toolkit.test.widget.PasswordWidget;
-import com.exadel.aem.toolkit.test.widget.PlaceWidget;
 import com.exadel.aem.toolkit.test.widget.RadioGroupWidget;
 import com.exadel.aem.toolkit.test.widget.RichTextEditorWidget;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
@@ -48,6 +48,11 @@ import com.exadel.aem.toolkit.test.widget.TextWidget;
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.RESOURCE_FOLDER_WIDGET;
 
 public class WidgetsTest extends DefaultTestBase {
+
+    @Test
+    public void testAccordion() {
+        test(AccordionWidget.class, RESOURCE_FOLDER_WIDGET, "accordion");
+    }
 
     @Test
     public void testAlert() {
@@ -140,13 +145,13 @@ public class WidgetsTest extends DefaultTestBase {
     }
 
     @Test
-    public void testPlace1() {
-        test(PlaceWidget.Test1.class, "widget/place1");
+    public void testPlacement1() {
+        test(PlacementTestCases.Test1.class, "widget/place1");
     }
 
     @Test
-    public void testPlace2() {
-        test(PlaceWidget.Test2.class, "widget/place2");
+    public void testPlacement2() {
+        test(PlacementTestCases.Test2.class, "widget/place2");
     }
 
     @Test
@@ -187,10 +192,5 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testWidgetAnnotatedWithMultiple() {
         test(MultipleAnnotatedWidget.class, RESOURCE_FOLDER_WIDGET, "multiple");
-    }
-
-    @Test
-    public void testAccordion() {
-        test(AccordionWidget.class, RESOURCE_FOLDER_WIDGET, "accordion");
     }
 }
