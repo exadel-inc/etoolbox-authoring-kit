@@ -36,7 +36,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.SELECT)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Select {
 
     /**
@@ -122,39 +121,4 @@ public @interface Select {
      */
     @PropertyRendering(ignoreValues = "false")
     boolean forceIgnoreFreshness() default false;
-
-    /**
-     * @deprecated Use {@code datasource:resourceType} instead
-     * When set to a non-blank string, allows to override {@code sling:resourceType} attribute of a {@code datasource node}
-     * pointing to a ACS Commons list
-     * @return String value
-     */
-    @Deprecated
-    @IgnorePropertyMapping
-    @SuppressWarnings("squid:S1133")
-    String acsListResourceType() default "";
-
-    /**
-     * @deprecated Use {@code datasource:path} instead
-     * When set to a non-blank string, a {@code datasource} node is appended to the JCR buildup of this component
-     * pointing to a ACS Commons list
-     * @return Valid JCR path, or an empty string
-     */
-    @Deprecated
-    @IgnorePropertyMapping
-    @SuppressWarnings("squid:S1133")
-    String acsListPath() default "";
-
-    /**
-     * When this option is to true, and also {@link Select#acsListPath()} is specified, renders the {@code addNone} attribute
-     * to the {@code datasource} node of this TouchUI dialog component's node so that "none" option is added to the
-     * list of selectable options.
-     * This option has no effect unless valid {@code acsListPath} is set.
-     * @return True or false
-     * @deprecated This will be removed starting from version 2.0.0
-     */
-    @IgnorePropertyMapping
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    boolean addNoneOption() default false;
 }
