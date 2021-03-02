@@ -65,7 +65,7 @@ public class DungeonsComponent extends ParentSelectComponent {
             RteFeatures.LISTS_ORDERED,
             RteFeatures.LISTS_UNORDERED
         })
-    @Place(in = "Main")
+    @Place("Main")
     private String dungeonRules;
 
     @DependsOn(query = "@dungeon === '1'")
@@ -78,7 +78,7 @@ public class DungeonsComponent extends ParentSelectComponent {
 
     @Accordion(
         value = @AccordionPanel(title = LABEL_DUNGEON_SELECT))
-    @Place(in = "Main")
+    @Place("Main")
     DungeonSelect dungeon;
 
     static class DungeonSelect {
@@ -92,7 +92,7 @@ public class DungeonsComponent extends ParentSelectComponent {
         @DependsOnRef(name = "dungeon")
         @Properties(
             value = @Property(name = "sling:hideChildren", value = "*"))
-        @Place(in = "Dungeons select")
+        @Place("Dungeons select")
         String dungeonsSelect;
 
     }
