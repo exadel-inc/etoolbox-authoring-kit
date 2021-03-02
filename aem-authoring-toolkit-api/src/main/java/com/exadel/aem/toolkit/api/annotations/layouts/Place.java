@@ -35,9 +35,18 @@ public @interface Place {
      * @return String value
      */
     String value() default "";
-    String in() default "";
 
+    /**
+     * If specified, refers to a class member (a method or a field) this member must be placed <b>before</b> when situated
+     * in the same container
+     * @return {@link ClassMember} value (optional)
+     */
     ClassMember before() default @ClassMember;
 
+    /**
+     * If specified, refers to a class member (a method or a field) this member must be placed <u>after</u> when situated
+     * in the same container
+     * @return {@link ClassMember} value (optional)
+     */
     ClassMember after() default @ClassMember;
 }
