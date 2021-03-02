@@ -15,29 +15,30 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.ButtonSize;
-import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.ButtonVariant;
-import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
+import com.exadel.aem.toolkit.api.annotations.widgets.FileUpload;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariant;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "FileUpload Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "FileUpload Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class FileUploadWidget {
     @DialogField
     @FileUpload(
             emptyText = "empty text",
+            async = false,
+            autoStart = false,
             uploadUrl = "/content/dam/acme/uploads",
             mimeTypes = {".png", ".jpg"},
-            buttonVariant = ButtonVariant.MINIMAL,
-            buttonSize = ButtonSize.LARGE,
-            buttonText = "Upload File"
+            variant = ElementVariant.MINIMAL,
+            size = Size.LARGE,
+            sizeLimit = 10000,
+            text = "Upload File"
     )
     String file1;
 }

@@ -16,10 +16,10 @@ package com.exadel.aem.toolkit.test.component;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
+import com.exadel.aem.toolkit.api.annotations.widgets.FileUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
-import com.exadel.aem.toolkit.api.annotations.widgets.fileupload.FileUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.ParagraphFormat;

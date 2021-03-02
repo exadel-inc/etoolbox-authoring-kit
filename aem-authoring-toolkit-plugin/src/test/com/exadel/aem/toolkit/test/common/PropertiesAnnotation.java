@@ -13,8 +13,8 @@
  */
 
 package com.exadel.aem.toolkit.test.common;
+
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
@@ -32,8 +32,7 @@ import com.exadel.aem.toolkit.plugin.util.TestConstants;
         helpPath = "https://www.google.com/search?q=my+aem+component",
         isContainer = true,
         width = 800,
-        height = 600,
-        layout = DialogLayout.FIXED_COLUMNS
+        height = 600
 )
 @SuppressWarnings("unused")
 public class PropertiesAnnotation {

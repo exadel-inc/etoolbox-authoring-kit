@@ -18,7 +18,6 @@ import com.exadel.aem.toolkit.api.annotations.layouts.LayoutType;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
-import com.exadel.aem.toolkit.api.annotations.layouts.TabsSize;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -27,6 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
@@ -48,7 +48,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_3;
     },
     type = LayoutType.LARGE,
     padding = false,
-    size = TabsSize.L, // this one will not render
+    size = Size.LARGE, // this one will not render
     trackingFeature = "unused" // this one will not render
 )
 public class DesignDialogView implements Addition, Addition2 {
@@ -66,26 +66,26 @@ public class DesignDialogView implements Addition, Addition2 {
             @Data(name = "field1-data1", value = "value-data1"),
             @Data(name = "field1-data2", value = "value-data2")
         })
-    @Place(in = LABEL_TAB_1)
+    @Place(value = LABEL_TAB_1)
     String field1;
 
     @DialogField(label = "Field 2")
     @PathField(rootPath = "/content")
-    @Place(in = LABEL_TAB_2)
+    @Place(value = LABEL_TAB_2)
     String field2;
 
     @DialogField(label = "Field 2.1", wrapperClass = "my-wrapper-class")
     @TextField
-    @Place(in = LABEL_TAB_3)
+    @Place(value = LABEL_TAB_3)
     String field3;
 
     @DialogField(description = "This is the second second field")
     @Checkbox(text = "Checkbox 2")
-    @Place(in = LABEL_TAB_1)
+    @Place(value = LABEL_TAB_1)
     String field4;
 
     @FieldSet(title = "Field set example")
-    @Place(in = LABEL_TAB_2)
+    @Place(value = LABEL_TAB_2)
     FieldSetExample fieldSet;
 
     static class FieldSetExample {
@@ -108,7 +108,7 @@ public class DesignDialogView implements Addition, Addition2 {
 
     @DialogField(ranking = 200)
     @TextField
-    @Place(in = LABEL_TAB_3)
+    @Place(value = LABEL_TAB_3)
     String getDropdown2() {
         return null;
     }
@@ -130,7 +130,7 @@ interface Addition {
         @Option(text = "4 star", value = "4"),
         @Option(text = "5 star", value = "5")
     }, emptyText = "Select rating")
-    @Place(in = LABEL_TAB_3)
+    @Place(value = LABEL_TAB_3)
     default String getDropdown() {
         return null;
     }
@@ -140,6 +140,6 @@ interface Addition2 {
 
     @DialogField(ranking = 300)
     @TextField(value = "text")
-    @Place(in = LABEL_TAB_3)
+    @Place(value = LABEL_TAB_3)
     String getDropdown3();
 }

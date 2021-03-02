@@ -23,7 +23,6 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
@@ -46,7 +45,6 @@ import com.exadel.aem.toolkit.plugin.util.TestConstants;
         title = "Component with external classes",
         description = "Component with external classes",
         componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
-        layout = DialogLayout.TABS,
         resourceSuperType = "/resource/super/type",
         tabs = {
                 @Tab(title = "Main tab"),

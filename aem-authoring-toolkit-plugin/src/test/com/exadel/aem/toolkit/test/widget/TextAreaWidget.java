@@ -15,7 +15,6 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextAreaResizeType;
@@ -24,8 +23,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "TextArea Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "TextArea Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class TextAreaWidget {

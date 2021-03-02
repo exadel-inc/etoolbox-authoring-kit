@@ -15,7 +15,6 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
@@ -26,8 +25,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "DatePicker Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "DatePicker Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class DatePickerWidget {
@@ -38,7 +36,10 @@ public class DatePickerWidget {
             valueFormat = "DD.MM.YYYY HH:mm",
             minDate = @DateTimeValue(day = 1, month = 1, year = 2019),
             maxDate = @DateTimeValue(day = 30, month = 4, year = 2020, hour = 12, minute = 10, timezone = "UTC+3"),
-            typeHint = TypeHint.STRING
+            typeHint = TypeHint.STRING,
+            displayTimezoneMessage = true,
+            beforeSelector = "before",
+            afterSelector = "after"
     )
     String currentDate;
 }

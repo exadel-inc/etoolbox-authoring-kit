@@ -15,21 +15,24 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
-import com.exadel.aem.toolkit.api.annotations.widgets.hyperlink.Hyperlink;
+import com.exadel.aem.toolkit.api.annotations.widgets.Hyperlink;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.LinkCheckerVariant;
 import com.exadel.aem.toolkit.plugin.util.TestConstants;
 
 @Dialog(
     name = TestConstants.DEFAULT_COMPONENT_NAME,
-    title = TestConstants.DEFAULT_COMPONENT_TITLE,
-    layout = DialogLayout.FIXED_COLUMNS
+    title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
 @SuppressWarnings("unused")
 public class HyperlinkWidget {
 
     @Hyperlink(
-        href = "http://localhost:4502/content/page.html",
-        text = "Link Text"
+        href = "http://acme.com/en/content/page.html",
+        hrefI18n = "http://acme.com/fr/content/page.html",
+        text = "Link Text",
+        hideText = true,
+        rel = "that",
+        linkChecker = LinkCheckerVariant.SKIP
     )
     String field;
 }

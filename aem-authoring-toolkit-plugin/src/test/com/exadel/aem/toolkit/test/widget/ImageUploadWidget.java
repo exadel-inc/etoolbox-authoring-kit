@@ -15,30 +15,22 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ButtonVariant;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "ImageUpload Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "ImageUpload Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class ImageUploadWidget {
     @DialogField
     @ImageUpload(
-            title="Valid Image Upload",
             mimeTypes=".png",
             sizeLimit = 100000,
-            buttonText = "Upload Image",
-            buttonVariant = ButtonVariant.QUIET,
             fileNameParameter = "./image/fileName",
-            multiple = true,
-            className = "css-class-name",
             fileReferenceParameter = "./image/fileRef"
     )
     String file1;

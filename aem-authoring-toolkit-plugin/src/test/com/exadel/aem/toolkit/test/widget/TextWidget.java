@@ -15,7 +15,6 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Text;
 
@@ -23,8 +22,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
 
 @Dialog(
     name = DEFAULT_COMPONENT_NAME,
-    title = "Text Widget Dialog",
-    layout = DialogLayout.FIXED_COLUMNS
+    title = "Text Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class TextWidget {

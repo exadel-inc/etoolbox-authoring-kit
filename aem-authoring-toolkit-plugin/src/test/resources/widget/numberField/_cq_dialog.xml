@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
-          xmlns:cq="http://www.day.com/jcr/cq/1.0"
-          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           width="{Double}560.0"
@@ -33,7 +31,7 @@
                              required="{Boolean}false"
                              min="{Double}-10.0"
                              max="{Double}10.0"
-                             step="{Double}1.0"
+                             step="{Double}2.0"
                              sling:resourceType="granite/ui/components/coral/foundation/form/numberfield"/>
                 </items>
             </column>
