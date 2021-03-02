@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 import java.lang.annotation.Retention;
@@ -24,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 public @interface OptionSource {
 
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
-    String path();
+    String value();
 
     String fallbackPath() default "";
 

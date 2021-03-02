@@ -95,6 +95,7 @@ public class DialogConstants {
     public static final String PN_ACTIVE = "active";
     public static final String PN_ALLOW = "allow";
     public static final String PN_ALLOW_BLOCK_TAGS = "allowBlockTags";
+    public static final String PN_ATTRIBUTE_MEMBERS = "attributeMembers";
     public static final String PN_ATTRIBUTES = "attributes";
     public static final String PN_COMPOSITE = "composite";
     public static final String PN_CSS_EXTERNAL = "cssExternal";

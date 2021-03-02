@@ -25,6 +25,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
+import com.exadel.aem.toolkit.plugin.util.StringUtil;
 
 abstract class OptionProviderHandler {
 
@@ -40,8 +41,8 @@ abstract class OptionProviderHandler {
             .attributes(optionProvider, PluginAnnotationUtility.getPropertyMappingFilter(optionProvider));
 
         int pathItemOrdinal = 1;
-        for (OptionSource item : optionProvider.sources()) {
-            String pathPostfix = optionProvider.sources().length > 1
+        for (OptionSource item : optionProvider.value()) {
+            String pathPostfix = optionProvider.value().length > 1
                 ? Integer.toString(pathItemOrdinal++)
                 : StringUtils.EMPTY;
             populateSourceAttributes(datasource, item, pathPostfix);
@@ -49,12 +50,12 @@ abstract class OptionProviderHandler {
     }
 
     static boolean hasProvidedOptions(OptionProvider optionProvider) {
-        return ArrayUtils.isNotEmpty(optionProvider.sources())
-            && Arrays.stream(optionProvider.sources()).anyMatch(source -> StringUtils.isNotBlank(source.path()));
+        return ArrayUtils.isNotEmpty(optionProvider.value())
+            && Arrays.stream(optionProvider.value()).anyMatch(source -> StringUtils.isNotBlank(source.value()));
     }
 
     private static void populateSourceAttributes(Target datasource, OptionSource optionSource, String postfix) {
-        datasource.attribute(DialogConstants.PN_PATH + postfix, optionSource.path());
+        datasource.attribute(DialogConstants.PN_PATH + postfix, optionSource.value());
         if (StringUtils.isNotBlank(optionSource.fallbackPath())) {
             datasource.attribute(DialogConstants.PN_FALLBACK_PATH + postfix, optionSource.fallbackPath());
         }
@@ -63,6 +64,11 @@ abstract class OptionProviderHandler {
         }
         if (StringUtils.isNotBlank(optionSource.valueMember())) {
             datasource.attribute(DialogConstants.PN_VALUE_MEMBER + postfix, optionSource.valueMember());
+        }
+        if (ArrayUtils.isNotEmpty(optionSource.attributeMembers())) {
+            datasource.attribute(
+                DialogConstants.PN_ATTRIBUTE_MEMBERS + postfix,
+                StringUtil.format(optionSource.attributeMembers(), String.class));
         }
         if (ArrayUtils.isNotEmpty(optionSource.attributes())) {
             datasource.attribute(DialogConstants.PN_ATTRIBUTES + postfix, optionSource.attributes());
