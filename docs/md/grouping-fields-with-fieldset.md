@@ -1,13 +1,15 @@
 [Main page](../../README.md)
 ## Grouping fields with FieldSet
 ### FieldSet
-@FieldSet (Granite name: FieldSet, resource type: /libs/granite/ui/components/coral/foundation/form/fieldset)
+* @FieldSet
+* Resource type: /libs/granite/ui/components/coral/foundation/form/fieldset
+* See spec: [FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html)
 
 Used to logically group a number of different fields as described in [Adobe's Granite UI manual on FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html). This goal is achieved by an external or a nested class that encapsulates grouping fields. Then an *\<OtherClass>*-typed field is declared, and `@FieldSet` annotation is added.
 
 The `@FieldSet` will guess the kind of group of widgets to render through the type of the underlying field. But you may as well specify some particular type by setting the *source* property.
 
-Hierarchy of classes is honored (so that a *FieldSet*-producing class may extend another class from same or even foreign scope. Proper field order within a fieldset can be guaranteed by use of *ranking* values (see chapter on `@DialogField` in [Widget annotations A-Z](docs/md/WidgetAnnotations.md)).
+Hierarchy of classes is honored (so that a *FieldSet*-producing class may extend another class from same or even foreign scope. Proper field order within a fieldset can be guaranteed by use of *ranking* values (see chapter on `@DialogField` in [Defining dialog fields](widget-annotations.md#dialogField)).
 
 Names of fields added to a FieldSet may share a common prefix specified in *namePrefix* property. This can be a simple word, or a string trailed with slash. In the latter case, values assigned to the FieldSet's fields will directed to a subnode of the resource being edited.
 
