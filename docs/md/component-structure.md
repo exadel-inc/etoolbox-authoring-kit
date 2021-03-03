@@ -181,3 +181,5 @@ To create a specific [decoration tag](https://docs.adobe.com/content/help/en/exp
 )
 public class MyComponentDialog { /* ... */ }
 ```
+
+####See also: [@Extends-ing fields annotations](reusing-code.md#extends-ing-fields-annotations)

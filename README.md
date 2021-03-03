@@ -50,11 +50,11 @@ I. Enhanced component management
    - [Multiplying Fields](docs/md/multiplying-fields.md)
    - [Laying out your components with Tabs](docs/md/tabs.md)
    - [Laying out your components with Accordion](docs/md/accordion.md)
-3. [Additional properties components and dialogs](docs/md/AdditionalProperties.md)
+3. [Additional properties components and dialogs](docs/md/additional-properties.md)
 4. [Programming dynamic dialog behavior:  DependsOn](./ui.apps/src/main/content/jcr_root/apps/authoring-toolkit/depends-on/README.md)
 5. [Reusing code and making it brief](docs/md/reusing-code.md)
-6. [Customizing Toolkit to your needs](docs/md/CustomizingToolkit.md)
-7. [Additional properties components and dialogs](docs/md/AdditionalProperties.md)
+6. [Customizing Toolkit to your needs](docs/md/customizing-toolkit.md)
+7. [Additional properties components and dialogs](docs/md/additional-properties.md)
 
 II. Enhanced authoring experience
 1. [Managing structured data with AEM Authoring Toolkit Lists](docs/md/aembox-lists.md)
