@@ -1,8 +1,12 @@
 [Main page](../../README.md)
-## AemComponent annotation
-In order to create .content.xml(?) file you need to create a Java class and mark it with `@AemComponent` annotation. Views represents authoring nodes(?) (e.g. cq:dialog, cq:design_dialog, cq:editConfig, cq:childEditConfig, cq:htmlTag). All files will be written to the path that is specified by path property.
+## @AemComponent
+`@AemComponent` is your entry point for creating authoring logic for a component. When added to a Java class, this annotation contains the generic properties of the component such as *title*, *description*, etc.
 
-`@AemComponent` possesses properties that are translated into common attributes of AEM component itself, according to the Adobe specification, thus covering most of the use-cases. See the code snippet below:
+Besides, `@AemComponent` can contain references to other Java classes that are also taking part in creating markup for the current component. It means that if you need an *editConfig* you can add the `@EditConfig` to that very Java class were `@AemComponent` annotation is already present. Or else you can add `@EditConfig` to another Java class and put reference to that class in the *views* collection of `@AemComponent`.
+
+Please take note that you need either to put an annotation such as `@Dialog`, `@EditConfig`, etc to the same Java class as AemComponent or add it to another class and then add the class reference to the *views* collection. You don't need to do both.
+
+See the code snippet below, which displays all `@AemComponent` properties currently supported:
 ```java
 @AemComponent(
     path = "content/my-component",
@@ -22,25 +26,21 @@ In order to create .content.xml(?) file you need to create a Java class and mark
 public class ComplexComponentHolder { /* ... */ }
 ```
 
-### @Dialog annotation
-In order to create a dialog you need create a Java class and mark it with `@Dialog` annotation and put this class to Component's views property. All required root attributes and namespace fields for the XML markup of cq:dialog  will be added.
-
+### @Dialog
+`@Dialog` is used for defining component's TouchUI dialog by creating and populating *\<cq:dialog>* node.
 ```java
 @Dialog(
-    name = "myComponent",
     title = "My AEM Component",
     helpPath = "https://www.google.com/search?q=my+aem+component",
     width = 800,
     height = 600,
-    extraClientlibs = "cq.common.wcm",
-    layout = DialogLayout.TABS //(?)
+    extraClientlibs = "cq.common.wcm"
 )
 public class MyComponentDialog { /* ... */ }
 ```
 
-### DesignDialog annotation
-In order to create a design dialog you need create a Java class and mark it with `@DesignDialog` annotation and put this class to Component's views property. All required root attributes and namespace fields for the XML markup of cq:design_dialog  will be added.
-
+### @DesignDialog
+`@DesignDialog` is used for defining component's TouchUI dialog by creating and populating *\<cq:design_dialog>* node.
 ```java
 @DesignDialog(
     title = "My AEM Component",
@@ -56,7 +56,7 @@ public class DesignDialogView{ /* ... */ }
 ```
 
 ### EditConfig settings
-If you wish to engage such TouchUI dialog features as listeners or in-place editing (those living in *\<cq:editConfig>* node and, accordingly, *_cq_editConfig.xml* file), add `@EditConfig` annotation to your Java class and put this class to Component's views property.
+If you wish to engage such TouchUI dialog features as listeners or in-place editing (those living in *\<cq:editConfig>* node and, accordingly, *_cq_editConfig.xml* file), add `@EditConfig` annotation to your Java class and put this class to AemComponent's views property.
 
 It facilitates setting of the following properties and features:
 
@@ -118,7 +118,7 @@ public class CustomPropertiesDialog {
 #### RichText configuration for the in-place editing
 With an in-place configuration of `type = EditorType.TEXT`, a *richTextConfig* may be specified with syntax equivalent to that of `@RichTextEditor` component annotation.
 Here is a very basic example of "richTextConfig" for an in-place editor
-```
+```java
 @InplaceEditingConfig (
     type = EditorType.TEXT, ...
     richTextConfig = @RichTextEditor(
@@ -142,7 +142,7 @@ class DialogSample { /* ... */ }
 ```
 Ever simpler, you can specify the richText field to "extend" RTE configuration specified for a Touch-UI dialog elsewhere in your project:
 
-```
+```java
 @InplaceEditingConfig (
     type = EditorType.TEXT,
     richText = @Extends(value = HelloWorld.class, field = "myRteAnnotatedField"),
@@ -152,9 +152,7 @@ Ever simpler, you can specify the richText field to "extend" RTE configuration s
 From the above snippet you can see that *richText* and *richTextConfig* work together fine. Configuration inherited via *richText* can be altered by whatever properties specified in *richTextConfig*. If you use both in the same `@InplaceEditingConfig`, plain values, such as strings and numbers, specified for the `@Extends`-ed field are overwritten by their correlates from *richTextConfig*. But array-typed values (such as *features*, *specialCharacters*, *formats*, etc.) are actually merged. So you can design a fairly basic set of features, styles, formats to store in a field somewhere in your project and then implement several *richTextConfig*-s with more comprehensive and different feature sets.
 
 ### ChildEditConfig settings
-Apart from *cq:editConfig* itself, the Adobe Granite gives you possibility to define some in-place editing features for the children of the current component. This is done via the *cq:childEditConfig* node having generally the same structure as cq:editConfig.
-
-You should(?) add `@ChildEditConfig` annotation to your Java class and put this class to Component's views property.
+Apart from *\<cq:editConfig>* itself, the Adobe Granite gives you possibility to define some in-place editing features for the children of the current component. This is done via the *\<cq:childEditConfig>* node having generally the same structure as *\<cq:editConfig>*.
 
 It facilitates setting of the following properties and features:
 
@@ -163,7 +161,7 @@ It facilitates setting of the following properties and features:
 - Listeners
 
 Usage is as follows:
-```
+```java
 @Dialog(name = "parentComponent")
 @ChildEditConfig(
     actions = {"edit", "copymove"}
@@ -174,8 +172,8 @@ public class Dialog {
     String field1;
 }
 ```
-#### Altering field's decoration tag with @HtmlTag
-To create a specific [decoration tag](https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/decoration-tag.html) for your widget, you need to mark your Java class with `@HtmlTag` and put this class to Component's views property. Then the `cq:htmlTag` node will be added to your component's nodeset.
+### Altering field's decoration tag with @HtmlTag
+To create a specific [decoration tag](https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/decoration-tag.html) for your widget, you need to mark your Java class with `@HtmlTag` and put this class to Component's views property. Then the *\<cq:htmlTag>* node will be added to your component's nodeset.
 ```java
 @HtmlTag(
     className = "my-class",

@@ -1,6 +1,9 @@
+[Main page](../../README.md)
 ## Multiplying Fields
 ### MultiField
-@MultiField  (Granite name: Multifield, resource type: /libs/granite/ui/components/coral/foundation/form/multifield)
+* @MultiField
+* Resource type: /libs/granite/ui/components/coral/foundation/form/multifield
+* See spec: [Multifield](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html)
 
 Used to facilitate multiple (repeating) instances of same fields or same groups if fields as described in [Adobe's Granite UI manual on MultiField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html). The logic of the component relies on the presence of a nested class encapsulating one or more fields to be repeated. Reference to that class is passed to `@MultiField`'s *field* property. Same as for `@FieldSet`, if you omit this value, it is guessed from the underlying field type, be it a *SomePlainType* or a *Collection\<WithTypeParameter>*.
 

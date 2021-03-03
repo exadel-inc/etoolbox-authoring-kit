@@ -31,5 +31,5 @@ public class TestAccordion {
     }
 }
 ```
-
+[Inheritance](container-inheritance.md)
 

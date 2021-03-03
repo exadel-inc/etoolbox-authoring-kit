@@ -1,3 +1,4 @@
+[Main page](../../README.md)
 ## Implementing RichTextEditor
 [RichTextEditor (RTE)](https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/rich-text-editor.html) is somehow special yet vastly demanded Coral dialog component that provides possibility of editing strings and texts with WYSIWYG experience. the functionality of the component is based upon set of plugins, either built-in or custom. Most plugins expose sets of "features" reflected by UI elements (buttons, or dropdown lists, or button panels, or floating panels - so called "popovers").
 
