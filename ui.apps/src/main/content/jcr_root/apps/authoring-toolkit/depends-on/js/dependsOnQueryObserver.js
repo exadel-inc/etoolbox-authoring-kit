@@ -83,6 +83,28 @@
         }
 
         /**
+         * Update observer instance
+         * @param {JQuery} $el
+         * @param {string[]} [actions]
+         * @return {boolean} operation's state
+         * */
+        static updateObserver($el, actions) {
+            $el = ns.ElementAccessors.findTarget($el);
+
+            const observers = $el.data(QueryObserver.DATA_STORE);
+            if (!observers || !observers.length) return false;
+
+            const targetObservers = actions
+                ? observers.filter((observer) => actions.indexOf(observer.action) !== -1)
+                : observers;
+            if (!targetObservers.length) return false;
+
+            targetObservers.forEach((observer) => observer.update());
+
+            return true;
+        }
+
+        /**
          * @constructor
          * @param {JQuery} $el
          * @param {string} query

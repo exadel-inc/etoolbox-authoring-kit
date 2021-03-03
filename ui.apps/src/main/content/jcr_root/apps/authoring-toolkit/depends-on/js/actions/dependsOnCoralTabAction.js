@@ -41,15 +41,11 @@
      */
     function tabChildrenVisibility($tabPanel, state) {
         $tabPanel.find('.coral-Form-field').each((index, el) => {
-            ns.ElementAccessors.setVisibility($(el), state);
+            const $el = $(el);
+            ns.ElementAccessors.setVisibility($el, state);
 
-            if (state && $(el).is('[data-dependson]')) {
-                // Force dependsOn observers initialization if it isn't already done.
-                if (!$(el).data(ns.QueryObserver.DATA_STORE)) {
-                    ns.QueryObserver.init($(el));
-                }
-                // Trigger dependsOn actions to set up expected element visibility
-                $(el).data(ns.QueryObserver.DATA_STORE).forEach((observer) => observer.update());
+            if (state) {
+                ns.QueryObserver.updateObserver($el, ['visibility']);
             }
         });
     }
