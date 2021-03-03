@@ -1,13 +1,15 @@
 [Main page](../../README.md)
-## Fields annotations
-The plugin makes use of `@DialogField`  annotation and the set of specific annotations, such as `@TextField`, `@Checkbox`, `@DatePicker`, etc., discussed further. The latter are referred as field-specific annotations.
+## Defining dialog fields
+The plugin makes use of `@DialogField`  annotation and the set of specific annotations, such as `@TextField`, `@Checkbox`, `@DatePicker`, etc., discussed further. The latter are referred as widget annotations.
 
 ### DialogField
-@DialogField, Granite name: Field, resource type: /libs/granite/ui/components/coral/foundation/form/field
+* @DialogField
+* Resource type: /libs/granite/ui/components/coral/foundation/form/field
+* See spec: [Field](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html)
 
-Used for defining common properties of a field, such as the *name* attribute (specifies under which name the value will be persisted, equals to the class' field name if not specified), and also *label*, *description*, *required*, *disabled*, *wrapperClass*, *renderHidden*. In addition, `@DialogField` provides the possibility to order fields inside the dialog container by specifying *ranking* value. Generally it reflects the task and capabilities of [Adobe's Granite UI Field](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html) component.
+Used for defining common properties of a field, such as the *name* attribute (specifies under which name the value will be persisted, equals to the class' field name if not specified), and also *label*, *description*, *required*, *disabled*, *wrapperClass*, *renderHidden*. In addition, `@DialogField` provides the possibility to order fields inside the dialog container by specifying *ranking* value.
 
-Typically `@DialogField` is used in pair with one of field-specific annotations e.g. `@TextField`.
+Typically `@DialogField` is used in pair with one of widget annotations e.g. `@TextField`.
 
 ```java
 @Dialog
@@ -24,18 +26,20 @@ public class Dialog {
     String field1;
 }
 ```
-Please note that if `@DialogField` is specified but a field-specific annotation is not, such field will not be rendered (`@DialogField` exposes only most common information about a field and does not hint on which HTML component to use).
+Please note that if `@DialogField` is specified but a widget annotation is not, such field will not be rendered (`@DialogField` exposes only most common information about a field and does not hint on which HTML component to use).
 
-The other way around, you can indeed specify a field-specific annotation and omit `@DialogField`. Such field will be rendered (however without *label* and *description*, etc.), but its value will not be persisted.
+The other way around, you can indeed specify a widget annotation and omit `@DialogField`. Such field will be rendered (however without *label* and *description*, etc.), but its value will not be persisted.
 
-In case when the dialog class extends another class that has some fields marked with field-specific annotations, relevant fields from both ancestral and child class are rendered. All fields from ancestral and child class (even those sharing same name) are considered different and rendered separately. Still namesake fields may interfere if rendered within same container (dialog or tab), so please avoid using same names. Still if you wish to engage some deliberate "field overriding", refer to the chapter on usage of `@Extends` below.
+In case when the dialog class extends another class that has some fields marked with widget annotations, relevant fields from both ancestral and child class are rendered. All fields from ancestral and child class (even those sharing same name) are considered different and rendered separately. Still namesake fields may interfere if rendered within same container (dialog or tab), so please avoid using same names. Still if you wish to engage some deliberate "field overriding", refer to the chapter on usage of `@Extends` below.
 
 The fields are sorted in order of their *ranking*. If several fields have the same (or default) *ranking*, they are rendered in the order as they appear in the source code. Fields collected from ancestral classes have precedence over fields from child classes.
 
-## Widget annotations (A-Z)
+## Widgets (A-Z)
 
 ### Alert
-@Alert (Granite name: Alert, resource type: /libs/granite/ui/components/coral/foundation/alert)
+* @Alert
+* Resource type: /libs/granite/ui/components/coral/foundation/alert
+* See spec: [Alert](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html?highlight=alert)
 
 Used to render components responsible for showing conditional alerts to the users in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Alert](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html?highlight=alert). Usage is similar to the following:
 ```java
@@ -52,9 +56,11 @@ public class DialogWithAlert{
 Mind that alert variants available as of Coral 3 are enumerated in `StatusVariantConstants` class of the **Toolkit**'s API.
 
 ### Autocomplete
-@Autocomplete (Granite name: Autocomplete, resource type: /libs/granite/ui/components/coral/foundation/form/autocomplete)
+* @Autocomplete
+* Resource type: /libs/granite/ui/components/coral/foundation/form/autocomplete
+* See spec: [Autocomplete](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/autocomplete/index.html)
 
-Used to render the component in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Autocomplete](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/autocomplete/index.html). Options becoming available as user enters text depend on the value of "namespaces" property of `@AutocompleteDataSource`. If unset, all tags under the *content/cq:Tags* JCR directory will be available. Otherwise you specify one or more particular *cq:Tag* nodes as in the snippet below:
+Used to render the component in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Autocomplete](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/autocomplete/index.html). Options becoming available as user enters text depend on the value of *namespaces* property of `@AutocompleteDataSource`. If unset, all tags under the *\<content/cq:Tags>* JCR directory will be available. Otherwise, you specify one or more particular *\<cq:Tag>* nodes as in the snippet below:
 ```java
 public class AutocompleteDialog {
     @DialogField
@@ -62,8 +68,11 @@ public class AutocompleteDialog {
     String field;
 }
 ```
+
 ### Button
-@Button (Granite name: Button, resource type: /libs/granite/ui/components/coral/foundation/button)
+* @Button
+* Resource type: /libs/granite/ui/components/coral/foundation/button
+* See spec: [Button](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/button/index.html)
 
 Used to produce buttons in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Button](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/button/index.html).
 
@@ -82,10 +91,14 @@ public class DialogWithButton {
     String field;
 }
 ```
+
 ### Checkbox
-@Checkbox (Granite name: Checkbox, resource type: /libs/granite/ui/components/coral/foundation/form/checkbox)
+* @Checkbox
+* Resource type: /libs/granite/ui/components/coral/foundation/form/checkbox
+* See spec: [Checkbox](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/checkbox/index.html)
 
 Used to produce checkbox inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Checkbox](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/checkbox/index.html).
+
 #### Checkbox nesting
 Sometimes there is a need to supply a list of sub-level checkboxes to a parent checkbox whose displayed state will be affected by the states of child inputs. You can achieve this by specifying *sublist* property of `@Checkbox` with a reference to a nested class encapsulating all the sub-level options. This is actually a full-feature rendition of [Granite UI NestedCheckboxList](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/nestedcheckboxlist/index.html).
 ```java
@@ -111,12 +124,18 @@ public class NestedCheckboxListDialog {
     }
 }
 ```
+
 ### ColorField
-@ColorField (Granite name: ColorField, resource type: /libs/granite/ui/components/coral/foundation/form/colorfield)
+* @ColorField
+* Resource type: /libs/granite/ui/components/coral/foundation/form/colorfield
+* See spec: [ColorField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/colorfield/index.html)
 
 Used to render inputs for storing color values in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on ColorField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/colorfield/index.html).
+
 ### DatePicker
-@DatePicker (Granite name: Alert, resource type: /libs/granite/ui/components/coral/foundation/form/datepicker)
+* @DatePicker
+* Resource type: /libs/granite/ui/components/coral/foundation/form/datepicker
+* See spec: [DatePicker](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/datepicker/index.html)
 
 Used to render date/time pickers in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on DatePicker](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/datepicker/index.html). You can set the type of DatePicker (whether it stores only date, only time, or both). Also you can display format (see [Java documentation](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html) on possible formats),
 minimal and maximal date/time to select (may also specify timezone). To make formatter effective, set `typeHint = TypeHint.STRING` to store date/time to JCR as merely string and not a numeric value.
@@ -135,9 +154,11 @@ public class DatePickerDialog {
 }
 ```
 ### FileUpload
-@FileUpload (Granite name: FileUpload, resource type: /libs/granite/ui/components/coral/foundation/form/fileupload)
+* @FileUpload
+* Resource type: /libs/granite/ui/components/coral/foundation/form/fileupload
+* See spec: [FileUpload](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fileupload/index.html)
 
-Used to render the FileUpload components in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on FileUpload](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fileupload/index.html). You can specify MIME types of files acceptable, graphic styles of the created component. It is required to specify uploadUrl to an actual and accessible JCR path (may also specify a sub-node of an existing node that will be created as needed). Sling shortcut  *${suffix.path}* for component-relative JCR path is also supported.
+Used to render the FileUpload components in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on FileUpload](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fileupload/index.html). You can specify MIME types of files acceptable, graphic styles of the created component. It is required to specify *uploadUrl* to an actual and accessible JCR path (may also specify a sub-node of an existing node that will be created as needed). Sling shortcut  *${suffix.path}* for component-relative JCR path is also supported.
 ```java
 public class FileUploadDialog {
     @DialogField
@@ -157,10 +178,12 @@ public class FileUploadDialog {
     String currentDate;
 }
 ```
-### ImageUpload
-@ImageUpload
 
-Designed as a companion to @FileUpload,  mimics the features of FileUpload component that was there [before Coral 3 was introduced](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/form/fileupload/index.html), and the build-it upload component situated at _cq/gui/components/authoring/dialog/fileupload_ in your AEM installation. Technically, this is but another rendition of FileUpload logic aimed at mainly uploading images via drag-and-drop
+### ImageUpload
+* @ImageUpload
+* Resource type: cq/gui/components/authoring/dialog/fileupload
+
+Designed as a companion to @FileUpload,  mimics the features of FileUpload component that was there [before Coral 3 was introduced](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/form/fileupload/index.html), and the build-in upload component situated at _cq/gui/components/authoring/dialog/fileupload_ in your AEM installation. Technically, this is but another rendition of FileUpload logic aimed at mainly uploading images via drag-and-drop
 ```java
 public class ImageFieldDialog {
     @DialogField
@@ -172,8 +195,11 @@ public class ImageFieldDialog {
     String file;
 }
 ```
+
 ### Heading
-@Heading (Granite name: Heading, resource type: /libs/granite/ui/components/coral/foundation/heading)
+* @Heading
+* Resource type: /libs/granite/ui/components/coral/foundation/heading
+* See spec: [Heading](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/heading/index.html)
 
 Used to render heading element in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Heading](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/heading/index.html).
 
@@ -184,24 +210,39 @@ public class DialogWithHeading {
     String heading;
 }
 ```
+
 ### Hidden
-@Hidden (Granite name: Hidden, resource type: /libs/granite/ui/components/coral/foundation/form/hidden)
+* @Hidden
+* Resource type: /libs/granite/ui/components/coral/foundation/form/hidden
+* See spec: [Hidden](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/hidden/index.html)
 
 Used to render hidden inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hidden](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/hidden/index.html).
+
 ### Hyperlink
-@Hyperlink (Granite name: Hyperlink, resource type: /libs/granite/ui/components/coral/foundation/hyperlink)
+* @Hyperlink
+* Resource type: /libs/granite/ui/components/coral/foundation/hyperlink
+* See spec: [Hyperlink](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html)
 
 Used to represent a HTML hyperlinks`(<a>)`in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Hyperlink](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html).
+
 ### AnchorButton
-@AnchorButton (Granite name: AnchorButton, resource type: /libs/granite/ui/components/coral/foundation/anchorbutton)
+* @AnchorButton
+* Resource type: /libs/granite/ui/components/coral/foundation/anchorbutton
+* See spec: [AnchorButton](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html)
 
 AnchorButton is a component to represent a standard HTML hyperlink`(<a>)`, but to look like a button in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on AnchorButton](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html).
+
 ### NumberField
-@NumberField (Granite name: NumberField, resource type: /libs/granite/ui/components/coral/foundation/form/numberfield)
+* @NumberField
+* Resource type: /libs/granite/ui/components/coral/foundation/form/numberfield
+* See spec: [NumberField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/numberfield/index.html)
 
 Used to render inputs for storing numbers in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on NumberField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/numberfield/index.html).
+
 ### Password
-@Password (Granite name: Password, resource type: /libs/granite/ui/components/coral/foundation/form/password)
+* @Password
+* Resource type: /libs/granite/ui/components/coral/foundation/form/password
+* See spec: [Password](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/password/index.html)
 
 Used to render password inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Password](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/password/index.html). If you wish to engage "confirm password" box in your dialog's layout, create two `@Password`-annotated fields in your Java class, then feed the name of the second field to the *retype* property for the first one. If the values of the two fields do not match, validation error is produced.
 ```java
@@ -214,12 +255,18 @@ public class PasswordDialog {
     String confirmPass;
 }
 ```
+
 ### PathField
-@PathField (Granite name: PathField, resource type: /libs/granite/ui/components/coral/foundation/form/pathfield)
+* @PathField
+* Resource type: /libs/granite/ui/components/coral/foundation/form/pathfield
+* See spec: [PathField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/pathfield/index.html)
 
 Used to produce path selectors in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on PathField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/pathfield/index.html).
+
 ### RadioGroup
-@RadioGroup (Granite name: RadioGroup, resource type: /libs/granite/ui/components/coral/foundation/form/radiogroup)
+* @RadioGroup
+* Resource type: /libs/granite/ui/components/coral/foundation/form/radiogroup
+* See spec: [RadioGroup](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html?highlight=alert)
 
 Used to render groups of RadioButtons in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on RadioGroup](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/radiogroup/index.html). The usage is as follows:
 ```java
@@ -235,7 +282,7 @@ public class RadioGroupDialog {
     String field8;
 }
 ```
-Mind you can set up to use a *datasource* instead of list of options. This way your `@Select` would look as follows:
+Mind you can set up to use a *datasource* instead of list of buttons. This way your `@RadioGroup` would look as follows:
 ```java
 public class RadioGroupDialog {
     @DialogField
@@ -244,7 +291,9 @@ public class RadioGroupDialog {
 }
 ```
 ### Select
-@Select (Granite name: Select, resource type: /libs/granite/ui/components/coral/foundation/form/select)
+* @Select
+* Resource type: /libs/granite/ui/components/coral/foundation/form/select
+* See spec: [Select](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/select/index.html)
 
 Used to render select inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Select](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/select/index.html). `@Select` comprises set of `@Option` items. Each of them must be initialized with mandatory *value* and several optional parameters, such as *text* (represents option label), boolean flags *selected* and *disabled*, and also String values responsible for visual presentation of an option: *icon*, *statusIcon*, *statusText* and *statusVariant*.
 
@@ -293,19 +342,29 @@ public class MyDialogWithDropdown {
 ```
 
 ### Switch
-@Switch (Granite name: Switch, resource type: /libs/granite/ui/components/coral/foundation/form/switch)
+* @Switch
+* Resource type: /libs/granite/ui/components/coral/foundation/form/switch
+* See spec: [Switch](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/switch/index.html)
 
 Used to render on-off toggle switches in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Switch](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/switch/index.html).
+
 ### Text
-@Text (Granite name: Text, resource type: /libs/granite/ui/components/coral/foundation/text)
+* @Text
+* Resource type: /libs/granite/ui/components/coral/foundation/text
+* See spec: [Text](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html)
 
 Used to render text component that is rendered as <span> in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on Text](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html).
+
 ### TextArea
-@TextArea (Granite name: Textarea, resource type: /libs/granite/ui/components/coral/foundation/form/textarea)
+* @TextArea
+* Resource type: /libs/granite/ui/components/coral/foundation/form/textarea
+* See spec: [Textarea](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textarea/index.html)
 
 Used to render textarea HTML inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on TextArea](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textarea/index.html).
+
 ### TextField
-@TextField (Granite name: TextField, resource type: /libs/granite/ui/components/coral/foundation/form/textfield)
+* @TextField
+* Resource type: /libs/granite/ui/components/coral/foundation/form/textfield
+* See spec: [TextField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textfield/index.html)
 
 Used to produce text inputs in TouchUI dialogs. Exposes properties as described in [Adobe's Granite UI manual on TextField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textfield/index.html).
-

@@ -20,4 +20,4 @@ public class TestTabsExtension { /* ... */}
 ```
 Note that `@Ignore` setting is *not* inherited, unlike fields themselves, and works only for the class where it was specified.
 
-See also: [Fields inheritance and ways to cancel it](ReusingCode.md)
+See also: [Fields inheritance and ways to cancel it](reusing-code.md)
