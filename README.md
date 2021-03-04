@@ -24,7 +24,7 @@ As the Toolkit was developed, thorough comparative investigation of Coral v.2 an
        - [@DialogField](#dialogfield)
        - [Widget annotations A-Z](#widget-annotations-a-z)
        - [Fields grouping and multiplying](#fields-grouping-and-multiplying)
-       - [Common attributes of felds](#common-attributes-of-fields)
+       - [Common attributes of fields](#common-attributes-of-fields)
        - [Implementing RichTextEditor](#implementing-richtexteditor)
    - [Altering field's decoration tag with @HtmlTag](#altering-fields-decoration-tag-with-htmltag)
    - [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it)
