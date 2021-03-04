@@ -45,7 +45,7 @@
             ns.ElementAccessors.setVisibility($el, state);
 
             if (state) {
-                ns.QueryObserver.updateObserver($el, ['visibility']);
+                ns.QueryObserver.updateObservers($el, ['visibility']);
             }
         });
     }
