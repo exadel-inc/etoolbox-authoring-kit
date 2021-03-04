@@ -41,7 +41,12 @@
      */
     function tabChildrenVisibility($tabPanel, state) {
         $tabPanel.find('.coral-Form-field').each((index, el) => {
-            ns.ElementAccessors.setVisibility($(el), state);
+            const $el = $(el);
+            ns.ElementAccessors.setVisibility($el, state);
+
+            if (state) {
+                ns.QueryObserver.updateObservers($el, ['visibility']);
+            }
         });
     }
 
