@@ -1,65 +1,65 @@
-## DependsOn Plugin client library
+## DependsOn Plug-in Client Library
 
 Authors _Alexey Stsefanovich (ala'n)_ and _Yana Bernatskaya (YanaBr)_
 
 Version _2.5.0_
 
-DependsOn Plugin is a clientlib that executes defined action on dependent fields.
+The DependsOn Plug-in is a clientlib that executes defined actions on dependent fields.
 
-DependsOn Plugin uses data attributes for fetching expected configuration.
-To define data attribute from JCR use _**granite:data**_ sub-node under the widget node.
+The DependsOn Plug-in uses data attributes to fetch the expected configuration.
+To define data attributes from JCR, use the _**granite:data**_ sub-node under the widget node.
 AEM Authoring Toolkit provides a set of annotations to use DependsOn from Java code.
 
-DependsOn workflow consists of the following steps:
+The DependsOn workflow consists of the following steps:
 
 **ObservedReference**  ─┐
 
-**ObservedReference**  ─── **QueryObserver[Query]***  ─── **Action***
+**ObservedReference**  ─── **QueryObserver[Query]**  ─── **Action**
 
 **ObservedReference**  ─┘
 
-**QueryObserver** and **Action** are always a part of DependsOn plugin workflow.
+**QueryObserver** and **Action** are always a part of the DependsOn workflow.
 
-**Action** defines what the plugin should do with the dependent field (show/hide, set value, etc).
+**Action** defines what the plug-in should do with the dependent field (show/hide, set value, etc).
 
-**Query** always goes with the Action and defines an expression that should be used as Action's input.
+The **Query** always goes with the **Action** and defines an expression that should be used as the Action's input.
 
-**QueryObserver** holds and process **Query** and initiates **Action** on **ObservedReferences** change.
+**QueryObserver** holds and processes **Query** and initiates **Action** on **ObservedReferences** changes.
 
-**ObservedReferences** are external elements or group of elements whose values can be used inside **Query**.
+**ObservedReferences** are external elements or groups of elements whose values can be used inside of a **Query**.
 
-More detailed DependsOn structure is presented below.
+More details on the structure of DependsOn are presented below:
 ![DependsOn Structure](./docs/structure.jpg)
 
 #### Introduction
 
-"DependsOn" plugin is based on the following data attributes.
+The DependsOn plug-in is based on the following data attributes:
 
-For a dependent field:
+For dependent fields:
 
-* `data-dependson` - to provide Query with condition or expression for the Action.
-* `data-dependsonaction` - (optional) to define Action that should be executed.
-* `data-dependsonskipinitial` - (optional) marker to disable initial execution.
+* `data-dependson` - to provide Query with a condition or expression for the Action
+* `data-dependsonaction` - (optional) to define the Action that should be executed
+* `data-dependsonskipinitial` - (optional) a marker to disable initial execution
 
-For referenced field:
+For referenced fields:
 
-* `data-dependsonref` - to mark a field, that is referenced from the Query.
-* `data-dependsonreftype` - (optional) to define expected type of reference value.
-* `data-dependsonreflazy` - (marker) attribute to mark reference as lazy. In this case, DependsOn will not observe rapid events like `input`.
+* `data-dependsonref` - to mark a field that is referenced in the Query.
+* `data-dependsonreftype` - (optional) to define the expected type of reference value.
+* `data-dependsonreflazy` - (marker) an attribute to mark a reference as lazy. In this case, DependsOn will not observe rapid events like input.
 
-#### DependsOn Usage
+#### Using DependsOn
 
 ##### Actions
 
-Built-in plugin actions are:
- * `visibility` - hide the element if the query result is 'falsy'
- * `tab-visibility` - hide the tab or element's parent tab if the query result is 'falsy'
- * `set` - set the query result as field's value (undefined query result skipped)
- * `set-if-blank` - set the query result as field's value only if the current value is blank (undefined query result skipped)
- * `readonly` - set the readonly marker of the field from the query result.
- * `required` - set the required marker of the field from the query result.
- * `validate` - set the validation state of the field from the query result.
- * `disabled` - set the field's disabled state from the query result.
+Built-in plug-in actions are:
+* `visibility` - hide the element if the Query result is 'falsy'
+* `tab-visibility` - hide the tab or the element's parent tab if the Query result is 'falsy'
+* `set` - set the Query result as the field's value (undefined Query result skipped)
+* `set-if-blank` - set the Query result as the field's value only if the current value is blank (undefined Query result skipped)
+* `readonly` - set the readonly marker of the field from the Query result.
+* `required` - set the required marker of the field from the Query result.
+* `validate` - set the validation state of the field from the Query result.
+* `disabled` - set the field's disabled state from the Query result.
 * `update-options` - changes the option set of a Granite Select component if it depends on a value of a foreign component (e.g. another component can alter the JCR path from which current Select's options are taken).
 
 
@@ -67,24 +67,23 @@ If the action is not specified then `visibility` is used by default.
 
 ##### Async actions
 
-Build-in plugin async actions:
- * `fetch` - action to set the result of fetching an arbitrary resource.
-Action to set the result of fetching an arbitrary resource.
-Uses query as a target path to node or property.
-Path should end with the property name or '/' to retrieve the whole node.
-Path can be relative (e.g. 'node/property' or '../../property') or absolute ('whole/path/to/the/node/property').
+Built-in plug-in async actions:
+* `fetch` - an action to set the result of fetching an arbitrary resource.
+It uses Query as a target path to a node or property.
+The path should end with the property name or '/' to retrieve the whole node.
+The path can be relative (e.g. 'node/property' or '../../property') or absolute ('whole/path/to/the/node/property').
 _Additional parameters:_
-   * `map` (optional) - function `(result: any, name: string, path: string) => any` to process result. Can be used as mapping / keys-filtering or can provide more complicated action.
-   * `err` (optional, map to empty string and log error to console by default) - function `(error: Error, name: string, path: string) => any` to process error. Can be used to map or ignore error result.
+   * `map` (optional) - function `(result: any, name: string, path: string) => any` to process result. Can be used as mapping/keys-filtering or can provide more complicated actions.
+   * `err` (optional, map to empty string and log error to console by default) - function `(error: Error, name: string, path: string) => any` to process error. Can be used to map or ignore error results.
    Note: If the mapping result is `undefined` then the action will not change the current value.
-   * `postfix` (optional, `.json` by default) - string to append to the path if it is not presented already
+   * `postfix` (optional, `.json` by default) - a string to append to the path if it is not already presented
 
 ##### Action Registry
 
 Custom action can be specified using `Granite.DependsOnPlugin.ActionRegistry`.
 
-Action should have name (allowed symbols: a-z, 0-9, -) and function to execute.
-For example build-in `set` action is defined as follows:
+An action should have a name (allowed symbols: a-z, 0-9, -) and function to execute.
+For example built-in `set` action is defined as follows:
 ```javascript
 Granite.DependsOnPlugin.ActionRegistry.register('set', function setValue(value) {
     if (value !== undefined) {
@@ -102,17 +101,17 @@ Allowed reference types:
 * `string` - cast to string
 * `json` - parse JSON string
 
-If the type is not specified manually it will be chosen automatically based on element widget type
-(see _preferableType_ in ElementsAccessor definition).
+If the type is not specified manually, it will be chosen automatically based on the type of element widget
+(see _preferableType_ in the ElementsAccessor definition).
 
-In any other case (e.g. if type is `any`) no cast will be performed.
+In any other case (e.g. if the type is `any`), no cast will be performed.
 
 ##### ElementsAccessor Registry
 
-Registry `Granite.DependsOnPlugin.ElementAccessors` - can be used to define custom accessors of element.
-Accessor provide the information how to get/set value, set a require/visibility/disabled state or returns `preferableType` for specific type of component.
+Registry `Granite.DependsOnPlugin.ElementAccessors` - can be used to define the custom accessors of an element.
+The accessor provides information on how to get/set values and set a require/visibility/disabled state, or returns `preferableType` for the specific type of component.
 
-For example default accessor descriptor is defined as follows:
+For example, a default accessor descriptor is defined as follows:
 ```javascript
 Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
     selector: '*', // Selector to filter element
@@ -147,30 +146,30 @@ Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
 
 ##### Query Syntax
 
-Query is a plain JavaScript condition or expression.
-Any global and native JavaScript object can be used inside of Query.
+A Query is a plain JavaScript condition or expression.
+Any global and native JavaScript object can be used inside of a Query.
 You can also use dynamic references to access other fields' values.
-In order to define a reference, referenced field's name should be specified in dependsOnRef attribute.
-Then reference will be accessible in the query using @ or @@ symbol and reference name.
+In order to define a reference, the referenced field's name should be specified in a `dependsOnRef` attribute.
+Then the reference will be accessible in the Query using the `@` or `@@` symbol and reference name.
 
-###### Using semicolon in DependsOn query
+###### Using Semicolons in DependsOn Queries
 
-DependsOn query is always treated as a single JavaScript expression, and never as multiple statements in one line.
-Semicolon symbols (`;`) within a DependsOn query must be escaped.
+DependsOn queries are always treated as a single JavaScript expression and never as multiple statements in one line.
+Semicolon symbols (`;`) within a DependsOn Query must be escaped.
 
-If you add a query via a Java annotation, semicolons will be escaped automatically:
+If you add a Query via a Java annotation, semicolons will be escaped automatically:
 ```java
 class MyComponent {
     @DependsOn(query = "@field === ';'")
     private String field1;
 }
 ```
-However, if you write directly to XML or HTML, you should escape them by hand:
+But if you write directly to XML or HTML, you should escape them by hand:
 ```xml
 <granite:data dependson="@field === '\\;'"></granite:data>
 ```
 
-If you actually need to execute several JavaScript statements within a DependsOn,
+If you need to actually execute several JavaScript statements within a DependsOn,
 you can do this by wrapping them in a function call:
 ```java
 class MyComponent {
@@ -179,7 +178,7 @@ class MyComponent {
 }
 ```
 
-Mind that it is still better to move complex structures to a standalone client library
+Be aware that it is still better to move complex structures to a standalone client library
 ```javascript
   // project-clientlib.js
   window.MyUtils = window.MyUtils || {};
@@ -198,58 +197,57 @@ class MyComponent {
 ##### Query Reference Syntax
 
 There are two versions of references available in the Queries:
- - Single reference:  `@reference`. Single reference starts from the @ symbol in the query, it allows to access a defined field value.
-Single reference should reference existing field and will not be reattached on dynamic DOM change.
- - Multiple reference: `@@reference`. Starts from double @ symbols. Allows to access a group of field values marked by the same reference name.
- Multiple reference always returns array in the query.
+ - 'Single' reference: `@reference`. 'Single' reference starts from the `@` symbol in the Query, it allows you to access a defined field value.
+'Single' reference should reference an existing field and will not be reattached on dynamic DOM change.
+ - 'Multiple' reference: `@@reference`. Starts from double `@` symbols. Allows you to access a group of field values marked by the same reference name.
+ 'Multiple' reference always returns an array in the Query.
 
-Note: multiple reference triggers query update on any group update: changing some of group fields value, adding or removing referenced field.
-So usage of multiple reference can slow down queries performance.
+Note: 'multiple' reference triggers query update on any group update: changing some of group’s fields value or adding/removing a referenced field.
+So usage of a 'multiple' reference can slow down Queries’ performance.
 
-Reference cannot be named 'this', because 'this' is reserved to refer to the value of the current element
-Reference name is not necessary for referencing current element by `@this`.
+Reference cannot be named 'this', because 'this' is reserved to refer to the value of the current element.
+The current element can be referenced using `@this` reference. It is not necessary to specify a reference name in this case.
 
-Area to find referenced field can be narrowed down by providing the Scope.
-Scope is a CSS Selector of the closest container element.
-Scope is defined in parentheses after reference name.
+The area to find a referenced field can be narrowed down by providing the Scope.
+The Scope is a CSS Selector of the closest container element.
+The Scope is defined in parentheses after the reference name.
 
 Examples:
 * `@enableCta (coral-panel)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of the closest parent Panel element.
 * `@enableCta (.my-fieldset)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of the closest parent container element with "my-fieldset" class.
 * `@@enableCta (coral-multifield)` - will reference all values of the fields marked by `dependsOnRef=enableCta` in bounds of the closest multifield.
 
-"Back-forward" CSS selectors are available in the Scope syntax, i.e. we can define CSS selector to determinate parent element and then provide selector to search the target element for scope in bounds of found parent.
-Back and forward selectors are separated by '|>' combination.
+"Back-forward" CSS selectors are available in the Scope syntax, i.e. we can define the CSS selector to determine the parent element and then provide a selector to search the target element for scope in bounds of the found parent.
+Back and forward selectors are separated by '|>'.
 
 For example:
 * `@enableCta (section |> .fieldset-1)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of element with `fieldset-1` class placed in the closest parent section element.
 
 ##### Multiple Actions
- Multiple actions with queries could be defined.
- Single query/action should be separated by ';' and placed in the same order.
- The number of actions should match the number of queries.
+Multiple actions with Queries can be defined.
+Queries/Actions should be separated by ';' and placed in the same order.
+The number of Actions should match the number of Queries.
 
- Action static params could be passed though data attributes with special syntax:
+Static action’s params can be passed through data attributes with the following syntax:
  - for a single and first action `data-dependson-{action}-{paramName}` can be easily accessed and used from action,
- e.g. `data-dependson-validate-msg` will be used by validate action as invalid state message
+ e.g. `data-dependson-validate-msg` will be used by `validate` action as invalid state message
  - for multiple actions of the same type additional actions params should end with `-{index}` (1 for the second action, 2 for the third).
- e.g. `data-dependson-validate-msg-1` will be used by second validate action as invalid state message
+ e.g. `data-dependson-validate-msg-1` will be used by second `validate` action as invalid state message
 
-#### Authoring Toolkit DependsOn annotations
+#### Authoring Toolkit DependsOn Annotations
 
-* `@DependsOn` - to define single DependsOn Action with the Query. Multiple annotations per element can be used.
+* `@DependsOn` - to define a single DependsOn Action with the Query. Multiple annotations per element can be used.
 
-* `@DependsOnRef` - to define referenced element name and type. Only a single annotation is allowed.
+* `@DependsOnRef` - to define a referenced element name and type. Only a single annotation is allowed.
 
-* `@DependsOnTab` - to define DependsOn query with `tab-visibility` action for tab.
+* `@DependsOnTab` - to define a DependsOn Query with tab-visibility Action for a tab.
 
+#### Debug Info
 
-#### Debug info
+DependsOn produces three types of debug notifications:
 
-DependsOn produce 3 types of debug notifications:
-
-- Critical errors: DependsOn will throw an Error on configuration mismatch (like unknown action name, illegal custom accessor registration, etc)
-- Error messages: not blocking runtime messages (query evaluation errors, unreachable references, etc)
+- Critical errors: DependsOn will throw an Error on a configuration mismatch (like unknown action name, illegal custom accessor registration, etc.)
+- Error messages: not blocking runtime messages (Query evaluation errors, unreachable references, etc.)
 - Warn messages: potentially unexpected results warning
 
 A couple of useful APIs can be used in runtime to check the current DependsOnState. The following expressions can be evaluated in the browser console:
@@ -260,9 +258,9 @@ A couple of useful APIs can be used in runtime to check the current DependsOnSta
 
 ### Examples
 
-#### 1. Simple bindings.
+#### 1. Simple bindings
 
-Field text is shown when `checkbox` is checked
+Field text is shown when the `checkbox` is checked
 
 ```java
 public class Component {
@@ -279,7 +277,7 @@ public class Component {
 }
 ```
 
-Field text is shown when `checkbox` is unchecked
+Field text is shown when the `checkbox` is unchecked
 
 ```java
 public class Component {
@@ -296,9 +294,9 @@ public class Component {
 }
 ```
 
-#### 2. Select value binding.
+#### 2. Select value binding
 
-Field text is shown when `selectbox` value is "Show Text"
+Field text is shown when the `selectbox` value is "Show Text"
 
 ```java
 public class Component {
@@ -320,7 +318,7 @@ public class Component {
 }
 ```
 
-Field text is shown when `selectbox` value is "Show Text 1" or "Show Text 2"
+Field text is shown when the `selectbox` value is "Show Text 1" or "Show Text 2"
 
 ```java
 public class Component {
@@ -344,7 +342,7 @@ public class Component {
 }
 ```
 
-#### 3. Multiple field binding.
+#### 3. Multiple field binding
 
 Field `text3` is shown when `text1` is equal to `text2`
 
@@ -369,7 +367,7 @@ public class Component {
 }
 ```
 
-#### 4. Tab binding.
+#### 4. Tab binding
 
 `tab2` should be shown when `checkbox1` is checked
 
@@ -399,7 +397,7 @@ public class Component {
 
 #### 5. Scoped binding
 
-List of items (reused fragments or MultiField), each item should have `field1` if `conditionGlobal` (globally) and `conditionItem` in current item checked.
+List of items (reused fragments or a MultiField). Each item should show `field1` if the `conditionGlobal` (globally) and `conditionItem` in the current item are checked.
 
 ```java
 public class Component {
@@ -430,7 +428,7 @@ public class Component {
 
 #### 6. Temporary result
 
-To save and use temporary result of some expression hidden unnamed field is used.
+An unnamed hidden field can be used to save the temporary result of an expression.
 
 ```java
 public class Component {
@@ -444,7 +442,7 @@ public class Component {
     @NumberField
     private int field2;
 
-    // @DialogField is not needed, name should not be defined, field type in model not important
+    // @DialogField is not needed, the name should not be defined, field type in the model not important
     @DependsOn(
         // Absolutely no need to calculate simple actions like sum separately, light operations can be used as it is, heavy thing can be declared like here
         query = "@field1 + @field2",
@@ -469,7 +467,7 @@ public class Component {
 
 #### 7. Query function usage
 
-Global functions are available in the queries. (Note: only pure functions are supported, as query recalculates only on reference change)
+Global functions are available in the Queries (note: only pure functions are supported, as Query recalculates only on reference change).
 
 ```java
     public class Component {
@@ -487,19 +485,14 @@ Global functions are available in the queries. (Note: only pure functions are su
 
 #### 8. Async conditions
 
-Async result should be stored as a temporary result with a custom action to provide the result.
+If you use a custom action that provides the result asynchronously, it should be stored in a separate hidden field and then used in other Queries.
 
 ```java
 public class Component {
-    @DialogField
-    @DependsOnRef(name = "path")
-    @TextField
-    private String path;
-
-    @DependsOn(query = "@path", action = "customAsyncAction")
+    @DependsOn(query = "", action = "customAsyncAction")
     @DependsOnRef(name = "temporaryResult", type = DependsOnRefTypes.BOOLSTRING)
     @Hidden
-    private int conditionGlobal;
+    private String tmp;
 
     @DialogField
     @DependsOn(query = "@temporaryResult")
@@ -510,21 +503,15 @@ public class Component {
 ```javascript
 (function (Granite, $, DependsOn) {
     'use strict';
-    Granite.DependsOnPlugin.ActionRegistry.register('customAsyncAction', function (path) {
-         const $el = this.$el;
-         $.get(Granite.HTTP.externalize(path + '/jcr:content.json')).then(
-             function (data) { return data && data.result; },
-             function () { return false; }
-         ).then(function (res) {
-             DependsOn.ElementAccessors.setValue($el, res);
-         });
+    Granite.DependsOnPlugin.ActionRegistry.register('customAsyncAction', function () {
+        setTimeout(() => DependsOn.ElementAccessors.setValue(this.$el, 'async value’));
     });
 })(Granite, Granite.$, Granite.DependsOnPlugin);
 ```
 
 #### 9. Multiple actions
 
-`text` should be shown when `checkbox1` is checked and should be required when `checkbox2` is checked
+`text` should be shown when `checkbox1` is checked and should be required when `checkbox2` is checked.
 
 ```java
 public class Component {
@@ -547,11 +534,11 @@ public class Component {
 ```
 
 #### 10. Custom validation
-Depends On allows you to simply validate field value.
-Here is an example of character count validation
+DependsOn allows you to simply validate field values.
+Here is an example of character count validation:
 ```java
 public class Component {
-    @DependsOn(query = "( @this || '' ).length > 5", action = DependsOnActions.VALIDATE, params = {
+    @DependsOn(query = "@this.length > 5", action = DependsOnActions.VALIDATE, params = {
        @DependsOnParam(name = "msg", value = "Limit exceeded")
     })
     @DialogField
@@ -562,7 +549,7 @@ public class Component {
 
 #### 11. Group references
 
-Allow to select 'active' only in one item in multifield
+This example allows you to select `active` in only one item in multifield.
 ```java
 public class MultifieldItem {
     @DependsOnRef(name = "active")
@@ -580,8 +567,7 @@ public class MultifieldItem {
 }
 ```
 
-
-One of the ways to validate min and max multifield items count (by 2 min and 5 max in the current example)
+One of the ways to validate min and max multifield items count (by 2 min and 5 max in the current example):
 ```java
 public class Component {
 
@@ -607,7 +593,7 @@ Multifield reference has two properties:
 - length - count of multifield items
 - isEmpty - _true_ if there are no items
 
-Another way to validate min and max multifield items count
+Another way to validate min and max multifield items count:
 ```java
 public class Component {
 
@@ -625,7 +611,7 @@ public class Component {
 }
 ```
 
-Show `multifield2` if `multifield1` is not empty and vice versa using multifield reference's property `isEmpty`
+Show `multifield2` if `multifield1` is not empty and vice versa using multifield reference's property isEmpty:
 ```java
 public class Component {
 
@@ -650,9 +636,9 @@ public class Component {
 ```
 
 #### 13. Fetch action
-'fetch' action provides easy access to parent nodes' properties.
+The `fetch` action provides easy access to parent nodes' properties.
 
-Allows to set 'opaque' option only if 'bg' option of parent component is not blank.
+The example below shows how to set an 'opaque' option only if the 'bg' option of the parent component is not blank.
 ```java
 public class Component {
         @Hidden
@@ -667,7 +653,7 @@ public class Component {
 }
 ```
 
-'fetch' action has a short term caching, so multiple properties will be requested once without loss of performance
+The `fetch` action has short-term caching, so multiple properties will be requested once without any performance loss.
  ```java
  public class Component {
          @Hidden
@@ -682,8 +668,8 @@ public class Component {
  }
  ```
 
-`map` acton param can be used to process result.
-The example below retrieves parent component's title and type in a special format.
+`map` acton param can be used to process results.
+The example below retrieves the parent component's title and type in a special format.
  ```java
  public class Component {
          @Hidden
@@ -701,7 +687,7 @@ The example below retrieves parent component's title and type in a special forma
 
 #### 14. Alert accessors
 
-DependsOn provides the ability to conditionally change any property of Alert widget:
+DependsOn provides the ability to conditionally change any property of the Alert widget:
 - text;
 - title;
 - size;
@@ -710,33 +696,33 @@ DependsOn provides the ability to conditionally change any property of Alert wid
 Setting Alert's text is done the same way as setting the value of other widgets.
 If you want to set multiple properties at once, use a JSON object (see the example below).
 
-Also, you can reference alert widgets. Alert reference is an object that provides alert's title and text.
+You can also reference alert widgets. Alert reference is an object that provides the alert's title and text.
 ```java
 public class Component {
 
     @DialogField(label = "Set alert text")
-        @TextField
-        @DependsOnRef
-        private String textSetter;
+    @TextField
+    @DependsOnRef
+    private String textSetter;
 
-        @DialogField(label = "Set alert size")
-        @Select(options = {
-                @Option(text = "Small", value = "S"),
-                @Option(text = "Large", value = "L")
-        })
-        @DependsOnRef
-        private String sizeSetter;
+    @DialogField(label = "Set alert size")
+    @Select(options = {
+        @Option(text = "Small", value = "S"),
+        @Option(text = "Large", value = "L")
+    })
+    @DependsOnRef
+    private String sizeSetter;
 
-        @DialogField
-        @Alert(text = "2", variant = StatusVariantConstants.WARNING)
-        @DependsOnRef
-        @DependsOn(query = "\\{'text': @textSetter, 'size': @sizeSetter\\}", action = DependsOnActions.SET)
-        // @DependsOn(query = "@textSetter", action = DependsOnActions.SET) //works as well
-        private String alert;
+    @DialogField
+    @Alert(text = "2", variant = StatusVariantConstants.WARNING)
+    @DependsOnRef
+    @DependsOn(query = "\\{'text': @textSetter, 'size': @sizeSetter\\}", action = DependsOnActions.SET)
+    // @DependsOn(query = "@textSetter", action = DependsOnActions.SET) //works as well
+    private String alert;
 
-        @DialogField(label = "Get alert text")
-        @TextField
-        @DependsOn(query = "@alert.text", action = DependsOnActions.SET)
-        private String alertGetter;
+    @DialogField(label = "Get alert text")
+    @TextField
+    @DependsOn(query = "@alert.text", action = DependsOnActions.SET)
+    private String alertGetter;
 }
 ```
