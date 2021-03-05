@@ -43,17 +43,27 @@
                     <properties>
                         <description>${project.description}</description>
                     </properties>
-                    <filters>
-                        <filter>
-                            <root>/apps/authoring-toolkit/install/aem-authoring-toolkit-api-${project.version}.jar</root>
-                            <mode>replace</mode>
-                        </filter>
-                        <filter>
-                            <root>/apps/authoring-toolkit/install/aem-authoring-toolkit-core-${project.version}.jar</root>
-                            <mode>replace</mode>
-                        </filter>
-                    </filters>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>clean-install-folder</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>${basedir}/src/main/content/jcr_root/apps/authoring-toolkit/install</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -78,13 +88,13 @@
                                 <resource>
                                     <directory>${project.parent.basedir}/core/target</directory>
                                     <includes>
-                                        <include>*.jar</include>
+                                        <include>aem-authoring-toolkit-core-${project.version}.jar</include>
                                     </includes>
                                 </resource>
                                 <resource>
                                     <directory>${project.parent.basedir}/aem-authoring-toolkit-api/target</directory>
                                     <includes>
-                                        <include>*.jar</include>
+                                        <include>aem-authoring-toolkit-api-${project.version}.jar</include>
                                     </includes>
                                 </resource>
                             </resources>
