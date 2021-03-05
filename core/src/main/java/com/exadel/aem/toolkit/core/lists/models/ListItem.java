@@ -21,11 +21,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
-import com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants;
-import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
-
-import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -35,6 +30,9 @@ import org.apache.sling.models.annotations.injectorspecific.Self;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.NameConstants;
 
+import com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants;
+import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
