@@ -21,6 +21,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
+import com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants;
+import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
+
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -35,6 +40,14 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 /**
  * Adapter class for a Sling resource representing a generic list item
  */
+@AemComponent(
+    path = "content/listItem",
+    title = "List Item",
+    componentGroup = "AEMBox Lists"
+)
+@EditConfig(
+    actions = {ActionConstants.INSERT, ActionConstants.COPYMOVE, ActionConstants.DELETE}
+)
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ListItem {
 
