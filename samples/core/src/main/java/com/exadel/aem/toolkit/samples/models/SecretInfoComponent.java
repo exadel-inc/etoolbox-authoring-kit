@@ -20,28 +20,29 @@ import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonType;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
+import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 
-@Dialog(
-        name = "content/secret-info-component",
-        title = "Secret Info",
-        description = "Secret info about the warrior",
-        resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = GroupConstants.COMPONENT_GROUP,
-        tabs = {
-                @Tab(title = SecretInfoComponent.TAB_PASSWORD),
-                @Tab(title = SecretInfoComponent.TAB_SECRET),
-        }
+@AemComponent(
+    path = "content/secret-info-component",
+    title = "Secret Info Component",
+    description = "Secret info about the warrior",
+    resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
+    componentGroup = GroupConstants.COMPONENT_GROUP
 )
+@Dialog(
+    title = "Secret Info"
+)
+@DialogTitlePostfix
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class SecretInfoComponent {
 
@@ -59,38 +60,38 @@ public class SecretInfoComponent {
     private static final String DEFAULT_SECRET = "This warrior has no secrets";
 
     @DialogField(
-            label = LABEL_PASSWORD,
-            description = DESCRIPTION_PASSWORD
+        label = LABEL_PASSWORD,
+        description = DESCRIPTION_PASSWORD
     )
     @Password(retype = "confirmPassword")
-    @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
+    @Place(SecretInfoComponent.TAB_PASSWORD)
     @ValueMapValue
     private String password;
 
     @DialogField(label = LABEL_CONFIRM_PASSWORD)
     @Password
-    @PlaceOnTab(SecretInfoComponent.TAB_PASSWORD)
+    @Place(SecretInfoComponent.TAB_PASSWORD)
     @ValueMapValue
     private String confirmPassword;
 
     @DialogField(
-            label = LABEL_INFO,
-            description = DESCRIPTION_INFO
+        label = LABEL_INFO,
+        description = DESCRIPTION_INFO
     )
     @TextArea(autofocus = true, maxlength = 200)
-    @PlaceOnTab(SecretInfoComponent.TAB_SECRET)
+    @Place(SecretInfoComponent.TAB_SECRET)
     @ValueMapValue
     private String info;
 
     @DialogField
     @Button(
-            type = ButtonType.SUBMIT,
-            text = "save",
-            icon = "edit",
-            command = "shift+s",
-            block = true
+        type = ButtonType.SUBMIT,
+        text = "save",
+        icon = "edit",
+        command = "shift+s",
+        block = true
     )
-    @PlaceOnTab(SecretInfoComponent.TAB_SECRET)
+    @Place(SecretInfoComponent.TAB_SECRET)
     private String button;
 
     public String getPassword() {

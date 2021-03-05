@@ -21,53 +21,62 @@ import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
+import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 
+@AemComponent(
+    path = "content/warrior-component",
+    title = "Warrior Component",
+    description = "Make your own warrior",
+    resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
+    componentGroup = GroupConstants.COMPONENT_CONTAINER_GROUP,
+    isContainer = true
+)
 @Dialog(
-        name = "content/warrior-component",
-        title = "Warrior Component",
-        description = "Make your own warrior",
-        resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = GroupConstants.COMPONENT_CONTAINER_GROUP,
-        tabs = {
-                @Tab(title = WarriorComponent.TAB_MAIN),
-                @Tab(title = WarriorComponent.TAB_PHOTO),
-                @Tab(title = WarriorComponent.TAB_THEME)
-        },
-        isContainer = true
+    title = "Warrior"
 )
 @EditConfig(
-        inplaceEditing = {
-                @InplaceEditingConfig(
-                        title = "Component title",
-                        propertyName = "title",
-                        type = EditorType.PLAINTEXT,
-                        editElementQuery = ".warrior-component-title"
-                ),
-                @InplaceEditingConfig(
-                        title = "Warrior's name",
-                        propertyName = "name",
-                        type = EditorType.PLAINTEXT,
-                        editElementQuery = ".warrior-name-span"
-                )
-        }
+    inplaceEditing = {
+        @InplaceEditingConfig(
+            title = "Component title",
+            propertyName = "title",
+            type = EditorType.PLAINTEXT,
+            editElementQuery = ".warrior-component-title"
+        ),
+        @InplaceEditingConfig(
+            title = "Warrior's name",
+            propertyName = "name",
+            type = EditorType.PLAINTEXT,
+            editElementQuery = ".warrior-name-span"
+        )
+    }
 )
 @ChildEditConfig(
-        actions = "copymove"
+    actions = "copymove"
 )
+@Tabs(
+    value = {
+        @Tab(title = WarriorComponent.TAB_MAIN),
+        @Tab(title = WarriorComponent.TAB_PHOTO),
+        @Tab(title = WarriorComponent.TAB_THEME)
+    }
+)
+@DialogTitlePostfix
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WarriorComponent {
 
@@ -98,16 +107,16 @@ public class WarriorComponent {
 
     @DialogField(label = LABEL_PHOTO)
     @PathField(
-            emptyText = "Face",
-            rootPath = "/content/dam"
+        emptyText = "Face",
+        rootPath = "/content/dam"
     )
-    @PlaceOnTab(WarriorComponent.TAB_PHOTO)
+    @Place(WarriorComponent.TAB_PHOTO)
     @ValueMapValue
     private String photo;
 
     @DialogField(label = LABEL_COLOR_THEME)
     @Switch
-    @PlaceOnTab(WarriorComponent.TAB_THEME)
+    @Place(WarriorComponent.TAB_THEME)
     @Default(booleanValues = false)
     @ValueMapValue
     private boolean colorTheme;

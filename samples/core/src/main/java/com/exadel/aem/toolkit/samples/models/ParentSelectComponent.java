@@ -20,23 +20,23 @@ import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 
-@Dialog(
-        name = "content/parent-select-component",
-        title = "Parent Select Component",
-        tabs = {
-                @Tab(title = ParentSelectComponent.TAB_MAIN)
-        }
+@AemComponent(
+    path = "content/parent-select-component",
+    title = "Parent Select Component"
 )
+@Dialog(
+    title = "Parent Select"
+)
+@DialogTitlePostfix
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ParentSelectComponent {
-
-    static final String TAB_MAIN = "Main";
 
     private static final String LABEL_DUNGEONS_SELECT = "Dungeons select";
 
@@ -44,8 +44,8 @@ public class ParentSelectComponent {
 
     @DialogField(label = LABEL_DUNGEONS_SELECT)
     @Select(options = {
-            @Option(text = "A", value = "a"),
-            @Option(text = "B", value = "b")
+        @Option(text = "A", value = "a"),
+        @Option(text = "B", value = "b")
     })
     @ValueMapValue
     private String dungeonBase;

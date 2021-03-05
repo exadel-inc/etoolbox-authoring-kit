@@ -14,7 +14,6 @@
 
 package com.exadel.aem.toolkit.samples.models;
 
-import com.exadel.aem.toolkit.samples.utils.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
@@ -24,32 +23,33 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
+import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 import com.exadel.aem.toolkit.samples.models.fieldsets.ProductsFieldSet;
 import com.exadel.aem.toolkit.samples.models.fieldsets.WeaponFieldSet;
+import com.exadel.aem.toolkit.samples.utils.ListUtils;
 
-@Dialog(
-        name = "content/shopping-list-component",
-        title = "Shopping List Component",
-        description = "Choose what your warrior needs",
-        resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = GroupConstants.COMPONENT_GROUP,
-        tabs = {
-                @Tab(title = ShoppingListComponent.TAB_MAIN),
-        },
-        extraClientlibs = "authoring-toolkit.samples.authoring"
+@AemComponent(
+    path = "content/shopping-list-component",
+    title = "Shopping List Component",
+    description = "Choose what your warrior needs",
+    resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
+    componentGroup = GroupConstants.COMPONENT_GROUP
 )
+@Dialog(
+    title = "Shopping List",
+    extraClientlibs = "authoring-toolkit.samples.authoring"
+)
+@DialogTitlePostfix
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ShoppingListComponent {
-
-    static final String TAB_MAIN = "Shopping list";
 
     private static final String DESCRIPTION_PRODUCTS_FIELD_SET = "Check all checkboxes from this group to show the text field";
 
@@ -86,7 +86,7 @@ public class ShoppingListComponent {
 
     public String getText() {
         String shoppingList = ListUtils.joinNonBlank(ListUtils.COMMA_SPACE_DELIMITER,
-                productsFieldSet.getProducts(), weaponFieldSet.getWeapon());
+            productsFieldSet.getProducts(), weaponFieldSet.getWeapon());
         StringBuilder text = new StringBuilder(shoppingList);
 
         if (StringUtils.isEmpty(shoppingList)) {

@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
@@ -36,16 +37,21 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 
-@Dialog(
-    name = "content/dungeons-component",
+@AemComponent(
+    path = "content/dungeons-component",
     title = "Dungeons Component",
     description = "Choose a dungeon for your warrior",
     resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
     componentGroup = GroupConstants.COMPONENT_GROUP
 )
+@Dialog(
+    title = "Dungeons"
+)
 @Accordion(value = @AccordionPanel(title = "Main"))
+@DialogTitlePostfix
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class DungeonsComponent extends ParentSelectComponent {
 
@@ -56,7 +62,6 @@ public class DungeonsComponent extends ParentSelectComponent {
     private static final String DEFAULT_ICE_VALLEY_TEXT = "ice valley, where you can lose your arm from strong frost,";
     private static final String DEFAULT_RULES = "no rules!";
 
-    @ValueMapValue
     @DialogField(label = LABEL_DUNGEON_RULES)
     @Extends(value = WarriorDescriptionComponent.class, field = "description")
     @RichTextEditor(
@@ -66,6 +71,7 @@ public class DungeonsComponent extends ParentSelectComponent {
             RteFeatures.LISTS_UNORDERED
         })
     @Place("Main")
+    @ValueMapValue
     private String dungeonRules;
 
     @DependsOn(query = "@dungeon === '1'")
@@ -82,8 +88,6 @@ public class DungeonsComponent extends ParentSelectComponent {
     DungeonSelect dungeon;
 
     static class DungeonSelect {
-        @ValueMapValue
-        @Default(values = "1")
         @DialogField(label = LABEL_DUNGEON_SELECT)
         @Select(options = {
             @Option(text = "Rotten swamps", value = "1"),
@@ -93,6 +97,8 @@ public class DungeonsComponent extends ParentSelectComponent {
         @Properties(
             value = @Property(name = "sling:hideChildren", value = "*"))
         @Place("Dungeons select")
+        @Default(values = "1")
+        @ValueMapValue
         String dungeonsSelect;
 
     }
