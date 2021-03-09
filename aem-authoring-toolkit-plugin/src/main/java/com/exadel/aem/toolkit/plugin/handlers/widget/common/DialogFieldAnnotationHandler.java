@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 
 /**
  * Handler for storing {@link DialogField} properties to a Granite UI widget node
@@ -42,7 +42,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         }
         String name = StringUtils.defaultIfEmpty(
             getNameByDialogFieldProperty(dialogField),
-            PluginNamingUtility.stripGetterPrefix(source.getName()));
+            NamingUtil.stripGetterPrefix(source.getName()));
         String slingSuffix = getSuffixByDialogFieldProperty(dialogField);
 
         String prefix = target.getNamePrefix();
@@ -76,9 +76,9 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
             return DialogConstants.RELATIVE_PATH_PREFIX;
         }
         if (dialogField.name().contains(DialogConstants.AT)) {
-            return PluginNamingUtility.getValidFieldName(StringUtils.substringBeforeLast(dialogField.name(), DialogConstants.AT));
+            return NamingUtil.getValidFieldName(StringUtils.substringBeforeLast(dialogField.name(), DialogConstants.AT));
         }
-        return PluginNamingUtility.getValidFieldName(dialogField.name());
+        return NamingUtil.getValidFieldName(dialogField.name());
     }
 
     /**
@@ -90,7 +90,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         if (!StringUtils.contains(dialogField.name(), DialogConstants.AT)) {
             return StringUtils.EMPTY;
         }
-        String result = PluginNamingUtility.getValidPlainName(StringUtils.substringAfterLast(dialogField.name(), DialogConstants.AT));
+        String result = NamingUtil.getValidPlainName(StringUtils.substringAfterLast(dialogField.name(), DialogConstants.AT));
         if (StringUtils.isNotEmpty(result)) {
             return DialogConstants.AT + result;
         }

@@ -43,7 +43,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 import com.exadel.aem.toolkit.plugin.util.StringUtil;
 
 public class TargetImpl extends AdaptationBase<Target> implements Target {
@@ -159,7 +159,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         if (SELF_PATH.equals(effectivePath)) {
             return this;
         }
-        String effectiveName = PluginNamingUtility.getUniqueName(effectivePath, DialogConstants.NN_ITEM, this);
+        String effectiveName = NamingUtil.getUniqueName(effectivePath, DialogConstants.NN_ITEM, this);
         Target child = new TargetImpl(effectiveName, this);
         this.children.add(child);
         return child;
@@ -200,7 +200,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         if (PARENT_PATH.equals(effectivePath) || SELF_PATH.equals(effectivePath)) {
             return this;
         }
-        String nameToFind = PluginNamingUtility.getValidNodeName(effectivePath);
+        String nameToFind = NamingUtil.getValidNodeName(effectivePath);
         Target result = getChildren()
             .stream()
             .filter(child -> nameToFind.equals(child.getName()))
@@ -483,7 +483,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         String propertyName = method.getName();
         if (method.isAnnotationPresent(PropertyRendering.class)) {
             PropertyRendering propertyRenderingAnnotation = method.getAnnotation(PropertyRendering.class);
-            propertyName = PluginNamingUtility.getValidFieldName(StringUtils.defaultIfBlank(propertyRenderingAnnotation.name(), propertyName));
+            propertyName = NamingUtil.getValidFieldName(StringUtils.defaultIfBlank(propertyRenderingAnnotation.name(), propertyName));
             ignorePrefix = propertyRenderingAnnotation.ignorePrefix();
         }
 

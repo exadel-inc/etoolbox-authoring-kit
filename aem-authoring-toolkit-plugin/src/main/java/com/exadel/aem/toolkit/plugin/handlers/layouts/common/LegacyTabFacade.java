@@ -23,8 +23,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
 class LegacyTabFacade extends SectionFacade {
 
@@ -60,7 +60,7 @@ class LegacyTabFacade extends SectionFacade {
         if (tab == null) {
             return container;
         }
-        String nodeName = PluginNamingUtility.getUniqueName(getTitle(), DialogConstants.NN_TAB, container);
+        String nodeName = NamingUtil.getUniqueName(getTitle(), DialogConstants.NN_TAB, container);
         Target itemsContainer = container.createTarget(nodeName);
         itemsContainer
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)

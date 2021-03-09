@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 /**
  * Helper class for creating standard compliant names for XML entities designed to work together
- * with the {@link PluginNamingUtility}
+ * with the {@link NamingUtil}
  */
 class NamingHelper {
     private static final String VERB_SEPARATOR = "_";
