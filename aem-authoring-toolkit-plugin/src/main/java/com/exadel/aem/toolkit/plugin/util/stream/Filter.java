@@ -21,10 +21,19 @@ import java.util.function.Predicate;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 
+/**
+ * Helper class used in {@code Source} processing stream for filtering source entries
+ */
 public class Filter {
 
     /**
-     * Generates an combined {@code Predicate<Member>} from the list of partial predicates given
+     * Default (hiding) constructor
+     */
+    private Filter() {
+    }
+
+    /**
+     * Generates a combined {@code Predicate<Member>} from the list of partial predicates given
      * @param predicates List of {@code Predicate<Member>} instances
      * @return An {@code AND}-joined combined predicate, or a default all-allowed predicate if no partial predicates provided
      */

@@ -33,10 +33,20 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
 
+/**
+ * Helper class used in {@code Source} processing stream for managing replacements as set by user
+ */
 public class Replacer {
     private static final SourceReplacingCollector SOURCE_REPLACING = new SourceReplacingCollector();
 
-    private final List<Source> internal = new ArrayList<>();
+    private final List<Source> internal;
+
+    /**
+     * Default (hiding) constructor
+     */
+    private Replacer() {
+        internal = new ArrayList<>();
+    }
 
     /**
      * Grooms the provided list of {@link Source}s.
@@ -81,7 +91,7 @@ public class Replacer {
 
             // Purge the former entry
             result.remove(formerEntry);
-            replacingEntries.remove(formerEntry); // because a replaceable member may also be declared as "replacing"
+            replacingEntries.remove(formerEntry); // because a replaceable member can also be declared as "replacing"
         }
         return result;
     }

@@ -18,6 +18,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -35,7 +36,6 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.target.TargetImpl;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
 
 /**
@@ -92,14 +92,17 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
             return predefinedHandlers;
         }
 
-        List<Class<? extends Annotation>> sourceAnnotations = PluginReflectionUtility.getSourceAnnotations(source);
+        List<Class<? extends Annotation>> sourceAnnotationTypes = Arrays
+            .stream(source.adaptTo(Annotation[].class))
+            .map(Annotation::annotationType)
+            .collect(Collectors.toList());
         List<DialogWidgetHandler> handlers;
 
         // Modern handlers mapping approach -- via @Handles annotation
-        handlers = new ArrayList<>(PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers(sourceAnnotations));
+        handlers = new ArrayList<>(PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers(sourceAnnotationTypes));
 
         // Legacy handlers mapping approach -- via source<->name mapping
-        List<DialogWidgetHandler> sourceToNameMappingHandlers = PluginReflectionUtility.getSourceAnnotations(source)
+        List<DialogWidgetHandler> sourceToNameMappingHandlers = sourceAnnotationTypes
             .stream()
             .filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
             .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())

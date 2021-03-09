@@ -21,6 +21,7 @@ import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.stream.Filter;
@@ -66,7 +67,7 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
         List<ClassMemberSetting> allIgnoredFields = Stream
             .concat(classLevelIgnoredMembers, fieldLevelIgnoredMembers)
             .filter(memberSettings ->
-                PluginReflectionUtility. getClassHierarchy(valueTypeClass)
+                ClassUtil.getInheritanceTree(valueTypeClass)
                     .stream()
                     .anyMatch(superclass -> superclass.equals(memberSettings.source()))
             )
@@ -77,7 +78,7 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
         // Return the filtered field list
         Predicate<Source> nonIgnoredMembers = Filter.getNotIgnoredSourcesPredicate(allIgnoredFields);
         Predicate<Source> dialogFields = DialogWidgets::isPresent;
-        return PluginReflectionUtility.getAllSources(valueTypeClass, Arrays.asList(nonIgnoredMembers, dialogFields));
+        return ClassUtil.getSources(valueTypeClass, Arrays.asList(nonIgnoredMembers, dialogFields));
     }
 
     /**

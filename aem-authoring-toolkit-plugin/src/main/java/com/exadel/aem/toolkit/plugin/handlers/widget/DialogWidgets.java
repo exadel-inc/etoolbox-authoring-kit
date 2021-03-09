@@ -51,7 +51,6 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.plugin.handlers.widget.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
 /**
  * Enumerates built-in {@link DialogWidget} entities and exposes utility methods to detect whether a {@code DialogWidget}
@@ -163,8 +162,8 @@ public enum DialogWidgets implements DialogWidget {
             return annotationClass;
         }
         // if no such annotation, retrieve first custom DialogComponentAnnotation attached to this source
-        return PluginReflectionUtility.getSourceAnnotations(source)
-                .stream()
+        return Arrays.stream(source.adaptTo(Annotation[].class))
+                .map(Annotation::annotationType)
                 .filter(DialogWidgets::isCustomDialogWidgetAnnotation)
                 .findFirst()
                 .orElse(null);
@@ -178,7 +177,7 @@ public enum DialogWidgets implements DialogWidget {
      */
     private static boolean isAnnotated(Source source, DialogWidgets widget) {
         return Objects.nonNull(widget.getAnnotationClass())
-                && PluginReflectionUtility.getSourceAnnotations(source).stream().anyMatch(fa -> fa.equals(widget.getAnnotationClass()));
+                && Arrays.stream(source.adaptTo(Annotation[].class)).anyMatch(fa -> fa.annotationType().equals(widget.getAnnotationClass()));
     }
 
     /**

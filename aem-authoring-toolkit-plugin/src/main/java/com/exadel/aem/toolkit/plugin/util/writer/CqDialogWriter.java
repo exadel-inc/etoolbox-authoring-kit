@@ -42,8 +42,8 @@ import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnTabHandl
 import com.exadel.aem.toolkit.plugin.handlers.layouts.DialogContainer;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
 
 /**
@@ -160,7 +160,7 @@ class CqDialogWriter extends PackageEntryWriter {
     private static DialogLayout getLayout(Class<?> componentClass, Scope scope) {
         DialogLayout result = DialogLayout.FIXED_COLUMNS;
 
-        List<Class<?>> hierarchy = PluginReflectionUtility.getClassHierarchy(componentClass, true);
+        List<Class<?>> hierarchy = ClassUtil.getInheritanceTree(componentClass, true);
         ListIterator<Class<?>> hierarchyIterator = hierarchy.listIterator(hierarchy.size());
 
         while (hierarchyIterator.hasPrevious()) {

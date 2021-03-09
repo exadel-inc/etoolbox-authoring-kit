@@ -23,12 +23,12 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
 
 /**
- * Utility class that exposes comparison routines used to order {@code Source} instances by their origin or explicit ranking
+ * Helper class used in {@code Source} processing stream for sorting source entries by their explicit ranking or origin
  */
 public class Sorter {
 
     /**
-     * Default private (hiding) constructor
+     * Default (hiding) constructor
      */
     private Sorter() {
     }
