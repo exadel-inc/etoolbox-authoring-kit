@@ -24,8 +24,8 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.lists.ListItemHandler;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing component-wide attributes (writes data to the
@@ -76,7 +76,7 @@ class ContentXmlWriter extends PackageEntryWriter {
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT)
             .attributes(
                 annotation,
-                PluginAnnotationUtility
+                AnnotationUtil
                     .getPropertyMappingFilter(annotation)
                     .and(member -> fitsInScope(member, getScope())));
         new ListItemHandler().accept(componentClass, target);

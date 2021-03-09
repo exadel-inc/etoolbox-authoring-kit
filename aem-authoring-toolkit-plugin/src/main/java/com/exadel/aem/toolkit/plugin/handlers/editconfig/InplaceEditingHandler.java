@@ -31,9 +31,9 @@ import com.exadel.aem.toolkit.plugin.handlers.widget.common.InheritanceHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.Sources;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.NamingUtil;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * {@code BiConsumer<EditConfig, Target>} implementation for storing {@link InplaceEditingConfig} arguments to {@code cq:editConfig} XML node
@@ -148,7 +148,7 @@ public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
             RichTextEditor rteAnnotation = referencedRteField.adaptTo(RichTextEditor.class);
             target.attributes(
                 rteAnnotation,
-                PluginAnnotationUtility
+                AnnotationUtil
                     .getPropertyMappingFilter(rteAnnotation)
                     .and(method -> !DialogConstants.PN_USE_FIXED_INLINE_TOOLBAR.equals(method.getName()))
             );

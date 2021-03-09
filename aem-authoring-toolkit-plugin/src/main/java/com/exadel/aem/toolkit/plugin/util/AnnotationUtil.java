@@ -42,7 +42,7 @@ import com.exadel.aem.toolkit.plugin.source.Sources;
  * Contains utility methods to perform {@code annotation - to - plain Java object} and {@code annotation - to - annotation}
  * value conversions for the sake of proper dialog markup rendering
  */
-public class PluginAnnotationUtility {
+public class AnnotationUtil {
     private static final String INVOCATION_EXCEPTION_MESSAGE_TEMPLATE = "Could not invoke method '%s' on %s";
 
     private static final Predicate<Method> MAP_ALL_PROPERTIES = member -> true;
@@ -50,7 +50,7 @@ public class PluginAnnotationUtility {
     /**
      * Default (hiding) constructor
      */
-    private PluginAnnotationUtility() {
+    private AnnotationUtil() {
     }
 
     /**
@@ -63,7 +63,7 @@ public class PluginAnnotationUtility {
     public static Object getProperty(Annotation annotation, Method method) {
         return getProperty(annotation, method, null);
     }
-    
+
     /**
      * Retrieves property value of the specified annotation. This method wraps up exception handling, therefore, can be
      * used within functional calls, etc
@@ -269,7 +269,7 @@ public class PluginAnnotationUtility {
 
     /**
      * Implements {@link InvocationHandler} mechanism for creating object extension
-     * per the {@link PluginAnnotationUtility#genericModify(Object, Class, Map)} signature
+     * per the {@link AnnotationUtil#genericModify(Object, Class, Map)} signature
      * @param <T> The {@code Class} of the source object
      * @param <R> The return type of the extension methods defined for this instance
      */

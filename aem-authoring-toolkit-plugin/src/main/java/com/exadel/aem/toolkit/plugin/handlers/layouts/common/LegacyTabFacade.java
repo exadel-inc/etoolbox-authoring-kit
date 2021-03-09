@@ -22,9 +22,9 @@ import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.NamingUtil;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 class LegacyTabFacade extends SectionFacade {
 
@@ -66,7 +66,7 @@ class LegacyTabFacade extends SectionFacade {
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
             .attribute(DialogConstants.PN_JCR_TITLE, getTitle());
         Attribute attributeAnnotation = tab.attribute();
-        itemsContainer.attributes(attributeAnnotation, PluginAnnotationUtility.getPropertyMappingFilter(attributeAnnotation));
+        itemsContainer.attributes(attributeAnnotation, AnnotationUtil.getPropertyMappingFilter(attributeAnnotation));
         if (attributeAnnotation.data().length > 0) {
             Target graniteDataElement = container.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA);
             Arrays.stream(attributeAnnotation.data())

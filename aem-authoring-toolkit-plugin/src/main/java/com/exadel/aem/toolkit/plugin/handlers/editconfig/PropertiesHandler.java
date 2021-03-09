@@ -18,8 +18,8 @@ import java.util.function.BiConsumer;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfigLayout;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * {@code BiConsumer<EditConfig, Target>} implementation for storing {@link EditConfig} properties to {@code cq:editConfig} node
@@ -32,7 +32,7 @@ public class PropertiesHandler implements BiConsumer<EditConfig, Target> {
      */
     @Override
     public void accept(EditConfig editConfig, Target root) {
-        root.attributes(editConfig, PluginAnnotationUtility.getPropertyMappingFilter(editConfig));
+        root.attributes(editConfig, AnnotationUtil.getPropertyMappingFilter(editConfig));
         EditConfigLayout dialogLayout = editConfig.dialogLayout();
         if (dialogLayout != EditConfigLayout.DEFAULT) {
             root.attribute(DialogConstants.PN_DIALOG_LAYOUT, dialogLayout.toString().toLowerCase());

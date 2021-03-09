@@ -41,8 +41,8 @@ import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnTabHandler;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.DialogContainer;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
 
@@ -105,7 +105,7 @@ class CqDialogWriter extends PackageEntryWriter {
         target
             .attributes(
                 dialogAnnotation,
-                PluginAnnotationUtility
+                AnnotationUtil
                     .getPropertyMappingFilter(dialogAnnotation)
                     .and(member -> fitsInScope(member, scope)))
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);

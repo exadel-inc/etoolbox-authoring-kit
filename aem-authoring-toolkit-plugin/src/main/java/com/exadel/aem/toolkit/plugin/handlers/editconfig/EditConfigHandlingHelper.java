@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 
 /**
  * Contains methods to generate and trigger the chain of handlers to store {@code cq:editConfig}
@@ -50,7 +50,7 @@ public class EditConfigHandlingHelper {
     public static void append(ChildEditConfig childEditConfig, Target target) {
         // Herewith we create a "proxied" @EditConfig object out of the provided @ChildEditConfig
         // with "dropTargets" and "listeners" methods of @EditConfig populated with  @ChildEditConfig values
-        EditConfig derivedEditConfig = PluginAnnotationUtility.createInstance(EditConfig.class, ImmutableMap.of(
+        EditConfig derivedEditConfig = AnnotationUtil.createInstance(EditConfig.class, ImmutableMap.of(
                 METHOD_DROP_TARGETS, childEditConfig.dropTargets(),
                 METHOD_LISTENERS, childEditConfig.listeners()
         ));

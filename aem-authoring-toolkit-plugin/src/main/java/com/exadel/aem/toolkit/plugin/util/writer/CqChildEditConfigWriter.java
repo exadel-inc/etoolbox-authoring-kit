@@ -22,8 +22,8 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.editconfig.EditConfigHandlingHelper;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing author UI aspects for child components that do not define
@@ -69,7 +69,7 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
         ChildEditConfig childEditConfig = componentClass.getDeclaredAnnotation(ChildEditConfig.class);
         root
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
-            .attributes(childEditConfig, PluginAnnotationUtility.getPropertyMappingFilter(childEditConfig));
+            .attributes(childEditConfig, AnnotationUtil.getPropertyMappingFilter(childEditConfig));
         EditConfigHandlingHelper.append(childEditConfig, root);
     }
 }

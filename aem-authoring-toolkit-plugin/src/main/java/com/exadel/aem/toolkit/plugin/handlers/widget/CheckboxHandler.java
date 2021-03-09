@@ -26,8 +26,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
 /**
@@ -46,7 +46,7 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
     public void accept(Source source, Target target) {
         Checkbox checkbox = source.adaptTo(Checkbox.class);
 
-        Predicate<Method> mappingFilter = PluginAnnotationUtility.getPropertyMappingFilter(checkbox);
+        Predicate<Method> mappingFilter = AnnotationUtil.getPropertyMappingFilter(checkbox);
         if (ArrayUtils.isEmpty(checkbox.sublist())) {
             target.attributes(checkbox, mappingFilter);
             setTextAttribute(source, target);
@@ -92,7 +92,7 @@ class CheckboxHandler implements BiConsumer<Source, Target> {
                 Checkbox innerCheckbox = innerSource.adaptTo(Checkbox.class);
                 Target checkboxElement = target.getOrCreateTarget(innerSource.getName())
                         .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX)
-                        .attributes(innerCheckbox, PluginAnnotationUtility.getPropertyMappingFilter(innerCheckbox));
+                        .attributes(innerCheckbox, AnnotationUtil.getPropertyMappingFilter(innerCheckbox));
                 setTextAttribute(innerSource, checkboxElement);
 
                 if (ArrayUtils.isNotEmpty(innerSource.adaptTo(Checkbox.class).sublist())) {

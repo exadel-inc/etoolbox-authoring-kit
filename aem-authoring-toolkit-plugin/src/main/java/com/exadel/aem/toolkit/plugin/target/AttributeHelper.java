@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.util.StringUtil;
@@ -111,7 +111,7 @@ public class AttributeHelper<T, V> {
         if (!valueTypeIsSupported) {
             return;
         }
-        Object invocationResult = PluginAnnotationUtility.getProperty(annotation, method);
+        Object invocationResult = AnnotationUtil.getProperty(annotation, method);
         if (invocationResult == null) {
             return;
         }
@@ -348,7 +348,7 @@ public class AttributeHelper<T, V> {
                     attributeSetter.typeHintValueType = propertyRendering.valueType();
                 }
             }
-            if (PluginAnnotationUtility.propertyIsNotDefault(annotation, property)) {
+            if (AnnotationUtil.propertyIsNotDefault(annotation, property)) {
                 attributeSetter.validationChecker = Validation.forMethod(property);
             }
             return (AttributeHelper<T, Object>) attributeSetter;
