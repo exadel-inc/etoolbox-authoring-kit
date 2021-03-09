@@ -90,9 +90,9 @@ public class DialogConstants {
     public static final String NT_UNSTRUCTURED = "nt:unstructured";
     public static final String NT_WIDGET_COLLECTION = "cq:WidgetCollection";
 
-    public static final String PN_AAT_LIST_ITEM = "aatListItem";
     public static final String PN_ACCEPT = "accept";
     public static final String PN_ACTIVE = "active";
+    public static final String PN_AEMBOX_LIST_ITEM = "aatListItem";
     public static final String PN_ALLOW = "allow";
     public static final String PN_ALLOW_BLOCK_TAGS = "allowBlockTags";
     public static final String PN_ATTRIBUTE_MEMBERS = "attributeMembers";

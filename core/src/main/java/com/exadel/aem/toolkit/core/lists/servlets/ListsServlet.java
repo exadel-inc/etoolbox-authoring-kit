@@ -50,8 +50,8 @@ import com.adobe.granite.ui.components.ds.EmptyDataSource;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
- * Provides the collection of AEM resources that either represent AAT Lists or serve as folders for AAT lists
- * to be displayed in the AAT Lists console
+ * Provides the collection of AEM resources that either represent AEMBox Lists or serve as folders for AEMBox Lists
+ * to be displayed in the AEMBox Lists console
  */
 @Component(
     service = Servlet.class,

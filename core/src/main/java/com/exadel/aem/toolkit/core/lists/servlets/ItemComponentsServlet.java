@@ -44,7 +44,7 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
- * Provides the collection of AEM resources that represent AAT Lists items
+ * Provides the collection of AEM resources that represent AEMBox Lists items
  * to be displayed in a TouchUI {@code Select} widget
  */
 @Component(
