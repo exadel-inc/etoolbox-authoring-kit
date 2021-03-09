@@ -17,19 +17,14 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.MalformedParameterizedTypeException;
 import java.lang.reflect.Member;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -266,6 +261,7 @@ public class PluginReflectionUtility {
      * @param handler Handler instance
      * @param field The field of handler to populate
      */
+    @SuppressWarnings("squid:S3011") // Access elevation is preserved for compatibility until context injection is retired
     private static void populateRuntimeContext(Object handler, Field field) {
         field.setAccessible(true);
         try {
@@ -398,53 +394,6 @@ public class PluginReflectionUtility {
             }
         }
         return result;
-    }
-
-    /**
-     * Retrieves the type represented by the provided Java class {@code Member}. If the method is designed to provide
-     * a primitive value or a singular object, its "direct" type is returned. But if the method represents a collection,
-     * type of array's element is returned
-     *
-     * @param member The member to analyze, a {@link Field} or {@link Method} reference expected
-     * @return Appropriate {@code Class} instance or null if an invalid {@code Member} provided
-     */
-    public static Class<?> getPlainType(Member member) {
-        if (!(member instanceof Field) && !(member instanceof Method)) {
-            return null;
-        }
-        Class<?> result = member instanceof Field
-            ? ((Field) member).getType()
-            : ((Method) member).getReturnType();
-        if (result.isArray()) {
-            result = result.getComponentType();
-        }
-        if (ClassUtils.isAssignable(result, Collection.class)) {
-            return getGenericType(member, result);
-        }
-        return result;
-    }
-
-    /**
-     * Retrieves the underlying parameter type of the provided Java class {@code Member}. If the method is an array
-     * or a collection, the item (parameter) type is returned; otherwise, the mere method type is returned
-     *
-     * @param member The member to analyze, a {@link Field} or {@link Method} reference expected
-     * @param defaultValue The value to return if parameter type extraction fails
-     * @return Extracted {@code Class} instance, or the {@code defaultValue}
-     */
-    private static Class<?> getGenericType(Member member, Class<?> defaultValue) {
-        try {
-            ParameterizedType fieldGenericType = member instanceof Field
-                ? (ParameterizedType) ((Field) member).getGenericType()
-                : (ParameterizedType) ((Method) member).getGenericReturnType();
-            Type[] typeArguments = fieldGenericType.getActualTypeArguments();
-            if (ArrayUtils.isEmpty(typeArguments)) {
-                return defaultValue;
-            }
-            return (Class<?>) typeArguments[0];
-        } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
-            return defaultValue;
-        }
     }
 
     /**

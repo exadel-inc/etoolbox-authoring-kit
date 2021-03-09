@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.plugin.util.MemberUtil;
 
 /**
  * Performs validation of annotations properties' values with use of specific {@link Validator}s
@@ -87,9 +87,9 @@ public class Validation {
         String restriction = null;
         if (method.isAnnotationPresent(ValueRestriction.class)) {
             restriction = method.getDeclaredAnnotation(ValueRestriction.class).value();
-        } else if (ClassUtils.isAssignable(PluginReflectionUtility.getPlainType(method), Annotation.class)
-                && PluginReflectionUtility.getPlainType(method).isAnnotationPresent(ValueRestriction.class)) {
-            restriction = PluginReflectionUtility.getPlainType(method).getDeclaredAnnotation(ValueRestriction.class).value();
+        } else if (ClassUtils.isAssignable(MemberUtil.getPlainType(method), Annotation.class)
+                && MemberUtil.getPlainType(method).isAnnotationPresent(ValueRestriction.class)) {
+            restriction = MemberUtil.getPlainType(method).getDeclaredAnnotation(ValueRestriction.class).value();
         }
         Validation checker = new Validation(getTestRoutine(restriction));
         checker.reflectedMethod = method;
