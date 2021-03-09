@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <!-- TODO: remove the following line before 2.0.0 release -->
-    <filter root="/apps/cq/core/content/nav/tools/aem-custom-lists"/>
     <filter root="/apps/cq/core/content/nav/tools/aembox/lists"/>
     <filter root="/apps/wcm/core/content/sites/actions/secondary/create/items/createlist"/>
 
@@ -12,7 +10,7 @@
     <filter root="/apps/authoring-toolkit/fixes"/>
     <filter root="/apps/authoring-toolkit/install"/>
 
-    <!-- The following filters clear old directories in JCR content. They can be removed after release 2.0.0 -->
+    <!-- The following filters clear old directories in JCR content. They can be removed after release 2.0.1 -->
     <filter root="/apps/authoring-toolkit/depends-on-injector"/>
     <filter root="/apps/authoring-toolkit/hotfixes-1.2.1"/>
 </workspaceFilter>

@@ -281,7 +281,6 @@ public class PluginXmlUtility implements XmlUtility {
      * @param attributeMerger Function that manages an existing attribute value and a new one
      *                        in case when a new value is set to an existing {@code Element}
      */
-    // PropertyName processing remains for compatibility reasons until v.2.0.0
     private static void setAttribute(Supplier<Element> elementSupplier,
                                      String name,
                                      Annotation source,
