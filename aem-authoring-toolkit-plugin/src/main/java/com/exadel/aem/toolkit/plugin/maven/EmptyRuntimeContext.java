@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.maven;
 
 import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
-import com.exadel.aem.toolkit.plugin.runtime.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.runtime.ReflectionRuntime;
+import com.exadel.aem.toolkit.plugin.runtime.XmlRuntime;
 
 /**
  * The fallback implementation of {@link PluginRuntimeContext} for the AEM Authoring Toolkit plugin instance that
@@ -46,7 +45,7 @@ class EmptyRuntimeContext implements PluginRuntimeContext {
      * Throws a {@code PluginException} upon call since the runtime has not been initialized
      */
     @Override
-    public PluginXmlUtility getXmlUtility() {
+    public XmlRuntime getXmlUtility() {
         throw new PluginException(NOT_INITIALIZED_EXCEPTION_MESSAGE);
     }
 }

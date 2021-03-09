@@ -14,12 +14,12 @@
 package com.exadel.aem.toolkit.plugin.maven;
 
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
-import com.exadel.aem.toolkit.plugin.runtime.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.runtime.ReflectionRuntime;
+import com.exadel.aem.toolkit.plugin.runtime.XmlRuntime;
 
 /**
  * An abstraction of AEM Authoring Toolkit's Maven plugin runtime context for internal use within. Additional to ts ancestor,
- * provides access to {@link ReflectionRuntime}, and the extended {@link PluginXmlUtility}
+ * provides access to {@link ReflectionRuntime}, and the extended {@link XmlRuntime}
  */
 public interface PluginRuntimeContext extends RuntimeContext {
 
@@ -30,5 +30,5 @@ public interface PluginRuntimeContext extends RuntimeContext {
     ReflectionRuntime getReflection();
 
     @Override
-    PluginXmlUtility getXmlUtility();
+    XmlRuntime getXmlUtility();
 }

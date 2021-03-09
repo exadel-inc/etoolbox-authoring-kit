@@ -61,7 +61,7 @@ import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 /**
  * Utility methods to process, verify and store AEM TouchUI dialog-related data to XML markup
  */
-public class PluginXmlUtility implements XmlUtility {
+public class XmlRuntime implements XmlUtility {
 
     /**
      * Default routine to manage merging two values of an XML attribute by suppressing existing value with a non-empty new one
@@ -79,7 +79,7 @@ public class PluginXmlUtility implements XmlUtility {
      * Default constructor
      * @param document {@code Document} instance to be used as a node factory within this instance
      */
-    public PluginXmlUtility(Document document) {
+    public XmlRuntime(Document document) {
         this.document = document;
     }
 
@@ -246,7 +246,7 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public void setAttribute(Element element, String name, List<String> values) {
-        setAttribute(element, name, values, PluginXmlUtility::mergeStringAttributes);
+        setAttribute(element, name, values, XmlRuntime::mergeStringAttributes);
     }
 
     @Override
@@ -371,7 +371,7 @@ public class PluginXmlUtility implements XmlUtility {
         if (!ignorePrefix && StringUtils.isNotBlank(prefix)) {
             name = namePrefix + name;
         }
-        BinaryOperator<String> merger = PluginXmlUtility::mergeStringAttributes;
+        BinaryOperator<String> merger = XmlRuntime::mergeStringAttributes;
         AttributeHelper
             .forXmlTarget()
             .forAnnotationProperty(annotation, method)

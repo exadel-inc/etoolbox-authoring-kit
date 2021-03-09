@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import com.google.common.collect.ImmutableMap;
 
-import com.exadel.aem.toolkit.plugin.runtime.PluginXmlUtility;
+import com.exadel.aem.toolkit.plugin.runtime.XmlRuntime;
 
 /**
  * Contains utility methods for creating and transforming XML entities
@@ -85,14 +85,14 @@ public class XmlFactory {
     }
 
     /**
-     * Creates a new {@link PluginXmlUtility} instance wrapped around a new {@code Document} for processing legacy
+     * Creates a new {@link XmlRuntime} instance wrapped around a new {@code Document} for processing legacy
      * handlers in an isolated document context
      * @return {@code PluginXmlUtility} object
      * @throws ParserConfigurationException if one or more security features cannot be assigned to the newly created document
      */
-    public static PluginXmlUtility newXmlUtility() throws ParserConfigurationException {
+    public static XmlRuntime newXmlUtility() throws ParserConfigurationException {
         Document document = newDocument();
-        return new PluginXmlUtility(document);
+        return new XmlRuntime(document);
     }
 
     /**
@@ -103,6 +103,8 @@ public class XmlFactory {
      */
     private static DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
+        dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, StringUtils.EMPTY);
         dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         for(Map.Entry<String, Boolean> feature : DOCUMENT_BUILDER_FACTORY_SECURITY_FEATURES.entrySet()) {
             dbf.setFeature(feature.getKey(), feature.getValue());

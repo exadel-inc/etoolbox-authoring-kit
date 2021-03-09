@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.maven;
 
 import java.util.List;
@@ -21,8 +20,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
-import com.exadel.aem.toolkit.plugin.runtime.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.runtime.ReflectionRuntime;
+import com.exadel.aem.toolkit.plugin.runtime.XmlRuntime;
 import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
 /**
@@ -32,7 +31,7 @@ import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 class LoadedRuntimeContext implements PluginRuntimeContext {
     private ReflectionRuntime pluginReflections;
     private ExceptionHandler exceptionHandler;
-    private PluginXmlUtility xmlUtility;
+    private XmlRuntime xmlUtility;
 
     /**
      * {@inheritDoc}
@@ -54,7 +53,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
      * {@inheritDoc}
      */
     @Override
-    public PluginXmlUtility getXmlUtility() {
+    public XmlRuntime getXmlUtility() {
         return xmlUtility;
     }
 
