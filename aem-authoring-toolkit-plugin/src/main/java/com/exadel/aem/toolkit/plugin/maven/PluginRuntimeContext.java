@@ -11,24 +11,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.maven;
 
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.plugin.runtime.ReflectionRuntime;
 import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 /**
  * An abstraction of AEM Authoring Toolkit's Maven plugin runtime context for internal use within. Additional to ts ancestor,
- * provides access to {@link PluginReflectionUtility}, and the extended {@link PluginXmlUtility}
+ * provides access to {@link ReflectionRuntime}, and the extended {@link PluginXmlUtility}
  */
 public interface PluginRuntimeContext extends RuntimeContext {
 
     /**
-     * Provides the reference to the active {@link PluginReflectionUtility} instance
+     * Provides the reference to the active {@link ReflectionRuntime} instance
      * @return {@code PluginReflectionUtility} initialized for this context
      */
-    PluginReflectionUtility getReflectionUtility();
+    ReflectionRuntime getReflection();
 
     @Override
     PluginXmlUtility getXmlUtility();

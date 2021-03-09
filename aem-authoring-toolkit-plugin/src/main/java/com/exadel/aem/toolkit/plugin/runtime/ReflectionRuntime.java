@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.util;
+package com.exadel.aem.toolkit.plugin.runtime;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
@@ -56,7 +56,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeContext;
  * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields
  * are marked with
  */
-public class PluginReflectionUtility {
+public class ReflectionRuntime {
 
     private static final String PACKAGE_BASE_WILDCARD = ".*";
 
@@ -70,7 +70,7 @@ public class PluginReflectionUtility {
 
     private Map<String, Validator> validators;
 
-    private PluginReflectionUtility() {
+    private ReflectionRuntime() {
     }
 
     /**
@@ -80,22 +80,22 @@ public class PluginReflectionUtility {
      * @param elements    List of classpath elements to be used in reflection routines
      * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
      *                    If not specified, all available components will be processed
-     * @return {@link PluginReflectionUtility} instance
+     * @return {@link ReflectionRuntime} instance
      */
-    public static PluginReflectionUtility fromCodeScope(List<String> elements, String packageBase) {
+    public static ReflectionRuntime fromCodeScope(List<String> elements, String packageBase) {
         URL[] urls = new URL[] {};
         if (elements != null) {
             urls = elements.stream()
                     .map(File::new)
                     .map(File::toURI)
-                    .map(PluginReflectionUtility::toUrl)
+                    .map(ReflectionRuntime::toUrl)
                     .filter(Objects::nonNull).toArray(URL[]::new);
         }
         Reflections reflections = new org.reflections.Reflections(new ConfigurationBuilder()
-                .addClassLoader(new URLClassLoader(urls, PluginReflectionUtility.class.getClassLoader()))
+                .addClassLoader(new URLClassLoader(urls, ReflectionRuntime.class.getClassLoader()))
                 .setUrls(urls)
                 .setScanners(new TypeAnnotationsScanner(), new SubTypesScanner()));
-        PluginReflectionUtility newInstance = new PluginReflectionUtility();
+        ReflectionRuntime newInstance = new ReflectionRuntime();
         newInstance.reflections = reflections;
         newInstance.packageBase = StringUtils.strip(StringUtils.defaultString(packageBase, StringUtils.EMPTY),
                 PACKAGE_BASE_WILDCARD);
@@ -160,7 +160,7 @@ public class PluginReflectionUtility {
             return validators;
         }
         validators = reflections.getSubTypesOf(Validator.class).stream()
-                .map(PluginReflectionUtility::getInstance)
+                .map(ReflectionRuntime::getInstance)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(validator -> validator.getClass().getName(), Function.identity()));
         return validators;
@@ -198,7 +198,7 @@ public class PluginReflectionUtility {
      */
     private <T> List<T> getHandlers(Class<? extends T> handlerClass) {
         return reflections.getSubTypesOf(handlerClass).stream()
-                .map(PluginReflectionUtility::getHandlerInstance)
+                .map(ReflectionRuntime::getHandlerInstance)
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(handler -> handler.getClass().getName())) // to provide stable handlers sequence between runs
                 .collect(Collectors.toList());

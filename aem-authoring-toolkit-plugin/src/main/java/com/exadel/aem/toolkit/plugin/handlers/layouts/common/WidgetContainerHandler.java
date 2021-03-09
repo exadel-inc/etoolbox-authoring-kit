@@ -23,14 +23,13 @@ import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.stream.Filter;
 
 public abstract class WidgetContainerHandler implements BiConsumer<Source, Target> {
 
     /**
      * Retrieves the list of sources that match the current container.
-     * This is performed by calling {@link PluginReflectionUtility#getAllSources(Class)}
+     * This is performed by calling {@link ClassUtil#getSources(Class)}
      * with additional predicates that allow to filter out sources that are set to be ignored at either
      * the "member itself" level or at "declaring class" level. Afterwards the non-widget fields are also filtered out
      * @param container         Current {@link Source} instance
@@ -39,6 +38,7 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
      *                          False to use same {@link Source#getValueType()} as for the rest of method logic
      * @return {@code List<Source>} containing placeable members, or an empty collection
      */
+    @SuppressWarnings("deprecation") // IgnoreFields is retained for compatibility until retired in a post-2.0.1 version
     protected List<Source> getEntriesForContainer(Source container, boolean useReportingClass) {
         Class<?> valueTypeClass = container.getValueType();
         Class<?> reportingClass = useReportingClass ? container.getReportingClass() : valueTypeClass;
@@ -142,9 +142,7 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
                 .forEach(tab -> result.add(new TabFacade(tab, false)));
         } else if (annotationClass.equals(Accordion.class)) {
             Arrays.stream(source.adaptTo(Accordion.class).value())
-                .forEach(accordionPanel -> {
-                    result.add(new AccordionPanelFacade(accordionPanel, false));
-                });
+                .forEach(accordionPanel -> result.add(new AccordionPanelFacade(accordionPanel, false)));
         }
         return result;
     }

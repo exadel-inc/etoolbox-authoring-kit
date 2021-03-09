@@ -116,7 +116,7 @@ class CqDialogWriter extends PackageEntryWriter {
 
         new DependsOnTabHandler().accept(componentClass, target);
 
-        List<DialogHandler> handlers = PluginRuntime.context().getReflectionUtility().getCustomDialogHandlers().stream()
+        List<DialogHandler> handlers = PluginRuntime.context().getReflection().getCustomDialogHandlers().stream()
                 .filter(dialogHandler -> dialogHandler.getClass().isAnnotationPresent(Handles.class)
                 && Arrays.stream(dialogHandler.getClass().getDeclaredAnnotation(Handles.class).value()).anyMatch(componentClass::isAnnotationPresent))
             .collect(Collectors.toList());

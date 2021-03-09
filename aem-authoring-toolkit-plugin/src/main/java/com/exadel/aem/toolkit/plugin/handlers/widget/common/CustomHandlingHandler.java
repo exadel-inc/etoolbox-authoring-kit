@@ -99,7 +99,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
         List<DialogWidgetHandler> handlers;
 
         // Modern handlers mapping approach -- via @Handles annotation
-        handlers = new ArrayList<>(PluginRuntime.context().getReflectionUtility().getCustomDialogWidgetHandlers(sourceAnnotationTypes));
+        handlers = new ArrayList<>(PluginRuntime.context().getReflection().getCustomDialogWidgetHandlers(sourceAnnotationTypes));
 
         // Legacy handlers mapping approach -- via source<->name mapping
         List<DialogWidgetHandler> sourceToNameMappingHandlers = sourceAnnotationTypes
@@ -118,7 +118,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
             return Stream.empty();
         }
         return PluginRuntime.context()
-            .getReflectionUtility()
+            .getReflection()
             .getCustomDialogWidgetHandlers()
             .stream()
             .filter(handler -> StringUtils.equals(source, handler.getName()));

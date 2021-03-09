@@ -82,7 +82,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         // (custom) handlers and run such one more time
         List<DialogWidgetHandler> multifieldHandlers = PluginRuntime
             .context()
-            .getReflectionUtility()
+            .getReflection()
             .getCustomDialogWidgetHandlers(Collections.singletonList(MultiField.class));
         new CustomHandlingHandler(multifieldHandlers).accept(source, target);
     }

@@ -217,7 +217,7 @@ abstract class PackageEntryWriter {
      */
     private static void processLegacyDialogHandlers(Element element, Class<?> annotatedClass) {
         List<DialogAnnotation> customAnnotations = getCustomDialogAnnotations(annotatedClass);
-        PluginRuntime.context().getReflectionUtility().getCustomDialogHandlers().stream()
+        PluginRuntime.context().getReflection().getCustomDialogHandlers().stream()
             .filter(handler -> customAnnotations.stream()
                 .anyMatch(annotation -> StringUtils.equals(annotation.source(), handler.getName())))
             .forEach(handler -> handler.accept(element, annotatedClass));
