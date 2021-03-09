@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.util;
+package com.exadel.aem.toolkit.plugin.runtime;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -51,6 +51,11 @@ import com.exadel.aem.toolkit.api.runtime.XmlUtility;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.target.AttributeHelper;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
+import com.exadel.aem.toolkit.plugin.util.StringUtil;
+import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
 /**
@@ -72,9 +77,9 @@ public class PluginXmlUtility implements XmlUtility {
 
     /**
      * Default constructor
-     * @param document {@code Document} instance ti be used as a node factory within this instance
+     * @param document {@code Document} instance to be used as a node factory within this instance
      */
-    PluginXmlUtility(Document document) {
+    public PluginXmlUtility(Document document) {
         this.document = document;
     }
 

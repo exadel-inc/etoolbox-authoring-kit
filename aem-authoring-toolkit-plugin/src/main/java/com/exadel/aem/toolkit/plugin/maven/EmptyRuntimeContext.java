@@ -16,8 +16,8 @@ package com.exadel.aem.toolkit.plugin.maven;
 
 import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
+import com.exadel.aem.toolkit.plugin.runtime.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.runtime.ReflectionRuntime;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 /**
  * The fallback implementation of {@link PluginRuntimeContext} for the AEM Authoring Toolkit plugin instance that

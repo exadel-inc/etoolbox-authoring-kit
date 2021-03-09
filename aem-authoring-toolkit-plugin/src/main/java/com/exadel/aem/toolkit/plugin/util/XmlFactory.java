@@ -27,6 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import com.google.common.collect.ImmutableMap;
 
+import com.exadel.aem.toolkit.plugin.runtime.PluginXmlUtility;
+
 /**
  * Contains utility methods for creating and transforming XML entities
  */
@@ -83,7 +85,7 @@ public class XmlFactory {
     }
 
     /**
-     * Creates a new {@link PluginXmlUtility} instance warapped around a new {@code Document} for processing legacy
+     * Creates a new {@link PluginXmlUtility} instance wrapped around a new {@code Document} for processing legacy
      * handlers in an isolated document context
      * @return {@code PluginXmlUtility} object
      * @throws ParserConfigurationException if one or more security features cannot be assigned to the newly created document

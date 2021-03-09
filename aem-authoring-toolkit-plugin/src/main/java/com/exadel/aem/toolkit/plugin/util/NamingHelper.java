@@ -22,6 +22,7 @@ import com.google.common.base.CaseFormat;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.runtime.PluginXmlUtility;
 
 /**
  * Helper class for creating standard compliant names for XML entities designed to work together

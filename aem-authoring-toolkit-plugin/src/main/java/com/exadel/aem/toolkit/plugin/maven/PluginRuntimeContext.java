@@ -14,8 +14,8 @@
 package com.exadel.aem.toolkit.plugin.maven;
 
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
+import com.exadel.aem.toolkit.plugin.runtime.PluginXmlUtility;
 import com.exadel.aem.toolkit.plugin.runtime.ReflectionRuntime;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
 
 /**
  * An abstraction of AEM Authoring Toolkit's Maven plugin runtime context for internal use within. Additional to ts ancestor,
