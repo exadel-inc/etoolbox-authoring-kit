@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,9 +34,6 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.source.Sources;
 import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
-import com.exadel.aem.toolkit.plugin.util.stream.Filter;
-import com.exadel.aem.toolkit.plugin.util.stream.Replacer;
-import com.exadel.aem.toolkit.plugin.util.stream.Sorter;
 
 /**
  * Contains utility methods for parsing AEM components' classes and extracting information related to UI rendering
@@ -77,7 +75,7 @@ public class ClassUtil {
                 : Stream.concat(Arrays.stream(classEntry.getDeclaredFields()), Arrays.stream(classEntry.getDeclaredMethods()));
             List<Source> classMemberSources = classMembersStream
                 .map(member -> Sources.fromMember(member, targetClass))
-                .filter(Filter.getSourcesPredicate(predicates))
+                .filter(getSourcesPredicate(predicates))
                 .collect(Collectors.toList());
             raw.addAll(classMemberSources);
 
@@ -94,11 +92,11 @@ public class ClassUtil {
 
         List<Source> reducedWithReplacements = raw
             .stream()
-            .collect(Replacer.processSourceReplace());
+            .collect(ReplacementHelper.processSourceReplace());
         List<Source> preSortedByRank = reducedWithReplacements
             .stream()
-            .filter(Filter.getNotIgnoredSourcesPredicate(ignoredClassMembers))
-            .sorted(Sorter::compareByRank)
+            .filter(source -> ignoredClassMembers.stream().noneMatch(ignored -> ignored.matches(source)))
+            .sorted(OrderingUtil::compareByRank)
             .collect(Collectors.toList());
 
         return OrderingUtil.sortMembers(preSortedByRank);
@@ -161,5 +159,17 @@ public class ClassUtil {
             }
         }
         return result;
+    }
+
+    /**
+     * Generates a combined {@code Predicate<Member>} from the list of partial predicates given
+     * @param predicates List of {@code Predicate<Member>} instances
+     * @return An {@code AND}-joined combined predicate, or a default all-allowed predicate if no partial predicates provided
+     */
+    private static Predicate<Source> getSourcesPredicate(List<Predicate<Source>> predicates) {
+        if (predicates == null || predicates.isEmpty()) {
+            return Source::isValid;
+        }
+        return predicates.stream().filter(Objects::nonNull).reduce(Source::isValid, Predicate::and);
     }
 }

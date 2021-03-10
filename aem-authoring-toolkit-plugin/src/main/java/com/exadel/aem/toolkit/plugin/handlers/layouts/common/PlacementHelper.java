@@ -39,7 +39,7 @@ import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.Sources;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.stream.Sorter;
+import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
 
 /**
  * Helper object for distributing class member-bound widgets into container sections, such as {@code Tab}s
@@ -117,7 +117,7 @@ public class PlacementHelper {
             boolean needResort = !sectionMembers.isEmpty() && !assignableSectionMembers.isEmpty();
             sectionMembers.addAll(assignableSectionMembers);
             if (needResort) {
-                sectionMembers.sort(Sorter::compareByRank);
+                sectionMembers.sort(OrderingUtil::compareByRank);
             }
             processedMembers.addAll(assignableSectionMembers);
             if (!ArrayUtils.contains(ignoredSections, currentSection.getTitle())) {
@@ -205,7 +205,7 @@ public class PlacementHelper {
             .collect(Collectors.toCollection(LinkedList::new));
         LinkedList<Source> sameNameFieldsByOrigin = sameNameFields
             .stream()
-            .sorted(Sorter::compareByOrigin)
+            .sorted(OrderingUtil::compareByOrigin)
             .collect(Collectors.toCollection(LinkedList::new));
 
         if (!sameNameFields.getLast().equals(sameNameFieldsByOrigin.getLast())) {

@@ -11,8 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.exadel.aem.toolkit.plugin.util.stream;
+package com.exadel.aem.toolkit.plugin.util;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -32,11 +31,12 @@ import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Replace;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
+import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
 
 /**
  * Helper class used in {@code Source} processing stream for managing replacements as set by user
  */
-public class Replacer {
+public class ReplacementHelper {
     private static final SourceReplacingCollector SOURCE_REPLACING = new SourceReplacingCollector();
 
     private final List<Source> internal;
@@ -44,7 +44,7 @@ public class Replacer {
     /**
      * Default (hiding) constructor
      */
-    private Replacer() {
+    private ReplacementHelper() {
         internal = new ArrayList<>();
     }
 
@@ -59,7 +59,7 @@ public class Replacer {
         List<Source> result = new ArrayList<>(internal);
         Queue<Source> replacingEntries = result.stream()
             .filter(entry -> entry.adaptTo(Replace.class) != null)
-            .sorted(Sorter::compareByOrigin)
+            .sorted(OrderingUtil::compareByOrigin)
             .collect(Collectors.toCollection(LinkedList::new));
 
         while (!replacingEntries.isEmpty()) {
@@ -96,24 +96,24 @@ public class Replacer {
         return result;
     }
 
-    public static Collector<Source, Replacer, List<Source>> processSourceReplace() {
+    public static Collector<Source, ReplacementHelper, List<Source>> processSourceReplace() {
         return SOURCE_REPLACING;
     }
 
-    private static class SourceReplacingCollector implements Collector<Source, Replacer, List<Source>> {
+    private static class SourceReplacingCollector implements Collector<Source, ReplacementHelper, List<Source>> {
 
         @Override
-        public Supplier<Replacer> supplier() {
-            return Replacer::new;
+        public Supplier<ReplacementHelper> supplier() {
+            return ReplacementHelper::new;
         }
 
         @Override
-        public BiConsumer<Replacer, Source> accumulator() {
+        public BiConsumer<ReplacementHelper, Source> accumulator() {
             return (left, right) -> left.internal.add(right);
         }
 
         @Override
-        public BinaryOperator<Replacer> combiner() {
+        public BinaryOperator<ReplacementHelper> combiner() {
             return (left, right) -> {
                 left.internal.addAll(right.internal);
                 return left;
@@ -121,8 +121,8 @@ public class Replacer {
         }
 
         @Override
-        public Function<Replacer, List<Source>> finisher() {
-            return Replacer::processInternal;
+        public Function<ReplacementHelper, List<Source>> finisher() {
+            return ReplacementHelper::processInternal;
         }
 
         @Override

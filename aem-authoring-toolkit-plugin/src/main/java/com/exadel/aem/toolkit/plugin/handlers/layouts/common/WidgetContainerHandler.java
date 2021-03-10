@@ -23,7 +23,6 @@ import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.stream.Filter;
 
 public abstract class WidgetContainerHandler implements BiConsumer<Source, Target> {
 
@@ -76,7 +75,7 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
         // Create filters to sort out ignored fields (apart from those defined for the container class)
         // and to banish non-widget fields
         // Return the filtered field list
-        Predicate<Source> nonIgnoredMembers = Filter.getNotIgnoredSourcesPredicate(allIgnoredFields);
+        Predicate<Source> nonIgnoredMembers = source -> allIgnoredFields.stream().noneMatch(ignored -> ignored.matches(source));
         Predicate<Source> dialogFields = DialogWidgets::isPresent;
         return ClassUtil.getSources(valueTypeClass, Arrays.asList(nonIgnoredMembers, dialogFields));
     }
