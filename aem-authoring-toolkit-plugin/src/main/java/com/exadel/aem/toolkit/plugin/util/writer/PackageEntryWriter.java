@@ -156,7 +156,7 @@ abstract class PackageEntryWriter {
 
         Document result = rootTarget
             .adaptTo(DomAdapter.class)
-            .composeDocument(PluginRuntime.context().getXmlUtility().resetDocument());
+            .composeDocument(PluginRuntime.context().newXmlUtility().getDocument());
         writeCommonProperties(componentClass, getScope(), result);
         if (Scope.CQ_DIALOG.equals(getScope())) {
             processLegacyDialogHandlers(result.getDocumentElement(), componentClass);

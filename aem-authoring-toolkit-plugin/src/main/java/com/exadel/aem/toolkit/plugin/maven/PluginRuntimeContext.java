@@ -31,4 +31,10 @@ public interface PluginRuntimeContext extends RuntimeContext {
 
     @Override
     XmlRuntime getXmlUtility();
+
+    /**
+     * Creates and returns an {@link XmlRuntime} instance wrapped around a new XML document
+     * @return {@code XmlRuntime} exposing a new XML document
+     */
+    XmlRuntime newXmlUtility();
 }

@@ -48,4 +48,12 @@ class EmptyRuntimeContext implements PluginRuntimeContext {
     public XmlRuntime getXmlUtility() {
         throw new PluginException(NOT_INITIALIZED_EXCEPTION_MESSAGE);
     }
+
+    /**
+     * Throws a {@code PluginException} upon call since the runtime has not been initialized
+     */
+    @Override
+    public XmlRuntime newXmlUtility() {
+        throw new PluginException(NOT_INITIALIZED_EXCEPTION_MESSAGE);
+    }
 }

@@ -29,9 +29,11 @@ import com.exadel.aem.toolkit.plugin.util.XmlFactory;
  * has been properly initialized
  */
 class LoadedRuntimeContext implements PluginRuntimeContext {
+    private static final String XML_EXCEPTION_MESSAGE = "Could not initialize XML runtime";
+
     private ReflectionRuntime pluginReflections;
     private ExceptionHandler exceptionHandler;
-    private XmlRuntime xmlUtility;
+    private XmlRuntime xmlRuntime;
 
     /**
      * {@inheritDoc}
@@ -54,7 +56,21 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
      */
     @Override
     public XmlRuntime getXmlUtility() {
-        return xmlUtility;
+        return xmlRuntime;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public XmlRuntime newXmlUtility() {
+        try {
+            xmlRuntime = new XmlRuntime(XmlFactory.newDocument());
+        } catch (ParserConfigurationException e) {
+            // Cannot proceed with the plugin flow if XML subsystem fails this early
+            throw new PluginException(XML_EXCEPTION_MESSAGE, e);
+        }
+        return xmlRuntime;
     }
 
 
@@ -62,7 +78,6 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
      * Accumulates data and performs necessary routines for creating the functional ("loaded") {@link PluginRuntimeContext}
      */
     static class Builder {
-        private static final String XML_EXCEPTION_MESSAGE = "Could not initialize XML writing routine";
 
         private List<String> classPathElements;
         private String packageBase;
@@ -121,12 +136,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
             LoadedRuntimeContext result = new LoadedRuntimeContext();
             result.pluginReflections = ReflectionRuntime.fromCodeScope(classPathElements, packageBase);
             result.exceptionHandler = ExceptionHandlers.forSetting(terminateOn);
-            try {
-                result.xmlUtility = XmlFactory.newXmlUtility();
-            } catch (ParserConfigurationException e) {
-                // Cannot proceed with the plugin flow if XML subsystem fails this early
-                throw new PluginException(XML_EXCEPTION_MESSAGE, e);
-            }
+            result.newXmlUtility();
             this.onComplete.accept(result);
         }
 

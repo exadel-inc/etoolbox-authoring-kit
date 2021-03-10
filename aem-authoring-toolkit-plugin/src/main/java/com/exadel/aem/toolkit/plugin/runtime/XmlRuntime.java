@@ -28,7 +28,6 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -55,7 +54,6 @@ import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 import com.exadel.aem.toolkit.plugin.util.StringUtil;
-import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
 /**
@@ -73,7 +71,7 @@ public class XmlRuntime implements XmlUtility {
        Instance members and constructors
        --------------------------------- */
 
-    private Document document;
+    private final Document document;
 
     /**
      * Default constructor
@@ -91,24 +89,6 @@ public class XmlRuntime implements XmlUtility {
         return document;
     }
 
-    /**
-     * Replaces and retrieves the current {@code Document}. If the document has been populated with data
-     * it is discarded in favor of another document instance; otherwise returned as is
-     * @return {@code Document} instance
-     */
-    public Document resetDocument() {
-        if (getDocument().getDocumentElement() == null) {
-            return getDocument();
-        }
-        Document newDocument;
-        try {
-            newDocument = XmlFactory.newDocument();
-            this.document = newDocument;
-        } catch (ParserConfigurationException e) {
-            PluginRuntime.context().getExceptionHandler().handle(e);
-        }
-        return getDocument();
-    }
 
     /* ----------------------------
        XmlUtility interface members
