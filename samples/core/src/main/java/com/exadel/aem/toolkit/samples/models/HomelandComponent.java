@@ -30,7 +30,6 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
-import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 
@@ -41,9 +40,7 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
     resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
     componentGroup = GroupConstants.COMPONENT_GROUP
 )
-@Dialog(
-    title = "Homeland"
-)
+@Dialog
 @EditConfig(
     dropTargets = {
         @DropTargetConfig(
@@ -54,7 +51,6 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
         )
     }
 )
-@DialogTitlePostfix
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class HomelandComponent {
 

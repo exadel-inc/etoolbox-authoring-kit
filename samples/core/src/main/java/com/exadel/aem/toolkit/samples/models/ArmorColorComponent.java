@@ -24,7 +24,6 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
-import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 import com.exadel.aem.toolkit.samples.models.fieldsets.ArmorColorFields;
@@ -36,10 +35,7 @@ import com.exadel.aem.toolkit.samples.models.fieldsets.ArmorColorFields;
     resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
     componentGroup = GroupConstants.COMPONENT_GROUP
 )
-@Dialog(
-    title = "Armor Color"
-)
-@DialogTitlePostfix
+@Dialog
 @HtmlTag(className = "component-wrap")
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ArmorColorComponent {

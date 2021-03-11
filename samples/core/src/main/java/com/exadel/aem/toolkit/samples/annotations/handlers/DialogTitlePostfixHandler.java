@@ -14,18 +14,17 @@
 
 package com.exadel.aem.toolkit.samples.annotations.handlers;
 
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 
-@Handles(DialogTitlePostfix.class)
+@Handles(Dialog.class)
 public class DialogTitlePostfixHandler implements DialogHandler {
 
     @Override
     public void accept(Class<?> cls, Target target) {
-        DialogTitlePostfix dialogTitlePostfix = cls.getDeclaredAnnotation(DialogTitlePostfix.class);
         String title = target.getAttribute("jcr:title");
-        target.attribute("jcr:title", title + dialogTitlePostfix.titlePrefix());
+        target.attribute("jcr:title", title.replace("Component", "Dialog"));
     }
 }

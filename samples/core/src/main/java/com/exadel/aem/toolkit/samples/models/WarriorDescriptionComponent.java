@@ -61,7 +61,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.ParagraphFormat;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Style;
-import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 import com.exadel.aem.toolkit.samples.utils.ListUtils;
@@ -74,26 +73,24 @@ import com.exadel.aem.toolkit.samples.utils.ListUtils;
     componentGroup = GroupConstants.COMPONENT_GROUP
 )
 @Dialog(
-    title = "Warrior Description",
     extraClientlibs = "authoring-toolkit.samples.authoring"
 )
-@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUITS, query = "@likesFruit")
+@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUIT, query = "@likesFruit")
 @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_MOVIES, query = "@likesMovies")
 @Tabs(
     value = {
         @Tab(title = WarriorDescriptionComponent.TAB_MAIN),
         @Tab(title = WarriorDescriptionComponent.TAB_TASTES),
-        @Tab(title = WarriorDescriptionComponent.TAB_FRUITS),
+        @Tab(title = WarriorDescriptionComponent.TAB_FRUIT),
         @Tab(title = WarriorDescriptionComponent.TAB_MOVIES)
     }
 )
-@DialogTitlePostfix
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WarriorDescriptionComponent {
 
     static final String TAB_MAIN = "Main info";
     static final String TAB_TASTES = "Tastes";
-    static final String TAB_FRUITS = "Fruits";
+    static final String TAB_FRUIT = "Fruit";
     static final String TAB_MOVIES = "Movies";
 
     private static final String LABEL_BIRTHDAY = "Birthday";
@@ -201,7 +198,7 @@ public class WarriorDescriptionComponent {
         forceSelection = true,
         datasource = @AutocompleteDatasource(namespaces = "fruit")
     )
-    @Place(WarriorDescriptionComponent.TAB_FRUITS)
+    @Place(WarriorDescriptionComponent.TAB_FRUIT)
     @ValueMapValue
     private String[] fruit;
 

@@ -37,7 +37,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 
@@ -49,10 +48,8 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
     componentGroup = GroupConstants.COMPONENT_GROUP
 )
 @Dialog(
-    title = "Abilities",
     extraClientlibs = "authoring-toolkit.samples.authoring"
 )
-@DialogTitlePostfix
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class AbilitiesComponent {
 

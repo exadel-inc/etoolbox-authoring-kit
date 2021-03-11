@@ -35,7 +35,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
-import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 
@@ -47,9 +46,7 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
     componentGroup = GroupConstants.COMPONENT_CONTAINER_GROUP,
     isContainer = true
 )
-@Dialog(
-    title = "Warrior"
-)
+@Dialog
 @EditConfig(
     inplaceEditing = {
         @InplaceEditingConfig(
@@ -76,7 +73,6 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
         @Tab(title = WarriorComponent.TAB_THEME)
     }
 )
-@DialogTitlePostfix
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WarriorComponent {
 

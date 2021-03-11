@@ -28,7 +28,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Password;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonType;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
-import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 
@@ -39,10 +38,7 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
     resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
     componentGroup = GroupConstants.COMPONENT_GROUP
 )
-@Dialog(
-    title = "Secret Info"
-)
-@DialogTitlePostfix
+@Dialog
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class SecretInfoComponent {
 

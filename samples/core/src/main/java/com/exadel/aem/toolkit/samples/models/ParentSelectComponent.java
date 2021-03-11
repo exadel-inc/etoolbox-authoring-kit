@@ -25,16 +25,12 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 
 @AemComponent(
     path = "content/parent-select-component",
     title = "Parent Select Component"
 )
-@Dialog(
-    title = "Parent Select"
-)
-@DialogTitlePostfix
+@Dialog
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ParentSelectComponent {
 

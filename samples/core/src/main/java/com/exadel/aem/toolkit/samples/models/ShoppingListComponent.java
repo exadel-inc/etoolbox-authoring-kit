@@ -29,7 +29,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
-import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 import com.exadel.aem.toolkit.samples.models.fieldsets.ProductsFieldSet;
@@ -44,10 +43,8 @@ import com.exadel.aem.toolkit.samples.utils.ListUtils;
     componentGroup = GroupConstants.COMPONENT_GROUP
 )
 @Dialog(
-    title = "Shopping List",
     extraClientlibs = "authoring-toolkit.samples.authoring"
 )
-@DialogTitlePostfix
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ShoppingListComponent {
 
@@ -74,8 +71,8 @@ public class ShoppingListComponent {
 
     @DialogField(label = LABEL_ANSWER)
     @TextField(emptyText = "Check all checkboxes to disable this text field")
-    @DependsOn(query = "AATSamples.getShoppingDefaultText(@@checkbox(coral-panel |> .weapon-fieldSet), @this)", action = DependsOnActions.SET)
-    @DependsOn(query = "@@checkbox(coral-panel |> .products-fieldSet).every(item => item)")
+    @DependsOn(query = "AATSamples.getShoppingDefaultText(@@checkbox(.coral-Form-fieldset |> .weapon-fieldSet), @this)", action = DependsOnActions.SET)
+    //@DependsOn(query = "@@checkbox(.coral-Form-fieldset |> .products-fieldSet).every(item => item)")
     @DependsOn(query = "@@checkbox.every(item => item)", action = DependsOnActions.DISABLED)
     @ValueMapValue
     private String answer;

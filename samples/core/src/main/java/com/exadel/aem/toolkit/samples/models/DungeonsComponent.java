@@ -37,23 +37,19 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.samples.annotations.DialogTitlePostfix;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 
 @AemComponent(
     path = "content/dungeons-component",
     title = "Dungeons Component",
     description = "Choose a dungeon for your warrior",
-    resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
+    //resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
     componentGroup = GroupConstants.COMPONENT_GROUP
 )
-@Dialog(
-    title = "Dungeons"
-)
+@Dialog
 @Accordion(value = @AccordionPanel(title = "Main"))
-@DialogTitlePostfix
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class DungeonsComponent extends ParentSelectComponent {
+public class DungeonsComponent {
 
     private static final String LABEL_DUNGEON_RULES = "Make your own dungeons rules";
     private static final String LABEL_DUNGEON_SELECT = "Dungeons select";
@@ -74,14 +70,6 @@ public class DungeonsComponent extends ParentSelectComponent {
     @ValueMapValue
     private String dungeonRules;
 
-    @DependsOn(query = "@dungeon === '1'")
-    @Hyperlink(href = "https://media.graphcms.com/BmLxDCt5SaSHWx4rt6xy", text = "Dungeon profile image", target = "_blank")
-    private String profileLink;
-
-    @DependsOn(query = "@dungeon === '2'")
-    @Hyperlink(href = "https://cg4.cgsociety.org/uploads/images/medium/penemenn-ice-valley-1-11885220-8day.jpg", text = "Dungeon profile image", target = "_blank")
-    private String profileLink2;
-
     @Accordion(
         value = @AccordionPanel(title = LABEL_DUNGEON_SELECT))
     @Place("Main")
@@ -101,6 +89,13 @@ public class DungeonsComponent extends ParentSelectComponent {
         @ValueMapValue
         String dungeonsSelect;
 
+        @DependsOn(query = "@dungeon === '1'")
+        @Hyperlink(href = "https://media.graphcms.com/BmLxDCt5SaSHWx4rt6xy", text = "Dungeon profile image", target = "_blank")
+        private String profileLink;
+
+        @DependsOn(query = "@dungeon === '2'")
+        @Hyperlink(href = "https://cg4.cgsociety.org/uploads/images/medium/penemenn-ice-valley-1-11885220-8day.jpg", text = "Dungeon profile image", target = "_blank")
+        private String profileLink2;
     }
 
     public String getDungeonRules() {
