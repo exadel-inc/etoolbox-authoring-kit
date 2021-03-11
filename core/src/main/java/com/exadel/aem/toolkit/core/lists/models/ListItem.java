@@ -30,11 +30,22 @@ import org.apache.sling.models.annotations.injectorspecific.Self;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.NameConstants;
 
+import com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants;
+import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Adapter class for a Sling resource representing a generic list item
  */
+@AemComponent(
+    path = "content/listItem",
+    title = "List Item",
+    componentGroup = "AEMBox Lists"
+)
+@EditConfig(
+    actions = {ActionConstants.INSERT, ActionConstants.COPYMOVE, ActionConstants.DELETE}
+)
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ListItem {
 
