@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.handlers.widget.common;
 
 import java.util.function.BiConsumer;
@@ -31,7 +30,7 @@ import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> {
 
     /**
-     * Processes the user-defined data and writes it to XML entity
+     * Processes the user-defined data and writes it to {@link Target}
      * @param source Current {@link Source} instance
      * @param target Current {@link Target} instance
      */
@@ -41,29 +40,78 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         if (dialogField == null) {
             return;
         }
-        String name = PluginNamingUtility.stripGetterPrefix(source.getName());
-        if (StringUtils.isNotBlank(dialogField.name())) {
-            name = !DialogConstants.PATH_SEPARATOR.equals(dialogField.name()) && !DialogConstants.RELATIVE_PATH_PREFIX.equals(dialogField.name())
-                ? PluginNamingUtility.getValidFieldName(dialogField.name())
-                : DialogConstants.RELATIVE_PATH_PREFIX;
-        }
-        String prefix = target.getNamePrefix();
+        String name = StringUtils.defaultIfEmpty(
+            getNameByDialogFieldProperty(dialogField),
+            PluginNamingUtility.stripGetterPrefix(source.getName()));
+        String slingSuffix = getSuffixByDialogFieldProperty(dialogField);
 
+        String prefix = target.getNamePrefix();
         // In case there are multiple sources in multifield container, their "name" values must not be preceded
         // with "./" which is by default
         // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
         // That is why we must alter the default name prefix for the ongoing set of sources
         Target multifieldAncestor = target.findParent(t -> ResourceTypes.MULTIFIELD.equals(t.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE)));
         if (multifieldAncestor == null || multifieldAncestor.equals(target.getParent())) {
-            prefix = DialogConstants.RELATIVE_PATH_PREFIX + prefix;
+            prefix = mergeWithPrefix(DialogConstants.RELATIVE_PATH_PREFIX, prefix);
         }
 
-        if (StringUtils.isNotBlank(prefix)
-                && !(prefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.equals(DialogConstants.RELATIVE_PATH_PREFIX))
-                && !(prefix.equals(DialogConstants.RELATIVE_PATH_PREFIX) && name.startsWith(DialogConstants.PARENT_PATH_PREFIX))) {
-            name = prefix + name;
-        }
-        name = name + target.getNamePostfix();
+        name = mergeWithPrefix(prefix, name)
+            + target.getNamePostfix()
+            + slingSuffix;
         target.attribute(DialogConstants.PN_NAME, name);
+    }
+
+    /**
+     * Retrieves the {@code name} value from the provided {@link DialogField} annotation. If the name contains a Sling
+     * suffix, on;y the part before suffix is returned
+     * @param dialogField {@code DialogField} instance
+     * @return String value
+     */
+    private static String getNameByDialogFieldProperty(DialogField dialogField) {
+        if (StringUtils.isBlank(dialogField.name())) {
+            return StringUtils.EMPTY;
+        }
+        if (DialogConstants.PATH_SEPARATOR.equals(dialogField.name())
+            || DialogConstants.RELATIVE_PATH_PREFIX.equals(dialogField.name())) {
+            return DialogConstants.RELATIVE_PATH_PREFIX;
+        }
+        if (dialogField.name().contains(DialogConstants.AT)) {
+            return PluginNamingUtility.getValidFieldName(StringUtils.substringBeforeLast(dialogField.name(), DialogConstants.AT));
+        }
+        return PluginNamingUtility.getValidFieldName(dialogField.name());
+    }
+
+    /**
+     * Retrieves the Sling suffix as stored in the {@code name} property of the provided {@link DialogField} annotation.
+     * @param dialogField {@code DialogField} instance
+     * @return String value (empty string is returned if no Sling suffix found)
+     */
+    private static String getSuffixByDialogFieldProperty(DialogField dialogField) {
+        if (!StringUtils.contains(dialogField.name(), DialogConstants.AT)) {
+            return StringUtils.EMPTY;
+        }
+        String result = PluginNamingUtility.getValidPlainName(StringUtils.substringAfterLast(dialogField.name(), DialogConstants.AT));
+        if (StringUtils.isNotEmpty(result)) {
+            return DialogConstants.AT + result;
+        }
+        return result;
+    }
+
+    /**
+     * Called by {@link DialogFieldAnnotationHandler#accept(Source, Target)} to merge parts of a field name avoiding
+     * prefix collisions
+     * @param left Left part of the merging, usually a field prefix
+     * @param right Right part of the merging, usually a field name
+     * @return String value
+     */
+    private static String mergeWithPrefix(String left, String right) {
+        if (StringUtils.isBlank(left)) {
+            return right;
+        }
+        if (DialogConstants.RELATIVE_PATH_PREFIX.equals(left) && DialogConstants.RELATIVE_PATH_PREFIX.equals(right)
+            || DialogConstants.RELATIVE_PATH_PREFIX.equals(left) && right.startsWith(DialogConstants.PARENT_PATH_PREFIX)) {
+            return right;
+        }
+        return left + right;
     }
 }
