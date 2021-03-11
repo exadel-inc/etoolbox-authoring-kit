@@ -3,4 +3,6 @@
     <filter root="/content/toolkit-samples" mode="merge"/>
     <filter root="/content/cq:tags/movies"/>
     <filter root="/content/cq:tags/fruit"/>
+    <filter root="/etc/tags/fruit"/>
+    <filter root="/etc/tags/movies"/>
 </workspaceFilter>
