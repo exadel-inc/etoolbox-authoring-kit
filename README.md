@@ -84,67 +84,26 @@ The authors heartily welcome the creative input from the AEM community worldwide
 
 ## Installation
 
-### Compiling project by hand
-Feel free to clone the project sources and run ```mvn clean install``` from the project's root folder. The plugin and the API artifacts will be installed in local .m2 repository. The compiled _aem-authoring-toolkit-assets_ package will be found under _/distrib_ folder of the project. You may then deploy it to your AEM authoring instance as usual.
-
 ### Using precompiled artifacts
-1) Insert dependency to the API module in the _\<dependencies>_ section of the POM file of your **bundle**:
+1) Insert dependency to the core module in the _\<dependencies>_ section of the POM file of your **bundle**:
 ```xml
 <dependency>
    <groupId>com.exadel.aem</groupId>
-   <artifactId>aem-authoring-toolkit-api</artifactId>
-   <version>1.0.1</version> <!-- prefer latest stable version whenever possible -->
+   <artifactId>aem-authoring-toolkit-core</artifactId>
+   <version>2.0.2</version> <!-- prefer latest stable version whenever possible -->
+    <scope>provided</scope> <!-- do not use compile or runtime scope!-->
 </dependency>
 ```
-2) Insert plugin's config in the _\<plugins>_ section of the POM file of your **package**:
-```xml
-
-<plugin>
-    <groupId>com.exadel.aem</groupId>
-    <artifactId>aem-authoring-toolkit-plugin</artifactId>
-    <version>1.1.0</version>
-    <executions>
-        <execution>
-            <goals>
-                <goal>aem-authoring</goal>
-            </goals>
-        </execution>
-    </executions>
-    <configuration>
-        <!-- MANDATORY: Place here the path to the node under which your component nodes are stored -->
-        <componentsPathBase>jcr_root/apps/projectName/components</componentsPathBase>
-        <!-- OPTIONAL: specify root package for component classes -->
-        <componentsReferenceBase>com.acme.project.samples</componentsReferenceBase>
-        <!-- OPTIONAL: specify list of exceptions, comma-separated, that would cause
-             this plugin to terminate the build process.
-             See section "terminateOn setting" below -->
-        <terminateOn>ALL</terminateOn>
-    </configuration>
-</plugin>
-```
-### Installing assets
-For some of the **Toolkit**'s features to work properly, namely the `DependsOn` set of instructions, you need to deploy the _aem-authoring-toolkit-assets-[version].zip_ package to your AEM author instance.
-
-If you compile the **Toolkit** from the source code, you'll find the zip file under _./aem-authoring-toolkit/aem-authoring-toolkit-assets/target_ directory.
-
-If you are using ready artifacts, the easiest way is to append the `DependsOn` package to one of your content packages. Since `DependsOn` is small in size, this will not hamper your deployment process.
-
-If you choose to import the source code and build the project by hand, run Maven with *install-assets* profile like `mvn clean install -Pinstall-assets`. You may need to change the following values in the *properties* part of the project's main _POM_ file:
-```
-<aem.host>10.0.0.1</aem.host> <!-- Your AEM instance address or hostname -->
-<aem.port>4502</aem.port> <!-- Your AEM instance port -->
-```
-
-Add the following dependency to your content package's _POM_ file.
+2) Insert dependency to the assets module in the _\<dependencies>_ section of the POM file of your **package**:
 ```xml
 <dependency>
     <groupId>com.exadel.aem</groupId>
     <artifactId>aem-authoring-toolkit-assets</artifactId>
-    <version>1.0.1</version>
+    <version>2.0.2</version>
     <type>content-package</type>
 </dependency>
 ```
- And then for instance specify the subpackage in your _Vault_ plugin (refer to your content plugin documentation for particulars).
+Then specify the subpackage in your _Vault_ plugin (refer to your content plugin documentation for particulars).
  ```xml
     <plugin>
         <groupId>com.day.jcr.vault</groupId>
@@ -163,6 +122,46 @@ Add the following dependency to your content package's _POM_ file.
         </configuration>
     </plugin>
 ```
+You can use other means to get the content package deployed to the AEM instance.
+
+3) Insert plugin's config in the _\<plugins>_ section of the POM file of your **package**:
+```xml
+
+<plugin>
+    <groupId>com.exadel.aem</groupId>
+    <artifactId>aem-authoring-toolkit-plugin</artifactId>
+    <version>2.0.2</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>aem-authoring</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <!-- MANDATORY: Place here the path to the node under which your components nodes are stored -->
+        <componentsPathBase>jcr_root/apps/projectName/components</componentsPathBase>
+        <!-- OPTIONAL: specify root package for component classes -->
+        <componentsReferenceBase>com.acme.project.samples</componentsReferenceBase>
+        <!-- OPTIONAL: specify list of exceptions, comma-separated, that would cause
+             this plugin to terminate the build process.
+             See section "terminateOn setting" below -->
+        <terminateOn>ALL</terminateOn>
+    </configuration>
+</plugin>
+```
+### Compiling project by hand
+Feel free to clone the project sources and run ```mvn clean install``` from the project's root folder. If you need to deploy the compiled binaries to the instance as well run Maven build with `-Pinstall-assets`.
+
+You may need to change the following values in the *properties* part of the project's main _POM_ file:
+```
+<aem.host>10.0.0.1</aem.host> <!-- Your AEM instance address or hostname -->
+<aem.port>4502</aem.port> <!-- Your AEM instance port -->
+```
+### Important installation notes
+1) Add the aem-authoring-toolkit plugin after the rest of plugins in your **package**.
+2) For the plugin to work properly, make sure that the _\<dependencies>_ section of your **package** POM file contains all the dependencies that can be required by the components in the corresponding **bundle**. E.g. if the plugin is expected to build the component markup for a Java class that refers to the ACS Commons bundle, the dependency to the ACS Commons must be present in that **package** as well as in that **bundle**, however not directly needed by the **package** itself.
+3) Also make sure that the dependency section of your **package** POM file includes a dependency to the corresponding **bundle** itself.
 
 ## Usage: API
 
@@ -1252,7 +1251,7 @@ Pay attention to the third and forth `@CommonProperty`-s. Specifying the *path* 
 Note that XPath parser is namespace-agnostic. That is why you need to use */root/inplaceEditing...* instead of */jcr:root/cq:inplaceEditing...* in the sample above.
 
 #### Debugging custom logic
-You can debug your custom logic while building your app. In order to do it run your build in debug mode e.g.:
+You can debug the aem-authoring-toolkit's plugin while building your app. In order to do it run your build in debug mode e.g.:
 ```
 mvnDebug clean install -PautoInstallPackage
 ```
