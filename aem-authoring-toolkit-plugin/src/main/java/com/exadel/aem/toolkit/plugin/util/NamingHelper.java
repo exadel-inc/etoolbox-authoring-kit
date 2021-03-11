@@ -47,7 +47,7 @@ class NamingHelper {
     private Pattern clearingPattern;
 
     /**
-     * {@code XmlNamingHelper} constructor. Stores reference to {@link PluginXmlUtility} object
+     * Default (hiding) constructor
      */
     private NamingHelper() {
     }
@@ -165,7 +165,7 @@ class NamingHelper {
 
     /**
      * Creates and initializes an instance of {@link NamingHelper} to deal with regular field names and name prefixes
-     * @return {@code XmlNamingHelper} object
+     * @return {@code NamingHelper} object
      */
     static NamingHelper forFieldName() {
         NamingHelper helper = new NamingHelper();
@@ -188,7 +188,7 @@ class NamingHelper {
 
     /**
      * Creates and initializes an instance of {@link NamingHelper} to deal with field name postfix parts
-     * @return {@code XmlNamingHelper} object
+     * @return {@code NamingHelper} object
      */
     static NamingHelper forFieldNamePostfix() {
         NamingHelper helper = new NamingHelper();
@@ -199,7 +199,7 @@ class NamingHelper {
     /**
      * Creates and initializes an instance of {@link NamingHelper} to deal with fully qualified (namespaced) node
      * names and attribute names
-     * @return {@code XmlNamingHelper} object
+     * @return {@code NamingHelper} object
      */
     static NamingHelper forNodeName() {
         NamingHelper helper = new NamingHelper();

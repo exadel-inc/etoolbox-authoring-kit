@@ -15,6 +15,9 @@ package com.exadel.aem.toolkit.plugin.handlers.widget;
 
 import java.util.function.BiConsumer;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -34,11 +37,15 @@ class PasswordHandler implements BiConsumer<Source, Target> {
     @Override
     public void accept(Source source, Target target) {
         Password password = source.adaptTo(Password.class);
-        if(!password.retype().isEmpty()) {
-            target.attribute(DialogConstants.PN_RETYPE,
-                    DialogConstants.RELATIVE_PATH_PREFIX + target.getNamePrefix() +
-                            PluginNamingUtility.getValidFieldName(password.retype()) +
-                            target.getNamePostfix());
+        if(source.adaptTo(DialogField.class) == null || password.retype().isEmpty()) {
+            return;
         }
+        // "Retype name" is expected to preserve same structure (prefix. postfix) as the original name
+        // Therefore we just replace the "middle" part in the original field name with the "retype-name" value
+        String targetNameAttribute = target.getAttribute(DialogConstants.PN_NAME);
+        String targetNamePart = PluginNamingUtility.getValidFieldName(StringUtils.defaultIfEmpty(source.adaptTo(DialogField.class).name(), source.getName()));
+        String retypeNamePart = PluginNamingUtility.getValidFieldName(password.retype());
+        String retypeName = targetNameAttribute.replace(targetNamePart, retypeNamePart);
+        target.attribute(DialogConstants.PN_RETYPE, retypeName);
     }
 }
