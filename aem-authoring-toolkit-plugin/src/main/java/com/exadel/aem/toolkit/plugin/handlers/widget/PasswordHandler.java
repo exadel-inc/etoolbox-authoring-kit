@@ -45,7 +45,11 @@ class PasswordHandler implements BiConsumer<Source, Target> {
         String targetNameAttribute = target.getAttribute(DialogConstants.PN_NAME);
         String targetNamePart = PluginNamingUtility.getValidFieldName(StringUtils.defaultIfEmpty(source.adaptTo(DialogField.class).name(), source.getName()));
         String retypeNamePart = PluginNamingUtility.getValidFieldName(password.retype());
-        String retypeName = targetNameAttribute.replace(targetNamePart, retypeNamePart);
+        // We deliberately use "targetName + postfix" ligament to minimize probability of "targetName" occurring
+        // in the complete field name more than once
+        String retypeName = targetNameAttribute.replace(
+            targetNamePart + target.getNamePostfix(),
+            retypeNamePart + target.getNamePostfix());
         target.attribute(DialogConstants.PN_RETYPE, retypeName);
     }
 }

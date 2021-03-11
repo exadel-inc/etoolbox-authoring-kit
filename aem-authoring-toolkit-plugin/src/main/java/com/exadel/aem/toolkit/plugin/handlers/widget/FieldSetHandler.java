@@ -23,7 +23,6 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
 
 /**
  * Handler used to prepare data for {@link FieldSet} widget rendering
@@ -53,10 +52,10 @@ class FieldSetHandler extends WidgetContainerHandler {
         }
 
         if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
-            target.namePrefix(PluginNamingUtility.getValidFieldPrefix(fieldSet.namePrefix()));
+            target.namePrefix(fieldSet.namePrefix());
         }
         if (StringUtils.isNotBlank(fieldSet.namePostfix())) {
-            target.namePostfix(PluginNamingUtility.getValidFieldPostfix(fieldSet.namePostfix()));
+            target.namePostfix(fieldSet.namePostfix());
         }
         populateContainer(fieldSetEntries, target);
     }
