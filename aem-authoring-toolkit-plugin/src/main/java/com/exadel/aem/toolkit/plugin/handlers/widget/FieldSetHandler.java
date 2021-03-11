@@ -53,7 +53,7 @@ class FieldSetHandler extends WidgetContainerHandler {
         }
 
         if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
-            target.namePrefix(PluginNamingUtility.getValidFieldName(fieldSet.namePrefix()));
+            target.namePrefix(PluginNamingUtility.getValidFieldPrefix(fieldSet.namePrefix()));
         }
         if (StringUtils.isNotBlank(fieldSet.namePostfix())) {
             target.namePostfix(PluginNamingUtility.getValidFieldPostfix(fieldSet.namePostfix()));
