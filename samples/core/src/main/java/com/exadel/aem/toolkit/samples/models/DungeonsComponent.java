@@ -43,7 +43,6 @@ import com.exadel.aem.toolkit.samples.constants.GroupConstants;
     path = "content/dungeons-component",
     title = "Dungeons Component",
     description = "Choose a dungeon for your warrior",
-    //resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
     componentGroup = GroupConstants.COMPONENT_GROUP
 )
 @Dialog
