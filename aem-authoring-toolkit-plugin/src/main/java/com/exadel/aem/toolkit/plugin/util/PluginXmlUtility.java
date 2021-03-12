@@ -351,7 +351,6 @@ public class PluginXmlUtility implements XmlUtility {
      * @param element Element node
      * @param annotation Annotation to look for a value in
      */
-    // PropertyName processing remains for compatibility reasons until v.2.0.0
     private static void populateProperty(Method method, Element element, Annotation annotation) {
         String name = method.getName();
         boolean ignorePrefix = false;

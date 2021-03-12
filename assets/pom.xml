@@ -44,15 +44,33 @@
                     </properties>
                     <filters>
                         <filter>
-                            <root>/etc/packages/authoring-toolkit/aem-authoring-toolkit-ui.apps-${project.version}.zip</root>
-                            <mode>replace</mode>
-                        </filter>
-                        <filter>
-                            <root>/etc/packages/authoring-toolkit/aem-authoring-toolkit-ui.content-${project.version}.zip</root>
-                            <mode>replace</mode>
+                            <root>/etc/packages/authoring-toolkit</root>
+                            <excludes>
+                                <exclude>/etc/packages/authoring-toolkit/aem-authoring-toolkit-assets-${project.version}.zip</exclude>
+                            </excludes>
                         </filter>
                     </filters>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>clean-install-folder</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>${basedir}/src/main/content/jcr_root/etc/packages/authoring-toolkit</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -70,13 +88,13 @@
                                 <resource>
                                     <directory>${project.parent.basedir}/ui.apps/target</directory>
                                     <includes>
-                                        <include>*.zip</include>
+                                        <include>aem-authoring-toolkit-ui.apps-${project.version}.zip</include>
                                     </includes>
                                 </resource>
                                 <resource>
                                     <directory>${project.parent.basedir}/ui.content/target</directory>
                                     <includes>
-                                        <include>*.zip</include>
+                                        <include>aem-authoring-toolkit-ui.content-${project.version}.zip</include>
                                     </includes>
                                 </resource>
                             </resources>

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.util;
 
 import java.util.regex.Matcher;
@@ -37,16 +36,18 @@ class NamingHelper {
     private static final Pattern INVALID_FIELD_NAME_PATTERN = Pattern.compile("^\\W+|[^\\w-/]$|[^\\w-/:]+");
     private static final Pattern INVALID_FIELD_NAME_POSTFIX_PATTERN = Pattern.compile("^[^\\w-/]+|[^\\w-/]$|[^\\w-/:]+");
     private static final Pattern INVALID_NODE_NAME_NS_PATTERN = Pattern.compile("^\\W*:|\\W+:$|[^\\w:]+");
+    private static final Pattern INVALID_PLAIN_NAME_PATTERN = Pattern.compile("\\W+");
 
     private static final Pattern PARENT_PATH_PREFIX_PATTERN = Pattern.compile("^(?:\\.\\./)+");
 
     private boolean lowercaseFirst;
     private boolean preserveParentPath;
-    private boolean checkNamespace;
+    private boolean allowSoloParentPath;
+    private boolean removeInvalidNamespace;
     private Pattern clearingPattern;
 
     /**
-     * {@code XmlNamingHelper} constructor. Stores reference to {@link PluginXmlUtility} object
+     * Default (hiding) constructor
      */
     private NamingHelper() {
     }
@@ -89,11 +90,13 @@ class NamingHelper {
             result = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, result);
         }
 
-        if (result.isEmpty() || !Character.isAlphabetic(result.codePointAt(0))) {
+        boolean needsDefaultValue = result.isEmpty() || !Character.isAlphabetic(result.codePointAt(0));
+        boolean canDoWithoutDefaultValue = allowSoloParentPath && !parentPathPrefix.isEmpty();
+        if (needsDefaultValue && !canDoWithoutDefaultValue) {
             result = StringUtils.defaultString(defaultValue) +  result;
         }
 
-        if (checkNamespace) {
+        if (removeInvalidNamespace) {
             result = removeInvalidNamespaces(result);
         }
 
@@ -162,40 +165,58 @@ class NamingHelper {
 
     /**
      * Creates and initializes an instance of {@link NamingHelper} to deal with regular field names and name prefixes
-     * @return {@code XmlNamingHelper} object
+     * @return {@code NamingHelper} object
      */
     static NamingHelper forFieldName() {
         NamingHelper helper = new NamingHelper();
-        helper.lowercaseFirst = false;
         helper.preserveParentPath = true;
         helper.clearingPattern = INVALID_FIELD_NAME_PATTERN;
-        helper.checkNamespace = false;
         return helper;
     }
 
     /**
      * Creates and initializes an instance of {@link NamingHelper} to deal with field name postfix parts
-     * @return {@code XmlNamingHelper} object
+     * @return {@code NamingHelper} object
+     */
+    static NamingHelper forFieldNamePrefix() {
+        NamingHelper helper = new NamingHelper();
+        helper.preserveParentPath = true;
+        helper.allowSoloParentPath = true;
+        helper.clearingPattern = INVALID_FIELD_NAME_PATTERN;
+        return helper;
+    }
+
+    /**
+     * Creates and initializes an instance of {@link NamingHelper} to deal with field name postfix parts
+     * @return {@code NamingHelper} object
      */
     static NamingHelper forFieldNamePostfix() {
         NamingHelper helper = new NamingHelper();
-        helper.lowercaseFirst = false;
-        helper.preserveParentPath = false;
         helper.clearingPattern = INVALID_FIELD_NAME_POSTFIX_PATTERN;
-        helper.checkNamespace = false;
         return helper;
     }
 
     /**
      * Creates and initializes an instance of {@link NamingHelper} to deal with fully qualified (namespaced) node
      * names and attribute names
-     * @return {@code XmlNamingHelper} object
+     * @return {@code NamingHelper} object
      */
     static NamingHelper forNodeName() {
         NamingHelper helper = new NamingHelper();
         helper.lowercaseFirst = true;
         helper.clearingPattern = INVALID_NODE_NAME_NS_PATTERN;
-        helper.checkNamespace = true;
+        helper.removeInvalidNamespace = true;
+        return helper;
+    }
+
+    /**
+     * Creates and initializes an instance of {@link NamingHelper} to deal with plan names that contain only alphanumeric
+     * characters
+     * @return {@code NamingHelper} object
+     */
+    static NamingHelper forPlainName() {
+        NamingHelper helper = new NamingHelper();
+        helper.clearingPattern = INVALID_PLAIN_NAME_PATTERN;
         return helper;
     }
 }

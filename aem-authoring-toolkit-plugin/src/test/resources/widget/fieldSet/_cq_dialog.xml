@@ -28,26 +28,33 @@
                             <textField
                                 jcr:primaryType="nt:unstructured"
                                 sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./textField21"
                                 disabled="{Boolean}false"
                                 fieldDescription="Field 1 description"
                                 fieldLabel="Field 1 Label"
-                                name="./textField"
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}false"/>
                             <checkboxField
                                 jcr:primaryType="nt:unstructured"
                                 sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
+                                name="./checkboxField21"
                                 autosubmit="{Boolean}false"
                                 checked="{Boolean}false"
                                 disabled="{Boolean}false"
                                 fieldDescription="Field 2 description"
                                 fieldLabel="Field 2 Label"
-                                name="./checkboxField"
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}false"
                                 text="Field 2 Label"
                                 uncheckedValue="{Boolean}false"
                                 value="{Boolean}true"/>
+                            <textFieldEraser
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                name="./textField21@Delete"
+                                disabled="{Boolean}false"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"/>
                         </items>
                     </fieldSet1>
                     <fieldSet2
@@ -63,33 +70,40 @@
                             <textField
                                 jcr:primaryType="nt:unstructured"
                                 sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./second_textField"
                                 disabled="{Boolean}false"
                                 fieldDescription="Field 1 description"
                                 fieldLabel="Field 1 Label"
-                                name="./second_textField"
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}false"/>
                             <checkboxField
                                 jcr:primaryType="nt:unstructured"
                                 sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
+                                name="./second_checkboxField"
                                 autosubmit="{Boolean}false"
                                 checked="{Boolean}false"
                                 disabled="{Boolean}false"
                                 fieldDescription="Field 2 description"
                                 fieldLabel="Field 2 Label"
-                                name="./second_checkboxField"
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}false"
                                 text="Field 2 Label"
                                 uncheckedValue="{Boolean}false"
                                 value="{Boolean}true"/>
+                            <textFieldEraser
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                name="./second_textField@Delete"
+                                disabled="{Boolean}false"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"/>
                             <extraField
                                 jcr:primaryType="nt:unstructured"
                                 sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./second_extraField"
                                 disabled="{Boolean}false"
                                 fieldDescription="Field 3 description"
                                 fieldLabel="Field 3 Label"
-                                name="./second_extraField"
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}false"/>
                         </items>

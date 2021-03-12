@@ -290,7 +290,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     @Override
     public Target namePrefix(String prefix) {
-        this.prefix = prefix;
+        this.prefix = PluginNamingUtility.getValidFieldPrefix(prefix);
         return this;
     }
 
@@ -309,7 +309,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     @Override
     public Target namePostfix(String postfix) {
-        this.postfix = postfix;
+        this.postfix = PluginNamingUtility.getValidFieldPostfix(postfix);
         return this;
     }
 

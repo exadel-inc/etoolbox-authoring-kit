@@ -14,14 +14,17 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
 
-@Dialog(
-        name = "test-component",
+@AemComponent(
+        path = "test-component",
         title = "test-component-dialog"
 )
+@Dialog
 @SuppressWarnings("unused")
 public class PasswordWidget {
 
@@ -33,4 +36,17 @@ public class PasswordWidget {
             retype = "retype-password"
     )
     String password;
+
+    @FieldSet(
+        value = NestedPassword.class,
+        namePrefix = "../../",
+        namePostfix = "21"
+    )
+    private String nestedPassword;
+
+    private static class NestedPassword {
+        @DialogField
+        @Password(retype = "retype-password")
+        String password;
+    }
 }
