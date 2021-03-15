@@ -35,6 +35,7 @@ import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.scripting.SlingScriptHelper;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import com.day.cq.commons.jcr.JcrConstants;
@@ -111,7 +112,7 @@ public class ListsServlet extends SlingSafeMethodsServlet {
      */
     private List<Resource> getValidChildren(ResourceResolver resolver, Resource parent) {
         return getChildrenStream(parent)
-            .filter(resource -> !isServiceNode(resource) && (isList(resolver, resource) || isFolder(resource)))
+            .filter(resource -> !isServiceNode(resource) && (isFolder(resource) || containsResource(resource) || isList(resolver, resource)))
             .collect(Collectors.toList());
     }
 
@@ -132,15 +133,28 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Checks whether the resource contains resources, which are either pages, or folders that may contain lists inside
+     * Checks whether the resource is a folder
      *
      * @param resource {@code Resource} instance used as the source of markup
      * @return True or false
      */
     private static boolean isFolder(Resource resource) {
+        String primaryType = resource.getValueMap().get(JcrConstants.JCR_PRIMARYTYPE, String.class);
+        return primaryType != null && (primaryType.equals(JcrConstants.NT_FOLDER) ||
+            primaryType.equals(JcrResourceConstants.NT_SLING_FOLDER) ||
+            primaryType.equals(JcrResourceConstants.NT_SLING_ORDERED_FOLDER));
+    }
+
+    /**
+     * Checks whether the resource contains resources, which are either pages, or folders that may contain lists inside
+     *
+     * @param resource {@code Resource} instance used as the source of markup
+     * @return True or false
+     */
+    private static boolean containsResource(Resource resource) {
         return getChildrenStream(resource).anyMatch(item -> {
-            String primaryType = item.getValueMap().get(JcrConstants.JCR_PRIMARYTYPE, String.class);
-            return primaryType != null && (primaryType.equals(NameConstants.NT_PAGE) || primaryType.equals(JcrConstants.NT_FOLDER));
+            String childPrimaryType = item.getValueMap().get(JcrConstants.JCR_PRIMARYTYPE, String.class);
+            return childPrimaryType != null && (childPrimaryType.equals(NameConstants.NT_PAGE) || childPrimaryType.equals(JcrConstants.NT_FOLDER));
         });
     }
 
