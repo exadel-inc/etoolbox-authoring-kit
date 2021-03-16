@@ -36,17 +36,17 @@ The other way of laying out tabs is to define array of `@Tab` within `@Dialog` a
 public class TestTabs {
     @DialogField(label = "Field on the first tab")
     @TextField
-    @PlaceOn("First tab")
+    @Place("First tab")
     String field1;
 
     @DialogField(label = "Field on the second tab")
     @TextField
-    @PlaceOn("Second tab")
+    @Place("Second tab")
     String field2;
 
     @DialogField(description = "Field on the third tab")
     @TextField
-    @PlaceOn("Third tab")
+    @Place("Third tab")
     String field3;
 }
 ```

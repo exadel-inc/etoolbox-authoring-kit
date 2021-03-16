@@ -45,12 +45,7 @@ public class MyComponentDialog { /* ... */ }
 @DesignDialog(
     title = "My AEM Component",
     width = 800,
-    height = 600,
-    layout = DialogLayout.TABS,
-    tabs = {
-        @Tab(title = LABEL_TAB_1),
-        @Tab(title = LABEL_TAB_2)
-    }
+    height = 600
 )
 public class DesignDialogView{ /* ... */ }
 ```

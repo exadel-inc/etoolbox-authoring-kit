@@ -1,3 +1,4 @@
+[Main page](../../README.md)
 ##Laying out your components with Accordion
 ### @Accordion
 
