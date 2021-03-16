@@ -14,7 +14,7 @@ The DependsOn workflow consists of the following steps:
 
 **ObservedReference**  ─┐
 
-**ObservedReference**  ─── **QueryObserver[Query]**  ─── **Action**
+**ObservedReference**  ─── **QueryObserver[Query]***  ─── **Action***
 
 **ObservedReference**  ─┘
 
@@ -45,7 +45,7 @@ For referenced fields:
 
 * `data-dependsonref` - to mark a field that is referenced in the Query.
 * `data-dependsonreftype` - (optional) to define the expected type of reference value.
-* `data-dependsonreflazy` - (marker) an attribute to mark a reference as lazy. In this case, DependsOn will not observe rapid events like input.
+* `data-dependsonreflazy` - (marker) an attribute to mark a reference as lazy. In this case, DependsOn will not observe rapid events like `input`.
 
 #### Using DependsOn
 
@@ -109,7 +109,7 @@ In any other case (e.g. if the type is `any`), no cast will be performed.
 ##### ElementsAccessor Registry
 
 Registry `Granite.DependsOnPlugin.ElementAccessors` - can be used to define the custom accessors of an element.
-The accessor provides information on how to get/set values and set a require/visibility/disabled state, or returns `preferableType` for the specific type of component.
+The accessor provides information on how to get/set values, set a require/visibility/disabled state, or returns `preferableType` for the specific type of component.
 
 For example, a default accessor descriptor is defined as follows:
 ```javascript
@@ -202,7 +202,7 @@ There are two versions of references available in the Queries:
  - 'Multiple' reference: `@@reference`. Starts from double `@` symbols. Allows you to access a group of field values marked by the same reference name.
  'Multiple' reference always returns an array in the Query.
 
-Note: 'multiple' reference triggers query update on any group update: changing some of group’s fields value or adding/removing a referenced field.
+Note: 'multiple' reference triggers Query update on any group update: changing some of group’s fields value or adding/removing a referenced field.
 So usage of a 'multiple' reference can slow down Queries’ performance.
 
 Reference cannot be named 'this', because 'this' is reserved to refer to the value of the current element.
