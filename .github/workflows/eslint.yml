@@ -9,7 +9,7 @@ on:
 
 env:
     node-version: 12.x
-    es-sources: ./ui.apps
+    es-sources: ui.apps
 
 jobs:
     eslint:
@@ -23,7 +23,7 @@ jobs:
                     node-version: ${{ env.node-version }}
             -   name: Install NPM Dependencies
                 run: npm ci
-                working-directory: ${{ env.es-source }}
+                working-directory: ui.apps
             -   name: Run Linting & Tests
                 run: npm run lint
-                working-directory: ${{ env.es-source }}
+                working-directory: ui.apps
