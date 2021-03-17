@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Position;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
@@ -80,7 +81,7 @@ public class DesignDialogView implements Addition, Addition2 {
     String field3;
 
     @DialogField(description = "This is the second second field")
-    @Checkbox(text = "Checkbox 2")
+    @Checkbox(text = "Checkbox 2", tooltipPosition = Position.RIGHT)
     @Place(LABEL_TAB_1)
     String field4;
 
