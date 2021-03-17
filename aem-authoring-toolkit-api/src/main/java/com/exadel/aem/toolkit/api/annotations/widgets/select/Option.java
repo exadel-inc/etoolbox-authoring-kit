@@ -18,9 +18,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 
 /**
  * Used to define an option within {@link Select#options()} set
@@ -30,52 +30,65 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConsta
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Option {
+
     /**
      * Maps to the 'text' attribute of this TouchUI dialog component's node.
      * Used to define optional text displayed beside the option box
+     *
      * @return String value
      */
     String text();
+
     /**
      * Maps to the 'value' attribute of this TouchUI dialog component's node.
      * Used to define value to be stored when this option is checked
+     *
      * @return String value
      */
     @PropertyRendering(allowBlank = true)
     String value();
+
     /**
-     * When set to a non-blank string value, maps to the 'icon' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string value, maps to the 'icon' attribute of this TouchUI dialog component's node
+     *
      * @return String value
      */
     String icon() default "";
+
     /**
-     * When set to a non-blank string value, maps to the 'statusIcon' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string value, maps to the 'statusIcon' attribute of this TouchUI dialog component's node
      * @return String value
      */
     String statusIcon() default "";
+
     /**
      * When set to a non-blank string value, maps to the 'statusText' attribute of this TouchUI dialog component's node.
      * @return String value
      */
     String statusText() default "";
+
     /**
-     * When set to a non-blank string value, maps to the 'statusVariant' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string value, maps to the 'statusVariant' attribute of this TouchUI dialog component's node
      * @return String value
-     * @see StatusVariantConstants
+     * @see StatusVariant
      */
-    String statusVariant() default "";
+    @PropertyRendering(ignoreValues = "info")
+    StatusVariant statusVariant() default StatusVariant.INFO;
+
     /**
      * When set to true, maps to the 'selected' attribute of this TouchUI dialog component's node.
-     * Defines the the current option is selected by default
+     * Defines that the current option is selected by default
+     *
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")
     boolean selected() default false;
+
     /**
      * When set to true, maps to the 'disabled' attribute of this TouchUI dialog component's node.
-     * Defines the the current option is shown in disabled state
+     * Defines that the current option is shown in disabled state
+     *
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

@@ -15,16 +15,14 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "TagField Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "TagField Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class TagFieldWidget {
@@ -33,6 +31,13 @@ public class TagFieldWidget {
     String tag1;
 
     @DialogField
-    @TagField(multiple = true, forceSelection = true, autocreateTag = false, emptyText = "empty text")
+    @TagField(
+        rootPath = "/content",
+        multiple = true,
+        forceSelection = true,
+        autocreateTag = false,
+        emptyText = "empty text",
+        deleteHint = false
+    )
     String tag2;
 }

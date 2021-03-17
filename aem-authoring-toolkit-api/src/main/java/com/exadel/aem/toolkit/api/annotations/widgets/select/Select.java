@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
@@ -26,6 +25,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 
 /**
  * Used to set up
@@ -36,7 +36,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.SELECT)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Select {
 
     /**
@@ -45,6 +44,13 @@ public @interface Select {
      */
     @IgnorePropertyMapping
     Option[] options() default {};
+
+    /**
+     * Used to specify the source for options handled by the AEM Authoring Toolkit's OptionProvider mechanism
+     * @return {@link OptionProvider} instance, or an empty {@code }OptionProvider} if not needed
+     */
+    @IgnorePropertyMapping
+    OptionProvider optionProvider() default @OptionProvider;
 
     /**
      * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
@@ -94,8 +100,10 @@ public @interface Select {
      * @see SelectVariant
      * @return One of {@code SelectVariant} values
      */
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
-    @PropertyRendering(ignoreValues = "default")
+    @PropertyRendering(
+        ignoreValues = "default",
+        transform = StringTransformation.LOWERCASE
+    )
     SelectVariant variant() default SelectVariant.DEFAULT;
 
     /**
@@ -113,39 +121,4 @@ public @interface Select {
      */
     @PropertyRendering(ignoreValues = "false")
     boolean forceIgnoreFreshness() default false;
-
-    /**
-     * @deprecated Use {@code datasource:resourceType} instead
-     * When set to a non-blank string, allows to override {@code sling:resourceType} attribute of a {@code datasource node}
-     * pointing to a ACS Commons list
-     * @return String value
-     */
-    @Deprecated
-    @IgnorePropertyMapping
-    @SuppressWarnings("squid:S1133")
-    String acsListResourceType() default "";
-
-    /**
-     * @deprecated Use {@code datasource:path} instead
-     * When set to a non-blank string, a {@code datasource} node is appended to the JCR buildup of this component
-     * pointing to a ACS Commons list
-     * @return Valid JCR path, or an empty string
-     */
-    @Deprecated
-    @IgnorePropertyMapping
-    @SuppressWarnings("squid:S1133")
-    String acsListPath() default "";
-
-    /**
-     * When this option is to true, and also {@link Select#acsListPath()} is specified, renders the {@code addNone} attribute
-     * to the {@code datasource} node of this TouchUI dialog component's node so that "none" option is added to the
-     * list of selectable options.
-     * This option has no effect unless valid {@code acsListPath} is set.
-     * @return True or false
-     * @deprecated This will be removed starting from version 2.0.0
-     */
-    @IgnorePropertyMapping
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    boolean addNoneOption() default false;
 }

@@ -1,6 +1,19 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
- * @version 2.2.4
  *
  * DependsOn plugin utils
  * */
@@ -16,13 +29,13 @@
     };
 
     /**
-     * Split string by {@param separator} and trim
+     * Split string
      * @param {string} value
-     * @param {string} [separator] (default ';')
      * @returns {string[]}
      * */
-    ns.splitAndTrim = function splitAndTrim(value, separator = ';') {
-        return value.split(separator).map((term) => term.trim());
+    ns.splitAndTrim = function splitAndTrim(value) {
+        const parts = value.replace(/\\;/g, '#~#').split(';');
+        return parts.map((term) => term.replace(/#~#/g, ';').trim());
     };
 
     /**
@@ -69,25 +82,21 @@
     };
 
     /**
-     * Find element by provided selector. Use back-forward search:
-     * First part of selector will be used to find closest element
-     * If the second part after '|>' provided will search back element by second part of selector inside of closest parent
-     * founded on the previous state.
-     * If 'this' passed as a sel $root will be returned
-     * If sel is not provided then result will be $(document).
+     * Find 'scope' element by provided selector. Use back-forward search:
+     * First part of the selector will be used to find the closest element (base)
+     * If the second part after '|>' is provided,
+     * function will search element by the second part of the selector inside the base element.
+     * If 'this' is passed as the first part of the selector, $root will be returned.
+     * If the selector is not provided then the result will be $(document).
      *
      * @param {JQuery} $root
-     * @param {string} sel
+     * @param {string} selector
      * */
-    ns.findBaseElement = function ($root, sel) {
-        if (!sel) return $(document.body);
-        if (sel.trim() === 'this') return $root;
-        const selParts = sel.split('|>');
-        if (selParts.length > 1) {
-            return $root.closest(selParts[0].trim()).find(selParts[1].trim());
-        } else {
-            return $root.closest(sel.trim());
-        }
+    ns.findScope = function ($root, selector) {
+        if (!(selector || '').trim()) return $(document.body);
+        const [parent, child] = selector.split('|>').map((term) => term.trim());
+        const $base = (parent === 'this') ? $root : $root.parent().closest(parent);
+        return child ? $base.find(child) : $base;
     };
 
     /**

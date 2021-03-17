@@ -14,18 +14,16 @@
 
 package com.exadel.aem.toolkit.test.common;
 
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 @Dialog(
         name = "test-component",
-        title = "test-component-dialog",
-        layout = DialogLayout.FIXED_COLUMNS)
+        title = "test-component-dialog")
 @EditConfig(
         inplaceEditing = @InplaceEditingConfig(
                 type = EditorType.TEXT,

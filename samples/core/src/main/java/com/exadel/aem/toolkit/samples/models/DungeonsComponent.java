@@ -23,13 +23,13 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
-import com.exadel.aem.toolkit.api.annotations.container.AccordionPanel;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOn;
+import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.AccordionWidget;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
-import com.exadel.aem.toolkit.api.annotations.widgets.hyperlink.Hyperlink;
+import com.exadel.aem.toolkit.api.annotations.widgets.Hyperlink;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
@@ -43,11 +43,9 @@ import com.exadel.aem.toolkit.samples.constants.GroupConstants;
     title = "Dungeons Component",
     description = "Choose a dungeon for your warrior",
     resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
-    componentGroup = GroupConstants.COMPONENT_GROUP,
-    panels = {
-        @AccordionPanel(title = "Main")
-    }
+    componentGroup = GroupConstants.COMPONENT_GROUP
 )
+@Accordion(value = @AccordionPanel(title = "Main"))
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class DungeonsComponent extends ParentSelectComponent {
 
@@ -58,6 +56,7 @@ public class DungeonsComponent extends ParentSelectComponent {
     private static final String DEFAULT_ICE_VALLEY_TEXT = "ice valley, where you can lose your arm from strong frost,";
     private static final String DEFAULT_RULES = "no rules!";
 
+    @ValueMapValue
     @DialogField(label = LABEL_DUNGEON_RULES)
     @Extends(value = WarriorDescriptionComponent.class, field = "description")
     @RichTextEditor(
@@ -66,8 +65,7 @@ public class DungeonsComponent extends ParentSelectComponent {
             RteFeatures.LISTS_ORDERED,
             RteFeatures.LISTS_UNORDERED
         })
-    @ValueMapValue
-    @PlaceOn("Main")
+    @Place("Main")
     private String dungeonRules;
 
     @DependsOn(query = "@dungeon === '1'")
@@ -78,21 +76,23 @@ public class DungeonsComponent extends ParentSelectComponent {
     @Hyperlink(href = "https://cg4.cgsociety.org/uploads/images/medium/penemenn-ice-valley-1-11885220-8day.jpg", text = "Dungeon profile image", target = "_blank")
     private String profileLink2;
 
-    @AccordionWidget(name = LABEL_DUNGEON_SELECT, panels = {@AccordionPanel(title = LABEL_DUNGEON_SELECT)})
-    @PlaceOn("Main")
+    @Accordion(
+        value = @AccordionPanel(title = LABEL_DUNGEON_SELECT))
+    @Place("Main")
     DungeonSelect dungeon;
 
     static class DungeonSelect {
+        @ValueMapValue
+        @Default(values = "1")
+        @DialogField(label = LABEL_DUNGEON_SELECT)
         @Select(options = {
             @Option(text = "Rotten swamps", value = "1"),
             @Option(text = "Ice valley", value = "2")
         })
-        @DialogField(label = LABEL_DUNGEON_SELECT)
         @DependsOnRef(name = "dungeon")
-        @Default(values = "1")
-        @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
-        @ValueMapValue
-        @PlaceOn("Dungeons select")
+        @Properties(
+            value = @Property(name = "sling:hideChildren", value = "*"))
+        @Place("Dungeons select")
         String dungeonsSelect;
 
     }

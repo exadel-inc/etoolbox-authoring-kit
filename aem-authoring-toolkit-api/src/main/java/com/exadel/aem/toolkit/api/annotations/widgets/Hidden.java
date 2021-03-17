@@ -13,14 +13,14 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 
 /**
  * Used to set up
@@ -31,7 +31,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.HIDDEN)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Hidden {
     /**
      * When set to a non-blank string, maps to the 'value' attribute of this TouchUI dialog component's node

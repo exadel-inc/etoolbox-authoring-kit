@@ -15,18 +15,18 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "RadioGroup Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "RadioGroup Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class RadioGroupWidget {
@@ -41,6 +41,20 @@ public class RadioGroupWidget {
     String group1;
 
     @DialogField
-    @RadioGroup(datasource = @DataSource(path = "new/path", resourceType = "my/res/type"))
+    @RadioGroup(
+        datasource = @DataSource(path = "new/path", resourceType = "my/res/type")
+    )
     String group2;
+
+
+    @DialogField
+    @RadioGroup(buttonProvider = @OptionProvider(
+        value = @OptionSource(
+            value = "/path/to/tags",
+            textMember = "jcr:title",
+            valueMember = "name",
+            attributeMembers = {"first", "second"},
+            textTransform = "capitalize")
+    ))
+    String group3;
 }

@@ -18,9 +18,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
@@ -34,7 +34,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.COLORFIELD)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface ColorField {
     /**
      * Maps to the 'value' attribute of this TouchUI dialog component's node.
@@ -56,7 +55,7 @@ public @interface ColorField {
      * @see ColorVariant
      * @return One of {@code ColorVariant} values
      */
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
+    @PropertyRendering(transform = StringTransformation.LOWERCASE)
     ColorVariant variant() default ColorVariant.DEFAULT;
 
     /**
@@ -65,7 +64,7 @@ public @interface ColorField {
      * @see GenerateColorsState
      * @return One of {@code GenerateColorsState} values
      */
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
+    @PropertyRendering(transform = StringTransformation.LOWERCASE)
     GenerateColorsState autogenerateColors() default GenerateColorsState.OFF;
     /**
      * Maps to the 'showSwatches' attribute of this TouchUI dialog component's node.

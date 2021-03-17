@@ -33,8 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.HEADING)
-@PropertyMapping
-@SuppressWarnings("unused")
+@PropertyMapping(mappings = "level")
 public @interface Heading {
     /**
      * Maps to the 'level' attribute of this TouchUI dialog component's node.
@@ -45,10 +44,21 @@ public @interface Heading {
     long level() default 1;
 
     /**
+     * When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
+     * Used to define text within header tag.
+     * @return String value, non-blank
+     * @deprecated Please use {@link Heading#value()}
+     */
+    @ValueRestriction(value = ValueRestrictions.NOT_BLANK_OR_DEFAULT)
+    @Deprecated
+    @SuppressWarnings("squid:S1133")
+    String text() default "";
+
+    /**
      *  When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
      *  Used to define text within header tag.
      *  @return String value, non-blank
      */
-    @ValueRestriction(value = ValueRestrictions.NOT_BLANK)
-    String text();
+    @ValueRestriction(value = ValueRestrictions.NOT_BLANK_OR_DEFAULT)
+    String value() default "";
 }

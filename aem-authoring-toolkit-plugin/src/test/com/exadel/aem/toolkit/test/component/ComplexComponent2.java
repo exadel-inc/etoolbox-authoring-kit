@@ -15,15 +15,15 @@
 package com.exadel.aem.toolkit.test.component;
 
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.ListenerConstants;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
@@ -44,15 +44,15 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.core.util.TestConstants;
+import com.exadel.aem.toolkit.plugin.util.TestConstants;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_1;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_2;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_3;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_4;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_5;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_6;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_7;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_1;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_2;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_3;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_4;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_5;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_6;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_7;
 
 @Dialog(name = TestConstants.DEFAULT_COMPONENT_NAME,
         title = TestConstants.DEFAULT_COMPONENT_TITLE,
@@ -60,17 +60,16 @@ import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_7;
         componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
         resourceSuperType = TestConstants.DEFAULT_COMPONENT_SUPERTYPE,
         disableTargeting = true,
-        extraClientlibs = "cq.common.wcm",
-        layout = DialogLayout.TABS,
-        tabs = {
-                @Tab(title = LABEL_TAB_1),
-                @Tab(title = LABEL_TAB_2),
-                @Tab(title = LABEL_TAB_3),
-                @Tab(title = LABEL_TAB_4),
-                @Tab(title = LABEL_TAB_5),
-                @Tab(title = LABEL_TAB_6),
-                @Tab(title = LABEL_TAB_7)
-        })
+        extraClientlibs = "cq.common.wcm")
+@Tabs({
+    @Tab(title = LABEL_TAB_1),
+    @Tab(title = LABEL_TAB_2),
+    @Tab(title = LABEL_TAB_3),
+    @Tab(title = LABEL_TAB_4),
+    @Tab(title = LABEL_TAB_5),
+    @Tab(title = LABEL_TAB_6),
+    @Tab(title = LABEL_TAB_7)
+})
 @EditConfig(
         listeners = {
                 @Listener(event = ListenerConstants.EVENT_AFTER_INSERT, action = ListenerConstants.ACTION_REFRESH_PAGE),
@@ -448,7 +447,10 @@ public class ComplexComponent2 {
                 name = "switch_field",
                 label = "switch label name"
         )
-        @Switch(checked = true)
+        @Switch(
+            checked = true,
+            ignoreData = true
+        )
         private boolean switchField;
     }
 }

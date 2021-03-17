@@ -23,15 +23,14 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
 /**
- * Used to set up an entry in {@link RichTextEditor#icons()} array. Represents matching between an RTE command (a "feature")
- * and an icon to be displayed for this command on the RTE toolbar
+ * Used to set up an entry in {@link RichTextEditor#icons()} array. Represents matching between an RTE command
+ * (a "feature"), and an icon to be displayed for this command on the RTE toolbar
  * @see RichTextEditor
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ValueRestriction(ValueRestrictions.ALL_NOT_BLANK)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface IconMapping {
     /**
      * Represents the command token

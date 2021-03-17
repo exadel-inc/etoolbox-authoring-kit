@@ -18,13 +18,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
 
 /**
  * Used to set up
@@ -35,22 +35,24 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.DATEPICKER)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface DatePicker {
+
     /**
      * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
      * Used to define text hint for an empty DatePicker
      * @return String value
      */
     String emptyText() default "";
+
     /**
      * Maps to the 'type' attribute of this TouchUI dialog component's node.
-     * Used the specify whether this DatePicker allows to pick date, time, or both
+     * Used to specify whether this DatePicker allows picking date, time, or both
      * @see DatePickerType
      * @return One of {@code DatePickerType} values
      */
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
+    @PropertyRendering(transform = StringTransformation.LOWERCASE)
     DatePickerType type() default DatePickerType.DATE;
+
     /**
      * Maps to the 'displayedFormat' attribute of this TouchUI dialog component's node.
      * Used to specify the date format for display.
@@ -58,6 +60,7 @@ public @interface DatePicker {
      * @return String value
      */
     String displayedFormat() default "";
+
     /**
      * Maps to the 'valueFormat' attribute of this TouchUI dialog component's node.
      * Used to specify the date format for form submission and storage (when persisted as a string).
@@ -65,6 +68,7 @@ public @interface DatePicker {
      * @return String value
      */
     String valueFormat() default "";
+
     /**
      * Maps to the 'minDate' attribute of this TouchUI dialog component's node.
      * Used to define minimal value a user can specify
@@ -72,6 +76,7 @@ public @interface DatePicker {
      * @return {@code DateTimeValue} instance
      */
     DateTimeValue minDate() default @DateTimeValue;
+
     /**
      * Maps to the 'minDate' attribute of this TouchUI dialog component's node.
      * Used to define minimal value a user can specify
@@ -79,12 +84,14 @@ public @interface DatePicker {
      * @return {@code DateTimeValue} instance
      */
     DateTimeValue maxDate() default @DateTimeValue;
+
     /**
      * Maps to the 'displayTimezoneMessage' attribute of this TouchUI dialog component's node.
-     * Used to set if a informative message should be displayed regarding timezone prevalence
+     * Used to set if an informative message should be displayed regarding timezone prevalence
      * @return True or false
      */
     boolean displayTimezoneMessage() default false;
+
     /**
      * Maps to the 'typeHint' attribute of this TouchUI dialog component's node.
      * Used to set that date values are persisted as strings formatted according to {@link DatePicker#valueFormat()},
@@ -93,11 +100,13 @@ public @interface DatePicker {
      */
     @IgnorePropertyMapping
     TypeHint typeHint() default TypeHint.NONE;
+
     /**
      * when set to a non-blank string, maps to the 'beforeSelector' attribute of this TouchUI dialog component's node.
      * @return String value
      */
     String beforeSelector() default "";
+
     /**
      * when set to a non-blank string, maps to the 'afterSelector' attribute of this TouchUI dialog component's node.
      * @return String value

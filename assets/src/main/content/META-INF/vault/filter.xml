@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <filter root="/etc/packages/authoring-toolkit"/>
+    <!-- The following filter clears an old directory in JCR. This can be removed after v.2 release -->
+    <filter root="/etc/packages/aem-authoring-toolkit/"/>
 </workspaceFilter>

@@ -25,14 +25,13 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 
 /**
  * Used to set up
- * https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html
- * A generic text component that is rendered as <span> in TouchUI dialog
+ * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html">
+ *     Text</a> component in a TouchUI dialog. This is a generic text that is rendered as {@code <span>} in the user interface
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TEXT)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface Text {
     /**
      * Maps to the 'text' attribute of this TouchUI dialog component's node

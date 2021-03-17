@@ -14,74 +14,129 @@
 package com.exadel.aem.toolkit.api.handlers;
 
 import java.lang.annotation.Annotation;
-import java.util.Collections;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
-import org.w3c.dom.Document;
-
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 
 public interface Target {
 
-    Target create(String s);
+    String getName();
 
-    Target create(Supplier<String> s);
+    Target getParent();
 
-    Target getOrCreate(String s);
+    List<Target> getChildren();
 
-    Target get(String s);
+    boolean isEmpty();
 
-    default Target mapProperties(Annotation annotation) {
-        return mapProperties(annotation, Collections.emptyList());
+    Scope getScope();
+
+    default boolean exists(String path) {
+        return getTarget(path) != null;
     }
 
-    Target mapProperties(Annotation annotation, List<String> skipped);
+    Target getTarget(String path);
+
+    Target getOrCreateTarget(String path);
+
+    Target createTarget(String path);
+
+    default void addTarget(Target other) {
+        if (other != null && other.getParent() != null) {
+            other.getParent().getChildren().remove(other);
+        }
+        if (other != null) {
+            getChildren().add(other);
+        }
+    }
+
+    default void addTarget(Target other, int position) {
+        if (other != null && other.getParent() != null) {
+            other.getParent().getChildren().remove(other);
+        }
+        if (other != null) {
+            getChildren().add(position, other);
+        }
+    }
+
+    default void addTarget(Target other, Target near) {
+        int position = near != null ? getChildren().indexOf(near) : -1;
+        if (position > -1) {
+            addTarget(other, position);
+        } else {
+            addTarget(other);
+        }
+    }
+
+    default void addTarget(Target other, Target near, boolean placeAfter) {
+        if (!placeAfter) {
+            addTarget(other, near);
+            return;
+        }
+        int position = near != null ? getChildren().indexOf(near) : -1;
+        if (position > -1 && position < getChildren().size() - 1) {
+            addTarget(other, position + 1);
+        } else {
+            addTarget(other);
+        }
+    }
+
+    void removeTarget(String path);
+
+    Target findParent(Predicate<Target> filter);
+
+    Target findChild(Predicate<Target> filter);
+
+    List<Target> findChildren(Predicate<Target> filter);
+
+    String getNamePrefix();
+
+    Target namePrefix(String prefix);
+
+    String getNamePostfix();
+
+    Target namePostfix(String postfix);
+
+    Map<String, String> getAttributes();
+
+    default String getAttribute(String name) {
+        return getAttributes().get(name);
+    }
+
+    default String getAttribute(String name, String defaultValue) {
+        return getAttributes().getOrDefault(name, defaultValue);
+    }
 
     Target attribute(String name, String value);
 
+    Target attribute(String name, String[] value);
+
     Target attribute(String name, boolean value);
+
+    Target attribute(String name, boolean[] value);
 
     Target attribute(String name, long value);
 
+    Target attribute(String name, long[] value);
+
     Target attribute(String name, double value);
+
+    Target attribute(String name, double[] value);
 
     Target attribute(String name, Date value);
 
+    Target attribute(String name, Date[] value);
+
     Target attributes(Map<String, Object> map);
 
-    Target prefix(String prefix);
+    Target attributes(Annotation annotation, Predicate<Method> filter);
 
-    Target postfix(String postfix);
+    default Target attributes(Annotation annotation) {
+        return attributes(annotation, null);
+    }
 
-    String getPrefix();
-
-    String getPostfix();
-
-    void delete();
-
-    void deleteAttribute(String name);
-
-    boolean hasAttribute(String name);
-
-    List<Target> listChildren();
-
-    String getName();
-
-    Target parent();
-
-    <T> T getAttribute(String name, Class<T> tClass);
-
-    boolean hasChild(String relPath);
-
-    Map<String, String> getValueMap();
-
-    void setSource(Source source);
-
-    Source getSource();
-
-    Document buildXml(Document document);
+    <T> T adaptTo(Class<T> adaptation);
 }

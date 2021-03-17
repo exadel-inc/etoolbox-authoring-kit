@@ -14,13 +14,23 @@
 
 package com.exadel.aem.toolkit.api.handlers;
 
+import java.util.Optional;
+
 public interface Source {
-
-    <T> T adaptTo(Class<T> t);
-
-    Class<?> getProcessedClass();
 
     String getName();
 
-    Class<?> getContainerClass();
+    Class<?> getDeclaringClass();
+
+    Class<?> getReportingClass();
+
+    Class<?> getValueType();
+
+    boolean isValid();
+
+    <T> T adaptTo(Class<T> adaptation);
+
+    default <T> Optional<T> tryAdaptTo(Class<T> adaptation) {
+        return Optional.ofNullable(adaptTo(adaptation));
+    }
 }

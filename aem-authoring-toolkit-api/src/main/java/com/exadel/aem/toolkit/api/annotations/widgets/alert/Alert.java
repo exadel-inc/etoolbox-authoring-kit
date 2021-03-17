@@ -13,25 +13,33 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.alert;
 
-import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
-import com.exadel.aem.toolkit.api.annotations.meta.*;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
+
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html">
  * Alert element</a> in TouchUI dialog
+ *
+ * @deprecated This annotation is deprecated and will be removed in a version after 2.0.1.
+ * Please use {@link com.exadel.aem.toolkit.api.annotations.widgets.Alert}
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.ALERT)
 @PropertyMapping
+@Deprecated
+@SuppressWarnings("squid:S1133")
 public @interface Alert {
+
     /**
      * Maps to the 'variant' attribute of this TouchUI dialog component's node.
      *
@@ -47,7 +55,6 @@ public @interface Alert {
      * @return One of {@code AlertSize} values
      * @see AlertSize
      */
-    @EnumValue()
     AlertSize size() default AlertSize.SMALL;
 
     /**
@@ -64,6 +71,6 @@ public @interface Alert {
      *
      * @return String value
      */
-    @PropertyRendering(name = JcrConstants.PN_TITLE)
+    @PropertyRendering(name = "jcr:title")
     String title() default "";
 }

@@ -24,13 +24,11 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
  * Used to set up <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/docs/server/commonattrs.html">
- * global HTML attributes</a> added to rendered HTML tags
- * @see com.exadel.aem.toolkit.api.annotations.container.Tab
+ * global HTML attributes</a> added to a rendered HTML tag
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping(prefix = "granite:")
-@SuppressWarnings("unused")
 public @interface Attribute {
 
     /**
@@ -52,17 +50,6 @@ public @interface Attribute {
      */
     @PropertyRendering(name = "class")
     String className() default "";
-
-    /**
-     * The HTML 'class' attribute
-     * @return String value
-     *
-     * @deprecated This will be removed starting from version 2.0.0. Please use {@link Attribute#className()} instead
-     */
-    @IgnorePropertyMapping
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    String clas() default "";
 
     /**
      * The HTML 'title' attribute

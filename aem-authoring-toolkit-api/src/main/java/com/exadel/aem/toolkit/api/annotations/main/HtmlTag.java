@@ -11,13 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.main;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import com.day.cq.wcm.api.NameConstants;
 
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
@@ -31,7 +32,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface HtmlTag {
 
     /**
@@ -46,7 +46,7 @@ public @interface HtmlTag {
      * Maps to the 'cq:tagName' attribute of the cq:htmlTag node
      * @return String value, non-blank
      */
-    @PropertyRendering(name = "cq:tagName")
+    @PropertyRendering(name = NameConstants.PN_TAG_NAME)
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String tagName() default "div";
 }

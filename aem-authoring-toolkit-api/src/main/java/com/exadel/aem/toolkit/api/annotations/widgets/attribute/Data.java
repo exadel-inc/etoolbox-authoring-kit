@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.widgets.attribute;
 /**
  * Name-value string pair used to populate {@link Attribute#data()} array
  */
-@SuppressWarnings("unused")
 public @interface Data {
     /**
      * Attribute name

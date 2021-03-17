@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.api.annotations.widgets.color;
 /**
  * Contains possible values of {@link ColorField#autogenerateColors()} property
  */
-@SuppressWarnings("unused")
 public enum GenerateColorsState {
     OFF, SHADES, TINTS
 }

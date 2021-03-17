@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.api.annotations.widgets.imageupload;
 
 import java.lang.annotation.ElementType;
@@ -18,13 +19,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.EnumValue;
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
@@ -35,7 +33,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.FILEUPLOAD)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface ImageUpload {
 
     /**
@@ -77,7 +74,7 @@ public @interface ImageUpload {
 
     /**
      * Maps to the 'allowUpload' attribute of this TouchUI dialog component's node.
-     * Defines whether file uploading (otherwise only file picking) is allowed
+     * Defines whether file uploading is allowed. Otherwise, only file picking is allowed
      * @return True or false
      */
     boolean allowUpload() default false;
@@ -89,202 +86,4 @@ public @interface ImageUpload {
      *
      */
     String viewInAdminURI() default "";
-
-    /**
-     * When set to a non-blank string, maps to the 'id' attribute of this TouchUI dialog component's node.
-     * Renders as the HTML 'id' attribute
-     * @return String value
-     *
-     * @deprecated This property will be removed starting from version 2.0.0. Please use {@link com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute#id()} instead
-     */
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    String id() default "";
-
-    /**
-     * When set to a non-blank string, maps to the 'rel' attribute of this TouchUI dialog component's node.
-     * Renders as the HTML 'rel' attribute
-     * @return String value
-     *
-     * @deprecated This property will be removed starting from version 2.0.0. Please use {@link com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute#rel()} instead
-     */
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    String rel() default "";
-
-    /**
-     * When set to a non-blank string, maps to the 'class' attribute of this TouchUI dialog component's node.
-     * Renders as the HTML 'class' attribute
-     * @return String value
-     *
-     * @deprecated This property will be removed starting from version 2.0.0. Please use {@link com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute#className()} instead
-     */
-    @PropertyRendering(name = "class")
-    @IgnorePropertyMapping
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    String clas() default "";
-
-    /**
-     * When set to a non-blank string, maps to the 'class' attribute of this TouchUI dialog component's node.
-     * Renders as the HTML 'class' attribute
-     * @return String value
-     *
-     * @deprecated This property will be removed starting from version 2.0.0. Please use {@link com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute#className()} instead
-     */
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    @PropertyRendering(name = "class")
-    String className() default "";
-
-    /**
-     * When set to a non-blank string, maps to the 'title' attribute of this TouchUI dialog component's node.
-     * Renders as the HTML 'title' attribute
-     * @return String value
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    String title() default "";
-
-    /**
-     * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
-     * Used to define text hint for an empty ImageUpload
-     * @return String value
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    String emptyText() default "";
-
-    /**
-     * Maps to the 'text' attribute of this TouchUI dialog component's node.
-     * Used to define default button text
-     * @return String value
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @PropertyRendering(name = "text")
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    String buttonText() default ImageUploadConstants.DEFAULT_BUTTON_TEXT;
-
-    /**
-     * Maps to the 'variant' attribute of this TouchUI dialog component's node.
-     * Used to define button variant
-     * @see ButtonVariant
-     * @return One of {@code ButtonVariant} values
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @PropertyRendering(name = "variant")
-    @EnumValue(transformation = StringTransformation.LOWERCASE)
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    ButtonVariant buttonVariant() default ButtonVariant.SECONDARY;
-    /**
-     * Maps to the 'multiple' attribute of this TouchUI dialog component's node.
-     * Used to set possibility for multiple files upload
-     * @return True or false
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    boolean multiple() default false;
-
-    /**
-     * Maps to the 'uploadUrl' attribute of this TouchUI dialog component's node.
-     * Used to determine the URL where to upload the file
-     * @return String value representing valid JCR path
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @ValueRestriction(ValueRestrictions.JCR_PATH)
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    String uploadUrl() default ImageUploadConstants.DEFAULT_UPLOAD_URL;
-
-    /**
-     * When set to a non-blank string, maps to the 'uploadUrlBuilder' attribute of this TouchUI dialog component's node.
-     * Used to determine the upload URL builder
-     * @return String value
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    String uploadUrlBuilder() default "";
-
-    /**
-     * When set to a non-blank string, maps to the 'autoStart' attribute of this TouchUI dialog component's node.
-     * If 'true' assigned, the upload starts automatically once the file is selected
-     * @return String value
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    String autoStart() default "";
-
-    /**
-     * Maps to the 'useHTML5' attribute of this TouchUI dialog component's node.
-     * Defines whether HTML5 is preferred for uploading files if browser allows it
-     * @return True or false
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    boolean useHTML5() default true;
-
-    /**
-     * When set to a non-blank string, maps to the 'dropZone' attribute of this TouchUI dialog component's node.
-     * Defines the drop zone selector to upload files from file system directly (if browser allows it)
-     * @return String value
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    String dropZone() default "";
-
-    /**
-     * Maps to the 'chunkUploadSupported' attribute of this TouchUI dialog component's node.
-     * Defines whether chunked uploading is supported
-     * @return True or false
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    boolean chunkUploadSupported() default false;
-
-    /**
-     * When set to a positive number, maps to the 'chunkSize' attribute of this TouchUI dialog component's node.
-     * Used to determine the chunk size of an uploaded file
-     * @return Long value
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
-    @PropertyRendering(ignoreValues = "0")
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    long chunkSize() default 0;
-
-    /**
-     * When set to a positive number, maps to the 'chunkUploadMinFileSize' attribute of this TouchUI dialog component's node.
-     * Used to determine the minimal size of an uploaded file to be split in chunks
-     * @return Long value
-     *
-     * @deprecated This property will be removed starting from version 2.0.0
-     */
-    @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
-    @PropertyRendering(ignoreValues = "0")
-    @Deprecated
-    @SuppressWarnings("squid:S1133")
-    long chunkUploadMinFileSize() default 0;
 }

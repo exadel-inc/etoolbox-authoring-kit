@@ -15,24 +15,27 @@
 package com.exadel.aem.toolkit.test.custom;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomAnnotationForOrderingTest;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomProcessingAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomNonMappingWidgetAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAutoOrder;
+import com.exadel.aem.toolkit.test.custom.annotation.DialogAnnotationForOrderingTest;
 
 @Dialog(
         name = "test-component",
-        title = "test-component-dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "test-component-dialog"
 )
 @CustomDialogAnnotation
+@DialogAnnotationForOrderingTest
 @SuppressWarnings("unused")
 public class CustomAnnotations {
     @DialogField
-    @CustomWidgetAnnotation(customField = "Custom!")
-    @CustomProcessingAnnotation
+    @CustomWidgetAnnotation(customField = "Overridden value")
+    @CustomNonMappingWidgetAnnotation
     String testCustomAnnotation;
 
     @DialogField
@@ -41,6 +44,17 @@ public class CustomAnnotations {
     String testCustomAnnotationDefault;
 
     @DialogField
+    @CustomWidgetAnnotationAuto(customField = "Overridden value")
+    String testCustomAnnotationAuto;
+
+    @DialogField
     @TextField
+    @CustomWidgetAnnotationAuto
     String testCustomAnnotationAutoDefault;
+
+    @CustomWidgetAutoOrder
+    String getTestAutoOrder;
+
+    @CustomAnnotationForOrderingTest
+    boolean getTestOrder;
 }

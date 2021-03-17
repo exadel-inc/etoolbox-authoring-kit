@@ -30,10 +30,10 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping(prefix = "cq:")
-@SuppressWarnings("unused")
 public @interface ChildEditConfig {
     /**
-     * When set to a non-blank string or an array of strings, maps to the 'cq:actions' property of {@code cq:childEditConfig} node
+     * When set to a non-blank string, or to an array of strings, maps to the 'cq:actions' property
+     * of {@code cq:childEditConfig} node
      * @return String / array value
      */
     String[] actions() default {};

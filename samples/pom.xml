@@ -7,7 +7,7 @@
     <artifactId>aem-authoring-toolkit-samples</artifactId>
     <groupId>com.exadel.aem</groupId>
     <name>AEM Authoring Toolkit - Samples</name>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.1-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
@@ -18,13 +18,14 @@
     </modules>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <host>localhost</host>
         <port>4502</port>
         <serviceUrl>http://${host}:${port}/crx/packmgr/service.jsp</serviceUrl>
         <project.jcrAppFolder>authoring-toolkit/samples</project.jcrAppFolder>
-        <aat.version>2.0.0-SNAPSHOT</aat.version>
+        <aat.version>2.0.1-SNAPSHOT</aat.version>
         <project.vendor>Exadel</project.vendor>
     </properties>
 
@@ -34,7 +35,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>4.2.1</version>
+                    <version>5.1.1</version>
                     <extensions>true</extensions>
                     <configuration>
                         <instructions>
@@ -79,10 +80,13 @@
                     </configuration>
                     <executions>
                         <execution>
-                            <id>Creating AEM package</id>
+                            <id>Creating AAT Samples package</id>
                             <goals>
                                 <goal>package</goal>
                             </goals>
+                            <configuration>
+                                <group>authoring-toolkit-samples</group>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
@@ -140,6 +144,7 @@
                 <groupId>com.exadel.aem</groupId>
                 <artifactId>aem-authoring-toolkit-api</artifactId>
                 <version>${aat.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.exadel.aem</groupId>

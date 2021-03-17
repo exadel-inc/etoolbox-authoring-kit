@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
           xmlns:cq="http://www.day.com/jcr/cq/1.0"
-          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           width="{Double}560.0"
@@ -184,8 +183,11 @@
                                            allow="{Boolean}false"
                                            ignoreMode="paragraph"/>
                                     <allowBasics jcr:primaryType="nt:unstructured"
+                                                 anchor="{Boolean}false"
                                                  bold="{Boolean}false"
-                                                 image="{Boolean}false"/>
+                                                 image="{Boolean}false"
+                                                 italic="{Boolean}false"
+                                                 underline="{Boolean}false"/>
                                 </htmlPasteRules>
                             </edit>
                             <paraformat jcr:primaryType="nt:unstructured" features="*">
@@ -197,10 +199,10 @@
                             </paraformat>
                             <format jcr:primaryType="nt:unstructured" features="[bold,italic,underline]"/>
                             <control jcr:primaryType="nt:unstructured" features="[save,close]"/>
-                            <undo jcr:primaryType="nt:unstructured" features="[undo,redo]" maxUndoSteps="{Long}20"/>
+                            <undo jcr:primaryType="nt:unstructured" features="[undo,redo]" maxUndoSteps="{Long}25"/>
                             <fullscreen jcr:primaryType="nt:unstructured" features="toggle"/>
                             <spellcheck jcr:primaryType="nt:unstructured" features="checktext"/>
-                            <lists jcr:primaryType="nt:unstructured" features="[ordered,unordered,indent,outdent]" indentSize="{Long}4"/>
+                            <lists jcr:primaryType="nt:unstructured" features="[ordered,unordered,indent,outdent]" indentSize="{Long}1"/>
                             <justify jcr:primaryType="nt:unstructured" features="[justifyleft,justifycenter,justifyright]"/>
                             <links jcr:primaryType="nt:unstructured" features="[modifylink,unlink]"/>
                             <styles jcr:primaryType="cq:WidgetCollection" features="*">
@@ -211,6 +213,7 @@
                             <misctools jcr:primaryType="nt:unstructured" features="[specialchars,sourceedit]">
                                 <specialCharsConfig jcr:primaryType="nt:unstructured">
                                     <chars jcr:primaryType="nt:unstructured">
+                                        <inputTypequotbuttonquotValuequotokquot entity="&lt;input type=&amp;quot;button&amp;quot; value=&amp;quot;OK&amp;quot;/&gt;" jcr:primaryType="nt:unstructured" name="Complex entity"/>
                                         <copy jcr:primaryType="nt:unstructured" entity="&amp;copy" name="Copyright"/>
                                         <x20AC jcr:primaryType="nt:unstructured" entity="&amp;#x20AC" name="Euro sign"/>
                                         <x00AE jcr:primaryType="nt:unstructured" entity="&amp;#x00AE" name="Registered"/>

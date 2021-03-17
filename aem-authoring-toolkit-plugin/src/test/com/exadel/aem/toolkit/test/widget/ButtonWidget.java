@@ -15,18 +15,16 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
 import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonType;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementSizeConstants;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariantConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariant;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "Button Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "Button Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class ButtonWidget {
@@ -40,8 +38,8 @@ public class ButtonWidget {
             hideText = true,
             active = true,
             icon = "search",
-            iconSize = ElementSizeConstants.LARGE,
-            size = ElementSizeConstants.LARGE,
+            iconSize = Size.LARGE,
+            size = Size.LARGE,
             block = true,
             command = "shift+s",
             trackingElement = "test-element",
@@ -53,7 +51,7 @@ public class ButtonWidget {
             type = ButtonType.RESET,
             text = "test-text",
             icon = "delete",
-            variant = ElementVariantConstants.ACTION_BAR,
+            variant = ElementVariant.ACTION_BAR,
             command = "backspace"
     )
     String buttonField2;

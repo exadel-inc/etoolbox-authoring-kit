@@ -14,20 +14,22 @@
 
 package com.exadel.aem.toolkit.test.common;
 
-import com.exadel.aem.toolkit.api.annotations.editconfig.*;
+import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
+import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.ListenerConstants;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
-import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.*;
+import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.COPYMOVE;
+import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.DELETE;
+import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.EDIT;
+import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.INSERT;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "FileUpload Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "FileUpload Widget Dialog"
 )
 @ChildEditConfig(
         actions = {

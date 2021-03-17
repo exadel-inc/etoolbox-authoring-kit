@@ -14,37 +14,35 @@
 
 package com.exadel.aem.toolkit.test.component;
 
-import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.core.util.TestConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
+import com.exadel.aem.toolkit.plugin.util.TestConstants;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_0;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_1;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_2;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_3;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_4;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_5;
-import static com.exadel.aem.toolkit.core.util.TestConstants.LABEL_TAB_6;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_0;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_1;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_2;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_3;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_4;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_5;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_6;
 
 @Dialog(name = TestConstants.DEFAULT_COMPONENT_NAME,
         title = TestConstants.DEFAULT_COMPONENT_TITLE,
-        layout = DialogLayout.TABS,
         tabs = {
             @Tab(title = LABEL_TAB_5),
             @Tab(title = LABEL_TAB_6),
         }
 )
-@IgnoreTabs({LABEL_TAB_4, LABEL_TAB_5})
+@Ignore(sections = {LABEL_TAB_4, LABEL_TAB_5})
 @SuppressWarnings("unused")
 public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedClassesAncestor {
 
-    @Tab(title = LABEL_TAB_1)
+    @com.exadel.aem.toolkit.api.annotations.layouts.Tab(title = LABEL_TAB_1)
     private static class Tab1 {
         @DialogField(
                 label = "Field 1",
@@ -54,7 +52,7 @@ public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedC
         String field1;
     }
 
-    @Tab(title = LABEL_TAB_2)
+    @com.exadel.aem.toolkit.api.annotations.layouts.Tab(title = LABEL_TAB_2)
     private static class Tab2 {
         @DialogField(label="Field 2")
         @PathField(rootPath = "/content")
@@ -62,7 +60,7 @@ public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedC
         String field2;
     }
 
-    @Tab(title = LABEL_TAB_3)
+    @com.exadel.aem.toolkit.api.annotations.layouts.Tab(title = LABEL_TAB_3)
     private static class Tab3 extends Tab1 {
         @DialogField(
                 label="Field 3",

@@ -1,6 +1,19 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * @author Alexey Stsefanovich (ala'n)
- * @version 2.2.2
  *
  * QueryObserver compile query using QueryProcessor and apply defined acton to the target.
  * Target supports multiple actions and queries separated by ';'
@@ -67,6 +80,28 @@
                 const data = ns.parseActionData($el[0], action, actionCounter[action]++);
                 return new QueryObserver($el, query, action, data);
             });
+        }
+
+        /**
+         * Update observers instances
+         * @param {JQuery} $el
+         * @param {string[]} [actions]
+         * @return {boolean} operation's state
+         * */
+        static updateObservers($el, actions) {
+            $el = ns.ElementAccessors.findTarget($el);
+
+            const observers = $el.data(QueryObserver.DATA_STORE);
+            if (!observers || !observers.length) return false;
+
+            const targetObservers = actions ?
+                observers.filter((observer) => actions.indexOf(observer.action) !== -1) :
+                observers;
+            if (!targetObservers.length) return false;
+
+            targetObservers.forEach((observer) => observer.update());
+
+            return true;
         }
 
         /**

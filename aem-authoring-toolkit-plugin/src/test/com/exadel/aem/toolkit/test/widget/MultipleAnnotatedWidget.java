@@ -18,7 +18,6 @@ import java.util.List;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
@@ -28,14 +27,13 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "Dialog with Multiple-Annotated Fields",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "Dialog with Multiple-Annotated Fields"
 )
 @CustomDialogAnnotation
 @SuppressWarnings("unused")
@@ -89,7 +87,7 @@ public class MultipleAnnotatedWidget {
     }
 
     @DialogField
-    @CustomWidgetAnnotation(customField = "Custom!")
+    @CustomWidgetAnnotationAuto(customField = "Custom!")
     @Multiple
     String customAnnotation;
 

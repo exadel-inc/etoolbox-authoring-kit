@@ -29,60 +29,69 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface DialogField {
+
     /**
-     * When set to a non-blank string, maps to the 'fieldLabel' attribute of this TouchUI dialog component's node.
-     * Used to define a label displayed beside this TouchUI dialog component
-     * @return String value
+     * When set to a non-blank string, maps to the {@code fieldLabel} attribute of this dialog component's node.
+     * Used to define a label displayed beside this dialog component
+     * @return String value (optional)
      */
     @PropertyRendering(name = "fieldLabel")
     String label() default "";
+
     /**
-     * When set to a non-blank string, maps to the 'fieldDescription' attribute of this TouchUI dialog component's node.
-     * Used to define helper text for this TouchUI dialog component
-     * @return String value
+     * When set to a non-blank string, maps to the 'fieldDescription' attribute of this dialog component's node.
+     * Used to define helper text for this dialog component
+     * @return String value (optional)
      */
     @PropertyRendering(name = "fieldDescription")
     String description() default "";
+
     /**
-     * Maps to the 'renderHidden' attribute of this TouchUI dialog component's node.
-     * If set to true, the whole TouchUI dialog component is hidden from user
+     * Maps to the {@code renderHidden} attribute of this dialog component's node.
+     * If set to true, the {@code hidden} attribute added to the HTML element that wraps up the current component, so that
+     * the component is hidden together with its label and description. Has no effect if a wrapper element is not
+     * rendered (e.g. when neither label nor description specified)
      * @return True or false
      */
     boolean renderHidden() default false;
+
     /**
-     * When set to a non-blank string, maps to the 'wrapperClass' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code wrapperClass} attribute of this dialog component's node.
      * Used to specify a CSS class for the wrapper element
-     * @return String value
+     * @return String value (optional)
      */
     String wrapperClass() default "";
+
     /**
-     * Used to override 'name' attribute value for this TouchUI dialog component.
-     * If not set, 'name' will be equal to the annotated field name
-     * @return String value
+     * Used to define {@code name} attribute value for this TouchUI dialog component.
+     * If not set, the name of the annotated field or method will be stored
+     * @return String value (optional)
      */
     @IgnorePropertyMapping
     String name() default "";
+
     /**
-     * Used to sort dialog components in the TouchUI interface. If none of the components has non-zero ranking, they
+     * Used to order dialog components in the TouchUI interface. If none of the components has non-zero ranking, they
      * will be rendered as they appear in Java class. Otherwise, components with smaller rankings will have precedence,
-     * Both positive and negative values allowed
-     * @return Integer value
+     * @return Integer value. Both positive and negative values allowed
      */
-    int ranking() default 0;
+    int ranking() default Integer.MIN_VALUE;
+
     /**
-     * Maps to the 'required' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code required} attribute of this TouchUI dialog component's node.
      * @return True or false
      */
     boolean required() default false;
+
     /**
-     * Maps to the 'disabled' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code disabled} attribute of this TouchUI dialog component's node.
      * @return True or false
      */
     boolean disabled() default false;
+
     /**
-     * Maps to the 'validation' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code validation} attribute of this TouchUI dialog component's node.
      * @return String value, or an array of non-blank strings
      */
     String[] validation() default {};

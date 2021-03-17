@@ -15,7 +15,6 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.AllowElement;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
@@ -29,13 +28,10 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Style;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
-@Dialog(
-        name = DEFAULT_COMPONENT_NAME,
-        title = "Rich Text Editor Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
-)
+@Dialog(name = DEFAULT_COMPONENT_NAME,
+        title = "Rich Text Editor Dialog")
 @SuppressWarnings("unused")
 public class RichTextEditorWidget {
     @DialogField(label = "Rich Text Editor")
@@ -71,14 +67,18 @@ public class RichTextEditorWidget {
                     @IconMapping(command = "#misctools", icon = "fileCode")
             },
             specialCharacters = {
+                    @Characters(name = "Complex entity", entity = "<input type=&quot;button&quot; value=&quot;OK&quot;/>"),
                     @Characters(name = "Copyright", entity = "&copy"),
                     @Characters(name = "Euro sign", entity = "&#x20AC"),
                     @Characters(name = "Registered", entity = "&#x00AE"),
                     @Characters(name = "Trademark", entity = "&#x2122"),
-                    @Characters(rangeStart = 998, rangeEnd = 1020),
+                    @Characters(rangeStart = 998, rangeEnd = 1020)
             },
             htmlPasteRules = @HtmlPasteRules(
                     allowBold = false,
+                    allowItalic = false,
+                    allowUnderline = false,
+                    allowAnchors = false,
                     allowImages = false,
                     allowLists = AllowElement.ALLOW,
                     allowTables = AllowElement.REPLACE_WITH_PARAGRAPHS,
@@ -97,14 +97,14 @@ public class RichTextEditorWidget {
                     @ParagraphFormat(tag = "h4", description = "H4 tagged paragraph")
             },
             tabSize = 8,
-            maxUndoSteps = 20,
+            indentSize = 1,
+            maxUndoSteps = 25,
             htmlLinkRules = @HtmlLinkRules(
                     targetInternal = LinkTarget.MANUAL,
                     targetExternal = LinkTarget.BLANK,
                     protocols = {"http:", "https:"},
                     defaultProtocol = "http:"
             ),
-            indentSize = 4,
             useFixedInlineToolbar = false
     )
     private String text;

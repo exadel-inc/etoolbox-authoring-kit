@@ -13,24 +13,39 @@
  */
 package com.exadel.aem.toolkit.api.handlers;
 
-import com.exadel.aem.toolkit.api.markers._Default;
-
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.markers._Default;
+
 /**
- * Used to specify one or more TouchUI dialog widgets annotations for a handler
+ * Used to specify one or more AEM Authoring Toolkit annotations processed by a handler class, and also to marshal
+ * invocation order if multiple handlers are attached to the same annotation
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@SuppressWarnings("unused")
 public @interface Handles {
-    Class<? extends Annotation>[] value() default {};
 
+    /**
+     * Enumerates AEM Authoring Toolkit annotations this handler processes
+     * @return An {@code Annotation} or an array of annotations
+     */
+    Class<? extends Annotation>[] value();
+
+    /**
+     * When specified, denotes a handler that must follow the current handler in the execution chain.
+     * This property is used to align handlers when execution sequence matters
+     * @return {@code Class} of the sibling handler
+     */
     Class<?> before() default _Default.class;
 
+    /**
+     * When specified, denotes a handler that must precede the current handler in the execution chain.
+     * This property is used to align handlers when execution sequrence matters
+     * @return {@code Class} of the sibling handler
+     */
     Class<?> after() default _Default.class;
 }

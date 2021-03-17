@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.container;
 
 import java.lang.annotation.ElementType;
@@ -19,12 +18,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
+
 /**
  * Used to specify tabs that are ignored while rendering XML markup for the current dialog. Typically used
  * when current dialog class extends another class exposing one or more {@link Tab}s that are not needed here
+ *
+ * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link Ignore} and fill in
+ * its {@code sections} value instead
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated
+@SuppressWarnings("squid:S1133")
 public @interface IgnoreTabs {
     /**
      * Enumerates the fields to be skipped from rendering XML for the current dialog, each specified by its title

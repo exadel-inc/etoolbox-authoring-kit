@@ -17,14 +17,14 @@ package com.exadel.aem.toolkit.api.annotations.meta;
  * Contains value restrictions processed by built-in {@link Validator} implementations
  * @see ValueRestriction
  */
-@SuppressWarnings("unused")
 public class ValueRestrictions {
-    private static final String BUILTIN_VALIDATORS_PACKAGE = "com.exadel.aem.toolkit.core.util.validation.";
+    private static final String BUILTIN_VALIDATORS_PACKAGE = "com.exadel.aem.toolkit.plugin.util.validation.";
 
     public static final String NUMBER = BUILTIN_VALIDATORS_PACKAGE + "NumberValidator";
     public static final String POSITIVE = BUILTIN_VALIDATORS_PACKAGE + "PositiveNumberValidator";
     public static final String NON_NEGATIVE = BUILTIN_VALIDATORS_PACKAGE + "NonNegativeNumberValidator";
     public static final String NOT_BLANK = BUILTIN_VALIDATORS_PACKAGE + "NotBlankValidator";
+    public static final String NOT_BLANK_OR_DEFAULT = BUILTIN_VALIDATORS_PACKAGE + "NotBlankOrEmptyValidator";
     public static final String ALL_NOT_BLANK = BUILTIN_VALIDATORS_PACKAGE + "AllNotBlankValidator";
     public static final String JCR_PATH = BUILTIN_VALIDATORS_PACKAGE + "JcrPathValidator";
 

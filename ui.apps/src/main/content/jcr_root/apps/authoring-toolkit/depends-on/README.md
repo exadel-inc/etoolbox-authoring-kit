@@ -26,7 +26,7 @@ DependsOn workflow consists of the following steps:
 
 **QueryObserver** holds and process **Query** and initiates **Action** on **ObservedReferences** change.
 
-**ObservedReferences** are external elements or group of elements whose values can be used inside of **Query**.
+**ObservedReferences** are external elements or group of elements whose values can be used inside **Query**.
 
 More detailed DependsOn structure is presented below.
 ![DependsOn Structure](./docs/structure.jpg)
@@ -35,7 +35,7 @@ More detailed DependsOn structure is presented below.
 
 "DependsOn" plugin is based on the following data attributes.
 
-For dependent field:
+For a dependent field:
 
 * `data-dependson` - to provide Query with condition or expression for the Action.
 * `data-dependsonaction` - (optional) to define Action that should be executed.
@@ -60,6 +60,8 @@ Built-in plugin actions are:
  * `required` - set the required marker of the field from the query result.
  * `validate` - set the validation state of the field from the query result.
  * `disabled` - set the field's disabled state from the query result.
+* `update-options` - changes the option set of a Granite Select component if it depends on a value of a foreign component (e.g. another component can alter the JCR path from which current Select's options are taken).
+
 
 If the action is not specified then `visibility` is used by default.
 
@@ -84,7 +86,7 @@ Custom action can be specified using `Granite.DependsOnPlugin.ActionRegistry`.
 Action should have name (allowed symbols: a-z, 0-9, -) and function to execute.
 For example build-in `set` action is defined as follows:
 ```javascript
-Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('set', function setValue(value) {
+Granite.DependsOnPlugin.ActionRegistry.register('set', function setValue(value) {
     if (value !== undefined) {
         Granite.DependsOnPlugin.ElementAccessors.setValue(this.$el, value);
     }
@@ -150,6 +152,48 @@ Any global and native JavaScript object can be used inside of Query.
 You can also use dynamic references to access other fields' values.
 In order to define a reference, referenced field's name should be specified in dependsOnRef attribute.
 Then reference will be accessible in the query using @ or @@ symbol and reference name.
+
+###### Using semicolon in DependsOn query
+
+DependsOn query is always treated as a single JavaScript expression, and never as multiple statements in one line.
+Semicolon symbols (`;`) within a DependsOn query must be escaped.
+
+If you add a query via a Java annotation, semicolons will be escaped automatically:
+```java
+class MyComponent {
+    @DependsOn(query = "@field === ';'")
+    private String field1;
+}
+```
+However, if you write directly to XML or HTML, you should escape them by hand:
+```xml
+<granite:data dependson="@field === '\\;'"></granite:data>
+```
+
+If you actually need to execute several JavaScript statements within a DependsOn,
+you can do this by wrapping them in a function call:
+```java
+class MyComponent {
+    @DependsOn(query = "function(){ var a = @field1 + @field2; return a * a < 4; }()")
+    private String field;
+}
+```
+
+Mind that it is still better to move complex structures to a standalone client library
+```javascript
+  // project-clientlib.js
+  window.MyUtils = window.MyUtils || {};
+  window.MyUtils.fieldAccepted = function (field1, field2) {
+      var a = field1 + field2;
+      return a * a < 4;
+  };
+```
+```java
+class MyComponent {
+    @DependsOn(query = "MyUtils.fieldAccepted(@field1, @field2)")
+    private String field;
+}
+```
 
 ##### Query Reference Syntax
 
@@ -466,7 +510,7 @@ public class Component {
 ```javascript
 (function (Granite, $, DependsOn) {
     'use strict';
-    Granite.DependsOnPlugin.ActionRegistry.ActionRegistry.register('customAsyncAction', function (path) {
+    Granite.DependsOnPlugin.ActionRegistry.register('customAsyncAction', function (path) {
          const $el = this.$el;
          $.get(Granite.HTTP.externalize(path + '/jcr:content.json')).then(
              function (data) { return data && data.result; },

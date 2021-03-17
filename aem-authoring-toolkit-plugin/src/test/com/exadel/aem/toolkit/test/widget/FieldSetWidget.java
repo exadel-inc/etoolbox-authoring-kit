@@ -14,27 +14,28 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.annotations.widgets.Hidden;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
-@Dialog(
-        name = DEFAULT_COMPONENT_NAME,
-        title = "FieldSet Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+@AemComponent(
+    path = DEFAULT_COMPONENT_NAME,
+    title = "FieldSet Widget Dialog"
 )
+@Dialog
 @SuppressWarnings("unused")
 public class FieldSetWidget {
     @DialogField(
             label="Fieldset 1",
             description = "Fieldset definition with source class specified"
     )
-    @FieldSet(source = SampleFieldSet.class)
+    @FieldSet(value = SampleFieldSet.class, namePostfix = "21")
     String fieldSet1;
 
     @DialogField(
@@ -58,6 +59,10 @@ public class FieldSetWidget {
         )
         @Checkbox
         String checkboxField;
+
+        @DialogField(name = "textField@Delete?!")
+        @Hidden
+        String textFieldEraser;
     }
 
     private static class SampleFieldSetDescendant extends SampleFieldSet {

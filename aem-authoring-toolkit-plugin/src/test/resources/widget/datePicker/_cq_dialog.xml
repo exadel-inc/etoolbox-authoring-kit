@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
-          xmlns:cq="http://www.day.com/jcr/cq/1.0"
-          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           width="{Double}560.0"
@@ -17,8 +15,10 @@
                 <items jcr:primaryType="nt:unstructured">
                     <currentDate sling:resourceType="granite/ui/components/coral/foundation/form/datepicker"
                                  jcr:primaryType="nt:unstructured"
+                                 afterSelector="after"
+                                 beforeSelector="before"
                                  disabled="{Boolean}false"
-                                 displayTimezoneMessage="{Boolean}false"
+                                 displayTimezoneMessage="{Boolean}true"
                                  displayedFormat="YYYY-MM-DD[T]HH:mm:ss.000"
                                  maxDate="30.04.2020 12:10"
                                  minDate="01.01.2019 00:00"

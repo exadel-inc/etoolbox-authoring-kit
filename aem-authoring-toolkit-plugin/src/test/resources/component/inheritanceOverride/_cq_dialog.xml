@@ -16,47 +16,75 @@
             <column jcr:primaryType="nt:unstructured"
                 sling:resourceType="granite/ui/components/coral/foundation/container">
                 <items jcr:primaryType="nt:unstructured">
-                    <text jcr:primaryType="nt:unstructured"
-                          sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                          name="./text"
-                          fieldLabel="Override label"
-                          disabled="{Boolean}false"
-                          renderHidden="{Boolean}false"
-                          required="{Boolean}true"/>
-                    <fieldsetOverride
-                            jcr:primaryType="nt:unstructured"
-                            sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
-                            name="./fieldset"
-                            jcr:title="Fieldset"
-                            disabled="{Boolean}false"
-                            renderHidden="{Boolean}false"
-                            required="{Boolean}false">
+                    <fieldsetChild
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
+                        name="./fieldset"
+                        jcr:title="Fieldset"
+                        disabled="{Boolean}false"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false">
                         <items jcr:primaryType="nt:unstructured">
-                            <fieldsetText2
-                                    jcr:primaryType="nt:unstructured"
-                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                                    name="./interimFieldsetText"
-                                    fieldLabel="Fieldset interim label"
-                                    disabled="{Boolean}false"
-                                    renderHidden="{Boolean}false"
-                                    required="{Boolean}false"/>
+                            <fieldsetText3
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./fieldsetText3"
+                                fieldLabel="Fieldset child"
+                                disabled="{Boolean}false"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"/>
                             <fieldsetText
-                                    jcr:primaryType="nt:unstructured"
-                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                                    name="./overrideFieldsetText"
-                                    fieldLabel="Fieldset override label"
-                                    disabled="{Boolean}false"
-                                    renderHidden="{Boolean}false"
-                                    required="{Boolean}false"/>
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./fieldsetText"
+                                fieldLabel="Fieldset child"
+                                disabled="{Boolean}false"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"/>
+                            <fieldsetText2
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./fieldsetText2"
+                                fieldLabel="Fieldset parent"
+                                disabled="{Boolean}false"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"/>
+                            <fieldsetSelect jcr:primaryType="nt:unstructured"
+                                      sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                      name="./fieldsetSelect"
+                                      fieldLabel="Fieldset child"
+                                      disabled="{Boolean}false"
+                                      renderHidden="{Boolean}false"
+                                      required="{Boolean}false">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <item jcr:primaryType="nt:unstructured" text="Default option" value=""/>
+                                    <option1 jcr:primaryType="nt:unstructured" text="Child option 1" value="option-1"/>
+                                    <option2 jcr:primaryType="nt:unstructured" text="Child option 2" value="option 2"/>
+                                </items>
+                            </fieldsetSelect>
                         </items>
-                    </fieldsetOverride>
+                    </fieldsetChild>
                     <text jcr:primaryType="nt:unstructured"
                           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                           name="./text"
-                          fieldLabel="Base label"
+                          fieldLabel="Parent"
                           disabled="{Boolean}false"
                           renderHidden="{Boolean}false"
                           required="{Boolean}true"/>
+                    <text2 jcr:primaryType="nt:unstructured"
+                           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                           name="./text2"
+                           fieldLabel="Parent"
+                           disabled="{Boolean}false"
+                           renderHidden="{Boolean}false"
+                           required="{Boolean}true"/>
+                    <text4 jcr:primaryType="nt:unstructured"
+                           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                           name="./text4"
+                           fieldLabel="Parent"
+                           disabled="{Boolean}false"
+                           renderHidden="{Boolean}false"
+                           required="{Boolean}false"/>
                 </items>
             </column>
         </items>

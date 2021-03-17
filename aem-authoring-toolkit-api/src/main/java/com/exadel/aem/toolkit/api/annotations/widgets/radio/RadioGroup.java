@@ -13,16 +13,17 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.radio;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 
 /**
  * Used to set up
@@ -32,44 +33,33 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.RADIOGROUP)
-@PropertyMapping
-@SuppressWarnings("unused")
+@PropertyMapping(mappings = "vertical")
 public @interface RadioGroup {
+
     /**
      * Maps to the 'emptyText' vertical of this TouchUI dialog component's node.
      * Sets whether this RadioGroup is displayed as a vertical stack
      * @return True or false
      */
     boolean vertical() default true;
+
     /**
      * Used to specify collection of {@link RadioButton}s within this RadioGroup
      * @return Single {@code @RadioButton} annotation, or an array of RadioButtons
      */
-    @IgnorePropertyMapping
     RadioButton[] buttons() default {};
+
+    /**
+     * Used to specify the source for options handled by the AEM Authoring Toolkit's OptionProvider mechanism
+     * @return {@link OptionProvider} instance, or an empty {@code }OptionProvider} if not needed
+     */
+    @IgnorePropertyMapping
+    OptionProvider buttonProvider() default @OptionProvider;
+
     /**
      * When set, the {@code datasource} node is appended to the JCR buildup of this component
      * and populated with values of provided {@link DataSource} annotation
      * @return {@code @DataSource} instance
      */
-    @IgnorePropertyMapping
     DataSource datasource() default @DataSource;
-    /**
-     * @deprecated Use {@code datasource:resourceType} instead
-     * When set to a non-blank string, allows to override {@code sling:resourceType} attribute of a {@code datasource node}
-     * pointing to a ACS Commons list
-     * @return String value
-     */
-    @Deprecated
-    @IgnorePropertyMapping
-    String acsListResourceType() default "";
-    /**
-     * @deprecated Use {@code datasource:path} instead
-     * When set to a non-blank string, a {@code datasource} node is appended to the JCR buildup of this component
-     * pointing to a ACS Commons list
-     * @return Valid JCR path, or an empty string
-     */
-    @Deprecated
-    @IgnorePropertyMapping
-    String acsListPath() default "";
 }

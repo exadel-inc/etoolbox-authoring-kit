@@ -16,7 +16,6 @@
                 sling:resourceType="granite/ui/components/coral/foundation/tabs">
                 <items jcr:primaryType="nt:unstructured">
                     <firstTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="First tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -117,7 +116,6 @@
                         </items>
                     </firstTab>
                     <secondTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Second tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -139,7 +137,6 @@
                         </items>
                     </secondTab>
                     <thirdTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Third tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -165,7 +162,6 @@
                         </items>
                     </thirdTab>
                     <fourthTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Fourth tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -256,7 +252,7 @@
                                             checked="{Boolean}true"
                                             disabled="{Boolean}false"
                                             fieldLabel="switch label name"
-                                            ignoreData="{Boolean}false"
+                                            ignoreData="{Boolean}true"
                                             name="./feedFirstswitch_field"
                                             offText="Off"
                                             onText="On"
@@ -411,7 +407,7 @@
                                             checked="{Boolean}true"
                                             disabled="{Boolean}false"
                                             fieldLabel="switch label name"
-                                            ignoreData="{Boolean}false"
+                                            ignoreData="{Boolean}true"
                                             name="./feed/second/switch_field/postfix"
                                             offText="Off"
                                             onText="On"
@@ -468,7 +464,6 @@
                         </items>
                     </fourthTab>
                     <fifthTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Fifth tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -661,19 +656,13 @@
                                                     jcr:primaryType="nt:unstructured"
                                                     sling:resourceType="cq/gui/components/authoring/dialog/fileupload"
                                                     allowUpload="{Boolean}false"
-                                                    chunkUploadSupported="{Boolean}false"
                                                     disabled="{Boolean}false"
                                                     fieldDescription="Description to first primary field"
                                                     fieldLabel="Label to first primary field"
                                                     mimeTypes="[image]"
-                                                    multiple="{Boolean}false"
                                                     name="./prefixFirst_Field_Primary_Fieldpostfix"
                                                     renderHidden="{Boolean}false"
-                                                    required="{Boolean}true"
-                                                    text="Upload"
-                                                    uploadUrl="${suffix.path}"
-                                                    useHTML5="{Boolean}true"
-                                                    variant="secondary"/>
+                                                    required="{Boolean}true"/>
                                             <secondFieldPrimaryField
                                                     jcr:primaryType="nt:unstructured"
                                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
@@ -802,7 +791,6 @@
                         </items>
                     </fifthTab>
                     <sixthTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Sixth tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -811,39 +799,26 @@
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="cq/gui/components/authoring/dialog/fileupload"
                                     allowUpload="{Boolean}false"
-                                    chunkUploadSupported="{Boolean}false"
                                     disabled="{Boolean}false"
                                     fieldLabel="label image"
                                     mimeTypes="[image]"
-                                    multiple="{Boolean}false"
                                     name="./fieldImage"
                                     renderHidden="{Boolean}false"
                                     required="{Boolean}true"
-                                    text="Upload"
-                                    sizeLimit="{Long}100"
-                                    uploadUrl="${suffix.path}"
-                                    useHTML5="{Boolean}true"
-                                    variant="secondary"/>
+                                    sizeLimit="{Long}100"/>
                             <productImagePath
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="cq/gui/components/authoring/dialog/fileupload"
                                     allowUpload="{Boolean}false"
-                                    chunkUploadSupported="{Boolean}false"
                                     disabled="{Boolean}false"
                                     fieldLabel="label product image"
                                     mimeTypes="[image]"
-                                    multiple="{Boolean}false"
                                     name="./fieldProductImage"
                                     renderHidden="{Boolean}false"
-                                    required="{Boolean}true"
-                                    text="Upload"
-                                    uploadUrl="${suffix.path}"
-                                    useHTML5="{Boolean}true"
-                                    variant="secondary"/>
+                                    required="{Boolean}true"/>
                         </items>
                     </sixthTab>
                     <seventhTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Seventh tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">

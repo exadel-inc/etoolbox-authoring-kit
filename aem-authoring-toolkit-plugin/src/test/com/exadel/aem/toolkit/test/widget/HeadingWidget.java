@@ -15,20 +15,18 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
 
 @Dialog(
         name = "test-component",
-        title = "test-component-dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "test-component-dialog"
 )
 @SuppressWarnings("unused")
 public class HeadingWidget {
 
-    @Heading(text = "test-text")
+    @Heading("test-text")
     String heading1;
 
-    @Heading(text = "test-text", level = 6)
+    @Heading(value = "test-text", level = 6)
     String heading2;
 }

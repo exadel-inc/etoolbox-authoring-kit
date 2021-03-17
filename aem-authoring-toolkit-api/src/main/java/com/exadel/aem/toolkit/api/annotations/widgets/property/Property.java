@@ -14,10 +14,10 @@
 package com.exadel.aem.toolkit.api.annotations.widgets.property;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.annotation.Repeatable;
 
 /**
  * Represent a name-value pair to be rendered as a TouchUI Dialog element attribute and its value
@@ -26,8 +26,8 @@ import java.lang.annotation.Repeatable;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(Properties.class)
-@SuppressWarnings("unused")
 public @interface Property {
+
     /**
      * Indicates the attribute name
      * Relative path can be defined in such a way that the substring before the ultimate `/`
@@ -35,6 +35,7 @@ public @interface Property {
      * @return String value, non-blank
      */
     String name();
+
     /**
      * Indicates the attribute value
      * @return String value

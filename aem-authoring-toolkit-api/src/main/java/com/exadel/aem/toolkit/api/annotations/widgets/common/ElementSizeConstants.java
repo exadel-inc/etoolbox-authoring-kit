@@ -11,13 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 /**
  * Contains common string constants used for size setup
+ *
+ * @deprecated These constants are deprecated in favour of {@link Size} enum and will be removed in a version after 2.0.1
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "squid:S1133"})
+@Deprecated
 public class ElementSizeConstants {
     public static final String EXTRA_SMALL = "XS";
     public static final String SMALL = "S";

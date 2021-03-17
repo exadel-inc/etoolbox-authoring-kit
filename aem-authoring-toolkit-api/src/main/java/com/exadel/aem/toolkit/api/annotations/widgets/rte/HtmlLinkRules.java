@@ -25,7 +25,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@SuppressWarnings("unused")
 public @interface HtmlLinkRules {
     /**
      * If set to non-blank string, represents the CSS style for links to internal resources

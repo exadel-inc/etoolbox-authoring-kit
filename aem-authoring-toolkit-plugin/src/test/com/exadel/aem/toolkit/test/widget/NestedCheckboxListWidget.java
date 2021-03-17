@@ -15,15 +15,13 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "Nested CheckboxList Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "Nested CheckboxList Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class NestedCheckboxListWidget {

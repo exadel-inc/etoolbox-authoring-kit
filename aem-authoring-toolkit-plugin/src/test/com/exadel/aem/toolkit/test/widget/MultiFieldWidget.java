@@ -17,17 +17,16 @@ package com.exadel.aem.toolkit.test.widget;
 import java.util.List;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "MultiField Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "MultiField Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class MultiFieldWidget {
@@ -50,11 +49,23 @@ public class MultiFieldWidget {
         description = "Multifield definition with collection-typed source"
     )
     @MultiField
-    List<MultiFieldContainer> multiField3;
+    List<ExtendedMultiFieldContainer> multiField3;
 
     private static class MultiFieldContainer {
         @DialogField
         @TextField
         String dialogItem;
+    }
+
+    private static class ExtendedMultiFieldContainer extends MultiFieldContainer {
+        @DialogField
+        @FieldSet(value = MultifieldContainerNestedFieldSet.class)
+        String nestedFieldSet;
+    }
+
+    private static class MultifieldContainerNestedFieldSet {
+        @DialogField
+        @TextField
+        String nestedItem;
     }
 }

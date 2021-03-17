@@ -19,24 +19,34 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
- * Defines settings for rendering a specific value of an annotation to an XML attribute, such as, the name of the attribute,
- * and whether to render attribute with a particular value or not (typically, blank strings and values which are default
- * according to Adobe specifications don't need to be explicitly set and hence rendered)
+ * Defines settings for rendering a specific value of an annotation to an Granite/XML attribute, such as, the name of the
+ * attribute, lexical form of the attribute's value, or whether to render attribute with a particular value or not
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PropertyRendering {
 
     /**
-     * When set, maps to the 'name' attribute of a field node
+     * When set, maps to the 'name' attribute of a dialog field node
      * @return String value
      */
     String name() default "";
 
     /**
-     * When set to true, allows to override prefix set for this field name
+     * When set, used to specify one or more {@link Scope}s this annotation or annotation property is rendered in,
+     * i.e. whether this is rendered to {@code cq:Component} (component root), {@code cq:dialog}, {@code cq:editorConfig},
+     * or any other appropriate JCR node.
+     * This setting applies only to values that technically can be rendered to multiple JCR nodes,
+     * such as {@link com.exadel.aem.toolkit.api.annotations.main.Dialog} annotation properties
+     * @return {@code Scope} value
+     */
+    Scope[] scope() default Scope.ALL;
+
+    /**
+     * When set to true, allows overriding prefix set for this field name
      * (in. e.g. a {@link FieldSet} annotation)
      * @return True or false
      */
@@ -51,8 +61,24 @@ public @interface PropertyRendering {
 
     /**
      * When set to true, indicates that a user-defined value will be necessarily rendered into an XML attribute
-     * even if results in an empty or a blank strong
+     * even if it maps to an empty, or a blank strong
      * @return True or false
      */
     boolean allowBlank() default false;
+
+    /**
+     * Defines whether the string value is stored as is, or else is rendered in uppercase, lowercase or came-lase. Most
+     * of the time this setting is used for transforming {@code Enum} values
+     * @return One of {@link StringTransformation} variants
+     */
+    StringTransformation transform() default StringTransformation.NONE;
+
+    /**
+     * When set, defines what value type will be used for the underlying property. the value type must be one of the JCR
+     * compliant types, such as {@code String}, {@code Long}, {@code Double}, etc. This value is used to produce a required
+     * type hint for the string representation of a value, e.g. when a Boolean value must be rendered as {@code "true"}
+     * and not as {@code "{Boolean}true"}
+     * @return {@code Class} reference, one of JCR-compliant classes must be used
+     */
+    Class<?> valueType() default _Default.class;
 }

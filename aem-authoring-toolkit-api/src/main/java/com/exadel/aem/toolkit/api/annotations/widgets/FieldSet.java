@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.main.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
@@ -35,7 +34,6 @@ import com.exadel.aem.toolkit.api.markers._Default;
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.FIELDSET)
 @PropertyMapping
-@SuppressWarnings("unused")
 public @interface FieldSet {
 
     /**
@@ -43,7 +41,7 @@ public @interface FieldSet {
      * Used to define title displayed above the FieldSet in TouchUI dialog
      * @return String value
      */
-    @PropertyRendering(name = JcrConstants.PN_TITLE)
+    @PropertyRendering(name = "jcr:title")
     String title() default "";
 
     /**
@@ -65,5 +63,5 @@ public @interface FieldSet {
      * the type of underlying {@code Field} is considered
      * @return Valid class referenced, or the {@link _Default} pseudo-reference
      */
-    Class<?> source() default _Default.class;
+    Class<?> value() default _Default.class;
 }

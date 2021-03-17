@@ -18,14 +18,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+
 /**
  * In multi-tab TouchUI Dialog setup, used to specify on which tab a dialog field is placed
- * @deprecated Use {@link PlaceOn} instead
+ * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link Place} instead
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Deprecated
-@SuppressWarnings("unused")
+@SuppressWarnings("squid:S1133")
 public @interface PlaceOnTab {
     /**
      * String equal to appropriate {@link Tab#title()} value

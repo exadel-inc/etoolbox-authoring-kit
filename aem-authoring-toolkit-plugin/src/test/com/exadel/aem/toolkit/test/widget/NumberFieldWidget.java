@@ -15,16 +15,14 @@
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 
-import static com.exadel.aem.toolkit.core.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,
-        title = "NumberField Widget Dialog",
-        layout = DialogLayout.FIXED_COLUMNS
+        title = "NumberField Widget Dialog"
 )
 @SuppressWarnings("unused")
 public class NumberFieldWidget {
@@ -37,9 +35,10 @@ public class NumberFieldWidget {
 
     @DialogField(label = "No value preset")
     @NumberField(
-            value = "",
-            min = -10,
-            max = 10
+        value = "",
+        min = -10,
+        max = 10,
+        step = 2
     )
     String number2;
 }
