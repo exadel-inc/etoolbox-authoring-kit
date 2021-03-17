@@ -324,7 +324,7 @@ public class XmlRuntime implements XmlUtility {
         Element effectiveElement = getRequiredElement(element, nodePrefix);
 
         Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .filter(m -> ArrayUtils.isEmpty(propMapping.mappings()) || ArrayUtils.contains(propMapping.mappings(), m.getName()))
+                .filter(m -> ArrayUtils.isEmpty(propMapping.value()) || ArrayUtils.contains(propMapping.value(), m.getName()))
                 .filter(m -> !m.isAnnotationPresent(IgnorePropertyMapping.class))
                 .filter(m -> !skipped.contains(m.getName()))
                 .forEach(m -> populateProperty(m, effectiveElement, annotation));

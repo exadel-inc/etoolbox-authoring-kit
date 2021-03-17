@@ -34,7 +34,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.RICHTEXT)
-@MapProperties(mappings = {"useFixedInlineToolbar"})
+@MapProperties(value = "useFixedInlineToolbar")
 public @interface RichTextEditor {
 
     /**

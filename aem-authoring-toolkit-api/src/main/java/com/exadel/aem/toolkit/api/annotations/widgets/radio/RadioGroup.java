@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.RADIOGROUP)
-@MapProperties(mappings = "vertical")
+@MapProperties(value = "vertical")
 public @interface RadioGroup {
 
     /**

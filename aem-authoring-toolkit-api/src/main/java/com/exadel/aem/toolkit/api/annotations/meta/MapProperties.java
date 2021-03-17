@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
 
 /**
  * Marks that properties of a specific annotation are expected to be automatically mapped to attributes of a markup
- * entity. This setting extends to all the properties of annotation unless a narrower list is specified via {@link MapProperties#mappings()}
+ * entity. This setting extends to all the properties of annotation unless a narrower list is specified via {@link MapProperties#value()}
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -39,5 +39,5 @@ public @interface MapProperties {
      * will be mapped
      * @return Array of strings, or an empty array
      */
-    String[] mappings() default {};
+    String[] value() default {};
 }

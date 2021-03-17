@@ -457,11 +457,11 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
     private void populateAnnotationProperties(Annotation annotation, Predicate<Method> filter) {
-        String completePropertyPrefix = Optional.ofNullable(annotation.annotationType().getAnnotation(MapProperties.class))
+        String propertyPrefix = Optional.ofNullable(annotation.annotationType().getAnnotation(MapProperties.class))
             .map(MapProperties::prefix)
             .orElse(StringUtils.EMPTY);
-        String nodePrefix = completePropertyPrefix.contains(DialogConstants.PATH_SEPARATOR)
-            ? StringUtils.substringBeforeLast(completePropertyPrefix, DialogConstants.PATH_SEPARATOR)
+        String nodePrefix = propertyPrefix.contains(DialogConstants.PATH_SEPARATOR)
+            ? StringUtils.substringBeforeLast(propertyPrefix, DialogConstants.PATH_SEPARATOR)
             : StringUtils.EMPTY;
 
         Target effectiveTarget = this;

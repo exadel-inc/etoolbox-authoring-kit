@@ -212,8 +212,8 @@ public class AnnotationUtil {
             return MAP_ALL_PROPERTIES;
         }
         return method -> {
-            boolean isAllowedByPropertyMapping = ArrayUtils.isEmpty(mapProperties.mappings())
-                || ArrayUtils.contains(mapProperties.mappings(), method.getName());
+            boolean isAllowedByPropertyMapping = ArrayUtils.isEmpty(mapProperties.value())
+                || ArrayUtils.contains(mapProperties.value(), method.getName());
             boolean isAllowedByIgnorePropertyMapping = Sources.fromMember(method).adaptTo(IgnorePropertyMapping.class) == null;
             return isAllowedByPropertyMapping && isAllowedByIgnorePropertyMapping;
         };

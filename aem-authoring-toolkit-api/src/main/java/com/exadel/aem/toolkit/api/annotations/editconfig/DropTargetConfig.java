@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
  * See <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#main-pars_title_2_tckaux_refd_">AEM Components documentation</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties(mappings = "propertyName")
+@MapProperties(value = "propertyName")
 public @interface DropTargetConfig {
 
     /**
