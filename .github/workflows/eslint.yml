@@ -2,14 +2,14 @@ name: eslint
 
 on:
     push:
-        branches: [ master, develop* ]
+        branches: [ master, develop*, release*]
     pull_request:
-        branches: [ master, develop* ]
+        branches: [ master, develop*, release* ]
     workflow_dispatch:
 
 env:
     node-version: 12.x
-    es-sources: ui.apps
+    es-sources: ./ui.apps
 
 jobs:
     eslint:
@@ -21,9 +21,9 @@ jobs:
                 uses: actions/setup-node@v1
                 with:
                     node-version: ${{ env.node-version }}
-            -   name: Move to source
-                run: cd ${{ env.es-sources }}
             -   name: Install NPM Dependencies
                 run: npm ci
+                working-directory: ${{ env.es-source }}
             -   name: Run Linting & Tests
                 run: npm run lint
+                working-directory: ${{ env.es-source }}
