@@ -33,7 +33,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.Sources;
@@ -197,23 +197,23 @@ public class AnnotationUtil {
 
     /**
      * Gets a filter routine typically passed to {@link com.exadel.aem.toolkit.api.handlers.Target#attributes(Annotation, Predicate)}.
-     * If {@link PropertyMapping} is present in the annotation given, the filter passes combs through the methods
+     * If {@link MapProperties} is present in the annotation given, the filter passes combs through the methods
      * as regulated by the property mapping; otherwise a neutral (pass-all) filtering is imposed
      * @param annotation {@code Annotation} object to use methods from
      * @return {@code Predicate<Method>} instance
      */
     public static Predicate<Method> getPropertyMappingFilter(Annotation annotation) {
-        PropertyMapping propMapping = Optional.ofNullable(annotation)
+        MapProperties mapProperties = Optional.ofNullable(annotation)
             .map(Annotation::annotationType)
-            .map(annotationType -> annotationType.getAnnotation(PropertyMapping.class))
+            .map(annotationType -> annotationType.getAnnotation(MapProperties.class))
             .orElse(null);
 
-        if (propMapping == null) {
+        if (mapProperties == null) {
             return MAP_ALL_PROPERTIES;
         }
         return method -> {
-            boolean isAllowedByPropertyMapping = ArrayUtils.isEmpty(propMapping.mappings())
-                || ArrayUtils.contains(propMapping.mappings(), method.getName());
+            boolean isAllowedByPropertyMapping = ArrayUtils.isEmpty(mapProperties.mappings())
+                || ArrayUtils.contains(mapProperties.mappings(), method.getName());
             boolean isAllowedByIgnorePropertyMapping = Sources.fromMember(method).adaptTo(IgnorePropertyMapping.class) == null;
             return isAllowedByPropertyMapping && isAllowedByIgnorePropertyMapping;
         };

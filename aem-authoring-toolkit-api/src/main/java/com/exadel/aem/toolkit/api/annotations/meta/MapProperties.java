@@ -19,15 +19,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks that properties of a specific annotation are expected to be automatically mapped to XML attributes
- * of the current XML node or an optional child node. This setting extends to all the properties unless
- * a narrower list is specified via {@link PropertyMapping#mappings()} or some of the properties are marked with
- * {@link IgnorePropertyMapping}
- * If set to entire annotation, this setting is eligible to all its properties unless explicitly marked with {@link IgnorePropertyMapping}
+ * Marks that properties of a specific annotation are expected to be automatically mapped to attributes of a markup
+ * entity. This setting extends to all the properties of annotation unless a narrower list is specified via {@link MapProperties#mappings()}
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PropertyMapping {
+public @interface MapProperties {
+
     /**
      * When initialized to a non-blank value, allows setting name prefix for a current field or all the eligible fields
      * of current annotation
@@ -37,8 +35,8 @@ public @interface PropertyMapping {
 
     /**
      * When initialized to a nonempty value, indicates that only properties with specified names will be automatically
-     * mapped. Default or non-initialized value means that every property will be mapped unless annotated with
-     * {@link IgnorePropertyMapping}
+     * mapped. Default or non-initialized value means that every property of an appropriate type (string, number, enum)
+     * will be mapped
      * @return Array of strings, or an empty array
      */
     String[] mappings() default {};

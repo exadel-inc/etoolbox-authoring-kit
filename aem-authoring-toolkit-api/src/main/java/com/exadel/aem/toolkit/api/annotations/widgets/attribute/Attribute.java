@@ -19,7 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@PropertyMapping(prefix = "granite:")
+@MapProperties(prefix = "granite:")
 public @interface Attribute {
 
     /**

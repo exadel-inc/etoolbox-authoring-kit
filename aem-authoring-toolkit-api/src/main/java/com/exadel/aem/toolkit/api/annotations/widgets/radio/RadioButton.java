@@ -13,13 +13,13 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.radio;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
  * Used to define an option within {@link RadioGroup#buttons()} set
  */
-@PropertyMapping
+@MapProperties
 public @interface RadioButton {
     /**
      * Maps to the 'text' attribute of this TouchUI dialog component's node.

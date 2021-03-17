@@ -37,7 +37,7 @@ import java.util.stream.LongStream;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -290,7 +290,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     @Override
     public Target namePrefix(String prefix) {
-        this.prefix = PluginNamingUtility.getValidFieldPrefix(prefix);
+        this.prefix = NamingUtil.getValidFieldPrefix(prefix);
         return this;
     }
 
@@ -309,7 +309,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     @Override
     public Target namePostfix(String postfix) {
-        this.postfix = PluginNamingUtility.getValidFieldPostfix(postfix);
+        this.postfix = NamingUtil.getValidFieldPostfix(postfix);
         return this;
     }
 
@@ -457,8 +457,8 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
     private void populateAnnotationProperties(Annotation annotation, Predicate<Method> filter) {
-        String completePropertyPrefix = Optional.ofNullable(annotation.annotationType().getAnnotation(PropertyMapping.class))
-            .map(PropertyMapping::prefix)
+        String completePropertyPrefix = Optional.ofNullable(annotation.annotationType().getAnnotation(MapProperties.class))
+            .map(MapProperties::prefix)
             .orElse(StringUtils.EMPTY);
         String nodePrefix = completePropertyPrefix.contains(DialogConstants.PATH_SEPARATOR)
             ? StringUtils.substringBeforeLast(completePropertyPrefix, DialogConstants.PATH_SEPARATOR)
@@ -488,8 +488,8 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         }
 
         // Extract property prefix and prepend it to the name
-        String prefixByPropertyMapping = Optional.ofNullable(context.annotationType().getAnnotation(PropertyMapping.class))
-            .map(PropertyMapping::prefix)
+        String prefixByPropertyMapping = Optional.ofNullable(context.annotationType().getAnnotation(MapProperties.class))
+            .map(MapProperties::prefix)
             .orElse(StringUtils.EMPTY);
         String namePrefix = prefixByPropertyMapping.contains(DialogConstants.PATH_SEPARATOR)
             ? StringUtils.substringAfterLast(prefixByPropertyMapping, DialogConstants.PATH_SEPARATOR)

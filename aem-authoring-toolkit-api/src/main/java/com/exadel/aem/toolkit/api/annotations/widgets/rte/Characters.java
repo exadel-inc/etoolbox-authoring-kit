@@ -18,7 +18,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 
@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ValueRestriction("com.exadel.aem.toolkit.plugin.util.validation.CharactersObjectValidator")
-@PropertyMapping
+@MapProperties
 public @interface Characters {
     /**
      * In a name-entity buildup, represents the name of a character entry

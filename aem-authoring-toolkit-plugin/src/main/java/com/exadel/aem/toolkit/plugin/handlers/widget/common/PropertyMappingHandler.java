@@ -17,7 +17,7 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
@@ -34,7 +34,7 @@ public class PropertyMappingHandler implements BiConsumer<Source, Target> {
     @Override
     public void accept(Source source, Target target) {
         Arrays.stream(source.adaptTo(Annotation[].class))
-                .filter(annotation -> annotation.annotationType().isAnnotationPresent(PropertyMapping.class))
+                .filter(annotation -> annotation.annotationType().isAnnotationPresent(MapProperties.class))
                 .forEach(annotation -> target.attributes(annotation, AnnotationUtil.getPropertyMappingFilter(annotation)));
     }
 }

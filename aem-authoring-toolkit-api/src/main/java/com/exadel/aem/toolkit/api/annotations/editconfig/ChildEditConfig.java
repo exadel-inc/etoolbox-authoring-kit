@@ -20,7 +20,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 
 /**
  * Defines editing configuration for a TouchUI-ready child components of the current component.
@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@PropertyMapping(prefix = "cq:")
+@MapProperties(prefix = "cq:")
 public @interface ChildEditConfig {
     /**
      * When set to a non-blank string, or to an array of strings, maps to the 'cq:actions' property

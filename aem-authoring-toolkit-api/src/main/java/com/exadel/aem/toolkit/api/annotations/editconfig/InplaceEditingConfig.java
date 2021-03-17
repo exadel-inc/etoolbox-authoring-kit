@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.api.annotations.editconfig;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 
@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
  * See <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#main-pars_title_9_pnfkfl_refd_">AEM Components documentation</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@PropertyMapping
+@MapProperties
 public @interface InplaceEditingConfig {
     /**
      * Maps to the 'type' attribute of current {@code cq:editConfig/cq:inplaceEditing/cq:childEditors/[editorName]} node

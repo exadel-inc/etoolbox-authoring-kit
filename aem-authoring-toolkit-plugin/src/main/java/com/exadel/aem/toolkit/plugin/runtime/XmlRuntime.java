@@ -42,7 +42,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
@@ -312,11 +312,11 @@ public class XmlRuntime implements XmlUtility {
 
     @Override
     public void mapProperties(Element element, Annotation annotation, List<String> skipped) {
-        PropertyMapping propMapping = annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class);
+        MapProperties propMapping = annotation.annotationType().getDeclaredAnnotation(MapProperties.class);
         if (propMapping == null) {
             return;
         }
-        String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
+        String prefix = annotation.annotationType().getAnnotation(MapProperties.class).prefix();
         String nodePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
                 ? StringUtils.substringBeforeLast(prefix, DialogConstants.PATH_SEPARATOR)
                 : StringUtils.EMPTY;
@@ -344,7 +344,7 @@ public class XmlRuntime implements XmlUtility {
             name = StringUtils.defaultIfBlank(propertyRendering.name(), name);
             ignorePrefix = propertyRendering.ignorePrefix();
         }
-        String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
+        String prefix = annotation.annotationType().getAnnotation(MapProperties.class).prefix();
         String namePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
                 ? StringUtils.substringAfterLast(prefix, DialogConstants.PATH_SEPARATOR)
                 : prefix;
