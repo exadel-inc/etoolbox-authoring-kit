@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
@@ -27,7 +26,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 @MapProperties
 public @interface OptionProvider {
 
-    @IgnorePropertyMapping
     OptionSource[] value() default {};
 
     String[] prepend() default {};

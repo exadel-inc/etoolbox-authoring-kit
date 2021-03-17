@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
@@ -56,20 +55,17 @@ public @interface Autocomplete {
      * and populated with values of provided {@link AutocompleteDatasource} annotation
      * @return {@code @AutocompleteDatasource} instance
      */
-    @IgnorePropertyMapping
     AutocompleteDatasource datasource() default @AutocompleteDatasource();
     /**
      * When set, the {@code values} node is appended to the JCR buildup of this component
      * and populated with values of provided {@link AutocompleteTag} annotation
      * @return {@code @AutocompleteTag} instance
      */
-    @IgnorePropertyMapping
     AutocompleteTag values() default @AutocompleteTag();
     /**
      * When set, the {@code options} node is appended to the JCR buildup of this component
      * and populated with values of provided {@link AutocompleteList} annotation
      * @return {@code @AutocompleteList} instance
      */
-    @IgnorePropertyMapping
     AutocompleteList options() default @AutocompleteList();
 }

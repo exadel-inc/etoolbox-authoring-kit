@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
@@ -31,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.CHECKBOX)
-@MapProperties
+@MapProperties("!disconnectedSublist")
 public @interface Checkbox {
     /**
      * Maps to the 'text' attribute of this TouchUI dialog component's node.
@@ -80,7 +79,6 @@ public @interface Checkbox {
      * Its visibility will depend on current Checkbox state
      * @return Reference to a class describing sublist
      */
-    @IgnorePropertyMapping
     Class<?>[] sublist() default {};
 
     /**
@@ -88,6 +86,5 @@ public @interface Checkbox {
      * The 'disconnected' attribute will be set to the node that declares the sublist
      * @return Reference to a class describing sublist
      */
-    @IgnorePropertyMapping
     boolean disconnectedSublist() default false;
 }

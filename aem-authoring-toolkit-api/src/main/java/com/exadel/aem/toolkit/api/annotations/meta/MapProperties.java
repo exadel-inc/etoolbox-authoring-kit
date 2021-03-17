@@ -34,9 +34,12 @@ public @interface MapProperties {
     String prefix() default "";
 
     /**
-     * When initialized to a nonempty value, indicates that only properties with specified names will be automatically
-     * mapped. Default or non-initialized value means that every property of an appropriate type (string, number, enum)
-     * will be mapped
+     * Defines mapping rules for the properties (methods) of the current annotation. Default rule is that all the property
+     * values of an appropriate type (string, number, enum) are mapped. The specific rules are:
+     * <p>1) It one or more names is specified, only these properties are mapped.</p>
+     * <p>2) If one or more names specified with the prepended negation sign ("{@code !}"), all the properties <i>save for</i>
+     * the specified ones are mapped.</p>
+     * <p>3) If there are names with and without "{@code !}" sign, rule (1) is in effect
      * @return Array of strings, or an empty array
      */
     String[] value() default {};

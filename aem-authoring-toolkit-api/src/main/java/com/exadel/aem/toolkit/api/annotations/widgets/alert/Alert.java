@@ -22,7 +22,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariantConstants;
 
 /**
  * Used to set up
@@ -44,7 +43,6 @@ public @interface Alert {
      * Maps to the 'variant' attribute of this TouchUI dialog component's node.
      *
      * @return Alert style
-     * @see StatusVariantConstants
      */
     String variant() default "";
 

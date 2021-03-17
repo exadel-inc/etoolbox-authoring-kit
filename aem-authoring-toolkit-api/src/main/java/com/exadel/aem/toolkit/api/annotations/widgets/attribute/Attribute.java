@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
@@ -67,6 +66,5 @@ public @interface Attribute {
      * Optional collection of extra attributes represented as name-value pairs
      * @return Single {@code @Data} annotation value, or an array of {@code @Data}
      */
-    @IgnorePropertyMapping
     Data[] data() default {};
 }

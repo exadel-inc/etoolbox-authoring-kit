@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
@@ -53,7 +52,6 @@ public @interface RadioGroup {
      * Used to specify the source for options handled by the AEM Authoring Toolkit's OptionProvider mechanism
      * @return {@link OptionProvider} instance, or an empty {@code }OptionProvider} if not needed
      */
-    @IgnorePropertyMapping
     OptionProvider buttonProvider() default @OptionProvider;
 
     /**

@@ -41,7 +41,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
@@ -312,8 +311,8 @@ public class XmlRuntime implements XmlUtility {
 
     @Override
     public void mapProperties(Element element, Annotation annotation, List<String> skipped) {
-        MapProperties propMapping = annotation.annotationType().getDeclaredAnnotation(MapProperties.class);
-        if (propMapping == null) {
+        MapProperties mapProperties = annotation.annotationType().getDeclaredAnnotation(MapProperties.class);
+        if (mapProperties == null) {
             return;
         }
         String prefix = annotation.annotationType().getAnnotation(MapProperties.class).prefix();
@@ -324,8 +323,15 @@ public class XmlRuntime implements XmlUtility {
         Element effectiveElement = getRequiredElement(element, nodePrefix);
 
         Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .filter(m -> ArrayUtils.isEmpty(propMapping.value()) || ArrayUtils.contains(propMapping.value(), m.getName()))
-                .filter(m -> !m.isAnnotationPresent(IgnorePropertyMapping.class))
+                .filter(m -> {
+                    if (mapProperties.value().length == 0) {
+                        return true;
+                    }
+                    if (ArrayUtils.contains(mapProperties.value(), m.getName())) {
+                        return true;
+                    }
+                    return !ArrayUtils.contains(mapProperties.value(), DialogConstants.NEGATION + m.getName());
+                })
                 .filter(m -> !skipped.contains(m.getName()))
                 .forEach(m -> populateProperty(m, effectiveElement, annotation));
     }

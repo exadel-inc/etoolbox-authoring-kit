@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
@@ -42,14 +41,12 @@ public @interface Select {
      * Used to specify collection of {@link Option}s within this Select
      * @return Single {@code Option} annotation, or an array of Options
      */
-    @IgnorePropertyMapping
     Option[] options() default {};
 
     /**
      * Used to specify the source for options handled by the AEM Authoring Toolkit's OptionProvider mechanism
      * @return {@link OptionProvider} instance, or an empty {@code }OptionProvider} if not needed
      */
-    @IgnorePropertyMapping
     OptionProvider optionProvider() default @OptionProvider;
 
     /**
@@ -63,7 +60,6 @@ public @interface Select {
      * and populated with values of provided {@link DataSource} annotation
      * @return {@code @DataSource} instance
      */
-    @IgnorePropertyMapping
     DataSource datasource() default @DataSource;
 
     /**

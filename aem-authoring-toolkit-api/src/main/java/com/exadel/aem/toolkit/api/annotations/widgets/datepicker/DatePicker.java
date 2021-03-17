@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
@@ -98,7 +97,6 @@ public @interface DatePicker {
      * default format otherwise
      * @return Value equal to "String", or none
      */
-    @IgnorePropertyMapping
     TypeHint typeHint() default TypeHint.NONE;
 
     /**

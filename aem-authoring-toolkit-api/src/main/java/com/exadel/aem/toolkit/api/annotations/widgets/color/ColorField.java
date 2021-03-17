@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
@@ -33,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.COLORFIELD)
-@MapProperties
+@MapProperties("!customColors")
 public @interface ColorField {
     /**
      * Maps to the 'value' attribute of this TouchUI dialog component's node.
@@ -91,6 +90,5 @@ public @interface ColorField {
      * Used to render a collection of user-set custom colors
      * @return An array of non-blank strings, or null
      */
-    @IgnorePropertyMapping
     String[] customColors() default {};
 }

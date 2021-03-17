@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
@@ -28,7 +27,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties
+@MapProperties("!name")
 public @interface DialogField {
 
     /**
@@ -68,7 +67,6 @@ public @interface DialogField {
      * If not set, the name of the annotated field or method will be stored
      * @return String value (optional)
      */
-    @IgnorePropertyMapping
     String name() default "";
 
     /**
