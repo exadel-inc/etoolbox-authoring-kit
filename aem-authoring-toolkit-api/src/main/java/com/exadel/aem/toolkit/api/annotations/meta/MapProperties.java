@@ -27,13 +27,6 @@ import java.lang.annotation.Target;
 public @interface MapProperties {
 
     /**
-     * When initialized to a non-blank value, allows setting name prefix for a current field or all the eligible fields
-     * of current annotation
-     * @return String value
-     */
-    String prefix() default "";
-
-    /**
      * Defines mapping rules for the properties (methods) of the current annotation. Default rule is that all the property
      * values of an appropriate type (string, number, enum) are mapped. The specific rules are:
      * <p>1) It one or more names is specified, only these properties are mapped.</p>
@@ -43,4 +36,20 @@ public @interface MapProperties {
      * @return Array of strings, or an empty array
      */
     String[] value() default {};
+
+    /**
+     * When set, specifies one or more {@link Scope}s this annotation can be mapped to,
+     * i.e. whether this is rendered to {@code cq:Component} (component root), {@code cq:dialog}, {@code cq:editorConfig},
+     * or any other appropriate JCR node. Default value is equal to "all applicable scopes".
+     * <p>Note: this value has no effect for the properties that are managed by a specific built-in or custom handler.
+     * Also, it can be overridden by a {@link PropertyRendering#scope()} setting if specified at the property level</p>
+     * @return One or more {@code Scope} values
+     */
+    Scope[] scope() default Scope.DEFAULT;
+
+    /**
+     * When initialized to a non-blank value, allows setting name prefix for all the eligible fields of current annotation
+     * @return String value
+     */
+    String prefix() default "";
 }

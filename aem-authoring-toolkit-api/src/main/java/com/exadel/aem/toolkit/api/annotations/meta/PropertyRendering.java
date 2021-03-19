@@ -36,14 +36,14 @@ public @interface PropertyRendering {
     String name() default "";
 
     /**
-     * When set, used to specify one or more {@link Scope}s this annotation or annotation property is rendered in,
+     * When set, used to specify one or more {@link Scope}s this annotation property is rendered in,
      * i.e. whether this is rendered to {@code cq:Component} (component root), {@code cq:dialog}, {@code cq:editorConfig},
      * or any other appropriate JCR node.
      * This setting applies only to values that technically can be rendered to multiple JCR nodes,
      * such as {@link com.exadel.aem.toolkit.api.annotations.main.Dialog} annotation properties
      * @return {@code Scope} value
      */
-    Scope[] scope() default Scope.ALL;
+    Scope[] scope() default Scope.DEFAULT;
 
     /**
      * When set to true, allows overriding prefix set for this field name

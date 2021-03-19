@@ -182,9 +182,9 @@ abstract class PackageEntryWriter {
             .tryAdaptTo(PropertyRendering.class)
             .map(PropertyRendering::scope)
             .map(Arrays::asList)
-            .orElse(Collections.singletonList(Scope.ALL));
+            .orElse(Collections.singletonList(Scope.DEFAULT));
 
-        return activeScopes.contains(scope) || activeScopes.contains(Scope.ALL);
+        return activeScopes.contains(scope) || activeScopes.contains(Scope.DEFAULT);
     }
 
     /**

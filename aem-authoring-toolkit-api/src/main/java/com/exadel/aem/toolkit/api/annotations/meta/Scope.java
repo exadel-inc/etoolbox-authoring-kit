@@ -13,45 +13,39 @@
  */
 package com.exadel.aem.toolkit.api.annotations.meta;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Contains possible values of {@link com.exadel.aem.toolkit.api.annotations.meta.Scope} annotation
  */
 public enum Scope {
-    ALL,
-    COMPONENT {
-        @Override
-        public String toString() {
-            return ".content.xml";
-        }
-    },
-    CQ_DIALOG {
-        @Override
-        public String toString() {
-            return "_cq_dialog.xml";
-        }
-    },
-    CQ_DESIGN_DIALOG {
-        @Override
-        public String toString() {
-            return "_cq_design_dialog.xml";
-        }
-    },
-    CQ_EDIT_CONFIG {
-        @Override
-        public String toString() {
-            return "_cq_editConfig.xml";
-        }
-    },
-    CQ_CHILD_EDIT_CONFIG {
-        @Override
-        public String toString() {
-            return "_cq_childEditConfig.xml";
-        }
-    },
-    CQ_HTML_TAG {
-        @Override
-        public String toString() {
-            return "_cq_htmlTag.xml";
-        }
+    DEFAULT,
+    COMPONENT(".content.xml"),
+    CQ_DIALOG("_cq_dialog.xml"),
+    CQ_DESIGN_DIALOG("_cq_design_dialog.xml"),
+    CQ_EDIT_CONFIG("_cq_editConfig.xml"),
+    CQ_CHILD_EDIT_CONFIG("_cq_childEditConfig.xml"),
+    CQ_HTML_TAG("_cq_htmlTag.xml");
+
+    private final String value;
+
+    /**
+     * Default constructor
+     */
+    Scope() {
+        this(null);
+    }
+
+    /**
+     * Value-specializing constructor
+     * @param value The return value of {@link Scope#toString()} method
+     */
+    Scope(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return StringUtils.defaultString(value);
     }
 }
