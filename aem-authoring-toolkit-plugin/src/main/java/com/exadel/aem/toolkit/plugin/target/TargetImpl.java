@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.BinaryOperator;
@@ -38,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -457,9 +457,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
     private void populateAnnotationProperties(Annotation annotation, Predicate<Method> filter) {
-        String propertyPrefix = Optional.ofNullable(annotation.annotationType().getAnnotation(MapProperties.class))
-            .map(MapProperties::prefix)
-            .orElse(StringUtils.EMPTY);
+        String propertyPrefix = getPropertyPrefix(annotation);
         String nodePrefix = propertyPrefix.contains(DialogConstants.PATH_SEPARATOR)
             ? StringUtils.substringBeforeLast(propertyPrefix, DialogConstants.PATH_SEPARATOR)
             : StringUtils.EMPTY;
@@ -476,7 +474,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         }
     }
 
-    private static void populateAnnotationProperty(Annotation context, Method method, Target target) {
+    private static void populateAnnotationProperty(Annotation annotation, Method method, Target target) {
         boolean ignorePrefix = false;
 
         // Extract property name
@@ -488,9 +486,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         }
 
         // Extract property prefix and prepend it to the name
-        String prefixByPropertyMapping = Optional.ofNullable(context.annotationType().getAnnotation(MapProperties.class))
-            .map(MapProperties::prefix)
-            .orElse(StringUtils.EMPTY);
+        String prefixByPropertyMapping = getPropertyPrefix(annotation);
         String namePrefix = prefixByPropertyMapping.contains(DialogConstants.PATH_SEPARATOR)
             ? StringUtils.substringAfterLast(prefixByPropertyMapping, DialogConstants.PATH_SEPARATOR)
             : prefixByPropertyMapping;
@@ -513,10 +509,20 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         }
 
         BinaryOperator<String> merger = TargetImpl::mergeStringAttributes;
-        AttributeHelper.forAnnotationProperty(context, method)
+        AttributeHelper.forAnnotationProperty(annotation, method)
             .withName(propertyName)
             .withMerger(merger)
             .setTo(effectiveTarget);
+    }
+
+    private static String getPropertyPrefix(Annotation annotation) {
+        String result = StringUtils.EMPTY;
+        if (annotation.annotationType().isAnnotationPresent(MapProperties.class)) {
+            result = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).prefix();
+        } else if (annotation.annotationType().isAnnotationPresent(PropertyMapping.class)) {
+            result = annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
+        }
+        return result;
     }
 
     private static String mergeStringAttributes(String first, String second) {

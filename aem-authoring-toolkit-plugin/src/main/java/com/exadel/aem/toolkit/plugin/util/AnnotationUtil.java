@@ -28,11 +28,13 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
@@ -195,28 +197,36 @@ public class AnnotationUtil {
 
     /**
      * Gets a filter routine to select properties of the given annotation eligible for automatic mapping.
-     * If {@link MapProperties} is present in the annotation given, the filter passes combs through the methods
-     * as regulated by the property mapping; otherwise a neutral (pass-all) filtering is imposed
+     * If one of the property-mapping annotations is present in the annotation given, the filter combs through
+     * the methods and picks those ones satisfying the mapping; otherwise a neutral (pass-all) filter is imposed
      * @param annotation {@code Annotation} object to use methods from
      * @return {@code Predicate<Method>} instance
      */
     public static Predicate<Method> getPropertyMappingFilter(Annotation annotation) {
-        MapProperties mapProperties = Optional.ofNullable(annotation)
+        Stream<String> mappingsByMapProperties = Optional.ofNullable(annotation)
             .map(Annotation::annotationType)
             .map(annotationType -> annotationType.getAnnotation(MapProperties.class))
-            .orElse(null);
+            .map(MapProperties::value)
+            .map(Arrays::stream)
+            .orElse(Stream.empty());
+        Stream<String> mappingsByPropertyMapping = Optional.ofNullable(annotation)
+            .map(Annotation::annotationType)
+            .map(annotationType -> annotationType.getAnnotation(PropertyMapping.class))
+            .map(PropertyMapping::mappings)
+            .map(Arrays::stream)
+            .orElse(Stream.empty());
+        List<String> effectiveMappings = Stream.concat(mappingsByMapProperties, mappingsByPropertyMapping)
+            .filter(StringUtils::isNotBlank)
+            .collect(Collectors.toList());
 
-        if (mapProperties == null) {
+        if (effectiveMappings.isEmpty()) {
             return MAP_ALL_PROPERTIES;
         }
         return method -> {
-            if (ArrayUtils.isEmpty(mapProperties.value())) {
-                return true;
+            if (effectiveMappings.stream().anyMatch(mapping -> !mapping.startsWith(DialogConstants.NEGATION))) {
+                return effectiveMappings.contains(method.getName());
             }
-            if (Arrays.stream(mapProperties.value()).anyMatch(mapping -> !mapping.startsWith(DialogConstants.NEGATION))) {
-                return ArrayUtils.contains(mapProperties.value(), method.getName());
-            }
-            return Arrays.stream(mapProperties.value()).noneMatch(mapping -> mapping.equals(DialogConstants.NEGATION + method.getName()));
+            return effectiveMappings.stream().noneMatch(mapping -> mapping.equals(DialogConstants.NEGATION + method.getName()));
         };
     }
 

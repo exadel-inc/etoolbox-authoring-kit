@@ -42,6 +42,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
@@ -311,11 +312,13 @@ public class XmlRuntime implements XmlUtility {
 
     @Override
     public void mapProperties(Element element, Annotation annotation, List<String> skipped) {
-        MapProperties mapProperties = annotation.annotationType().getDeclaredAnnotation(MapProperties.class);
-        if (mapProperties == null) {
+        if (!annotation.annotationType().isAnnotationPresent(MapProperties.class)
+            && !annotation.annotationType().isAnnotationPresent(PropertyMapping.class)) {
             return;
         }
-        String prefix = annotation.annotationType().getAnnotation(MapProperties.class).prefix();
+        String prefix = annotation.annotationType().isAnnotationPresent(MapProperties.class)
+            ? annotation.annotationType().getDeclaredAnnotation(MapProperties.class).prefix()
+            : annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
         String nodePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
                 ? StringUtils.substringBeforeLast(prefix, DialogConstants.PATH_SEPARATOR)
                 : StringUtils.EMPTY;
@@ -323,15 +326,7 @@ public class XmlRuntime implements XmlUtility {
         Element effectiveElement = getRequiredElement(element, nodePrefix);
 
         Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .filter(m -> {
-                    if (mapProperties.value().length == 0) {
-                        return true;
-                    }
-                    if (ArrayUtils.contains(mapProperties.value(), m.getName())) {
-                        return true;
-                    }
-                    return !ArrayUtils.contains(mapProperties.value(), DialogConstants.NEGATION + m.getName());
-                })
+                .filter(AnnotationUtil.getPropertyMappingFilter(annotation))
                 .filter(m -> !skipped.contains(m.getName()))
                 .forEach(m -> populateProperty(m, effectiveElement, annotation));
     }

@@ -13,13 +13,11 @@
  */
 package com.exadel.aem.toolkit.api.annotations.meta;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * Contains possible values of {@link com.exadel.aem.toolkit.api.annotations.meta.Scope} annotation
  */
 public enum Scope {
-    DEFAULT,
+    DEFAULT(""),
     COMPONENT(".content.xml"),
     CQ_DIALOG("_cq_dialog.xml"),
     CQ_DESIGN_DIALOG("_cq_design_dialog.xml"),
@@ -31,13 +29,6 @@ public enum Scope {
 
     /**
      * Default constructor
-     */
-    Scope() {
-        this(null);
-    }
-
-    /**
-     * Value-specializing constructor
      * @param value The return value of {@link Scope#toString()} method
      */
     Scope(String value) {
@@ -46,6 +37,6 @@ public enum Scope {
 
     @Override
     public String toString() {
-        return StringUtils.defaultString(value);
+        return value;
     }
 }
