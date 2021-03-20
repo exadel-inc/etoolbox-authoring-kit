@@ -33,6 +33,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
@@ -202,6 +203,8 @@ public class AnnotationUtil {
      * @param annotation {@code Annotation} object to use methods from
      * @return {@code Predicate<Method>} instance
      */
+    @SuppressWarnings("deprecation") // PropertyMapping and IgnorePropertyMapping are retained for compatibility
+                                     // until retired in a version after 2.0.1
     public static Predicate<Method> getPropertyMappingFilter(Annotation annotation) {
         Stream<String> mappingsByMapProperties = Optional.ofNullable(annotation)
             .map(Annotation::annotationType)
@@ -209,12 +212,14 @@ public class AnnotationUtil {
             .map(MapProperties::value)
             .map(Arrays::stream)
             .orElse(Stream.empty());
+
         Stream<String> mappingsByPropertyMapping = Optional.ofNullable(annotation)
             .map(Annotation::annotationType)
             .map(annotationType -> annotationType.getAnnotation(PropertyMapping.class))
             .map(PropertyMapping::mappings)
             .map(Arrays::stream)
             .orElse(Stream.empty());
+
         List<String> effectiveMappings = Stream.concat(mappingsByMapProperties, mappingsByPropertyMapping)
             .filter(StringUtils::isNotBlank)
             .collect(Collectors.toList());
@@ -224,7 +229,8 @@ public class AnnotationUtil {
         }
         return method -> {
             if (effectiveMappings.stream().anyMatch(mapping -> !mapping.startsWith(DialogConstants.NEGATION))) {
-                return effectiveMappings.contains(method.getName());
+                return effectiveMappings.contains(method.getName())
+                    && !method.isAnnotationPresent(IgnorePropertyMapping.class);
             }
             return effectiveMappings.stream().noneMatch(mapping -> mapping.equals(DialogConstants.NEGATION + method.getName()));
         };

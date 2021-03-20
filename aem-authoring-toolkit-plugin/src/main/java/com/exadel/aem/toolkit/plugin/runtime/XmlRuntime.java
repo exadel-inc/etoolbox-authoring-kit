@@ -345,7 +345,9 @@ public class XmlRuntime implements XmlUtility {
             name = StringUtils.defaultIfBlank(propertyRendering.name(), name);
             ignorePrefix = propertyRendering.ignorePrefix();
         }
-        String prefix = annotation.annotationType().getAnnotation(MapProperties.class).prefix();
+        String prefix = annotation.annotationType().isAnnotationPresent(MapProperties.class)
+            ? annotation.annotationType().getDeclaredAnnotation(MapProperties.class).prefix()
+            : annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
         String namePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
                 ? StringUtils.substringAfterLast(prefix, DialogConstants.PATH_SEPARATOR)
                 : prefix;
