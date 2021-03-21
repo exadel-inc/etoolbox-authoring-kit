@@ -18,7 +18,9 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.ListenerConstants;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomChildEditConfigAnnotationAuto;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
 
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.COPYMOVE;
@@ -27,10 +29,11 @@ import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.INSERT;
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
 
-@Dialog(
-        name = DEFAULT_COMPONENT_NAME,
-        title = "FileUpload Widget Dialog"
+@AemComponent(
+    path = DEFAULT_COMPONENT_NAME,
+    title = "FileUpload Widget Dialog"
 )
+@Dialog
 @ChildEditConfig(
         actions = {
                 DELETE,
@@ -47,5 +50,6 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
                 propertyName = "file_image" + "file-reference"
         )
 )
+@CustomChildEditConfigAnnotationAuto(field1 = "value1")
 public class ChildEditConfigAnnotation extends FileUploadWidget {
 }
