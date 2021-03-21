@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.util.writer;
 
 import java.lang.annotation.Annotation;
@@ -61,13 +60,13 @@ class ContentXmlWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateTarget(Class, Target)} abstract method to write down contents
-     * of {@code .content.xml} file
+     * Overrides {@link PackageEntryWriter#writeProperties(Class, Target)} method to write down contents related to the
+     * component's root node, or {@code .content.xml} file
      * @param componentClass The {@code Class} being processed
      * @param target         The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateTarget(Class<?> componentClass, Target target) {
+    void writeProperties(Class<?> componentClass, Target target) {
         Annotation annotation = componentClass.getDeclaredAnnotation(AemComponent.class);
         if (annotation == null) {
             annotation = componentClass.getDeclaredAnnotation(Dialog.class);
