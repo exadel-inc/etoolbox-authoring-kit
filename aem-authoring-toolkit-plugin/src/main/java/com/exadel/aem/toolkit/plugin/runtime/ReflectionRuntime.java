@@ -23,7 +23,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -41,9 +39,9 @@ import org.reflections.util.ConfigurationBuilder;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
-import com.exadel.aem.toolkit.api.handlers.DialogHandler;
-import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
 import com.exadel.aem.toolkit.api.runtime.Injected;
@@ -51,10 +49,11 @@ import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeContext;
+import com.exadel.aem.toolkit.plugin.util.ScopeUtil;
+import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
 
 /**
- * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields
- * are marked with
+ * Introspects the classes available in Maven reactor to retrieve and manage Toolkit-related logic
  */
 public class ReflectionRuntime {
 
@@ -64,114 +63,26 @@ public class ReflectionRuntime {
 
     private org.reflections.Reflections reflections;
 
-    private List<DialogWidgetHandler> customDialogWidgetHandlers;
-
-    private List<DialogHandler> customDialogHandlers;
+    private List<Handler> handlers;
 
     private Map<String, Validator> validators;
 
+    /**
+     * Default (hiding) constructor
+     */
     private ReflectionRuntime() {
     }
 
-    /**
-     * Used to initialize {@code PluginReflectionUtility} instance based on list of available classpath entries in the
-     * scope of this Maven plugin
-     *
-     * @param elements    List of classpath elements to be used in reflection routines
-     * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
-     *                    If not specified, all available components will be processed
-     * @return {@link ReflectionRuntime} instance
-     */
-    public static ReflectionRuntime fromCodeScope(List<String> elements, String packageBase) {
-        URL[] urls = new URL[] {};
-        if (elements != null) {
-            urls = elements.stream()
-                    .map(File::new)
-                    .map(File::toURI)
-                    .map(ReflectionRuntime::toUrl)
-                    .filter(Objects::nonNull).toArray(URL[]::new);
-        }
-        Reflections reflections = new org.reflections.Reflections(new ConfigurationBuilder()
-                .addClassLoader(new URLClassLoader(urls, ReflectionRuntime.class.getClassLoader()))
-                .setUrls(urls)
-                .setScanners(new TypeAnnotationsScanner(), new SubTypesScanner()));
-        ReflectionRuntime newInstance = new ReflectionRuntime();
-        newInstance.reflections = reflections;
-        newInstance.packageBase = StringUtils.strip(StringUtils.defaultString(packageBase, StringUtils.EMPTY),
-                PACKAGE_BASE_WILDCARD);
-        return newInstance;
-    }
-    /**
-     * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
-     * scope of the plugin
-     * @return {@code List<DialogWidgetHandler>} of instances
-     */
-    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers() {
-        if (customDialogWidgetHandlers != null) {
-            return customDialogWidgetHandlers;
-        }
-        customDialogWidgetHandlers = getHandlers(DialogWidgetHandler.class);
-        return customDialogWidgetHandlers;
-    }
+
+    /* --------------------------
+       Retrieving manages classes
+       -------------------------- */
 
     /**
-     * Initializes as necessary and returns collection of {@code CustomDialogComponentHandler}s defined within the Compile
-     * scope of the plugin matching the specified widget annotation
-     * @param annotationClasses List of {@code Class<?>} reference to pick up handlers for
-     * @return {@code List<DialogWidgetHandler>} of instances
-     */
-    public List<DialogWidgetHandler> getCustomDialogWidgetHandlers(List<Class<? extends Annotation>> annotationClasses) {
-        if (annotationClasses == null) {
-            return Collections.emptyList();
-        }
-        return getCustomDialogWidgetHandlers().stream()
-                .filter(handler -> handler.getClass().isAnnotationPresent(Handles.class)
-                    || handler.getClass().isAnnotationPresent(HandlesWidgets.class))
-                .filter(handler -> {
-                    Class<?>[] handled = handler.getClass().isAnnotationPresent(Handles.class)
-                        ? handler.getClass().getDeclaredAnnotation(Handles.class).value()
-                        : handler.getClass().getDeclaredAnnotation(HandlesWidgets.class).value();
-                    return annotationClasses.stream().anyMatch(annotationClass -> ArrayUtils.contains(handled, annotationClass));
-                })
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Initializes as necessary and returns collection of {@code CustomDialogHandler}s defined within the Compile
-     * scope of the AEM Authoring Toolkit Maven plugin
-     * @return {@code List<DialogHandler>} of instances
-     */
-    public List<DialogHandler> getCustomDialogHandlers() {
-        if (customDialogHandlers != null) {
-            return customDialogHandlers;
-        }
-        customDialogHandlers = getHandlers(DialogHandler.class);
-        return customDialogHandlers;
-    }
-
-    /**
-     * Initializes as necessary and returns collection of {@code Validator}s defined within the Compile
-     * scope of the AEM Authoring Toolkit Maven plugin
-     *
-     * @return {@code List<Validator>} of instances
-     */
-    public Map<String, Validator> getValidators() {
-        if (validators != null) {
-            return validators;
-        }
-        validators = reflections.getSubTypesOf(Validator.class).stream()
-                .map(ReflectionRuntime::getInstance)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toMap(validator -> validator.getClass().getName(), Function.identity()));
-        return validators;
-    }
-
-    /**
-     * Returns list of {@code @Dialog}-annotated classes within the Compile scope the plugin is operating in, to
-     * determine which of the component folders to process.
-     * If {@code componentsPath} is set for this instance, classes are tested to be under that path
-     *
-     * @return {@code List<Class>} of instances
+     * Returns list of {@code AemComponent}-annotated and {@code @Dialog}-annotated classes within the scope the plugin
+     * is operating in, to determine which of the component folders to process. If {@code componentsPath} is set for this
+     * instance, classes are tested to be under that path
+     * @return {@code List} of class references
      */
     public List<Class<?>> getComponentClasses() {
         List<Class<?>> classesAnnotatedWithDialog = reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
@@ -188,30 +99,109 @@ public class ReflectionRuntime {
         return classesAnnotatedWithComponent;
     }
 
+
+    /* -------------------
+       Retrieving handlers
+       ------------------- */
+
     /**
-     * Gets generic list of handler instances invoked from all available derivatives of specified handler {@code Class}.
-     * Each is supplied with a reference to {@link PluginRuntimeContext} as required
-     *
-     * @param handlerClass {@code Class} object
-     * @param <T> Expected handler type
-     * @return {@link List<T>} of instances
+     * Retrieves list of {@link Handler} instances that match the provided annotations and {@link Scope}. The return
+     * value is ordered to honor the relations set by {@code before} and {@code after} anchors
+     * @param scope Non-null {@code Scope} object that the handlers must match
+     * @param annotations One or more non-null {@code Annotation} objects, usually representing annotations of a method
+     *                    or a class
+     * @return {@code List} of handler instances, ordered
      */
-    private <T> List<T> getHandlers(Class<? extends T> handlerClass) {
-        return reflections.getSubTypesOf(handlerClass).stream()
-                .map(ReflectionRuntime::getHandlerInstance)
-                .filter(Objects::nonNull)
-                .sorted(Comparator.comparing(handler -> handler.getClass().getName())) // to provide stable handlers sequence between runs
-                .collect(Collectors.toList());
+    public List<Handler> getHandlers(Scope scope, Annotation... annotations) {
+        List<Handler> result = getHandlers().stream()
+            .filter(handler -> isHandlerMatches(handler, scope, annotations))
+            .collect(Collectors.toList());
+        return OrderingUtil.sortHandlers(result);
     }
 
     /**
-     * Creates new instance object of a handler {@code Class} and populates {@link RuntimeContext} instance to
-     * every field annotated with {@link Injected}
-     *
+     * Retrieves list of {@link Handler} instances that match the provided annotation types and {@link Scope}. The return
+     * value is ordered to honor the relations set by {@code before} and {@code after} anchors
+     * @param scope Non-null {@code Scope} object that the handlers must match
+     * @param annotationType Non-null {@code Class} object
+     * @return {@code List} of handler instances, ordered
+     */
+    public List<Handler> getHandlers(Scope scope, Class<? extends Annotation> annotationType) {
+        List<Handler> result = getHandlers().stream()
+            .filter(handler -> isHandlerMatches(handler, scope, new Class<?>[] {annotationType}))
+            .collect(Collectors.toList());
+        return OrderingUtil.sortHandlers(result);
+    }
+
+    /**
+     * Retrieves the list of {@code Handler}s defined within the scope the plugin is operating in
+     * @return {@code List} of handler instances
+     */
+    public List<Handler> getHandlers() {
+        if (handlers != null) {
+            return handlers;
+        }
+        handlers = reflections.getSubTypesOf(Handler.class).stream()
+            .filter(cls -> !cls.isInterface())
+            .map(ReflectionRuntime::getHandlerInstance)
+            .filter(Objects::nonNull)
+            .sorted(Comparator.comparing(handler -> handler.getClass().getName())) // to provide stable handlers sequence between runs
+            .collect(Collectors.toList());
+        return handlers;
+    }
+
+    /**
+     * Tests whether the given handler fits for the conditions defined by the set of manageable annotations and the
+     * {@code Scope} value
+     * @param scope {@code Scope} that the handler must match
+     * @param handler {@code Handler} instance to test
+     * @param annotations Array of {@code Annotation} objects, usually representing annotations of a method or a class
+     * @return True or false
+     */
+    private static boolean isHandlerMatches(Handler handler, Scope scope, Annotation[] annotations) {
+        return isHandlerMatches(handler, scope, Arrays.stream(annotations).map(Annotation::annotationType).toArray(Class<?>[]::new));
+    }
+
+    /**
+     * Tests whether the given handler fits for the conditions defined by the set of manageable annotations and the
+     * {@code Scope} value
+     * @param handler {@code Handler} instance to test
+     * @param scope {@code Scope} that the handler must match
+     * @param annotationTypes Array of {@code Class} references, usually representing types of annotations of a method
+     *                        or a class
+     * @return True or false
+     */
+    @SuppressWarnings("deprecation") // HandlesWidgets processing is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
+    private static boolean isHandlerMatches(Handler handler, Scope scope, Class<?>[] annotationTypes) {
+        Handles handles = handler.getClass().getDeclaredAnnotation(Handles.class);
+        HandlesWidgets handlesWidgets = handler.getClass().getDeclaredAnnotation(HandlesWidgets.class);
+        if (handles == null && handlesWidgets == null) {
+            return false;
+        }
+        Class<? extends Annotation>[] handledAnnotationTypes = handles != null
+            ? handles.value()
+            : handlesWidgets.value();
+        boolean isMatchByType = Arrays.stream(handledAnnotationTypes)
+            .anyMatch(annotationType -> Arrays.asList(annotationTypes).contains(annotationType));
+
+        Scope[] handlerScopes = handles != null ? handles.scope() : new Scope[] {Scope.DEFAULT};
+        if (handles != null && handlerScopes.length == 1 && handlerScopes[0].equals(Scope.DEFAULT)) {
+            handlerScopes = new Scope[] {ScopeUtil.designate(annotationTypes)};
+        }
+        boolean isMatchByScope = ScopeUtil.fits(scope, handlerScopes);
+
+        return isMatchByType && isMatchByScope;
+    }
+
+    /**
+     * Creates new instance of a handler by {@code Class} reference and populates the runtime context
      * @param handlerClass The handler class to instantiate
-     * @param <T> Instance type
+     * @param <T> Handler type
      * @return New handler instance
      */
+    @SuppressWarnings("deprecation") // RuntimeContext and @Injected are processed for compatibility, to be removed in
+                                     // a version after 2.0.1
     private static <T> T getHandlerInstance(Class<? extends T> handlerClass) {
         T instance = getInstance(handlerClass);
         if (instance != null) {
@@ -221,24 +211,6 @@ public class ReflectionRuntime {
                     .forEach(field -> populateRuntimeContext(instance, field));
         }
         return instance;
-    }
-
-    /**
-     * Creates a new instance object of the specified {@code Class}
-     * @param instanceClass The class to instantiate
-     * @param <T> Instance type
-     * @return New object instance
-     */
-    private static <T> T getInstance(Class<? extends T> instanceClass) {
-        try {
-            return instanceClass.getConstructor().newInstance();
-        } catch (InstantiationException
-                | IllegalAccessException
-                | InvocationTargetException
-                | NoSuchMethodException e) {
-            PluginRuntime.context().getExceptionHandler().handle(new ExtensionApiException(instanceClass, e));
-        }
-        return null;
     }
 
     /**
@@ -254,6 +226,85 @@ public class ReflectionRuntime {
         } catch (IllegalAccessException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ExtensionApiException(handler.getClass(), e));
         }
+    }
+
+
+    /* ---------------------
+       Retrieving validators
+       --------------------- */
+
+    /**
+     * Initializes as necessary and returns collection of {@code Validator}s defined within the Compile
+     * scope of the AEM Authoring Toolkit Maven plugin
+     *
+     * @return {@code List} of instances
+     */
+    public Map<String, Validator> getValidators() {
+        if (validators != null) {
+            return validators;
+        }
+        validators = reflections.getSubTypesOf(Validator.class).stream()
+            .map(ReflectionRuntime::getInstance)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toMap(validator -> validator.getClass().getName(), Function.identity()));
+        return validators;
+    }
+
+
+    /* ----------------
+       Common utilities
+       ---------------- */
+
+    /**
+     * Creates a new instance object of the specified {@code Class}
+     * @param instanceClass The class to instantiate
+     * @param <T> Instance type
+     * @return New object instance
+     */
+    private static <T> T getInstance(Class<? extends T> instanceClass) {
+        try {
+            return instanceClass.getConstructor().newInstance();
+        } catch (InstantiationException
+            | IllegalAccessException
+            | InvocationTargetException
+            | NoSuchMethodException e) {
+            PluginRuntime.context().getExceptionHandler().handle(new ExtensionApiException(instanceClass, e));
+        }
+        return null;
+    }
+
+
+    /* ---------------
+       Factory methods
+       --------------- */
+
+    /**
+     * Used to initialize {@code PluginReflectionUtility} instance based on list of available classpath entries in the
+     * scope of this Maven plugin
+     *
+     * @param elements    List of classpath elements to be used in reflection routines
+     * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
+     *                    If not specified, all available components will be processed
+     * @return {@link ReflectionRuntime} instance
+     */
+    public static ReflectionRuntime fromCodeScope(List<String> elements, String packageBase) {
+        URL[] urls = new URL[] {};
+        if (elements != null) {
+            urls = elements.stream()
+                .map(File::new)
+                .map(File::toURI)
+                .map(ReflectionRuntime::toUrl)
+                .filter(Objects::nonNull).toArray(URL[]::new);
+        }
+        Reflections reflections = new org.reflections.Reflections(new ConfigurationBuilder()
+            .addClassLoader(new URLClassLoader(urls, ReflectionRuntime.class.getClassLoader()))
+            .setUrls(urls)
+            .setScanners(new TypeAnnotationsScanner(), new SubTypesScanner()));
+        ReflectionRuntime newInstance = new ReflectionRuntime();
+        newInstance.reflections = reflections;
+        newInstance.packageBase = StringUtils.strip(StringUtils.defaultString(packageBase, StringUtils.EMPTY),
+            PACKAGE_BASE_WILDCARD);
+        return newInstance;
     }
 
     /**
