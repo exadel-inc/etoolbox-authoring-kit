@@ -47,8 +47,8 @@ public class ClassUtil {
     }
 
     /**
-     * Retrieves a sequential list of {@link Source} objects representing manageable members that belong
-     * a certain {@code Class} (and its superclasses) and match specific criteria
+     * Retrieves a sequential list of {@link Source} objects representing manageable members that belong to
+     * a certain {@code Class} and its superclasses
      * @param targetClass The class to extract sources from
      * @return List of {@code Source} objects
      */
@@ -57,8 +57,8 @@ public class ClassUtil {
     }
 
     /**
-     * Retrieves a sequential list of {@link Source} objects representing manageable members that belong
-     * a certain {@code Class} (and its superclasses) and match specific criteria
+     * Retrieves a sequential list of {@link Source} objects representing manageable members that belong to
+     * a certain {@code Class} (and its superclasses) and match provided criteria represented by a {@code Predicate}
      * @param targetClass The class to extract sources from
      * @param predicates List of {@code Predicate<Member>} instances to pick up appropriate fields and methods
      * @return List of {@code Source} objects
@@ -103,7 +103,7 @@ public class ClassUtil {
     }
 
     /**
-     * Retrieves the sequential list of ancestral of a specific {@code Class}, target class itself included,
+     * Retrieves a list of ancestors of a specific {@code Class}, target class itself included,
      * starting from the "top" of the inheritance tree. {@code Object} class is not added to the hierarchy
      * @param targetClass The class to build the tree upon
      * @return List of {@code Class} objects
@@ -113,7 +113,7 @@ public class ClassUtil {
     }
 
     /**
-     * Retrieves the sequential list of ancestral classes of a specific {@code Class}, started from the "top" of the inheritance
+     * Retrieves a list of ancestors of a specific {@code Class}, started from the "top" of the inheritance
      * tree. {@code Object} class is not added to the hierarchy
      * @param targetClass The class to analyze
      * @param includeTarget Whether to include the {@code targetClass} itself to the hierarchy
