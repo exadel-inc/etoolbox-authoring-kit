@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.plugin.handlers.widget.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
-import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -80,10 +79,10 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
 
         // Since this targetFacade has just "emerged" as a multifield, we need to check if there are multifield bound
         // (custom) handlers and run such one more time
-        List<DialogWidgetHandler> multifieldHandlers = PluginRuntime
+        List<Handler> multifieldHandlers = PluginRuntime
             .context()
             .getReflection()
-            .getCustomDialogWidgetHandlers(Collections.singletonList(MultiField.class));
+            .getHandlers(target.getScope(), MultiField.class);
         new CustomHandlingHandler(multifieldHandlers).accept(source, target);
     }
 
