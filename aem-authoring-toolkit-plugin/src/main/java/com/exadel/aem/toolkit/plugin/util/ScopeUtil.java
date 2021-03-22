@@ -73,7 +73,7 @@ public class ScopeUtil {
         }
         Scope[] scopes = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).scope();
         if (scopes.length == 1 && scopes[0].equals(Scope.DEFAULT) && ArrayUtils.isNotEmpty(context)) {
-            scopes = new Scope[] {designate(Arrays.stream(context).map(Annotation::annotationType).toArray(Class<?>[]::new))};
+            scopes = designate(Arrays.stream(context).map(Annotation::annotationType).toArray(Class<?>[]::new));
         }
         return ArrayUtils.contains(scopes, scope) || ArrayUtils.contains(scopes, Scope.DEFAULT);
     }
@@ -92,34 +92,51 @@ public class ScopeUtil {
     }
 
     /**
-     * Picks up an appropriate {@link Scope} value judging by the annotations provided. This is usually required when
-     * an auto-mapped annotation or a handler has no particular scope specified, and we need to guess the scope in order
-     * to avoid applying same logic to all the available scopes
-     * @param annotationTypes Non-null array of {@code Annotation} objects
-     * @return {@code Scope} object
+     * Picks up an appropriate {@link Scope} value judging by the annotations provided. Each one is tested for having
+     * its {@link MapProperties} meta-annotation with an optional non-default {@code Scope}. If such is found, its value
+     * is returned; otherwise, a default scope if returned
+     * @param annotations Non-null array of {@code Annotation} objects
+     * @return Array of {@code Scope} objects
      */
-    public static Scope designate(Class<?>[] annotationTypes) {
+    public static Scope[] designate(Annotation[] annotations) {
+        if (ArrayUtils.isEmpty(annotations)) {
+            return new Scope[] {Scope.DEFAULT};
+        }
+        for (Annotation annotation : annotations) {
+            if (!annotation.annotationType().isAnnotationPresent(MapProperties.class)) {
+                continue;
+            }
+            Scope[] scopes = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).scope();
+            if (scopes.length > 1 || (scopes.length == 1 && !scopes[0].equals(Scope.DEFAULT))) {
+                return Arrays.stream(scopes).filter(scope -> !scope.equals(Scope.DEFAULT)).toArray(Scope[]::new);
+            }
+        }
+        return new Scope[] {Scope.DEFAULT};
+    }
+
+    /**
+     * Picks up an appropriate {@link Scope} value judging by the annotation types provided
+     * @param annotationTypes Non-null array of {@code Class} references representing annotation types
+     * @return Array of {@code Scope} objects
+     */
+    public static Scope[] designate(Class<?>[] annotationTypes) {
         if (annotationTypes == null) {
-            return Scope.DEFAULT;
+            return new Scope[] {Scope.DEFAULT};
         }
+        Scope result = Scope.DEFAULT;
         if (ArrayUtils.contains(annotationTypes, Dialog.class) && !ArrayUtils.contains(annotationTypes, DesignDialog.class)) {
-            return Scope.CQ_DIALOG;
+            result = Scope.CQ_DIALOG;
+        } else if (ArrayUtils.contains(annotationTypes, AemComponent.class)) {
+            result = Scope.COMPONENT;
+        } else if (ArrayUtils.contains(annotationTypes, DesignDialog.class)) {
+            result = Scope.CQ_DESIGN_DIALOG;
+        }else if (ArrayUtils.contains(annotationTypes, EditConfig.class)) {
+            result = Scope.CQ_EDIT_CONFIG;
+        } else if (ArrayUtils.contains(annotationTypes, ChildEditConfig.class)) {
+            result = Scope.CQ_CHILD_EDIT_CONFIG;
+        } else if (ArrayUtils.contains(annotationTypes, HtmlTag.class)) {
+            result = Scope.CQ_HTML_TAG;
         }
-        if (ArrayUtils.contains(annotationTypes, AemComponent.class)) {
-            return Scope.COMPONENT;
-        }
-        if (ArrayUtils.contains(annotationTypes, DesignDialog.class)) {
-            return Scope.CQ_DESIGN_DIALOG;
-        }
-        if (ArrayUtils.contains(annotationTypes, EditConfig.class)) {
-            return Scope.CQ_EDIT_CONFIG;
-        }
-        if (ArrayUtils.contains(annotationTypes, ChildEditConfig.class)) {
-            return Scope.CQ_CHILD_EDIT_CONFIG;
-        }
-        if (ArrayUtils.contains(annotationTypes, HtmlTag.class)) {
-            return Scope.CQ_HTML_TAG;
-        }
-        return Scope.DEFAULT;
+        return new Scope[] {result};
     }
 }
