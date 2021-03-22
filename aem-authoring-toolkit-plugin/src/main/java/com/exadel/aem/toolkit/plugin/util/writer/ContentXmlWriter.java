@@ -22,7 +22,6 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.lists.ListItemHandler;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.ScopeUtil;
@@ -79,6 +78,5 @@ class ContentXmlWriter extends PackageEntryWriter {
                 AnnotationUtil
                     .getPropertyMappingFilter(annotation)
                     .and(member -> ScopeUtil.fits(getScope(), member)));
-        new ListItemHandler().accept(componentClass, target);
     }
 }

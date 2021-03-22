@@ -93,7 +93,6 @@ public class DialogConstants {
 
     public static final String PN_ACCEPT = "accept";
     public static final String PN_ACTIVE = "active";
-    public static final String PN_AEMBOX_LIST_ITEM = "aatListItem";
     public static final String PN_ALLOW = "allow";
     public static final String PN_ALLOW_BLOCK_TAGS = "allowBlockTags";
     public static final String PN_ATTRIBUTE_MEMBERS = "attributeMembers";
@@ -122,6 +121,7 @@ public class DialogConstants {
     public static final String PN_IGNORE_MODE = "ignoreMode";
     public static final String PN_INDENT_SIZE = "indentSize";
     public static final String PN_JCR_TITLE = "jcr:title";
+    public static final String PN_LIST_ITEM = "listItem";
     public static final String PN_MAX_DATE = "maxDate";
     public static final String PN_MAX_UNDO_STEPS = "maxUndoSteps";
     public static final String PN_MIN_DATE = "minDate";
