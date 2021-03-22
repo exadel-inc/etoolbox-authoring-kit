@@ -25,9 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ClassUtils;
@@ -65,7 +63,7 @@ public class ReflectionContextHelper {
 
     private List<Handler> handlers;
 
-    private Map<String, Validator> validators;
+    private List<Validator> validators;
 
     /**
      * Default (hiding) constructor
@@ -239,14 +237,14 @@ public class ReflectionContextHelper {
      *
      * @return {@code List} of instances
      */
-    public Map<String, Validator> getValidators() {
+    public List<Validator> getValidators() {
         if (validators != null) {
             return validators;
         }
         validators = reflections.getSubTypesOf(Validator.class).stream()
             .map(ReflectionContextHelper::getInstance)
             .filter(Objects::nonNull)
-            .collect(Collectors.toMap(validator -> validator.getClass().getName(), Function.identity()));
+            .collect(Collectors.toList());
         return validators;
     }
 

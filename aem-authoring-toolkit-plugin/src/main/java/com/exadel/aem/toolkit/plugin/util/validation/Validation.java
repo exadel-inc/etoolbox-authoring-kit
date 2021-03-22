@@ -122,7 +122,14 @@ public class Validation {
      * @return {@code Validator} instance
      */
     private static Validator getTestRoutine(String name) {
-        return PluginRuntime.context().getReflection().getValidators().getOrDefault(name, NO_RESTRICTION);
+        return PluginRuntime
+            .context()
+            .getReflection()
+            .getValidators()
+            .stream()
+            .filter(validator -> validator.getClass().getName().equals(name))
+            .findFirst()
+            .orElse(NO_RESTRICTION);
     }
 
     /**
