@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.DATEPICKER)
-@MapProperties
+@MapProperties("!typeHint")
 public @interface DatePicker {
 
     /**
