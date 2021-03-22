@@ -32,7 +32,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
-import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.MemberUtil;
 import com.exadel.aem.toolkit.plugin.util.StringUtil;
@@ -64,7 +63,7 @@ public class AttributeHelper<T, V> {
     private StringTransformation transformation;
 
     private Validation validationChecker = Validation.defaultChecker();
-    private BinaryOperator<String> valueMerger = XmlContextHelper.DEFAULT_ATTRIBUTE_MERGER;
+    private BinaryOperator<String> valueMerger = TargetImpl.DEFAULT_ATTRIBUTE_MERGER;
 
     /**
      * Creates a new {@code AttributeSettingHelper} instance parametrized with holder type and value type

@@ -51,7 +51,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     private static final String PARENT_PATH = "..";
     private static final String SELF_PATH = ".";
 
-    private static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
+    static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
 
     /* -----------------------------
