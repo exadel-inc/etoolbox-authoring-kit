@@ -57,7 +57,7 @@ import com.exadel.aem.toolkit.plugin.util.StringUtil;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
 /**
- * Utility methods to process, verify and store AEM TouchUI dialog-related data to XML markup
+ * Processes, verifies and stores TouchUI dialog-related data to XML markup
  */
 public class XmlRuntime implements XmlUtility {
 
