@@ -52,6 +52,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_3;
     size = Size.LARGE, // this one will not render
     trackingFeature = "unused" // this one will not render
 )
+@SuppressWarnings("unused")
 public class DesignDialogView implements Addition, Addition2 {
 
     @DialogField(

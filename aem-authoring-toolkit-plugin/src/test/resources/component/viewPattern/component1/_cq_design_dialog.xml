@@ -60,7 +60,8 @@
                                     fieldLabel="Field 2"
                                     renderHidden="{Boolean}false"
                                     required="{Boolean}false"
-                                    rootPath="/content"/>
+                                    rootPath="/content"
+                                    designDialogSpecial="This is added to PathField@DesignDialog"/>
                             <fieldSet jcr:primaryType="nt:unstructured"
                                       sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
                                       jcr:title="Field set example">

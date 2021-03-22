@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties(value = "!field3", scope = Scope.CQ_DIALOG)
+@MapProperties(scope = Scope.CQ_CHILD_EDIT_CONFIG)
 public @interface CustomChildEditConfigAnnotationAuto {
     String field1();
 }
