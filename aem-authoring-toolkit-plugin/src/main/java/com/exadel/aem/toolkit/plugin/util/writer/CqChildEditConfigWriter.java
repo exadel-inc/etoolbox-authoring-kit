@@ -58,13 +58,13 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#writeProperties(Class, Target)} method to write down contents related to the
-     * component's {@code cq:childEditConfig} node, or the {@code _cq_ChildEditConfig.xml} file
+     * Overrides {@link PackageEntryWriter#applySpecificProperties(Class, Target)} method to write down contents related
+     * to the component's {@code cq:childEditConfig} node, or the {@code _cq_ChildEditConfig.xml} file
      * @param componentClass The {@code Class} being processed
      * @param target The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void writeProperties(Class<?> componentClass, Target target) {
+    void applySpecificProperties(Class<?> componentClass, Target target) {
         ChildEditConfig childEditConfig = componentClass.getDeclaredAnnotation(ChildEditConfig.class);
         target
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)

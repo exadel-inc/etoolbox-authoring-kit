@@ -55,13 +55,13 @@ class CqHtmlTagWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#writeProperties(Class, Target)} method to write down contents related to the
-     * component's {@code cq:htmlTag} node, or the {@code _cq_htmlTag.xml} file
+     * Overrides {@link PackageEntryWriter#applySpecificProperties(Class, Target)} method to write down contents related
+     * to the component's {@code cq:htmlTag} node, or the {@code _cq_htmlTag.xml} file
      * @param componentClass The {@code Class} being processed
      * @param target The root element to feed data to
      */
     @Override
-    void writeProperties(Class<?> componentClass, Target target) {
+    void applySpecificProperties(Class<?> componentClass, Target target) {
         HtmlTag htmlTag = componentClass.getDeclaredAnnotation(HtmlTag.class);
         target
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
