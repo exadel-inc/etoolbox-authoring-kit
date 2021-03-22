@@ -17,6 +17,7 @@ import java.util.List;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
@@ -47,7 +48,7 @@ public class MultiFieldHandler extends WidgetContainerHandler {
         List<Source> members = getEntriesForContainer(source, true);
         if (members.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
-                    EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.getValueType().getName()
+                    EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.adaptTo(MemberSource.class).getValueType().getName()
             ));
             return;
         }

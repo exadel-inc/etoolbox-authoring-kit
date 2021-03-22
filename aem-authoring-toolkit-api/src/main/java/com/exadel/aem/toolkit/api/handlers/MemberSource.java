@@ -11,20 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.handlers;
 
-import java.util.Optional;
+public interface MemberSource extends Source {
 
-public interface Source {
+    Class<?> getDeclaringClass();
 
-    String getName();
+    Class<?> getReportingClass();
 
-    boolean isValid();
-
-    <T> T adaptTo(Class<T> adaptation);
-
-    default <T> Optional<T> tryAdaptTo(Class<T> adaptation) {
-        return Optional.ofNullable(adaptTo(adaptation));
-    }
+    Class<?> getValueType();
 }

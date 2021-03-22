@@ -18,6 +18,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.ClassUtils;
+
 import com.exadel.aem.toolkit.api.handlers.Adaptable;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -34,6 +36,9 @@ public abstract class AdaptationBase<T> {
     }
 
     public <A> A adaptTo(Class<A> adaptation) {
+        if (ClassUtils.isAssignable(getClass(), adaptation)) {
+            return adaptation.cast(this);
+        }
         if (adaptationsCache != null && adaptationsCache.containsKey(adaptation)) {
             return adaptation.cast(adaptationsCache.get(adaptation));
         }

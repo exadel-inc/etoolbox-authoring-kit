@@ -18,12 +18,12 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 
 /**
  * Handler used to prepare data for {@link FieldSet} widget rendering
@@ -41,7 +41,7 @@ class FieldSetHandler extends WidgetContainerHandler {
     @Override
     public void accept(Source source, Target target) {
         FieldSet fieldSet = source.adaptTo(FieldSet.class);
-        Class<?> fieldSetType = source.getValueType();
+        Class<?> fieldSetType = source.adaptTo(MemberSource.class).getValueType();
 
         List<Source> fieldSetEntries = getEntriesForContainer(source, true);
 

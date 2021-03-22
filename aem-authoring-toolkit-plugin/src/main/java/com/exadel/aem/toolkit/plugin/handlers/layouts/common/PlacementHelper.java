@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
@@ -215,8 +216,8 @@ public class PlacementHelper {
                 .handle(new InvalidLayoutException(String.format(
                     NAMING_COLLISION_MESSAGE_TEMPLATE,
                     sameNameFieldsByOrigin.getLast().getName(),
-                    sameNameFieldsByOrigin.getLast().getDeclaringClass().getSimpleName(),
-                    sameNameFields.getLast().getDeclaringClass().getSimpleName(),
+                    sameNameFieldsByOrigin.getLast().adaptTo(MemberSource.class).getDeclaringClass().getSimpleName(),
+                    sameNameFields.getLast().adaptTo(MemberSource.class).getDeclaringClass().getSimpleName(),
                     REASON_DISORDER)));
         }
 
@@ -236,8 +237,8 @@ public class PlacementHelper {
                 .handle(new InvalidLayoutException(String.format(
                     NAMING_COLLISION_MESSAGE_TEMPLATE,
                     contenders[1].getName(),
-                    contenders[1].getDeclaringClass().getSimpleName(),
-                    contenders[0].getDeclaringClass().getSimpleName(),
+                    contenders[1].adaptTo(MemberSource.class).getDeclaringClass().getSimpleName(),
+                    contenders[0].adaptTo(MemberSource.class).getDeclaringClass().getSimpleName(),
                     REASON_DIFFERENT_RESTYPE)));
         }
     }
