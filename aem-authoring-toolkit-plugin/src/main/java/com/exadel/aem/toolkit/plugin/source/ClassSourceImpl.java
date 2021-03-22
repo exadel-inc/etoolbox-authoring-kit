@@ -14,62 +14,46 @@
 package com.exadel.aem.toolkit.plugin.source;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Member;
-import java.lang.reflect.Modifier;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.plugin.util.MemberUtil;
+public class ClassSourceImpl extends SourceImpl {
 
-public class FieldSourceImpl extends MemberSourceImpl {
+    private final Class<?> value;
 
-    private final Field field;
-
-    public FieldSourceImpl(Field field, Class<?> reportingClass) {
-        super(reportingClass);
-        this.field = field;
+    ClassSourceImpl(Class<?> value) {
+        this.value = value;
     }
 
     @Override
     public String getName() {
-        return field != null ? field.getName() : StringUtils.EMPTY;
-    }
-
-    @Override
-    public Class<?> getDeclaringClass() {
-        return field != null ? field.getDeclaringClass() : null;
-    }
-
-    @Override
-    Class<?> getPlainReturnType() {
-        return MemberUtil.getPlainType(field);
+        return isValid() ? value.getName() : StringUtils.EMPTY;
     }
 
     @Override
     Annotation[] getDeclaredAnnotations() {
-        return field != null ? field.getDeclaredAnnotations() : null;
+        return value != null ? value.getDeclaredAnnotations() : null;
     }
 
     @Override
     <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
-        return field != null ? field.getDeclaredAnnotation(annotationClass) : null;
+        return value != null ? value.getDeclaredAnnotation(annotationClass) : null;
     }
 
     @Override
     <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass) {
-        return field != null ? field.getAnnotationsByType(annotationClass) : null;
+        return value != null ? value.getAnnotationsByType(annotationClass) : null;
     }
 
     @Override
     public boolean isValid() {
-        return field != null && !field.getDeclaringClass().isInterface() && !Modifier.isStatic(field.getModifiers());
+        return value != null;
     }
 
     @Override
     public <T> T adaptTo(Class<T> adaptation) {
-        if (adaptation.equals(Field.class) || adaptation.equals(Member.class)) {
-            return adaptation.cast(field);
+        if (Class.class.equals(adaptation)) {
+            return adaptation.cast(value);
         }
         return super.adaptTo(adaptation);
     }

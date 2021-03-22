@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.source;
 
 import java.lang.reflect.Field;
@@ -26,31 +25,40 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 public class Sources {
 
     /**
-     * Default hiding (private) constructor
+     * Default (hiding) constructor
      */
     private Sources() {
     }
 
     /**
      * Creates a {@link Source} facade for a Java class member
-     * @param member A {@code Method} or a {@code Field} for which a source facade is created
-     * @return {@code Source instance}
+     * @param value A {@code Method} or a {@code Field} for which a source facade is created
+     * @return {@code Source} instance
      */
-    public static Source fromMember(Member member) {
-        return fromMember(member, null);
+    public static Source fromMember(Member value) {
+        return fromMember(value, null);
     }
 
     /**
      * Creates a {@link Source} facade for a Java class member
-     * @param member A {@code Method} or a {@code Field} for which a source facade is created
+     * @param value A {@code Method} or a {@code Field} for which a source facade is created
      * @param reportingClass {@code Class<?>} pointer determining the class that "reports" the AEM Authoring Toolkit's plugin
      *                       of current member (can be a class where this member was declared or a descendant of
      *                       some superclass that uses the member for UI rendering)
-     * @return {@code Source instance}
+     * @return {@code Source} instance
      */
-    public static Source fromMember(Member member, Class<?> reportingClass) {
-        return member instanceof Field
-            ? new FieldSourceImpl((Field) member, reportingClass)
-            : new MethodSourceImpl((Method) member, reportingClass);
+    public static Source fromMember(Member value, Class<?> reportingClass) {
+        return value instanceof Field
+            ? new FieldSourceImpl((Field) value, reportingClass)
+            : new MethodSourceImpl((Method) value, reportingClass);
+    }
+
+    /**
+     * Creates a {@link Source} facade for a Java class
+     * @param value A {@code Class} or a {@code Field} for which a source facade is created
+     * @return {@code Source} instance
+     */
+    public static Source fromClass(Class<?> value) {
+        return new ClassSourceImpl(value);
     }
 }
