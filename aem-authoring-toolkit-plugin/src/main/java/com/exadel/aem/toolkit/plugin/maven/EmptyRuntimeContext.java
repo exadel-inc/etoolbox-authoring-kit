@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.plugin.maven;
 import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.runtime.ReflectionContextHelper;
-import com.exadel.aem.toolkit.plugin.runtime.XmlRuntime;
+import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 
 /**
  * The fallback implementation of {@link PluginRuntimeContext} for the AEM Authoring Toolkit plugin instance that
@@ -45,7 +45,7 @@ class EmptyRuntimeContext implements PluginRuntimeContext {
      * Throws a {@code PluginException} upon call since the runtime has not been initialized
      */
     @Override
-    public XmlRuntime getXmlUtility() {
+    public XmlContextHelper getXmlUtility() {
         throw new PluginException(NOT_INITIALIZED_EXCEPTION_MESSAGE);
     }
 
@@ -53,7 +53,7 @@ class EmptyRuntimeContext implements PluginRuntimeContext {
      * Throws a {@code PluginException} upon call since the runtime has not been initialized
      */
     @Override
-    public XmlRuntime newXmlUtility() {
+    public XmlContextHelper newXmlUtility() {
         throw new PluginException(NOT_INITIALIZED_EXCEPTION_MESSAGE);
     }
 }

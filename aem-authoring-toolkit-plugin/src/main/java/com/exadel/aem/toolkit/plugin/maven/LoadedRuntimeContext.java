@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
 import com.exadel.aem.toolkit.plugin.runtime.ReflectionContextHelper;
-import com.exadel.aem.toolkit.plugin.runtime.XmlRuntime;
+import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
 /**
@@ -33,7 +33,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
 
     private ReflectionContextHelper pluginReflections;
     private ExceptionHandler exceptionHandler;
-    private XmlRuntime xmlRuntime;
+    private XmlContextHelper xmlRuntime;
 
     /**
      * {@inheritDoc}
@@ -55,7 +55,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
      * {@inheritDoc}
      */
     @Override
-    public XmlRuntime getXmlUtility() {
+    public XmlContextHelper getXmlUtility() {
         return xmlRuntime;
     }
 
@@ -63,9 +63,9 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
      * {@inheritDoc}
      */
     @Override
-    public XmlRuntime newXmlUtility() {
+    public XmlContextHelper newXmlUtility() {
         try {
-            xmlRuntime = new XmlRuntime(XmlFactory.newDocument());
+            xmlRuntime = new XmlContextHelper(XmlFactory.newDocument());
         } catch (ParserConfigurationException e) {
             // Cannot proceed with the plugin flow if XML subsystem fails this early
             throw new PluginException(XML_EXCEPTION_MESSAGE, e);

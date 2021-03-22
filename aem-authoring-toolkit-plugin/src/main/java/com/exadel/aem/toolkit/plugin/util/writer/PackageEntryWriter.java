@@ -39,7 +39,7 @@ import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.runtime.XmlRuntime;
+import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 import com.exadel.aem.toolkit.plugin.source.Sources;
 import com.exadel.aem.toolkit.plugin.target.Targets;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
@@ -212,7 +212,7 @@ abstract class PackageEntryWriter {
     private void writeCommonProperties(Class<?> componentClass, Document document) {
         Arrays.stream(componentClass.getAnnotationsByType(CommonProperty.class))
             .filter(p -> getScope().equals(p.scope()))
-            .forEach(p -> writeCommonProperty(p, XmlRuntime.getElementNodes(p.path(), document)));
+            .forEach(p -> writeCommonProperty(p, XmlContextHelper.getElementNodes(p.path(), document)));
     }
 
     /**
