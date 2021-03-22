@@ -20,7 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
-import com.exadel.aem.toolkit.plugin.runtime.ReflectionRuntime;
+import com.exadel.aem.toolkit.plugin.runtime.ReflectionContextHelper;
 import com.exadel.aem.toolkit.plugin.runtime.XmlRuntime;
 import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 class LoadedRuntimeContext implements PluginRuntimeContext {
     private static final String XML_EXCEPTION_MESSAGE = "Could not initialize XML runtime";
 
-    private ReflectionRuntime pluginReflections;
+    private ReflectionContextHelper pluginReflections;
     private ExceptionHandler exceptionHandler;
     private XmlRuntime xmlRuntime;
 
@@ -39,7 +39,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
      * {@inheritDoc}
      */
     @Override
-    public ReflectionRuntime getReflection() {
+    public ReflectionContextHelper getReflection() {
         return pluginReflections;
     }
 
@@ -134,7 +134,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
                 return;
             }
             LoadedRuntimeContext result = new LoadedRuntimeContext();
-            result.pluginReflections = ReflectionRuntime.fromCodeScope(classPathElements, packageBase);
+            result.pluginReflections = ReflectionContextHelper.fromCodeScope(classPathElements, packageBase);
             result.exceptionHandler = ExceptionHandlers.forSetting(terminateOn);
             result.newXmlUtility();
             this.onComplete.accept(result);

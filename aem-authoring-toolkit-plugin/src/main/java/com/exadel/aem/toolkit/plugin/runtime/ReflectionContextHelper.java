@@ -55,7 +55,7 @@ import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
 /**
  * Introspects the classes available in Maven reactor to retrieve and manage Toolkit-related logic
  */
-public class ReflectionRuntime {
+public class ReflectionContextHelper {
 
     private static final String PACKAGE_BASE_WILDCARD = ".*";
 
@@ -70,7 +70,7 @@ public class ReflectionRuntime {
     /**
      * Default (hiding) constructor
      */
-    private ReflectionRuntime() {
+    private ReflectionContextHelper() {
     }
 
 
@@ -143,7 +143,7 @@ public class ReflectionRuntime {
         }
         handlers = reflections.getSubTypesOf(Handler.class).stream()
             .filter(cls -> !cls.isInterface())
-            .map(ReflectionRuntime::getHandlerInstance)
+            .map(ReflectionContextHelper::getHandlerInstance)
             .filter(Objects::nonNull)
             .sorted(Comparator.comparing(handler -> handler.getClass().getName())) // to provide stable handlers sequence between runs
             .collect(Collectors.toList());
@@ -244,7 +244,7 @@ public class ReflectionRuntime {
             return validators;
         }
         validators = reflections.getSubTypesOf(Validator.class).stream()
-            .map(ReflectionRuntime::getInstance)
+            .map(ReflectionContextHelper::getInstance)
             .filter(Objects::nonNull)
             .collect(Collectors.toMap(validator -> validator.getClass().getName(), Function.identity()));
         return validators;
@@ -285,22 +285,22 @@ public class ReflectionRuntime {
      * @param elements    List of classpath elements to be used in reflection routines
      * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
      *                    If not specified, all available components will be processed
-     * @return {@link ReflectionRuntime} instance
+     * @return {@link ReflectionContextHelper} instance
      */
-    public static ReflectionRuntime fromCodeScope(List<String> elements, String packageBase) {
+    public static ReflectionContextHelper fromCodeScope(List<String> elements, String packageBase) {
         URL[] urls = new URL[] {};
         if (elements != null) {
             urls = elements.stream()
                 .map(File::new)
                 .map(File::toURI)
-                .map(ReflectionRuntime::toUrl)
+                .map(ReflectionContextHelper::toUrl)
                 .filter(Objects::nonNull).toArray(URL[]::new);
         }
         Reflections reflections = new org.reflections.Reflections(new ConfigurationBuilder()
-            .addClassLoader(new URLClassLoader(urls, ReflectionRuntime.class.getClassLoader()))
+            .addClassLoader(new URLClassLoader(urls, ReflectionContextHelper.class.getClassLoader()))
             .setUrls(urls)
             .setScanners(new TypeAnnotationsScanner(), new SubTypesScanner()));
-        ReflectionRuntime newInstance = new ReflectionRuntime();
+        ReflectionContextHelper newInstance = new ReflectionContextHelper();
         newInstance.reflections = reflections;
         newInstance.packageBase = StringUtils.strip(StringUtils.defaultString(packageBase, StringUtils.EMPTY),
             PACKAGE_BASE_WILDCARD);
