@@ -35,7 +35,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties({"!name", "!layout"})
+@MapProperties(value = {"!name", "!layout"}, scope = Scope.CQ_DIALOG)
 @SuppressWarnings("squid:S1133")
 public @interface Dialog {
 
