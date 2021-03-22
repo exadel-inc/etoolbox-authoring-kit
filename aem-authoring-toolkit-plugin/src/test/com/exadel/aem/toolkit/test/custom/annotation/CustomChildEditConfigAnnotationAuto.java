@@ -25,5 +25,5 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 @Retention(RetentionPolicy.RUNTIME)
 @MapProperties(scope = Scope.CQ_CHILD_EDIT_CONFIG)
 public @interface CustomChildEditConfigAnnotationAuto {
-    String field1();
+    String autoField1();
 }

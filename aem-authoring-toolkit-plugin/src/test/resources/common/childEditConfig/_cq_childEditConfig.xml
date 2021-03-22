@@ -4,7 +4,8 @@
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           jcr:primaryType="cq:EditConfig"
           cq:actions="[delete,copymove,edit,insert,custom-action]"
-          field1="value1">
+          childEditConfigHandlerProp1="value1"
+          autoField1="value1">
     <cq:dropTargets jcr:primaryType="nt:unstructured">
         <image
                 jcr:primaryType="cq:DropTargetConfig"
