@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
@@ -29,11 +30,12 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.plugin.source.Sources;
 
 /**
- * Contains utility methods for managing {@link Scope} values
+ * Contains utility methods for managing scope values
+ * @see Scopes
  */
 public class ScopeUtil {
 
@@ -45,98 +47,98 @@ public class ScopeUtil {
 
     /**
      * Gets whether the given scope matches the provided class {@code Member}
-     * @param scope Non-null {@code Scope} object to test matching
+     * @param scope Non-null string value representing a scope
      * @param member Non-null {@code Member} instance
      * @return True or false
      */
-    public static boolean fits(Scope scope, Member member) {
-        List<Scope> activeScopes = Sources.fromMember(member)
+    public static boolean fits(String scope, Member member) {
+        List<String> activeScopes = Sources.fromMember(member)
             .tryAdaptTo(PropertyRendering.class)
             .map(PropertyRendering::scope)
             .map(Arrays::asList)
-            .orElse(Collections.singletonList(Scope.DEFAULT));
+            .orElse(Collections.singletonList(Scopes.DEFAULT));
 
-        return activeScopes.contains(scope) || activeScopes.contains(Scope.DEFAULT);
+        return activeScopes.contains(scope) || activeScopes.contains(Scopes.DEFAULT);
     }
 
     /**
      * Gets whether the given scope matches the provided {@code Annotation}
-     * @param scope Non-null {@code Scope} object to test matching
+     * @param scope Non-null string value representing a scope
      * @param annotation Non-null {@code Annotation} instance
      * @param context Array of sibling annotations to decide on the scope of the current annotation if set to default,
      *                nullable
      * @return True or false
      */
-    public static boolean fits(Scope scope, Annotation annotation, Annotation[] context) {
+    public static boolean fits(String scope, Annotation annotation, Annotation[] context) {
         if (!annotation.annotationType().isAnnotationPresent(MapProperties.class)) {
             return false;
         }
-        Scope[] scopes = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).scope();
-        if (scopes.length == 1 && scopes[0].equals(Scope.DEFAULT) && ArrayUtils.isNotEmpty(context)) {
+        String[] scopes = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).scope();
+        if (scopes.length == 1 && scopes[0].equals(Scopes.DEFAULT) && ArrayUtils.isNotEmpty(context)) {
             scopes = designate(Arrays.stream(context).map(Annotation::annotationType).toArray(Class<?>[]::new));
         }
-        return ArrayUtils.contains(scopes, scope) || ArrayUtils.contains(scopes, Scope.DEFAULT);
+        return ArrayUtils.contains(scopes, scope) || ArrayUtils.contains(scopes, Scopes.DEFAULT);
     }
 
     /**
      * Gets whether the given scope matches one or more other scopes
-     * @param scope Non-null {@code Scope} object to test matching
+     * @param scope Non-null string value representing a scope
      * @param others Non-null array of {@code Scope} objects
      * @return True or false
      */
-    public static boolean fits(Scope scope, Scope[] others) {
+    public static boolean fits(String scope, String[] others) {
         if (ArrayUtils.contains(others, scope)) {
             return true;
         }
-        return ArrayUtils.contains(others, Scope.DEFAULT);
+        return ArrayUtils.contains(others, Scopes.DEFAULT);
     }
 
     /**
-     * Picks up an appropriate {@link Scope} value judging by the annotations provided. Each one is tested for having
+     * Picks up an appropriate scope value judging by the annotations provided. Each one is tested for having
      * its {@link MapProperties} meta-annotation with an optional non-default {@code Scope}. If such is found, its value
      * is returned; otherwise, a default scope if returned
      * @param annotations Non-null array of {@code Annotation} objects
      * @return Array of {@code Scope} objects
      */
-    public static Scope[] designate(Annotation[] annotations) {
+    public static String[] designate(Annotation[] annotations) {
         if (ArrayUtils.isEmpty(annotations)) {
-            return new Scope[] {Scope.DEFAULT};
+            return new String[] {Scopes.DEFAULT};
         }
         for (Annotation annotation : annotations) {
             if (!annotation.annotationType().isAnnotationPresent(MapProperties.class)) {
                 continue;
             }
-            Scope[] scopes = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).scope();
-            if (scopes.length > 1 || (scopes.length == 1 && !scopes[0].equals(Scope.DEFAULT))) {
-                return Arrays.stream(scopes).filter(scope -> !scope.equals(Scope.DEFAULT)).toArray(Scope[]::new);
+            String[] scopes = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).scope();
+            if (scopes.length > 1 || (scopes.length == 1 && !scopes[0].equals(Scopes.DEFAULT))) {
+                return Arrays.stream(scopes).filter(StringUtils::isNotBlank).toArray(String[]::new);
             }
         }
-        return new Scope[] {Scope.DEFAULT};
+        return new String[] {Scopes.DEFAULT};
     }
 
     /**
-     * Picks up an appropriate {@link Scope} value judging by the annotation types provided
+     * Picks up an appropriate scope value judging by the annotation types provided
      * @param annotationTypes Non-null array of {@code Class} references representing annotation types
-     * @return Array of {@code Scope} objects
+     * @return Array of strings representing valid scopes. Default is the array containing the single "default scope" entry
      */
-    public static Scope[] designate(Class<?>[] annotationTypes) {
+    public static String[] designate(Class<?>[] annotationTypes) {
         if (annotationTypes == null) {
-            return new Scope[] {Scope.DEFAULT};
+            return new String[] {Scopes.DEFAULT};
         }
-        Scope result = Scope.DEFAULT;
+        String result = Scopes.DEFAULT;
         if (ArrayUtils.contains(annotationTypes, Dialog.class) && !ArrayUtils.contains(annotationTypes, DesignDialog.class)) {
-            result = Scope.CQ_DIALOG;
+            result = Scopes.CQ_DIALOG;
         } else if (ArrayUtils.contains(annotationTypes, AemComponent.class)) {
-            result = Scope.COMPONENT;
+            result = Scopes.COMPONENT;
         } else if (ArrayUtils.contains(annotationTypes, DesignDialog.class)) {
-            result = Scope.CQ_DESIGN_DIALOG;
+            result = Scopes.CQ_DESIGN_DIALOG;
         }else if (ArrayUtils.contains(annotationTypes, EditConfig.class)) {
-            result = Scope.CQ_EDIT_CONFIG;
+            result = Scopes.CQ_EDIT_CONFIG;
         } else if (ArrayUtils.contains(annotationTypes, ChildEditConfig.class)) {
-            result = Scope.CQ_CHILD_EDIT_CONFIG;
+            result = Scopes.CQ_CHILD_EDIT_CONFIG;
         } else if (ArrayUtils.contains(annotationTypes, HtmlTag.class)) {
-            result = Scope.CQ_HTML_TAG;
+            result = Scopes.CQ_HTML_TAG;
         }
-        return new Scope[] {result};
+        return new String[] {result};
     }
 }

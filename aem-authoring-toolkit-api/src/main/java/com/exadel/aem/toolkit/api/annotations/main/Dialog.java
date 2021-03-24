@@ -25,7 +25,7 @@ import com.day.cq.wcm.api.NameConstants;
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
@@ -35,7 +35,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties(value = {"!name", "!layout"}, scope = Scope.CQ_DIALOG)
+@MapProperties(value = {"!name", "!layout"}, scope = Scopes.CQ_DIALOG)
 @SuppressWarnings("squid:S1133")
 public @interface Dialog {
 
@@ -54,7 +54,7 @@ public @interface Dialog {
      */
     @PropertyRendering(
         name = JcrConstants.JCR_DESCRIPTION,
-        scope = Scope.COMPONENT
+        scope = Scopes.COMPONENT
     )
     @Deprecated
     String description() default "";
@@ -66,7 +66,7 @@ public @interface Dialog {
      */
     @PropertyRendering(
         name = NameConstants.PN_CELL_NAME,
-        scope = Scope.COMPONENT
+        scope = Scopes.COMPONENT
     )
     @Deprecated
     String cellName() default "";
@@ -76,7 +76,7 @@ public @interface Dialog {
      * @return String value
      * @deprecated Use {@link AemComponent#componentGroup()} to set this value
      */
-    @PropertyRendering(scope = Scope.COMPONENT)
+    @PropertyRendering(scope = Scopes.COMPONENT)
     @Deprecated
     String componentGroup() default "";
 
@@ -85,7 +85,7 @@ public @interface Dialog {
      * @return String value
      * @deprecated Use {@link AemComponent#dialogPath()} to set this value
      */
-    @PropertyRendering(scope = Scope.COMPONENT)
+    @PropertyRendering(scope = Scopes.COMPONENT)
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     @Deprecated
     String dialogPath() default "";
@@ -97,7 +97,7 @@ public @interface Dialog {
      */
     @PropertyRendering(
         name = NameConstants.PN_NO_DECORATION,
-        scope = Scope.COMPONENT,
+        scope = Scopes.COMPONENT,
         ignoreValues = "false"
     )
     @Deprecated
@@ -110,7 +110,7 @@ public @interface Dialog {
      */
     @PropertyRendering(
         name = JcrResourceConstants.SLING_RESOURCE_SUPER_TYPE_PROPERTY,
-        scope = Scope.COMPONENT
+        scope = Scopes.COMPONENT
     )
     @Deprecated
     String resourceSuperType() default "";
@@ -122,7 +122,7 @@ public @interface Dialog {
      */
     @PropertyRendering(
         name = NameConstants.PN_TEMPLATE_PATH,
-        scope = Scope.COMPONENT
+        scope = Scopes.COMPONENT
     )
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     @Deprecated
@@ -132,14 +132,14 @@ public @interface Dialog {
      * When set to non-blank, renders as the `helpPath` attribute of component's {@code cq:dialog} node
      * @return String value
      */
-    @PropertyRendering(scope = Scope.CQ_DIALOG)
+    @PropertyRendering(scope = Scopes.CQ_DIALOG)
     String helpPath() default "";
 
     /**
      * Renders as the `height` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal to zero provided, default 480 is used
      * @return Numeric value
      */
-    @PropertyRendering(scope = Scope.CQ_DIALOG)
+    @PropertyRendering(scope = Scopes.CQ_DIALOG)
     @ValueRestriction(ValueRestrictions.POSITIVE)
     double height() default 480;
 
@@ -147,7 +147,7 @@ public @interface Dialog {
      * Renders as the `width` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal to zero provided, default 560 is used
      * @return Numeric value
      */
-    @PropertyRendering(scope = Scope.CQ_DIALOG)
+    @PropertyRendering(scope = Scopes.CQ_DIALOG)
     @ValueRestriction(ValueRestrictions.POSITIVE)
     double width() default 560;
 
@@ -157,7 +157,7 @@ public @interface Dialog {
      * @deprecated Use {@link AemComponent#disableTargeting()} to set this value
      */
     @PropertyRendering(
-        scope = Scope.COMPONENT,
+        scope = Scopes.COMPONENT,
         ignoreValues = "false"
     )
     @Deprecated
@@ -169,7 +169,7 @@ public @interface Dialog {
      * @deprecated Use {@link AemComponent#isContainer()} to set this value
      */
     @PropertyRendering(
-        scope = Scope.COMPONENT,
+        scope = Scopes.COMPONENT,
         name = NameConstants.PN_IS_CONTAINER,
         valueType = String.class,
         ignoreValues = "false"
@@ -202,7 +202,7 @@ public @interface Dialog {
      * of component's {@code cq:dialog} node
      * @return String value, or an array of strings
      */
-    @PropertyRendering(scope = Scope.CQ_DIALOG)
+    @PropertyRendering(scope = Scopes.CQ_DIALOG)
     String[] extraClientlibs() default {};
 
     /**

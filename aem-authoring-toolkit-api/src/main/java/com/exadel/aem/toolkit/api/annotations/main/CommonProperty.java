@@ -19,13 +19,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 /**
  * Used to populate {@link CommonProperties} value with set of name-value string pairs. They are rendered as XML nodes'
  * attributes
- * To define appropriate XML node, node's {@link Scope}, and {@code XPath} can be specified
+ * To define appropriate XML node, node's scope and {@code XPath} can be specified
  * @see CommonProperties
+ * @see Scopes
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -49,7 +50,7 @@ public @interface CommonProperty {
      * {@code cq:dialog}, {@code cq:editorConfig} or any other appropriate JCR node
      * @return One of {@code XmlScope} values
      */
-    Scope scope() default Scope.COMPONENT;
+    String scope() default Scopes.COMPONENT;
 
     /**
      * Specifies the path to target node relative to node defined by {@link CommonProperty#scope()}

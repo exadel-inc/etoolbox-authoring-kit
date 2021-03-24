@@ -30,7 +30,6 @@ import org.codehaus.plexus.util.CollectionUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -89,7 +88,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
         OrderingUtil.sortHandlers(new ArrayList<>(modernHandlers)).forEach(handler -> handler.accept(source, target));
     }
 
-    private List<Handler> getEffectiveHandlers(Source source, Scope scope) {
+    private List<Handler> getEffectiveHandlers(Source source, String scope) {
         if (predefinedHandlers != null && !predefinedHandlers.isEmpty()) {
             return predefinedHandlers;
         }

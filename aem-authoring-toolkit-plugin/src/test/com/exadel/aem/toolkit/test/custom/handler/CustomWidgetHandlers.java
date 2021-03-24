@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
@@ -110,7 +110,7 @@ public class CustomWidgetHandlers {
         }
     }
 
-    @Handles(value = PathField.class, scope = Scope.CQ_DESIGN_DIALOG)
+    @Handles(value = PathField.class, scope = Scopes.CQ_DESIGN_DIALOG)
     @SuppressWarnings("unused")
     public static class CustomScopeLimitedHandler implements Handler {
 

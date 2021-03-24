@@ -44,7 +44,6 @@ import org.w3c.dom.NodeList;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
@@ -302,7 +301,7 @@ public class XmlContextHelper implements XmlUtility {
     }
 
     @Override
-    public void mapProperties(Element element, Annotation annotation, Scope scope) {
+    public void mapProperties(Element element, Annotation annotation, String scope) {
         List<String> skippedFields = Arrays.stream(annotation.annotationType().getDeclaredMethods())
                 .filter(m -> !fitsInScope(m, scope))
                 .map(Method::getName)
@@ -379,13 +378,14 @@ public class XmlContextHelper implements XmlUtility {
     }
 
     /**
-     * Gets whether this annotation method falls within the specified {@link Scope}. True if no scope specified
+     * Gets whether this annotation method falls within the specified scope. True if no scope specified
      * for method (that is, the method is applicable to any scope
      * @param method {@code Method} instance representing a property of an annotation
-     * @param scope {@code PropertyScope} value
+     * @param scope String representing a valid scope
      * @return True or false
+     * @see com.exadel.aem.toolkit.api.annotations.meta.Scopes
      */
-    private static boolean fitsInScope(Method method, Scope scope) {
+    private static boolean fitsInScope(Method method, String scope) {
         if (!method.isAnnotationPresent(PropertyRendering.class)) {
             return true;
         }

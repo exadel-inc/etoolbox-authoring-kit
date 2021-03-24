@@ -20,7 +20,7 @@ import org.w3c.dom.Document;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
@@ -41,11 +41,11 @@ class ContentXmlWriter extends PackageEntryWriter {
 
     /**
      * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
-     * @return {@link Scope} value
+     * @return String value representing a valid scope
      */
     @Override
-    Scope getScope() {
-        return Scope.COMPONENT;
+    String getScope() {
+        return Scopes.COMPONENT;
     }
 
     /**

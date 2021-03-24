@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnTabHandler;
@@ -48,24 +48,24 @@ import com.exadel.aem.toolkit.plugin.util.ScopeUtil;
 class CqDialogWriter extends PackageEntryWriter {
     private static final String TITLE_MISSING_EXCEPTION_MESSAGE = "Title property is missing for dialog in class ";
 
-    private final Scope scope;
+    private final String scope;
 
     /**
      * Basic constructor
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
-     * @param scope Current XmlScope
+     * @param scope Current scope value
      */
-    CqDialogWriter(Transformer transformer, Scope scope) {
+    CqDialogWriter(Transformer transformer, String scope) {
         super(transformer);
         this.scope = scope;
     }
 
     /**
      * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
-     * @return {@link Scope} value
+     * @return String value representing a valid scope
      */
     @Override
-    Scope getScope() {
+    String getScope() {
         return scope;
     }
 
@@ -76,7 +76,7 @@ class CqDialogWriter extends PackageEntryWriter {
      */
     @Override
     boolean canProcess(Class<?> componentClass) {
-        return Scope.CQ_DIALOG.equals(scope)
+        return Scopes.CQ_DIALOG.equals(scope)
             ? componentClass.isAnnotationPresent(Dialog.class)
             : componentClass.isAnnotationPresent(DesignDialog.class);
     }
@@ -89,7 +89,7 @@ class CqDialogWriter extends PackageEntryWriter {
      */
     @Override
     void applySpecificProperties(Class<?> componentClass, Target target) {
-        Annotation dialogAnnotation = Scope.CQ_DIALOG.equals(scope)
+        Annotation dialogAnnotation = Scopes.CQ_DIALOG.equals(scope)
             ? componentClass.getDeclaredAnnotation(Dialog.class)
             : componentClass.getDeclaredAnnotation(DesignDialog.class);
 
@@ -137,13 +137,13 @@ class CqDialogWriter extends PackageEntryWriter {
      * on layout annotations provided for the component class. If no specific annotations found, the default layout,
      * which is {@link DialogLayout#FIXED_COLUMNS}, returned
      * @param componentClass The {@code Class} being processed
-     * @param scope Indicates whether to look for a {@code Dialog}, or {@code DesignDialog} annotation as a possible
+     * @param scope Value indicating whether to look for a {@code Dialog}, or {@code DesignDialog} annotation as a possible
      *              source of layout
      * @return {@code DialogLayout} value
      */
     @SuppressWarnings("deprecation") // Processing of Dialog#tabs is retained for compatibility and will be removed
                                      // in a version after 2.0.1
-    private static DialogLayout getLayout(Class<?> componentClass, Scope scope) {
+    private static DialogLayout getLayout(Class<?> componentClass, String scope) {
         DialogLayout result = DialogLayout.FIXED_COLUMNS;
 
         List<Class<?>> hierarchy = ClassUtil.getInheritanceTree(componentClass, true);
@@ -151,7 +151,7 @@ class CqDialogWriter extends PackageEntryWriter {
 
         while (hierarchyIterator.hasPrevious()) {
             Class<?> current = hierarchyIterator.previous();
-            if (scope.equals(Scope.CQ_DIALOG)
+            if (scope.equals(Scopes.CQ_DIALOG)
                 && current.isAnnotationPresent(Dialog.class)
                 && current.getDeclaredAnnotation(Dialog.class).tabs().length > 0) {
                 return DialogLayout.TABS;
@@ -174,7 +174,7 @@ class CqDialogWriter extends PackageEntryWriter {
     }
 
     /**
-     * Called from {@link CqDialogWriter#getLayout(Class, Scope)} to search for an appropriate {@code DialogLayout} value
+     * Called from {@link CqDialogWriter#getLayout(Class, String)} to search for an appropriate {@code DialogLayout} value
      * in case it is defined as an annotation to nested class. If such annotation is found, the appropriate value is
      * immediately returned; otherwise the fallback value {@link DialogLayout#FIXED_COLUMNS} is returned
      * @param componentClass The {@code Class} being processed

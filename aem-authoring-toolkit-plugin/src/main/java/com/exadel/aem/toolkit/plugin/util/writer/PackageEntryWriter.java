@@ -34,7 +34,7 @@ import com.exadel.aem.toolkit.api.annotations.main.CommonProperties;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
@@ -73,10 +73,11 @@ abstract class PackageEntryWriter {
        ----------------------- */
 
     /**
-     * Gets {@link Scope} associated with this {@code PackageEntryWriter} instance
-     * @return One of {@code XmlScope} values
+     * Gets the scope associated with this {@code PackageEntryWriter} instance
+     * @return String value representing a valid scope
+     * @see com.exadel.aem.toolkit.api.annotations.meta.Scopes
      */
-    abstract Scope getScope();
+    abstract String getScope();
 
     /**
      * Gets whether this component {@code Class} is processable by this particular {@code PackageEntryWriter} implementation
@@ -97,16 +98,16 @@ abstract class PackageEntryWriter {
      */
     final void cleanUp(Path componentPath) {
         try {
-            Path existingFilePath = componentPath.resolve(getScope().toString());
+            Path existingFilePath = componentPath.resolve(getScope());
             Files.deleteIfExists(existingFilePath);
-            if (!getScope().equals(Scope.COMPONENT)) {
+            if (!Scopes.COMPONENT.equals(getScope())) {
                 // We take into account that the markup could be stored by hand in e.g. _cq_dialog/.content.xml structure
                 // instead of _cq_dialog.xml file. Therefore, both the "file" and the "folder" must be deleted,
                 // or we might end up with two versions of component markup within same package
                 Path nestedFolderPath = componentPath.resolve(StringUtils.substringBeforeLast(
-                    getScope().toString(),
+                    getScope(),
                     DialogConstants.EXTENSION_SEPARATOR));
-                Path nestedFilePath = nestedFolderPath.resolve(Scope.COMPONENT.toString()); // we just use the '.content.xml' value here as a constant
+                Path nestedFilePath = nestedFolderPath.resolve(Scopes.COMPONENT);
                 Files.deleteIfExists(nestedFilePath);
                 Files.deleteIfExists(nestedFolderPath);
             }
@@ -121,7 +122,7 @@ abstract class PackageEntryWriter {
      * @param componentPath {@link Path} representing a file within a file system the data is written to
      */
     final void writeXml(Class<?> componentClass, Path componentPath) {
-        try (Writer writer = Files.newBufferedWriter(componentPath.resolve(getScope().toString()), StandardOpenOption.CREATE)) {
+        try (Writer writer = Files.newBufferedWriter(componentPath.resolve(getScope()), StandardOpenOption.CREATE)) {
             writeXml(componentClass, writer);
         } catch (IOException e) {
             PluginRuntime.context().getExceptionHandler().handle(e);
@@ -159,7 +160,7 @@ abstract class PackageEntryWriter {
             .composeDocument(PluginRuntime.context().newXmlUtility().getDocument());
         writeCommonProperties(componentClass, result);
 
-        if (Scope.CQ_DIALOG.equals(getScope())) {
+        if (Scopes.CQ_DIALOG.equals(getScope())) {
             applyLegacyDialogHandlers(result.getDocumentElement(), componentClass);
         }
 
@@ -211,7 +212,7 @@ abstract class PackageEntryWriter {
      */
     private void writeCommonProperties(Class<?> componentClass, Document document) {
         Arrays.stream(componentClass.getAnnotationsByType(CommonProperty.class))
-            .filter(p -> getScope().equals(p.scope()))
+            .filter(p -> StringUtils.equals(getScope(), p.scope()))
             .forEach(p -> writeCommonProperty(p, XmlContextHelper.getElementNodes(p.path(), document)));
     }
 

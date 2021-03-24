@@ -14,7 +14,6 @@
 
 package com.exadel.aem.toolkit.plugin.target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 /**
@@ -40,10 +39,10 @@ public class Targets {
     /**
      * Creates a new unattached (root) {@code Target} instance with the specified name and scope
      * @param name Name of the instance, non-blank String
-     * @param scope Scope of the instance, one of {@link Scope} values
+     * @param scope Scope of the instance, see {@link com.exadel.aem.toolkit.api.annotations.meta.Scopes} for details
      * @return {@code Target} object
      */
-    public static Target newInstance(String name, Scope scope) {
+    public static Target newInstance(String name, String scope) {
         TargetImpl result = new TargetImpl(name, null);
         result.setScope(scope);
         return result;
