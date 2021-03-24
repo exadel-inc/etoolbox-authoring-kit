@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.editconfig;
 
 import java.lang.annotation.ElementType;
@@ -22,7 +21,6 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 
 /**
@@ -32,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties(prefix = "cq:", value = {"actions", "emptyText", "inherit"}, scope = Scopes.CQ_EDIT_CONFIG)
+@MapProperties(prefix = "cq:", value = {"actions", "emptyText", "inherit"})
 public @interface EditConfig {
 
     /**

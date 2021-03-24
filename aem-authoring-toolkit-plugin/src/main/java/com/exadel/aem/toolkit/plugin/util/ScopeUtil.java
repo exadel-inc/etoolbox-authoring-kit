@@ -18,9 +18,11 @@ import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
@@ -39,8 +41,18 @@ import com.exadel.aem.toolkit.plugin.source.Sources;
  */
 public class ScopeUtil {
 
+    private static final Map<Class<? extends Annotation>, String> PREDEFINED_SCOPES =
+        ImmutableMap.<Class<? extends Annotation>, String>builder()
+        .put(AemComponent.class, Scopes.COMPONENT)
+        .put(Dialog.class, Scopes.CQ_DIALOG)
+        .put(DesignDialog.class, Scopes.CQ_DESIGN_DIALOG)
+        .put(EditConfig.class, Scopes.CQ_EDIT_CONFIG)
+        .put(ChildEditConfig.class, Scopes.CQ_CHILD_EDIT_CONFIG)
+        .put(HtmlTag.class, Scopes.CQ_HTML_TAG)
+        .build();
+
     /**
-     * Default (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private ScopeUtil() {
     }
@@ -104,16 +116,12 @@ public class ScopeUtil {
         if (ArrayUtils.isEmpty(annotations)) {
             return new String[] {Scopes.DEFAULT};
         }
-        for (Annotation annotation : annotations) {
-            if (!annotation.annotationType().isAnnotationPresent(MapProperties.class)) {
-                continue;
-            }
-            String[] scopes = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).scope();
-            if (scopes.length > 1 || (scopes.length == 1 && !scopes[0].equals(Scopes.DEFAULT))) {
-                return Arrays.stream(scopes).filter(StringUtils::isNotBlank).toArray(String[]::new);
-            }
-        }
-        return new String[] {Scopes.DEFAULT};
+        String[] result = Arrays.stream(annotations)
+            .map(Annotation::annotationType)
+            .map(PREDEFINED_SCOPES::get)
+            .filter(StringUtils::isNotEmpty)
+            .toArray(String[]::new);
+        return result.length > 0 ? result : new String[] {Scopes.DEFAULT};
     }
 
     /**
@@ -125,19 +133,14 @@ public class ScopeUtil {
         if (annotationTypes == null) {
             return new String[] {Scopes.DEFAULT};
         }
-        String result = Scopes.DEFAULT;
+        String result;
         if (ArrayUtils.contains(annotationTypes, Dialog.class) && !ArrayUtils.contains(annotationTypes, DesignDialog.class)) {
             result = Scopes.CQ_DIALOG;
-        } else if (ArrayUtils.contains(annotationTypes, AemComponent.class)) {
-            result = Scopes.COMPONENT;
-        } else if (ArrayUtils.contains(annotationTypes, DesignDialog.class)) {
-            result = Scopes.CQ_DESIGN_DIALOG;
-        }else if (ArrayUtils.contains(annotationTypes, EditConfig.class)) {
-            result = Scopes.CQ_EDIT_CONFIG;
-        } else if (ArrayUtils.contains(annotationTypes, ChildEditConfig.class)) {
-            result = Scopes.CQ_CHILD_EDIT_CONFIG;
-        } else if (ArrayUtils.contains(annotationTypes, HtmlTag.class)) {
-            result = Scopes.CQ_HTML_TAG;
+        } else {
+            result = PREDEFINED_SCOPES.keySet().stream().filter(cls -> ArrayUtils.contains(annotationTypes, cls))
+                .findFirst()
+                .map(PREDEFINED_SCOPES::get)
+                .orElse(Scopes.DEFAULT);
         }
         return new String[] {result};
     }
