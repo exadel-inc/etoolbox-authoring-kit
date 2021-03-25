@@ -27,6 +27,7 @@
                 <excludes>
                     <exclude>**/.vlt</exclude>
                     <exclude>**/.vltignore</exclude>
+                    <exclude>**/.keep</exclude>
                 </excludes>
             </resource>
             <resource>
@@ -47,6 +48,7 @@
                             <root>/etc/packages/authoring-toolkit</root>
                             <excludes>
                                 <exclude>/etc/packages/authoring-toolkit/aem-authoring-toolkit-assets-${project.version}.zip</exclude>
+                                <exclude>/etc/packages/authoring-toolkit/.snapshot/aem-authoring-toolkit-assets-${project.version}.zip</exclude>
                             </excludes>
                         </filter>
                     </filters>
@@ -66,6 +68,13 @@
                             <filesets>
                                 <fileset>
                                     <directory>${basedir}/src/main/content/jcr_root/etc/packages/authoring-toolkit</directory>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>.snapshot</exclude>
+                                        <exclude>.snapshot/.keep</exclude>
+                                    </excludes>
                                 </fileset>
                             </filesets>
                         </configuration>
