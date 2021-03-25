@@ -34,6 +34,7 @@ public @interface OptionProvider {
 
     String[] append() default {};
 
+    @PropertyRendering(name = "selected")
     String selectedValue() default "";
 
     @PropertyRendering(ignoreValues = "false")
