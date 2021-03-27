@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.plugin.handlers.assets.dependson;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.ImmutableMap;
@@ -24,6 +23,9 @@ import com.google.common.collect.ImmutableMap;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTabConfig;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
@@ -35,7 +37,11 @@ import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for the {@code DependsOnTab} functionality
  */
-public class DependsOnTabHandler implements BiConsumer<Source, Target> {
+@Handles(
+    value = {DependsOnTab.class, DependsOnTabConfig.class},
+    scope = {Scopes.CQ_DIALOG, Scopes.CQ_DESIGN_DIALOG}
+)
+public class DependsOnTabHandler implements Handler {
 
     private static final String TAB_ITEMS_NODE_PATH = String.join(DialogConstants.PATH_SEPARATOR,
         DialogConstants.NN_CONTENT,
