@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
 import java.lang.annotation.Annotation;
@@ -20,9 +19,9 @@ import java.util.function.BiConsumer;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnHandler;
+import com.exadel.aem.toolkit.plugin.handlers.common.CustomHandlingHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.PropertyMappingHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.AttributeAnnotationHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.CustomHandlingHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.DialogFieldAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.InheritanceHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.MultipleAnnotationHandler;
