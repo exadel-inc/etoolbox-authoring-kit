@@ -18,10 +18,8 @@ import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
-import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
@@ -40,15 +38,14 @@ import com.exadel.aem.toolkit.plugin.source.Sources;
  */
 public class ScopeUtil {
 
-    private static final Map<Class<? extends Annotation>, String> PREDEFINED_SCOPES =
-        ImmutableMap.<Class<? extends Annotation>, String>builder()
-        .put(AemComponent.class, Scopes.COMPONENT)
-        .put(Dialog.class, Scopes.CQ_DIALOG)
-        .put(DesignDialog.class, Scopes.CQ_DESIGN_DIALOG)
-        .put(EditConfig.class, Scopes.CQ_EDIT_CONFIG)
-        .put(ChildEditConfig.class, Scopes.CQ_CHILD_EDIT_CONFIG)
-        .put(HtmlTag.class, Scopes.CQ_HTML_TAG)
-        .build();
+    private static final List<Class<? extends Annotation>> ENTRY_POINT_ANNOTATION_TYPES = Arrays.asList(
+        AemComponent.class,
+        Dialog.class,
+        DesignDialog.class,
+        EditConfig.class,
+        ChildEditConfig.class,
+        HtmlTag.class
+    );
 
     /**
      * Default (instantiation-restricting) constructor
@@ -113,15 +110,14 @@ public class ScopeUtil {
         if (ArrayUtils.isEmpty(annotationTypes)) {
             return Scopes.DEFAULT;
         }
-        String result;
         if (ArrayUtils.contains(annotationTypes, Dialog.class) && !ArrayUtils.contains(annotationTypes, DesignDialog.class)) {
-            result = Scopes.CQ_DIALOG;
-        } else {
-            result = PREDEFINED_SCOPES.keySet().stream().filter(cls -> ArrayUtils.contains(annotationTypes, cls))
-                .findFirst()
-                .map(PREDEFINED_SCOPES::get)
-                .orElse(Scopes.DEFAULT);
+            return Scopes.CQ_DIALOG;
         }
-        return result;
+        for (Class<?> annotationType : ENTRY_POINT_ANNOTATION_TYPES) {
+            if (ArrayUtils.contains(annotationTypes, annotationType)) {
+                return annotationType.getDeclaredAnnotation(MapProperties.class).scope()[0];
+            }
+        }
+        return Scopes.DEFAULT;
     }
 }
