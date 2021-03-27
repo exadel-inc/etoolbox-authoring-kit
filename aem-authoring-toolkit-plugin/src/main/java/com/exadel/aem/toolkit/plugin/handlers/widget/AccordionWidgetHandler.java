@@ -31,6 +31,8 @@ class AccordionWidgetHandler extends WidgetContainerHandler {
      */
     @Override
     public void accept(Source source, Target target) {
+        target.attributes(source.adaptTo(Accordion.class)); // We do not use the auto-mapping facility here because
+        // @Accordion can be used class-level and should not mess with "true" auto-mapped class annotations
         populateNestedContainer(source, target, Accordion.class);
     }
 }

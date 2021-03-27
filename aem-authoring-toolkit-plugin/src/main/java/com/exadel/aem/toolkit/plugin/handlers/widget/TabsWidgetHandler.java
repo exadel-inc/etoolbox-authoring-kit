@@ -42,7 +42,8 @@ public class TabsWidgetHandler extends WidgetContainerHandler {
      */
     @Override
     public void accept(Source source, Target target) {
-        target.attributes(source.adaptTo(Tabs.class), WIDGET_PROPERTIES_FILTER);
+        target.attributes(source.adaptTo(Tabs.class), WIDGET_PROPERTIES_FILTER); // We do not use the auto-mapping facility
+        // because @Tabs can be used class-level and should not mess with "true" auto-mapped class annotations
         populateNestedContainer(source, target, Tabs.class);
     }
 }
