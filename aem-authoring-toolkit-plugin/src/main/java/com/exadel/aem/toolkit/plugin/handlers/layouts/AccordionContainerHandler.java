@@ -29,7 +29,7 @@ public class AccordionContainerHandler extends ContainerHandler {
      * @param parentElement  XML document root element
      */
     @Override
-    public void accept(Class<?> componentClass, Target parentElement) {
-        populateContainer(componentClass, parentElement, AccordionPanel.class);
+    public void accept(Source source, Target target) {
+        populateContainer(source.adaptTo(Class.class), target, AccordionPanel.class);
     }
 }

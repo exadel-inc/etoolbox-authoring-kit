@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.ContainerHandler;
 import com.exadel.aem.toolkit.plugin.target.Targets;
@@ -42,22 +43,24 @@ public class TabsContainerHandler extends ContainerHandler {
      * @param componentClass {@code Class<?>} instance used as the source of markup
      * @param parentElement  XML document root element
      */
+    @SuppressWarnings("deprecation") // Processing container.Tab is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     @Override
-    public void accept(Class<?> componentClass, Target parentElement) {
+    public void accept(Source source, Target target) {
         populateContainer(
-            componentClass,
-            parentElement,
+            source.adaptTo(Class.class),
+            target,
             Arrays.asList(Tab.class,
                 com.exadel.aem.toolkit.api.annotations.container.Tab.class)
         );
-        Tabs tabsAnnotation = componentClass.getDeclaredAnnotation(Tabs.class);
+        Tabs tabsAnnotation = source.adaptTo(Tabs.class);
         Target layoutContainer = null;
         if (tabsAnnotation != null) {
             layoutContainer = Targets.newInstance(DialogConstants.NN_LAYOUT)
                 .attributes(tabsAnnotation, LAYOUT_PROPERTIES_FILTER);
         }
-        if (layoutContainer != null && !layoutContainer.isEmpty() && parentElement.exists(DialogConstants.NN_CONTENT)) {
-            parentElement.getTarget(DialogConstants.NN_CONTENT).addTarget(layoutContainer, 0);
+        if (layoutContainer != null && !layoutContainer.isEmpty() && target.exists(DialogConstants.NN_CONTENT)) {
+            target.getTarget(DialogConstants.NN_CONTENT).addTarget(layoutContainer, 0);
         }
     }
 }

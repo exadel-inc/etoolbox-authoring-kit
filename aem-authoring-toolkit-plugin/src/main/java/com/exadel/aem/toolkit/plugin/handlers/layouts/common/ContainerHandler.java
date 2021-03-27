@@ -41,7 +41,11 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
-public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
+/**
+ * Presents a common base for handlers processing layout logic for Granite UI containers, such as the accordion container,
+ * tab container, etc.
+ */
+public abstract class ContainerHandler implements BiConsumer<Source, Target> {
 
     /**
      * Processes container-backing Java class and appends the results to the root {@link Target} object
@@ -216,6 +220,8 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param scope          String value defining whether to handle the current Java class as a {@code Dialog}
      *                       source, or a {@code DesignDialog} source
      */
+    @SuppressWarnings("deprecation") // Processing of container.Tab class and Dialog#tabs() method is retained for
+                                     // compatibility and will be removed in a version after 2.0.1
     private void appendSectionsFromClassLevel(List<SectionFacade> accumulator, Class<?> componentClass, String scope) {
         com.exadel.aem.toolkit.api.annotations.container.Tab[] legacyTabs = null;
         Tab[] tabs = null;
@@ -292,6 +298,8 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param componentClass {@code Class<?>} instance used as the source of markup
      * @return Array of strings, non-null
      */
+    @SuppressWarnings("deprecation") // Processing of IgnoreTabs annotation is retained for
+                                     // compatibility and will be removed in a version after 2.0.1
     private static String[] getIgnoredSectionTitles(Class<?> componentClass) {
         String[] result = ArrayUtils.EMPTY_STRING_ARRAY;
         if (componentClass.isAnnotationPresent(IgnoreTabs.class)) {

@@ -13,9 +13,10 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.layouts;
 
+import java.util.Map;
 import java.util.function.BiConsumer;
 
-import org.apache.commons.lang3.EnumUtils;
+import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -26,32 +27,25 @@ import com.exadel.aem.toolkit.plugin.util.writer.DialogLayout;
  * the implementation of {@code ContentXmlWriter} to populate markup elements produced by the set of component class
  * fields to the overall dialog markup
  */
-public enum DialogContainer {
-    FIXED_COLUMNS(new FixedColumnsHandler()),
-    ACCORDION(new AccordionContainerHandler()),
-    TABS(new TabsContainerHandler());
+public class ContainerHandlers {
+    private static final Map<DialogLayout, BiConsumer<Source, Target>> HANDLERS = ImmutableMap.of(
+        DialogLayout.FIXED_COLUMNS, new FixedColumnsHandler(),
+        DialogLayout.ACCORDION, new AccordionContainerHandler(),
+        DialogLayout.TABS, new TabsContainerHandler()
+    );
 
-    private final BiConsumer<Class<?>, Target> handler;
-
-    DialogContainer(BiConsumer<Class<?>, Target> handler) {
-        this.handler = handler;
+    /**
+     * Default (instantiation-preventing) constructor
+     */
+    private ContainerHandlers() {
     }
 
     /**
-     * Builds Granite UI dialog markup based on the specific container logic
-     * @param source {@code Source} object used for data retrieval
-     * @param target Resulting {@code Target} object
+     * Retrieves the container handler instance for the given layout
+     * @param layout Non-null {@link DialogLayout} value to match the container
+     * @return Container handler for either fixed-columns, tabbed, accordion-shaped, etc. layout
      */
-    public void build(Source source, Target target) {
-        handler.accept(source.adaptTo(Class.class), target);
-    }
-
-    /**
-     * Returns the {@code DialogContainer} instance for the particular layout
-     * @param layout {@link DialogLayout} to match this container
-     * @return {@code DialogContainer} for either fixed-columns, tabbed or accordion-shaped layout
-     */
-    public static DialogContainer getContainer(DialogLayout layout) {
-        return EnumUtils.getEnumMap(DialogContainer.class).get(layout.name());
+    public static BiConsumer<Source, Target> forLayout(DialogLayout layout) {
+        return HANDLERS.getOrDefault(layout, HANDLERS.get(DialogLayout.FIXED_COLUMNS));
     }
 }
