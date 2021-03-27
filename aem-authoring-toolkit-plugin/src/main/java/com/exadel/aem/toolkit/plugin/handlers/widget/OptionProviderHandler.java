@@ -11,10 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,19 +48,18 @@ abstract class OptionProviderHandler {
     }
 
     /**
-     * Appends data structure related to {@link DataSource} value to the provided {@link Target}
-     * @param dataSource Values provided by a {@code DataSource} annotation
-     * @param target     {@code Target} instance to store data in
+     * Adds a particular option represented by an annotation in a {@code Select}'s or {@code RadioGroup}'s option set
+     * to the given {@code Target}
+     * @param option {@code Annotation} object representing a selection option
+     * @param optionValue String that exposes value of the option
+     * @param parentElement {@code Target} instance to store the option in
      */
-    void appendDataSource(DataSource dataSource, Target target) {
-        if (StringUtils.isAnyBlank(dataSource.path(), dataSource.resourceType())) {
-            return;
-        }
-        Target datasourceElement = target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
-            .attribute(DialogConstants.PN_PATH, dataSource.path())
-            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, dataSource.resourceType());
-        Arrays.stream(dataSource.properties())
-            .forEach(property -> datasourceElement.attribute(property.name(), property.value()));
+    void appendOption(Annotation option, String optionValue, Target parentElement) {
+        List<Target> existing = parentElement.findChildren(t -> t.getAttribute(DialogConstants.PN_VALUE).equals(optionValue));
+        Target item = existing.isEmpty()
+            ? parentElement.createTarget(DialogConstants.DOUBLE_QUOTE + optionValue + DialogConstants.DOUBLE_QUOTE)
+            : parentElement.getTarget(DialogConstants.DOUBLE_QUOTE + optionValue + DialogConstants.DOUBLE_QUOTE);
+        item.attributes(option, AnnotationUtil.getPropertyMappingFilter(option));
     }
 
     /**
@@ -86,11 +86,27 @@ abstract class OptionProviderHandler {
     }
 
     /**
+     * Appends data structure related to {@link DataSource} value to the provided {@link Target}
+     * @param dataSource Values provided by a {@code DataSource} annotation
+     * @param target     {@code Target} instance to store data in
+     */
+    void appendDataSource(DataSource dataSource, Target target) {
+        if (StringUtils.isAnyBlank(dataSource.path(), dataSource.resourceType())) {
+            return;
+        }
+        Target datasourceElement = target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
+            .attribute(DialogConstants.PN_PATH, dataSource.path())
+            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, dataSource.resourceType());
+        Arrays.stream(dataSource.properties())
+            .forEach(property -> datasourceElement.attribute(property.name(), property.value()));
+    }
+
+    /**
      * Called by {@link OptionProviderHandler#appendOptionProvider(OptionProvider, Target)} to store options related
      * to the particular option path into the given datasource {@code Target}
      * @param optionSource Values provided by an {@code OptionSource} member of an {@code OptionProvider} annotation
-     * @param datasourceElement       {@code Target} instance to store data in
-     * @param postfix      Special key added to every attribute name to distinguish it from the others
+     * @param datasourceElement {@code Target} instance to store data in
+     * @param postfix Special key added to every attribute name to distinguish it from the others
      */
     private static void populateSourceAttributes(OptionSource optionSource, Target datasourceElement, String postfix) {
         datasourceElement.attribute(DialogConstants.PN_PATH + postfix, optionSource.value());
