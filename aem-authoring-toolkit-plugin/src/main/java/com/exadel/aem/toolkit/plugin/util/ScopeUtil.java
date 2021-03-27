@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
@@ -87,7 +86,7 @@ public class ScopeUtil {
         }
         String[] scopes = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).scope();
         if (scopes.length == 1 && scopes[0].equals(Scopes.DEFAULT) && ArrayUtils.isNotEmpty(context)) {
-            scopes = designate(Arrays.stream(context).map(Annotation::annotationType).toArray(Class<?>[]::new));
+            scopes = new String[] {designate(Arrays.stream(context).map(Annotation::annotationType).toArray(Class<?>[]::new))};
         }
         return ArrayUtils.contains(scopes, scope) || ArrayUtils.contains(scopes, Scopes.DEFAULT);
     }
@@ -106,32 +105,13 @@ public class ScopeUtil {
     }
 
     /**
-     * Picks up an appropriate scope value judging by the annotations provided. Each one is tested for having
-     * its {@link MapProperties} meta-annotation with an optional non-default {@code Scope}. If such is found, its value
-     * is returned; otherwise, a default scope if returned
-     * @param annotations Non-null array of {@code Annotation} objects
-     * @return Array of {@code Scope} objects
-     */
-    public static String[] designate(Annotation[] annotations) {
-        if (ArrayUtils.isEmpty(annotations)) {
-            return new String[] {Scopes.DEFAULT};
-        }
-        String[] result = Arrays.stream(annotations)
-            .map(Annotation::annotationType)
-            .map(PREDEFINED_SCOPES::get)
-            .filter(StringUtils::isNotEmpty)
-            .toArray(String[]::new);
-        return result.length > 0 ? result : new String[] {Scopes.DEFAULT};
-    }
-
-    /**
      * Picks up an appropriate scope value judging by the annotation types provided
      * @param annotationTypes Non-null array of {@code Class} references representing annotation types
      * @return Array of strings representing valid scopes. Default is the array containing the single "default scope" entry
      */
-    public static String[] designate(Class<?>[] annotationTypes) {
-        if (annotationTypes == null) {
-            return new String[] {Scopes.DEFAULT};
+    public static String designate(Class<?>[] annotationTypes) {
+        if (ArrayUtils.isEmpty(annotationTypes)) {
+            return Scopes.DEFAULT;
         }
         String result;
         if (ArrayUtils.contains(annotationTypes, Dialog.class) && !ArrayUtils.contains(annotationTypes, DesignDialog.class)) {
@@ -142,6 +122,6 @@ public class ScopeUtil {
                 .map(PREDEFINED_SCOPES::get)
                 .orElse(Scopes.DEFAULT);
         }
-        return new String[] {result};
+        return result;
     }
 }
