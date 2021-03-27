@@ -13,24 +13,18 @@
  */
 package com.exadel.aem.toolkit.plugin.util.writer;
 
-import java.lang.annotation.Annotation;
 import javax.xml.transform.Transformer;
-
-import org.w3c.dom.Document;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.ScopeUtil;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing component-wide attributes (writes data to the
  * {@code .content.xml} file within the current component folder before package is uploaded
  */
 class ContentXmlWriter extends PackageEntryWriter {
+
     /**
      * Basic constructor
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
@@ -57,26 +51,5 @@ class ContentXmlWriter extends PackageEntryWriter {
     boolean canProcess(Class<?> componentClass) {
         return componentClass.isAnnotationPresent(Dialog.class)
             || componentClass.isAnnotationPresent(AemComponent.class);
-    }
-
-    /**
-     * Overrides {@link PackageEntryWriter#applySpecificProperties(Class, Target)} method to write down contents related
-     * to the component's root node, or {@code .content.xml} file
-     * @param componentClass The {@code Class} being processed
-     * @param target         The root element of DOM {@link Document} to feed data to
-     */
-    @Override
-    void applySpecificProperties(Class<?> componentClass, Target target) {
-        Annotation annotation = componentClass.getDeclaredAnnotation(AemComponent.class);
-        if (annotation == null) {
-            annotation = componentClass.getDeclaredAnnotation(Dialog.class);
-        }
-        target
-            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT)
-            .attributes(
-                annotation,
-                AnnotationUtil
-                    .getPropertyMappingFilter(annotation)
-                    .and(member -> ScopeUtil.fits(getScope(), member)));
     }
 }

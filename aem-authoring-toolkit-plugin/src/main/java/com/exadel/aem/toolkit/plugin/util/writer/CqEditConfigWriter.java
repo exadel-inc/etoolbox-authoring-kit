@@ -15,13 +15,8 @@ package com.exadel.aem.toolkit.plugin.util.writer;
 
 import javax.xml.transform.Transformer;
 
-import org.w3c.dom.Document;
-
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.editconfig.EditConfigHandlingHelper;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing subsidiary authoring process parameters for an AEM component,
@@ -29,6 +24,7 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
  * current component folder before package is uploaded
  */
 class CqEditConfigWriter extends PackageEntryWriter {
+
     /**
      * Basic constructor
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
@@ -54,18 +50,5 @@ class CqEditConfigWriter extends PackageEntryWriter {
     @Override
     boolean canProcess(Class<?> componentClass) {
         return componentClass.isAnnotationPresent(EditConfig.class);
-    }
-
-    /**
-     * Overrides {@link PackageEntryWriter#applySpecificProperties(Class, Target)} method to write down contents related
-     * to the component's {@code cq:editConfig} node, or the {@code _cq_editConfig.xml} file
-     * @param componentClass The {@code Class} being processed
-     * @param target The root element of DOM {@link Document} to feed data to
-     */
-    @Override
-    void applySpecificProperties(Class<?> componentClass, Target target) {
-        EditConfig editConfig = componentClass.getDeclaredAnnotation(EditConfig.class);
-        target.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
-        EditConfigHandlingHelper.append(editConfig, target);
     }
 }

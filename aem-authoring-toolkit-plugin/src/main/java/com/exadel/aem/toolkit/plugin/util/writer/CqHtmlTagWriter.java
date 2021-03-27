@@ -17,9 +17,6 @@ import javax.xml.transform.Transformer;
 
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing decoration tag properties,
@@ -27,6 +24,7 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
  * current component folder before package is uploaded
  */
 class CqHtmlTagWriter extends PackageEntryWriter {
+
     /**
      * Basic constructor
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
@@ -52,19 +50,5 @@ class CqHtmlTagWriter extends PackageEntryWriter {
     @Override
     boolean canProcess(Class<?> componentClass) {
         return componentClass.isAnnotationPresent(HtmlTag.class);
-    }
-
-    /**
-     * Overrides {@link PackageEntryWriter#applySpecificProperties(Class, Target)} method to write down contents related
-     * to the component's {@code cq:htmlTag} node, or the {@code _cq_htmlTag.xml} file
-     * @param componentClass The {@code Class} being processed
-     * @param target The root element to feed data to
-     */
-    @Override
-    void applySpecificProperties(Class<?> componentClass, Target target) {
-        HtmlTag htmlTag = componentClass.getDeclaredAnnotation(HtmlTag.class);
-        target
-            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
-            .attributes(htmlTag, AnnotationUtil.getPropertyMappingFilter(htmlTag));
     }
 }
