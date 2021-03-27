@@ -11,16 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.handlers.layouts;
 
 import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.EnumUtils;
 
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.writer.DialogLayout;
-import com.exadel.aem.toolkit.plugin.util.writer.PackageWriter;
 
 /**
  * Represents dialog builder for either fixed-columns or tabbed TouchUI dialog. Typically applied to by
@@ -39,13 +38,12 @@ public enum DialogContainer {
     }
 
     /**
-     * Called via {@link PackageWriter} to build dialog markup based on the set
-     * of component class fields
-     * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param target Current {@link Target} instance
+     * Builds Granite UI dialog markup based on the specific container logic
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
-    public void build(Class<?> componentClass, Target target){
-        handler.accept(componentClass, target);
+    public void build(Source source, Target target) {
+        handler.accept(source.adaptTo(Class.class), target);
     }
 
     /**
@@ -53,7 +51,7 @@ public enum DialogContainer {
      * @param layout {@link DialogLayout} to match this container
      * @return {@code DialogContainer} for either fixed-columns, tabbed or accordion-shaped layout
      */
-    public static DialogContainer getContainer(DialogLayout layout){
+    public static DialogContainer getContainer(DialogLayout layout) {
         return EnumUtils.getEnumMap(DialogContainer.class).get(layout.name());
     }
 }
