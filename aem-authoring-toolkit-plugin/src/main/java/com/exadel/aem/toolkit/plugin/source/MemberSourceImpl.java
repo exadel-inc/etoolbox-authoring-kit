@@ -13,6 +13,12 @@
  */
 package com.exadel.aem.toolkit.plugin.source;
 
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+
+import org.codehaus.plexus.util.StringUtils;
+
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
@@ -52,4 +58,9 @@ public abstract class MemberSourceImpl extends SourceImpl implements MemberSourc
         return result;
     }
 
+    boolean isWidgetAnnotationPresent() {
+        return Arrays.stream(adaptTo(Annotation[].class))
+            .anyMatch(annotation -> annotation.annotationType().isAnnotationPresent(ResourceType.class)
+                && StringUtils.isNotBlank(annotation.annotationType().getDeclaredAnnotation(ResourceType.class).value()));
+    }
 }

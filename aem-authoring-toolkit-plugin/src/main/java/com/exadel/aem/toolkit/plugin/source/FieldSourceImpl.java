@@ -63,7 +63,10 @@ public class FieldSourceImpl extends MemberSourceImpl {
 
     @Override
     public boolean isValid() {
-        return field != null && !field.getDeclaringClass().isInterface() && !Modifier.isStatic(field.getModifiers());
+        return field != null
+            && !field.getDeclaringClass().isInterface()
+            && !Modifier.isStatic(field.getModifiers())
+            && isWidgetAnnotationPresent();
     }
 
     @Override

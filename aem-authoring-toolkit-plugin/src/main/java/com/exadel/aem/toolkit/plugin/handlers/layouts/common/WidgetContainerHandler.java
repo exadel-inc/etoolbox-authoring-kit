@@ -4,7 +4,6 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,18 +19,16 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
-import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
-public abstract class WidgetContainerHandler implements BiConsumer<Source, Target> {
+public abstract class WidgetContainerHandler {
 
     /**
-     * Retrieves the list of sources that match the current container.
-     * This is performed by calling {@link ClassUtil#getSources(Class)}
-     * with additional predicates that allow to filter out sources that are set to be ignored at either
-     * the "member itself" level or at "declaring class" level. Afterwards the non-widget fields are also filtered out
+     * Retrieves the list of sources that match the current container. This is performed by calling {@code ClassUtil#getSources()}
+     * with the additional predicate that allows to filter out sources that are set to be ignored at either
+     * the "member itself" level or the "declaring class" level
      * @param container         Current {@link Source} instance
      * @param useReportingClass True to use {@link MemberSource#getReportingClass()} to look for ignored members (this is
      *                          the case for {@code Multifield} or {@code FieldSet}-bound members);
@@ -78,8 +75,7 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
         // and to banish non-widget fields
         // Return the filtered field list
         Predicate<Source> nonIgnoredMembers = source -> allIgnoredFields.stream().noneMatch(ignored -> ignored.matches(source));
-        Predicate<Source> dialogFields = DialogWidgets::isPresent;
-        return ClassUtil.getSources(valueTypeClass, Arrays.asList(nonIgnoredMembers, dialogFields));
+        return ClassUtil.getSources(valueTypeClass, nonIgnoredMembers);
     }
 
     /**

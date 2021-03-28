@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,19 +52,19 @@ public class ClassUtil {
      * @return List of {@code Source} objects
      */
     public static List<Source> getSources(Class<?> targetClass) {
-        return getSources(targetClass, Collections.emptyList());
+        return getSources(targetClass, null);
     }
 
     /**
      * Retrieves a sequential list of {@link Source} objects representing manageable members that belong to
      * a certain {@code Class} (and its superclasses) and match provided criteria represented by a {@code Predicate}
      * @param targetClass The class to extract sources from
-     * @param predicates List of {@code Predicate<Member>} instances to pick up appropriate fields and methods
+     * @param condition Nullable {@code Predicate<Member>} instance that helps to pick up appropriate fields and methods
      * @return List of {@code Source} objects
      */
     @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
                                      // in a version after 2.0.1
-    public static List<Source> getSources(Class<?> targetClass, List<Predicate<Source>> predicates) {
+    public static List<Source> getSources(Class<?> targetClass, Predicate<Source> condition) {
         List<Source> raw = new ArrayList<>();
         List<ClassMemberSetting> ignoredClassMembers = new ArrayList<>();
 
@@ -76,7 +75,7 @@ public class ClassUtil {
                 : Stream.concat(Arrays.stream(classEntry.getDeclaredFields()), Arrays.stream(classEntry.getDeclaredMethods()));
             List<Source> classMemberSources = classMembersStream
                 .map(member -> Sources.fromMember(member, targetClass))
-                .filter(getSourcesPredicate(predicates))
+                .filter(source -> source.isValid() && (condition == null || condition.test(source)))
                 .collect(Collectors.toList());
             raw.addAll(classMemberSources);
 
@@ -160,17 +159,5 @@ public class ClassUtil {
             }
         }
         return result;
-    }
-
-    /**
-     * Generates a combined {@code Predicate<Member>} from the list of partial predicates given
-     * @param predicates List of {@code Predicate<Member>} instances
-     * @return An {@code AND}-joined combined predicate, or a default all-allowed predicate if no partial predicates provided
-     */
-    private static Predicate<Source> getSourcesPredicate(List<Predicate<Source>> predicates) {
-        if (predicates == null || predicates.isEmpty()) {
-            return Source::isValid;
-        }
-        return predicates.stream().filter(Objects::nonNull).reduce(Source::isValid, Predicate::and);
     }
 }
