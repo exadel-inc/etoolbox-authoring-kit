@@ -13,24 +13,28 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers;
 
-import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
-import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnHandler;
+import com.exadel.aem.toolkit.plugin.handlers.common.CasualAnnotationsHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.ComponentHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.CqChildEditConfigHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.CqDialogHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.CqEditConfigHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.CqHtmlTagHandler;
-import com.exadel.aem.toolkit.plugin.handlers.common.CustomHandlingHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.PropertyMappingHandler;
-import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.handlers.widget.common.AttributeAnnotationHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widget.common.DialogFieldAnnotationHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widget.common.InheritanceHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widget.common.MultipleAnnotationHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widget.common.PropertyAnnotationHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widget.common.ResourceTypeHandler;
 
 /**
  * Serves as the source for handler chains used to process user-specified data and prepare structures that are further
@@ -41,16 +45,15 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 public class HandlerChains {
 
     // Generic handlers
+    private static final BiConsumer<Source, Target> CUSTOM_HANDLING_HANDLER = new CasualAnnotationsHandler();
     private static final BiConsumer<Source, Target> PROPERTY_MAPPING_HANDLER = new PropertyMappingHandler();
-    private static final BiConsumer<Source, Target> CUSTOM_HANDLING_HANDLER = new CustomHandlingHandler();
 
-    // Scope-specific handlers
+    // UI-specific handlers
     private static final BiConsumer<Source, Target> CHILD_EDIT_CONFIG_HANDLER = new CqChildEditConfigHandler();
     private static final BiConsumer<Source, Target> COMPONENT_HANDLER = new ComponentHandler();
     private static final BiConsumer<Source, Target> DIALOG_HANDLER = new CqDialogHandler();
     private static final BiConsumer<Source, Target> EDIT_CONFIG_HANDLER = new CqEditConfigHandler();
     private static final BiConsumer<Source, Target> HTML_TAG_HANDLER = new CqHtmlTagHandler();
-
     private static final Map<String, BiConsumer<Source, Target>> UI_HANDLERS = ImmutableMap.<String, BiConsumer<Source, Target>>builder()
         .put(Scopes.COMPONENT, COMPONENT_HANDLER)
         .put(Scopes.CQ_DIALOG, DIALOG_HANDLER)
@@ -59,6 +62,29 @@ public class HandlerChains {
         .put(Scopes.CQ_CHILD_EDIT_CONFIG, CHILD_EDIT_CONFIG_HANDLER)
         .put(Scopes.CQ_HTML_TAG, HTML_TAG_HANDLER)
         .build();
+
+    // Widget-specific handlers
+    private static final BiConsumer<Source, Target> ATTRIBUTE_ANNOTATION_HANDLER = new AttributeAnnotationHandler();
+    private static final BiConsumer<Source, Target> DEPENDS_ON_HANDLER = new DependsOnHandler();
+    private static final BiConsumer<Source, Target> DIALOG_FIELD_HANDLER = new DialogFieldAnnotationHandler();
+    private static final BiConsumer<Source, Target> MULTIPLE_HANDLER = new MultipleAnnotationHandler();
+    private static final BiConsumer<Source, Target> PROPERTY_ANNOTATION_HANDLER = new PropertyAnnotationHandler();
+    private static final BiConsumer<Source, Target> RESOURCE_TYPE_HANDLER = new ResourceTypeHandler();
+
+    // Complete widget chain
+    private static final BiConsumer<Source, Target> MEMBER_HANDLER_CHAIN =
+        RESOURCE_TYPE_HANDLER
+        .andThen(PROPERTY_MAPPING_HANDLER)
+        .andThen(ATTRIBUTE_ANNOTATION_HANDLER)
+        .andThen(DIALOG_FIELD_HANDLER)
+        .andThen(CUSTOM_HANDLING_HANDLER)
+        .andThen(DEPENDS_ON_HANDLER)
+        .andThen(PROPERTY_ANNOTATION_HANDLER)
+        .andThen(MULTIPLE_HANDLER);
+
+    private static final BiConsumer<Source, Target> MEMBER_INHERITANCE_HANDLER_CHAIN =
+        new InheritanceHandler(MEMBER_HANDLER_CHAIN)
+        .andThen(MEMBER_HANDLER_CHAIN);
 
     private static final BiConsumer<Source, Target> NOOP_HANDLER = (source, target) -> {};
 
@@ -69,7 +95,7 @@ public class HandlerChains {
     }
 
     /**
-     * Retrieves a handler conveyor for rendering a default scope-specific UI, such as a dialog, a design dialog, or an
+     * Retrieves a handler conveyor for rendering a scope-specific UI, such as a dialog, a design dialog, or an
      * in-place editing config
      * @param scope Non-blank string representing the scope
      * @return {@code BiConsumer<Source, Target>} instance representing the conveyor
@@ -81,14 +107,11 @@ public class HandlerChains {
             .andThen(CUSTOM_HANDLING_HANDLER);
     }
 
-    public static BiConsumer<Source, Target> forMember(Source source, String scope) {
-        Handler widgetHandler = PluginRuntime.context().getReflection().getHandlers(scope, source.adaptTo(Annotation[].class))
-            .stream()
-            .reduce((first, second) -> (Handler) first.andThen(second))
-            .orElse((Handler) NOOP_HANDLER);
-        return PROPERTY_MAPPING_HANDLER
-            .andThen(widgetHandler)
-            .andThen(CUSTOM_HANDLING_HANDLER);
+    /**
+     * Retrieves a handler conveyor for rendering a member-specific UI (usually a dialog field widget)
+     * @return {@code BiConsumer<Source, Target>} instance representing the conveyor
+     */
+    public static BiConsumer<Source, Target> forMember() {
+        return MEMBER_INHERITANCE_HANDLER_CHAIN;
     }
-
 }
