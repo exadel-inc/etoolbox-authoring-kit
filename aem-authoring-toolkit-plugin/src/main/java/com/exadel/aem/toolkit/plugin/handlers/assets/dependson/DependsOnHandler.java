@@ -64,7 +64,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
      * @param value Current {@link DependsOn} value
      * @param target Current {@link Target} instance
      */
-    private void handleDependsOn(DependsOn value, Target target) {
+    private static void handleDependsOn(DependsOn value, Target target) {
         if (StringUtils.isAnyBlank(value.query(), value.action())) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
@@ -82,7 +82,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
      * @param value  Current {@link DependsOnConfig} value
      * @param target Current {@link Target} instance
      */
-    private void handleDependsOnConfig(DependsOnConfig value, Target target) {
+    private static void handleDependsOnConfig(DependsOnConfig value, Target target) {
         List<DependsOn> validDeclarations = Arrays.stream(value.value())
                 .filter(dependsOn -> StringUtils.isNoneBlank(dependsOn.action(), dependsOn.query()))
                 .collect(Collectors.toList());
@@ -117,8 +117,8 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     /**
      * Build {@code DependsOnParam} parameters for the passed {@code DependsOn} annotation
      * Param pattern:<br>
-     * - for the first action (index = 0): dependson-{action}-{param}<br>
-     * - otherwise: dependson-{action}-{param}-{index}
+     * - for the first action (index = 0): {@code dependson-{action}-{param}}<br>
+     * - otherwise: {@code dependson-{action}-{param}-{index}}
      * @param dependsOn current {@link DependsOn} value
      * @param index     index of action
      */
@@ -140,7 +140,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
      * @param source Current {@link Source} instance
      * @param target Current {@link Target} instance
      */
-    private void handleDependsOnRefValue(Source source, Target target) {
+    private static void handleDependsOnRefValue(Source source, Target target) {
         DependsOnRef value = source.adaptTo(DependsOnRef.class);
         if (value == null) {
             return;

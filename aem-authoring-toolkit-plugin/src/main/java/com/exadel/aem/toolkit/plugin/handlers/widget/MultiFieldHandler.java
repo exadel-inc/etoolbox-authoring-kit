@@ -17,10 +17,13 @@ import java.util.List;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
+import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
@@ -28,7 +31,8 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 /**
  * Handler used to prepare data for {@link MultiField} widget rendering
  */
-public class MultiFieldHandler extends WidgetContainerHandler {
+@Handles(MultiField.class)
+public class MultiFieldHandler extends WidgetContainerHandler implements Handler {
 
     private static final String EMPTY_MULTIFIELD_EXCEPTION_MESSAGE = "No valid fields found in multifield class ";
 
@@ -45,8 +49,8 @@ public class MultiFieldHandler extends WidgetContainerHandler {
         target.getAttributes().remove(DialogConstants.PN_NAME);
 
         // Get the filtered members collection for the current container; early return if collection is empty
-        List<Source> members = getEntriesForContainer(source, true);
-        if (members.isEmpty()) {
+        List<Source> sources = getEntriesForContainer(source, true);
+        if (sources.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.adaptTo(MemberSource.class).getValueType().getName()
             ));
@@ -54,10 +58,10 @@ public class MultiFieldHandler extends WidgetContainerHandler {
         }
 
         // Process separately the multiple-source and the single-source modes of multifield
-        if (members.size() > 1) {
-            process(members, target, name);
+        if (sources.size() > 1) {
+            placeMultiple(sources, target, name);
         } else {
-            process(members.get(0), target);
+            placeOne(sources.get(0), target);
         }
     }
 
@@ -67,7 +71,7 @@ public class MultiFieldHandler extends WidgetContainerHandler {
      * @param target Current {@link Target} instance
      * @param name The {@code name} attribute fot the target multifield
      */
-    private void process(List<Source> sources, Target target, String name) {
+    private void placeMultiple(List<Source> sources, Target target, String name) {
         target.attribute(DialogConstants.PN_COMPOSITE, true);
         Target multifieldContainerElement = target.getOrCreateTarget(DialogConstants.NN_FIELD)
                 .attribute(DialogConstants.PN_NAME, name)
@@ -80,11 +84,7 @@ public class MultiFieldHandler extends WidgetContainerHandler {
      * @param source The {@link Source} instance to render multifield content from
      * @param target Current {@link Target} instance
      */
-    private void process(Source source, Target target) {
-        DialogWidget widget = DialogWidgets.fromSource(source);
-        if (widget == null) {
-            return;
-        }
-        widget.appendTo(source, target, DialogConstants.NN_FIELD);
+    private void placeOne(Source source, Target target) {
+        HandlerChains.forMember().accept(source, target.getOrCreateTarget(DialogConstants.NN_FIELD));
     }
 }

@@ -42,13 +42,13 @@ import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
  * Implements {@code BiConsumer} to populate a {@link Target} instance via calls to custom handlers attached to the
  * annotations adaptable from the provided {@link Source}
  */
-public class CustomHandlingHandler implements BiConsumer<Source, Target> {
+public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
     private List<Handler> predefinedHandlers;
 
     /**
      * Default constructor
      */
-    public CustomHandlingHandler() {
+    public CasualAnnotationsHandler() {
     }
 
     /**
@@ -56,7 +56,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
      * the passed {@code Source}
      * @param handlers Pre-defined handlers list
      */
-    public CustomHandlingHandler(List<Handler> handlers) {
+    public CasualAnnotationsHandler(List<Handler> handlers) {
         this.predefinedHandlers = handlers;
     }
 
@@ -72,7 +72,14 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
         List<Handler> handlers = getEffectiveHandlers(source, target.getScope());
 
         // Extract legacy handlers that accept(Element, Field)
-        List<Handler> legacyHandlers = handlers.stream().filter(CustomHandlingHandler::isLegacyHandler).collect(Collectors.toList());
+        List<Handler> legacyHandlers = handlers.stream().filter(CasualAnnotationsHandler::isLegacyHandler).collect(Collectors.toList());
+        // Separate modern handlers that accept(Source, Target)
+        Collection<Handler> modernHandlers = CollectionUtils.subtract(handlers, legacyHandlers);
+
+        // Process modern handlers
+        OrderingUtil.sortHandlers(new ArrayList<>(modernHandlers)).forEach(handler -> handler.accept(source, target));
+
+        // Process legacy handlers after modern ones (because they must trigger after built-in modern handlers worked)
         if (!legacyHandlers.isEmpty()) {
             Field field = source.adaptTo(Field.class);
             Element element = target
@@ -83,10 +90,6 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
                 ((TargetImpl) target).attributes(element);
             }
         }
-
-        // Process modern handlers that accept(Source, Target)
-        Collection<Handler> modernHandlers = CollectionUtils.subtract(handlers, legacyHandlers);
-        OrderingUtil.sortHandlers(new ArrayList<>(modernHandlers)).forEach(handler -> handler.accept(source, target));
     }
 
     /**
@@ -110,7 +113,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
             .map(Annotation::annotationType)
             .filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
             .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
-            .flatMap(CustomHandlingHandler::getMatchedHandlersByName)
+            .flatMap(CasualAnnotationsHandler::getMatchedHandlersByName)
             .collect(Collectors.toList());
         result.addAll(sourceToNameMappingHandlers);
 
@@ -119,7 +122,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
 
 
     /**
-     * Called by {@link CustomHandlingHandler#getEffectiveHandlers(Source, String)} to process {@code source<->name}
+     * Called by {@link CasualAnnotationsHandler#getEffectiveHandlers(Source, String)} to process {@code source<->name}
      * mapping for the legacy-style handlers
      * @param source String representing the {@code source} value per the legacy-style handler signature
      * @return Stream of {@link DialogWidgetHandler} instances

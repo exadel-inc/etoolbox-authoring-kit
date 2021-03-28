@@ -13,10 +13,10 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
-import java.util.function.BiConsumer;
-
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
@@ -26,7 +26,8 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code Multifield} widget functionality
  * within the {@code cq:dialog} node
  */
-class AutocompleteHandler implements BiConsumer<Source, Target> {
+@Handles(Autocomplete.class)
+public class AutocompleteHandler implements Handler {
     /**
      * Processes the user-defined data and writes it to {@link Target}
      * @param source Current {@link Source} instance

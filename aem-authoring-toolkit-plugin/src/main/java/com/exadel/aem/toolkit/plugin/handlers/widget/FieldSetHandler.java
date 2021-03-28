@@ -18,6 +18,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -28,7 +30,8 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 /**
  * Handler used to prepare data for {@link FieldSet} widget rendering
  */
-class FieldSetHandler extends WidgetContainerHandler {
+@Handles(FieldSet.class)
+public class FieldSetHandler extends WidgetContainerHandler implements Handler {
 
     private static final String EMPTY_FIELDSET_EXCEPTION_MESSAGE = "No valid fields found in fieldset class ";
 

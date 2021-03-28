@@ -13,10 +13,11 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
-import java.util.function.BiConsumer;
-
 import org.apache.commons.lang3.StringUtils;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
@@ -25,7 +26,8 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
  * within the {@code cq:dialog} node
  */
-class ImageUploadHandler implements BiConsumer<Source, Target> {
+@Handles(ImageUpload.class)
+public class ImageUploadHandler implements Handler {
     /**
      * Processes the user-defined data and writes it to {@link Target}
      * @param source Current {@link Source} instance

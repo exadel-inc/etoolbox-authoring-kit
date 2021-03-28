@@ -14,11 +14,12 @@
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
 import java.util.Arrays;
-import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
@@ -27,7 +28,9 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for {@code RadioGroup} widget functionality
  * within the {@code cq:dialog} node
  */
-class RadioGroupHandler extends OptionProviderHandler implements BiConsumer<Source, Target> {
+@Handles(RadioGroup.class)
+public class RadioGroupHandler extends OptionProviderHandler implements Handler {
+
     /**
      * Processes the user-defined data and writes it to {@link Target}
      * @param source Current {@link Source} instance

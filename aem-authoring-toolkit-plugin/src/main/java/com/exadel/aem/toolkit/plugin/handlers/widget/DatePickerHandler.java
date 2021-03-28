@@ -16,13 +16,14 @@ package com.exadel.aem.toolkit.plugin.handlers.widget;
 import java.time.DateTimeException;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DateTimeSetting;
@@ -35,7 +36,8 @@ import com.exadel.aem.toolkit.plugin.util.validation.Validation;
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code DatePicker} widget functionality
  * within the {@code cq:dialog} node
  */
-class DatePickerHandler implements BiConsumer<Source, Target> {
+@Handles(DatePicker.class)
+public class DatePickerHandler implements Handler {
     private static final String INVALID_FORMAT_EXCEPTION_TEMPLATE = "Invalid %s '%s' for @DatePicker field '%s'";
     private static final String INVALID_VALUE_EXCEPTION_TEMPLATE = "Property '%s' of @DatePicker does not correspond to specified valueFormat";
 
