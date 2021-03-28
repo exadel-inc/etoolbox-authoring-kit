@@ -13,12 +13,14 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers;
 
+import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
+import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.common.ComponentHandler;
@@ -28,6 +30,7 @@ import com.exadel.aem.toolkit.plugin.handlers.common.CqEditConfigHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.CqHtmlTagHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.CustomHandlingHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.PropertyMappingHandler;
+import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 /**
  * Serves as the source for handler chains used to process user-specified data and prepare structures that are further
@@ -57,6 +60,8 @@ public class HandlerChains {
         .put(Scopes.CQ_HTML_TAG, HTML_TAG_HANDLER)
         .build();
 
+    private static final BiConsumer<Source, Target> NOOP_HANDLER = (source, target) -> {};
+
     /**
      * Default (instantiation-restricting) constructor
      */
@@ -70,9 +75,20 @@ public class HandlerChains {
      * @return {@code BiConsumer<Source, Target>} instance representing the conveyor
      */
     public static BiConsumer<Source, Target> forScope(String scope) {
-        BiConsumer<Source, Target> uiHandler = UI_HANDLERS.getOrDefault(scope, (source, target) -> {});
+        BiConsumer<Source, Target> uiHandler = UI_HANDLERS.getOrDefault(scope, NOOP_HANDLER);
         return PROPERTY_MAPPING_HANDLER
             .andThen(uiHandler)
             .andThen(CUSTOM_HANDLING_HANDLER);
     }
+
+    public static BiConsumer<Source, Target> forMember(Source source, String scope) {
+        Handler widgetHandler = PluginRuntime.context().getReflection().getHandlers(scope, source.adaptTo(Annotation[].class))
+            .stream()
+            .reduce((first, second) -> (Handler) first.andThen(second))
+            .orElse((Handler) NOOP_HANDLER);
+        return PROPERTY_MAPPING_HANDLER
+            .andThen(widgetHandler)
+            .andThen(CUSTOM_HANDLING_HANDLER);
+    }
+
 }

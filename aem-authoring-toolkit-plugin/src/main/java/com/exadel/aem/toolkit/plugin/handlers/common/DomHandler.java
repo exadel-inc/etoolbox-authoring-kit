@@ -114,5 +114,4 @@ public class DomHandler {
             .map(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class))
             .collect(Collectors.toList());
     }
-
 }

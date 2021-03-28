@@ -14,19 +14,20 @@
 package com.exadel.aem.toolkit.plugin.handlers.layouts;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.ContainerHandler;
 
 /**
- * The {@code Handler} for a accordion-shaped TouchUI dialog
+ * The handler for a accordion-shaped TouchUI dialog
  */
 public class AccordionContainerHandler extends ContainerHandler {
 
     /**
-     * Implements {@code BiConsumer<Class<?>, Element>} pattern
-     * to process component-backing Java class and append the results to the XML root node
-     * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param parentElement  XML document root element
+     * Implements {@code BiConsumer<Source, Target>} pattern to process component-backing Java class and append
+     * the results to the given target representing a Granite UI root node
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {

@@ -63,7 +63,8 @@ public class ClassUtil {
      * @param predicates List of {@code Predicate<Member>} instances to pick up appropriate fields and methods
      * @return List of {@code Source} objects
      */
-    @SuppressWarnings("deprecation") // IgnoreFields is processed for compatibility reasons until retired in a post-2.0.1 version
+    @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     public static List<Source> getSources(Class<?> targetClass, List<Predicate<Source>> predicates) {
         List<Source> raw = new ArrayList<>();
         List<ClassMemberSetting> ignoredClassMembers = new ArrayList<>();

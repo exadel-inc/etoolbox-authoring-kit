@@ -38,7 +38,8 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
      *                          False to use same {@link MemberSource#getValueType()} as for the rest of method logic
      * @return {@code List<Source>} containing placeable members, or an empty collection
      */
-    @SuppressWarnings("deprecation") // IgnoreFields is retained for compatibility until retired in a post-2.0.1 version
+    @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     protected List<Source> getEntriesForContainer(Source container, boolean useReportingClass) {
         Class<?> valueTypeClass = container.adaptTo(MemberSource.class).getValueType();
         Class<?> reportingClass = useReportingClass ? container.adaptTo(MemberSource.class).getReportingClass() : valueTypeClass;
