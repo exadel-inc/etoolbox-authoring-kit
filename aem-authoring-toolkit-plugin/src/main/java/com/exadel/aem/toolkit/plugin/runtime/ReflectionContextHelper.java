@@ -23,7 +23,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -106,11 +105,11 @@ public class ReflectionContextHelper {
      * Retrieves list of {@link Handler} instances that match the provided annotations and scope. The collection returned
      * is ordered to honor the relations set by {@code before} and {@code after} anchors
      * @param scope Non-null string representing the scope that the handlers must match
-     * @param annotations One or more non-null {@code Annotation} objects, usually representing annotations of a method
+     * @param annotations Non-null array of {@code Annotation} objects, usually representing annotations of a method
      *                    or a class
      * @return {@code List} of handler instances, ordered
      */
-    public List<Handler> getHandlers(String scope, Annotation... annotations) {
+    public List<Handler> getHandlers(String scope, Annotation[] annotations) {
         List<Handler> result = getHandlers().stream()
             .filter(handler -> isHandlerMatches(handler, scope, annotations))
             .collect(Collectors.toList());
@@ -121,12 +120,12 @@ public class ReflectionContextHelper {
      * Retrieves list of {@link Handler} instances that match the provided annotation types and scope. The collection
      * returned is ordered to honor the relations set by {@code before} and {@code after} anchors
      * @param scope Non-null string representing the scope that the handlers must match
-     * @param annotationType Non-null {@code Class} object
+     * @param annotationTypes Non-null array of {@code Class} objects
      * @return {@code List} of handler instances, ordered
      */
-    public List<Handler> getHandlers(String scope, Class<? extends Annotation> annotationType) {
+    public List<Handler> getHandlers(String scope, Class<?>... annotationTypes) {
         List<Handler> result = getHandlers().stream()
-            .filter(handler -> isHandlerMatches(handler, scope, new Class<?>[] {annotationType}))
+            .filter(handler -> isHandlerMatches(handler, scope, annotationTypes))
             .collect(Collectors.toList());
         return OrderingUtil.sortHandlers(result);
     }
@@ -143,7 +142,7 @@ public class ReflectionContextHelper {
             .filter(cls -> !cls.isInterface())
             .map(ReflectionContextHelper::getHandlerInstance)
             .filter(Objects::nonNull)
-            .sorted(Comparator.comparing(handler -> handler.getClass().getName())) // to provide stable handlers sequence between runs
+            .sorted(OrderingUtil::compareByOrigin) // to provide stable handlers sequence between runs
             .collect(Collectors.toList());
         return handlers;
     }
