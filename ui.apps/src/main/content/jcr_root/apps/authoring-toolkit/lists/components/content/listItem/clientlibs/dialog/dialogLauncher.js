@@ -17,15 +17,15 @@
 
     const APPS_REGEXP = /^\/(apps\/)?/;
 
-    ns.AATLists = ns.AATLists || {};
+    ns.EToolboxLists = ns.EToolboxLists || {};
 
-    ns.AATLists.WRAPPER_RES_TYPE = 'authoring-toolkit/lists/components/content/listItem';
+    ns.EToolboxLists.WRAPPER_RES_TYPE = 'authoring-toolkit/lists/components/content/listItem';
 
-    ns.AATLists.launchReferenceDialog = function (editable, itemPath) {
+    ns.EToolboxLists.launchReferenceDialog = function (editable, itemPath) {
         const dialogConfig = getDialogConfig(editable, itemPath);
         const dlg = new author.ui.Dialog({
             getConfig: () => dialogConfig,
-            getRequestData: () => ({ resourceType: ns.AATLists.WRAPPER_RES_TYPE }),
+            getRequestData: () => ({ resourceType: ns.EToolboxLists.WRAPPER_RES_TYPE }),
             onSuccess: () => reloadEditable(editable)
         });
         author.DialogFrame.openDialog(dlg);
