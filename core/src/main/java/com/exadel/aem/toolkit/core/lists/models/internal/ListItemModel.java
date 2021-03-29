@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.core.lists.models;
+package com.exadel.aem.toolkit.core.lists.models.internal;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,8 +47,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
     actions = {ActionConstants.INSERT, ActionConstants.COPYMOVE, ActionConstants.DELETE}
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class ListItem {
-
+public class ListItemModel {
     private static final List<String> SYSTEM_PROPERTIES = Arrays.asList(
         JcrConstants.JCR_CREATED,
         JcrConstants.JCR_CREATED_BY,
