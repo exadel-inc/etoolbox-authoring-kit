@@ -27,9 +27,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.api.lists.services.ListHelperService;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
-import com.exadel.aem.toolkit.core.lists.services.impl.ListHelperServiceImpl;
+import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
@@ -42,11 +42,8 @@ public class ListHelperServiceTest {
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
 
-    private ListHelperService listHelper;
-
     @Before
     public void setUp() {
-        listHelper = context.registerInjectActivateService(new ListHelperServiceImpl());
         context.load().json("/com/exadel/aem/toolkit/core/lists/services/simpleList.json", SIMPLE_LIST_PATH);
         context.load().json("/com/exadel/aem/toolkit/core/lists/services/customList.json", CUSTOM_LIST_PATH);
         context.addModelsForClasses(SimpleListItem.class, ItemModel.class);
@@ -54,22 +51,22 @@ public class ListHelperServiceTest {
 
     @Test
     public void shouldReturnEmptyListForInvalidInputs() {
-        List<NonModel> actual = listHelper.getList(context.resourceResolver(), CUSTOM_LIST_PATH, NonModel.class);
+        List<NonModel> actual = ListHelper.getList(context.resourceResolver(), CUSTOM_LIST_PATH, NonModel.class);
         assertEquals(0, actual.size());
 
-        Map<String, NonModel> actual2 = listHelper.getMap(context.resourceResolver(), CUSTOM_LIST_PATH, "title", NonModel.class);
+        Map<String, NonModel> actual2 = ListHelper.getMap(context.resourceResolver(), CUSTOM_LIST_PATH, "title", NonModel.class);
         assertEquals(0, actual2.size());
 
-        List<Resource> actual3 = listHelper.getResourceList(context.resourceResolver(), "non-existing-path");
+        List<Resource> actual3 = ListHelper.getResourceList(context.resourceResolver(), "non-existing-path");
         assertEquals(0, actual3.size());
 
-        List<Resource> actual4 = listHelper.getResourceList(null, CUSTOM_LIST_PATH);
+        List<Resource> actual4 = ListHelper.getResourceList(null, CUSTOM_LIST_PATH);
         assertEquals(0, actual4.size());
     }
 
     @Test
     public void shouldRetrieveBasicList() {
-        List<SimpleListItem> actual = listHelper.getList(context.resourceResolver(), SIMPLE_LIST_PATH);
+        List<SimpleListItem> actual = ListHelper.getList(context.resourceResolver(), SIMPLE_LIST_PATH);
         assertEquals(5, actual.size());
         assertEquals("key1", actual.get(0).getTitle());
         assertEquals("value1", actual.get(0).getValue());
@@ -89,7 +86,7 @@ public class ListHelperServiceTest {
 
     @Test
     public void shouldRetrieveResourceList() {
-        List<Resource> actual = listHelper.getList(context.resourceResolver(), CUSTOM_LIST_PATH, Resource.class);
+        List<Resource> actual = ListHelper.getList(context.resourceResolver(), CUSTOM_LIST_PATH, Resource.class);
         assertEquals("Hello", actual.get(0).getValueMap().get("textValue"));
         assertEquals(true, actual.get(0).getValueMap().get("booleanValue"));
 
@@ -99,14 +96,14 @@ public class ListHelperServiceTest {
 
     @Test
     public void shouldAdaptListItemsToModel() {
-        List<ItemModel> actual = listHelper.getList(context.resourceResolver(), CUSTOM_LIST_PATH, ItemModel.class);
+        List<ItemModel> actual = ListHelper.getList(context.resourceResolver(), CUSTOM_LIST_PATH, ItemModel.class);
         assertEquals(new ItemModel("Hello", true), actual.get(0));
         assertEquals(new ItemModel("World", false), actual.get(1));
     }
 
     @Test
     public void shouldRetrieveBasicMap() {
-        Map<String, String> actual = listHelper.getMap(context.resourceResolver(), SIMPLE_LIST_PATH);
+        Map<String, String> actual = ListHelper.getMap(context.resourceResolver(), SIMPLE_LIST_PATH);
         assertEquals(3, actual.size());
         assertEquals("value3", actual.get("key1"));
         assertEquals("value2", actual.get("key2"));
@@ -114,8 +111,8 @@ public class ListHelperServiceTest {
     }
 
     @Test
-    public void shouldRetrieveResourceMap() {
-        Map<String, Resource> actual = listHelper.getResourceMap(
+    public void shouldRetrieveCustomResourceMap() {
+        Map<String, Resource> actual = ListHelper.getResourceMap(
             context.resourceResolver(),
             CUSTOM_LIST_PATH,
             "textValue");
@@ -128,7 +125,7 @@ public class ListHelperServiceTest {
 
     @Test
     public void shouldAdaptMapItemToModel() {
-        Map<String, ItemModel> actual = listHelper.getMap(
+        Map<String, ItemModel> actual = ListHelper.getMap(
             context.resourceResolver(),
             CUSTOM_LIST_PATH,
             "textValue",
