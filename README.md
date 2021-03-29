@@ -74,8 +74,8 @@ Feel free to clone the project sources and run ```mvn clean install``` from the 
 ```xml
 <dependency>
    <groupId>com.exadel.aem</groupId>
-   <artifactId>aem-authoring-toolkit-api</artifactId>
-   <version>1.0.1</version> <!-- prefer latest stable version whenever possible -->
+   <artifactId>aem-authoring-toolkit-core</artifactId>
+   <version>2.0.1</version> <!-- prefer latest stable version whenever possible -->
 </dependency>
 ```
 2) Insert plugin's config in the _\<plugins>_ section of the POM file of your **package**:
@@ -1074,7 +1074,7 @@ public class CustomMultifieldHandler implements DialogWidgetHandler {}
    ```
 
 #### Runtime methods for custom handlers
-If you define in your handler class a field of type `RuntimeContext` marked with `@Injected` annotation, the link to the global *RuntimeContext* object will be injected by the Maven plugin. It allows to engage a number of utility methods and techniques, such as those of the [`XmlUtility`](aem-authoring-toolkit-api/src/main/java/com/exadel/aem/toolkit/api/runtime/XmlUtility.java) interface. Of special interest are the methods `.createNodeElement()` with overloads for creating nodes with specific *jcr:primaryType*, *sling:resourceType* and other attributes, `.appendChild()` with overloads for appending or merging a newcomer node to a set of existing child nodes of a local root, and `.setAttribute()` with overloads for populating previously created node with generic-typed annotation values, optionally validated and then optionally fallen back to defaults.
+If you define in your handler class a field of type `RuntimeContext` marked with `@Injected` annotation, the link to the global *RuntimeContext* object will be injected by the Maven plugin. It allows to engage a number of utility methods and techniques, such as those of the [`XmlUtility`](core/src/main/java/com/exadel/aem/toolkit/api/runtime/XmlUtility.java) interface. Of special interest are the methods `.createNodeElement()` with overloads for creating nodes with specific *jcr:primaryType*, *sling:resourceType* and other attributes, `.appendChild()` with overloads for appending or merging a newcomer node to a set of existing child nodes of a local root, and `.setAttribute()` with overloads for populating previously created node with generic-typed annotation values, optionally validated and then optionally fallen back to defaults.
 
 Developer can (and is encouraged to) also call `.getExceptionHandler()` method whenever his or her logic is ought to throw or manage an exception. This way, all the exceptions from either built-in or custom routines are managed uniformly.
 

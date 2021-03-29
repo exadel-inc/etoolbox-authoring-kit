@@ -91,7 +91,7 @@
     <dependencies>
         <dependency>
             <groupId>com.exadel.aem</groupId>
-            <artifactId>aem-authoring-toolkit-api</artifactId>
+            <artifactId>aem-authoring-toolkit-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

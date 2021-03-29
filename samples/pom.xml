@@ -142,7 +142,7 @@
             <!-- AAT-Specific -->
             <dependency>
                 <groupId>com.exadel.aem</groupId>
-                <artifactId>aem-authoring-toolkit-api</artifactId>
+                <artifactId>aem-authoring-toolkit-core</artifactId>
                 <version>${aat.version}</version>
                 <scope>provided</scope>
             </dependency>
