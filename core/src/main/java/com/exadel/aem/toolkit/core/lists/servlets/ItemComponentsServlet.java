@@ -57,7 +57,9 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 public class ItemComponentsServlet extends SlingSafeMethodsServlet {
     private static final Logger LOG = LoggerFactory.getLogger(ItemComponentsServlet.class);
 
-    private static final String SELECT_STATEMENT = "SELECT * FROM [cq:Component] AS s WHERE ISDESCENDANTNODE(s,'/apps') AND [aatListItem] = 'true'";
+    private static final String SELECT_STATEMENT = String.format(
+        "SELECT * FROM [cq:Component] AS s WHERE ISDESCENDANTNODE(s,'/apps') AND [%s] = 'true'",
+        CoreConstants.PN_LIST_ITEM);
 
     /**
      * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest}
