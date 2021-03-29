@@ -33,12 +33,12 @@ import com.exadel.aem.toolkit.plugin.handlers.editconfig.DropTargetsHandler;
 import com.exadel.aem.toolkit.plugin.handlers.editconfig.FormParametersHandler;
 import com.exadel.aem.toolkit.plugin.handlers.editconfig.InplaceEditingHandler;
 import com.exadel.aem.toolkit.plugin.handlers.editconfig.ListenersHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.AttributeAnnotationHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.DialogFieldAnnotationHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.InheritanceHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.MultipleAnnotationHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.PropertyAnnotationHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.common.ResourceTypeHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.common.AttributeAnnotationHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.common.DialogFieldAnnotationHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.common.InheritanceHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.common.MultipleAnnotationHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.common.PropertyAnnotationHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.common.ResourceTypeHandler;
 
 /**
  * Serves as the source for handler chains used to process user-specified data and prepare structures that are further

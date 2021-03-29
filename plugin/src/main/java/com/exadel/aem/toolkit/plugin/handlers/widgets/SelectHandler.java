@@ -11,13 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.widget;
 
-import java.util.Arrays;
+package com.exadel.aem.toolkit.plugin.handlers.widgets;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
+import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
+import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -25,12 +25,11 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
- * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for {@code RadioGroup} widget functionality
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite {@code Select} widget functionality
  * within the {@code cq:dialog} node
  */
-@Handles(RadioGroup.class)
-public class RadioGroupHandler extends OptionProviderHandler implements Handler {
-
+@Handles(Select.class)
+public class SelectHandler extends OptionProviderHandler implements Handler {
     /**
      * Processes the user-defined data and writes it to {@link Target}
      * @param source Current {@link Source} instance
@@ -38,16 +37,17 @@ public class RadioGroupHandler extends OptionProviderHandler implements Handler 
      */
     @Override
     public void accept(Source source, Target target) {
-        RadioGroup radioGroup = source.adaptTo(RadioGroup.class);
-        if (hasProvidedOptions(radioGroup.buttonProvider())) {
-            appendOptionProvider(radioGroup.buttonProvider(), target);
+        Select select = source.adaptTo(Select.class);
+        if (hasProvidedOptions(select.optionProvider())) {
+            appendOptionProvider(select.optionProvider(), target);
             return;
         }
-        if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {
+        if (ArrayUtils.isNotEmpty(select.options())) {
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
-            Arrays.stream(radioGroup.buttons()).forEach(button -> appendOption(button, button.value(), items));
+            for (Option option: select.options()) {
+                appendOption(option, option.value(), items);
+            }
         }
-        appendDataSource(radioGroup.datasource(), target);
+        appendDataSource(select.datasource(), target);
     }
-
 }

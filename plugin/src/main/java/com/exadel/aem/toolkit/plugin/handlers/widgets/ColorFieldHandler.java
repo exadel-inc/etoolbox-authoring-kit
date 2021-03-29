@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.handlers.widget;
+package com.exadel.aem.toolkit.plugin.handlers.widgets;
 
 import java.util.Arrays;
 import java.util.Collections;

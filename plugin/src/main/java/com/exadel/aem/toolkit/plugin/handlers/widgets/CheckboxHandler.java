@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.widget;
+package com.exadel.aem.toolkit.plugin.handlers.widgets;
 
 import java.lang.reflect.Method;
 import java.util.List;

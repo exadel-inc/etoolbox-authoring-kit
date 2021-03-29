@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.widget.rte;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.rte;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;

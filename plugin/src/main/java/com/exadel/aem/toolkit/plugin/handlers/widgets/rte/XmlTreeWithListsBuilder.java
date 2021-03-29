@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.handlers.widget.rte;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.rte;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;

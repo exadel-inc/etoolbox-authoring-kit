@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.widget.common;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.handlers.common.CasualAnnotationsHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widget.MultiFieldHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.MultiFieldHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.target.Targets;
 import com.exadel.aem.toolkit.plugin.util.ClassUtil;
