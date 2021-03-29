@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.plugin.util.FileSystemHelper;
 import com.exadel.aem.toolkit.plugin.util.TestConstants;
-import com.exadel.aem.toolkit.plugin.util.writer.TestXmlUtility;
+import com.exadel.aem.toolkit.plugin.writers.TestXmlUtility;
 
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.RESOURCE_FOLDER_COMMON;
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.RESOURCE_FOLDER_COMPONENT;

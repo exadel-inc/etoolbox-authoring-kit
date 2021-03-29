@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.util.writer;
+package com.exadel.aem.toolkit.plugin.writers;
 
 import java.io.IOException;
 import java.io.StringReader;

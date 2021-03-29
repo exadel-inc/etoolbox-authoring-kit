@@ -21,7 +21,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.exadel.aem.toolkit.plugin.util.FileSystemHelper;
-import com.exadel.aem.toolkit.plugin.util.writer.TestXmlUtility;
+import com.exadel.aem.toolkit.plugin.writers.TestXmlUtility;
 
 public abstract class ExceptionsTestBase {
 

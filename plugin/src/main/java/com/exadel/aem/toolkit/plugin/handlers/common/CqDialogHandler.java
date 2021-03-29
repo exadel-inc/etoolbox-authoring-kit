@@ -39,7 +39,7 @@ import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.ScopeUtil;
-import com.exadel.aem.toolkit.plugin.util.writer.DialogLayout;
+import com.exadel.aem.toolkit.plugin.writers.DialogLayout;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a

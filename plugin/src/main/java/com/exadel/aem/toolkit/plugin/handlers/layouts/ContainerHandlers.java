@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.util.writer.DialogLayout;
+import com.exadel.aem.toolkit.plugin.writers.DialogLayout;
 
 /**
  * Represents dialog builder for either fixed-columns or tabbed TouchUI dialog. Typically applied to by

@@ -11,26 +11,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.util.writer;
+package com.exadel.aem.toolkit.plugin.writers;
 
 import javax.xml.transform.Transformer;
 
-import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
+import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 /**
- * The {@link PackageEntryWriter} implementation for storing component-wide attributes (writes data to the
- * {@code .content.xml} file within the current component folder before package is uploaded
+ * The {@link PackageEntryWriter} implementation for storing AEM TouchUI dialog definition (writes data to the
+ * {@code _cq_dialog.xml} file within the current component folder before package is uploaded
  */
-class ContentXmlWriter extends PackageEntryWriter {
+class CqDialogWriter extends PackageEntryWriter {
+
+    private final String scope;
 
     /**
      * Basic constructor
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
+     * @param scope Current scope value
      */
-    ContentXmlWriter(Transformer transformer) {
+    CqDialogWriter(Transformer transformer, String scope) {
         super(transformer);
+        this.scope = scope;
     }
 
     /**
@@ -39,17 +43,18 @@ class ContentXmlWriter extends PackageEntryWriter {
      */
     @Override
     String getScope() {
-        return Scopes.COMPONENT;
+        return scope;
     }
 
     /**
-     * Gets whether current {@code Class} is eligible for populating {@code .content.xml} structure
+     * Gets whether current {@code Class} is eligible for populating {@code _cq_dialog.xml} structure
      * @param componentClass The {@code Class} under consideration
-     * @return True if current {@code Class} is annotated with {@link Dialog} or {@link AemComponent}; otherwise, false
+     * @return True if current {@code Class} is annotated with {@link Dialog} or {@link DesignDialog}; otherwise, false
      */
     @Override
     boolean canProcess(Class<?> componentClass) {
-        return componentClass.isAnnotationPresent(Dialog.class)
-            || componentClass.isAnnotationPresent(AemComponent.class);
+        return Scopes.CQ_DIALOG.equals(scope)
+            ? componentClass.isAnnotationPresent(Dialog.class)
+            : componentClass.isAnnotationPresent(DesignDialog.class);
     }
 }
