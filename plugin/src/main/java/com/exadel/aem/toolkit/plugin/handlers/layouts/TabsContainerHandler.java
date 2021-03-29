@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.ContainerHandler;
-import com.exadel.aem.toolkit.plugin.target.Targets;
+import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**

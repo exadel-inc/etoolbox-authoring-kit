@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.target;
+package com.exadel.aem.toolkit.plugin.targets;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;

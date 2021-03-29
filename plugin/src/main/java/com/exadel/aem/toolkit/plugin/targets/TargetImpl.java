@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.target;
+package com.exadel.aem.toolkit.plugin.targets;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

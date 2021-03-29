@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
-import com.exadel.aem.toolkit.plugin.target.Targets;
+import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
 public class TargetsTest {

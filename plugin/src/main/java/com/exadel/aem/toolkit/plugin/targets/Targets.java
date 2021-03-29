@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.target;
+package com.exadel.aem.toolkit.plugin.targets;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
 
