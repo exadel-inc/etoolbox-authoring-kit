@@ -111,6 +111,12 @@ public class ListHelperServiceTest {
     }
 
     @Test
+    public void shouldRetrieveResourceMap() {
+        Map<String, Resource> actual = ListHelper.getResourceMap(context.resourceResolver(), SIMPLE_LIST_PATH);
+        assertEquals("value3", actual.get("key1").getValueMap().get(CoreConstants.PN_VALUE));
+    }
+
+    @Test
     public void shouldRetrieveCustomResourceMap() {
         Map<String, Resource> actual = ListHelper.getResourceMap(
             context.resourceResolver(),
