@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.ImmutableMap;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
+
 /**
  * Contains utility methods for parsing and formatting string values
  */
@@ -130,7 +132,7 @@ public class StringUtil {
             .filter(Objects::nonNull)
             .map(conversion)
             .map(s -> s.startsWith(ARRAY_OPENING) && s.endsWith(ARRAY_CLOSING) ? ESCAPE_STRING + s : s)
-            .collect(Collectors.joining(DialogConstants.ITEM_SEPARATOR_COMMA));
+            .collect(Collectors.joining(CoreConstants.SEPARATOR_COMMA));
         if (String.class.equals(valueType)) {
             return String.format(ARRAY_TEMPLATE, collectionPart);
         } else {

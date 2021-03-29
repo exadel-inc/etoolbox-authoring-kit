@@ -14,6 +14,8 @@
 
 package com.exadel.aem.toolkit.test.custom;
 
+import com.exadel.aem.toolkit.api.annotations.lists.ListItem;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
@@ -26,16 +28,18 @@ import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAutoOrder;
 import com.exadel.aem.toolkit.test.custom.annotation.DialogAnnotationForOrderingTest;
 
-@Dialog(
-        name = "test-component",
-        title = "test-component-dialog"
+@AemComponent(
+    path = "test-component",
+    title = "test-component-dialog"
 )
+@Dialog
 @CustomDialogAnnotation
 @CustomDialogAnnotationAuto(
     field1 = "value1",
     field2 = 2
 )
 @DialogAnnotationForOrderingTest
+@ListItem
 @SuppressWarnings("unused")
 public class CustomAnnotations {
     @DialogField

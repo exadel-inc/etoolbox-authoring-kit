@@ -27,6 +27,7 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
@@ -112,9 +113,9 @@ public class CheckboxHandler implements Handler {
     private void setTextAttribute(Source source, Target target) {
         Checkbox checkbox = source.adaptTo(Checkbox.class);
         if (checkbox.text().isEmpty() && source.adaptTo(DialogField.class) != null) {
-            target.attribute(DialogConstants.PN_TEXT, source.adaptTo(DialogField.class).label());
+            target.attribute(CoreConstants.PN_TEXT, source.adaptTo(DialogField.class).label());
         } else if (checkbox.text().isEmpty()) {
-            target.attribute(DialogConstants.PN_TEXT, source.getName());
+            target.attribute(CoreConstants.PN_TEXT, source.getName());
         }
     }
 }

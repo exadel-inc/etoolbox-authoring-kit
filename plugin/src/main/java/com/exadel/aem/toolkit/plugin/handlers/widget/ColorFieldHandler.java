@@ -27,6 +27,7 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
@@ -56,7 +57,7 @@ public class ColorFieldHandler implements Handler {
         for (String customColor: validCustomColors) {
             itemsNode.getOrCreateTarget(NODE_NAME_COLOR + customColor.toLowerCase().replace(SKIPPED_COLOR_NODE_NAME_SYMBOLS, StringUtils.EMPTY))
                     .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
-                    .attributes(Collections.singletonMap(DialogConstants.PN_VALUE, customColor));
+                    .attributes(Collections.singletonMap(CoreConstants.PN_VALUE, customColor));
         }
     }
 }

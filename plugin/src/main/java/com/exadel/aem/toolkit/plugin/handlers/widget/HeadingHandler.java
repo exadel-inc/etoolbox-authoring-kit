@@ -20,9 +20,9 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup for Granite UI {@code Heading} widget
@@ -44,6 +44,6 @@ public class HeadingHandler implements Handler {
         if (StringUtils.isAllBlank(heading.value(), heading.text())) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(EXCEPTION_MESSAGE));
         }
-        target.attribute(DialogConstants.PN_TEXT, StringUtils.defaultIfBlank(heading.value(), heading.text()));
+        target.attribute(CoreConstants.PN_TEXT, StringUtils.defaultIfBlank(heading.value(), heading.text()));
     }
 }

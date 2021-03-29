@@ -19,7 +19,7 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * The {@code Handler} for adding listItem property to a TouchUI dialog
@@ -29,7 +29,7 @@ public class ListItemHandler implements Handler {
     @Override
     public void accept(Source source, Target target) {
         if (source.adaptTo(ListItem.class) != null) {
-            target.attribute(DialogConstants.PN_LIST_ITEM, true);
+            target.attribute(CoreConstants.PN_LIST_ITEM, true);
         }
     }
 }

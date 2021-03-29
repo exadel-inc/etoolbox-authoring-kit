@@ -128,7 +128,6 @@ public class ClassUtil {
                 result.addAll(Arrays.asList(current.getInterfaces()));
             }
             current = current.getSuperclass();
-            result.addAll(Arrays.asList(current.getInterfaces()));
         }
         Collections.reverse(result);
         return result;

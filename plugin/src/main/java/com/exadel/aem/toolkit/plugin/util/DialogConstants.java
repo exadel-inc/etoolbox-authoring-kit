@@ -26,7 +26,6 @@ public class DialogConstants {
     public static final String PATH_SEPARATOR = "/";
     public static final String EXTENSION_SEPARATOR = ".";
     public static final String VALUE_SEPARATOR = ";";
-    public static final String ITEM_SEPARATOR_COMMA = ",";
 
     public static final String RELATIVE_PATH_PREFIX = "./";
     public static final String PARENT_PATH_PREFIX = "../";
@@ -107,7 +106,6 @@ public class DialogConstants {
     public static final String PN_DEPENDS_ON_REF = "dependsOnRef";
     public static final String PN_DEPENDS_ON_REFTYPE = "dependsOnRefType";
     public static final String PN_DEPENDS_ON_REFLAZY = "dependsOnRefLazy";
-    public static final String PN_DIALOG_LAYOUT = "dialogLayout";
     public static final String PN_DISABLED = "disabled";
     public static final String PN_DISCONNECTED = "disconnected";
     public static final String PN_EDIT_ELEMENT_QUERY = "editElementQuery";
@@ -121,14 +119,12 @@ public class DialogConstants {
     public static final String PN_IGNORE_MODE = "ignoreMode";
     public static final String PN_INDENT_SIZE = "indentSize";
     public static final String PN_JCR_TITLE = "jcr:title";
-    public static final String PN_LIST_ITEM = "listItem";
     public static final String PN_MAX_DATE = "maxDate";
     public static final String PN_MAX_UNDO_STEPS = "maxUndoSteps";
     public static final String PN_MIN_DATE = "minDate";
     public static final String PN_MODE = "mode";
     public static final String PN_NAME = "name";
     public static final String PN_PADDING = "padding";
-    public static final String PN_PATH = "path";
     public static final String PN_PRIMARY_TYPE = "jcr:primaryType";
     public static final String PN_PROPERTY_NAME = "propertyName";
     public static final String PN_PROTOCOLS = "protocols";
@@ -140,7 +136,6 @@ public class DialogConstants {
     public static final String PN_TAB_SIZE = "tabSize";
     public static final String PN_TARGET_EXTERNAL = "targetExternal";
     public static final String PN_TARGET_INTERNAL = "targetInternal";
-    public static final String PN_TEXT = "text";
     public static final String PN_TEXT_MEMBER = "textMember";
     public static final String PN_TEXT_PROPERTY_NAME = "textPropertyName";
     public static final String PN_TEXT_TRANSFORM = "textTransform";
@@ -150,7 +145,6 @@ public class DialogConstants {
     public static final String PN_TYPE = "type";
     public static final String PN_TYPE_HINT = "typeHint";
     public static final String PN_USE_FIXED_INLINE_TOOLBAR = "useFixedInlineToolbar";
-    public static final String PN_VALUE = "value";
     public static final String PN_VALUE_MEMBER = "valueMember";
     public static final String PN_VALUE_TRANSFORM = "valueTransform";
 

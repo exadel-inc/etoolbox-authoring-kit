@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * The factory-like class for getting an instance of {@link ExceptionHandler} that matches the value specified in
@@ -43,7 +43,7 @@ public class ExceptionHandlers {
         if (StringUtils.isBlank(value) || EXCEPTION_TOKEN_NONE.equalsIgnoreCase(value)) {
             return new PermissiveExceptionHandler();
         }
-        List<String> exceptionTokens = Arrays.stream(StringUtils.split(value, DialogConstants.ITEM_SEPARATOR_COMMA))
+        List<String> exceptionTokens = Arrays.stream(StringUtils.split(value, CoreConstants.SEPARATOR_COMMA))
                 .map(String::trim)
                 .collect(Collectors.toList());
         return new SelectiveExceptionHandler(exceptionTokens);

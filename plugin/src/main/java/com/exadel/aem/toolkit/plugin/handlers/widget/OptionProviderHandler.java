@@ -25,6 +25,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.StringUtil;
@@ -55,7 +56,7 @@ abstract class OptionProviderHandler {
      * @param parentElement {@code Target} instance to store the option in
      */
     void appendOption(Annotation option, String optionValue, Target parentElement) {
-        List<Target> existing = parentElement.findChildren(t -> t.getAttribute(DialogConstants.PN_VALUE).equals(optionValue));
+        List<Target> existing = parentElement.findChildren(t -> t.getAttribute(CoreConstants.PN_VALUE).equals(optionValue));
         Target item = existing.isEmpty()
             ? parentElement.createTarget(DialogConstants.DOUBLE_QUOTE + optionValue + DialogConstants.DOUBLE_QUOTE)
             : parentElement.getTarget(DialogConstants.DOUBLE_QUOTE + optionValue + DialogConstants.DOUBLE_QUOTE);
@@ -95,7 +96,7 @@ abstract class OptionProviderHandler {
             return;
         }
         Target datasourceElement = target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
-            .attribute(DialogConstants.PN_PATH, dataSource.path())
+            .attribute(CoreConstants.PN_PATH, dataSource.path())
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, dataSource.resourceType());
         Arrays.stream(dataSource.properties())
             .forEach(property -> datasourceElement.attribute(property.name(), property.value()));
@@ -109,7 +110,7 @@ abstract class OptionProviderHandler {
      * @param postfix Special key added to every attribute name to distinguish it from the others
      */
     private static void populateSourceAttributes(OptionSource optionSource, Target datasourceElement, String postfix) {
-        datasourceElement.attribute(DialogConstants.PN_PATH + postfix, optionSource.value());
+        datasourceElement.attribute(CoreConstants.PN_PATH + postfix, optionSource.value());
         if (StringUtils.isNotBlank(optionSource.fallbackPath())) {
             datasourceElement.attribute(DialogConstants.PN_FALLBACK_PATH + postfix, optionSource.fallbackPath());
         }
