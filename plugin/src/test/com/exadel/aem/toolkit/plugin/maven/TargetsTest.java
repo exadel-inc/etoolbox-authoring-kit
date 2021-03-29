@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
-import com.exadel.aem.toolkit.plugin.util.XmlFactory;
+import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 public class TargetsTest {
     private static final String NN_ROOT = "root";

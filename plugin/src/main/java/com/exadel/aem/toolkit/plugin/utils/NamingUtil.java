@@ -1,4 +1,4 @@
-package com.exadel.aem.toolkit.plugin.util;
+package com.exadel.aem.toolkit.plugin.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;

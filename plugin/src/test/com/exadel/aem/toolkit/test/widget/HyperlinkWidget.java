@@ -17,7 +17,7 @@ package com.exadel.aem.toolkit.test.widget;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.Hyperlink;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.LinkCheckerVariant;
-import com.exadel.aem.toolkit.plugin.util.TestConstants;
+import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
 @Dialog(
     name = TestConstants.DEFAULT_COMPONENT_NAME,

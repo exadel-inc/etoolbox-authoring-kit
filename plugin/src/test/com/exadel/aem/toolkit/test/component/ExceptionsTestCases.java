@@ -19,10 +19,10 @@ import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_TITLE;
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_0;
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_1;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_TITLE;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_0;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_1;
 
 @SuppressWarnings("unused")
 public class ExceptionsTestCases {

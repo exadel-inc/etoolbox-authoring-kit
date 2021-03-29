@@ -19,7 +19,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
-import com.exadel.aem.toolkit.plugin.util.TestConstants;
+import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
 @Dialog(
         name = TestConstants.DEFAULT_COMPONENT_NAME,

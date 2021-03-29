@@ -36,7 +36,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.targets.TargetImpl;
-import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
+import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance via calls to custom handlers attached to the

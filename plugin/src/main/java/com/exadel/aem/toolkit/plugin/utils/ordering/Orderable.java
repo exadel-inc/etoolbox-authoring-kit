@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.util.ordering;
+package com.exadel.aem.toolkit.plugin.utils.ordering;
 
 class Orderable<T> {
 

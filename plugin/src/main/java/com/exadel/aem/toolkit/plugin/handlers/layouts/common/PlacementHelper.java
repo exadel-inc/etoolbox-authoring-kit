@@ -38,9 +38,9 @@ import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.NamingUtil;
-import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
+import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
  * Helper object for distributing class member-bound widgets into container sections, such as {@code Tab}s

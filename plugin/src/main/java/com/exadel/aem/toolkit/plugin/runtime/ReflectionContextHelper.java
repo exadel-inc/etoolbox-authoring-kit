@@ -46,8 +46,8 @@ import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeContext;
-import com.exadel.aem.toolkit.plugin.util.ScopeUtil;
-import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
+import com.exadel.aem.toolkit.plugin.utils.ScopeUtil;
+import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
  * Introspects the classes available in Maven reactor to retrieve and manage Toolkit-related logic

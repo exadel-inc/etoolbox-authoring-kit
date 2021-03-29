@@ -35,7 +35,7 @@ import com.exadel.aem.toolkit.plugin.handlers.common.DomHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Base class for routines that render XML files inside a component folder within an AEM package

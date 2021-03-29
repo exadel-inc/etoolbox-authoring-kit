@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.util;
+package com.exadel.aem.toolkit.plugin.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
-import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
+import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
  * Contains utility methods for parsing AEM components' classes and extracting information related to UI rendering

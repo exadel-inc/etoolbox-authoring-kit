@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
-import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 
 /**
  *  {@link Validator} implementation for testing that provided character range is valid

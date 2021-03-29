@@ -23,8 +23,8 @@ import org.w3c.dom.Element;
 import com.exadel.aem.toolkit.api.handlers.Adaptable;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.NamingUtil;
-import com.exadel.aem.toolkit.plugin.util.XmlFactory;
+import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
+import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
  * Implements {@link Adaptable} for rendering a {@link Target} instance into a DOM {@code Document}

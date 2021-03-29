@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * {@link WidgetContainerHandler} implementation used to prepare data needed for {@code Tabs} widget functionality

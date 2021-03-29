@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
 import com.exadel.aem.toolkit.plugin.runtime.ReflectionContextHelper;
 import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
-import com.exadel.aem.toolkit.plugin.util.XmlFactory;
+import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
  * The implementation of {@link PluginRuntimeContext} for the AEM Authoring Toolkit plugin instance that

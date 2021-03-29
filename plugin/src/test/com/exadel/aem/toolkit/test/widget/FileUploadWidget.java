@@ -20,7 +20,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FileUpload;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariant;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,

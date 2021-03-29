@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exadel.aem.toolkit.plugin.util.TestConstants;
+import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
 public class TestXmlUtility {
     private static final Logger LOG = LoggerFactory.getLogger(TestXmlUtility.class);

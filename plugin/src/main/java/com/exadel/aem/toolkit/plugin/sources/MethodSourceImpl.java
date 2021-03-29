@@ -20,7 +20,7 @@ import java.lang.reflect.Modifier;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.plugin.util.MemberUtil;
+import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 
 public class MethodSourceImpl extends MemberSourceImpl {
 

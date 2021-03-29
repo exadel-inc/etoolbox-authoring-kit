@@ -38,8 +38,8 @@ import com.exadel.aem.toolkit.plugin.handlers.common.CasualAnnotationsHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.MultiFieldHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
-import com.exadel.aem.toolkit.plugin.util.ClassUtil;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Handler for creating ad-hoc {@code Multifield}s for {@link Multiple}-marked dialog fields

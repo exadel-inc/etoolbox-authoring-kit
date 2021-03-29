@@ -17,7 +17,7 @@ package com.exadel.aem.toolkit.plugin.maven;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.plugin.util.TestConstants;
+import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 import com.exadel.aem.toolkit.test.component.IgnoreTestCases;
 
 public class IgnoreTest extends DefaultTestBase {

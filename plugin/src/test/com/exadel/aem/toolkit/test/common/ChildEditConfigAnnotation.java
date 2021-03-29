@@ -27,7 +27,7 @@ import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.DELETE;
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.EDIT;
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.INSERT;
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @AemComponent(
     path = DEFAULT_COMPONENT_NAME,

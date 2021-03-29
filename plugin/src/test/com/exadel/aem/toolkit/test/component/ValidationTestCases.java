@@ -27,8 +27,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_TITLE;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_TITLE;
 
 @SuppressWarnings("unused")
 public class ValidationTestCases {

@@ -30,14 +30,14 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exadel.aem.toolkit.plugin.util.FileSystemHelper;
-import com.exadel.aem.toolkit.plugin.util.TestConstants;
+import com.exadel.aem.toolkit.plugin.utils.FileSystemHelper;
+import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 import com.exadel.aem.toolkit.plugin.writers.TestXmlUtility;
 
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.RESOURCE_FOLDER_COMMON;
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.RESOURCE_FOLDER_COMPONENT;
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.RESOURCE_FOLDER_DEPENDSON;
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.RESOURCE_FOLDER_WIDGET;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_COMMON;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_COMPONENT;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_DEPENDSON;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_WIDGET;
 
 public abstract class DefaultTestBase {
     static final Logger LOG = LoggerFactory.getLogger("AEM Authoring Toolkit Unit Tests");

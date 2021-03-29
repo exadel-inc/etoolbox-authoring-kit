@@ -32,9 +32,9 @@ import com.exadel.aem.toolkit.plugin.handlers.widgets.common.InheritanceHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
-import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.NamingUtil;
+import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a

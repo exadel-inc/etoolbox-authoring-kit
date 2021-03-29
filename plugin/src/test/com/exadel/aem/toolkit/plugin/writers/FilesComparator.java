@@ -43,7 +43,7 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.Difference;
 
-import com.exadel.aem.toolkit.plugin.util.XmlFactory;
+import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 class FilesComparator {
     private static final Logger LOG = LoggerFactory.getLogger(FilesComparator.class);

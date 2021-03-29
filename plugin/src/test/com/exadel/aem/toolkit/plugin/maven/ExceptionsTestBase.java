@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import com.exadel.aem.toolkit.plugin.util.FileSystemHelper;
+import com.exadel.aem.toolkit.plugin.utils.FileSystemHelper;
 import com.exadel.aem.toolkit.plugin.writers.TestXmlUtility;
 
 public abstract class ExceptionsTestBase {

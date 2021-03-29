@@ -20,7 +20,7 @@ import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
-import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 
 /**
  * {@link Validator} implementation for testing that all String-typed annotation properties are not blank

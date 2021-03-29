@@ -19,7 +19,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Alert;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
         name = DEFAULT_COMPONENT_NAME,

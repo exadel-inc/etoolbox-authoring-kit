@@ -48,7 +48,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.UnknownComponentException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginInfo;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.XmlFactory;
+import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
  * Implements actions needed to store collected/processed data into AEM package, optimal for use in "try-with-resources" block

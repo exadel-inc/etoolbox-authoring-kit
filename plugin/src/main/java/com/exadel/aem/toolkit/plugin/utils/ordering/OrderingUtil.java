@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.util.ordering;
+package com.exadel.aem.toolkit.plugin.utils.ordering;
 
 import java.lang.reflect.Member;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 public class OrderingUtil {
 

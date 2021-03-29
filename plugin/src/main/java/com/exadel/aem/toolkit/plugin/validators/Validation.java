@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.MemberUtil;
+import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 
 /**
  * Performs validation of annotations properties' values with use of specific {@link Validator}s

@@ -28,9 +28,9 @@ import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
-import com.exadel.aem.toolkit.plugin.util.ClassUtil;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code Checkbox} widget functionality

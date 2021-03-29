@@ -20,8 +20,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.PlacementHelper;
-import com.exadel.aem.toolkit.plugin.util.ClassUtil;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * The {@code BiConsumer<Source, Target>} implementation for a fixed-columns TouchUI dialog.

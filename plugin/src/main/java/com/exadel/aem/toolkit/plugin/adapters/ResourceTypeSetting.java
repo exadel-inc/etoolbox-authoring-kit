@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.handlers.Adaptable;
 import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 
 /**
  * Implements {@link Adaptable} for extracting appropriate {@code sling:resourceType} value from a {@link Source} object

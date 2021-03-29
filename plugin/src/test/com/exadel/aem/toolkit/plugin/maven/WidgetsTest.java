@@ -45,7 +45,7 @@ import com.exadel.aem.toolkit.test.widget.TagFieldWidget;
 import com.exadel.aem.toolkit.test.widget.TextAreaWidget;
 import com.exadel.aem.toolkit.test.widget.TextWidget;
 
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.RESOURCE_FOLDER_WIDGET;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_WIDGET;
 
 public class WidgetsTest extends DefaultTestBase {
 

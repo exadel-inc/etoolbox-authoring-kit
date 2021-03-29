@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.util;
+package com.exadel.aem.toolkit.plugin.utils;
 
 import java.io.Closeable;
 import java.io.IOException;

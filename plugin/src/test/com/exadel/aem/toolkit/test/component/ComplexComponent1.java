@@ -35,15 +35,15 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.plugin.util.TestConstants;
+import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomEditConfigAnnotation;
 
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_1;
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_2;
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_3;
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_4;
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_5;
-import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_6;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_1;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_2;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_3;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_4;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_5;
+import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_6;
 
 @Dialog(
         name = TestConstants.DEFAULT_COMPONENT_NAME,
