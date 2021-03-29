@@ -52,8 +52,8 @@ import com.adobe.granite.ui.components.ds.EmptyDataSource;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
- * Provides the collection of AEM resources that either represent AEMBox Lists or serve as folders for AEMBox Lists
- * to be displayed in the AEMBox Lists console
+ * Provides the collection of AEM resources that either represent EToolbox Lists or serve as folders for EToolbox Lists
+ * to be displayed in the EToolbox Lists console
  */
 @Component(
     service = Servlet.class,

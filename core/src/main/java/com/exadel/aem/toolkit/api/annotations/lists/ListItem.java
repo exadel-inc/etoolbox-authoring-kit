@@ -20,7 +20,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marker added to AEM components that can serve as AEMBox Lists items
+ * Marker added to AEM components that can serve as EToolbox Lists items
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

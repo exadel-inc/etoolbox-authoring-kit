@@ -202,7 +202,7 @@ public class ListHelper {
     }
 
     /**
-     * Retrieves an AEMBox List page resource by the provided JCR {@code path}
+     * Retrieves an EToolbox List page resource by the provided JCR {@code path}
      * @param resourceResolver {@code ResourceResolver} used to retrieve the resource
      * @param path             JCR path of the items list
      * @return {@code Resource object, or null if the resource resolver is missing or the path in unresolvable}

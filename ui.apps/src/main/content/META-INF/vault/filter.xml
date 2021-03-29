@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <filter root="/apps/cq/core/content/nav/tools/aembox/lists"/>
+    <filter root="/apps/cq/core/content/nav/tools/etoolbox/lists"/>
     <filter root="/apps/wcm/core/content/sites/actions/secondary/create/items/createlist"/>
 
     <filter root="/apps/authoring-toolkit/clientlib-injector"/>

@@ -41,7 +41,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 @AemComponent(
     path = "content/listItem",
     title = "List Item",
-    componentGroup = "AEMBox Lists"
+    componentGroup = "EToolbox Lists"
 )
 @EditConfig(
     actions = {ActionConstants.INSERT, ActionConstants.COPYMOVE, ActionConstants.DELETE}
