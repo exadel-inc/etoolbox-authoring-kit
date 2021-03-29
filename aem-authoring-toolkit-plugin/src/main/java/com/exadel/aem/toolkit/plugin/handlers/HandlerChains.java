@@ -29,6 +29,10 @@ import com.exadel.aem.toolkit.plugin.handlers.common.CqDialogHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.CqEditConfigHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.CqHtmlTagHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.PropertyMappingHandler;
+import com.exadel.aem.toolkit.plugin.handlers.editconfig.DropTargetsHandler;
+import com.exadel.aem.toolkit.plugin.handlers.editconfig.FormParametersHandler;
+import com.exadel.aem.toolkit.plugin.handlers.editconfig.InplaceEditingHandler;
+import com.exadel.aem.toolkit.plugin.handlers.editconfig.ListenersHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.AttributeAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.DialogFieldAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.InheritanceHandler;
@@ -45,7 +49,7 @@ import com.exadel.aem.toolkit.plugin.handlers.widget.common.ResourceTypeHandler;
 public class HandlerChains {
 
     // Generic handlers
-    private static final BiConsumer<Source, Target> CUSTOM_HANDLING_HANDLER = new CasualAnnotationsHandler();
+    private static final BiConsumer<Source, Target> CASUAL_ANNOTATIONS_HANDLER = new CasualAnnotationsHandler();
     private static final BiConsumer<Source, Target> PROPERTY_MAPPING_HANDLER = new PropertyMappingHandler();
 
     // UI-specific handlers
@@ -77,14 +81,30 @@ public class HandlerChains {
         .andThen(PROPERTY_MAPPING_HANDLER)
         .andThen(ATTRIBUTE_ANNOTATION_HANDLER)
         .andThen(DIALOG_FIELD_HANDLER)
-        .andThen(CUSTOM_HANDLING_HANDLER)
+        .andThen(CASUAL_ANNOTATIONS_HANDLER)
         .andThen(DEPENDS_ON_HANDLER)
         .andThen(PROPERTY_ANNOTATION_HANDLER)
         .andThen(MULTIPLE_HANDLER);
-
     private static final BiConsumer<Source, Target> MEMBER_INHERITANCE_HANDLER_CHAIN =
         new InheritanceHandler(MEMBER_HANDLER_CHAIN)
-        .andThen(MEMBER_HANDLER_CHAIN);
+            .andThen(MEMBER_HANDLER_CHAIN);
+
+    // EditConfig handlers
+    private static final BiConsumer<Source, Target> EDIT_CONFIG_DROP_TARGETS_HANDLER = new DropTargetsHandler();
+    private static final BiConsumer<Source, Target> EDIT_CONFIG_FORM_PARAMS_HANDLER = new FormParametersHandler();
+    private static final BiConsumer<Source, Target> EDIT_CONFIG_INPLACE_HANDLER = new InplaceEditingHandler();
+    private static final BiConsumer<Source, Target> EDIT_CONFIG_LISTENERS_HANDLER = new ListenersHandler();
+
+    // Complete editConfig chains
+    private static final BiConsumer<Source, Target> EDIT_CONFIG_HANDLER_CHAIN =
+        PROPERTY_MAPPING_HANDLER
+        .andThen(EDIT_CONFIG_DROP_TARGETS_HANDLER)
+        .andThen(EDIT_CONFIG_FORM_PARAMS_HANDLER)
+        .andThen(EDIT_CONFIG_INPLACE_HANDLER)
+        .andThen(EDIT_CONFIG_LISTENERS_HANDLER);
+    private static final BiConsumer<Source, Target> CHILD_EDIT_CONFIG_HANDLER_CHAIN =
+        EDIT_CONFIG_DROP_TARGETS_HANDLER
+        .andThen(EDIT_CONFIG_LISTENERS_HANDLER);
 
     private static final BiConsumer<Source, Target> NOOP_HANDLER = (source, target) -> {};
 
@@ -104,7 +124,7 @@ public class HandlerChains {
         BiConsumer<Source, Target> uiHandler = UI_HANDLERS.getOrDefault(scope, NOOP_HANDLER);
         return PROPERTY_MAPPING_HANDLER
             .andThen(uiHandler)
-            .andThen(CUSTOM_HANDLING_HANDLER);
+            .andThen(CASUAL_ANNOTATIONS_HANDLER);
     }
 
     /**
@@ -113,5 +133,21 @@ public class HandlerChains {
      */
     public static BiConsumer<Source, Target> forMember() {
         return MEMBER_INHERITANCE_HANDLER_CHAIN;
+    }
+
+    /**
+     * Retrieves a handler conveyor for rendering {@code editConfig}
+     * @return {@code BiConsumer<Source, Target>} instance representing the conveyor
+     */
+    public static BiConsumer<Source, Target> forEditConfig() {
+        return EDIT_CONFIG_HANDLER_CHAIN;
+    }
+
+    /**
+     * Retrieves a handler conveyor for rendering {@code editConfig}
+     * @return {@code BiConsumer<Source, Target>} instance representing the conveyor
+     */
+    public static BiConsumer<Source, Target> forChildEditConfig() {
+        return CHILD_EDIT_CONFIG_HANDLER_CHAIN;
     }
 }

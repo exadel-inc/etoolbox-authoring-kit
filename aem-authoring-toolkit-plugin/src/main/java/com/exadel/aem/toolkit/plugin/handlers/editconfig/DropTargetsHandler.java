@@ -19,21 +19,26 @@ import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
- * {@code BiConsumer<Target, EditConfig>} implementation for storing {@link DropTargetConfig} arguments to {@code cq:editConfig} node
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a
+ * {@link Source} object that define the configuration of drop targets within a Granite UI {@code cq:editConfig}
+ * or {@code cq:childEditConfig} node
  */
-public class DropTargetsHandler implements BiConsumer<EditConfig, Target> {
+public class DropTargetsHandler implements BiConsumer<Source, Target> {
+
     /**
-     * Processes the user-defined data and writes it to {@code Target}
-     * @param editConfig {@code EditConfig} annotation instance
-     * @param target Current {@link Target} instance
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
-    public void accept(EditConfig editConfig, Target target) {
+    public void accept(Source source, Target target) {
+        EditConfig editConfig = source.adaptTo(EditConfig.class);
         if(editConfig.dropTargets().length == 0){
             return;
         }

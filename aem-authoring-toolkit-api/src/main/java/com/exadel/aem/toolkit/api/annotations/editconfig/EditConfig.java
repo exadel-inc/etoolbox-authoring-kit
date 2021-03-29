@@ -34,7 +34,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 @MapProperties(
     scope = Scopes.CQ_EDIT_CONFIG,
     prefix = "cq:",
-    value = {"actions", "emptyText", "inherit"}
+    value = {"actions", "emptyText", "inherit", "dialogLayout"}
 )
 public @interface EditConfig {
 
@@ -62,6 +62,7 @@ public @interface EditConfig {
      * When set to a value other than {@code Layout.DEFAULT}, renders as the 'dialogLayout' attribute of {@code cq:editConfig} node
      * @return One of {@link EditConfigLayout} constants
      */
+    @PropertyRendering(ignoreValues = "default", transform = StringTransformation.LOWERCASE)
     EditConfigLayout dialogLayout() default EditConfigLayout.DEFAULT;
 
     /**

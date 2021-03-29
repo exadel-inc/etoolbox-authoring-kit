@@ -21,27 +21,32 @@ import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
- * {@code BiConsumer<EditConfig, Target>} implementation for storing {@link Listener} arguments to {@code cq:editConfig} node
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a
+ * {@link Source} object that define listeners within a Granite UI {@code cq:editConfig}
+ * or {@code cq:childEditConfig} node
  */
-public class ListenersHandler implements BiConsumer<EditConfig, Target> {
+public class ListenersHandler implements BiConsumer<Source, Target> {
+
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param editConfig {@code EditConfig} annotation instance
-     * @param root Current {@link Target} instance
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
-    public void accept(EditConfig editConfig, Target root) {
+    public void accept(Source source, Target target) {
+        EditConfig editConfig = source.adaptTo(EditConfig.class);
         List<Listener> listeners = Arrays.asList(editConfig.listeners());
         if(listeners.isEmpty()) {
             return;
         }
         Map<String, Object> properties = listeners.stream()
             .collect(Collectors.toMap(Listener::event, Listener::action));
-        root.getOrCreateTarget(DialogConstants.NN_LISTENERS)
+        target.getOrCreateTarget(DialogConstants.NN_LISTENERS)
                 .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_LISTENERS)
                 .attributes(properties);
     }
