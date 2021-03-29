@@ -18,10 +18,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Position;
 
 /**
  * Used to set up
@@ -31,7 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.CHECKBOX)
-@PropertyMapping
+@MapProperties("!disconnectedSublist")
 public @interface Checkbox {
     /**
      * Maps to the 'text' attribute of this TouchUI dialog component's node.
@@ -63,10 +65,11 @@ public @interface Checkbox {
 
     /**
      * Maps to the 'tooltipPosition' attribute of this TouchUI dialog component's node.
-     * When set to a non-blank string, defines the position of the tooltip relative to the field
+     * Defines the position of the tooltip relative to the field. Effective only if {@code fieldDescription} is set
      * @return String value
      */
-    String tooltipPosition() default "";
+    @PropertyRendering(transform = StringTransformation.LOWERCASE, ignoreValues = "left")
+    Position tooltipPosition() default Position.LEFT;
 
     /**
      * Maps to the 'checked' attribute of this TouchUI dialog component's node.
@@ -80,7 +83,6 @@ public @interface Checkbox {
      * Its visibility will depend on current Checkbox state
      * @return Reference to a class describing sublist
      */
-    @IgnorePropertyMapping
     Class<?>[] sublist() default {};
 
     /**
@@ -88,6 +90,5 @@ public @interface Checkbox {
      * The 'disconnected' attribute will be set to the node that declares the sublist
      * @return Reference to a class describing sublist
      */
-    @IgnorePropertyMapping
     boolean disconnectedSublist() default false;
 }

@@ -9,7 +9,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 
 public class PropertyAnnotationHandler implements BiConsumer<Source, Target> {
 
@@ -30,6 +30,6 @@ public class PropertyAnnotationHandler implements BiConsumer<Source, Target> {
             propertyPath = null;
         }
         Target effectiveTarget = StringUtils.isNotBlank(propertyPath) ? target.getOrCreateTarget(propertyPath) : target;
-        effectiveTarget.attribute(PluginNamingUtility.getValidFieldName(propertyName), property.value());
+        effectiveTarget.attribute(NamingUtil.getValidFieldName(propertyName), property.value());
     }
 }

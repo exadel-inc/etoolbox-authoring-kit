@@ -24,8 +24,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 import com.exadel.aem.toolkit.plugin.util.StringUtil;
 
 /**
@@ -74,7 +74,7 @@ abstract class OptionProviderHandler {
         Target datasourceElement = target
             .getOrCreateTarget(DialogConstants.NN_DATASOURCE)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, RESOURCE_TYPE_PREFIX + ResourceTypes.OPTION_PROVIDER)
-            .attributes(optionProvider, PluginAnnotationUtility.getPropertyMappingFilter(optionProvider));
+            .attributes(optionProvider, AnnotationUtil.getPropertyMappingFilter(optionProvider));
 
         int pathItemOrdinal = 1;
         for (OptionSource item : optionProvider.value()) {

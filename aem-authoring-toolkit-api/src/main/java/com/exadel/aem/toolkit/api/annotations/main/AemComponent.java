@@ -22,8 +22,7 @@ import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.NameConstants;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
@@ -46,7 +45,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@PropertyMapping
+@MapProperties("!path")
 public @interface AemComponent {
 
     /**
@@ -56,7 +55,6 @@ public @interface AemComponent {
      *
      * @return String value, non-blank
      */
-    @IgnorePropertyMapping
     String path();
 
     /**
@@ -65,7 +63,6 @@ public @interface AemComponent {
      *
      * @return Array {@code Class<?>} references, or an empty array
      */
-    @IgnorePropertyMapping
     Class<?>[] views() default {};
 
     /**

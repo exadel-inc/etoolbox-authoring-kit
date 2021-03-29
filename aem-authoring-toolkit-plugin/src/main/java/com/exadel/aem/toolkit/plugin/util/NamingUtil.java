@@ -5,7 +5,7 @@ import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
 
-public class PluginNamingUtility {
+public class NamingUtil {
     private static final String PREFIX_GET = "get";
 
     private static final NamingHelper FIELD_HELPER = NamingHelper.forFieldName();
@@ -14,7 +14,7 @@ public class PluginNamingUtility {
     private static final NamingHelper NODE_NAME_HELPER = NamingHelper.forNodeName();
     private static final NamingHelper PLAIN_NAME_HELPER = NamingHelper.forPlainName();
 
-    private PluginNamingUtility() {}
+    private NamingUtil() {}
 
     public static String getValidFieldName(String value) {
         return FIELD_HELPER.getValidName(value, DialogConstants.NN_FIELD);

@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets.autocomplete;
+package com.exadel.aem.toolkit.test.custom.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,16 +19,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 
-/**
- * Used to set up {@link Autocomplete#datasource()} property
- */
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ResourceType(ResourceTypes.TAGS)
-@MapProperties
-public @interface AutocompleteDatasource {
-    String[] namespaces() default "";
+@MapProperties(value = "!field3", scope = Scope.CQ_DIALOG)
+public @interface CustomDialogAnnotationAuto {
+
+    String field1() default "";
+
+    long field2();
+
+    boolean field3() default false; // will not be rendered
 }

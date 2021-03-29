@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
 import com.exadel.aem.toolkit.api.handlers.Adaptable;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
 /**
@@ -93,7 +93,7 @@ public class DomAdapter {
      * @return {@code Element} instance
      */
     private static Element createElement(Document sourceDocument, Target target, boolean isRoot) {
-        String name = PluginNamingUtility.getValidNodeName(target.getName());
+        String name = NamingUtil.getValidNodeName(target.getName());
         Element element = sourceDocument.createElement(name);
         for (Map.Entry<String, String> entry : target.getAttributes().entrySet()) {
             element.setAttribute(entry.getKey(), entry.getValue());

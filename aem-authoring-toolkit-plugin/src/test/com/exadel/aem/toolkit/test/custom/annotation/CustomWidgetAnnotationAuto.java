@@ -20,7 +20,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 @Retention(RetentionPolicy.RUNTIME)
 @DialogWidgetAnnotation
 @ResourceType("test-components/form/customfield")
-@PropertyMapping(prefix = "granite:data/cq:")
+@MapProperties(prefix = "granite:data/cq:")
 @SuppressWarnings("unused")
 public @interface CustomWidgetAnnotationAuto {
     @PropertyRendering(name = "custom")

@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.api.annotations.editconfig;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 
 /**
  * Defines a target for a drag-and-drop operation in a TouchUI dialog. Upon properties of this annotation,
@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
  * See <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#main-pars_title_2_tckaux_refd_">AEM Components documentation</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@PropertyMapping(mappings = "propertyName")
+@MapProperties(value = "propertyName")
 public @interface DropTargetConfig {
 
     /**

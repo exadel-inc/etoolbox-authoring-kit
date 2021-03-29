@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Password;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for {@code Password} widget functionality
@@ -43,8 +43,8 @@ class PasswordHandler implements BiConsumer<Source, Target> {
         // "Retype name" is expected to preserve same structure (prefix. postfix) as the original name
         // Therefore we just replace the "middle" part in the original field name with the "retype-name" value
         String targetNameAttribute = target.getAttribute(DialogConstants.PN_NAME);
-        String targetNamePart = PluginNamingUtility.getValidFieldName(StringUtils.defaultIfEmpty(source.adaptTo(DialogField.class).name(), source.getName()));
-        String retypeNamePart = PluginNamingUtility.getValidFieldName(password.retype());
+        String targetNamePart = NamingUtil.getValidFieldName(StringUtils.defaultIfEmpty(source.adaptTo(DialogField.class).name(), source.getName()));
+        String retypeNamePart = NamingUtil.getValidFieldName(password.retype());
         // We deliberately use "targetName + postfix" ligament to minimize probability of "targetName" occurring
         // in the complete field name more than once
         String retypeName = targetNameAttribute.replace(

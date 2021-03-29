@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.util.writer;
 
 import java.lang.annotation.Annotation;
@@ -41,9 +40,9 @@ import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnTabHandler;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.DialogContainer;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
 
 /**
@@ -87,17 +86,13 @@ class CqDialogWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateTarget(Class, Target)} abstract method to write down contents
-     * of {@code _cq_dialog.xml} file. To the targetFacade node, several XML building routines are applied in sequence: the predefined
-     * dialog container builder, the common properties' writer, {@code DependsOn} handlers and any {@code CustomHandler}s defined for
-     * this component class
-     *
+     * Overrides {@link PackageEntryWriter#writeProperties(Class, Target)} method to write down contents related to the
+     * component's {@code cq:dialog} node, or the {@code _cq_dialog.xml} file
      * @param componentClass The {@code Class} being processed
      * @param target   The targetFacade element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateTarget(Class<?> componentClass, Target target) {
-
+    void writeProperties(Class<?> componentClass, Target target) {
         Annotation dialogAnnotation = Scope.CQ_DIALOG.equals(scope)
             ? componentClass.getDeclaredAnnotation(Dialog.class)
             : componentClass.getDeclaredAnnotation(DesignDialog.class);
@@ -105,7 +100,7 @@ class CqDialogWriter extends PackageEntryWriter {
         target
             .attributes(
                 dialogAnnotation,
-                PluginAnnotationUtility
+                AnnotationUtil
                     .getPropertyMappingFilter(dialogAnnotation)
                     .and(member -> fitsInScope(member, scope)))
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
@@ -116,7 +111,7 @@ class CqDialogWriter extends PackageEntryWriter {
 
         new DependsOnTabHandler().accept(componentClass, target);
 
-        List<DialogHandler> handlers = PluginRuntime.context().getReflectionUtility().getCustomDialogHandlers().stream()
+        List<DialogHandler> handlers = PluginRuntime.context().getReflection().getCustomDialogHandlers().stream()
                 .filter(dialogHandler -> dialogHandler.getClass().isAnnotationPresent(Handles.class)
                 && Arrays.stream(dialogHandler.getClass().getDeclaredAnnotation(Handles.class).value()).anyMatch(componentClass::isAnnotationPresent))
             .collect(Collectors.toList());
@@ -125,7 +120,7 @@ class CqDialogWriter extends PackageEntryWriter {
     }
 
     /**
-     * Called by {@link CqDialogWriter#populateTarget(Class, Target)} to settle the dialog {@code title} issue.
+     * Called by {@link CqDialogWriter#writeProperties(Class, Target)} to settle the dialog {@code title} issue.
      * If {@code title} is set at {@code AemComponent} level, one does not need to specify it separately for a {@code Dialog}
      * or {@code DesignDialog}. However if {@code AemComponent} is missing, {@code title} must be set to a non-blank value
      * in the dialog annotation
@@ -157,10 +152,12 @@ class CqDialogWriter extends PackageEntryWriter {
      *              source of layout
      * @return {@code DialogLayout} value
      */
+    @SuppressWarnings("deprecation") // Processing of Dialog#tabs is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     private static DialogLayout getLayout(Class<?> componentClass, Scope scope) {
         DialogLayout result = DialogLayout.FIXED_COLUMNS;
 
-        List<Class<?>> hierarchy = PluginReflectionUtility.getClassHierarchy(componentClass, true);
+        List<Class<?>> hierarchy = ClassUtil.getInheritanceTree(componentClass, true);
         ListIterator<Class<?>> hierarchyIterator = hierarchy.listIterator(hierarchy.size());
 
         while (hierarchyIterator.hasPrevious()) {
@@ -168,22 +165,19 @@ class CqDialogWriter extends PackageEntryWriter {
             if (scope.equals(Scope.CQ_DIALOG)
                 && current.isAnnotationPresent(Dialog.class)
                 && current.getDeclaredAnnotation(Dialog.class).tabs().length > 0) {
-                result = DialogLayout.TABS;
-                break;
+                return DialogLayout.TABS;
             }
             Tabs tabsAnnotation = current.getDeclaredAnnotation(Tabs.class);
             if (tabsAnnotation != null && tabsAnnotation.value().length > 0) {
-                result = DialogLayout.TABS;
-                break;
+                return DialogLayout.TABS;
             }
             Accordion accordionAnnotation = current.getDeclaredAnnotation(Accordion.class);
             if (accordionAnnotation != null && accordionAnnotation.value().length > 0) {
-                result = DialogLayout.ACCORDION;
-                break;
+                return DialogLayout.ACCORDION;
             }
             result = getLayoutFromNestedClasses(componentClass);
             if (!result.equals(DialogLayout.FIXED_COLUMNS)) {
-                break;
+                return result;
             }
         }
 
@@ -197,6 +191,8 @@ class CqDialogWriter extends PackageEntryWriter {
      * @param componentClass The {@code Class} being processed
      * @return {@code DialogLayout} value
      */
+    @SuppressWarnings("deprecation") // Processing of container.Tab is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     private static DialogLayout getLayoutFromNestedClasses(Class<?> componentClass) {
         if (ArrayUtils.isEmpty(componentClass.getDeclaredClasses())) {
             return DialogLayout.FIXED_COLUMNS;

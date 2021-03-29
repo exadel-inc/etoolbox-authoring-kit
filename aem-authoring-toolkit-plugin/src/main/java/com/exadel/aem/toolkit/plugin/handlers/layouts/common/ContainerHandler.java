@@ -39,8 +39,8 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
 public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
 
@@ -98,7 +98,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         String[] ignoredSections = getIgnoredSectionTitles(componentClass);
 
         // Get all *non-nested* sources from the superclasses, and from the current class
-        List<Source> allMembers = PluginReflectionUtility.getAllSources(componentClass);
+        List<Source> allMembers = ClassUtil.getSources(componentClass);
 
         // If tabs or accordion panels collection is empty and yet there are sources to be placed, fire an exception
         if (allContainerSections.isEmpty() && !allMembers.isEmpty()) {
@@ -141,7 +141,7 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
         // populate container section registry and store members that are within @Tab or @AccordionPanel-marked classes
         // (because we will not have access to them later)
         List<SectionFacade> containerSectionsFromSuperClasses = getSections(
-            PluginReflectionUtility.getClassHierarchy(componentClass, false),
+            ClassUtil.getInheritanceTree(componentClass, false),
             scope,
             annotationClasses);
 

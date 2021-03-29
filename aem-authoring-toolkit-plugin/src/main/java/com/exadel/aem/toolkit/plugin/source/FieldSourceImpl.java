@@ -19,7 +19,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
 
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.plugin.util.MemberUtil;
 
 public class FieldSourceImpl extends SourceImpl {
 
@@ -42,7 +42,7 @@ public class FieldSourceImpl extends SourceImpl {
 
     @Override
     Class<?> getPlainReturnType() {
-        return PluginReflectionUtility.getPlainType(field);
+        return MemberUtil.getPlainType(field);
     }
 
     @Override

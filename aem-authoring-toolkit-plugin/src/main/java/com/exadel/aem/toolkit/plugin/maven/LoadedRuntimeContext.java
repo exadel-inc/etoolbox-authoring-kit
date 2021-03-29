@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.maven;
 
 import java.util.List;
@@ -21,8 +20,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
+import com.exadel.aem.toolkit.plugin.runtime.ReflectionRuntime;
+import com.exadel.aem.toolkit.plugin.runtime.XmlRuntime;
 import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
 /**
@@ -30,15 +29,17 @@ import com.exadel.aem.toolkit.plugin.util.XmlFactory;
  * has been properly initialized
  */
 class LoadedRuntimeContext implements PluginRuntimeContext {
-    private PluginReflectionUtility pluginReflections;
+    private static final String XML_EXCEPTION_MESSAGE = "Could not initialize XML runtime";
+
+    private ReflectionRuntime pluginReflections;
     private ExceptionHandler exceptionHandler;
-    private PluginXmlUtility xmlUtility;
+    private XmlRuntime xmlRuntime;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PluginReflectionUtility getReflectionUtility() {
+    public ReflectionRuntime getReflection() {
         return pluginReflections;
     }
 
@@ -54,8 +55,22 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
      * {@inheritDoc}
      */
     @Override
-    public PluginXmlUtility getXmlUtility() {
-        return xmlUtility;
+    public XmlRuntime getXmlUtility() {
+        return xmlRuntime;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public XmlRuntime newXmlUtility() {
+        try {
+            xmlRuntime = new XmlRuntime(XmlFactory.newDocument());
+        } catch (ParserConfigurationException e) {
+            // Cannot proceed with the plugin flow if XML subsystem fails this early
+            throw new PluginException(XML_EXCEPTION_MESSAGE, e);
+        }
+        return xmlRuntime;
     }
 
 
@@ -63,7 +78,6 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
      * Accumulates data and performs necessary routines for creating the functional ("loaded") {@link PluginRuntimeContext}
      */
     static class Builder {
-        private static final String XML_EXCEPTION_MESSAGE = "Could not initialize XML writing routine";
 
         private List<String> classPathElements;
         private String packageBase;
@@ -120,14 +134,9 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
                 return;
             }
             LoadedRuntimeContext result = new LoadedRuntimeContext();
-            result.pluginReflections = PluginReflectionUtility.fromCodeScope(classPathElements, packageBase);
+            result.pluginReflections = ReflectionRuntime.fromCodeScope(classPathElements, packageBase);
             result.exceptionHandler = ExceptionHandlers.forSetting(terminateOn);
-            try {
-                result.xmlUtility = XmlFactory.newXmlUtility();
-            } catch (ParserConfigurationException e) {
-                // Cannot proceed with the plugin flow if XML subsystem fails this early
-                throw new PluginException(XML_EXCEPTION_MESSAGE, e);
-            }
+            result.newXmlUtility();
             this.onComplete.accept(result);
         }
 

@@ -18,7 +18,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ValueRestriction(ValueRestrictions.ALL_NOT_BLANK)
-@PropertyMapping
+@MapProperties
 public @interface ParagraphFormat {
     /**
      * Represents the paragraph or header tag, such as p, h1, h2, h3 etc.

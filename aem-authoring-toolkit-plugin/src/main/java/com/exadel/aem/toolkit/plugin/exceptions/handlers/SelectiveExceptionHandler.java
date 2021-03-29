@@ -21,6 +21,7 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
+import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
  * Implements the "selective" kind of {@link com.exadel.aem.toolkit.api.runtime.ExceptionHandler}, that is, the one
@@ -30,8 +31,6 @@ import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
  */
 class SelectiveExceptionHandler extends PermissiveExceptionHandler {
     private static final String EXCEPTION_TOKEN_ALL = "all";
-    private static final String EXCEPTION_WILDCARD = "*";
-    private static final String INVERSION_SIGN = "!";
     private static final String PACKAGE_POSTFIX = ".*";
 
     private final List<String> exceptionTokens;
@@ -58,8 +57,8 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
     public boolean shouldTerminateOn(Class<? extends Exception> exceptionType) {
         for (String exceptionToken : exceptionTokens) {
             Optional<Boolean> result = isMatch(exceptionType,
-                    StringUtils.strip(exceptionToken, INVERSION_SIGN),
-                    exceptionToken.startsWith(INVERSION_SIGN));
+                    StringUtils.strip(exceptionToken, DialogConstants.NEGATION),
+                    exceptionToken.startsWith(DialogConstants.NEGATION));
             if (result.isPresent()) {
                 return result.get();
             }
@@ -78,7 +77,7 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
      * value represents the verdict
      */
     private Optional<Boolean> isMatch(Class<? extends Exception> exceptionType, String exceptionToken, boolean inverse) {
-        if (StringUtils.equalsAnyIgnoreCase(exceptionToken, EXCEPTION_TOKEN_ALL, EXCEPTION_WILDCARD)) {
+        if (StringUtils.equalsAnyIgnoreCase(exceptionToken, EXCEPTION_TOKEN_ALL, DialogConstants.WILDCARD)) {
             return !inverse ? Optional.of(true) : Optional.empty();
         }
         if (exceptionToken.endsWith(PACKAGE_POSTFIX)) {

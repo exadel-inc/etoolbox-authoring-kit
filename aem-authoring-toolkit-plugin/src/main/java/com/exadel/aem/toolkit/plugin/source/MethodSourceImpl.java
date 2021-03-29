@@ -19,7 +19,7 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
+import com.exadel.aem.toolkit.plugin.util.MemberUtil;
 
 public class MethodSourceImpl extends SourceImpl {
 
@@ -42,7 +42,7 @@ public class MethodSourceImpl extends SourceImpl {
 
     @Override
     Class<?> getPlainReturnType() {
-        return PluginReflectionUtility.getPlainType(method);
+        return MemberUtil.getPlainType(method);
     }
 
     @Override

@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.BinaryOperator;
@@ -37,13 +36,14 @@ import java.util.stream.LongStream;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 import com.exadel.aem.toolkit.plugin.util.StringUtil;
 
 public class TargetImpl extends AdaptationBase<Target> implements Target {
@@ -159,7 +159,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         if (SELF_PATH.equals(effectivePath)) {
             return this;
         }
-        String effectiveName = PluginNamingUtility.getUniqueName(effectivePath, DialogConstants.NN_ITEM, this);
+        String effectiveName = NamingUtil.getUniqueName(effectivePath, DialogConstants.NN_ITEM, this);
         Target child = new TargetImpl(effectiveName, this);
         this.children.add(child);
         return child;
@@ -200,7 +200,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         if (PARENT_PATH.equals(effectivePath) || SELF_PATH.equals(effectivePath)) {
             return this;
         }
-        String nameToFind = PluginNamingUtility.getValidNodeName(effectivePath);
+        String nameToFind = NamingUtil.getValidNodeName(effectivePath);
         Target result = getChildren()
             .stream()
             .filter(child -> nameToFind.equals(child.getName()))
@@ -290,7 +290,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     @Override
     public Target namePrefix(String prefix) {
-        this.prefix = PluginNamingUtility.getValidFieldPrefix(prefix);
+        this.prefix = NamingUtil.getValidFieldPrefix(prefix);
         return this;
     }
 
@@ -309,7 +309,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     @Override
     public Target namePostfix(String postfix) {
-        this.postfix = PluginNamingUtility.getValidFieldPostfix(postfix);
+        this.postfix = NamingUtil.getValidFieldPostfix(postfix);
         return this;
     }
 
@@ -457,11 +457,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
     private void populateAnnotationProperties(Annotation annotation, Predicate<Method> filter) {
-        String completePropertyPrefix = Optional.ofNullable(annotation.annotationType().getAnnotation(PropertyMapping.class))
-            .map(PropertyMapping::prefix)
-            .orElse(StringUtils.EMPTY);
-        String nodePrefix = completePropertyPrefix.contains(DialogConstants.PATH_SEPARATOR)
-            ? StringUtils.substringBeforeLast(completePropertyPrefix, DialogConstants.PATH_SEPARATOR)
+        String propertyPrefix = getPropertyPrefix(annotation);
+        String nodePrefix = propertyPrefix.contains(DialogConstants.PATH_SEPARATOR)
+            ? StringUtils.substringBeforeLast(propertyPrefix, DialogConstants.PATH_SEPARATOR)
             : StringUtils.EMPTY;
 
         Target effectiveTarget = this;
@@ -476,21 +474,19 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         }
     }
 
-    private static void populateAnnotationProperty(Annotation context, Method method, Target target) {
+    private static void populateAnnotationProperty(Annotation annotation, Method method, Target target) {
         boolean ignorePrefix = false;
 
         // Extract property name
         String propertyName = method.getName();
         if (method.isAnnotationPresent(PropertyRendering.class)) {
             PropertyRendering propertyRenderingAnnotation = method.getAnnotation(PropertyRendering.class);
-            propertyName = PluginNamingUtility.getValidFieldName(StringUtils.defaultIfBlank(propertyRenderingAnnotation.name(), propertyName));
+            propertyName = NamingUtil.getValidFieldName(StringUtils.defaultIfBlank(propertyRenderingAnnotation.name(), propertyName));
             ignorePrefix = propertyRenderingAnnotation.ignorePrefix();
         }
 
         // Extract property prefix and prepend it to the name
-        String prefixByPropertyMapping = Optional.ofNullable(context.annotationType().getAnnotation(PropertyMapping.class))
-            .map(PropertyMapping::prefix)
-            .orElse(StringUtils.EMPTY);
+        String prefixByPropertyMapping = getPropertyPrefix(annotation);
         String namePrefix = prefixByPropertyMapping.contains(DialogConstants.PATH_SEPARATOR)
             ? StringUtils.substringAfterLast(prefixByPropertyMapping, DialogConstants.PATH_SEPARATOR)
             : prefixByPropertyMapping;
@@ -513,10 +509,20 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         }
 
         BinaryOperator<String> merger = TargetImpl::mergeStringAttributes;
-        AttributeHelper.forAnnotationProperty(context, method)
+        AttributeHelper.forAnnotationProperty(annotation, method)
             .withName(propertyName)
             .withMerger(merger)
             .setTo(effectiveTarget);
+    }
+
+    private static String getPropertyPrefix(Annotation annotation) {
+        String result = StringUtils.EMPTY;
+        if (annotation.annotationType().isAnnotationPresent(MapProperties.class)) {
+            result = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).prefix();
+        } else if (annotation.annotationType().isAnnotationPresent(PropertyMapping.class)) {
+            result = annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
+        }
+        return result;
     }
 
     private static String mergeStringAttributes(String first, String second) {

@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
@@ -70,7 +70,7 @@ public class DependsOnTabHandler implements BiConsumer<Class<?>, Target> {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(DependsOnHandler.EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
         }
-        if (target.exists(TAB_ITEMS_NODE_PATH + "/" + PluginNamingUtility.getValidNodeName(value.tabTitle()))) {
+        if (target.exists(TAB_ITEMS_NODE_PATH + "/" + NamingUtil.getValidNodeName(value.tabTitle()))) {
             Map<String, Object> dependsOnAttributes = ImmutableMap.of(
                 DialogConstants.PN_DEPENDS_ON, value.query(),
                 DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY);

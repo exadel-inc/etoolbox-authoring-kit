@@ -11,36 +11,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.util;
+package com.exadel.aem.toolkit.plugin.runtime;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.MalformedParameterizedTypeException;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -53,30 +42,21 @@ import org.reflections.util.ConfigurationBuilder;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
-import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
-import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeContext;
-import com.exadel.aem.toolkit.plugin.source.Sources;
-import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
-import com.exadel.aem.toolkit.plugin.util.stream.Filter;
-import com.exadel.aem.toolkit.plugin.util.stream.Replacer;
-import com.exadel.aem.toolkit.plugin.util.stream.Sorter;
 
 /**
  * Contains utility methods for manipulating AEM components Java classes, their fields, and the annotations these fields
  * are marked with
  */
-public class PluginReflectionUtility {
+public class ReflectionRuntime {
 
     private static final String PACKAGE_BASE_WILDCARD = ".*";
 
@@ -90,7 +70,7 @@ public class PluginReflectionUtility {
 
     private Map<String, Validator> validators;
 
-    private PluginReflectionUtility() {
+    private ReflectionRuntime() {
     }
 
     /**
@@ -100,22 +80,22 @@ public class PluginReflectionUtility {
      * @param elements    List of classpath elements to be used in reflection routines
      * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
      *                    If not specified, all available components will be processed
-     * @return {@link PluginReflectionUtility} instance
+     * @return {@link ReflectionRuntime} instance
      */
-    public static PluginReflectionUtility fromCodeScope(List<String> elements, String packageBase) {
+    public static ReflectionRuntime fromCodeScope(List<String> elements, String packageBase) {
         URL[] urls = new URL[] {};
         if (elements != null) {
             urls = elements.stream()
                     .map(File::new)
                     .map(File::toURI)
-                    .map(PluginReflectionUtility::toUrl)
+                    .map(ReflectionRuntime::toUrl)
                     .filter(Objects::nonNull).toArray(URL[]::new);
         }
         Reflections reflections = new org.reflections.Reflections(new ConfigurationBuilder()
-                .addClassLoader(new URLClassLoader(urls, PluginReflectionUtility.class.getClassLoader()))
+                .addClassLoader(new URLClassLoader(urls, ReflectionRuntime.class.getClassLoader()))
                 .setUrls(urls)
                 .setScanners(new TypeAnnotationsScanner(), new SubTypesScanner()));
-        PluginReflectionUtility newInstance = new PluginReflectionUtility();
+        ReflectionRuntime newInstance = new ReflectionRuntime();
         newInstance.reflections = reflections;
         newInstance.packageBase = StringUtils.strip(StringUtils.defaultString(packageBase, StringUtils.EMPTY),
                 PACKAGE_BASE_WILDCARD);
@@ -180,7 +160,7 @@ public class PluginReflectionUtility {
             return validators;
         }
         validators = reflections.getSubTypesOf(Validator.class).stream()
-                .map(PluginReflectionUtility::getInstance)
+                .map(ReflectionRuntime::getInstance)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(validator -> validator.getClass().getName(), Function.identity()));
         return validators;
@@ -218,7 +198,7 @@ public class PluginReflectionUtility {
      */
     private <T> List<T> getHandlers(Class<? extends T> handlerClass) {
         return reflections.getSubTypesOf(handlerClass).stream()
-                .map(PluginReflectionUtility::getHandlerInstance)
+                .map(ReflectionRuntime::getHandlerInstance)
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(handler -> handler.getClass().getName())) // to provide stable handlers sequence between runs
                 .collect(Collectors.toList());
@@ -266,184 +246,13 @@ public class PluginReflectionUtility {
      * @param handler Handler instance
      * @param field The field of handler to populate
      */
+    @SuppressWarnings("squid:S3011") // Access elevation is preserved for compatibility until context injection is retired
     private static void populateRuntimeContext(Object handler, Field field) {
         field.setAccessible(true);
         try {
             field.set(handler, PluginRuntime.context());
         } catch (IllegalAccessException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ExtensionApiException(handler.getClass(), e));
-        }
-    }
-
-    /**
-     * Retrieves collection of annotations associated with a {@code Source} instance
-     * @param source The source to analyze
-     * @return {@code List} of annotation objects
-     */
-    public static List<Class<? extends Annotation>> getSourceAnnotations(Source source) {
-        return Arrays.stream(source.adaptTo(Annotation[].class))
-                .map(Annotation::annotationType)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Retrieves a sequential list of {@link Source} objects representing manageable members that belong
-     * a certain {@code Class} (and its superclasses) and match specific criteria
-     * @param targetClass The class to extract sources from
-     * @return List of {@code Source} objects
-     */
-    public static List<Source> getAllSources(Class<?> targetClass) {
-        return getAllSources(targetClass, Collections.emptyList());
-    }
-
-    /**
-     * Retrieves a sequential list of {@link Source} objects representing manageable members that belong
-     * a certain {@code Class} (and its superclasses) and match specific criteria
-     * @param targetClass The class to extract sources from
-     * @param predicates List of {@code Predicate<Member>} instances to pick up appropriate fields and methods
-     * @return List of {@code Source} objects
-     */
-    public static List<Source> getAllSources(Class<?> targetClass, List<Predicate<Source>> predicates) {
-        List<Source> raw = new ArrayList<>();
-        List<ClassMemberSetting> ignoredClassMembers = new ArrayList<>();
-
-        for (Class<?> classEntry : getClassHierarchy(targetClass)) {
-
-            Stream<Member> classMembersStream = targetClass.isInterface()
-                ? Arrays.stream(classEntry.getMethods())
-                : Stream.concat(Arrays.stream(classEntry.getDeclaredFields()), Arrays.stream(classEntry.getDeclaredMethods()));
-            List<Source> classMemberSources = classMembersStream
-                    .map(member -> Sources.fromMember(member, targetClass))
-                    .filter(Filter.getSourcesPredicate(predicates))
-                    .collect(Collectors.toList());
-            raw.addAll(classMemberSources);
-
-            if (classEntry.getAnnotation(Ignore.class) != null && classEntry.getAnnotation(Ignore.class).members().length > 0) {
-                Arrays.stream(classEntry.getAnnotation(Ignore.class).members())
-                        .map(classMember -> new ClassMemberSetting(classMember).populateDefaults(targetClass, classEntry.getName()))
-                        .forEach(ignoredClassMembers::add);
-            } else if (classEntry.getAnnotation(IgnoreFields.class) != null) {
-                Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
-                    .map(classMember -> new ClassMemberSetting(classMember).populateDefaults(targetClass))
-                    .forEach(ignoredClassMembers::add);
-            }
-        }
-
-        List<Source> reducedWithReplacements = raw
-            .stream()
-            .collect(Replacer.processSourceReplace());
-        List<Source> preSortedByRank = reducedWithReplacements
-            .stream()
-            .filter(Filter.getNotIgnoredSourcesPredicate(ignoredClassMembers))
-            .sorted(Sorter::compareByRank)
-            .collect(Collectors.toList());
-
-        return OrderingUtil.sortMembers(preSortedByRank);
-    }
-
-    /**
-     * Retrieves the sequential list of ancestral of a specific {@code Class}, target class itself included,
-     * starting from the "top" of the inheritance tree. {@code Object} class is not added to the hierarchy
-     * @param targetClass The class to build the tree upon
-     * @return List of {@code Class} objects
-     */
-    public static List<Class<?>> getClassHierarchy(Class<?> targetClass) {
-        return getClassHierarchy(targetClass, true);
-    }
-
-    /**
-     * Retrieves the sequential list of ancestral classes of a specific {@code Class}, started from the "top" of the inheritance
-     * tree. {@code Object} class is not added to the hierarchy
-     * @param targetClass The class to analyze
-     * @param includeTarget Whether to include the {@code targetClass} itself to the hierarchy
-     * @return List of {@code Class} objects
-     */
-    public static List<Class<?>> getClassHierarchy(Class<?> targetClass, boolean includeTarget) {
-        List<Class<?>> result = new LinkedList<>();
-        Class<?> current = targetClass;
-        while (current != null && !current.equals(Object.class)) {
-            if (!current.equals(targetClass) || includeTarget) {
-                result.add(current);
-                result.addAll(Arrays.asList(current.getInterfaces()));
-            }
-            current = current.getSuperclass();
-            result.addAll(Arrays.asList(current.getInterfaces()));
-        }
-        Collections.reverse(result);
-        return result;
-    }
-
-    /**
-     * Retrieves values of public constant fields originating from the given constant class as a key-value map
-     * @param targetClass {@code Class<?>} object representing the constants class
-     * @return {@code Map<String, Object>} containing the key-value pairs. An empty map can be returned if no valid
-     * constants found
-     */
-    public static Map<String, Object> getConstantValues(Class<?> targetClass) {
-        Map<String, Object> result = new HashMap<>();
-        for (Field field : targetClass.getDeclaredFields()) {
-            if (!Modifier.isStatic(field.getModifiers())
-                || !Modifier.isFinal(field.getModifiers())
-                || !Modifier.isPublic(field.getModifiers())) {
-                continue;
-            }
-            Object fieldValue;
-            try {
-                fieldValue = field.get(targetClass);
-            } catch (IllegalAccessException e) {
-                fieldValue = null;
-            }
-            if (fieldValue != null) {
-                result.put(field.getName(), fieldValue);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Retrieves the type represented by the provided Java class {@code Member}. If the method is designed to provide
-     * a primitive value or a singular object, its "direct" type is returned. But if the method represents a collection,
-     * type of array's element is returned
-     *
-     * @param member The member to analyze, a {@link Field} or {@link Method} reference expected
-     * @return Appropriate {@code Class} instance or null if an invalid {@code Member} provided
-     */
-    public static Class<?> getPlainType(Member member) {
-        if (!(member instanceof Field) && !(member instanceof Method)) {
-            return null;
-        }
-        Class<?> result = member instanceof Field
-            ? ((Field) member).getType()
-            : ((Method) member).getReturnType();
-        if (result.isArray()) {
-            result = result.getComponentType();
-        }
-        if (ClassUtils.isAssignable(result, Collection.class)) {
-            return getGenericType(member, result);
-        }
-        return result;
-    }
-
-    /**
-     * Retrieves the underlying parameter type of the provided Java class {@code Member}. If the method is an array
-     * or a collection, the item (parameter) type is returned; otherwise, the mere method type is returned
-     *
-     * @param member The member to analyze, a {@link Field} or {@link Method} reference expected
-     * @param defaultValue The value to return if parameter type extraction fails
-     * @return Extracted {@code Class} instance, or the {@code defaultValue}
-     */
-    private static Class<?> getGenericType(Member member, Class<?> defaultValue) {
-        try {
-            ParameterizedType fieldGenericType = member instanceof Field
-                ? (ParameterizedType) ((Field) member).getGenericType()
-                : (ParameterizedType) ((Method) member).getGenericReturnType();
-            Type[] typeArguments = fieldGenericType.getActualTypeArguments();
-            if (ArrayUtils.isEmpty(typeArguments)) {
-                return defaultValue;
-            }
-            return (Class<?>) typeArguments[0];
-        } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
-            return defaultValue;
         }
     }
 

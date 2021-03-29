@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.util.writer;
 
 import javax.xml.transform.Transformer;
@@ -22,8 +21,8 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.editconfig.EditConfigHandlingHelper;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing author UI aspects for child components that do not define
@@ -59,17 +58,17 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateTarget(Class, Target)} abstract method to write down contents
-     * of {@code _cq_ChildEditConfig.xml} file
+     * Overrides {@link PackageEntryWriter#writeProperties(Class, Target)} method to write down contents related to the
+     * component's {@code cq:childEditConfig} node, or the {@code _cq_ChildEditConfig.xml} file
      * @param componentClass The {@code Class} being processed
-     * @param root The root element of DOM {@link Document} to feed data to
+     * @param target The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateTarget(Class<?> componentClass, Target root) {
+    void writeProperties(Class<?> componentClass, Target target) {
         ChildEditConfig childEditConfig = componentClass.getDeclaredAnnotation(ChildEditConfig.class);
-        root
+        target
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
-            .attributes(childEditConfig, PluginAnnotationUtility.getPropertyMappingFilter(childEditConfig));
-        EditConfigHandlingHelper.append(childEditConfig, root);
+            .attributes(childEditConfig, AnnotationUtil.getPropertyMappingFilter(childEditConfig));
+        EditConfigHandlingHelper.append(childEditConfig, target);
     }
 }

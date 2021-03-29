@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.target.Targets;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 
 class TabFacade extends SectionFacade {
     private static final Predicate<Method> MAIN_NODE_MEMBERS = method -> StringUtils.equalsAny(
@@ -64,7 +64,7 @@ class TabFacade extends SectionFacade {
         if (tab == null) {
             return container;
         }
-        String nodeName = PluginNamingUtility.getUniqueName(getTitle(), DialogConstants.NN_TAB, container);
+        String nodeName = NamingUtil.getUniqueName(getTitle(), DialogConstants.NN_TAB, container);
         Target itemsContainer = container.createTarget(nodeName);
         itemsContainer.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
             .attributes(tab, MAIN_NODE_MEMBERS);

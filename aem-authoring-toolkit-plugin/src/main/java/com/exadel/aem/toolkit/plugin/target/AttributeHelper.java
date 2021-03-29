@@ -32,9 +32,9 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
+import com.exadel.aem.toolkit.plugin.runtime.XmlRuntime;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.util.MemberUtil;
 import com.exadel.aem.toolkit.plugin.util.StringUtil;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
@@ -64,7 +64,7 @@ public class AttributeHelper<T, V> {
     private StringTransformation transformation;
 
     private Validation validationChecker = Validation.defaultChecker();
-    private BinaryOperator<String> valueMerger = PluginXmlUtility.DEFAULT_ATTRIBUTE_MERGER;
+    private BinaryOperator<String> valueMerger = XmlRuntime.DEFAULT_ATTRIBUTE_MERGER;
 
     /**
      * Creates a new {@code AttributeSettingHelper} instance parametrized with holder type and value type
@@ -111,7 +111,7 @@ public class AttributeHelper<T, V> {
         if (!valueTypeIsSupported) {
             return;
         }
-        Object invocationResult = PluginAnnotationUtility.getProperty(annotation, method);
+        Object invocationResult = AnnotationUtil.getProperty(annotation, method);
         if (invocationResult == null) {
             return;
         }
@@ -348,7 +348,7 @@ public class AttributeHelper<T, V> {
                     attributeSetter.typeHintValueType = propertyRendering.valueType();
                 }
             }
-            if (PluginAnnotationUtility.propertyIsNotDefault(annotation, property)) {
+            if (AnnotationUtil.propertyIsNotDefault(annotation, property)) {
                 attributeSetter.validationChecker = Validation.forMethod(property);
             }
             return (AttributeHelper<T, Object>) attributeSetter;
@@ -385,7 +385,7 @@ public class AttributeHelper<T, V> {
          * @return Object type
          */
         private static Class<?> getMethodWrappedType(Method method) {
-            Class<?> effectiveType = PluginReflectionUtility.getPlainType(method);
+            Class<?> effectiveType = MemberUtil.getPlainType(method);
             if (effectiveType.isEnum()) {
                 return String.class;
             }

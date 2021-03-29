@@ -23,8 +23,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite {@code Select} widget functionality
@@ -50,7 +50,7 @@ class SelectHandler extends OptionProviderHandler implements BiConsumer<Source, 
                 Target item = existing.isEmpty()
                     ? items.createTarget(DialogConstants.DOUBLE_QUOTE + option.value() + DialogConstants.DOUBLE_QUOTE)
                     : items.getTarget(DialogConstants.DOUBLE_QUOTE + option.value() + DialogConstants.DOUBLE_QUOTE);
-                item.attributes(option, PluginAnnotationUtility.getPropertyMappingFilter(option));
+                item.attributes(option, AnnotationUtil.getPropertyMappingFilter(option));
             }
         }
         appendDataSource(select.datasource(), target);

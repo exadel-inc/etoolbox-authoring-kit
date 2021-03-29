@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.util.writer;
 
 import java.lang.annotation.Annotation;
@@ -24,8 +23,8 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.lists.ListItemHandler;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing component-wide attributes (writes data to the
@@ -61,13 +60,13 @@ class ContentXmlWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateTarget(Class, Target)} abstract method to write down contents
-     * of {@code .content.xml} file
+     * Overrides {@link PackageEntryWriter#writeProperties(Class, Target)} method to write down contents related to the
+     * component's root node, or {@code .content.xml} file
      * @param componentClass The {@code Class} being processed
      * @param target         The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateTarget(Class<?> componentClass, Target target) {
+    void writeProperties(Class<?> componentClass, Target target) {
         Annotation annotation = componentClass.getDeclaredAnnotation(AemComponent.class);
         if (annotation == null) {
             annotation = componentClass.getDeclaredAnnotation(Dialog.class);
@@ -76,7 +75,7 @@ class ContentXmlWriter extends PackageEntryWriter {
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT)
             .attributes(
                 annotation,
-                PluginAnnotationUtility
+                AnnotationUtil
                     .getPropertyMappingFilter(annotation)
                     .and(member -> fitsInScope(member, getScope())));
         new ListItemHandler().accept(componentClass, target);

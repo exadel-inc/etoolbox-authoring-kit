@@ -18,9 +18,10 @@ package com.exadel.aem.toolkit.plugin.util;
  * @see <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/user-guide.html?topic=/experience-manager/6-5/sites/developing/morehelp/components.ug.js">Adobe documentation</a>
  */
 public class DialogConstants {
-    public static final String WILDCARD = "*";
-    public static final String DOUBLE_QUOTE = "\"";
     public static final String AT = "@";
+    public static final String DOUBLE_QUOTE = "\"";
+    public static final String NEGATION = "!";
+    public static final String WILDCARD = "*";
 
     public static final String PATH_SEPARATOR = "/";
     public static final String EXTENSION_SEPARATOR = ".";

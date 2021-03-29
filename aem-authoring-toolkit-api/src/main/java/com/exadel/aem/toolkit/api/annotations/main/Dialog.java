@@ -23,8 +23,7 @@ import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.NameConstants;
 
 import com.exadel.aem.toolkit.api.annotations.container.Tab;
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
@@ -36,7 +35,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@PropertyMapping
+@MapProperties({"!name", "!layout"})
 @SuppressWarnings("squid:S1133")
 public @interface Dialog {
 
@@ -184,7 +183,6 @@ public @interface Dialog {
      * @return String value
      * @deprecated Use {@link AemComponent#path()} to set this value
      */
-    @IgnorePropertyMapping
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     @Deprecated
     String name() default "";
@@ -196,7 +194,6 @@ public @interface Dialog {
      * @deprecated This property is no longer needed. The proper layout is set based on the container annotations,
      * such as {@code Tabs} or {@code Accordion} added directly to the dialog class or one of its superclasses
      */
-    @IgnorePropertyMapping
     @Deprecated
     DialogLayout layout() default DialogLayout.FIXED_COLUMNS;
 

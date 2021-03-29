@@ -18,8 +18,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
@@ -33,7 +32,7 @@ import com.exadel.aem.toolkit.api.markers._Default;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.FIELDSET)
-@PropertyMapping
+@MapProperties({"!namePrefix", "!namePostfix"})
 public @interface FieldSet {
 
     /**
@@ -48,14 +47,12 @@ public @interface FieldSet {
      * Used to define string prefix for names of all fields in the FieldSet
      * @return String value
      */
-    @IgnorePropertyMapping
     String namePrefix() default "";
 
     /**
      * Used to define string postfix for names of all fields in the FieldSet
      * @return String value
      */
-    @IgnorePropertyMapping
     String namePostfix() default "";
 
     /**

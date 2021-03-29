@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -19,10 +19,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks that property/properties of a specific annotation not to be automapped to XML attributes
- * If set to entire annotation, this setting is eligible to all its properties unless explicitly marked with {@link PropertyMapping}
+ * Marks that property/properties of a specific annotation not to be automatically mapped to Granite attributes
+ * If set to entire annotation, this setting is eligible to all its properties unless explicitly marked with {@link MapProperties}
+ * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link MapProperties} instead
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated
+@SuppressWarnings("squid:S1133")
 public @interface IgnorePropertyMapping {
 }

@@ -19,6 +19,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomAnnotationForOrderingTest;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotationAuto;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomNonMappingWidgetAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
@@ -30,6 +31,10 @@ import com.exadel.aem.toolkit.test.custom.annotation.DialogAnnotationForOrdering
         title = "test-component-dialog"
 )
 @CustomDialogAnnotation
+@CustomDialogAnnotationAuto(
+    field1 = "value1",
+    field2 = 2
+)
 @DialogAnnotationForOrderingTest
 @SuppressWarnings("unused")
 public class CustomAnnotations {

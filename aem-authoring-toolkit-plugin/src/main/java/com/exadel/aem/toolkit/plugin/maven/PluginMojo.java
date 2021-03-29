@@ -81,7 +81,7 @@ public class PluginMojo extends AbstractMojo {
 
         try (PackageWriter packageWriter = PackageWriter.forMavenProject(project, componentsPathBase)) {
             packageWriter.writeInfo(PluginInfo.getInstance());
-            PluginRuntime.context().getReflectionUtility().getComponentClasses().forEach(packageWriter::write);
+            PluginRuntime.context().getReflection().getComponentClasses().forEach(packageWriter::write);
         } catch (PluginException e) {
             throw new MojoExecutionException(String.format(PLUGIN_EXECUTION_EXCEPTION_MESSAGE,
                     e.getCause() != null ? e.getCause().getClass().getSimpleName() : e.getClass().getSimpleName(),

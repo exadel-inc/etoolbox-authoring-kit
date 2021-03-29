@@ -28,21 +28,22 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.source.Sources;
 
 /**
  * Contains utility methods to perform {@code annotation - to - plain Java object} and {@code annotation - to - annotation}
  * value conversions for the sake of proper dialog markup rendering
  */
-public class PluginAnnotationUtility {
+public class AnnotationUtil {
     private static final String INVOCATION_EXCEPTION_MESSAGE_TEMPLATE = "Could not invoke method '%s' on %s";
 
     private static final Predicate<Method> MAP_ALL_PROPERTIES = member -> true;
@@ -50,7 +51,7 @@ public class PluginAnnotationUtility {
     /**
      * Default (hiding) constructor
      */
-    private PluginAnnotationUtility() {
+    private AnnotationUtil() {
     }
 
     /**
@@ -63,7 +64,7 @@ public class PluginAnnotationUtility {
     public static Object getProperty(Annotation annotation, Method method) {
         return getProperty(annotation, method, null);
     }
-    
+
     /**
      * Retrieves property value of the specified annotation. This method wraps up exception handling, therefore, can be
      * used within functional calls, etc
@@ -196,26 +197,42 @@ public class PluginAnnotationUtility {
     }
 
     /**
-     * Gets a filter routine typically passed to {@link com.exadel.aem.toolkit.api.handlers.Target#attributes(Annotation, Predicate)}.
-     * If {@link PropertyMapping} is present in the annotation given, the filter passes combs through the methods
-     * as regulated by the property mapping; otherwise a neutral (pass-all) filtering is imposed
+     * Gets a filter routine to select properties of the given annotation eligible for automatic mapping.
+     * If one of the property-mapping annotations is present in the annotation given, the filter combs through
+     * the methods and picks those ones satisfying the mapping; otherwise a neutral (pass-all) filter is imposed
      * @param annotation {@code Annotation} object to use methods from
      * @return {@code Predicate<Method>} instance
      */
+    @SuppressWarnings("deprecation") // PropertyMapping and IgnorePropertyMapping are retained for compatibility
+                                     // until retired in a version after 2.0.1
     public static Predicate<Method> getPropertyMappingFilter(Annotation annotation) {
-        PropertyMapping propMapping = Optional.ofNullable(annotation)
+        Stream<String> mappingsByMapProperties = Optional.ofNullable(annotation)
+            .map(Annotation::annotationType)
+            .map(annotationType -> annotationType.getAnnotation(MapProperties.class))
+            .map(MapProperties::value)
+            .map(Arrays::stream)
+            .orElse(Stream.empty());
+
+        Stream<String> mappingsByPropertyMapping = Optional.ofNullable(annotation)
             .map(Annotation::annotationType)
             .map(annotationType -> annotationType.getAnnotation(PropertyMapping.class))
-            .orElse(null);
+            .map(PropertyMapping::mappings)
+            .map(Arrays::stream)
+            .orElse(Stream.empty());
 
-        if (propMapping == null) {
+        List<String> effectiveMappings = Stream.concat(mappingsByMapProperties, mappingsByPropertyMapping)
+            .filter(StringUtils::isNotBlank)
+            .collect(Collectors.toList());
+
+        if (effectiveMappings.isEmpty()) {
             return MAP_ALL_PROPERTIES;
         }
         return method -> {
-            boolean isAllowedByPropertyMapping = ArrayUtils.isEmpty(propMapping.mappings())
-                || ArrayUtils.contains(propMapping.mappings(), method.getName());
-            boolean isAllowedByIgnorePropertyMapping = Sources.fromMember(method).adaptTo(IgnorePropertyMapping.class) == null;
-            return isAllowedByPropertyMapping && isAllowedByIgnorePropertyMapping;
+            if (effectiveMappings.stream().anyMatch(mapping -> !mapping.startsWith(DialogConstants.NEGATION))) {
+                return effectiveMappings.contains(method.getName())
+                    && !method.isAnnotationPresent(IgnorePropertyMapping.class);
+            }
+            return effectiveMappings.stream().noneMatch(mapping -> mapping.equals(DialogConstants.NEGATION + method.getName()));
         };
     }
 
@@ -269,7 +286,7 @@ public class PluginAnnotationUtility {
 
     /**
      * Implements {@link InvocationHandler} mechanism for creating object extension
-     * per the {@link PluginAnnotationUtility#genericModify(Object, Class, Map)} signature
+     * per the {@link AnnotationUtil#genericModify(Object, Class, Map)} signature
      * @param <T> The {@code Class} of the source object
      * @param <R> The return type of the extension methods defined for this instance
      */

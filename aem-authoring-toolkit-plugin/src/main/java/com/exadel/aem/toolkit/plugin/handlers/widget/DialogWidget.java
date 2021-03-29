@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.plugin.handlers.widget.common.MultipleAnnotationHa
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.PropertyAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.PropertyMappingHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.ResourceTypeHandler;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 
 /**
  * Represents an abstraction of a built-in or a custom dialog widget that has a widget annotation attached.
@@ -67,7 +67,7 @@ public interface DialogWidget {
      * @return Populated {@link Target} by the current {@link Source}
      */
     default Target appendTo(Source source, Target target, String name) {
-        Target widgetChildElement = target.getOrCreateTarget(PluginNamingUtility.stripGetterPrefix(name));
+        Target widgetChildElement = target.getOrCreateTarget(NamingUtil.stripGetterPrefix(name));
         getHandlerChain().accept(source, widgetChildElement);
         return widgetChildElement;
     }

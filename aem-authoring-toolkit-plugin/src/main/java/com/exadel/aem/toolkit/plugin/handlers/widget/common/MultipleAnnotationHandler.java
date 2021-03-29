@@ -36,8 +36,8 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.target.Targets;
+import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
 
 /**
  * Handler for creating ad-hoc {@code Multifield}s for {@link Multiple}-marked dialog fields
@@ -82,7 +82,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         // (custom) handlers and run such one more time
         List<DialogWidgetHandler> multifieldHandlers = PluginRuntime
             .context()
-            .getReflectionUtility()
+            .getReflection()
             .getCustomDialogWidgetHandlers(Collections.singletonList(MultiField.class));
         new CustomHandlingHandler(multifieldHandlers).accept(source, target);
     }
@@ -114,7 +114,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
             return false;
         }
         // Assuming this is a custom multifield, i.e. the target does not match any of the known resource types
-        return PluginReflectionUtility.getConstantValues(ResourceTypes.class).values()
+        return ClassUtil.getConstantValues(ResourceTypes.class).values()
             .stream()
             .map(Object::toString)
             .noneMatch(restype -> restype.equals(target.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE)));
@@ -191,7 +191,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * Generates set of node transfer policies to properly distribute XML element requisites between the wrapper level
      * and the nested element level while converting a singular element to a multifield
      * @param source {@code Source} instance referring to the class member being processed
-     * @return Map containing attribute/child names, either plain or wildcarded, and the action appropriate, whether
+     * @return Map containing attribute/child names, either plain or wild-carded, and the action appropriate, whether
      * to copy element, move, or leave intact. Wildcard symbol ({@code *}) is to specify common policy for multiple elements
      */
     private static Map<String, PropertyTransferPolicy> getTransferPolicies(Source source) {

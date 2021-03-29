@@ -22,9 +22,9 @@ import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginAnnotationUtility;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 
 class LegacyTabFacade extends SectionFacade {
 
@@ -60,13 +60,13 @@ class LegacyTabFacade extends SectionFacade {
         if (tab == null) {
             return container;
         }
-        String nodeName = PluginNamingUtility.getUniqueName(getTitle(), DialogConstants.NN_TAB, container);
+        String nodeName = NamingUtil.getUniqueName(getTitle(), DialogConstants.NN_TAB, container);
         Target itemsContainer = container.createTarget(nodeName);
         itemsContainer
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
             .attribute(DialogConstants.PN_JCR_TITLE, getTitle());
         Attribute attributeAnnotation = tab.attribute();
-        itemsContainer.attributes(attributeAnnotation, PluginAnnotationUtility.getPropertyMappingFilter(attributeAnnotation));
+        itemsContainer.attributes(attributeAnnotation, AnnotationUtil.getPropertyMappingFilter(attributeAnnotation));
         if (attributeAnnotation.data().length > 0) {
             Target graniteDataElement = container.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA);
             Arrays.stream(attributeAnnotation.data())

@@ -21,15 +21,14 @@ import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginReflectionUtility;
-import com.exadel.aem.toolkit.plugin.util.stream.Filter;
 
 public abstract class WidgetContainerHandler implements BiConsumer<Source, Target> {
 
     /**
      * Retrieves the list of sources that match the current container.
-     * This is performed by calling {@link PluginReflectionUtility#getAllSources(Class)}
+     * This is performed by calling {@link ClassUtil#getSources(Class)}
      * with additional predicates that allow to filter out sources that are set to be ignored at either
      * the "member itself" level or at "declaring class" level. Afterwards the non-widget fields are also filtered out
      * @param container         Current {@link Source} instance
@@ -38,6 +37,7 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
      *                          False to use same {@link Source#getValueType()} as for the rest of method logic
      * @return {@code List<Source>} containing placeable members, or an empty collection
      */
+    @SuppressWarnings("deprecation") // IgnoreFields is retained for compatibility until retired in a post-2.0.1 version
     protected List<Source> getEntriesForContainer(Source container, boolean useReportingClass) {
         Class<?> valueTypeClass = container.getValueType();
         Class<?> reportingClass = useReportingClass ? container.getReportingClass() : valueTypeClass;
@@ -66,7 +66,7 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
         List<ClassMemberSetting> allIgnoredFields = Stream
             .concat(classLevelIgnoredMembers, fieldLevelIgnoredMembers)
             .filter(memberSettings ->
-                PluginReflectionUtility. getClassHierarchy(valueTypeClass)
+                ClassUtil.getInheritanceTree(valueTypeClass)
                     .stream()
                     .anyMatch(superclass -> superclass.equals(memberSettings.source()))
             )
@@ -75,9 +75,9 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
         // Create filters to sort out ignored fields (apart from those defined for the container class)
         // and to banish non-widget fields
         // Return the filtered field list
-        Predicate<Source> nonIgnoredMembers = Filter.getNotIgnoredSourcesPredicate(allIgnoredFields);
+        Predicate<Source> nonIgnoredMembers = source -> allIgnoredFields.stream().noneMatch(ignored -> ignored.matches(source));
         Predicate<Source> dialogFields = DialogWidgets::isPresent;
-        return PluginReflectionUtility.getAllSources(valueTypeClass, Arrays.asList(nonIgnoredMembers, dialogFields));
+        return ClassUtil.getSources(valueTypeClass, Arrays.asList(nonIgnoredMembers, dialogFields));
     }
 
     /**
@@ -141,9 +141,7 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
                 .forEach(tab -> result.add(new TabFacade(tab, false)));
         } else if (annotationClass.equals(Accordion.class)) {
             Arrays.stream(source.adaptTo(Accordion.class).value())
-                .forEach(accordionPanel -> {
-                    result.add(new AccordionPanelFacade(accordionPanel, false));
-                });
+                .forEach(accordionPanel -> result.add(new AccordionPanelFacade(accordionPanel, false)));
         }
         return result;
     }

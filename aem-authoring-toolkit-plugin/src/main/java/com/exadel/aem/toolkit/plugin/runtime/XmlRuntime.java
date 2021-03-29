@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.util;
+package com.exadel.aem.toolkit.plugin.runtime;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -28,7 +28,6 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -42,7 +41,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
@@ -51,12 +50,16 @@ import com.exadel.aem.toolkit.api.runtime.XmlUtility;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.target.AttributeHelper;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
+import com.exadel.aem.toolkit.plugin.util.StringUtil;
 import com.exadel.aem.toolkit.plugin.util.validation.Validation;
 
 /**
  * Utility methods to process, verify and store AEM TouchUI dialog-related data to XML markup
  */
-public class PluginXmlUtility implements XmlUtility {
+public class XmlRuntime implements XmlUtility {
 
     /**
      * Default routine to manage merging two values of an XML attribute by suppressing existing value with a non-empty new one
@@ -68,13 +71,13 @@ public class PluginXmlUtility implements XmlUtility {
        Instance members and constructors
        --------------------------------- */
 
-    private Document document;
+    private final Document document;
 
     /**
      * Default constructor
-     * @param document {@code Document} instance ti be used as a node factory within this instance
+     * @param document {@code Document} instance to be used as a node factory within this instance
      */
-    PluginXmlUtility(Document document) {
+    public XmlRuntime(Document document) {
         this.document = document;
     }
 
@@ -86,24 +89,6 @@ public class PluginXmlUtility implements XmlUtility {
         return document;
     }
 
-    /**
-     * Replaces and retrieves the current {@code Document}. If the document has been populated with data
-     * it is discarded in favor of another document instance; otherwise returned as is
-     * @return {@code Document} instance
-     */
-    public Document resetDocument() {
-        if (getDocument().getDocumentElement() == null) {
-            return getDocument();
-        }
-        Document newDocument;
-        try {
-            newDocument = XmlFactory.newDocument();
-            this.document = newDocument;
-        } catch (ParserConfigurationException e) {
-            PluginRuntime.context().getExceptionHandler().handle(e);
-        }
-        return getDocument();
-    }
 
     /* ----------------------------
        XmlUtility interface members
@@ -184,22 +169,22 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public String getValidName(String name) {
-        return PluginNamingUtility.getValidNodeName(name, DialogConstants.NN_ITEM);
+        return NamingUtil.getValidNodeName(name, DialogConstants.NN_ITEM);
     }
 
     @Override
     public String getValidSimpleName(String name) {
-        return PluginNamingUtility.getValidNodeName(name, DialogConstants.NN_ITEM);
+        return NamingUtil.getValidNodeName(name, DialogConstants.NN_ITEM);
     }
 
     @Override
     public String getValidFieldName(String name) {
-        return PluginNamingUtility.getValidNodeName(name, DialogConstants.NN_FIELD);
+        return NamingUtil.getValidNodeName(name, DialogConstants.NN_FIELD);
     }
 
     @Override
     public String getUniqueName(String name, String defaultValue, Element context) {
-        return PluginNamingUtility.getUniqueName(name, defaultValue, context);
+        return NamingUtil.getUniqueName(name, defaultValue, context);
     }
 
 
@@ -241,7 +226,7 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public void setAttribute(Element element, String name, List<String> values) {
-        setAttribute(element, name, values, PluginXmlUtility::mergeStringAttributes);
+        setAttribute(element, name, values, XmlRuntime::mergeStringAttributes);
     }
 
     @Override
@@ -287,7 +272,7 @@ public class PluginXmlUtility implements XmlUtility {
                                      BinaryOperator<String> attributeMerger) {
         try {
             Method sourceMethod = source.annotationType().getDeclaredMethod(name);
-            if (!PluginAnnotationUtility.propertyIsNotDefault(source, sourceMethod)) {
+            if (!AnnotationUtil.propertyIsNotDefault(source, sourceMethod)) {
                 return;
             }
             PropertyRendering propertyRendering = sourceMethod.getAnnotation(PropertyRendering.class);
@@ -327,11 +312,13 @@ public class PluginXmlUtility implements XmlUtility {
 
     @Override
     public void mapProperties(Element element, Annotation annotation, List<String> skipped) {
-        PropertyMapping propMapping = annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class);
-        if (propMapping == null) {
+        if (!annotation.annotationType().isAnnotationPresent(MapProperties.class)
+            && !annotation.annotationType().isAnnotationPresent(PropertyMapping.class)) {
             return;
         }
-        String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
+        String prefix = annotation.annotationType().isAnnotationPresent(MapProperties.class)
+            ? annotation.annotationType().getDeclaredAnnotation(MapProperties.class).prefix()
+            : annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
         String nodePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
                 ? StringUtils.substringBeforeLast(prefix, DialogConstants.PATH_SEPARATOR)
                 : StringUtils.EMPTY;
@@ -339,8 +326,7 @@ public class PluginXmlUtility implements XmlUtility {
         Element effectiveElement = getRequiredElement(element, nodePrefix);
 
         Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .filter(m -> ArrayUtils.isEmpty(propMapping.mappings()) || ArrayUtils.contains(propMapping.mappings(), m.getName()))
-                .filter(m -> !m.isAnnotationPresent(IgnorePropertyMapping.class))
+                .filter(AnnotationUtil.getPropertyMappingFilter(annotation))
                 .filter(m -> !skipped.contains(m.getName()))
                 .forEach(m -> populateProperty(m, effectiveElement, annotation));
     }
@@ -359,14 +345,16 @@ public class PluginXmlUtility implements XmlUtility {
             name = StringUtils.defaultIfBlank(propertyRendering.name(), name);
             ignorePrefix = propertyRendering.ignorePrefix();
         }
-        String prefix = annotation.annotationType().getAnnotation(PropertyMapping.class).prefix();
+        String prefix = annotation.annotationType().isAnnotationPresent(MapProperties.class)
+            ? annotation.annotationType().getDeclaredAnnotation(MapProperties.class).prefix()
+            : annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
         String namePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
                 ? StringUtils.substringAfterLast(prefix, DialogConstants.PATH_SEPARATOR)
                 : prefix;
         if (!ignorePrefix && StringUtils.isNotBlank(prefix)) {
             name = namePrefix + name;
         }
-        BinaryOperator<String> merger = PluginXmlUtility::mergeStringAttributes;
+        BinaryOperator<String> merger = XmlRuntime::mergeStringAttributes;
         AttributeHelper
             .forXmlTarget()
             .forAnnotationProperty(annotation, method)

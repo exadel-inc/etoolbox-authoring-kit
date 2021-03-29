@@ -11,11 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets.common;
+package com.exadel.aem.toolkit.test.custom.annotation;
 
-/**
- * Contains possible values describing orientation of a component
- */
-public enum Orientation {
-    HORIZONTAL, VERTICAL
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@MapProperties(value = "!field3", scope = Scope.CQ_DIALOG)
+public @interface CustomChildEditConfigAnnotationAuto {
+    String field1();
 }

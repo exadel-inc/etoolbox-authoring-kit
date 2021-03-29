@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.target.Targets;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginNamingUtility;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 
 class AccordionPanelFacade extends SectionFacade {
     private final AccordionPanel panel;
@@ -56,7 +56,7 @@ class AccordionPanelFacade extends SectionFacade {
         if (panel == null) {
             return container;
         }
-        String nodeName = PluginNamingUtility.getUniqueName(getTitle(), DialogConstants.NN_TAB, container);
+        String nodeName = NamingUtil.getUniqueName(getTitle(), DialogConstants.NN_TAB, container);
         Target itemsContainer = container.createTarget(nodeName);
         itemsContainer.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
             .attribute(DialogConstants.PN_JCR_TITLE, getTitle());

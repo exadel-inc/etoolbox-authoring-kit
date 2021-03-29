@@ -11,22 +11,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.util.ordering;
 
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
+import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
+import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 public class OrderingUtil {
+
+    private OrderingUtil() {
+    }
+
+
+    /* ---------------
+       Sorting methods
+       --------------- */
+
 
     public static <T> List<T> sortHandlers(List<T> handlers) {
         if (handlers.size() < 2) {
@@ -86,7 +99,6 @@ public class OrderingUtil {
             .collect(Collectors.toList());
     }
 
-    // Gets the Orderable object from list to store valid links in before/after fields
     private static <T> Orderable<T> find(String find, List<Orderable<T>> list) {
         for (Orderable<T> orderable : list) {
             if (orderable.getName().equals(find)) {
@@ -108,10 +120,57 @@ public class OrderingUtil {
     }
 
     private static String createName(Class<?> cls, String name) {
-        return cls.getName() + "." + name;
+        return cls.getName() + DialogConstants.EXTENSION_SEPARATOR + name;
     }
 
-    private OrderingUtil() {
 
+    /* -----------------
+       Comparing methods
+       ----------------- */
+
+    /**
+     * Facilitates ordering {@code Member} instances according to their optional {@link DialogField} annotations'
+     * ranking values and then their class affiliation
+     * @param f1 First comparison member
+     * @param f2 Second comparison member
+     * @return Integer value per {@code Comparator#compare(Object, Object)} convention
+     */
+    public static int compareByRank(Source f1, Source f2)  {
+        int rank1 = f1.adaptTo(MemberRankingSetting.class).getRanking();
+        int rank2 = f2.adaptTo(MemberRankingSetting.class).getRanking();
+        if (rank1 != rank2) {
+            return Integer.compare(rank1, rank2);
+        }
+        if (f1.getDeclaringClass() != f2.getDeclaringClass()) {
+            if (ClassUtils.isAssignable(f1.getDeclaringClass(), f2.getDeclaringClass())) {
+                return 1;
+            }
+            if (ClassUtils.isAssignable(f2.getDeclaringClass(), f1.getDeclaringClass())) {
+                return -1;
+            }
+        }
+        return 0;
     }
+
+    /**
+     * Facilitates ordering {@code Source} instances according to their class affiliation (if both fields' classes
+     * are of the same inheritance tree, a field from the senior class goes first)
+     * @param f1 First comparison member
+     * @param f2 Second comparison member
+     * @return Integer value per {@code Comparator#compare(Object, Object)} convention
+     */
+    public static int compareByOrigin(Source f1, Source f2) {
+        Class<?> f1Class = f1.adaptTo(Member.class).getDeclaringClass();
+        Class<?> f2Class = f2.adaptTo(Member.class).getDeclaringClass();
+        if (f1Class != f2Class) {
+            if (ClassUtils.isAssignable(f1Class, f2Class)) {
+                return 1;
+            }
+            if (ClassUtils.isAssignable(f2Class, f1Class)) {
+                return -1;
+            }
+        }
+        return 0;
+    }
+
 }

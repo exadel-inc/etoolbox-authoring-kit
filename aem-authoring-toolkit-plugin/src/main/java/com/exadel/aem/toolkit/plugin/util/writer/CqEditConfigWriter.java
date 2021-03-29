@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.util.writer;
 
 import javax.xml.transform.Transformer;
@@ -58,15 +57,15 @@ class CqEditConfigWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#populateTarget(Class, Target)} abstract method to write down contents
-     * of {@code _cq_editConfig.xml} file
+     * Overrides {@link PackageEntryWriter#writeProperties(Class, Target)} method to write down contents related to the
+     * component's {@code cq:editConfig} node, or the {@code _cq_editConfig.xml} file
      * @param componentClass The {@code Class} being processed
-     * @param root The root element of DOM {@link Document} to feed data to
+     * @param target The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void populateTarget(Class<?> componentClass, Target root) {
+    void writeProperties(Class<?> componentClass, Target target) {
         EditConfig editConfig = componentClass.getDeclaredAnnotation(EditConfig.class);
-        root.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
-        EditConfigHandlingHelper.append(editConfig, root);
+        target.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
+        EditConfigHandlingHelper.append(editConfig, target);
     }
 }

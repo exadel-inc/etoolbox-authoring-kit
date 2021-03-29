@@ -11,11 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.util.writer;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,12 +24,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -37,21 +37,23 @@ import org.w3c.dom.Element;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperties;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
 import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.runtime.XmlRuntime;
 import com.exadel.aem.toolkit.plugin.source.Sources;
 import com.exadel.aem.toolkit.plugin.target.Targets;
+import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.PluginXmlUtility;
-
 
 /**
  * Base class for routines that render XML files inside a component folder within an AEM package
  */
 abstract class PackageEntryWriter {
+    private static final String API_PACKAGE_NAME = "com.exadel.aem.toolkit.api";
 
 
     /* -----------------------------
@@ -69,9 +71,9 @@ abstract class PackageEntryWriter {
     }
 
 
-    /* ----------------
-       Instance members
-       ---------------- */
+    /* -----------------------
+       Common instance members
+       ----------------------- */
 
     /**
      * Gets {@link Scope} associated with this {@code PackageEntryWriter} instance
@@ -86,12 +88,10 @@ abstract class PackageEntryWriter {
      */
     abstract boolean canProcess(Class<?> componentClass);
 
-    /**
-     * Triggers the particular routines for storing component-related data in the XML markup
-     * @param componentClass The {@code Class} being processed
-     * @param target The targetFacade element of DOM {@link Document} to feed data to
-     */
-    abstract void populateTarget(Class<?> componentClass, Target target);
+
+    /* ----------------------------
+       File system writing routines
+       ---------------------------- */
 
     /**
      * Called by {@link PackageWriter#write(Class)} before storing new XML entities into the component's folder
@@ -146,18 +146,20 @@ abstract class PackageEntryWriter {
     }
 
     /**
-     * Wraps DOM document creating with use of a {@link DocumentBuilder} and populating it with data
+     * Creates a DOM document that reflects the data that is provided by the component class and is relevant to the
+     * scope of the current writer
      * @param componentClass The {@code Class} being processed
      * @return {@link Document} created
      */
     private Document createDocument(Class<?> componentClass) {
         Target rootTarget = Targets.newInstance(DialogConstants.NN_ROOT, getScope());
-        populateTarget(componentClass, rootTarget);
-
+        writeAutoMappedProperties(componentClass, rootTarget);
+        writeProperties(componentClass, rootTarget);
         Document result = rootTarget
             .adaptTo(DomAdapter.class)
-            .composeDocument(PluginRuntime.context().getXmlUtility().resetDocument());
-        writeCommonProperties(componentClass, getScope(), result);
+            .composeDocument(PluginRuntime.context().newXmlUtility().getDocument());
+        writeCommonProperties(componentClass, result);
+
         if (Scope.CQ_DIALOG.equals(getScope())) {
             processLegacyDialogHandlers(result.getDocumentElement(), componentClass);
         }
@@ -166,41 +168,43 @@ abstract class PackageEntryWriter {
     }
 
 
-    /* ------------------------
-       Static (utility) methods
-       ------------------------ */
+    /* -----------------
+       Populating target
+       ----------------- */
 
     /**
-     * Gets whether the provided {@code Member} matches the provided scope. This is used to decide if a particular
-     * property should be rendered by the current {@code PackageEntryWriter}
-     * @param member Non-null {@code Member} instance
-     * @param scope {@code Scope} for the current {@code PackageEntryWriter}
-     * @return True or false
+     * Triggers routines for storing component-related data in the provided {@link Target}
+     * @param componentClass The {@code Class} being processed
+     * @param target The {@code Target} to feed data to
      */
-    static boolean fitsInScope(Member member, Scope scope) {
-        List<Scope> activeScopes = Sources.fromMember(member)
-            .tryAdaptTo(PropertyRendering.class)
-            .map(PropertyRendering::scope)
-            .map(Arrays::asList)
-            .orElse(Collections.singletonList(Scope.ALL));
+    abstract void writeProperties(Class<?> componentClass, Target target);
 
-        return activeScopes.contains(scope) || activeScopes.contains(Scope.ALL);
+    /**
+     * Processes Toolkit annotations appended to the given {@code Class}(other than those present in out-of-box API module)
+     * that have a {@link MapProperties} meta-annotation. Their mappable properties are stored in the given {@link Target}
+     * @param componentClass The {@code Class} being processed
+     * @param target The {@code Target} to feed data to
+     */
+    private void writeAutoMappedProperties(Class<?> componentClass, Target target) {
+        Arrays.stream(componentClass.getDeclaredAnnotations())
+            .filter(annotation -> !annotation.annotationType().getPackage().getName().startsWith(API_PACKAGE_NAME))
+            .filter(annotation -> fitsInScope(annotation, getScope()))
+            .forEach(annotation -> target.attributes(annotation, AnnotationUtil.getPropertyMappingFilter(annotation)));
     }
 
     /**
-     * Maps the values set in {@link CommonProperties} annotation to nodes of a pre-built XML document. The nodes are
+     * Maps the values set in {@link CommonProperties} annotation to nodes of a DOM document being built. The nodes are
      * picked by an {@link javax.xml.xpath.XPath}
      * @param componentClass Current {@code Class} instance
-     * @param scope Current {@code XmlScope}
      */
-    private static void writeCommonProperties(Class<?> componentClass, Scope scope, Document document) {
+    private void writeCommonProperties(Class<?> componentClass, Document document) {
         Arrays.stream(componentClass.getAnnotationsByType(CommonProperty.class))
-                .filter(p -> scope.equals(p.scope()))
-                .forEach(p -> writeCommonProperty(p, PluginXmlUtility.getElementNodes(p.path(), document)));
+            .filter(p -> getScope().equals(p.scope()))
+            .forEach(p -> writeCommonProperty(p, XmlRuntime.getElementNodes(p.path(), document)));
     }
 
     /**
-     * Called by {@link PackageEntryWriter#writeCommonProperties(Class, Scope, Document)} for each {@link CommonProperty}
+     * Called by {@link PackageEntryWriter#writeCommonProperties(Class, Document)} for each {@link CommonProperty}
      * instance
      * @param property {@code CommonProperty} instance
      * @param targets Target {@code Node}s selected via an XPath
@@ -215,9 +219,11 @@ abstract class PackageEntryWriter {
      * @param element DOM {@code Element} object
      * @param annotatedClass The {@code Class<?>} that a legacy handler processes
      */
+    @SuppressWarnings("deprecation") // Handler#accept() method is retained for compatibility and will be removed in
+                                     // a version after 2.0.1
     private static void processLegacyDialogHandlers(Element element, Class<?> annotatedClass) {
         List<DialogAnnotation> customAnnotations = getCustomDialogAnnotations(annotatedClass);
-        PluginRuntime.context().getReflectionUtility().getCustomDialogHandlers().stream()
+        PluginRuntime.context().getReflection().getCustomDialogHandlers().stream()
             .filter(handler -> customAnnotations.stream()
                 .anyMatch(annotation -> StringUtils.equals(annotation.source(), handler.getName())))
             .forEach(handler -> handler.accept(element, annotatedClass));
@@ -225,7 +231,6 @@ abstract class PackageEntryWriter {
 
     /**
      * Retrieves list of {@link DialogAnnotation} instances defined for the current {@code Class}
-     *
      * @param componentClass The {@code Class} being processed
      * @return List of values, empty or non-empty
      */
@@ -234,5 +239,42 @@ abstract class PackageEntryWriter {
             .filter(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class) != null)
             .map(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class))
             .collect(Collectors.toList());
+    }
+
+
+    /* ---------------
+       Utility methods
+       --------------- */
+
+    /**
+     * Gets whether the provided {@code Annotation} matches the provided scope. This is used to decide if properties of
+     * the annotation property should be automatically mapped by the current {@code PackageEntryWriter}
+     * @param annotation Non-null {@code Annotation} instance
+     * @param scope {@code Scope} for the current {@code PackageEntryWriter}
+     * @return True or false
+     */
+    static boolean fitsInScope(Annotation annotation, Scope scope) {
+        if (!annotation.annotationType().isAnnotationPresent(MapProperties.class)) {
+            return false;
+        }
+        Scope[] scopes = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).scope();
+        return ArrayUtils.contains(scopes, scope) || ArrayUtils.contains(scopes, Scope.DEFAULT);
+    }
+
+    /**
+     * Gets whether the provided {@code Member} matches the provided scope. This is used to decide if a particular
+     * property should be rendered by the current {@code PackageEntryWriter}
+     * @param member Non-null {@code Member} instance
+     * @param scope {@code Scope} for the current {@code PackageEntryWriter}
+     * @return True or false
+     */
+    static boolean fitsInScope(Member member, Scope scope) {
+        List<Scope> activeScopes = Sources.fromMember(member)
+            .tryAdaptTo(PropertyRendering.class)
+            .map(PropertyRendering::scope)
+            .map(Arrays::asList)
+            .orElse(Collections.singletonList(Scope.DEFAULT));
+
+        return activeScopes.contains(scope) || activeScopes.contains(Scope.DEFAULT);
     }
 }

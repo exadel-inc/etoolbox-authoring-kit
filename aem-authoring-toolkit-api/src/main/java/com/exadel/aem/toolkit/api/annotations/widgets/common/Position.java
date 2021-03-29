@@ -14,8 +14,11 @@
 package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 /**
- * Contains possible values describing orientation of a component
+ * Contains possible values describing position of a component
  */
-public enum Orientation {
-    HORIZONTAL, VERTICAL
+public enum Position {
+    LEFT,
+    RIGHT,
+    TOP,
+    BOTTOM
 }
