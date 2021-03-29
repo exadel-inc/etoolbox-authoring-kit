@@ -15,6 +15,7 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
@@ -32,15 +33,15 @@ public abstract class WidgetContainerHandler implements BiConsumer<Source, Targe
      * with additional predicates that allow to filter out sources that are set to be ignored at either
      * the "member itself" level or at "declaring class" level. Afterwards the non-widget fields are also filtered out
      * @param container         Current {@link Source} instance
-     * @param useReportingClass True to use {@link Source#getReportingClass()} to look for ignored members (this is
+     * @param useReportingClass True to use {@link MemberSource#getReportingClass()} to look for ignored members (this is
      *                          the case for {@code Multifield} or {@code FieldSet}-bound members);
-     *                          False to use same {@link Source#getValueType()} as for the rest of method logic
+     *                          False to use same {@link MemberSource#getValueType()} as for the rest of method logic
      * @return {@code List<Source>} containing placeable members, or an empty collection
      */
     @SuppressWarnings("deprecation") // IgnoreFields is retained for compatibility until retired in a post-2.0.1 version
     protected List<Source> getEntriesForContainer(Source container, boolean useReportingClass) {
-        Class<?> valueTypeClass = container.getValueType();
-        Class<?> reportingClass = useReportingClass ? container.getReportingClass() : valueTypeClass;
+        Class<?> valueTypeClass = container.adaptTo(MemberSource.class).getValueType();
+        Class<?> reportingClass = useReportingClass ? container.adaptTo(MemberSource.class).getReportingClass() : valueTypeClass;
         // Build the collection of ignored members at nesting class level
         // (apart from those defined for the container class itself)
         Stream<ClassMemberSetting> classLevelIgnoredMembers = Stream.empty();

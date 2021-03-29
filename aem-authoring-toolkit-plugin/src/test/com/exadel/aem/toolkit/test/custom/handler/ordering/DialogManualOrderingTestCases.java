@@ -16,8 +16,9 @@ package com.exadel.aem.toolkit.test.custom.handler.ordering;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.exadel.aem.toolkit.api.handlers.DialogHandler;
+import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.test.custom.annotation.DialogAnnotationForOrderingTest;
 
@@ -38,10 +39,10 @@ public class DialogManualOrderingTestCases {
     private static int counter = 0;
 
     @Handles(value = DialogAnnotationForOrderingTest.class, after = DialogHandler2.class)
-    public static class DialogHandler1 implements DialogHandler {
+    public static class DialogHandler1 implements Handler {
 
         @Override
-        public void accept(Class<?> source, Target target) {
+        public void accept(Source source, Target target) {
             counter++;
             target
                 .attribute(ATTRIBUTE_LIST.get(0), ATTRIBUTE_VALUE_ORDER + counter);
@@ -49,10 +50,10 @@ public class DialogManualOrderingTestCases {
     }
 
     @Handles(value = DialogAnnotationForOrderingTest.class)
-    public static class DialogHandler2 implements DialogHandler {
+    public static class DialogHandler2 implements Handler {
 
         @Override
-        public void accept(Class<?> source, Target target) {
+        public void accept(Source source, Target target) {
             counter++;
             target
                 .attribute(ATTRIBUTE_LIST.get(1), ATTRIBUTE_VALUE_ORDER + counter);
@@ -60,10 +61,10 @@ public class DialogManualOrderingTestCases {
     }
 
     @Handles(value = DialogAnnotationForOrderingTest.class, before = DialogHandler1.class)
-    public static class DialogHandler3 implements DialogHandler {
+    public static class DialogHandler3 implements Handler {
 
         @Override
-        public void accept(Class<?> source, Target target) {
+        public void accept(Source source, Target target) {
             counter++;
             target
                 .attribute(ATTRIBUTE_LIST.get(2), ATTRIBUTE_VALUE_ORDER + counter);

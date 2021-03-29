@@ -14,10 +14,8 @@
 package com.exadel.aem.toolkit.plugin.util.writer;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.stream.Collectors;
 import javax.xml.transform.Transformer;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -33,8 +31,6 @@ import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
-import com.exadel.aem.toolkit.api.handlers.DialogHandler;
-import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnTabHandler;
@@ -43,7 +39,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
+import com.exadel.aem.toolkit.plugin.util.ScopeUtil;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing AEM TouchUI dialog definition (writes data to the
@@ -86,13 +82,13 @@ class CqDialogWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#writeProperties(Class, Target)} method to write down contents related to the
-     * component's {@code cq:dialog} node, or the {@code _cq_dialog.xml} file
+     * Overrides {@link PackageEntryWriter#applySpecificProperties(Class, Target)} method to write down contents related
+     * to the component's {@code cq:dialog} node, or the {@code _cq_dialog.xml} file
      * @param componentClass The {@code Class} being processed
      * @param target   The targetFacade element of DOM {@link Document} to feed data to
      */
     @Override
-    void writeProperties(Class<?> componentClass, Target target) {
+    void applySpecificProperties(Class<?> componentClass, Target target) {
         Annotation dialogAnnotation = Scope.CQ_DIALOG.equals(scope)
             ? componentClass.getDeclaredAnnotation(Dialog.class)
             : componentClass.getDeclaredAnnotation(DesignDialog.class);
@@ -102,7 +98,7 @@ class CqDialogWriter extends PackageEntryWriter {
                 dialogAnnotation,
                 AnnotationUtil
                     .getPropertyMappingFilter(dialogAnnotation)
-                    .and(member -> fitsInScope(member, scope)))
+                    .and(member -> ScopeUtil.fits(scope, member)))
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
         populateTitleProperty(componentClass, target);
 
@@ -110,17 +106,10 @@ class CqDialogWriter extends PackageEntryWriter {
         DialogContainer.getContainer(dialogLayout).build(componentClass, target);
 
         new DependsOnTabHandler().accept(componentClass, target);
-
-        List<DialogHandler> handlers = PluginRuntime.context().getReflection().getCustomDialogHandlers().stream()
-                .filter(dialogHandler -> dialogHandler.getClass().isAnnotationPresent(Handles.class)
-                && Arrays.stream(dialogHandler.getClass().getDeclaredAnnotation(Handles.class).value()).anyMatch(componentClass::isAnnotationPresent))
-            .collect(Collectors.toList());
-
-        OrderingUtil.sortHandlers(handlers).forEach(handler -> handler.accept(componentClass, target));
     }
 
     /**
-     * Called by {@link CqDialogWriter#writeProperties(Class, Target)} to settle the dialog {@code title} issue.
+     * Called by {@link CqDialogWriter#applySpecificProperties(Class, Target)} to settle the dialog {@code title} issue.
      * If {@code title} is set at {@code AemComponent} level, one does not need to specify it separately for a {@code Dialog}
      * or {@code DesignDialog}. However if {@code AemComponent} is missing, {@code title} must be set to a non-blank value
      * in the dialog annotation

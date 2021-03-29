@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.api.markers._Super;
@@ -75,7 +76,7 @@ public class ClassMemberSetting {
     }
 
     public boolean matches(Source source) {
-        return source().equals(source.getDeclaringClass())
+        return source().equals(source.adaptTo(MemberSource.class).getDeclaringClass())
             && name().equals(source.getName());
     }
 

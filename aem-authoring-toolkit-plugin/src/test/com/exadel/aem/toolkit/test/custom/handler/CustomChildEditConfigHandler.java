@@ -11,25 +11,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.lists;
+package com.exadel.aem.toolkit.test.custom.handler;
 
-import com.exadel.aem.toolkit.api.annotations.lists.ListItem;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
-/**
- * The {@code Handler} for adding listItem property to a TouchUI dialog
- */
-@Handles(value = ListItem.class, scope = Scope.COMPONENT)
-public class ListItemHandler implements Handler {
+@Handles(value = ChildEditConfig.class)
+@SuppressWarnings("unused") // Used by AAT Plugin logic
+public class CustomChildEditConfigHandler implements Handler {
+
     @Override
     public void accept(Source source, Target target) {
-        if (source.adaptTo(ListItem.class) != null) {
-            target.attribute(DialogConstants.PN_LIST_ITEM, true);
-        }
+        target.attribute("childEditConfigHandlerProp1", "value1");
     }
 }

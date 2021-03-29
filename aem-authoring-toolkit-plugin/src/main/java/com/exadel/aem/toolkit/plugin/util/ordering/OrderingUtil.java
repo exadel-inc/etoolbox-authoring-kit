@@ -17,14 +17,17 @@ import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import com.google.common.collect.Streams;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
@@ -40,32 +43,35 @@ public class OrderingUtil {
        Sorting methods
        --------------- */
 
-
     public static <T> List<T> sortHandlers(List<T> handlers) {
         if (handlers.size() < 2) {
             return handlers;
         }
 
-        List<Orderable<T>> list = new ArrayList<>(handlers.size());
+        List<Orderable<T>> orderableHandlers = new ArrayList<>();
+        List<T> nonOrderableHandlers = new ArrayList<>();
         for (T handler : handlers) {
-            list.add(new Orderable<>(handler.getClass().getName(), handler));
+            if (handler.getClass().isAnnotationPresent(Handles.class)) {
+                orderableHandlers.add(new Orderable<>(handler.getClass().getName(), handler));
+            } else {
+                nonOrderableHandlers.add(handler);
+            }
         }
 
-        for (int i = 0; i < handlers.size(); i++) {
-            Handles handles = handlers.get(i).getClass().getDeclaredAnnotation(Handles.class);
+        for (int i = 0; i < orderableHandlers.size(); i++) {
+            Handles handles = orderableHandlers.get(i).getValue().getClass().getDeclaredAnnotation(Handles.class);
             if (!_Default.class.equals(handles.before())) {
-                Orderable<T> before = find(handles.before().getName(), list);
-                list.get(i).setBefore(before);
+                Orderable<T> before = find(handles.before().getName(), orderableHandlers);
+                orderableHandlers.get(i).setBefore(before);
             }
             if (!_Default.class.equals(handles.after())) {
-                Orderable<T> after = find(handles.after().getName(), list);
-                list.get(i).setAfter(after);
+                Orderable<T> after = find(handles.after().getName(), orderableHandlers);
+                orderableHandlers.get(i).setAfter(after);
             }
         }
 
-        return new TopologicalSorter<>(list).topologicalSort().stream()
-            .map(Orderable::getValue)
-            .collect(Collectors.toList());
+        Stream<T> sortedStream = new TopologicalSorter<>(orderableHandlers).topologicalSort().stream().map(Orderable::getValue);
+        return Streams.concat(nonOrderableHandlers.stream(), sortedStream).collect(Collectors.toList());
     }
 
     public static List<Source> sortMembers(List<Source> sources) {
@@ -83,12 +89,18 @@ public class OrderingUtil {
             if (place != null) {
                 ClassMember classMemberBefore = place.before();
                 if (StringUtils.isNotBlank(classMemberBefore.value())) {
-                    Orderable<Source> before = find(createName(classMemberBefore, sources.get(i).getDeclaringClass()), list);
+                    Orderable<Source> before = find(createName(
+                        classMemberBefore,
+                        sources.get(i).adaptTo(MemberSource.class).getDeclaringClass()),
+                        list);
                     list.get(i).setBefore(before);
                 }
                 ClassMember classMemberAfter = place.after();
                 if (StringUtils.isNotBlank(classMemberAfter.value())) {
-                    Orderable<Source> after = find(createName(classMemberAfter, sources.get(i).getDeclaringClass()), list);
+                    Orderable<Source> after = find(createName(
+                        classMemberAfter,
+                        sources.get(i).adaptTo(MemberSource.class).getDeclaringClass()),
+                        list);
                     list.get(i).setAfter(after);
                 }
             }
@@ -109,7 +121,7 @@ public class OrderingUtil {
     }
 
     private static String createName(Source source) {
-        return createName(source.getDeclaringClass(), source.getName());
+        return createName(source.adaptTo(MemberSource.class).getDeclaringClass(), source.getName());
     }
 
     private static String createName(ClassMember classMember, Class<?> defaultClass) {
@@ -141,11 +153,15 @@ public class OrderingUtil {
         if (rank1 != rank2) {
             return Integer.compare(rank1, rank2);
         }
-        if (f1.getDeclaringClass() != f2.getDeclaringClass()) {
-            if (ClassUtils.isAssignable(f1.getDeclaringClass(), f2.getDeclaringClass())) {
+        if (f1.adaptTo(MemberSource.class).getDeclaringClass() != f2.adaptTo(MemberSource.class).getDeclaringClass()) {
+            if (ClassUtils.isAssignable(
+                f1.adaptTo(MemberSource.class).getDeclaringClass(),
+                f2.adaptTo(MemberSource.class).getDeclaringClass())) {
                 return 1;
             }
-            if (ClassUtils.isAssignable(f2.getDeclaringClass(), f1.getDeclaringClass())) {
+            if (ClassUtils.isAssignable(
+                f2.adaptTo(MemberSource.class).getDeclaringClass(),
+                f1.adaptTo(MemberSource.class).getDeclaringClass())) {
                 return -1;
             }
         }
@@ -172,5 +188,4 @@ public class OrderingUtil {
         }
         return 0;
     }
-
 }

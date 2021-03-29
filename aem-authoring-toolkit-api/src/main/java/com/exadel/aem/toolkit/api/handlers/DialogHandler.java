@@ -13,34 +13,28 @@
  */
 package com.exadel.aem.toolkit.api.handlers;
 
-import java.util.function.BiConsumer;
-
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-
 import org.w3c.dom.Element;
 
 /**
- * Abstraction of handler class to process logic of AEM components and/or AEM TouchUI dialog.
+ * Represents an abstraction of logic for handling a dialog annotation.
  * Serves as the marker interface for creating and enumerating handlers instances
+ * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link Handler} instead
  */
-@Handles(Dialog.class)
-public interface DialogHandler extends BiConsumer<Element, Class<?>> {
+@Deprecated
+@SuppressWarnings({"unused", "squid:S1133"}) // See deprecation message
+public interface DialogHandler extends Handler {
 
     /**
      * Identifies this DialogHandler for binding to a specific {@code DialogAnnotation}
      * @return String value, non-blank
      */
-    @Deprecated
     default String getName() {
         return "";
     }
 
-    default void accept(Class<?> cls, Target target) {
-
+    default void accept(Source source, Target target) {
     }
 
-    @Deprecated
     default void accept(Element element, Class<?> cls) {
-
     }
 }

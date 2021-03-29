@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.source;
 
 import java.lang.annotation.Annotation;
@@ -19,9 +18,11 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.exadel.aem.toolkit.plugin.util.MemberUtil;
 
-public class MethodSourceImpl extends SourceImpl {
+public class MethodSourceImpl extends MemberSourceImpl {
 
     private final Method method;
 
@@ -32,12 +33,12 @@ public class MethodSourceImpl extends SourceImpl {
 
     @Override
     public String getName() {
-        return method.getName();
+        return method != null ? method.getName() : StringUtils.EMPTY;
     }
 
     @Override
     public Class<?> getDeclaringClass() {
-        return method.getDeclaringClass();
+        return method != null ? method.getDeclaringClass() : null;
     }
 
     @Override
@@ -47,17 +48,17 @@ public class MethodSourceImpl extends SourceImpl {
 
     @Override
     Annotation[] getDeclaredAnnotations() {
-        return method.getDeclaredAnnotations();
+        return method != null ? method.getDeclaredAnnotations() : null;
     }
 
     @Override
     <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
-        return method.getDeclaredAnnotation(annotationClass);
+        return method != null ? method.getDeclaredAnnotation(annotationClass) : null;
     }
 
     @Override
     <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass) {
-        return method.getAnnotationsByType(annotationClass);
+        return method != null ? method.getAnnotationsByType(annotationClass) : null;
     }
 
     @Override

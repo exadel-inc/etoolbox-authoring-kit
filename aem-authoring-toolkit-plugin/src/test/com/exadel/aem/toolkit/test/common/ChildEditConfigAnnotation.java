@@ -50,6 +50,6 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.DEFAULT_COMPONENT
                 propertyName = "file_image" + "file-reference"
         )
 )
-@CustomChildEditConfigAnnotationAuto(field1 = "value1")
+@CustomChildEditConfigAnnotationAuto(autoField1 = "value1")
 public class ChildEditConfigAnnotation extends FileUploadWidget {
 }

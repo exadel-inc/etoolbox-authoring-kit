@@ -138,5 +138,7 @@ public interface Target {
         return attributes(annotation, null);
     }
 
+    void removeAttribute(String name);
+
     <T> T adaptTo(Class<T> adaptation);
 }

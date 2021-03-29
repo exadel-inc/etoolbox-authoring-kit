@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Sets;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Replace;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
@@ -68,7 +69,7 @@ public class ReplacementHelper {
             Replace replace = replacingEntry.adaptTo(Replace.class);
 
             ClassMemberSetting formerClassMemberAnnotation = new ClassMemberSetting(replace.value())
-                .populateDefaults(replacingEntry.getDeclaringClass(), replacingEntry.getName());
+                .populateDefaults(replacingEntry.adaptTo(MemberSource.class).getDeclaringClass(), replacingEntry.getName());
 
             Source formerEntry = internal.stream()
                 .filter(formerClassMemberAnnotation::matches)

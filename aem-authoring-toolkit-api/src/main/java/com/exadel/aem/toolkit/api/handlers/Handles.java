@@ -19,6 +19,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
@@ -36,6 +37,16 @@ public @interface Handles {
     Class<? extends Annotation>[] value();
 
     /**
+     * When set, specifies one or more {@link Scope}s in which this handler is effective, i.e. whether it will be triggered
+     * for {@code cq:Component} (component root), {@code cq:dialog}, {@code cq:editorConfig}, or any other appropriate
+     * JCR node. Default value is equal to "all applicable scopes". The latter, though, differs in meaning for widget
+     * annotation handlers (where it is {@code cq:dialog} and {@code cq:design_dialog} together) and class-wide annotation
+     * handlers. In the latter case, the default scope when not specified is the scope of built-in annotations present
+     * @return One or more {@code Scope} values
+     */
+    Scope[] scope() default Scope.DEFAULT;
+
+    /**
      * When specified, denotes a handler that must follow the current handler in the execution chain.
      * This property is used to align handlers when execution sequence matters
      * @return {@code Class} of the sibling handler
@@ -44,7 +55,7 @@ public @interface Handles {
 
     /**
      * When specified, denotes a handler that must precede the current handler in the execution chain.
-     * This property is used to align handlers when execution sequrence matters
+     * This property is used to align handlers when execution sequence matters
      * @return {@code Class} of the sibling handler
      */
     Class<?> after() default _Default.class;

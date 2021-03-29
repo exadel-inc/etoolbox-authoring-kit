@@ -20,12 +20,6 @@ public interface Source {
 
     String getName();
 
-    Class<?> getDeclaringClass();
-
-    Class<?> getReportingClass();
-
-    Class<?> getValueType();
-
     boolean isValid();
 
     <T> T adaptTo(Class<T> adaptation);

@@ -11,50 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.source;
 
 import java.lang.annotation.Annotation;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
-import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 
 public abstract class SourceImpl extends AdaptationBase<Source> implements Source {
 
-    private final Class<?> reportingClass;
-
-    SourceImpl(Class<?> reportingClass) {
+    SourceImpl() {
         super(Source.class);
-        this.reportingClass = reportingClass;
     }
-
-    @Override
-    public Class<?> getReportingClass() {
-        return this.reportingClass;
-    }
-
-    @Override
-    public Class<?> getValueType() {
-        // Retrieve the "immediate" return type
-        Class<?> result = getPlainReturnType();
-        // Then switch to directly specified type, if any
-        if (getDeclaredAnnotation(MultiField.class) != null
-            && getDeclaredAnnotation(MultiField.class).value() != _Default.class) {
-            result = getDeclaredAnnotation(MultiField.class).value();
-        } else if (getDeclaredAnnotation(MultiField.class) != null
-            && getDeclaredAnnotation(MultiField.class).field() != _Default.class) {
-            result = getDeclaredAnnotation(MultiField.class).field();
-        } else if (getDeclaredAnnotation(FieldSet.class) != null
-            && getDeclaredAnnotation(FieldSet.class).value() != _Default.class) {
-            result = getDeclaredAnnotation(FieldSet.class).value();
-        }
-        return result;
-    }
-
-    abstract Class<?> getPlainReturnType();
 
     abstract Annotation[] getDeclaredAnnotations();
 

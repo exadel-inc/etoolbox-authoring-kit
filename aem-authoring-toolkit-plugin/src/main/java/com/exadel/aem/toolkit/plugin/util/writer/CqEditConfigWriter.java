@@ -57,13 +57,13 @@ class CqEditConfigWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#writeProperties(Class, Target)} method to write down contents related to the
-     * component's {@code cq:editConfig} node, or the {@code _cq_editConfig.xml} file
+     * Overrides {@link PackageEntryWriter#applySpecificProperties(Class, Target)} method to write down contents related
+     * to the component's {@code cq:editConfig} node, or the {@code _cq_editConfig.xml} file
      * @param componentClass The {@code Class} being processed
      * @param target The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void writeProperties(Class<?> componentClass, Target target) {
+    void applySpecificProperties(Class<?> componentClass, Target target) {
         EditConfig editConfig = componentClass.getDeclaredAnnotation(EditConfig.class);
         target.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
         EditConfigHandlingHelper.append(editConfig, target);

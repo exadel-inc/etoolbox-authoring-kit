@@ -51,7 +51,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     private static final String PARENT_PATH = "..";
     private static final String SELF_PATH = ".";
 
-    private static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
+    static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
 
     /* -----------------------------
@@ -426,6 +426,15 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return this;
     }
 
+    @Override
+    public Target attributes(Annotation value, Predicate<Method> filter) {
+        if (value == null) {
+            return this;
+        }
+        populateAnnotationProperties(value, filter == null ? method -> true : filter);
+        return this;
+    }
+
     public Target attributes(Element value) {
         if (value != null) {
             populateElementProperties(value);
@@ -434,12 +443,8 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
     @Override
-    public Target attributes(Annotation value, Predicate<Method> filter) {
-        if (value == null) {
-            return this;
-        }
-        populateAnnotationProperties(value, filter == null ? method -> true : filter);
-        return this;
+    public void removeAttribute(String name) {
+        attributes.remove(name);
     }
 
     private void populateElementProperties(Element value) {

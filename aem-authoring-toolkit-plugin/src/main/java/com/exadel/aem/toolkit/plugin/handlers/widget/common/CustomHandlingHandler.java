@@ -30,7 +30,9 @@ import org.codehaus.plexus.util.CollectionUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
@@ -43,7 +45,7 @@ import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
  * to a Granite UI target
  */
 public class CustomHandlingHandler implements BiConsumer<Source, Target> {
-    private List<DialogWidgetHandler> predefinedHandlers;
+    private List<Handler> predefinedHandlers;
 
     /**
      * Default constructor
@@ -56,7 +58,7 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
      * the passed {@code Source}
      * @param handlers Pre-defined handlers list
      */
-    public CustomHandlingHandler(List<DialogWidgetHandler> handlers) {
+    public CustomHandlingHandler(List<Handler> handlers) {
         this.predefinedHandlers = handlers;
     }
 
@@ -67,50 +69,46 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
      */
     @Override
     public void accept(Source source, Target target) {
-        List<DialogWidgetHandler> handlers = getEffectiveHandlers(source);
+        List<Handler> handlers = getEffectiveHandlers(source, target.getScope());
 
         // Extract legacy handlers that accept(Element, Field)
-        List<DialogWidgetHandler> legacyHandlers = handlers.stream().filter(CustomHandlingHandler::isLegacyHandler).collect(Collectors.toList());
+        List<Handler> legacyHandlers = handlers.stream().filter(CustomHandlingHandler::isLegacyHandler).collect(Collectors.toList());
         if (!legacyHandlers.isEmpty()) {
             Field field = source.adaptTo(Field.class);
             Element element = target
                 .adaptTo(DomAdapter.class)
                 .composeElement(PluginRuntime.context().getXmlUtility().getDocument());
             if (element != null) {
-                legacyHandlers.forEach(handler -> handler.accept(element, field));
+                legacyHandlers.forEach(handler -> ((DialogWidgetHandler) handler).accept(element, field));
                 ((TargetImpl) target).attributes(element);
             }
         }
 
         // Process modern handlers that accept(Source, Target)
-        Collection<DialogWidgetHandler> modernHandlers = CollectionUtils.subtract(handlers, legacyHandlers);
+        Collection<Handler> modernHandlers = CollectionUtils.subtract(handlers, legacyHandlers);
         OrderingUtil.sortHandlers(new ArrayList<>(modernHandlers)).forEach(handler -> handler.accept(source, target));
     }
 
-    private List<DialogWidgetHandler> getEffectiveHandlers(Source source) {
+    private List<Handler> getEffectiveHandlers(Source source, Scope scope) {
         if (predefinedHandlers != null && !predefinedHandlers.isEmpty()) {
             return predefinedHandlers;
         }
 
-        List<Class<? extends Annotation>> sourceAnnotationTypes = Arrays
-            .stream(source.adaptTo(Annotation[].class))
-            .map(Annotation::annotationType)
-            .collect(Collectors.toList());
-        List<DialogWidgetHandler> handlers;
+        List<Handler> result;
 
         // Modern handlers mapping approach -- via @Handles annotation
-        handlers = new ArrayList<>(PluginRuntime.context().getReflection().getCustomDialogWidgetHandlers(sourceAnnotationTypes));
+        result = PluginRuntime.context().getReflection().getHandlers(scope, source.adaptTo(Annotation[].class));
 
         // Legacy handlers mapping approach -- via source<->name mapping
-        List<DialogWidgetHandler> sourceToNameMappingHandlers = sourceAnnotationTypes
-            .stream()
+        List<DialogWidgetHandler> sourceToNameMappingHandlers = Arrays.stream(source.adaptTo(Annotation[].class))
+            .map(Annotation::annotationType)
             .filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
             .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
             .flatMap(CustomHandlingHandler::getMatchedHandlersByName)
             .collect(Collectors.toList());
-        handlers.addAll(sourceToNameMappingHandlers);
+        result.addAll(sourceToNameMappingHandlers);
 
-        return handlers;
+        return result;
     }
 
     private static Stream<DialogWidgetHandler> getMatchedHandlersByName(String source) {
@@ -119,12 +117,14 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
         }
         return PluginRuntime.context()
             .getReflection()
-            .getCustomDialogWidgetHandlers()
+            .getHandlers()
             .stream()
-            .filter(handler -> StringUtils.equals(source, handler.getName()));
+            .filter(handler -> handler instanceof DialogWidgetHandler)
+            .filter(handler -> StringUtils.equals(source, ((DialogWidgetHandler) handler).getName()))
+            .map(DialogWidgetHandler.class::cast);
     }
 
-    private static boolean isLegacyHandler(DialogWidgetHandler handler) {
+    private static boolean isLegacyHandler(Handler handler) {
         try {
             Method legacyAcceptMethod = handler.getClass().getMethod("accept", Element.class, Field.class);
             return !legacyAcceptMethod.isDefault(); // if it's not default, it has been overridden which is true for actual handlers

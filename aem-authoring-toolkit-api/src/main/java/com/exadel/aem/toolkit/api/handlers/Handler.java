@@ -11,19 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.custom.annotation;
+package com.exadel.aem.toolkit.api.handlers;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
-
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@MapProperties(scope = Scope.CQ_CHILD_EDIT_CONFIG)
-public @interface CustomChildEditConfigAnnotationAuto {
-    String autoField1();
+/**
+ * Represents an abstraction of logic for handling a Toolkit annotation.
+ * Serves as the marker interface for creating and enumerating handlers instances
+ */
+public interface Handler extends BiConsumer<Source, Target> {
 }

@@ -20,8 +20,11 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
+import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.HandlesWidgets;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -104,6 +107,16 @@ public class CustomWidgetHandlers {
         @Override
         public void accept(Source source, Target target) {
             target.attribute("multifieldSpecial", "This is added to Multifields");
+        }
+    }
+
+    @Handles(value = PathField.class, scope = Scope.CQ_DESIGN_DIALOG)
+    @SuppressWarnings("unused")
+    public static class CustomScopeLimitedHandler implements Handler {
+
+        @Override
+        public void accept(Source source, Target target) {
+            target.attribute("designDialogSpecial", "This is added to PathField@DesignDialog");
         }
     }
 }

@@ -22,9 +22,9 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.lists.ListItemHandler;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.ScopeUtil;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing component-wide attributes (writes data to the
@@ -60,13 +60,13 @@ class ContentXmlWriter extends PackageEntryWriter {
     }
 
     /**
-     * Overrides {@link PackageEntryWriter#writeProperties(Class, Target)} method to write down contents related to the
-     * component's root node, or {@code .content.xml} file
+     * Overrides {@link PackageEntryWriter#applySpecificProperties(Class, Target)} method to write down contents related
+     * to the component's root node, or {@code .content.xml} file
      * @param componentClass The {@code Class} being processed
      * @param target         The root element of DOM {@link Document} to feed data to
      */
     @Override
-    void writeProperties(Class<?> componentClass, Target target) {
+    void applySpecificProperties(Class<?> componentClass, Target target) {
         Annotation annotation = componentClass.getDeclaredAnnotation(AemComponent.class);
         if (annotation == null) {
             annotation = componentClass.getDeclaredAnnotation(Dialog.class);
@@ -77,7 +77,6 @@ class ContentXmlWriter extends PackageEntryWriter {
                 annotation,
                 AnnotationUtil
                     .getPropertyMappingFilter(annotation)
-                    .and(member -> fitsInScope(member, getScope())));
-        new ListItemHandler().accept(componentClass, target);
+                    .and(member -> ScopeUtil.fits(getScope(), member)));
     }
 }

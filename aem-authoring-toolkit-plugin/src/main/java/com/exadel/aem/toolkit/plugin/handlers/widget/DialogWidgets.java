@@ -46,6 +46,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
@@ -141,7 +142,7 @@ public enum DialogWidgets implements DialogWidget {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidSettingException(String.format(
                     NO_COMPONENT_EXCEPTION_MESSAGE_TEMPLATE,
                     source.getName(),
-                    source.getReportingClass())));
+                    source.adaptTo(MemberSource.class).getReportingClass())));
         }
         return result;
     }

@@ -11,100 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.custom.handler;
 
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.stream.IntStream;
-
-import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.handlers.DialogHandler;
+import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.api.runtime.Injected;
-import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
 
 @Handles(value = CustomDialogAnnotation.class)
 @SuppressWarnings("unused") // Used by AAT Plugin logic
-public class CustomDialogHandler implements DialogHandler {
+public class CustomDialogHandler implements Handler {
 
     @Override
-    public String getName() {
-        return "customDialogProcessing";
-    }
-
-    @Injected
-    private RuntimeContext runtimeContext;
-
-
-    @Override
-    public void accept(Element element, Class<?> cls) {
-        element.setAttribute("className", cls.getSimpleName());
-        legacyVisitElements(element, elt -> {
-            if (StringUtils.equals(elt.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE), ResourceTypes.MULTIFIELD)
-                && isLegacyTopLevelMultifield(elt)) {
-                elt.setAttribute("multifieldSpecial", "This is added to top-level Multifields");
-            }
-        });
-        Element customChild = runtimeContext.getXmlUtility().createNodeElement("customChild");
-        Element content = runtimeContext.getXmlUtility().getChildElement(element, "content");
-        Element extItems = runtimeContext.getXmlUtility().getChildElement(content, "items");
-        Element column = runtimeContext.getXmlUtility().getChildElement(extItems, "column");
-        Element intItems = runtimeContext.getXmlUtility().getChildElement(column, "items");
-        intItems.appendChild(customChild);
-    }
-
-    @Override
-    public void accept(Class<?> aClass, Target target) {
-        visitElements(target, elt -> {
-            if (StringUtils.equals(elt.getAttributes().get(DialogConstants.PN_SLING_RESOURCE_TYPE), ResourceTypes.MULTIFIELD)
-                    && isTopLevelMultifield(elt)) {
-                elt.attribute("multifieldSpecial", "This is added to top-level Multifields");
-            }
-        });
-    }
-
-    private static void visitElements(Target root, Consumer<Target> visitor) {
-        visitor.accept(root);
-        if (root.getChildren().isEmpty()) {
-            return;
-        }
-        root.getChildren().forEach(elt -> visitElements(elt, visitor));
-    }
-
-    private static boolean isTopLevelMultifield(Target target) {
-        String resourceType = Optional.ofNullable(target.getParent())
-            .map(Target::getParent)
-            .map(Target::getParent)
-            .map(t -> t.getAttributes().get(DialogConstants.PN_SLING_RESOURCE_TYPE))
-            .orElse(StringUtils.EMPTY);
-        return !resourceType.equals(ResourceTypes.MULTIFIELD);
-    }
-
-    private static void legacyVisitElements(Element root, Consumer<Element> visitor) {
-        visitor.accept(root);
-        if (!root.hasChildNodes()) {
-            return;
-        }
-        IntStream.range(0, root.getChildNodes().getLength())
-            .mapToObj(pos -> (Element) root.getChildNodes().item(pos))
-            .forEach(elt -> legacyVisitElements(elt, visitor));
-    }
-
-    private static boolean isLegacyTopLevelMultifield(Element element) {
-        String resourceType = Optional.ofNullable(element.getParentNode())
-            .map(Node::getParentNode)
-            .map(Node::getParentNode)
-            .map(node -> node.getAttributes().getNamedItem(DialogConstants.PN_SLING_RESOURCE_TYPE))
-            .map(Node::getNodeValue)
-            .orElse(StringUtils.EMPTY);
-        return !resourceType.equals(ResourceTypes.MULTIFIELD);
+    public void accept(Source source, Target target) {
+        String field1Value = target.getAttribute("field1");
+        target.removeAttribute("field1");
+        target
+            .attribute("autoField1", field1Value)
+            .attribute("fullyQualifiedClassName", source.adaptTo(Class.class).getCanonicalName());
     }
 }

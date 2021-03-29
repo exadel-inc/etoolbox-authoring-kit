@@ -20,8 +20,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
-import com.exadel.aem.toolkit.plugin.runtime.ReflectionRuntime;
-import com.exadel.aem.toolkit.plugin.runtime.XmlRuntime;
+import com.exadel.aem.toolkit.plugin.runtime.ReflectionContextHelper;
+import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
 /**
@@ -31,15 +31,15 @@ import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 class LoadedRuntimeContext implements PluginRuntimeContext {
     private static final String XML_EXCEPTION_MESSAGE = "Could not initialize XML runtime";
 
-    private ReflectionRuntime pluginReflections;
+    private ReflectionContextHelper pluginReflections;
     private ExceptionHandler exceptionHandler;
-    private XmlRuntime xmlRuntime;
+    private XmlContextHelper xmlRuntime;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ReflectionRuntime getReflection() {
+    public ReflectionContextHelper getReflection() {
         return pluginReflections;
     }
 
@@ -55,7 +55,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
      * {@inheritDoc}
      */
     @Override
-    public XmlRuntime getXmlUtility() {
+    public XmlContextHelper getXmlUtility() {
         return xmlRuntime;
     }
 
@@ -63,9 +63,9 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
      * {@inheritDoc}
      */
     @Override
-    public XmlRuntime newXmlUtility() {
+    public XmlContextHelper newXmlUtility() {
         try {
-            xmlRuntime = new XmlRuntime(XmlFactory.newDocument());
+            xmlRuntime = new XmlContextHelper(XmlFactory.newDocument());
         } catch (ParserConfigurationException e) {
             // Cannot proceed with the plugin flow if XML subsystem fails this early
             throw new PluginException(XML_EXCEPTION_MESSAGE, e);
@@ -134,7 +134,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
                 return;
             }
             LoadedRuntimeContext result = new LoadedRuntimeContext();
-            result.pluginReflections = ReflectionRuntime.fromCodeScope(classPathElements, packageBase);
+            result.pluginReflections = ReflectionContextHelper.fromCodeScope(classPathElements, packageBase);
             result.exceptionHandler = ExceptionHandlers.forSetting(terminateOn);
             result.newXmlUtility();
             this.onComplete.accept(result);

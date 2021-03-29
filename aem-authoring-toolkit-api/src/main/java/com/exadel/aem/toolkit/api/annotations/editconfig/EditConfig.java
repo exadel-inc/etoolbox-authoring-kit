@@ -22,6 +22,7 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 
 /**
@@ -31,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties(prefix = "cq:", value = {"actions", "emptyText", "inherit"})
+@MapProperties(prefix = "cq:", value = {"actions", "emptyText", "inherit"}, scope = Scope.CQ_EDIT_CONFIG)
 public @interface EditConfig {
 
     /**
