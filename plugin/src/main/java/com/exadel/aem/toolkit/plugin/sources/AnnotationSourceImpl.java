@@ -11,38 +11,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.source;
+package com.exadel.aem.toolkit.plugin.sources;
 
 import java.lang.annotation.Annotation;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class ClassSourceImpl extends SourceImpl {
+import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 
-    private final Class<?> value;
+public class AnnotationSourceImpl extends AdaptationBase<Source> implements Source {
+    private final Annotation value;
 
-    ClassSourceImpl(Class<?> value) {
+    public AnnotationSourceImpl(Annotation value) {
+        super(Source.class);
         this.value = value;
     }
 
     @Override
     public String getName() {
-        return isValid() ? value.getName() : StringUtils.EMPTY;
-    }
-
-    @Override
-    Annotation[] getDeclaredAnnotations() {
-        return value != null ? value.getDeclaredAnnotations() : null;
-    }
-
-    @Override
-    <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
-        return value != null ? value.getDeclaredAnnotation(annotationClass) : null;
-    }
-
-    @Override
-    <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass) {
-        return value != null ? value.getAnnotationsByType(annotationClass) : null;
+        return value != null ? value.annotationType().getName() : StringUtils.EMPTY;
     }
 
     @Override
@@ -51,8 +39,11 @@ public class ClassSourceImpl extends SourceImpl {
     }
 
     @Override
-    public <T> T adaptTo(Class<T> adaptation) {
-        if (Class.class.equals(adaptation)) {
+    public <A> A adaptTo(Class<A> adaptation) {
+        if (adaptation == null) {
+            return null;
+        }
+        if (adaptation.isAnnotation() && value != null && adaptation.equals(value.annotationType())) {
             return adaptation.cast(value);
         }
         return super.adaptTo(adaptation);
