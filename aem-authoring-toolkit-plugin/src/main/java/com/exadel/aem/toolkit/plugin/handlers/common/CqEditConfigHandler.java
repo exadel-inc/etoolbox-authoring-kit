@@ -15,10 +15,9 @@ package com.exadel.aem.toolkit.plugin.handlers.common;
 
 import java.util.function.BiConsumer;
 
-import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.editconfig.EditConfigHandlingHelper;
+import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
@@ -28,14 +27,13 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 public class CqEditConfigHandler implements BiConsumer<Source, Target> {
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores in into the provided {@code Target}
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {
-        EditConfig editConfig = source.adaptTo(EditConfig.class);
         target.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
-        EditConfigHandlingHelper.append(editConfig, target);
+        HandlerChains.forEditConfig().accept(source, target);
     }
 }

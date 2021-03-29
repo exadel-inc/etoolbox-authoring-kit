@@ -15,10 +15,14 @@ package com.exadel.aem.toolkit.plugin.handlers.common;
 
 import java.util.function.BiConsumer;
 
+import com.google.common.collect.ImmutableMap;
+
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
+import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.editconfig.EditConfigHandlingHelper;
+import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
+import com.exadel.aem.toolkit.plugin.source.Sources;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
@@ -27,9 +31,11 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
  * object that define the {@code cq:childEditConfig} settings node of an AEM component
  */
 public class CqChildEditConfigHandler implements BiConsumer<Source, Target> {
+    private static final String METHOD_DROP_TARGETS = "dropTargets";
+    private static final String METHOD_LISTENERS = "listeners";
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores in into the provided {@code Target}
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
@@ -39,6 +45,12 @@ public class CqChildEditConfigHandler implements BiConsumer<Source, Target> {
         target
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
             .attributes(childEditConfig, AnnotationUtil.getPropertyMappingFilter(childEditConfig));
-        EditConfigHandlingHelper.append(childEditConfig, target);
+        // Herewith we create a "proxied" @EditConfig object out of the provided @ChildEditConfig
+        // with "dropTargets" and "listeners" methods of @EditConfig populated with  @ChildEditConfig values
+        EditConfig derivedEditConfig = AnnotationUtil.createInstance(EditConfig.class, ImmutableMap.of(
+            METHOD_DROP_TARGETS, childEditConfig.dropTargets(),
+            METHOD_LISTENERS, childEditConfig.listeners()
+        ));
+        HandlerChains.forChildEditConfig().accept(Sources.fromAnnotation(derivedEditConfig), target);
     }
 }
