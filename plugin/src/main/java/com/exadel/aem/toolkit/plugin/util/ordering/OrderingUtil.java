@@ -134,7 +134,7 @@ public class OrderingUtil {
     }
 
     private static String createName(Class<?> cls, String name) {
-        return cls.getName() + DialogConstants.EXTENSION_SEPARATOR + name;
+        return cls.getName() + DialogConstants.SEPARATOR_DOT + name;
     }
 
 

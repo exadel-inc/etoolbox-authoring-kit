@@ -26,9 +26,9 @@ import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.target.Targets;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.XmlFactory;
 
 public class TargetsTest {
@@ -59,7 +59,7 @@ public class TargetsTest {
                         .attribute(PN_INT_ARRAY, new long[] {1, 2, 3})
                         .attribute(PN_BOOL_ARRAY, new boolean[] {true, true, false, true})
                         .attribute(PN_DATE_ARRAY, new Date[] {getDate(2020,10,01), getDate(2021, 1, 10)})
-                        .createTarget(NN_SUBITEM + i + DialogConstants.PATH_SEPARATOR + NN_SUBSUBITEM + i)
+                        .createTarget(NN_SUBITEM + i + CoreConstants.SEPARATOR_SLASH + NN_SUBSUBITEM + i)
                             .attribute(PN_ORDINAL, i);
                 }
             }

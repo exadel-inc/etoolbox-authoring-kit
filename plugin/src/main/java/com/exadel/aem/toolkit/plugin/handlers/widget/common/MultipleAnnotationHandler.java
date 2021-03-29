@@ -33,6 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.handlers.common.CasualAnnotationsHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.MultiFieldHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -158,7 +159,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         transferProperties(
                 target,
                 fieldSubresource,
-                ImmutableMap.of(DialogConstants.AT + DialogConstants.PN_NAME, PropertyTransferPolicy.MOVE));
+                ImmutableMap.of(CoreConstants.SEPARATOR_AT + DialogConstants.PN_NAME, PropertyTransferPolicy.MOVE));
     }
 
     /**
@@ -175,10 +176,10 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         // Move existing multifield attributes to the nested multifield
         Map<String, PropertyTransferPolicy> standardPolicies = getTransferPolicies(source);
         Map<String, PropertyTransferPolicy> multifieldPolicies = new LinkedHashMap<>();
-        multifieldPolicies.put(DialogConstants.AT + DialogConstants.PN_COMPOSITE, PropertyTransferPolicy.COPY);
+        multifieldPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_COMPOSITE, PropertyTransferPolicy.COPY);
         multifieldPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.NN_FIELD, PropertyTransferPolicy.MOVE);
         standardPolicies.forEach(multifieldPolicies::put);
-        multifieldPolicies.put(DialogConstants.AT + DialogConstants.PN_SLING_RESOURCE_TYPE, PropertyTransferPolicy.COPY);
+        multifieldPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_SLING_RESOURCE_TYPE, PropertyTransferPolicy.COPY);
         transferProperties(target, nestedMultifield, multifieldPolicies);
 
         // Set the "name" attribute of the "source" node of the current multifield
@@ -208,22 +209,22 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
                     String propertyName = method.getAnnotation(PropertyRendering.class) != null
                             ? StringUtils.defaultIfEmpty(method.getAnnotation(PropertyRendering.class).name(), method.getName())
                             : method.getName();
-                    transferPolicies.put(DialogConstants.AT + propertyName, PropertyTransferPolicy.SKIP);
+                    transferPolicies.put(CoreConstants.SEPARATOR_AT + propertyName, PropertyTransferPolicy.SKIP);
                 });
         // Also, all the values set via @Property will belong to the Multifield node
         Arrays.stream(source.adaptTo(Property[].class))
-            .forEach(property -> transferPolicies.put(DialogConstants.AT + property.name(), PropertyTransferPolicy.SKIP));
+            .forEach(property -> transferPolicies.put(CoreConstants.SEPARATOR_AT + property.name(), PropertyTransferPolicy.SKIP));
         // Need to override policy for "name" as has been stored in a loop above
-        transferPolicies.put(DialogConstants.AT + DialogConstants.PN_NAME, PropertyTransferPolicy.MOVE);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_NAME, PropertyTransferPolicy.MOVE);
         // Some attribute values are expected to be moved or copied though have set to "skipped" above
-        transferPolicies.put(DialogConstants.AT + DialogConstants.PN_PRIMARY_TYPE, PropertyTransferPolicy.COPY);
-        transferPolicies.put(DialogConstants.AT + DialogConstants.PN_DISABLED, PropertyTransferPolicy.COPY);
-        transferPolicies.put(DialogConstants.AT + DialogConstants.PN_RENDER_HIDDEN, PropertyTransferPolicy.COPY);
-        transferPolicies.put(DialogConstants.AT + DialogConstants.PN_REQUIRED, PropertyTransferPolicy.MOVE);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_PRIMARY_TYPE, PropertyTransferPolicy.COPY);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_DISABLED, PropertyTransferPolicy.COPY);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_RENDER_HIDDEN, PropertyTransferPolicy.COPY);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_REQUIRED, PropertyTransferPolicy.MOVE);
         // Need to leave "granite:"-prefixed props (as they are probably set via @Attribute) at the multifield level
-        transferPolicies.put(DialogConstants.AT + PREFIX_GRANITE, PropertyTransferPolicy.MOVE);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + PREFIX_GRANITE, PropertyTransferPolicy.MOVE);
         // Rest of element attributes will move to the inner source
-        transferPolicies.put(DialogConstants.AT + DialogConstants.WILDCARD, PropertyTransferPolicy.MOVE);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.WILDCARD, PropertyTransferPolicy.MOVE);
         // While all child nodes will stay as the property of multifield
         transferPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.WILDCARD, PropertyTransferPolicy.SKIP);
 
@@ -245,7 +246,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         for (String attribute : from.getAttributes().keySet()) {
             PropertyTransferPolicy policy = getPolicyForProperty(
                 policies,
-                DialogConstants.AT + attribute);
+                CoreConstants.SEPARATOR_AT + attribute);
             if (policy != PropertyTransferPolicy.SKIP) {
                 to.attribute(attribute, from.getAttributes().get(attribute));
             }

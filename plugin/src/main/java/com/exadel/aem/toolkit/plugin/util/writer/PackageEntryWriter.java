@@ -96,7 +96,7 @@ abstract class PackageEntryWriter {
                 // or we might end up with two versions of component markup within same package
                 Path nestedFolderPath = componentPath.resolve(StringUtils.substringBeforeLast(
                     getScope(),
-                    DialogConstants.EXTENSION_SEPARATOR));
+                    DialogConstants.SEPARATOR_DOT));
                 Path nestedFilePath = nestedFolderPath.resolve(Scopes.COMPONENT);
                 Files.deleteIfExists(nestedFilePath);
                 Files.deleteIfExists(nestedFolderPath);

@@ -28,6 +28,7 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -43,7 +44,7 @@ import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 )
 public class DependsOnTabHandler implements Handler {
 
-    private static final String TAB_ITEMS_NODE_PATH = String.join(DialogConstants.PATH_SEPARATOR,
+    private static final String TAB_ITEMS_NODE_PATH = String.join(CoreConstants.SEPARATOR_SLASH,
         DialogConstants.NN_CONTENT,
         DialogConstants.NN_ITEMS,
         DialogConstants.NN_TABS,
@@ -78,7 +79,7 @@ public class DependsOnTabHandler implements Handler {
                 DialogConstants.PN_DEPENDS_ON, value.query(),
                 DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY);
             target
-                .getTarget(TAB_ITEMS_NODE_PATH  + DialogConstants.PATH_SEPARATOR  + value.tabTitle())
+                .getTarget(TAB_ITEMS_NODE_PATH  + CoreConstants.SEPARATOR_SLASH  + value.tabTitle())
                 .getOrCreateTarget(DialogConstants.NN_GRANITE_DATA)
                 .attributes(dependsOnAttributes);
         } else {

@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.handlers.widget.common.InheritanceHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widget.rte.RichTextEditorHandler;
@@ -191,8 +192,8 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
         String result = StringUtils.isNotBlank(config.name())
             ? config.name()
             : config.propertyName();
-        if (result.contains(DialogConstants.PATH_SEPARATOR)) {
-            return StringUtils.substringAfterLast(result, DialogConstants.PATH_SEPARATOR).trim();
+        if (result.contains(CoreConstants.SEPARATOR_SLASH)) {
+            return StringUtils.substringAfterLast(result, CoreConstants.SEPARATOR_SLASH).trim();
         }
         return result.trim();
     }

@@ -97,10 +97,10 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
         String queries = validDeclarations.stream()
                 .map(DependsOn::query)
                 .map(str -> StringUtils.replace(str, ";", "\\\\;"))
-                .collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
+                .collect(Collectors.joining(DialogConstants.SEPARATOR_SEMICOLON));
         String actions = validDeclarations.stream()
                 .map(DependsOn::action)
-                .collect(Collectors.joining(DialogConstants.VALUE_SEPARATOR));
+                .collect(Collectors.joining(DialogConstants.SEPARATOR_SEMICOLON));
 
         valueMap.put(DialogConstants.PN_DEPENDS_ON, queries);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, actions);

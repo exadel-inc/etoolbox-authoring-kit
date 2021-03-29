@@ -41,6 +41,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.NamingUtil;
@@ -463,8 +464,8 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     private void populateAnnotationProperties(Annotation annotation, Predicate<Method> filter) {
         String propertyPrefix = getPropertyPrefix(annotation);
-        String nodePrefix = propertyPrefix.contains(DialogConstants.PATH_SEPARATOR)
-            ? StringUtils.substringBeforeLast(propertyPrefix, DialogConstants.PATH_SEPARATOR)
+        String nodePrefix = propertyPrefix.contains(CoreConstants.SEPARATOR_SLASH)
+            ? StringUtils.substringBeforeLast(propertyPrefix, CoreConstants.SEPARATOR_SLASH)
             : StringUtils.EMPTY;
 
         Target effectiveTarget = this;
@@ -492,15 +493,15 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
         // Extract property prefix and prepend it to the name
         String prefixByPropertyMapping = getPropertyPrefix(annotation);
-        String namePrefix = prefixByPropertyMapping.contains(DialogConstants.PATH_SEPARATOR)
-            ? StringUtils.substringAfterLast(prefixByPropertyMapping, DialogConstants.PATH_SEPARATOR)
+        String namePrefix = prefixByPropertyMapping.contains(CoreConstants.SEPARATOR_SLASH)
+            ? StringUtils.substringAfterLast(prefixByPropertyMapping, CoreConstants.SEPARATOR_SLASH)
             : prefixByPropertyMapping;
         if (!ignorePrefix && StringUtils.isNotBlank(prefixByPropertyMapping)) {
-            if (propertyName.contains(DialogConstants.PATH_SEPARATOR)) {
-                propertyName = StringUtils.substringBeforeLast(propertyName, DialogConstants.PATH_SEPARATOR)
-                    + DialogConstants.PATH_SEPARATOR
+            if (propertyName.contains(CoreConstants.SEPARATOR_SLASH)) {
+                propertyName = StringUtils.substringBeforeLast(propertyName, CoreConstants.SEPARATOR_SLASH)
+                    + CoreConstants.SEPARATOR_SLASH
                     + namePrefix
-                    + StringUtils.substringAfterLast(propertyName, DialogConstants.PATH_SEPARATOR);
+                    + StringUtils.substringAfterLast(propertyName, CoreConstants.SEPARATOR_SLASH);
             } else {
                 propertyName = namePrefix + propertyName;
             }
@@ -508,9 +509,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
         // Adjust target if the property name contains a relative path
         Target effectiveTarget = target;
-        if (propertyName.contains(DialogConstants.PATH_SEPARATOR)) {
-            effectiveTarget = target.getOrCreateTarget(StringUtils.substringBeforeLast(propertyName, DialogConstants.PATH_SEPARATOR));
-            propertyName = StringUtils.substringAfterLast(propertyName, DialogConstants.PATH_SEPARATOR);
+        if (propertyName.contains(CoreConstants.SEPARATOR_SLASH)) {
+            effectiveTarget = target.getOrCreateTarget(StringUtils.substringBeforeLast(propertyName, CoreConstants.SEPARATOR_SLASH));
+            propertyName = StringUtils.substringAfterLast(propertyName, CoreConstants.SEPARATOR_SLASH);
         }
 
         BinaryOperator<String> merger = TargetImpl::mergeStringAttributes;

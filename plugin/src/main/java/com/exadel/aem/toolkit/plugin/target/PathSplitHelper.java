@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 class PathSplitHelper {
@@ -34,7 +35,7 @@ class PathSplitHelper {
     private PathSplitHelper(String path) {
         this.path = path;
         if (path == null
-            || !path.contains(DialogConstants.PATH_SEPARATOR)
+            || !path.contains(CoreConstants.SEPARATOR_SLASH)
             || !path.contains(DialogConstants.DOUBLE_QUOTE)) {
             return;
         }
@@ -43,15 +44,15 @@ class PathSplitHelper {
 
     boolean isSplittable() {
         if (escapedSequences == null || escapedSequences.isEmpty()) {
-            return StringUtils.contains(path, DialogConstants.PATH_SEPARATOR);
+            return StringUtils.contains(path, CoreConstants.SEPARATOR_SLASH);
         }
-        int cursor = path.indexOf(DialogConstants.PATH_SEPARATOR);
+        int cursor = path.indexOf(CoreConstants.SEPARATOR_SLASH);
         while (cursor >= 0) {
             int position = cursor;
             if (escapedSequences.stream().noneMatch(pair -> position > pair.getLeft() && position < pair.getRight())) {
                 return true;
             }
-            cursor = path.indexOf(DialogConstants.PATH_SEPARATOR, cursor + 1);
+            cursor = path.indexOf(CoreConstants.SEPARATOR_SLASH, cursor + 1);
         }
         return false;
     }
@@ -61,18 +62,18 @@ class PathSplitHelper {
             return new LinkedList<>();
         }
         if (escapedSequences == null || escapedSequences.isEmpty()) {
-            return Pattern.compile(DialogConstants.PATH_SEPARATOR).splitAsStream(path).collect(Collectors.toCollection(LinkedList::new));
+            return Pattern.compile(CoreConstants.SEPARATOR_SLASH).splitAsStream(path).collect(Collectors.toCollection(LinkedList::new));
         }
 
         Queue<String> result = new LinkedList<>();
         List<Integer> splitPositions = new ArrayList<>();
-        int cursor = path.indexOf(DialogConstants.PATH_SEPARATOR);
+        int cursor = path.indexOf(CoreConstants.SEPARATOR_SLASH);
         while (cursor >= 0) {
             int position = cursor;
             if (escapedSequences.stream().noneMatch(pair -> position > pair.getLeft() && position < pair.getRight())) {
                 splitPositions.add(cursor);
             }
-            cursor = path.indexOf(DialogConstants.PATH_SEPARATOR, cursor + 1);
+            cursor = path.indexOf(CoreConstants.SEPARATOR_SLASH, cursor + 1);
         }
         if (splitPositions.isEmpty()) {
             result.add(path);

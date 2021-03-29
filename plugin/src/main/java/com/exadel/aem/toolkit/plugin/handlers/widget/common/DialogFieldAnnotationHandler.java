@@ -21,6 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 
@@ -71,12 +72,12 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         if (StringUtils.isBlank(dialogField.name())) {
             return StringUtils.EMPTY;
         }
-        if (DialogConstants.PATH_SEPARATOR.equals(dialogField.name())
+        if (CoreConstants.SEPARATOR_SLASH.equals(dialogField.name())
             || DialogConstants.RELATIVE_PATH_PREFIX.equals(dialogField.name())) {
             return DialogConstants.RELATIVE_PATH_PREFIX;
         }
-        if (dialogField.name().contains(DialogConstants.AT)) {
-            return NamingUtil.getValidFieldName(StringUtils.substringBeforeLast(dialogField.name(), DialogConstants.AT));
+        if (dialogField.name().contains(CoreConstants.SEPARATOR_AT)) {
+            return NamingUtil.getValidFieldName(StringUtils.substringBeforeLast(dialogField.name(), CoreConstants.SEPARATOR_AT));
         }
         return NamingUtil.getValidFieldName(dialogField.name());
     }
@@ -87,12 +88,12 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
      * @return String value (empty string is returned if no Sling suffix found)
      */
     private static String getSuffixByDialogFieldProperty(DialogField dialogField) {
-        if (!StringUtils.contains(dialogField.name(), DialogConstants.AT)) {
+        if (!StringUtils.contains(dialogField.name(), CoreConstants.SEPARATOR_AT)) {
             return StringUtils.EMPTY;
         }
-        String result = NamingUtil.getValidPlainName(StringUtils.substringAfterLast(dialogField.name(), DialogConstants.AT));
+        String result = NamingUtil.getValidPlainName(StringUtils.substringAfterLast(dialogField.name(), CoreConstants.SEPARATOR_AT));
         if (StringUtils.isNotEmpty(result)) {
-            return DialogConstants.AT + result;
+            return CoreConstants.SEPARATOR_AT + result;
         }
         return result;
     }

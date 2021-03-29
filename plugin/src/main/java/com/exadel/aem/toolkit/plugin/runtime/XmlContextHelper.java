@@ -46,6 +46,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.target.AttributeHelper;
@@ -318,8 +319,8 @@ public class XmlContextHelper implements XmlUtility {
         String prefix = annotation.annotationType().isAnnotationPresent(MapProperties.class)
             ? annotation.annotationType().getDeclaredAnnotation(MapProperties.class).prefix()
             : annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
-        String nodePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
-                ? StringUtils.substringBeforeLast(prefix, DialogConstants.PATH_SEPARATOR)
+        String nodePrefix = prefix.contains(CoreConstants.SEPARATOR_SLASH)
+                ? StringUtils.substringBeforeLast(prefix, CoreConstants.SEPARATOR_SLASH)
                 : StringUtils.EMPTY;
 
         Element effectiveElement = getRequiredElement(element, nodePrefix);
@@ -347,8 +348,8 @@ public class XmlContextHelper implements XmlUtility {
         String prefix = annotation.annotationType().isAnnotationPresent(MapProperties.class)
             ? annotation.annotationType().getDeclaredAnnotation(MapProperties.class).prefix()
             : annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
-        String namePrefix = prefix.contains(DialogConstants.PATH_SEPARATOR)
-                ? StringUtils.substringAfterLast(prefix, DialogConstants.PATH_SEPARATOR)
+        String namePrefix = prefix.contains(CoreConstants.SEPARATOR_SLASH)
+                ? StringUtils.substringAfterLast(prefix, CoreConstants.SEPARATOR_SLASH)
                 : prefix;
         if (!ignorePrefix && StringUtils.isNotBlank(prefix)) {
             name = namePrefix + name;
@@ -372,7 +373,7 @@ public class XmlContextHelper implements XmlUtility {
         if (StringUtils.isEmpty(path)) {
             return element;
         }
-        return Pattern.compile(DialogConstants.PATH_SEPARATOR)
+        return Pattern.compile(CoreConstants.SEPARATOR_SLASH)
                 .splitAsStream(path)
                 .reduce(element, this::getParentOrChildElement, (prev, next) -> next);
     }
@@ -494,8 +495,8 @@ public class XmlContextHelper implements XmlUtility {
         if (parent == null) {
             return fallbackSupplier.apply(null);
         }
-        if (childName.contains(DialogConstants.PATH_SEPARATOR)) {
-            return Arrays.stream(StringUtils.split(childName, DialogConstants.PATH_SEPARATOR))
+        if (childName.contains(CoreConstants.SEPARATOR_SLASH)) {
+            return Arrays.stream(StringUtils.split(childName, CoreConstants.SEPARATOR_SLASH))
                     .reduce(parent, (p, c) -> getChildElement(p, c, fallbackSupplier), (c1, c2) -> c2);
         }
         Node child = parent.getFirstChild();
