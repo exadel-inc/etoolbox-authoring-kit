@@ -22,8 +22,9 @@ import java.util.List;
 
 /**
  * Implements topological sorting
- * List<Class<?>> nodes stores all existing Custom Handlers
- * HashMap<Class<?>, ArrayList<Class<?>>> edges stores Handler as a key and all neighbors as list of values
+ * {@code List<Orderable<T>>} is a collection of nodes that will be sorted
+ * {@code List<List<Orderable<T>>>} is a collection of ordered lists used to represent a finite graph.
+ * Each list describes the list of neighbors of a node in the graph
  */
 class TopologicalSorter<T> {
 
@@ -91,13 +92,7 @@ class TopologicalSorter<T> {
 
         // Check if not all nodes are visited
         if (sortedOrder.size() != this.nodes.size()) {
-            List<Orderable<T>> loopNodes = new ArrayList<>();
-            for (int i = 0; i < this.nodes.size(); i++) {
-                if (inDegrees[i] != 0) {
-                    loopNodes.add(this.nodes.get(i));
-                }
-            }
-            sortedOrder.addAll(new TopologicalSorter<>(loopNodes).topologicalSort());
+            sortedOrder.addAll(sortLoop(inDegrees));
         }
         return sortedOrder;
     }
@@ -122,5 +117,15 @@ class TopologicalSorter<T> {
         for (int i = 0; i < this.nodes.size(); i++) {
             this.adjacencyList.get(i).sort((Comparator.comparing(Orderable::getName)));
         }
+    }
+
+    private List<Orderable<T>> sortLoop(int[] inDegrees) {
+        List<Orderable<T>> loopNodes = new ArrayList<>();
+        for (int i = 0; i < this.nodes.size(); i++) {
+            if (inDegrees[i] != 0) {
+                loopNodes.add(this.nodes.get(i));
+            }
+        }
+        return new TopologicalSorter<>(loopNodes).topologicalSort();
     }
 }

@@ -26,6 +26,7 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 
 import org.apache.commons.collections.iterators.TransformIterator;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -35,6 +36,7 @@ import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.scripting.SlingScriptHelper;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import com.day.cq.commons.jcr.JcrConstants;
@@ -73,7 +75,6 @@ public class ListsServlet extends SlingSafeMethodsServlet {
      * a {@code DataSource} object filled with all child pages under the current root path, which are either
      * lists themselves, or folders that may contain lists inside.
      * The result is then limited by 'offset' and 'limit' parameter values.
-     *
      * @param request  {@code SlingHttpServletRequest} instance
      * @param response {@code SlingHttpServletResponse} instance
      */
@@ -104,20 +105,18 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     /**
      * Retrieves the list of item resources, which are either lists themselves or folders
      * that may contain lists inside, excludes service and content nodes
-     *
      * @param resolver An instance of ResourceResolver
      * @param parent   {@code Resource} instance used as the source of markup
      * @return A list of {@link Resource}s
      */
     private List<Resource> getValidChildren(ResourceResolver resolver, Resource parent) {
         return getChildrenStream(parent)
-            .filter(resource -> !isServiceNode(resource) && (isList(resolver, resource) || isFolder(resource)))
+            .filter(resource -> !isServiceNode(resource) && (isFolder(resource) || containsResource(resource) || isList(resolver, resource)))
             .collect(Collectors.toList());
     }
 
     /**
      * Checks whether the resource is a list page
-     *
      * @param resolver An instance of ResourceResolver
      * @param resource {@code Resource} instance used as the source of markup
      * @return True or false
@@ -125,28 +124,37 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     private static boolean isList(ResourceResolver resolver, Resource resource) {
         Resource childParameters = resolver.getResource(resource.getPath() + PATH_JCR_CONTENT);
         if (childParameters != null) {
-            String template = childParameters.getValueMap().get(NameConstants.NN_TEMPLATE, String.class);
-            return template != null && template.equals(LIST_TEMPLATE_NAME);
+            String template = childParameters.getValueMap().get(NameConstants.NN_TEMPLATE, StringUtils.EMPTY);
+            return template.equals(LIST_TEMPLATE_NAME);
         }
         return false;
     }
 
     /**
-     * Checks whether the resource contains resources, which are either pages, or folders that may contain lists inside
-     *
+     * Checks whether the resource is a folder
      * @param resource {@code Resource} instance used as the source of markup
      * @return True or false
      */
     private static boolean isFolder(Resource resource) {
+        String primaryType = resource.getValueMap().get(JcrConstants.JCR_PRIMARYTYPE, StringUtils.EMPTY);
+        return primaryType.equals(JcrConstants.NT_FOLDER) || primaryType.equals(JcrResourceConstants.NT_SLING_FOLDER) ||
+            primaryType.equals(JcrResourceConstants.NT_SLING_ORDERED_FOLDER);
+    }
+
+    /**
+     * Checks whether the resource contains resources, which are either pages, or folders that may contain lists inside
+     * @param resource {@code Resource} instance used as the source of markup
+     * @return True or false
+     */
+    private static boolean containsResource(Resource resource) {
         return getChildrenStream(resource).anyMatch(item -> {
-            String primaryType = item.getValueMap().get(JcrConstants.JCR_PRIMARYTYPE, String.class);
-            return primaryType != null && (primaryType.equals(NameConstants.NT_PAGE) || primaryType.equals(JcrConstants.NT_FOLDER));
+            String childPrimaryType = item.getValueMap().get(JcrConstants.JCR_PRIMARYTYPE, StringUtils.EMPTY);
+            return childPrimaryType.equals(NameConstants.NT_PAGE) || childPrimaryType.equals(JcrConstants.NT_FOLDER);
         });
     }
 
     /**
      * Checks whether the resource is a service/content node
-     *
      * @param resource {@code Resource} instance used as the source of markup
      * @return True or false
      */
@@ -160,7 +168,6 @@ public class ListsServlet extends SlingSafeMethodsServlet {
 
     /**
      * Gets {@code request} sling script helper
-     *
      * @param request {@code ServletRequest} instance
      * @return {@code SlingScriptHelper} instance
      */
