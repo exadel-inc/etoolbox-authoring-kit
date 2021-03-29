@@ -21,7 +21,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import com.day.cq.commons.jcr.JcrConstants;
 
-import com.exadel.aem.toolkit.api.lists.models.SimpleListItem;
+import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 /**
  * Contains methods that assist in retrieving AEMBox Lists values

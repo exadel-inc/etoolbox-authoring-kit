@@ -27,8 +27,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.api.lists.models.SimpleListItem;
 import com.exadel.aem.toolkit.api.lists.services.ListHelperService;
+import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 import com.exadel.aem.toolkit.core.lists.services.impl.ListHelperServiceImpl;
 
 import io.wcm.testing.mock.aem.junit.AemContext;

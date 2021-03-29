@@ -11,47 +11,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.exadel.aem.toolkit.core.lists.models;
 
-package com.exadel.aem.toolkit.core.lists.components;
-
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Default;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import com.day.cq.commons.jcr.JcrConstants;
 
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.lists.ListItem;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.api.lists.models.SimpleListItem;
 
 /**
- * Represents the basic list item which consists of "jct:title" and "value" fields
+ * Represents basic AEMBox List item which consists of "jct:title" and "value" fields
  */
+@Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 @AemComponent(
     path = "content/simpleListItem",
     title = "Simple List Item"
 )
 @Dialog
 @ListItem
-public class SimpleListItemImpl implements SimpleListItem {
+public interface SimpleListItem {
 
+    /**
+     * Gets the {@code title} part of this item
+     * @return String value (non-null)
+     */
+    @ValueMapValue(name = JcrConstants.JCR_TITLE)
+    @Default(values = StringUtils.EMPTY)
     @DialogField(
         name = JcrConstants.JCR_TITLE,
         label = "Title",
         description = "Provide item title.")
     @TextField
-    private String title;
+    @Place(before = @ClassMember("getValue"))
+    String getTitle();
 
+    /**
+     * Gets the {@code value} part of this item
+     * @return String value (non-null)
+     */
+    @ValueMapValue
+    @Default(values = StringUtils.EMPTY)
     @DialogField(
         label = "Value",
         description = "Provide item value.")
     @TextField
-    private String value;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getValue() {
-        return value;
-    }
+    String getValue();
 }
