@@ -1,7 +1,7 @@
 {
   "jcr:primaryType": "cq:Component",
   "jcr:title": "Simple List Item",
-  "aatListItem": "true",
+  "listItem": "true",
   "jcr:content": {
     "jcr:primaryType": "nt:unstructured",
     "jcr:title": "Simple List Item",
