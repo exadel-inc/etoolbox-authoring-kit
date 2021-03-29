@@ -21,7 +21,6 @@ import java.util.function.BinaryOperator;
 
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Source;
 
@@ -29,7 +28,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
  * An abstraction of class encapsulating routines for XML generation and handling
  *
  * @deprecated Since AEM Authoring Toolkit v. 2.0.1 users are encouraged to use new custom handlers API that is based
- * on {@link Source} and {@link Target} objects handling. Legacy API will be revoked in the versions to come
+ * on {@link Source} and {@link Target} objects handling. Legacy API will be removed in the versions to come
  */
 @Deprecated
 @SuppressWarnings({"unused", "squid:S1133"})
@@ -172,12 +171,12 @@ public interface XmlUtility {
 
     /**
      * Populates {@code Element} node with all eligible property values of an {@code Annotation} instance,
-     * honoring {@link Scope} specified for an annotation or a particular annotation method
+     * honoring the scope specified for an annotation or a particular annotation method
      * @param element Element node
      * @param annotation Annotation to take property values from
-     * @param scope Current {@code XmlScope}
+     * @param scope Non-null string representing the current scope
      */
-    void mapProperties(Element element, Annotation annotation, Scope scope);
+    void mapProperties(Element element, Annotation annotation, String scope);
 
     /**
      * Populates {@code Element} node with property values of an {@code Annotation} instance,

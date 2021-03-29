@@ -14,23 +14,22 @@
 
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
-import java.util.List;
-import java.util.function.BiConsumer;
-
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite {@code Select} widget functionality
  * within the {@code cq:dialog} node
  */
-class SelectHandler extends OptionProviderHandler implements BiConsumer<Source, Target> {
+@Handles(Select.class)
+public class SelectHandler extends OptionProviderHandler implements Handler {
     /**
      * Processes the user-defined data and writes it to {@link Target}
      * @param source Current {@link Source} instance
@@ -46,11 +45,7 @@ class SelectHandler extends OptionProviderHandler implements BiConsumer<Source, 
         if (ArrayUtils.isNotEmpty(select.options())) {
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             for (Option option: select.options()) {
-                List<Target> existing = items.findChildren(t -> option.value().equals(t.getAttribute(DialogConstants.PN_VALUE)));
-                Target item = existing.isEmpty()
-                    ? items.createTarget(DialogConstants.DOUBLE_QUOTE + option.value() + DialogConstants.DOUBLE_QUOTE)
-                    : items.getTarget(DialogConstants.DOUBLE_QUOTE + option.value() + DialogConstants.DOUBLE_QUOTE);
-                item.attributes(option, AnnotationUtil.getPropertyMappingFilter(option));
+                appendOption(option, option.value(), items);
             }
         }
         appendDataSource(select.datasource(), target);

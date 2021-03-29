@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.plugin.handlers.widget.rte;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,6 +28,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.HtmlLinkRules;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.HtmlPasteRules;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
@@ -43,7 +44,8 @@ import com.exadel.aem.toolkit.plugin.util.validation.Validation;
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code RichTextEditor} widget functionality
  * within the {@code cq:dialog} and {@code cq:editConfig} XML nodes
  */
-public class RichTextEditorHandler implements BiConsumer<Source, Target> {
+@Handles(RichTextEditor.class)
+public class RichTextEditorHandler implements Handler {
     private static final String KEYWORD_AUTO = "auto";
 
     private static final String FEATURE_ALL = "*";

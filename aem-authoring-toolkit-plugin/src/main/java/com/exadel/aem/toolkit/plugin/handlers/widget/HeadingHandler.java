@@ -13,11 +13,11 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
-import java.util.function.BiConsumer;
-
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
@@ -28,7 +28,8 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
  * {@code BiConsumer<Source, Target>} implementation used to create markup for Granite UI {@code Heading} widget
  * for a {@code Dialog} or a {@code DesignDialog}
  */
-class HeadingHandler implements BiConsumer<Source, Target> {
+@Handles(Heading.class)
+public class HeadingHandler implements Handler {
     private static final String EXCEPTION_MESSAGE = "A non blank string must be specified for this Heading's text";
 
     /**

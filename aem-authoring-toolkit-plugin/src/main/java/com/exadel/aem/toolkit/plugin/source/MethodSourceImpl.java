@@ -63,7 +63,9 @@ public class MethodSourceImpl extends MemberSourceImpl {
 
     @Override
     public boolean isValid() {
-        return method != null && !Modifier.isStatic(method.getModifiers());
+        return method != null
+            && !Modifier.isStatic(method.getModifiers())
+            && isWidgetAnnotationPresent();
     }
 
     @Override

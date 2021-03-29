@@ -36,21 +36,24 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 
 /**
- * {@code BiConsumer<EditConfig, Target>} implementation for storing {@link InplaceEditingConfig} arguments to {@code cq:editConfig} XML node
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a
+ * {@link Source} object that define the in-place editing config within a Granite UI {@code cq:editConfig} node
  */
-public class InplaceEditingHandler implements BiConsumer<EditConfig, Target> {
+public class InplaceEditingHandler implements BiConsumer<Source, Target> {
+
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param editConfig {@code EditConfig} annotation instance
-     * @param root Current {@link Target} instance
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
-    public void accept(EditConfig editConfig, Target root) {
+    public void accept(Source source, Target target) {
+        EditConfig editConfig = source.adaptTo(EditConfig.class);
         if (ArrayUtils.isEmpty(editConfig.inplaceEditing())
                 || (editConfig.inplaceEditing().length == 1 && EditorType.EMPTY.equals(editConfig.inplaceEditing()[0].type()))) {
             return;
         }
-        Target inplaceEditingNode = root.getOrCreateTarget(DialogConstants.NN_INPLACE_EDITING)
+        Target inplaceEditingNode = target.getOrCreateTarget(DialogConstants.NN_INPLACE_EDITING)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, DialogConstants.NT_INPLACE_EDITING_CONFIG)
                 .attribute(DialogConstants.PN_ACTIVE, true);
 

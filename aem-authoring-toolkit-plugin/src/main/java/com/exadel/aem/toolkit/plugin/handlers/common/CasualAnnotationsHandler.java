@@ -11,8 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.exadel.aem.toolkit.plugin.handlers.widget.common;
+package com.exadel.aem.toolkit.plugin.handlers.common;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -30,7 +29,6 @@ import org.codehaus.plexus.util.CollectionUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -41,16 +39,16 @@ import com.exadel.aem.toolkit.plugin.target.TargetImpl;
 import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
 
 /**
- * Stores properties coming from custom annotations and, optionally, processed by custom handlers
- * to a Granite UI target
+ * Implements {@code BiConsumer} to populate a {@link Target} instance via calls to custom handlers attached to the
+ * annotations adaptable from the provided {@link Source}
  */
-public class CustomHandlingHandler implements BiConsumer<Source, Target> {
+public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
     private List<Handler> predefinedHandlers;
 
     /**
      * Default constructor
      */
-    public CustomHandlingHandler() {
+    public CasualAnnotationsHandler() {
     }
 
     /**
@@ -58,21 +56,30 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
      * the passed {@code Source}
      * @param handlers Pre-defined handlers list
      */
-    public CustomHandlingHandler(List<Handler> handlers) {
+    public CasualAnnotationsHandler(List<Handler> handlers) {
         this.predefinedHandlers = handlers;
     }
 
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Processes data that can be extracted from the given {@code Source} and stores in into the provided {@code Target}
+     * @param source {@code Source} object to get data
+     * @param target Resulting {@code Target} object
      */
     @Override
+    @SuppressWarnings("deprecation") // DialogWidgetHandler processing is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     public void accept(Source source, Target target) {
         List<Handler> handlers = getEffectiveHandlers(source, target.getScope());
 
         // Extract legacy handlers that accept(Element, Field)
-        List<Handler> legacyHandlers = handlers.stream().filter(CustomHandlingHandler::isLegacyHandler).collect(Collectors.toList());
+        List<Handler> legacyHandlers = handlers.stream().filter(CasualAnnotationsHandler::isLegacyHandler).collect(Collectors.toList());
+        // Separate modern handlers that accept(Source, Target)
+        Collection<Handler> modernHandlers = CollectionUtils.subtract(handlers, legacyHandlers);
+
+        // Process modern handlers
+        OrderingUtil.sortHandlers(new ArrayList<>(modernHandlers)).forEach(handler -> handler.accept(source, target));
+
+        // Process legacy handlers after modern ones (because they must trigger after built-in modern handlers worked)
         if (!legacyHandlers.isEmpty()) {
             Field field = source.adaptTo(Field.class);
             Element element = target
@@ -83,34 +90,45 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
                 ((TargetImpl) target).attributes(element);
             }
         }
-
-        // Process modern handlers that accept(Source, Target)
-        Collection<Handler> modernHandlers = CollectionUtils.subtract(handlers, legacyHandlers);
-        OrderingUtil.sortHandlers(new ArrayList<>(modernHandlers)).forEach(handler -> handler.accept(source, target));
     }
 
-    private List<Handler> getEffectiveHandlers(Source source, Scope scope) {
+    /**
+     * Retrieves handler instances valid for the given source and scope
+     * @param source {@code Source} object to get data from
+     * @param scope Non-null string representing the scope that the handlers must match
+     * @return List of {@code Handler} instances
+     */
+    @SuppressWarnings("deprecation") // DialogWidgetHandler processing is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
+    private List<Handler> getEffectiveHandlers(Source source, String scope) {
         if (predefinedHandlers != null && !predefinedHandlers.isEmpty()) {
             return predefinedHandlers;
         }
 
         List<Handler> result;
-
         // Modern handlers mapping approach -- via @Handles annotation
         result = PluginRuntime.context().getReflection().getHandlers(scope, source.adaptTo(Annotation[].class));
-
         // Legacy handlers mapping approach -- via source<->name mapping
         List<DialogWidgetHandler> sourceToNameMappingHandlers = Arrays.stream(source.adaptTo(Annotation[].class))
             .map(Annotation::annotationType)
             .filter(a -> a.isAnnotationPresent(DialogWidgetAnnotation.class))
             .map(a -> a.getAnnotation(DialogWidgetAnnotation.class).source())
-            .flatMap(CustomHandlingHandler::getMatchedHandlersByName)
+            .flatMap(CasualAnnotationsHandler::getMatchedHandlersByName)
             .collect(Collectors.toList());
         result.addAll(sourceToNameMappingHandlers);
 
         return result;
     }
 
+
+    /**
+     * Called by {@link CasualAnnotationsHandler#getEffectiveHandlers(Source, String)} to process {@code source<->name}
+     * mapping for the legacy-style handlers
+     * @param source String representing the {@code source} value per the legacy-style handler signature
+     * @return Stream of {@link DialogWidgetHandler} instances
+     */
+    @SuppressWarnings("deprecation") // DialogWidgetHandler processing is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     private static Stream<DialogWidgetHandler> getMatchedHandlersByName(String source) {
         if (StringUtils.isEmpty(source)) {
             return Stream.empty();
@@ -124,6 +142,12 @@ public class CustomHandlingHandler implements BiConsumer<Source, Target> {
             .map(DialogWidgetHandler.class::cast);
     }
 
+    /**
+     * Gets whether the given handler is a legacy handler, that is, implements an {@code accept} method that takes the
+     * {@link Element}-typed and {@link Field}-typed argument
+     * @param handler The {@code Handler} to analyze
+     * @return True or false
+     */
     private static boolean isLegacyHandler(Handler handler) {
         try {
             Method legacyAcceptMethod = handler.getClass().getMethod("accept", Element.class, Field.class);

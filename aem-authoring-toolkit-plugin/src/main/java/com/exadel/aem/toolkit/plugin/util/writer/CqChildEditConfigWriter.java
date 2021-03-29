@@ -15,14 +15,8 @@ package com.exadel.aem.toolkit.plugin.util.writer;
 
 import javax.xml.transform.Transformer;
 
-import org.w3c.dom.Document;
-
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
-import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.editconfig.EditConfigHandlingHelper;
-import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
-import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing author UI aspects for child components that do not define
@@ -40,11 +34,11 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
 
     /**
      * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
-     * @return {@link Scope} value
+     * @return String value representing a valid scope
      */
     @Override
-    Scope getScope() {
-        return Scope.CQ_CHILD_EDIT_CONFIG;
+    String getScope() {
+        return Scopes.CQ_CHILD_EDIT_CONFIG;
     }
 
     /**
@@ -55,20 +49,5 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
     @Override
     boolean canProcess(Class<?> componentClass) {
         return componentClass.isAnnotationPresent(ChildEditConfig.class);
-    }
-
-    /**
-     * Overrides {@link PackageEntryWriter#applySpecificProperties(Class, Target)} method to write down contents related
-     * to the component's {@code cq:childEditConfig} node, or the {@code _cq_ChildEditConfig.xml} file
-     * @param componentClass The {@code Class} being processed
-     * @param target The root element of DOM {@link Document} to feed data to
-     */
-    @Override
-    void applySpecificProperties(Class<?> componentClass, Target target) {
-        ChildEditConfig childEditConfig = componentClass.getDeclaredAnnotation(ChildEditConfig.class);
-        target
-            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
-            .attributes(childEditConfig, AnnotationUtil.getPropertyMappingFilter(childEditConfig));
-        EditConfigHandlingHelper.append(childEditConfig, target);
     }
 }

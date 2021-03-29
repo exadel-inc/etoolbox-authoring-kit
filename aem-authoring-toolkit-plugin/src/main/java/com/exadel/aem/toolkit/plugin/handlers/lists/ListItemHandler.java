@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.plugin.handlers.lists;
 
 import com.exadel.aem.toolkit.api.annotations.lists.ListItem;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 /**
  * The {@code Handler} for adding listItem property to a TouchUI dialog
  */
-@Handles(value = ListItem.class, scope = Scope.COMPONENT)
+@Handles(value = ListItem.class, scope = Scopes.COMPONENT)
 public class ListItemHandler implements Handler {
     @Override
     public void accept(Source source, Target target) {

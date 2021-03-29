@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.handlers.widget.common;
 
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.ImmutableMap;
@@ -33,6 +33,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.handlers.common.CasualAnnotationsHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widget.MultiFieldHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.target.Targets;
 import com.exadel.aem.toolkit.plugin.util.ClassUtil;
@@ -48,7 +50,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param source {@code Source} instance referring to the class member being processed
-     * @param target XML targetFacade
+     * @param target {@code Target} instance
      */
     @Override
     public void accept(Source source, Target target) {
@@ -82,8 +84,11 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         List<Handler> multifieldHandlers = PluginRuntime
             .context()
             .getReflection()
-            .getHandlers(target.getScope(), MultiField.class);
-        new CustomHandlingHandler(multifieldHandlers).accept(source, target);
+            .getHandlers(target.getScope(), MultiField.class)
+            .stream() // Because the built-in MultiField handler should not be applied for the second time, only custom ones
+            .filter(handler -> !handler.getClass().equals(MultiFieldHandler.class))
+            .collect(Collectors.toList());
+        new CasualAnnotationsHandler(multifieldHandlers).accept(source, target);
     }
 
     /**

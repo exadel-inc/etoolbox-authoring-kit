@@ -24,17 +24,17 @@ import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
- * The {@code BiConsumer<Class<?>, Target>} implementation for a fixed-columns TouchUI dialog.
+ * The {@code BiConsumer<Source, Target>} implementation for a fixed-columns TouchUI dialog.
  */
-public class FixedColumnsHandler implements BiConsumer<Class<?>, Target> {
+public class FixedColumnsHandler implements BiConsumer<Source, Target> {
     /**
      * Implements {@code BiConsumer<Class<?>, Element>} pattern
      * to process component-backing Java class and append the results to the {@link Target} root node
-     * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param target Current {@link Target} instance
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
-    public void accept(Class<?> componentClass, Target target) {
+    public void accept(Source source, Target target) {
         Target contentItemsColumn = target.getOrCreateTarget(DialogConstants.NN_CONTENT)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
                 .getOrCreateTarget(DialogConstants.NN_LAYOUT)
@@ -44,7 +44,7 @@ public class FixedColumnsHandler implements BiConsumer<Class<?>, Target> {
                 .getOrCreateTarget(DialogConstants.NN_COLUMN)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 
-        List<Source> members = ClassUtil.getSources(componentClass);
+        List<Source> members = ClassUtil.getSources(source.adaptTo(Class.class));
         PlacementHelper.builder()
             .container(contentItemsColumn)
             .members(members)

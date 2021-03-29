@@ -23,7 +23,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,7 +36,7 @@ import org.reflections.util.ConfigurationBuilder;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
@@ -103,14 +102,14 @@ public class ReflectionContextHelper {
        ------------------- */
 
     /**
-     * Retrieves list of {@link Handler} instances that match the provided annotations and {@link Scope}. The return
-     * value is ordered to honor the relations set by {@code before} and {@code after} anchors
-     * @param scope Non-null {@code Scope} object that the handlers must match
-     * @param annotations One or more non-null {@code Annotation} objects, usually representing annotations of a method
+     * Retrieves list of {@link Handler} instances that match the provided annotations and scope. The collection returned
+     * is ordered to honor the relations set by {@code before} and {@code after} anchors
+     * @param scope Non-null string representing the scope that the handlers must match
+     * @param annotations Non-null array of {@code Annotation} objects, usually representing annotations of a method
      *                    or a class
      * @return {@code List} of handler instances, ordered
      */
-    public List<Handler> getHandlers(Scope scope, Annotation... annotations) {
+    public List<Handler> getHandlers(String scope, Annotation[] annotations) {
         List<Handler> result = getHandlers().stream()
             .filter(handler -> isHandlerMatches(handler, scope, annotations))
             .collect(Collectors.toList());
@@ -118,15 +117,15 @@ public class ReflectionContextHelper {
     }
 
     /**
-     * Retrieves list of {@link Handler} instances that match the provided annotation types and {@link Scope}. The return
-     * value is ordered to honor the relations set by {@code before} and {@code after} anchors
-     * @param scope Non-null {@code Scope} object that the handlers must match
-     * @param annotationType Non-null {@code Class} object
+     * Retrieves list of {@link Handler} instances that match the provided annotation types and scope. The collection
+     * returned is ordered to honor the relations set by {@code before} and {@code after} anchors
+     * @param scope Non-null string representing the scope that the handlers must match
+     * @param annotationTypes Non-null array of {@code Class} objects
      * @return {@code List} of handler instances, ordered
      */
-    public List<Handler> getHandlers(Scope scope, Class<? extends Annotation> annotationType) {
+    public List<Handler> getHandlers(String scope, Class<?>... annotationTypes) {
         List<Handler> result = getHandlers().stream()
-            .filter(handler -> isHandlerMatches(handler, scope, new Class<?>[] {annotationType}))
+            .filter(handler -> isHandlerMatches(handler, scope, annotationTypes))
             .collect(Collectors.toList());
         return OrderingUtil.sortHandlers(result);
     }
@@ -143,7 +142,7 @@ public class ReflectionContextHelper {
             .filter(cls -> !cls.isInterface())
             .map(ReflectionContextHelper::getHandlerInstance)
             .filter(Objects::nonNull)
-            .sorted(Comparator.comparing(handler -> handler.getClass().getName())) // to provide stable handlers sequence between runs
+            .sorted(OrderingUtil::compareByOrigin) // to provide stable handlers sequence between runs
             .collect(Collectors.toList());
         return handlers;
     }
@@ -151,12 +150,12 @@ public class ReflectionContextHelper {
     /**
      * Tests whether the given handler fits for the conditions defined by the set of manageable annotations and the
      * {@code Scope} value
-     * @param scope {@code Scope} that the handler must match
+     * @param scope String value representing the scope that the handlers must match
      * @param handler {@code Handler} instance to test
      * @param annotations Array of {@code Annotation} objects, usually representing annotations of a method or a class
      * @return True or false
      */
-    private static boolean isHandlerMatches(Handler handler, Scope scope, Annotation[] annotations) {
+    private static boolean isHandlerMatches(Handler handler, String scope, Annotation[] annotations) {
         return isHandlerMatches(handler, scope, Arrays.stream(annotations).map(Annotation::annotationType).toArray(Class<?>[]::new));
     }
 
@@ -164,14 +163,14 @@ public class ReflectionContextHelper {
      * Tests whether the given handler fits for the conditions defined by the set of manageable annotations and the
      * {@code Scope} value
      * @param handler {@code Handler} instance to test
-     * @param scope {@code Scope} that the handler must match
+     * @param scope String value representing the scope that the handlers must match
      * @param annotationTypes Array of {@code Class} references, usually representing types of annotations of a method
      *                        or a class
      * @return True or false
      */
     @SuppressWarnings("deprecation") // HandlesWidgets processing is retained for compatibility and will be removed
                                      // in a version after 2.0.1
-    private static boolean isHandlerMatches(Handler handler, Scope scope, Class<?>[] annotationTypes) {
+    private static boolean isHandlerMatches(Handler handler, String scope, Class<?>[] annotationTypes) {
         Handles handles = handler.getClass().getDeclaredAnnotation(Handles.class);
         HandlesWidgets handlesWidgets = handler.getClass().getDeclaredAnnotation(HandlesWidgets.class);
         if (handles == null && handlesWidgets == null) {
@@ -183,17 +182,17 @@ public class ReflectionContextHelper {
         boolean isMatchByType = Arrays.stream(handledAnnotationTypes)
             .anyMatch(annotationType -> Arrays.asList(annotationTypes).contains(annotationType));
 
-        Scope[] handlerScopes = handles != null ? handles.scope() : new Scope[] {Scope.DEFAULT};
+        String[] handlerScopes = handles != null ? handles.scope() : new String[] {Scopes.DEFAULT};
         // Try to guess appropriate scopes for the handler judging by the annotations it handles
         // (so that if it handles e.g. @ChildEditConfig, the scope for the handler is exactly ChildEditConfig)
-        if (handles != null && handlerScopes.length == 1 && handlerScopes[0].equals(Scope.DEFAULT)) {
-            handlerScopes = ScopeUtil.designate(handles.value());
+        if (handles != null && handlerScopes.length == 1 && handlerScopes[0].equals(Scopes.DEFAULT)) {
+            handlerScopes = new String[] {ScopeUtil.designate(handles.value())};
         }
         // If still no particular scopes, try to guess by the mere annotations added to the current class
         // (so that if there's e.g. @Dialog, and the handler has no particular scope, it is considered the handler
         // is also for the dialog)
-        if (handlerScopes.length == 1 && handlerScopes[0].equals(Scope.DEFAULT)) {
-            handlerScopes = ScopeUtil.designate(annotationTypes);
+        if (handlerScopes.length == 1 && handlerScopes[0].equals(Scopes.DEFAULT)) {
+            handlerScopes = new String[] {ScopeUtil.designate(annotationTypes)};
         }
         boolean isMatchByScope = ScopeUtil.fits(scope, handlerScopes);
 

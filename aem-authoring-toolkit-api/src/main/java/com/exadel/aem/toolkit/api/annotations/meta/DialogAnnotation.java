@@ -22,9 +22,14 @@ import java.lang.annotation.Target;
 /**
  * Used to specify that an {@link Annotation} defined in code is to be processed as the AEM Component /
  * AEM TouchUI Dialog annotation
+ * @deprecated Since v 2.0.1, there's no need to specially mark a custom annotation as soon as it is either automatically
+ * processed with {@link MapProperties} or handled with a {@link com.exadel.aem.toolkit.api.handlers.Handler}.
+ * {@code DialogAnnotation} will be removed in a version after 2.0.1
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated
+@SuppressWarnings("squid:S1133")
 public @interface DialogAnnotation {
     String source() default "";
 }

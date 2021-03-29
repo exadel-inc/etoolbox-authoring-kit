@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
 
 import java.lang.annotation.Annotation;
@@ -32,7 +31,7 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -42,7 +41,11 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.ClassUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
-public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
+/**
+ * Presents a common base for handlers processing layout logic for Granite UI containers, such as the accordion container,
+ * tab container, etc.
+ */
+public abstract class ContainerHandler implements BiConsumer<Source, Target> {
 
     /**
      * Processes container-backing Java class and appends the results to the root {@link Target} object
@@ -127,14 +130,14 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     /**
      * Retrieves a collection of container sections derived from the specified hierarchical collection of classes
      * @param componentClass    {@code Class<?>} instance used as the source of markup
-     * @param scope             {@link Scope} value defining whether to handle the current Java class as a {@code Dialog}
+     * @param scope             String value defining whether to handle the current Java class as a {@code Dialog}
      *                          source, or a {@code DesignDialog} source
      * @param annotationClasses One or more {@code Class<?>} objects representing types of container sections to process
      * @return Ordered list of container sections
      */
     private List<SectionFacade> getSections(
         Class<?> componentClass,
-        Scope scope,
+        String scope,
         List<Class<? extends Annotation>> annotationClasses) {
 
         // Retrieve superclasses of the current class, from top of the hierarchy to the most immediate ancestor,
@@ -159,14 +162,14 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
     /**
      * Retrieves a collection of container sections derived from the specified hierarchical collection of classes
      * @param hierarchy         The {@code Class<?>}-es to search for defined container items
-     * @param scope             {@link Scope} value defining whether to handle the current Java class as a {@code Dialog}
+     * @param scope             String value defining whether to handle the current Java class as a {@code Dialog}
      *                          source, or a {@code DesignDialog} source
      * @param annotationClasses One or more {@code Class<?>} objects representing types of container sections to process
      * @return Ordered list of container sections
      */
     private List<SectionFacade> getSections(
         List<Class<?>> hierarchy,
-        Scope scope,
+        String scope,
         List<Class<? extends Annotation>> annotationClasses) {
 
         List<SectionFacade> result = new ArrayList<>();
@@ -214,15 +217,17 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * into the accumulating collection
      * @param accumulator    The collection of container sections
      * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param scope          {@link Scope} value defining whether to handle the current Java class as a {@code Dialog}
+     * @param scope          String value defining whether to handle the current Java class as a {@code Dialog}
      *                       source, or a {@code DesignDialog} source
      */
-    private void appendSectionsFromClassLevel(List<SectionFacade> accumulator, Class<?> componentClass, Scope scope) {
+    @SuppressWarnings("deprecation") // Processing of container.Tab class and Dialog#tabs() method is retained for
+                                     // compatibility and will be removed in a version after 2.0.1
+    private void appendSectionsFromClassLevel(List<SectionFacade> accumulator, Class<?> componentClass, String scope) {
         com.exadel.aem.toolkit.api.annotations.container.Tab[] legacyTabs = null;
         Tab[] tabs = null;
         AccordionPanel[] panels = null;
 
-        if (Scope.CQ_DIALOG.equals(scope) && componentClass.getDeclaredAnnotation(Dialog.class) != null) {
+        if (Scopes.CQ_DIALOG.equals(scope) && componentClass.getDeclaredAnnotation(Dialog.class) != null) {
             Dialog dialogAnnotation = componentClass.getDeclaredAnnotation(Dialog.class);
             legacyTabs = dialogAnnotation.tabs();
         }
@@ -293,6 +298,8 @@ public abstract class ContainerHandler implements BiConsumer<Class<?>, Target> {
      * @param componentClass {@code Class<?>} instance used as the source of markup
      * @return Array of strings, non-null
      */
+    @SuppressWarnings("deprecation") // Processing of IgnoreTabs annotation is retained for
+                                     // compatibility and will be removed in a version after 2.0.1
     private static String[] getIgnoredSectionTitles(Class<?> componentClass) {
         String[] result = ArrayUtils.EMPTY_STRING_ARRAY;
         if (componentClass.isAnnotationPresent(IgnoreTabs.class)) {

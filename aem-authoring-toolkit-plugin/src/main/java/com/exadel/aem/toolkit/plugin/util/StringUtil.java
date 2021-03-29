@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.util;
 
 import java.text.SimpleDateFormat;
@@ -20,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -53,9 +53,13 @@ public class StringUtil {
         Date.class, v -> new SimpleDateFormat(DATE_FORMAT).format(v)
     );
 
+    /**
+     * Default (instantiation-restricting) constructor
+     */
+    private StringUtil() {
+    }
 
-
-    /* ----------------------
+/* ----------------------
        Formatting plain types
        ---------------------- */
 
@@ -144,7 +148,6 @@ public class StringUtil {
      * @param value The string to analyze
      * @return True or false
      */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isCollection(String value) {
         return ATTRIBUTE_LIST_PATTERN.matcher(value).matches();
     }
@@ -158,7 +161,7 @@ public class StringUtil {
         if (StringUtils.isEmpty(value)) {
             return new HashSet<>();
         }
-        return new HashSet<>(Arrays.asList(StringUtils
+        return new LinkedHashSet<>(Arrays.asList(StringUtils
             .strip(value, ARRAY_OPENING + ARRAY_CLOSING)
             .split(SPLITTING_PATTERN)));
     }

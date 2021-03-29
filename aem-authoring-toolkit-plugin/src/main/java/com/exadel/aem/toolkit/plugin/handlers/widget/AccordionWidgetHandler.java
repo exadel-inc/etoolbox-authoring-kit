@@ -14,6 +14,8 @@
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
@@ -21,7 +23,8 @@ import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHand
 /**
  * Handler used to prepare data for {@link Accordion} widget rendering
  */
-class AccordionWidgetHandler extends WidgetContainerHandler {
+@Handles(Accordion.class)
+public class AccordionWidgetHandler extends WidgetContainerHandler implements Handler {
 
     /**
      * Implements the {@code BiConsumer<Source, Target} pattern to process settings specified by {@link Accordion}
@@ -31,6 +34,12 @@ class AccordionWidgetHandler extends WidgetContainerHandler {
      */
     @Override
     public void accept(Source source, Target target) {
+        if (source.adaptTo(Class.class) != null) {
+            // This handler is not used with class-based source objects
+            return;
+        }
+        target.attributes(source.adaptTo(Accordion.class)); // We do not use the auto-mapping facility here because
+        // @Accordion can be used class-level and should not mess with "true" auto-mapped class annotations
         populateNestedContainer(source, target, Accordion.class);
     }
 }

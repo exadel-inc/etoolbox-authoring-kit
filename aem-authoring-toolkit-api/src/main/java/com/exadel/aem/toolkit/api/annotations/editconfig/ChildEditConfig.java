@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.editconfig;
 
 import java.lang.annotation.ElementType;
@@ -21,7 +20,7 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 /**
  * Defines editing configuration for a TouchUI-ready child components of the current component.
@@ -30,19 +29,25 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scope;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties(prefix = "cq:", scope = Scope.CQ_CHILD_EDIT_CONFIG)
+@MapProperties(
+    scope = Scopes.CQ_CHILD_EDIT_CONFIG,
+    prefix = "cq:"
+)
 public @interface ChildEditConfig {
+
     /**
      * When set to a non-blank string, or to an array of strings, maps to the 'cq:actions' property
      * of {@code cq:childEditConfig} node
      * @return String / array value
      */
     String[] actions() default {};
+
     /**
      * Used to specify a collection of {@link DropTargetConfig} values for this child editing configuration
      * @return Single {@code DropTargetConfig} or an array of configs
      */
     DropTargetConfig[] dropTargets() default {};
+
     /**
      * Used to specify a collection of {@link Listener} configs for this child editing configuration
      * @return Single {@code Listener} or an array of Listeners

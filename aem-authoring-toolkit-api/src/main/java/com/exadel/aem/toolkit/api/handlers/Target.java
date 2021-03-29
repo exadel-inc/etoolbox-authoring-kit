@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
-
 public interface Target {
 
     String getName();
@@ -32,7 +30,7 @@ public interface Target {
 
     boolean isEmpty();
 
-    Scope getScope();
+    String getScope();
 
     default boolean exists(String path) {
         return getTarget(path) != null;

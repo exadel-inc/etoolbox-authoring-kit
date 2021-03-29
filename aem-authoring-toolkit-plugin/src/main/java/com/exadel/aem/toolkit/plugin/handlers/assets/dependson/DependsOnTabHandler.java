@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.plugin.handlers.assets.dependson;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.ImmutableMap;
@@ -24,6 +23,10 @@ import com.google.common.collect.ImmutableMap;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTabConfig;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
@@ -32,9 +35,13 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 
 /**
- * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
+ * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for the {@code DependsOnTab} functionality
  */
-public class DependsOnTabHandler implements BiConsumer<Class<?>, Target> {
+@Handles(
+    value = {DependsOnTab.class, DependsOnTabConfig.class},
+    scope = {Scopes.CQ_DIALOG, Scopes.CQ_DESIGN_DIALOG}
+)
+public class DependsOnTabHandler implements Handler {
 
     private static final String TAB_ITEMS_NODE_PATH = String.join(DialogConstants.PATH_SEPARATOR,
         DialogConstants.NN_CONTENT,
@@ -43,22 +50,18 @@ public class DependsOnTabHandler implements BiConsumer<Class<?>, Target> {
         DialogConstants.NN_ITEMS);
 
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param target Current {@link Target} instance
-     * @param dialogClass {@code Class} object representing the tab-defining class
+     * Processes relevant data that can be extracted from the given {@code Source} and stores in into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
-    public void accept(Class<?> dialogClass, Target target) {
-        if (dialogClass.isAnnotationPresent(DependsOnTab.class)) {
-            handleDependsOnTab(dialogClass.getDeclaredAnnotation(DependsOnTab.class), target);
-        } else if (dialogClass.isAnnotationPresent(DependsOnTabConfig.class)) {
-            handleDependsOnTabConfig(dialogClass.getDeclaredAnnotation(DependsOnTabConfig.class), target);
-        }
+    public void accept(Source source, Target target) {
+        source.tryAdaptTo(DependsOnTab.class).ifPresent(dependsOnTab -> handleDependsOnTab(dependsOnTab, target));
+        source.tryAdaptTo(DependsOnTabConfig.class).ifPresent(dependsOnTabConfig -> handleDependsOnTabConfig(dependsOnTabConfig, target));
     }
 
     /**
-     * Called by {@link DependsOnTabHandler#accept(Class, Target)} to store particular {@code DependsOnTab} value
-     * in XML markup
+     * Called by {@link DependsOnTabHandler#accept(Source, Target)} to store particular {@code DependsOnTab} value
      * @param value Current {@link DependsOnTab} value
      * @param target Current {@link Target} instance
      */
@@ -86,8 +89,7 @@ public class DependsOnTabHandler implements BiConsumer<Class<?>, Target> {
     }
 
     /**
-     * Called by {@link DependsOnTabHandler#accept(Class, Target)} to store particular {@code DependsOnTab} value
-     * in XML markup
+     * Called by {@link DependsOnTabHandler#accept(Source, Target)} to store particular {@code DependsOnTab} value
      * @param value Current {@link DependsOnTabConfig} value
      * @param target Current {@link Target} instance
      */

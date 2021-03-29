@@ -35,11 +35,11 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
 import com.exadel.aem.toolkit.plugin.adapters.ResourceTypeSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
-import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidget;
-import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
+import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.Sources;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
+import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 import com.exadel.aem.toolkit.plugin.util.ordering.OrderingUtil;
 
 /**
@@ -158,11 +158,8 @@ public class PlacementHelper {
         Target itemsElement = container.getOrCreateTarget(DialogConstants.NN_ITEMS);
 
         for (Source source : sources) {
-            DialogWidget widget = DialogWidgets.fromSource(source);
-            if (widget == null) {
-                continue;
-            }
-            Target newElement = widget.appendTo(source, itemsElement);
+            Target newElement = itemsElement.getOrCreateTarget(NamingUtil.stripGetterPrefix(source.getName()));
+            HandlerChains.forMember().accept(source, newElement);
             managedFields.put(source, newElement.getName());
         }
 

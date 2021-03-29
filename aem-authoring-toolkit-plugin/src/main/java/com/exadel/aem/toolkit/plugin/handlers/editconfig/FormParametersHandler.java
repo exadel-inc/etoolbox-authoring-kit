@@ -20,25 +20,29 @@ import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.FormParameter;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
- * {@code BiConsumer<EditConfig, Target>} implementation for storing {@link FormParameter} arguments to {@code cq:editConfig} XML node
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a
+ * {@link Source} object that define the form parameters within a Granite UI {@code cq:editConfig} node
  */
-public class FormParametersHandler implements BiConsumer<EditConfig, Target> {
+public class FormParametersHandler implements BiConsumer<Source, Target> {
+
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param editConfig {@code EditConfig} annotation instance
-     * @param root Current {@link Target} instance
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
-    public void accept(EditConfig editConfig, Target root) {
+    public void accept(Source source, Target target) {
+        EditConfig editConfig = source.adaptTo(EditConfig.class);
         if(editConfig.formParameters().length == 0){
             return;
         }
         Map<String, Object> propertiesMap = Arrays.stream(editConfig.formParameters())
             .collect(Collectors.toMap(FormParameter::name, FormParameter::value));
-        root.getOrCreateTarget(DialogConstants.NN_FORM_PARAMETERS).attributes(propertiesMap);
+        target.getOrCreateTarget(DialogConstants.NN_FORM_PARAMETERS).attributes(propertiesMap);
     }
 }

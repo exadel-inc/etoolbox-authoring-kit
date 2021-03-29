@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.plugin.source;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -41,7 +42,7 @@ public class Sources {
 
     /**
      * Creates a {@link Source} facade for a Java class member
-     * @param value A {@code Method} or a {@code Field} for which a source facade is created
+     * @param value {@code Method} or a {@code Field} for which a source facade is created
      * @param reportingClass {@code Class<?>} pointer determining the class that "reports" the AEM Authoring Toolkit's plugin
      *                       of current member (can be a class where this member was declared or a descendant of
      *                       some superclass that uses the member for UI rendering)
@@ -55,10 +56,19 @@ public class Sources {
 
     /**
      * Creates a {@link Source} facade for a Java class
-     * @param value A {@code Class} or a {@code Field} for which a source facade is created
+     * @param value {@code Class} object for which a source facade is created
      * @return {@code Source} instance
      */
     public static Source fromClass(Class<?> value) {
         return new ClassSourceImpl(value);
+    }
+
+    /**
+     * Creates a {@link Source} facade for a Java annotation
+     * @param value {@code Annotation} object for which a source facade is created
+     * @return {@code Source} instance
+     */
+    public static Source fromAnnotation(Annotation value) {
+        return new AnnotationSourceImpl(value);
     }
 }

@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.plugin.handlers.widget;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -24,6 +23,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
@@ -34,7 +35,8 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code Checkbox} widget functionality
  * within the {@code cq:dialog} node
  */
-class CheckboxHandler implements BiConsumer<Source, Target> {
+@Handles(Checkbox.class)
+public class CheckboxHandler implements Handler {
     private static final String POSTFIX_FOR_ROOT_CHECKBOX = "Checkbox";
 
     /**

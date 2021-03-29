@@ -14,23 +14,23 @@
 package com.exadel.aem.toolkit.plugin.handlers.widget;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for {@code RadioGroup} widget functionality
  * within the {@code cq:dialog} node
  */
-class RadioGroupHandler extends OptionProviderHandler implements BiConsumer<Source, Target> {
+@Handles(RadioGroup.class)
+public class RadioGroupHandler extends OptionProviderHandler implements Handler {
+
     /**
      * Processes the user-defined data and writes it to {@link Target}
      * @param source Current {@link Source} instance
@@ -45,16 +45,9 @@ class RadioGroupHandler extends OptionProviderHandler implements BiConsumer<Sour
         }
         if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
-            Arrays.stream(radioGroup.buttons()).forEach(button -> renderButton(button, items));
+            Arrays.stream(radioGroup.buttons()).forEach(button -> appendOption(button, button.value(), items));
         }
         appendDataSource(radioGroup.datasource(), target);
     }
 
-    private void renderButton(RadioButton button, Target parentElement) {
-        List<Target> existing = parentElement.findChildren(t -> button.value().equals(t.getAttribute(DialogConstants.PN_VALUE)));
-        Target item = existing.isEmpty()
-            ? parentElement.createTarget(DialogConstants.DOUBLE_QUOTE + button.value() + DialogConstants.DOUBLE_QUOTE)
-            : parentElement.getTarget(DialogConstants.DOUBLE_QUOTE + button.value() + DialogConstants.DOUBLE_QUOTE);
-        item.attributes(button, AnnotationUtil.getPropertyMappingFilter(button));
-    }
 }

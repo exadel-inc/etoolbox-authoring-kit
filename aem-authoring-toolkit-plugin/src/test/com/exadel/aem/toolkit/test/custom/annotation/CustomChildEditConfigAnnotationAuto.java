@@ -19,11 +19,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties(scope = Scope.CQ_CHILD_EDIT_CONFIG)
+@MapProperties(scope = Scopes.CQ_CHILD_EDIT_CONFIG)
 public @interface CustomChildEditConfigAnnotationAuto {
     String autoField1();
 }

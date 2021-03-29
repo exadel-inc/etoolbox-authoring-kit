@@ -19,6 +19,8 @@ import java.util.function.Predicate;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.handlers.Handler;
+import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
@@ -27,7 +29,8 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 /**
  * {@link WidgetContainerHandler} implementation used to prepare data needed for {@code Tabs} widget functionality
  */
-public class TabsWidgetHandler extends WidgetContainerHandler {
+@Handles(Tabs.class)
+public class TabsWidgetHandler extends WidgetContainerHandler implements Handler {
     private static final Predicate<Method> WIDGET_PROPERTIES_FILTER = method ->
         !StringUtils.equalsAny(
             method.getName(),
@@ -42,7 +45,12 @@ public class TabsWidgetHandler extends WidgetContainerHandler {
      */
     @Override
     public void accept(Source source, Target target) {
-        target.attributes(source.adaptTo(Tabs.class), WIDGET_PROPERTIES_FILTER);
+        if (source.adaptTo(Class.class) != null) {
+            // This handler is not used with class-based source objects
+            return;
+        }
+        target.attributes(source.adaptTo(Tabs.class), WIDGET_PROPERTIES_FILTER); // We do not use the auto-mapping facility
+        // because @Tabs can be used class-level and should not mess with "true" auto-mapped class annotations
         populateNestedContainer(source, target, Tabs.class);
     }
 }

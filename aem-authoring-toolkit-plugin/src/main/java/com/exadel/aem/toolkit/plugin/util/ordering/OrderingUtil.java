@@ -26,6 +26,7 @@ import com.google.common.collect.Streams;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -35,9 +36,10 @@ import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 
 public class OrderingUtil {
 
+    private static final String BUILTIN_HANDLERS_ROOT = "com.exadel.aem.toolkit.plugin.handlers";
+
     private OrderingUtil() {
     }
-
 
     /* ---------------
        Sorting methods
@@ -143,11 +145,19 @@ public class OrderingUtil {
     /**
      * Facilitates ordering {@code Member} instances according to their optional {@link DialogField} annotations'
      * ranking values and then their class affiliation
-     * @param f1 First comparison member
-     * @param f2 Second comparison member
+     * @param f1 First comparison member, non-null
+     * @param f2 Second comparison member, non-null
      * @return Integer value per {@code Comparator#compare(Object, Object)} convention
      */
     public static int compareByRank(Source f1, Source f2)  {
+        if (f1 != null && f2 == null) {
+            return -1;
+        } else if (f1 == null && f2 != null) {
+            return 1;
+        } else if (f1 == null) {
+            return 0;
+        }
+
         int rank1 = f1.adaptTo(MemberRankingSetting.class).getRanking();
         int rank2 = f2.adaptTo(MemberRankingSetting.class).getRanking();
         if (rank1 != rank2) {
@@ -171,11 +181,19 @@ public class OrderingUtil {
     /**
      * Facilitates ordering {@code Source} instances according to their class affiliation (if both fields' classes
      * are of the same inheritance tree, a field from the senior class goes first)
-     * @param f1 First comparison member
-     * @param f2 Second comparison member
+     * @param f1 First comparison member, non-null
+     * @param f2 Second comparison member, non-null
      * @return Integer value per {@code Comparator#compare(Object, Object)} convention
      */
     public static int compareByOrigin(Source f1, Source f2) {
+        if (f1 != null && f2 == null) {
+            return -1;
+        } else if (f1 == null && f2 != null) {
+            return 1;
+        } else if (f1 == null) {
+            return 0;
+        }
+
         Class<?> f1Class = f1.adaptTo(Member.class).getDeclaringClass();
         Class<?> f2Class = f2.adaptTo(Member.class).getDeclaringClass();
         if (f1Class != f2Class) {
@@ -188,4 +206,31 @@ public class OrderingUtil {
         }
         return 0;
     }
+
+    /**
+     * Facilitates ordering {@code Handler} instances in the way that handlers are sorted in the alphabetic order of
+     * their names, and above this, built-handlers come before the custom ones
+     * @param h1 First comparison member, non-null
+     * @param h2 Second comparison member, non-null
+     * @return Integer value per {@code Comparator#compare(Object, Object)} convention
+     */
+    public static int compareByOrigin(Handler h1, Handler h2) {
+        if (h1 != null && h2 == null) {
+            return -1;
+        } else if (h1 == null && h2 != null) {
+            return 1;
+        } else if (h1 == null) {
+            return 0;
+        }
+
+        if (h1.getClass().getPackage().getName().startsWith(BUILTIN_HANDLERS_ROOT)
+            && !h2.getClass().getPackage().getName().startsWith(BUILTIN_HANDLERS_ROOT)) {
+            return -1;
+        } else if (!h1.getClass().getPackage().getName().startsWith(BUILTIN_HANDLERS_ROOT)
+            && h2.getClass().getPackage().getName().startsWith(BUILTIN_HANDLERS_ROOT)) {
+            return 1;
+        }
+        return h1.getClass().getName().compareTo(h2.getClass().getName());
+    }
+
 }

@@ -203,8 +203,8 @@ public class AnnotationUtil {
      * @param annotation {@code Annotation} object to use methods from
      * @return {@code Predicate<Method>} instance
      */
-    @SuppressWarnings("deprecation") // PropertyMapping and IgnorePropertyMapping are retained for compatibility
-                                     // until retired in a version after 2.0.1
+    @SuppressWarnings("deprecation") // Processing of PropertyMapping and IgnorePropertyMapping is retained for compatibility
+                                     // and will be removed in a version after 2.0.1
     public static Predicate<Method> getPropertyMappingFilter(Annotation annotation) {
         Stream<String> mappingsByMapProperties = Optional.ofNullable(annotation)
             .map(Annotation::annotationType)

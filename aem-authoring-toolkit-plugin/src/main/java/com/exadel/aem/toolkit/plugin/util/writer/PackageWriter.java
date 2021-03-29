@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.util.writer;
 
 import java.io.BufferedWriter;
@@ -42,7 +41,7 @@ import com.google.common.collect.Streams;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.UnknownComponentException;
@@ -156,7 +155,7 @@ public class PackageWriter implements AutoCloseable {
 
         Map<PackageEntryWriter, Class<?>> viewsByWriter = getComponentViews(componentClass);
 
-        if (viewsByWriter.keySet().stream().noneMatch(writer -> writer.getScope() == Scope.COMPONENT)) {
+        if (viewsByWriter.keySet().stream().noneMatch(writer -> Scopes.COMPONENT.equals(writer.getScope()))) {
             InvalidSettingException e = new InvalidSettingException(
                 COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE + componentClass.getName());
             PluginRuntime.context().getExceptionHandler().handle(e);
@@ -203,7 +202,7 @@ public class PackageWriter implements AutoCloseable {
             }
 
             for (PackageEntryWriter matchedWriter : matchedWriters) {
-                if (result.containsKey(matchedWriter) && matchedWriter.getScope() != Scope.COMPONENT) {
+                if (result.containsKey(matchedWriter) && !Scopes.COMPONENT.equals(matchedWriter.getScope())) {
                     InvalidSettingException ex = new InvalidSettingException(String.format(
                         MULTIPLE_MODULES_EXCEPTION_MESSAGE,
                         matchedWriter.getScope(),
@@ -284,8 +283,8 @@ public class PackageWriter implements AutoCloseable {
             Transformer transformer = XmlFactory.newDocumentTransformer();
             writers = Arrays.asList(
                     new ContentXmlWriter(transformer),
-                    new CqDialogWriter(transformer, Scope.CQ_DIALOG),
-                    new CqDialogWriter(transformer, Scope.CQ_DESIGN_DIALOG),
+                    new CqDialogWriter(transformer, Scopes.CQ_DIALOG),
+                    new CqDialogWriter(transformer, Scopes.CQ_DESIGN_DIALOG),
                     new CqEditConfigWriter(transformer),
                     new CqChildEditConfigWriter(transformer),
                     new CqHtmlTagWriter(transformer)

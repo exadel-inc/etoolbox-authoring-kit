@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.Scope;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
@@ -65,7 +65,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     private String name;
     private String prefix;
     private String postfix;
-    private Scope scope;
+    private String scope;
 
 
     TargetImpl(String name, Target parent) {
@@ -74,7 +74,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         this.parent = parent;
         this.attributes = new HashMap<>();
         this.children = new LinkedList<>();
-        this.scope = parent != null ? parent.getScope() : Scope.CQ_DIALOG;
+        this.scope = parent != null ? parent.getScope() : Scopes.CQ_DIALOG;
         this.attributes.put(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
     }
 
@@ -113,11 +113,11 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
        ---------------- */
 
     @Override
-    public Scope getScope() {
+    public String getScope() {
         return scope;
     }
 
-    void setScope(Scope scope) {
+    void setScope(String scope) {
         this.scope = scope;
     }
 

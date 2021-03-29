@@ -13,21 +13,24 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widget.common;
 
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
+import org.apache.maven.shared.utils.StringUtils;
+
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidget;
-import com.exadel.aem.toolkit.plugin.handlers.widget.DialogWidgets;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.source.Sources;
 
 /**
- * Handler for processing Granite UI widgets features "inherited" by the current component class {@code SourceFacade} from
- * other SourceFacades via {@link Extends} mechanism
+ * Handler for processing Granite UI widgets features "inherited" by the current {@code Source} from other {@code Source}s
+ * via {@link Extends} mechanism
  */
 public class InheritanceHandler implements BiConsumer<Source, Target> {
     private final BiConsumer<Source, Target> descendantChain;
@@ -51,13 +54,13 @@ public class InheritanceHandler implements BiConsumer<Source, Target> {
 
     /**
      * Builds the inheritance sequence for the current {@link Source}
-     * @param source Current {@link Target} instance
-     * @return Ancestral {@link Target}s, as an ordered sequence
+     * @param source Current {@link Source} instance
+     * @return Ancestral {@link Target}s in an ordered sequence
      */
     private static Deque<Source> getInheritanceTree(Source source) {
         Deque<Source> result = new LinkedList<>();
-        DialogWidget referencedComponent = DialogWidgets.fromSource(source);
-        if (referencedComponent == null) {
+        Annotation widgetAnnotation = getReferencedWidgetAnnotation(source);
+        if (widgetAnnotation == null) {
             return result;
         }
         Extends extendsAnnotation = source.adaptTo(Extends.class);
@@ -68,7 +71,9 @@ public class InheritanceHandler implements BiConsumer<Source, Target> {
                 if (referencedField.equals(source) || result.contains(referencedField)) { // to avoid circular references
                     break;
                 }
-                if (referencedComponent.equals(DialogWidgets.fromSource(referencedField))) { // to avoid mixing up props of different components
+                Annotation referencedFieldWidgetAnnotation = getReferencedWidgetAnnotation(referencedField);
+                if (referencedFieldWidgetAnnotation != null
+                    && widgetAnnotation.annotationType().equals(referencedFieldWidgetAnnotation.annotationType())) { // to avoid mixing up props of different components
                     result.add(referencedField);
                 }
                 extendsAnnotation = referencedField.adaptTo(Extends.class);
@@ -78,5 +83,19 @@ public class InheritanceHandler implements BiConsumer<Source, Target> {
             }
         }
         return result;
+    }
+
+    /**
+     * Finds among the annotations of the provided {@code Source} the first annotation that defines a widget (i.e. has
+     * a valid {@link ResourceType} meta-annotation
+     * @param source Current {@link Source} instance
+     * @return {@code Annotation} object or null in case no compliant annotation found
+     */
+    private static Annotation getReferencedWidgetAnnotation(Source source) {
+        return Arrays.stream(source.adaptTo(Annotation[].class))
+            .filter(annotation -> annotation.annotationType().isAnnotationPresent(ResourceType.class)
+                && StringUtils.isNotBlank(annotation.annotationType().getDeclaredAnnotation(ResourceType.class).value()))
+            .findFirst()
+            .orElse(null);
     }
 }

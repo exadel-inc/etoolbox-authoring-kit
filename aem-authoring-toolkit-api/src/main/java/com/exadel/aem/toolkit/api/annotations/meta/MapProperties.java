@@ -38,14 +38,15 @@ public @interface MapProperties {
     String[] value() default {};
 
     /**
-     * When set, specifies one or more {@link Scope}s this annotation can be mapped to,
+     * When set, specifies one or more scopes this annotation can be mapped to,
      * i.e. whether this is rendered to {@code cq:Component} (component root), {@code cq:dialog}, {@code cq:editorConfig},
      * or any other appropriate JCR node. Default value is equal to "all applicable scopes".
      * <p>Note: this value has no effect for the properties that are managed by a specific built-in or custom handler.
      * Also, it can be overridden by a {@link PropertyRendering#scope()} setting if specified at the property level</p>
      * @return One or more {@code Scope} values
+     * @see Scopes
      */
-    Scope[] scope() default Scope.DEFAULT;
+    String[] scope() default Scopes.DEFAULT;
 
     /**
      * When initialized to a non-blank value, allows setting name prefix for all the eligible fields of current annotation

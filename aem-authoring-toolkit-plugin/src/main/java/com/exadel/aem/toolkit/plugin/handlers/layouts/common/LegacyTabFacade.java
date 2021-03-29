@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
 
 import java.util.Arrays;
@@ -26,6 +25,8 @@ import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 
+@SuppressWarnings("deprecation") // Processing of container.Tab is retained for compatibility and will be removed
+                                 // in a version after 2.0.1
 class LegacyTabFacade extends SectionFacade {
 
     private final Tab tab;
