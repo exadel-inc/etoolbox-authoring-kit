@@ -54,7 +54,7 @@ import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
 import com.exadel.aem.toolkit.plugin.util.NamingUtil;
 import com.exadel.aem.toolkit.plugin.util.StringUtil;
-import com.exadel.aem.toolkit.plugin.util.validation.Validation;
+import com.exadel.aem.toolkit.plugin.validators.Validation;
 
 /**
  * Processes, verifies and stores TouchUI dialog-related data to XML markup

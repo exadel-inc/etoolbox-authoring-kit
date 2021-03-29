@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ValueRestriction("com.exadel.aem.toolkit.plugin.util.validation.DateTimeValidator")
+@ValueRestriction("com.exadel.aem.toolkit.plugin.validators.DateTimeValidator")
 public @interface DateTimeValue {
     int day() default 0;
     int month() default 0;

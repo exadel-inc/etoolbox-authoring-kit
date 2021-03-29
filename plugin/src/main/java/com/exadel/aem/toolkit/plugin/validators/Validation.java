@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.util.validation;
+package com.exadel.aem.toolkit.plugin.validators;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

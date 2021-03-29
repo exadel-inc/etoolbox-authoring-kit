@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.util.validation;
+package com.exadel.aem.toolkit.plugin.validators;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,21 +21,23 @@ import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 /**
  *  {@link Validator} implementation for testing that provided string is not blank
  */
-public class NotBlankValidator implements Validator {
-    private static final String MSG_STRING_EXPECTED = "non-blank string expected";
+@SuppressWarnings("unused") // Invoked indirectly via reflection
+public class NotBlankOrEmptyValidator implements Validator {
+    private static final String MSG_STRING_EXPECTED = "non-blank string expected unless left default";
 
     /**
-     * Tests that the provided string is not blank
+     * Tests that the provided string is not blank unless empty. This validator can be assigned to optional
+     * annotation methods which have their default value
      * @param obj Raw string value
      * @return True or false
      */
     @Override
     public boolean test(Object obj) {
-        return isApplicableTo(obj) && StringUtils.isNotBlank(obj.toString());
+        return isApplicableTo(obj) && (StringUtils.isEmpty(obj.toString()) || StringUtils.isNotBlank(obj.toString()));
     }
 
     /**
-     * {@inheritDoc}. In {@code NotBlankValidator}, defines the allow-all kind of predicate
+     * {@inheritDoc}. In {@code NotBlankOrEmptyValidator}, defines the allow-all kind of predicate
      */
     @Override
     public boolean isApplicableTo(Object obj) {

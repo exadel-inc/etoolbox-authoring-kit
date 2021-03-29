@@ -12,24 +12,41 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.util.validation;
+package com.exadel.aem.toolkit.plugin.validators;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 
 /**
- *  Default (fully permissive) {@link Validator} implementation
+ *  {@link Validator} implementation for testing that provided value is of numeric type
  */
-public final class PermissiveValidator implements Validator {
+public class NumberValidator implements Validator {
+    private static final String MSG_NUMBER_EXPECTED = "a numeric value or an empty string expected";
+
     /**
-     * {@inheritDoc}. In {@code PermissiveValidator}, defines the completely permissive testing routine
+     * Tests that the provided value is of numeric type or an empty string
+     * @param obj Generic value
+     * @return True or false
      */
     @Override
     public boolean test(Object obj) {
-        return true;
+        if (obj == null) {
+            return false;
+        }
+        if (StringUtils.EMPTY.equals(obj)) {
+            return true;
+        }
+        try {
+            Double.valueOf(obj.toString());
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     /**
-     * {@inheritDoc}. In {@code PermissiveValidator}, defines the allow-all kind of predicate
+     * {@inheritDoc}. In {@code NumberValidator}, defines the allow-all kind of predicate
      */
     @Override
     public boolean isApplicableTo(Object obj) {
@@ -41,6 +58,6 @@ public final class PermissiveValidator implements Validator {
      */
     @Override
     public String getWarningMessage() {
-        return null;
+        return MSG_NUMBER_EXPECTED;
     }
 }

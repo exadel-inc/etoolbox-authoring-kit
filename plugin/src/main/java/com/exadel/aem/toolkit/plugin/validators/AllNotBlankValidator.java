@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.util.validation;
+package com.exadel.aem.toolkit.plugin.validators;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;

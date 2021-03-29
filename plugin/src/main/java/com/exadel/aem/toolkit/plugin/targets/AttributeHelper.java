@@ -35,7 +35,7 @@ import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.plugin.util.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.util.MemberUtil;
 import com.exadel.aem.toolkit.plugin.util.StringUtil;
-import com.exadel.aem.toolkit.plugin.util.validation.Validation;
+import com.exadel.aem.toolkit.plugin.validators.Validation;
 
 /**
  * Helper class for storing authored attributes to entities, such as {@link Target} or an XML element

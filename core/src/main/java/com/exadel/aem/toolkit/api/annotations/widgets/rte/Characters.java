@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ValueRestriction("com.exadel.aem.toolkit.plugin.util.validation.CharactersObjectValidator")
+@ValueRestriction("com.exadel.aem.toolkit.plugin.validators.CharactersObjectValidator")
 @MapProperties
 public @interface Characters {
     /**

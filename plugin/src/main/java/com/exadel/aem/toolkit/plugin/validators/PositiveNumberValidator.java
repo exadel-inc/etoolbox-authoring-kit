@@ -12,40 +12,30 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.util.validation;
+package com.exadel.aem.toolkit.plugin.validators;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
-import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
-import com.exadel.aem.toolkit.plugin.adapters.DateTimeSetting;
 
 /**
- * {@link Validator} implementation for testing that provided DateTimeValue is valid
+ *  {@link Validator} implementation for checking that provided number is greater than zero
  */
 @SuppressWarnings("unused") // Invoked indirectly via reflection
-public class DateTimeValidator implements Validator {
-    private static final String MSG_DATETIME_EXPECTED = "valid date/time value expected";
+public class PositiveNumberValidator extends NonNegativeNumberValidator {
+    private static final String MSG_POSITIVE_EXPECTED = "number greater than zero expected";
 
     /**
-     * Tests that the provided DateTime is valid
-     * @param obj {@code DateTimeValue} instance
+     * Tests that the provided number is greater than zero
+     * @param obj Generic representation of number
      * @return True or false
      */
     @Override
     public boolean test(Object obj) {
-        if (!isApplicableTo(obj)) {
+        if (!super.test(obj)) {
             return false;
         }
-        return new DateTimeSetting((DateTimeValue) obj).isValid();
-    }
-
-    /**
-     * Returns whether this object is of {@code DateTimeValue} type
-     * @param obj Tested value
-     * @return True or false
-     */
-    @Override
-    public boolean isApplicableTo(Object obj) {
-        return obj instanceof DateTimeValue;
+        return StringUtils.isNotEmpty(obj.toString()) && Double.parseDouble(obj.toString()) > 0d;
     }
 
     /**
@@ -53,6 +43,6 @@ public class DateTimeValidator implements Validator {
      */
     @Override
     public String getWarningMessage() {
-        return MSG_DATETIME_EXPECTED;
+        return MSG_POSITIVE_EXPECTED;
     }
 }

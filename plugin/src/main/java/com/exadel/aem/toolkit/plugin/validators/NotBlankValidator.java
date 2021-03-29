@@ -12,30 +12,34 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.util.validation;
+package com.exadel.aem.toolkit.plugin.validators;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 
 /**
- *  {@link Validator} implementation for checking that provided number is greater than zero
+ *  {@link Validator} implementation for testing that provided string is not blank
  */
-@SuppressWarnings("unused") // Invoked indirectly via reflection
-public class PositiveNumberValidator extends NonNegativeNumberValidator {
-    private static final String MSG_POSITIVE_EXPECTED = "number greater than zero expected";
+public class NotBlankValidator implements Validator {
+    private static final String MSG_STRING_EXPECTED = "non-blank string expected";
 
     /**
-     * Tests that the provided number is greater than zero
-     * @param obj Generic representation of number
+     * Tests that the provided string is not blank
+     * @param obj Raw string value
      * @return True or false
      */
     @Override
     public boolean test(Object obj) {
-        if (!super.test(obj)) {
-            return false;
-        }
-        return StringUtils.isNotEmpty(obj.toString()) && Double.parseDouble(obj.toString()) > 0d;
+        return isApplicableTo(obj) && StringUtils.isNotBlank(obj.toString());
+    }
+
+    /**
+     * {@inheritDoc}. In {@code NotBlankValidator}, defines the allow-all kind of predicate
+     */
+    @Override
+    public boolean isApplicableTo(Object obj) {
+        return obj != null;
     }
 
     /**
@@ -43,6 +47,6 @@ public class PositiveNumberValidator extends NonNegativeNumberValidator {
      */
     @Override
     public String getWarningMessage() {
-        return MSG_POSITIVE_EXPECTED;
+        return MSG_STRING_EXPECTED;
     }
 }

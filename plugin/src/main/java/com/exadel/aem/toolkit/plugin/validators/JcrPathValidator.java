@@ -12,21 +12,24 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.util.validation;
+package com.exadel.aem.toolkit.plugin.validators;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.regex.Pattern;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 
 /**
- *  {@link Validator} implementation for testing that provided number is non-negative
+ *  {@link Validator} implementation for testing that provided string is a valid JCR path
  */
-public class NonNegativeNumberValidator extends NumberValidator {
-    private static final String MSG_NON_NEGATIVE_EXPECTED = "number equal or greater than zero expected";
+@SuppressWarnings("unused") // called indirectly via reflection
+public class JcrPathValidator extends NotBlankValidator {
+    private static final Pattern JCR_PATH_PATTERN = Pattern.compile("^(/[\\w:.-]+)+/?$");
+    private static final Pattern PROP_INJECT_PATTERN = Pattern.compile("^\\$\\{\\w+(?:\\.\\w+)*}$");
+    private static final String MSG_JCR_PATH_EXPECTED = "complete JCR path expected";
 
     /**
-     * Tests that the provided number is non-negative
-     * @param obj Generic representation of number
+     * Tests that the provided string is a valid JCR path
+     * @param obj Raw string
      * @return True or false
      */
     @Override
@@ -34,10 +37,8 @@ public class NonNegativeNumberValidator extends NumberValidator {
         if (!super.test(obj)) {
             return false;
         }
-        if (StringUtils.EMPTY.equals(obj)) {
-            return true;
-        }
-        return Double.parseDouble(obj.toString()) >= 0d;
+        return JCR_PATH_PATTERN.matcher(obj.toString()).matches()
+                || PROP_INJECT_PATTERN.matcher(obj.toString()).matches();
     }
 
     /**
@@ -45,6 +46,6 @@ public class NonNegativeNumberValidator extends NumberValidator {
      */
     @Override
     public String getWarningMessage() {
-        return MSG_NON_NEGATIVE_EXPECTED;
+        return MSG_JCR_PATH_EXPECTED;
     }
 }

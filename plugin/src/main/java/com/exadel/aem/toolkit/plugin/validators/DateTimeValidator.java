@@ -12,36 +12,40 @@
  * limitations under the License.
  */
 
-package com.exadel.aem.toolkit.plugin.util.validation;
-
-import org.apache.commons.lang3.StringUtils;
+package com.exadel.aem.toolkit.plugin.validators;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
+import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
+import com.exadel.aem.toolkit.plugin.adapters.DateTimeSetting;
 
 /**
- *  {@link Validator} implementation for testing that provided string is not blank
+ * {@link Validator} implementation for testing that provided DateTimeValue is valid
  */
 @SuppressWarnings("unused") // Invoked indirectly via reflection
-public class NotBlankOrEmptyValidator implements Validator {
-    private static final String MSG_STRING_EXPECTED = "non-blank string expected unless left default";
+public class DateTimeValidator implements Validator {
+    private static final String MSG_DATETIME_EXPECTED = "valid date/time value expected";
 
     /**
-     * Tests that the provided string is not blank unless empty. This validator can be assigned to optional
-     * annotation methods which have their default value
-     * @param obj Raw string value
+     * Tests that the provided DateTime is valid
+     * @param obj {@code DateTimeValue} instance
      * @return True or false
      */
     @Override
     public boolean test(Object obj) {
-        return isApplicableTo(obj) && (StringUtils.isEmpty(obj.toString()) || StringUtils.isNotBlank(obj.toString()));
+        if (!isApplicableTo(obj)) {
+            return false;
+        }
+        return new DateTimeSetting((DateTimeValue) obj).isValid();
     }
 
     /**
-     * {@inheritDoc}. In {@code NotBlankOrEmptyValidator}, defines the allow-all kind of predicate
+     * Returns whether this object is of {@code DateTimeValue} type
+     * @param obj Tested value
+     * @return True or false
      */
     @Override
     public boolean isApplicableTo(Object obj) {
-        return obj != null;
+        return obj instanceof DateTimeValue;
     }
 
     /**
@@ -49,6 +53,6 @@ public class NotBlankOrEmptyValidator implements Validator {
      */
     @Override
     public String getWarningMessage() {
-        return MSG_STRING_EXPECTED;
+        return MSG_DATETIME_EXPECTED;
     }
 }

@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.plugin.adapters.DateTimeSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.util.DialogConstants;
-import com.exadel.aem.toolkit.plugin.util.validation.Validation;
+import com.exadel.aem.toolkit.plugin.validators.Validation;
 
 /**
  * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code DatePicker} widget functionality
