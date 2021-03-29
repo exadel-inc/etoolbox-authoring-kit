@@ -36,6 +36,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.plugin.util.TestConstants;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomEditConfigAnnotation;
 
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_1;
 import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_2;
@@ -167,6 +168,7 @@ import static com.exadel.aem.toolkit.plugin.util.TestConstants.LABEL_TAB_6;
                 ),
         }
 )
+@CustomEditConfigAnnotation
 @Tabs({
     @Tab(title = LABEL_TAB_1),
     @Tab(title = LABEL_TAB_2),

@@ -2,7 +2,8 @@
 <jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
     cq:actions="[edit,copymove,insert,delete]"
     cq:inherit="{Boolean}false"
-    jcr:primaryType="cq:EditConfig">
+    jcr:primaryType="cq:EditConfig"
+    editConfigHandlerProp1="value1">
     <cq:dropTargets jcr:primaryType="nt:unstructured">
         <target1
             jcr:primaryType="cq:DropTargetConfig"
