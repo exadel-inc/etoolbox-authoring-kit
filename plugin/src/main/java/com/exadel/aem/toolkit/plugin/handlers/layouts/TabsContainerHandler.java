@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * The handler for a tabbed TouchUI dialog
+ * The {@link ContainerHandler} variant for a tabbed Granite UI dialog
  */
 public class TabsContainerHandler extends ContainerHandler {
     private static final Predicate<Method> LAYOUT_PROPERTIES_FILTER = method ->
@@ -38,8 +38,7 @@ public class TabsContainerHandler extends ContainerHandler {
             DialogConstants.PN_PADDING);
 
     /**
-     * Implements {@code BiConsumer<Source, Target>} pattern to process component-backing Java class and append
-     * the results to the given target representing a Granite UI root node
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */

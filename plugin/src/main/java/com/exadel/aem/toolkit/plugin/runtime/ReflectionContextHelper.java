@@ -65,7 +65,7 @@ public class ReflectionContextHelper {
     private List<Validator> validators;
 
     /**
-     * Default (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private ReflectionContextHelper() {
     }
@@ -239,9 +239,8 @@ public class ReflectionContextHelper {
        --------------------- */
 
     /**
-     * Initializes as necessary and returns collection of {@code Validator}s defined within the Compile
-     * scope of the AEM Authoring Toolkit Maven plugin
-     *
+     * Initializes as necessary and returns collection of {@code Validator}s defined within the execution scope
+     * of the ToolKit Maven plugin
      * @return {@code List} of instances
      */
     public List<Validator> getValidators() {

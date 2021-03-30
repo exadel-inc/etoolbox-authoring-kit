@@ -43,7 +43,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 public class DomHandler {
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores in into the provided DOM {@code Document}
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided DOM {@code Document}
      * @param source {@code Source} object used for data retrieval
      * @param document Resulting {@code Document} object
      * @param scope Non-blank string representing a ordinary component part scope

@@ -23,6 +23,9 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
+/**
+ * Presents a common base for handler classes responsible for laying out child components within Granite UI
+ */
 public abstract class WidgetContainerHandler {
 
     /**
@@ -92,7 +95,7 @@ public abstract class WidgetContainerHandler {
     }
 
     /**
-     * Used to fill in multi-section containers nested within a TouchUI dialog. This method extracts container sections,
+     * Used to fill in multi-section containers nested within a Granite UI dialog. This method extracts container sections,
      * such as {@code Tab}s or {@code AccordionPanel}s, from the current {@code Source} and fills in the {@code Target}
      * with them
      * @param member          Class member holding a multi-section container

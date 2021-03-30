@@ -42,16 +42,18 @@ import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * Handler for creating ad-hoc {@code Multifield}s for {@link Multiple}-marked dialog fields
+ * Implements {@code BiConsumer} to modify {@link Target} instance in order to create an ad-hoc {@code Multifield}
+ * for a {@link Multiple}-marked dialog field
  */
+
 public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     private static final String PREFIX_GRANITE = "granite:*";
     private static final String POSTFIX_NESTED = "_nested";
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source {@code Source} instance referring to the class member being processed
-     * @param target {@code Target} instance
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {

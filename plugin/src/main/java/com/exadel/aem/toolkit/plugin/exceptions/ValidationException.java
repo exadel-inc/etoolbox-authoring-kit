@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.plugin.exceptions;
 
 /**
- * Represents the plugin-specific exception produced when validation of an AEM Authoring Toolkit annotation value fails
+ * Represents the plugin-specific exception produced when the validation of an ToolKit annotation value fails
  */
 public class ValidationException extends RuntimeException {
     public ValidationException(String message) {

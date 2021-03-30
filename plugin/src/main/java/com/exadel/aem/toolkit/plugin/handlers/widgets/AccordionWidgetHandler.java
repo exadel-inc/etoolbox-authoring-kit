@@ -21,16 +21,16 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
 
 /**
- * Handler used to prepare data for {@link Accordion} widget rendering
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
+ * object that define the Granite UI {@code Accordion} dialog widget look and behavior
  */
 @Handles(Accordion.class)
 public class AccordionWidgetHandler extends WidgetContainerHandler implements Handler {
 
     /**
-     * Implements the {@code BiConsumer<Source, Target} pattern to process settings specified by {@link Accordion}
-     * and provide data for widget rendering
-     * @param source Member that defines an {@code Accordion}
-     * @param target Data structure used for rendering
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {

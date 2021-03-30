@@ -51,7 +51,7 @@ import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 import com.exadel.aem.toolkit.plugin.validators.Validation;
 
 /**
- * Processes, verifies and stores TouchUI dialog-related data to XML markup
+ * Processes, verifies and stores Granite UI-related data to XML markup
  */
 @SuppressWarnings("deprecation") // XmlUtility is retained for compatibility reasons (used in legacy custom handlers)
                                  // This will be retired in a version after 2.0.1

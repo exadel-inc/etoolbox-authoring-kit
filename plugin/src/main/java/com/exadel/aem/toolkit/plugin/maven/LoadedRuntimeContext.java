@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
- * The implementation of {@link PluginRuntimeContext} for the AEM Authoring Toolkit plugin instance that
+ * The implementation of {@link PluginRuntimeContext} for the ToolKit Maven plugin instance that
  * has been properly initialized
  */
 class LoadedRuntimeContext implements PluginRuntimeContext {

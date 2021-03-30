@@ -40,7 +40,7 @@ import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance via calls to custom handlers attached to the
- * annotations adaptable from the provided {@link Source}
+ * annotations (either built-in or custom) that are extractable from the provided {@link Source}
  */
 public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
     private List<Handler> predefinedHandlers;
@@ -61,8 +61,8 @@ public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores in into the provided {@code Target}
-     * @param source {@code Source} object to get data
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
     @Override

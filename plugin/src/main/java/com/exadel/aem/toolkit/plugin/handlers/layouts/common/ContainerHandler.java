@@ -182,7 +182,7 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
 
     /**
      * Puts all sections, such as tabs or accordion panels, from the nested classes of the current Java class
-     * that represents a TouchUI dialog into the accumulating collection
+     * that represents a Granite UI dialog into the accumulating collection
      * @param accumulator       The collection of container sections
      * @param componentClass    {@code Class<?>} instance used as the source of markup
      * @param annotationClasses One or more {@code Class<?>} objects representing types of container sections to process
@@ -213,7 +213,7 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Puts all sections, such as tabs or accordion panels, from the current Java class that represents a TouchUI dialog
+     * Puts all sections, such as tabs or accordion panels, from the current Java class that represents a Granite UI dialog
      * into the accumulating collection
      * @param accumulator    The collection of container sections
      * @param componentClass {@code Class<?>} instance used as the source of markup

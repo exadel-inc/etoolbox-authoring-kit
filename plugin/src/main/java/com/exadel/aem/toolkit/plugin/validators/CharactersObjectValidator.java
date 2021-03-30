@@ -32,29 +32,29 @@ public class CharactersObjectValidator extends AllNotBlankValidator {
 
     /**
      * Tests that the provided character range is valid
-     * @param obj Annotation instance
+     * @param value Annotation instance
      * @return True or false
      */
     @Override
-    public boolean test(Object obj) {
-        if (super.test(obj)) {
+    public boolean test(Object value) {
+        if (super.test(value)) {
             return true;
         }
-        if (!isApplicableTo(obj)) {
+        if (!isApplicableTo(value)) {
             return false;
         }
-        Characters characters = (Characters) obj;
+        Characters characters = (Characters) value;
         return characters.rangeStart() > 0 && characters.rangeEnd() > characters.rangeStart();
     }
 
     /**
      * Returns whether this object is of {@code Characters} type
-     * @param obj Tested value
+     * @param value Tested value
      * @return True or false
      */
     @Override
-    public boolean isApplicableTo(Object obj) {
-        return obj instanceof Characters;
+    public boolean isApplicableTo(Object value) {
+        return value instanceof Characters;
     }
 
     /**

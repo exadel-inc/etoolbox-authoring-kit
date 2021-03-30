@@ -27,7 +27,8 @@ import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHand
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * {@link WidgetContainerHandler} implementation used to prepare data needed for {@code Tabs} widget functionality
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
+ * object that define the Granite UI {@code Tabs} dialog widget look and behavior
  */
 @Handles(Tabs.class)
 public class TabsWidgetHandler extends WidgetContainerHandler implements Handler {
@@ -38,10 +39,9 @@ public class TabsWidgetHandler extends WidgetContainerHandler implements Handler
             DialogConstants.PN_PADDING);
 
     /**
-     * Implements the {@code BiConsumer<Source, Target} pattern to process user input data specific for {@link Tabs}
-     * and provide data for widget rendering
-     * @param source Member that defines a {@code Tabs} widget
-     * @param target Data structure used for rendering
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {

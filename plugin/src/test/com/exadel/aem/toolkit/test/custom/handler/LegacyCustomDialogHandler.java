@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
 
 @Handles(value = CustomDialogAnnotation.class)
-@SuppressWarnings("unused") // Used by AAT Plugin logic
+@SuppressWarnings("unused") // Used by ToolKit logic
 public class LegacyCustomDialogHandler implements DialogHandler {
 
     @Override

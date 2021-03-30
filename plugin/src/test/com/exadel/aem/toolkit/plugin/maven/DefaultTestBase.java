@@ -40,7 +40,7 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_WIDGET;
 
 public abstract class DefaultTestBase {
-    static final Logger LOG = LoggerFactory.getLogger("AEM Authoring Toolkit Unit Tests");
+    static final Logger LOG = LoggerFactory.getLogger("EToolbox Authoring Kit Unit Tests");
 
     static final List<String> CLASSPATH_ELEMENTS = Arrays.asList(
         TestConstants.PLUGIN_MODULE_TARGET,

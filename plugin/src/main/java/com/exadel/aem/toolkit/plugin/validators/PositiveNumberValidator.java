@@ -27,15 +27,15 @@ public class PositiveNumberValidator extends NonNegativeNumberValidator {
 
     /**
      * Tests that the provided number is greater than zero
-     * @param obj Generic representation of number
+     * @param value Generic representation of number
      * @return True or false
      */
     @Override
-    public boolean test(Object obj) {
-        if (!super.test(obj)) {
+    public boolean test(Object value) {
+        if (!super.test(value)) {
             return false;
         }
-        return StringUtils.isNotEmpty(obj.toString()) && Double.parseDouble(obj.toString()) > 0d;
+        return StringUtils.isNotEmpty(value.toString()) && Double.parseDouble(value.toString()) > 0d;
     }
 
     /**

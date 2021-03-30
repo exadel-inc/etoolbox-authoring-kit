@@ -22,13 +22,15 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * Handler for storing {@link Attribute} properties to a Granite UI widget node
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a
+ * {@link Source} object that define {@code granite:data} attributes for the current Granite component
  */
 public class AttributeAnnotationHandler implements BiConsumer<Source, Target> {
+
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {

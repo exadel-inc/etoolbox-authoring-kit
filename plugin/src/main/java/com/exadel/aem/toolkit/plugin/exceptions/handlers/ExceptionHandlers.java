@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * The factory-like class for getting an instance of {@link ExceptionHandler} that matches the value specified in
- * the {@code terminateOn} AEM Authoring Toolkit plugin setting
+ * the {@code terminateOn} ToolKit Maven plugin setting
  */
 public class ExceptionHandlers {
     private static final String EXCEPTION_TOKEN_NONE = "none";

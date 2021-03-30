@@ -20,7 +20,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
 
 @Handles(value = CustomDialogAnnotation.class)
-@SuppressWarnings("unused") // Used by AAT Plugin logic
+@SuppressWarnings("unused") // Used by ToolKit Plugin logic
 public class CustomDialogHandler implements Handler {
 
     @Override

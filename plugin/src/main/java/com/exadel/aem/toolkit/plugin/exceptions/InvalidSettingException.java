@@ -15,7 +15,7 @@
 package com.exadel.aem.toolkit.plugin.exceptions;
 
 /**
- * Represents the plugin-specific exception produced for a generic invalid setting of AEM Authoring Toolkit,
+ * Represents the plugin-specific exception produced for a generic invalid setting of the ToolKit,
  * such as a reference to an unreachable component class, or an invalid resource type
  */
 public class InvalidSettingException extends RuntimeException {

@@ -24,7 +24,7 @@ public final class PermissiveValidator implements Validator {
      * {@inheritDoc}. In {@code PermissiveValidator}, defines the completely permissive testing routine
      */
     @Override
-    public boolean test(Object obj) {
+    public boolean test(Object value) {
         return true;
     }
 
@@ -32,7 +32,7 @@ public final class PermissiveValidator implements Validator {
      * {@inheritDoc}. In {@code PermissiveValidator}, defines the allow-all kind of predicate
      */
     @Override
-    public boolean isApplicableTo(Object obj) {
+    public boolean isApplicableTo(Object value) {
         return true;
     }
 

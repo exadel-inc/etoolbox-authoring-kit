@@ -47,7 +47,7 @@ class NamingHelper {
     private Pattern clearingPattern;
 
     /**
-     * Default (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private NamingHelper() {
     }

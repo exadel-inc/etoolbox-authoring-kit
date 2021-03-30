@@ -23,6 +23,9 @@ import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
+/**
+ * Presents a {@link SectionFacade} variant for handling the {@code Accordion} layout
+ */
 class AccordionPanelFacade extends SectionFacade {
     private final AccordionPanel panel;
 

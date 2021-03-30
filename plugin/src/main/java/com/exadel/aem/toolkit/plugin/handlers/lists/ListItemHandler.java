@@ -22,10 +22,17 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
- * The {@code Handler} for adding listItem property to a TouchUI dialog
+ * Implements {@code Handler} to add to a {@link Target} instance the attribute declaring the current component
+ * a list item
  */
 @Handles(value = ListItem.class, scope = Scopes.COMPONENT)
 public class ListItemHandler implements Handler {
+
+    /**
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
+     */
     @Override
     public void accept(Source source, Target target) {
         if (source.adaptTo(ListItem.class) != null) {

@@ -17,12 +17,12 @@ package com.exadel.aem.toolkit.plugin.targets;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 /**
- * Factory class used to create {@link Target} instances
+ * Contains factory methods for creating {@link Target} instances
  */
 public class Targets {
 
     /**
-     * Default private (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private Targets() {
     }

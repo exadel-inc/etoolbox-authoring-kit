@@ -24,12 +24,12 @@ import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * The {@code BiConsumer<Source, Target>} implementation for a fixed-columns TouchUI dialog.
+ * Presents the layout handler implementation for a fixed-columns Granite UI dialog
  */
 public class FixedColumnsHandler implements BiConsumer<Source, Target> {
+
     /**
-     * Implements {@code BiConsumer<Class<?>, Element>} pattern
-     * to process component-backing Java class and append the results to the {@link Target} root node
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */

@@ -23,9 +23,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.writers.DialogLayout;
 
 /**
- * Represents dialog builder for either fixed-columns or tabbed TouchUI dialog. Typically applied to by
- * the implementation of {@code ContentXmlWriter} to populate markup elements produced by the set of component class
- * fields to the overall dialog markup
+ * Presents factory logic for building either a fixed-columns or nested-container Granite UI dialog
  */
 public class ContainerHandlers {
     private static final Map<DialogLayout, BiConsumer<Source, Target>> HANDLERS = ImmutableMap.of(

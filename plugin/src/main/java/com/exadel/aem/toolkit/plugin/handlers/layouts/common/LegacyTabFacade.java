@@ -25,6 +25,9 @@ import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
+/**
+ * Presents a {@link SectionFacade} variant for handling the legacy flavor of {@code Tab} layout
+ */
 @SuppressWarnings("deprecation") // Processing of container.Tab is retained for compatibility and will be removed
                                  // in a version after 2.0.1
 class LegacyTabFacade extends SectionFacade {

@@ -27,25 +27,25 @@ public class DateTimeValidator implements Validator {
 
     /**
      * Tests that the provided DateTime is valid
-     * @param obj {@code DateTimeValue} instance
+     * @param value {@code DateTimeValue} instance
      * @return True or false
      */
     @Override
-    public boolean test(Object obj) {
-        if (!isApplicableTo(obj)) {
+    public boolean test(Object value) {
+        if (!isApplicableTo(value)) {
             return false;
         }
-        return new DateTimeSetting((DateTimeValue) obj).isValid();
+        return new DateTimeSetting((DateTimeValue) value).isValid();
     }
 
     /**
      * Returns whether this object is of {@code DateTimeValue} type
-     * @param obj Tested value
+     * @param value Tested value
      * @return True or false
      */
     @Override
-    public boolean isApplicableTo(Object obj) {
-        return obj instanceof DateTimeValue;
+    public boolean isApplicableTo(Object value) {
+        return value instanceof DateTimeValue;
     }
 
     /**

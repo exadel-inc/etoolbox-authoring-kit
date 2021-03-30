@@ -41,8 +41,8 @@ import com.exadel.aem.toolkit.plugin.validators.CharactersObjectValidator;
 import com.exadel.aem.toolkit.plugin.validators.Validation;
 
 /**
- * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code RichTextEditor} widget functionality
- * within the {@code cq:dialog} and {@code cq:editConfig} XML nodes
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
+ * object that define the Granite UI {@code RichTextEditor} look and behavior
  */
 @Handles(RichTextEditor.class)
 public class RichTextEditorHandler implements Handler {
@@ -69,9 +69,9 @@ public class RichTextEditorHandler implements Handler {
     }
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source Current {@code SourceFacade} instance
-     * @param target Current XML targetFacade
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {
@@ -80,8 +80,8 @@ public class RichTextEditorHandler implements Handler {
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param target Current {@code TargetFacade} instance
      * @param rteAnnotation Current {@link RichTextEditor} instance
+     * @param target Resulting {@code Target} object
      */
     public void accept(RichTextEditor rteAnnotation, Target target) {
         this.rteAnnotation = rteAnnotation;

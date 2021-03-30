@@ -29,16 +29,16 @@ public class JcrPathValidator extends NotBlankValidator {
 
     /**
      * Tests that the provided string is a valid JCR path
-     * @param obj Raw string
+     * @param value Raw string
      * @return True or false
      */
     @Override
-    public boolean test(Object obj) {
-        if (!super.test(obj)) {
+    public boolean test(Object value) {
+        if (!super.test(value)) {
             return false;
         }
-        return JCR_PATH_PATTERN.matcher(obj.toString()).matches()
-                || PROP_INJECT_PATTERN.matcher(obj.toString()).matches();
+        return JCR_PATH_PATTERN.matcher(value.toString()).matches()
+                || PROP_INJECT_PATTERN.matcher(value.toString()).matches();
     }
 
     /**

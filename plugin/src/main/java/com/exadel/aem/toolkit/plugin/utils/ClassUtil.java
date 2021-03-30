@@ -40,7 +40,7 @@ import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 public class ClassUtil {
 
     /**
-     * Default (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private ClassUtil() {
     }

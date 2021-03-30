@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
  * Maven workflow
  */
 class PermissiveExceptionHandler implements ExceptionHandler {
-    static final Logger LOG = LoggerFactory.getLogger("AEM Authoring Toolkit");
+    static final Logger LOG = LoggerFactory.getLogger("EToolbox Authoring Kit");
 
     /**
      * Logs the handled exception. Checked exceptions are logged as error messages, and unchecked exceptions are logged

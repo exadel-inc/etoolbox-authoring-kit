@@ -50,7 +50,7 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
     private static final String TITLE_MISSING_EXCEPTION_MESSAGE = "Title property is missing for dialog in class ";
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores in into the provided {@code Target}
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */

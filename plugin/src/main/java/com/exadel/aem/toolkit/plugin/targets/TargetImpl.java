@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.targets;
 
 import java.lang.annotation.Annotation;
@@ -59,16 +58,20 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
        Local fields and constructors
        ----------------------------- */
 
-    private final Target parent;
     private final Map<String, String> attributes;
     private final List<Target> children;
 
     private String name;
+    private Target parent;
     private String prefix;
     private String postfix;
     private String scope;
 
-
+    /**
+     * Default constructor
+     * @param name Non-blank string representing the name of the new instance
+     * @param parent Nullable {@code Target} object that will serve as the parent reference
+     */
     TargetImpl(String name, Target parent) {
         super(Target.class);
         this.name = name;
@@ -80,25 +83,79 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
 
-    /* ---------------
-       Basic accessors
-       --------------- */
+    /* -----------------
+       Naming operations
+       ----------------- */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return name;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getNamePrefix() {
+        if (getParent() == null) {
+            return StringUtils.defaultString(this.prefix);
+        }
+        return getParent().getNamePrefix() + StringUtils.defaultString(this.prefix);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Target namePrefix(String prefix) {
+        this.prefix = NamingUtil.getValidFieldPrefix(prefix);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getNamePostfix() {
+        if (getParent() == null) {
+            return StringUtils.defaultString(this.postfix);
+        }
+        return StringUtils.defaultString(this.postfix) + getParent().getNamePostfix();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Target namePostfix(String postfix) {
+        this.postfix = NamingUtil.getValidFieldPostfix(postfix);
+        return this;
+    }
+
+
+    /* ---------------
+       Basic accessors
+       --------------- */
 
     @Override
     public Target getParent() {
         return parent;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Target> getChildren() {
         return this.children;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isEmpty() {
         if (!children.isEmpty() || attributes.size() > 1) {
@@ -113,11 +170,18 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
        Scope operations
        ---------------- */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getScope() {
         return scope;
     }
 
+    /**
+     * Assigns scope value to the current instance
+     * @param scope String value
+     */
     void setScope(String scope) {
         this.scope = scope;
     }
@@ -132,11 +196,17 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return getTarget(path, false);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target getOrCreateTarget(String path) {
         return getTarget(path, true);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target createTarget(String path) {
         if (path == null) {
@@ -166,14 +236,12 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return child;
     }
 
-    @Override
-    public void removeTarget(String path) {
-        Target removable = getTarget(path);
-        if (removable != null && removable.getParent() != null) {
-            removable.getParent().getChildren().remove(removable);
-        }
-    }
-
+    /**
+     * Retrieves or creates as necessary a {@code Target} object related to the current instance by the provided path
+     * @param path String value, non-blank
+     * @param createIfMissing True to create a {@code Target} for the unmatched path segment; otherwise, false
+     * @return New {@code Target} instance
+     */
     private Target getTarget(String path, boolean createIfMissing) {
         if (StringUtils.isBlank(path)) {
             return null;
@@ -214,10 +282,50 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
 
+    /* ------------------------------
+       Relation management operations
+       ------------------------------ */
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addTarget(Target other, int position) {
+        if (other != null && other.getParent() != null) {
+            other.getParent().getChildren().remove(other);
+        }
+        if (other == null) {
+            return;
+        }
+        if (other instanceof TargetImpl) {
+            ((TargetImpl) other).parent = this;
+        }
+        if (position > -1 && position < getChildren().size()) {
+            getChildren().add(position, other);
+        } else {
+            getChildren().add(other);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeTarget(String path) {
+        Target removable = getTarget(path);
+        if (removable != null && removable.getParent() != null) {
+            removable.getParent().getChildren().remove(removable);
+        }
+    }
+
+
     /* --------------------
        Filtering operations
        -------------------- */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target findParent(Predicate<Target> filter) {
         if (filter == null) {
@@ -233,6 +341,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target findChild(Predicate<Target> filter) {
         if (filter == null) {
@@ -241,6 +352,12 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return findChild(this, filter);
     }
 
+    /**
+     * Performs a recursive search for a matching descendant {@code Target} with the provided filter
+     * @param current {@code Target object} children of which are currently tested
+     * @param filter {@code Predicate} to test the descendants of the current target
+     * @return Relevant descendant {@code Target} object, or null
+     */
     private static Target findChild(Target current, Predicate<Target> filter) {
         Target match = current.getChildren()
             .stream()
@@ -258,6 +375,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Target> findChildren(Predicate<Target> filter) {
         if (filter == null) {
@@ -268,6 +388,12 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return result;
     }
 
+    /**
+     * Performs a recursive search for matching descendant {@code Target}s with the provided filter
+     * @param current {@code Target object} children of which are currently tested
+     * @param filter {@code Predicate} to test the descendants of the current target
+     * @param collection {@code List} object accumulating the relevant targets
+     */
     private static void findChildren(Target current, Predicate<Target> filter, List<Target> collection) {
         List<Target> matches = current.getChildren().stream().filter(filter).collect(Collectors.toList());
         collection.addAll(matches);
@@ -277,54 +403,22 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
 
-    /* -----------------
-       Prefix operations
-       ----------------- */
-
-    @Override
-    public String getNamePrefix() {
-        if (getParent() == null) {
-            return StringUtils.defaultString(this.prefix);
-        }
-        return getParent().getNamePrefix() + StringUtils.defaultString(this.prefix);
-    }
-
-    @Override
-    public Target namePrefix(String prefix) {
-        this.prefix = NamingUtil.getValidFieldPrefix(prefix);
-        return this;
-    }
-
-
-    /* ------------------
-       Postfix operations
-       ------------------ */
-
-    @Override
-    public String getNamePostfix() {
-        if (getParent() == null) {
-            return StringUtils.defaultString(this.postfix);
-        }
-        return StringUtils.defaultString(this.postfix) + getParent().getNamePostfix();
-    }
-
-    @Override
-    public Target namePostfix(String postfix) {
-        this.postfix = NamingUtil.getValidFieldPostfix(postfix);
-        return this;
-    }
-
-
     /* ---------------------
        Attributes operations
        --------------------- */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, String> getAttributes() {
         return this.attributes;
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target attribute(String name, String value) {
         if (value != null) {
@@ -333,6 +427,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target attribute(String name, String[] value) {
         if (value != null) {
@@ -341,12 +438,18 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target attribute(String name, boolean value) {
         this.attributes.put(name, StringUtil.format(value, Boolean.class));
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target attribute(String name, boolean[] value) {
         if (value != null) {
@@ -358,12 +461,18 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target attribute(String name, long value) {
         this.attributes.put(name, StringUtil.format(value, Long.class));
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target attribute(String name, long[] value) {
         if (value != null) {
@@ -374,6 +483,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target attribute(String name, double value) {
         this.attributes.put(name, StringUtil.format(value, Double.class));
@@ -390,6 +502,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target attribute(String name, Date value) {
         if (value != null) {
@@ -398,6 +513,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target attribute(String name, Date[] value) {
         if (value != null) {
@@ -406,6 +524,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target attributes(Map<String, Object> value) {
         if (value == null) {
@@ -427,6 +548,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Target attributes(Annotation value, Predicate<Method> filter) {
         if (value == null) {
@@ -436,6 +560,11 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return this;
     }
 
+    /**
+     * Assigns attributes the the current instance based on the provided DOM {@code Element} object
+     * @param value {@code Element} object used as the source of attribute names and values
+     * @return Current instance
+     */
     public Target attributes(Element value) {
         if (value != null) {
             populateElementProperties(value);
@@ -443,11 +572,18 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeAttribute(String name) {
         attributes.remove(name);
     }
 
+    /**
+     * Called by {@link TargetImpl#attributes(Element)} in order to store element attributes to the current instance
+     * @param value {@code Element} object used as the source of attribute names and values
+     */
     private void populateElementProperties(Element value) {
         this.name = value.getTagName();
         IntStream.range(0, value.getAttributes().getLength())
@@ -462,8 +598,14 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
             });
     }
 
-    private void populateAnnotationProperties(Annotation annotation, Predicate<Method> filter) {
-        String propertyPrefix = getPropertyPrefix(annotation);
+    /**
+     * Called by {@link TargetImpl#attributes(Annotation, Predicate)} in order to store annotation properties
+     * to the current instance
+     * @param value {@code Annotation} object used as the source of attribute names and values
+     * @param filter {@code Predicate} used to sort out irrelevant properties
+     */
+    private void populateAnnotationProperties(Annotation value, Predicate<Method> filter) {
+        String propertyPrefix = getPropertyPrefix(value);
         String nodePrefix = propertyPrefix.contains(CoreConstants.SEPARATOR_SLASH)
             ? StringUtils.substringBeforeLast(propertyPrefix, CoreConstants.SEPARATOR_SLASH)
             : StringUtils.EMPTY;
@@ -472,15 +614,22 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         if (StringUtils.isNotEmpty(nodePrefix)) {
             effectiveTarget = effectiveTarget.getOrCreateTarget(nodePrefix);
         }
-        List<Method> propertySources = Arrays.stream(annotation.annotationType().getDeclaredMethods())
+        List<Method> propertySources = Arrays.stream(value.annotationType().getDeclaredMethods())
             .filter(filter)
             .collect(Collectors.toList());
         for (Method propertySource: propertySources) {
-            populateAnnotationProperty(annotation, propertySource, effectiveTarget);
+            populateAnnotationProperty(value, propertySource, effectiveTarget);
         }
     }
 
-    private static void populateAnnotationProperty(Annotation annotation, Method method, Target target) {
+    /**
+     * Called by {@link TargetImpl#populateAnnotationProperties(Annotation, Predicate)} to store the value of a particular
+     * annotation property
+     * @param value {@code Annotation} object used as the source of attribute names and values
+     * @param method {@code Method} reference representing the annotation property
+     * @param target Resulting {@code Target} object
+     */
+    private static void populateAnnotationProperty(Annotation value, Method method, Target target) {
         boolean ignorePrefix = false;
 
         // Extract property name
@@ -492,7 +641,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         }
 
         // Extract property prefix and prepend it to the name
-        String prefixByPropertyMapping = getPropertyPrefix(annotation);
+        String prefixByPropertyMapping = getPropertyPrefix(value);
         String namePrefix = prefixByPropertyMapping.contains(CoreConstants.SEPARATOR_SLASH)
             ? StringUtils.substringAfterLast(prefixByPropertyMapping, CoreConstants.SEPARATOR_SLASH)
             : prefixByPropertyMapping;
@@ -515,12 +664,17 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         }
 
         BinaryOperator<String> merger = TargetImpl::mergeStringAttributes;
-        AttributeHelper.forAnnotationProperty(annotation, method)
+        AttributeHelper.forAnnotationProperty(value, method)
             .withName(propertyName)
             .withMerger(merger)
             .setTo(effectiveTarget);
     }
 
+    /**
+     * Retrieves a name prefix for the given {@code Annotation}
+     * @param annotation {@code Annotation} object to look for a prefix value
+     * @return String value
+     */
     @SuppressWarnings("deprecation") // Processing of PropertyMapping is retained for compatibility and will be removed
                                      // in a version after 2.0.1
     private static String getPropertyPrefix(Annotation annotation) {
@@ -533,6 +687,13 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         return result;
     }
 
+    /**
+     * Merges two string attributes expressing either plain values or inline value lists into the resulting string.
+     * This method leaves no duplicate elements
+     * @param first First string value
+     * @param second Second string value
+     * @return String containing the merged value
+     */
     private static String mergeStringAttributes(String first, String second) {
         if (!StringUtil.isCollection(first) || !StringUtil.isCollection(second)) {
             return DEFAULT_ATTRIBUTE_MERGER.apply(first, second);

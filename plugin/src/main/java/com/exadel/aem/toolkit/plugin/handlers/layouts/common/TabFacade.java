@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
 
 import java.lang.reflect.Method;
@@ -26,6 +25,9 @@ import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
+/**
+ * Presents a {@link SectionFacade} variant for handling the modern {@code Tab} layout
+ */
 class TabFacade extends SectionFacade {
     private static final Predicate<Method> MAIN_NODE_MEMBERS = method -> StringUtils.equalsAny(
         method.getName(),

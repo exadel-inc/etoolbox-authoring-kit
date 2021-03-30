@@ -49,7 +49,7 @@ public class AnnotationUtil {
     private static final Predicate<Method> MAP_ALL_PROPERTIES = member -> true;
 
     /**
-     * Default (hiding) constructor
+     * Default (instantiation-preventing) constructor
      */
     private AnnotationUtil() {
     }

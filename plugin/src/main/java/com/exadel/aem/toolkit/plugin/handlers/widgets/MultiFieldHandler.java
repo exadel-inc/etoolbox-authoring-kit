@@ -29,7 +29,8 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * Handler used to prepare data for {@link MultiField} widget rendering
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
+ * object that define the Granite UI {@code MultiField} widget look and behavior
  */
 @Handles(MultiField.class)
 public class MultiFieldHandler extends WidgetContainerHandler implements Handler {
@@ -37,10 +38,9 @@ public class MultiFieldHandler extends WidgetContainerHandler implements Handler
     private static final String EMPTY_MULTIFIELD_EXCEPTION_MESSAGE = "No valid fields found in multifield class ";
 
     /**
-     * Implements the {@code BiConsumer<Source, Target} pattern to process settings specified by {@link MultiField}
-     * and provide data for widget rendering
-     * @param source Member that defines a {@code MultiField}
-     * @param target Data structure used for rendering
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {

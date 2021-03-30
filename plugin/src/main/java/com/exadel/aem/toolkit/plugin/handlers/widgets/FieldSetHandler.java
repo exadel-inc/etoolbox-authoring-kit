@@ -28,7 +28,8 @@ import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHand
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 /**
- * Handler used to prepare data for {@link FieldSet} widget rendering
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
+ * object that define the Granite UI {@code FieldSet} widget look and behavior
  */
 @Handles(FieldSet.class)
 public class FieldSetHandler extends WidgetContainerHandler implements Handler {
@@ -36,10 +37,9 @@ public class FieldSetHandler extends WidgetContainerHandler implements Handler {
     private static final String EMPTY_FIELDSET_EXCEPTION_MESSAGE = "No valid fields found in fieldset class ";
 
     /**
-     * Implements the {@code BiConsumer<Source, Target} pattern to process settings specified by {@link FieldSet}
-     * and provide data for widget rendering
-     * @param source Member that defines a {@code FieldSet}
-     * @param target Data structure used for rendering
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {

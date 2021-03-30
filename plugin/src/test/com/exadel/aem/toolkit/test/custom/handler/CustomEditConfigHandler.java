@@ -20,7 +20,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomEditConfigAnnotation;
 
 @Handles(value = CustomEditConfigAnnotation.class)
-@SuppressWarnings("unused") // Used by AAT Plugin logic
+@SuppressWarnings("unused") // Used by ToolKit logic
 public class CustomEditConfigHandler implements Handler {
 
     @Override

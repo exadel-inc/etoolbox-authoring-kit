@@ -26,19 +26,19 @@ public class NumberValidator implements Validator {
 
     /**
      * Tests that the provided value is of numeric type or an empty string
-     * @param obj Generic value
+     * @param value Generic value
      * @return True or false
      */
     @Override
-    public boolean test(Object obj) {
-        if (obj == null) {
+    public boolean test(Object value) {
+        if (value == null) {
             return false;
         }
-        if (StringUtils.EMPTY.equals(obj)) {
+        if (StringUtils.EMPTY.equals(value)) {
             return true;
         }
         try {
-            Double.valueOf(obj.toString());
+            Double.valueOf(value.toString());
             return true;
         } catch (NumberFormatException e) {
             return false;
@@ -49,7 +49,7 @@ public class NumberValidator implements Validator {
      * {@inheritDoc}. In {@code NumberValidator}, defines the allow-all kind of predicate
      */
     @Override
-    public boolean isApplicableTo(Object obj) {
+    public boolean isApplicableTo(Object value) {
         return true;
     }
 

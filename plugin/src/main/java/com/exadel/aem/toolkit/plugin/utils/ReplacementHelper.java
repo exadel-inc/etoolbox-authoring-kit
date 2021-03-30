@@ -43,7 +43,7 @@ public class ReplacementHelper {
     private final List<Source> internal;
 
     /**
-     * Default (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private ReplacementHelper() {
         internal = new ArrayList<>();

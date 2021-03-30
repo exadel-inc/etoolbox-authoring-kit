@@ -25,15 +25,16 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite {@code Select} widget functionality
- * within the {@code cq:dialog} node
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
+ * object that define the Granite UI {@code Select} widget look and behavior
  */
 @Handles(Select.class)
 public class SelectHandler extends OptionProviderHandler implements Handler {
+
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {
