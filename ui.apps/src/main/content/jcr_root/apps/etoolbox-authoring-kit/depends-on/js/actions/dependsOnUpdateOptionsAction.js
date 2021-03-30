@@ -26,7 +26,7 @@
 
     const ADDRESS_TERMINATORS = /^[./]+|\/+$/g;
 
-    const OPTION_PROVIDER_ENDPOINT = '/apps/authoring-toolkit/datasources/option-provider';
+    const OPTION_PROVIDER_ENDPOINT = '/apps/etoolbox-authoring-kit/datasources/option-provider';
     const ENDPOINT_EXTENSION = '.json';
 
     const STORED_VALUE_ATTRIBUTE = 'data-stored-value';

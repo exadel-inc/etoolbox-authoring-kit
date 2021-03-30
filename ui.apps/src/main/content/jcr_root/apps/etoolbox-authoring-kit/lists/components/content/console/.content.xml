@@ -50,13 +50,13 @@
                     limit="{Long}40"
                     modeGroup="cq-siteadmin-admin-childpages"
                     path="${requestPathInfo.suffix}"
-                    previewSrc="/mnt/overlay/authoring-toolkit/lists/components/content/console/pagecolumnpreview.html{+id}"
+                    previewSrc="/mnt/overlay/etoolbox-authoring-kit/lists/components/content/console/pagecolumnpreview.html{+id}"
                     rootPath="/content"
                     size="${empty requestPathInfo.selectors[1] ? &quot;40&quot; : requestPathInfo.selectors[1]}"
-                    src="/mnt/overlay/authoring-toolkit/lists/components/content/console/jcr:content/views/column{.offset,limit}.html{+id}">
+                    src="/mnt/overlay/etoolbox-authoring-kit/lists/components/content/console/jcr:content/views/column{.offset,limit}.html{+id}">
                 <datasource
                         jcr:primaryType="nt:unstructured"
-                        sling:resourceType="/apps/authoring-toolkit/datasources/lists"
+                        sling:resourceType="/apps/etoolbox-authoring-kit/datasources/lists"
                         itemResourceType="cq/gui/components/coral/admin/page/columnitem"
                         limit="${empty requestPathInfo.selectors[1] ? &quot;41&quot; : requestPathInfo.selectors[1] + 1}"
                         offset="${requestPathInfo.selectors[0]}"
@@ -72,10 +72,10 @@
                     modeGroup="cq-siteadmin-admin-childpages"
                     path="${requestPathInfo.suffix}"
                     size="${empty requestPathInfo.selectors[1] ? &quot;20&quot; : requestPathInfo.selectors[1]}"
-                    src="/mnt/overlay/authoring-toolkit/lists/components/content/console/jcr:content/views/card{.offset,limit}.html{+id}">
+                    src="/mnt/overlay/etoolbox-authoring-kit/lists/components/content/console/jcr:content/views/card{.offset,limit}.html{+id}">
                 <datasource
                         jcr:primaryType="nt:unstructured"
-                        sling:resourceType="/apps/authoring-toolkit/datasources/lists"
+                        sling:resourceType="/apps/etoolbox-authoring-kit/datasources/lists"
                         applyWeighting="{Boolean}true"
                         itemResourceType="cq/gui/components/coral/admin/page/card"
                         limit="${empty requestPathInfo.selectors[1] ? &quot;21&quot; : requestPathInfo.selectors[1] + 1}"
@@ -95,7 +95,7 @@
                     selectionMode="row"
                     size="${empty requestPathInfo.selectors[1] ? &quot;40&quot; : requestPathInfo.selectors[1]}"
                     sortMode="remote"
-                    src="/mnt/overlay/authoring-toolkit/lists/components/content/console/jcr:content/views/list{.offset,limit}.html{+id}{?sortName,sortDir}">
+                    src="/mnt/overlay/etoolbox-authoring-kit/lists/components/content/console/jcr:content/views/list{.offset,limit}.html{+id}{?sortName,sortDir}">
                 <granite:data
                         jcr:primaryType="nt:unstructured"
                         columns-state-id="aem.sites.listview.columns"/>
@@ -106,7 +106,7 @@
                         stateId="aem.sites.listview.columns"/>
                 <datasource
                         jcr:primaryType="nt:unstructured"
-                        sling:resourceType="/apps/authoring-toolkit/datasources/lists"
+                        sling:resourceType="/apps/etoolbox-authoring-kit/datasources/lists"
                         itemResourceType="cq/gui/components/coral/admin/page/row"
                         limit="${empty requestPathInfo.selectors[1] ? &quot;41&quot; : requestPathInfo.selectors[1] + 1}"
                         offset="${requestPathInfo.selectors[0]}"
@@ -148,7 +148,7 @@
                                 text="List">
                             <data jcr:primaryType="nt:unstructured"
                                   nesting="hide"
-                                  src.uritemplate="/mnt/overlay/authoring-toolkit/lists/components/content/console/createpagedialog.html{+id}"/>
+                                  src.uritemplate="/mnt/overlay/etoolbox-authoring-kit/lists/components/content/console/createpagedialog.html{+id}"/>
                         </createlist>
                         <createfolder
                                 granite:rel="cq-siteadmin-admin-createfolder"
@@ -194,7 +194,7 @@
                                 text="List">
                             <data jcr:primaryType="nt:unstructured"
                                   nesting="hide"
-                                  src.uritemplate="/mnt/overlay/authoring-toolkit/lists/components/content/console/createpagedialog.html{+id}"/>
+                                  src.uritemplate="/mnt/overlay/etoolbox-authoring-kit/lists/components/content/console/createpagedialog.html{+id}"/>
                         </createlist>
                         <createfolder
                                 granite:rel="cq-siteadmin-admin-createfolder"
@@ -340,17 +340,17 @@
                                             jcr:primaryType="nt:unstructured"
                                             sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
                                             name="./cq:template"
-                                            value="/conf/authoring-toolkit/settings/wcm/templates/list"/>
+                                            value="/conf/etoolbox-authoring-kit/settings/wcm/templates/list"/>
                                     <resourceType
                                             jcr:primaryType="nt:unstructured"
                                             sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
                                             name="./sling:resourceType"
-                                            value="/apps/authoring-toolkit/lists/components/structure/page-list"/>
+                                            value="/apps/etoolbox-authoring-kit/lists/components/structure/page-list"/>
                                     <pageProps
                                             jcr:primaryType="nt:unstructured"
                                             sling:resourceType="granite/ui/components/coral/foundation/include"
                                             resourceType="granite/ui/components/coral/foundation/container"
-                                            path="/apps/authoring-toolkit/lists/components/structure/page-list/cq:dialog/content/items/tabs/items/mainConfig"/>
+                                            path="/apps/etoolbox-authoring-kit/lists/components/structure/page-list/cq:dialog/content/items/tabs/items/mainConfig"/>
                                     <create
                                             jcr:primaryType="nt:unstructured"
                                             sling:resourceType="granite/ui/components/coral/foundation/button"

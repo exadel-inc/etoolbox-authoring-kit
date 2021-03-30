@@ -19,7 +19,7 @@
 
     ns.EToolboxLists = ns.EToolboxLists || {};
 
-    ns.EToolboxLists.WRAPPER_RES_TYPE = 'authoring-toolkit/lists/components/content/listItem';
+    ns.EToolboxLists.WRAPPER_RES_TYPE = 'etoolbox-authoring-kit/lists/components/content/listItem';
 
     ns.EToolboxLists.launchReferenceDialog = function (editable, itemPath) {
         const dialogConfig = getDialogConfig(editable, itemPath);

@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ListItemTest {
 
-    private static final String SIMPLE_LIST_PATH = "/content/authoring-toolkit/lists/simpleList";
+    private static final String SIMPLE_LIST_PATH = "/content/etoolbox-authoring-kit/lists/simpleList";
     private static final String LIST_ITEM_PATH = "/jcr:content/list/list_item_1006003058";
 
     @Rule
@@ -45,7 +45,7 @@ public class ListItemTest {
 
     @Test
     public void getItemResType() {
-        final String expected = "/apps/authoring-toolkit/lists/components/content/simpleItem";
+        final String expected = "/apps/etoolbox-authoring-kit/lists/components/content/simpleItem";
         String actual1 = listItem.getItemResType();
         assertEquals(expected, actual1);
     }

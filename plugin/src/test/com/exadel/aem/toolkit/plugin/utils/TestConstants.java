@@ -27,8 +27,8 @@ public class TestConstants {
     public static final String PLUGIN_MODULE_TARGET = Paths.get("target", "classes").toAbsolutePath().toString();
     public static final String PLUGIN_MODULE_TEST_TARGET = Paths.get( "target", "test-classes").toAbsolutePath().toString();
 
-    private static final String API_MODULE_NAME = "aem-authoring-toolkit-core";
-    private static final String PLUGIN_MODULE_NAME = "aem-authoring-toolkit-plugin";
+    private static final String API_MODULE_NAME = "etoolbox-authoring-kit-core";
+    private static final String PLUGIN_MODULE_NAME = "etoolbox-authoring-kit-plugin";
     public static final String API_MODULE_TARGET = PLUGIN_MODULE_TARGET.replace(PLUGIN_MODULE_NAME, API_MODULE_NAME);
 
     public static final String DEFAULT_COMPONENT_NAME = "test-component";

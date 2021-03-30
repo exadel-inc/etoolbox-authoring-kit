@@ -65,7 +65,7 @@
                               renderHidden="{Boolean}false"
                               required="{Boolean}false">
                         <datasource jcr:primaryType="nt:unstructured"
-                                    sling:resourceType="/apps/authoring-toolkit/datasources/option-provider"
+                                    sling:resourceType="/apps/etoolbox-authoring-kit/datasources/option-provider"
                                     prepend="[None:none]"
                                     path1="/path/to/acs/list"
                                     path2="/path/to/acs/list2"
