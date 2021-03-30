@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/button/index.html">
- * Button element</a> in TouchUI dialog
+ * Button element</a> in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -38,7 +38,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 public @interface Button {
 
     /**
-     * Maps to the 'type' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code type} attribute of this Granite UI component's node.
      * Used to define button type
      *
      * @return One of {@code ButtonType} values
@@ -48,7 +48,7 @@ public @interface Button {
     ButtonType type() default ButtonType.BUTTON;
 
     /**
-     * When set to true, maps to the 'disabled' attribute of this TouchUI dialog component's node.
+     * When set to true, maps to the {@code disabled} attribute of this Granite UI component's node.
      * Defines the the current option is shown in disabled state
      *
      * @return True or false
@@ -56,13 +56,13 @@ public @interface Button {
     boolean disabled() default false;
 
     /**
-     * When set to a non-blank string, maps to the 'autocomplete' attribute of this TouchUI dialog component's node
+     * When set to a non-blank string, maps to the {@code autocomplete} attribute of this Granite UI component's node
      * @return String value
      */
     String autocomplete() default "off";
 
     /**
-     * When set to a non-blank string, maps to the 'formId' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code formId} attribute of this Granite UI component's node.
      * Used to identify the {@code form} this button is bound to
      *
      * @return String value
@@ -70,7 +70,7 @@ public @interface Button {
     String formId() default "";
 
     /**
-     * When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code text} attribute of this Granite UI component's node.
      * Used to define the text of the button
      *
      * @return String value, non-blank
@@ -78,7 +78,7 @@ public @interface Button {
     String text() default "";
 
     /**
-     *  When set to a non-blank string, maps to the 'text_commentI18n' attribute of this TouchUI dialog component's node.
+     *  When set to a non-blank string, maps to the {@code text_commentI18n} attribute of this Granite UI component's node.
      *  Used to define I18n comment for the body text
      *
      *  @return String value, non-blank
@@ -87,7 +87,7 @@ public @interface Button {
     String textComment() default "";
 
     /**
-     * Maps to the 'hideText' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code hideText} attribute of this Granite UI component's node.
      * Used to define whether text is hidden
      *
      * @return True or false
@@ -95,7 +95,7 @@ public @interface Button {
     boolean hideText() default false;
 
     /**
-     * Maps to the 'active' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code active} attribute of this Granite UI component's node.
      * Used to define initial state of the button
      *
      * @return True or false
@@ -103,7 +103,7 @@ public @interface Button {
     boolean active() default false;
 
     /**
-     * When set to a non-blank string, maps to the 'icon' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code icon} attribute of this Granite UI component's node.
      * Used to define component's icon.
      * When set, override actionConfigName
      *
@@ -112,7 +112,7 @@ public @interface Button {
     String icon() default "";
 
     /**
-     * When set to a non-blank string, maps to the 'iconSize' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code iconSize} attribute of this Granite UI component's node.
      * Used to specify icon size
      *
      * @return One of {@code Size} values
@@ -121,7 +121,7 @@ public @interface Button {
     Size iconSize() default Size.SMALL;
 
     /**
-     * When set to a non-blank string, maps to the 'size' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code size} attribute of this Granite UI component's node.
      * Used to define button size
      * <p><u>Note:</u> only {@code "medium"} and {@code "large"} values are officially supported</p>
      *
@@ -131,7 +131,7 @@ public @interface Button {
     Size size() default Size.MEDIUM;
 
     /**
-     * Maps to the 'block' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code block} attribute of this Granite UI component's node.
      * Used to ensure the button is rendered as a block element
      *
      * @return True or false
@@ -139,7 +139,7 @@ public @interface Button {
     boolean block() default false;
 
     /**
-     * Maps to the 'variant' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code variant} attribute of this Granite UI dialog component's node.
      * Used to define button variant
      *
      * @return One of {@code ElementVariant} values
@@ -148,15 +148,15 @@ public @interface Button {
     ElementVariant variant() default ElementVariant.PRIMARY;
 
     /**
-     *  When set to a non-blank string, maps to the 'command' attribute of this TouchUI dialog component's node.
-     *  Used to define keyboard shortcut for the action. Overrides 'actionConfigName' value
+     *  When set to a non-blank string, maps to the {@code command} attribute of this Granite UI dialog component's node.
+     *  Used to define keyboard shortcut for the action. Overrides {@code actionConfigName} value
      *
      *  @return String value, non-blank
      */
     String command() default "";
 
     /**
-     *  When set to a non-blank string, maps to the 'actionConfigName' attribute of this TouchUI dialog component's node.
+     *  When set to a non-blank string, maps to the {@code actionConfigName} attribute of this Granite UI dialog component's node.
      *  Used to define standard definitions of command, icon and text
      *
      *  @return String value, non-blank
@@ -164,7 +164,7 @@ public @interface Button {
     String actionConfigName() default "";
 
     /**
-     *  When set to a non-blank string, maps to the 'trackingFeature' attribute of this TouchUI dialog component's node.
+     *  When set to a non-blank string, maps to the {@code trackingFeature} attribute of this Granite UI dialog component's node.
      *  Used to define name of the feature that the interaction takes place
      *
      *  @return String value, non-blank
@@ -173,8 +173,8 @@ public @interface Button {
     String trackingFeature() default "";
 
     /**
-     *  When set to a non-blank string, maps to the 'trackingElement' attribute of this TouchUI dialog component's node.
-     *  Used to element this component represents for the purpose of tracking
+     *  When set to a non-blank string, maps to the {@code trackingElement} attribute of this Granite UI component's node.
+     *  Used to determine element this component represents for the purpose of tracking
      *
      *  @return String value, non-blank
      *  @see <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">foundation-tracking</a>

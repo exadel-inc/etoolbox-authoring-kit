@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.layouts;
 
 import java.lang.annotation.ElementType;
@@ -25,9 +24,9 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 
 /**
- * Used to define the accordion-shaped layout for a TouchUI dialog and/or to set up
- * a <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html">
- * Accordion</a> widget inside dialog
+ * Used to define the accordion-shaped layout for a Granite UI dialog and/or to set up
+ * an <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html">
+ * Accordion</a> widget
  */
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

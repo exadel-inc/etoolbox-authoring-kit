@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html">
- *     Text</a> component in a TouchUI dialog. This is a generic text that is rendered as {@code <span>} in the user interface
+ *     Text</a> component in Granite UI. This is a generic text that is rendered as {@code <span>} in the user interface
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -34,7 +34,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @MapProperties
 public @interface Text {
     /**
-     * Maps to the 'text' attribute of this TouchUI dialog component's node
+     * Maps to the 'text' attribute of this Granite UI component's node
      * @return String value
      */
     @PropertyRendering(name = "text")

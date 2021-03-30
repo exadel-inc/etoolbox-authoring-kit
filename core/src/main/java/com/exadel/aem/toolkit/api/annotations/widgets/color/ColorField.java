@@ -27,7 +27,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/colorfield/index.html">
- * ColorField element</a> in TouchUI dialog
+ * ColorField element</a> in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -35,21 +35,21 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 @MapProperties("!customColors")
 public @interface ColorField {
     /**
-     * Maps to the 'value' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code value} attribute of this Granite UI component's node.
      * Used to define default value of ColorField
      * @return String value in either HEX, RGB, RGBA, HSB, or CMYK format
      */
     String value() default "";
 
     /**
-     * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code emptyText} attribute of this Granite UI component's node.
      * Used to define text hint for an empty ColorField
      * @return String value
      */
     String emptyText() default "";
 
     /**
-     * Maps to the 'variant' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code variant} attribute of this Granite UI component's node.
      * Used to specify the capabilities set of this ColorField
      * @see ColorVariant
      * @return One of {@code ColorVariant} values
@@ -58,7 +58,7 @@ public @interface ColorField {
     ColorVariant variant() default ColorVariant.DEFAULT;
 
     /**
-     * Maps to the 'autogenerateColors' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code autogenerateColors} attribute of this Granite UI component's node.
      * Used to specify the mode of auto color generating
      * @see GenerateColorsState
      * @return One of {@code GenerateColorsState} values
@@ -66,21 +66,21 @@ public @interface ColorField {
     @PropertyRendering(transform = StringTransformation.LOWERCASE)
     GenerateColorsState autogenerateColors() default GenerateColorsState.OFF;
     /**
-     * Maps to the 'showSwatches' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code showSwatches} attribute of this Granite UI component's node.
      * Used to specify whether swatches view should be displayed
      * @return True or false
      */
     boolean showSwatches() default true;
 
     /**
-     * Maps to the 'showProperties' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code showProperties} attribute of this Granite UI component's node.
      * Used to specify whether color properties view should be displayed
      * @return True or false
      */
     boolean showProperties() default true;
 
     /**
-     * Maps to the 'showDefaultColors' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code showDefaultColors} attribute of this Granite UI component's node.
      * Used to specify whether default colors should be displayed
      * @return True or false
      */

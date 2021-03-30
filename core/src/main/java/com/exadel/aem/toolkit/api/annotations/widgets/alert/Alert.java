@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html">
- * Alert element</a> in TouchUI dialog
+ * Alert element</a> in Granite UI
  *
  * @deprecated This annotation is deprecated and will be removed in a version after 2.0.1.
  * Please use {@link com.exadel.aem.toolkit.api.annotations.widgets.Alert}
@@ -40,14 +40,14 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 public @interface Alert {
 
     /**
-     * Maps to the 'variant' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code variant} attribute of this Granite UI component's node.
      *
      * @return Alert style
      */
     String variant() default "";
 
     /**
-     * Maps to the 'size' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code size} attribute of this Granite UI component's node.
      * Used to define Alert size
      *
      * @return One of {@code AlertSize} values
@@ -56,7 +56,7 @@ public @interface Alert {
     AlertSize size() default AlertSize.SMALL;
 
     /**
-     * When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code text} attribute of this Granite UI component's node.
      * Used to define content HTML for Alert component
      *
      * @return String value
@@ -64,7 +64,7 @@ public @interface Alert {
     String text() default "";
 
     /**
-     * When set to a non-blank string, maps to the 'jcr:title' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code jcr:title} attribute of this Granite UI component's node.
      * Used to define header text for Alert component
      *
      * @return String value

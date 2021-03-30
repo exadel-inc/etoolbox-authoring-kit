@@ -19,11 +19,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to specify the {@code sling:resourceType} of a TouchUI Dialog field.
- * Accepts s non-blank string representing JCR path
+ * Used to specify the {@code sling:resourceType} for an annotation describing a Granite UI component
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ResourceType {
+
+    /**
+     * Defines path to the component in JCR
+     * @return Non-blank string
+     */
     String value();
 }

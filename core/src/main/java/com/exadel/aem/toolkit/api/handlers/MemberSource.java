@@ -13,11 +13,30 @@
  */
 package com.exadel.aem.toolkit.api.handlers;
 
+/**
+ * Extends the {@code Source} interface with methods specific for sources based on Java classes' fields and methods
+ * @see Source
+ */
 public interface MemberSource extends Source {
 
+    /**
+     * Retrieves the class the underlying Java field or method is declared in
+     * @return Non-null {@code Class} reference
+     */
     Class<?> getDeclaringClass();
 
+    /**
+     * Retrieves the class the underlying Java field or method is received from. This value can be similar to that of
+     * {@link MemberSource#getDeclaringClass()}. Or else it can differ from the former in case when the underlying member
+     * is declared in a superclass or in an interface the current class is implementing
+     * @return Non-null {@code Class} reference
+     */
     Class<?> getReportingClass();
 
+    /**
+     * Retrieves the return type of the underlying Java class member (field or method). If the class member returns
+     * an array value, or a collection, the type of an array/collection element is returned
+     * @return Non-null {@code Class} reference
+     */
     Class<?> getValueType();
 }

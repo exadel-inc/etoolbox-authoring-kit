@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 /**
  * Used to set up Coral 2
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/autocomplete/index.html">
- * Autocomplete element</a> in TouchUI dialog
+ * Autocomplete element</a> in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -33,19 +33,19 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @MapProperties
 public @interface Autocomplete {
     /**
-     * Maps to the 'forceSelection' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code forceSelection} attribute of this Granite UI component's node.
      * If set to true, forces the user to select only from the available choices
      * @return True or false
      */
     boolean forceSelection() default false;
     /**
-     * Maps to the 'mode' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code mode} attribute of this Granite UI component's node.
      * Used to specify string matching mode for autocomplete proposals
      * @return String value (non-null)
      */
     String mode() default "contains";
     /**
-     * Maps to the 'multiple' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code multiple} attribute of this Granite UI component's node.
      * Used to set whether the user is able to make multiple selections
      * @return True or false
      */

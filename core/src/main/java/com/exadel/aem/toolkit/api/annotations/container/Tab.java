@@ -23,8 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 
 /**
- * Used to define specific tab in multi-tab TouchUI dialog setup
- *
+ * Used to define specific tab in multi-tab Granite UI dialog setup
  * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use
  * {@link com.exadel.aem.toolkit.api.annotations.layouts.Tab} instead
  */
@@ -36,13 +35,13 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 public @interface Tab {
 
     /**
-     * Maps to the 'jcr:title' attribute of a {@code cq:dialog/content/items/tabs/items/<this_tab>} node
+     * Maps to the {@code jcr:title} attribute of a {@code cq:dialog/content/items/tabs/items/<thisTab>} node
      * @return String value, required
      */
     String title();
 
     /**
-     * When set to non-default, renders as set of specific attributes of a tab node
+     * When set to a non-default value, renders the set of specific attributes of a tab node
      * @see Attribute
      * @return {@code Attribute} value
      */

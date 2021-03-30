@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/heading/index.html">
- * Heading element</a> in TouchUI dialog
+ * Heading element</a> in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -36,7 +36,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @MapProperties(value = "level")
 public @interface Heading {
     /**
-     * Maps to the 'level' attribute of this TouchUI dialog component's node.
+     * Maps to the 'level' attribute of this Granite UI component's node.
      * Number that corresponds to the header tag level {@code <h1>} to {@code <h6>}
      * @return Long value
      */
@@ -44,7 +44,7 @@ public @interface Heading {
     long level() default 1;
 
     /**
-     * When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the 'text' attribute of this Granite UI component's node.
      * Used to define text within header tag.
      * @return String value, non-blank
      * @deprecated Please use {@link Heading#value()}
@@ -55,7 +55,7 @@ public @interface Heading {
     String text() default "";
 
     /**
-     *  When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
+     *  When set to a non-blank string, maps to the 'text' attribute of this Granite UI component's node.
      *  Used to define text within header tag.
      *  @return String value, non-blank
      */

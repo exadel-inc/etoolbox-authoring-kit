@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.handlers;
 
 import java.lang.annotation.Annotation;
@@ -21,12 +20,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to specify one or more TouchUI dialog widgets annotations for a handler
- * @deprecated Use {@link Handles} instead
+ * Used to specify one or more Granite UI dialog widget annotations for a handler
+ * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link Handles} instead
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Deprecated
+@SuppressWarnings("squid:S1133")
 public @interface HandlesWidgets {
+
+    /**
+     * Enumerates the ToolKit annotations this handler processes
+     * @return A {@code Class} reference or an array of classes
+     */
     Class<? extends Annotation>[] value() default {};
 }

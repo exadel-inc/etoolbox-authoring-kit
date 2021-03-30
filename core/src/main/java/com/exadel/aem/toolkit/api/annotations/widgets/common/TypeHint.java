@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePicker;
 
 /**
- * Contains possible values of {@link DatePicker#typeHint()} property and similar properties of other TouchUI dialog components
+ * Contains possible values of {@link DatePicker#typeHint()} property and similar properties of other Granite UI components
  */
 public enum TypeHint {
     NONE,

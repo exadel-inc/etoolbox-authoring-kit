@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textarea/index.html">
- * TextArea element</a> in TouchUI dialog
+ * TextArea element</a> in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -39,28 +39,28 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 public @interface TextArea {
 
     /**
-     * When set to a non-blank string, maps to the 'value' attribute of this TouchUI dialog component's node
+     * When set to a non-blank string, maps to the {@code value} attribute of this Granite UI component's node
      * Used to define default value for a TextField
      * @return String value
      */
     String value() default "";
 
     /**
-     * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code emptyText} attribute of this Granite UI component's node.
      * Used to define text hint for an empty TextArea
      * @return String value
      */
     String emptyText() default "";
 
     /**
-     * When set to true, maps to the 'autofocus' attribute of this TouchUI dialog component's node.
+     * When set to true, maps to the {@code autofocus} attribute of this Granite UI component's node.
      * Used to specify that this component will have focus after page load/refresh
      * @return True or false
      */
     boolean autofocus() default false;
 
     /**
-     * Maps to the 'maxlength' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code maxlength} attribute of this Granite UI component's node.
      * Sets the maximal number of characters to be stored via this TextArea
      * @return Long value
      */
@@ -69,7 +69,7 @@ public @interface TextArea {
     long maxlength() default 0;
 
     /**
-     * Maps to the 'cols' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code cols} attribute of this Granite UI component's node.
      * Sets the visible width of the text control, in average character widths
      * @return Long values
      */
@@ -78,7 +78,7 @@ public @interface TextArea {
     long cols() default 1;
 
     /**
-     * Maps to the 'rows' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code rows} attribute of this Granite UI component's node.
      * Sets number of text rows
      * @return Long value
      */
@@ -86,7 +86,7 @@ public @interface TextArea {
     long rows() default 5;
 
     /**
-     * Maps to the 'resize' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code resize} attribute of this Granite UI component's node.
      * Sets the resizing type of this TextArea
      * @see TextAreaResizeType
      * @return One of {@code TextAreaResizeType} values

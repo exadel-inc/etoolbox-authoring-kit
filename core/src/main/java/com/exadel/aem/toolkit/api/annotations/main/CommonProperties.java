@@ -19,11 +19,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to define a collection of additional properties of an AEM component and/or TouchUI Dialog
+ * Used to define a collection of additional properties of an AEM component and/or Granite UI entity-defining node
  * @see CommonProperty
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CommonProperties {
+
+    /**
+     * Declares the set of common properties
+     * @return One or more {@code CommonProperty} values
+     */
     CommonProperty[] value();
 }

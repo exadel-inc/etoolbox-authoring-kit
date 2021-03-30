@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.assets.dependson;
 
 /**
- * Represents acceptable {@code dependsOnRef} values for use with {@link DependsOnRef} annotation
+ * Presents the set of possible {@code dependsOnRef} values to be used with {@link DependsOnRef} annotation
  */
 public enum DependsOnRefTypes {
     /**

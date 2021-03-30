@@ -19,7 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represent collection of additional properties that may be assigned to a TouchUI Dialog element node
+ * Represent collection of additional properties that may be assigned to a Granite UI component
  * @see Property
  */
 @Target({ElementType.FIELD})

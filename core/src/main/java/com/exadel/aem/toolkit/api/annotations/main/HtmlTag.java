@@ -36,7 +36,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 public @interface HtmlTag {
 
     /**
-     * Maps to the 'class' attribute of the cq:htmlTag node
+     * Maps to the {@code class} attribute of the {@code cq:htmlTag} node
      * @return String value, non-blank
      */
     @PropertyRendering(name = "class")
@@ -44,7 +44,7 @@ public @interface HtmlTag {
     String className();
 
     /**
-     * Maps to the 'cq:tagName' attribute of the cq:htmlTag node
+     * Maps to the {@code cq:tagName} attribute of the {@code cq:htmlTag} node
      * @return String value, non-blank
      */
     @PropertyRendering(name = NameConstants.PN_TAG_NAME)

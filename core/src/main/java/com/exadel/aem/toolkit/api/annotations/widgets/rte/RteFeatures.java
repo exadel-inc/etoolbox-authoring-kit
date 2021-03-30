@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.widgets.rte;
 
 /**
- * Stores string constants representing built-in features of {@link RichTextEditor} TouchUI Dialog component
+ * Contains string constants representing built-in features of {@link RichTextEditor} Granite UI component
  */
 @SuppressWarnings({"unused"})
 public class RteFeatures {

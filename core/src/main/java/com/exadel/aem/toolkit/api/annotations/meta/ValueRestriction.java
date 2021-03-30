@@ -19,15 +19,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to specify value restriction applied to an annotation property
+ * Used to specify a value restriction applied to an annotation property
  * @see ValueRestrictions for built-in restriction tokens
  */
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValueRestriction {
+
     /**
      * Fully qualified name of a class implementing {@link Validator} that processes the current restriction.
-     * If a name of a non-existent class specified, no restriction will be applied to a field
+     * If a name of a non-existent class specified, no restriction will be applied
      * @return String value, non-blank
      */
     String value();

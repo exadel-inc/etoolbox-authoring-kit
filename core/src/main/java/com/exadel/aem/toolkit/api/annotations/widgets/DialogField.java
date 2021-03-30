@@ -22,8 +22,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
- * Used to define common properties of TouchUI <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html">
- * Dialog field</a>
+ * Used to define common properties of Granite UI <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html">
+ * dialog field</a>
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -63,33 +63,33 @@ public @interface DialogField {
     String wrapperClass() default "";
 
     /**
-     * Used to define {@code name} attribute value for this TouchUI dialog component.
+     * Used to define {@code name} attribute value for this Granite UIdialog component.
      * If not set, the name of the annotated field or method will be stored
      * @return String value (optional)
      */
     String name() default "";
 
     /**
-     * Used to order dialog components in the TouchUI interface. If none of the components has non-zero ranking, they
+     * Used to order dialog components in the Granite UI interface. If none of the components has non-zero ranking, they
      * will be rendered as they appear in Java class. Otherwise, components with smaller rankings will have precedence,
      * @return Integer value. Both positive and negative values allowed
      */
     int ranking() default Integer.MIN_VALUE;
 
     /**
-     * Maps to the {@code required} attribute of this TouchUI dialog component's node.
+     * Maps to the {@code required} attribute of this Granite UI component's node.
      * @return True or false
      */
     boolean required() default false;
 
     /**
-     * Maps to the {@code disabled} attribute of this TouchUI dialog component's node.
+     * Maps to the {@code disabled} attribute of this Granite UI component's node.
      * @return True or false
      */
     boolean disabled() default false;
 
     /**
-     * Maps to the {@code validation} attribute of this TouchUI dialog component's node.
+     * Maps to the {@code validation} attribute of this Granite UI component's node.
      * @return String value, or an array of non-blank strings
      */
     String[] validation() default {};

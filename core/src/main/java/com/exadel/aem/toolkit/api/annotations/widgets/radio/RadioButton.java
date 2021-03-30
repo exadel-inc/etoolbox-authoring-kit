@@ -22,14 +22,14 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 @MapProperties
 public @interface RadioButton {
     /**
-     * Maps to the 'text' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code text} attribute of this Granite UI component's node.
      * Used to define optional text displayed beside the option box
      * @return String value
      */
     String text();
 
     /**
-     * Maps to the 'value' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code value} attribute of this Granite UI component's node.
      * Used to define value to be stored when this option is checked
      * @return String value
      */
@@ -37,7 +37,7 @@ public @interface RadioButton {
     String value();
 
     /**
-     * When set to true, maps to the 'checked' attribute of this TouchUI dialog component's node.
+     * When set to true, maps to the {@code checked} attribute of this Granite UI component's node.
      * Defines the current option is selected by default
      * @return True or false
      */
@@ -45,7 +45,7 @@ public @interface RadioButton {
     boolean checked() default false;
 
     /**
-     * When set to true, maps to the 'disabled' attribute of this TouchUI dialog component's node.
+     * When set to true, maps to the {@code disabled} attribute of this Granite UI component's node.
      * Defines the current option is shown in disabled state
      * @return True or false
      */

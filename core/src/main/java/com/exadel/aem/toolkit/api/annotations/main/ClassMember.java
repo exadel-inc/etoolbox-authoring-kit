@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.markers._Default;
 public @interface ClassMember {
 
     /**
-     * The Java class possessing the member. If not specified, the class currently processed by the AEM Authoring Toolkit's
+     * The Java class possessing the member. If not specified, the class currently processed by the ToolKit's Maven
      * plugin will be used
      * @return {@code Class<?>} instance
      */

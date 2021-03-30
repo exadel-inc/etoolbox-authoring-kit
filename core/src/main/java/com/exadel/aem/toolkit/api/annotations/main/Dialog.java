@@ -30,8 +30,9 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
 /**
- * Used to store generic properties of TouchUI Dialog and most common properties of AEM Component according to the
- * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#PropertiesandChildNodesofaComponent"> Adobe specification</a>
+ * Used to store generic properties of a Granite UI Dialog and most common properties of an AEM Component according to the
+ * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#PropertiesandChildNodesofaComponent">
+ *     Adobe specification</a>
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -42,7 +43,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 public @interface Dialog {
 
     /**
-     * Maps to the 'jcr:title' attributes of both the component root node and its {@code cq:dialog} node
+     * Maps to the {@code jcr:title} attributes of both the component root node and its {@code cq:dialog} node (unless
+     * separate {@code title} is specified in {@link AemComponent} annotation for the current component)
      * @return String value, non-blank
      */
     @PropertyRendering(name = JcrConstants.JCR_TITLE)
@@ -50,7 +52,7 @@ public @interface Dialog {
     String title() default "";
 
     /**
-     * When set to non-blank, maps to the 'jcr:description' attribute of the component's root node
+     * When set to a non-blank string, maps to the {@code jcr:description} attribute of the component's root node
      * @return String value
      * @deprecated Use {@link AemComponent#description()} to set this value
      */
@@ -62,7 +64,7 @@ public @interface Dialog {
     String description() default "";
 
     /**
-     * When set to non-blank, maps to the 'cq:cellName' attribute of the component's root node
+     * When set to a non-blank string, maps to the {@code cq:cellName} attribute of the component's root node
      * @return String value
      * @deprecated Use {@link AemComponent#cellName()} to set this value
      */
@@ -74,7 +76,7 @@ public @interface Dialog {
     String cellName() default "";
 
     /**
-     * When set to non-blank, maps to the 'componentGroup' attribute of the component root node
+     * When set to a non-blank string, maps to the {@code componentGroup} attribute of the component root node
      * @return String value
      * @deprecated Use {@link AemComponent#componentGroup()} to set this value
      */
@@ -83,7 +85,7 @@ public @interface Dialog {
     String componentGroup() default "";
 
     /**
-     * Maps to the 'dialogPath' attribute of the component root node. Must represent a valid JCR path
+     * Maps to the {@code dialogPath} attribute of the component root node. Must represent a valid JCR path
      * @return String value
      * @deprecated Use {@link AemComponent#dialogPath()} to set this value
      */
@@ -93,7 +95,7 @@ public @interface Dialog {
     String dialogPath() default "";
 
     /**
-     * When set to true, renders as the 'cq:noDecoration' attribute of the component root node with `true` value
+     * When set to true, renders as the {@code cq:noDecoration} attribute of the component root node with `true` value
      * @return True or false
      * @deprecated Use {@link AemComponent#noDecoration()} to set this value
      */
@@ -106,7 +108,7 @@ public @interface Dialog {
     boolean noDecoration() default false;
 
     /**
-     * When set to non-blank, renders as the 'sling:resourceSuperType' attribute of the component root node
+     * When set to a non-blank string, renders as the {@code sling:resourceSuperType} attribute of the component root node
      * @return String value
      * @deprecated Use {@link AemComponent#resourceSuperType()} to set this value
      */
@@ -118,7 +120,7 @@ public @interface Dialog {
     String resourceSuperType() default "";
 
     /**
-     * Maps to the 'cq:templatePath' attribute of the component root node. Must represent a valid JCR path
+     * Maps to the {@code cq:templatePath} attribute of the component root node. Must represent a valid JCR path
      * @return String value
      * @deprecated Use {@link AemComponent#templatePath()} to set this value
      */
@@ -131,30 +133,33 @@ public @interface Dialog {
     String templatePath() default "";
 
     /**
-     * When set to non-blank, renders as the `helpPath` attribute of component's {@code cq:dialog} node
+     * When set to a non-blank string, renders as the `helpPath` attribute of component's {@code cq:dialog} node
      * @return String value
      */
     @PropertyRendering(scope = Scopes.CQ_DIALOG)
     String helpPath() default "";
 
     /**
-     * Renders as the `height` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal to zero provided, default 480 is used
-     * @return Numeric value
+     * Renders as the `height` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal
+     * to zero provided, default {@code 480} is used
+     * @return Double-typed number
      */
     @PropertyRendering(scope = Scopes.CQ_DIALOG)
     @ValueRestriction(ValueRestrictions.POSITIVE)
     double height() default 480;
 
     /**
-     * Renders as the `width` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal to zero provided, default 560 is used
-     * @return Numeric value
+     * Renders as the `width` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal
+     * to zero provided, default {@code 560} is used
+     * @return Double-typed number
      */
     @PropertyRendering(scope = Scopes.CQ_DIALOG)
     @ValueRestriction(ValueRestrictions.POSITIVE)
     double width() default 560;
 
     /**
-     * When set to true, renders as the `disableTargeting` attribute of the component root node with `true` value
+     * When set to true, renders as the {@code disableTargeting} attribute of the component root node with its value
+     * set to "true"
      * @return True or false
      * @deprecated Use {@link AemComponent#disableTargeting()} to set this value
      */
@@ -166,7 +171,7 @@ public @interface Dialog {
     boolean disableTargeting() default false;
 
     /**
-     * Renders as the 'isContainer' attribute of the component root node
+     * Renders as the {@code isContainer} attribute of the component root node
      * @return True or false
      * @deprecated Use {@link AemComponent#isContainer()} to set this value
      */
@@ -180,8 +185,8 @@ public @interface Dialog {
     boolean isContainer() default false;
 
     /**
-     * Used to set path to the node/folder of component to create TouchUI dialog for. The path is relative to the {@code componentsPathBase}
-     * config setting in package's POM file
+     * Used to set path to the node of component for which to create Granite UI entities, such as the {@code cq:dialog}
+     * node. The path is relative to the {@code componentsPathBase} config setting in package's POM file
      * @return String value
      * @deprecated Use {@link AemComponent#path()} to set this value
      */
@@ -190,8 +195,8 @@ public @interface Dialog {
     String name() default "";
 
     /**
-     * Used to specify TouchUI dialog layout
-     * @return One of the FIXED_COLUMNS and TABS values
+     * Used to specify a Granite UI dialog layout
+     * @return One of the FIXED_COLUMNS, TABS, or ACCORDION values
      * @see DialogLayout
      * @deprecated This property is no longer needed. The proper layout is set based on the container annotations,
      * such as {@code Tabs} or {@code Accordion} added directly to the dialog class or one of its superclasses
@@ -200,7 +205,7 @@ public @interface Dialog {
     DialogLayout layout() default DialogLayout.FIXED_COLUMNS;
 
     /**
-     * When set to a non-blank String, or an array of strings, renders as the `extraClientlibs` attribute
+     * When set to a non-blank string or an array of strings, renders as the {@code extraClientlibs} attribute
      * of component's {@code cq:dialog} node
      * @return String value, or an array of strings
      */
@@ -208,7 +213,7 @@ public @interface Dialog {
     String[] extraClientlibs() default {};
 
     /**
-     * For the tabbed TouchUI dialog layout, enumerates the tabs to be rendered
+     * For the tabbed Granite UI layout, enumerates the tabs to be rendered
      * @return Zero or more {@code Tab} annotations
      * @see Tab
      * @deprecated This property is for compatibility purposes. It's recommended that you add {@code @Tabs} annotation

@@ -45,7 +45,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Provides the collection of AEM resources that represent EToolbox Lists items
- * to be displayed in a TouchUI {@code Select} widget
+ * to be displayed in a Granite UI {@code Select} widget
  */
 @Component(
     service = Servlet.class,

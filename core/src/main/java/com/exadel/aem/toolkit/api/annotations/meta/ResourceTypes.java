@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.meta;
 
 /**
- * Contains JCR paths of standard TouchUI dialog components
+ * Contains JCR paths of standard Granite UI components
  * @see ResourceType
  */
 @SuppressWarnings("unused")

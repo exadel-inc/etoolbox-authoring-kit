@@ -47,13 +47,13 @@ public @interface HtmlLinkRules {
      */
     String defaultProtocol() default "";
     /**
-     * Defines the 'target' attribute for a link to an internal resource
+     * Defines the {@code target} attribute for a link to an internal resource
      * @see LinkTarget
      * @return One of {@code LinkTarget} values
      */
     LinkTarget targetInternal() default LinkTarget.AUTO;
     /**
-     * Defines the 'target' attribute for a link to an external resource
+     * Defines the {@code target} attribute for a link to an external resource
      * @see LinkTarget
      * @return One of {@code LinkTarget} values
      */

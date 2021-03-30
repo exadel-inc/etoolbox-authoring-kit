@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.layouts;
 
 import java.lang.annotation.ElementType;
@@ -24,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 /**
  * Used to define a specific
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/tabs/index.html">
- *     Tab</a> item in multi-tab TouchUI dialog setup or within a {@code Tabs} widget
+ *     Tab</a> item in a multi-tab Granite UI dialog or within a {@code Tabs} widget
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -40,7 +39,7 @@ public @interface Tab {
     /**
      * Determines the element this component represents for the purpose of tracking. See
      * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">
-     * Foundation tracking</a> for detail.
+     * Foundation tracking</a> for details.
      * <p>Note that the property is effective for <i>Tabs widget</i> and not the tabbed layout</p>
      * @return String value (optional). If omitted, the value of {@code title} property is used
      */

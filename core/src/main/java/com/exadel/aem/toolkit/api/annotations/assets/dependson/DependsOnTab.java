@@ -21,8 +21,7 @@ import java.lang.annotation.Target;
 
 /**
  * Used to define {@code dependsOn} and {@code dependsOnActon} attributes of {@code granite:data} child node of the current
- * tab node to engage DependsOn frontend routines. For this to work properly, the {@code aem-authoring-toolkit-assets}
- * package must be added to the AEM installation
+ * tab node to engage DependsOn frontend routines
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

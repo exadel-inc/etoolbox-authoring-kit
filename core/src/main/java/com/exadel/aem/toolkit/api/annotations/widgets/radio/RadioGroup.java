@@ -27,7 +27,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/radiogroup/index.html">
- * RadioGroup element</a> in TouchUI dialog
+ * RadioGroup element</a> in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -36,7 +36,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 public @interface RadioGroup {
 
     /**
-     * Maps to the 'emptyText' vertical of this TouchUI dialog component's node.
+     * Maps to the {@code emptyText} vertical of this Granite UI component's node.
      * Sets whether this RadioGroup is displayed as a vertical stack
      * @return True or false
      */
@@ -49,7 +49,7 @@ public @interface RadioGroup {
     RadioButton[] buttons() default {};
 
     /**
-     * Used to specify the source for options handled by the AEM Authoring Toolkit's OptionProvider mechanism
+     * Used to specify the source for options handled by the ToolKit's {@code OptionProvider} mechanism
      * @return {@link OptionProvider} instance, or an empty {@code }OptionProvider} if not needed
      */
     OptionProvider buttonProvider() default @OptionProvider;

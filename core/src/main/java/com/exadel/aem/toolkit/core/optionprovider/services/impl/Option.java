@@ -60,7 +60,7 @@ class Option {
     private StringTransform valueTransform;
 
     /**
-     * Default (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private Option() {
     }

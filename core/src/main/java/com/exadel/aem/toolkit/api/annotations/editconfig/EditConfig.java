@@ -25,8 +25,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 
 /**
- * Defines editing configuration for a TouchUI-ready component.
- * Upon properties of this annotation, a {@code cq:editConfig} node within a component's buildup is created.
+ * Defines editing configuration for a Granite UI component. Upon processing this annotation, a {@code cq:editConfig}
+ * node within a component's configuration is created.
  * See <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#EditBehavior">Adobe documentation</a>
  */
 @Target(ElementType.TYPE)
@@ -39,7 +39,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 public @interface EditConfig {
 
     /**
-     * When set to a non-blank string or to an array of strings, maps to the 'cq:actions' property
+     * When set to a non-blank string or an array of strings, maps to the {@code cq:actions} property
      * of {@code cq:editConfig} node
      * @return String / array value
      */
@@ -47,19 +47,20 @@ public @interface EditConfig {
     String[] actions() default {};
 
     /**
-     * When set to a non-blank string, maps to the 'emptyText' attribute of {@code cq:editConfig} node
+     * When set to a non-blank string, maps to the {@code emptyText} attribute of {@code cq:editConfig} node
      * @return String value
      */
     String emptyText() default "";
 
     /**
-     * When set to true, renders as the 'inherit' attribute of {@code cq:editConfig} node
+     * When set to true, renders as the {@code inherit} attribute of {@code cq:editConfig} node
      * @return True or false
      */
     boolean inherit() default false;
 
     /**
-     * When set to a value other than {@code Layout.DEFAULT}, renders as the 'dialogLayout' attribute of {@code cq:editConfig} node
+     * When set to a value other than {@code EditConfigLayout.DEFAULT}, renders as the {@code dialogLayout} attribute
+     * of {@code cq:editConfig} node
      * @return One of {@link EditConfigLayout} constants
      */
     @PropertyRendering(ignoreValues = "default", transform = StringTransformation.LOWERCASE)

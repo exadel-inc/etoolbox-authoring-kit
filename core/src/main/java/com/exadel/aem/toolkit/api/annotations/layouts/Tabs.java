@@ -26,9 +26,9 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Orientation;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 
 /**
- * Used to define tabbed layout for a TouchUI dialog and/or to set up
+ * Used to define the tabbed layout for a Granite UI dialog and/or to set up
  * a <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/tabs/index.html">
- * Tabs</a> widget inside dialog
+ * Tabs</a> widget
  */
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -75,7 +75,7 @@ public @interface Tabs {
     /**
      * Determines the name of the feature responsible for interaction. See
      * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">
-     * Foundation tracking</a> for detail.
+     * Foundation tracking</a> for details.
      * <p>Note that the property is effective for <i>Tabs widget</i> and not the tabbed layout</p>
      * @return String value (optional)
      */
@@ -84,7 +84,7 @@ public @interface Tabs {
     /**
      * Determines the name of the widget responsible for interaction. See
      * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">
-     * Foundation tracking</a> for detail.
+     * Foundation tracking</a> for details.
      * <p>Note that the property is effective for <i>Tabs widget</i> and not the tabbed layout</p>
      * @return String value (optional)
      */

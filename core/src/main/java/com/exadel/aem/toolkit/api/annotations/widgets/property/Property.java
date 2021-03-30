@@ -20,7 +20,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represent a name-value pair to be rendered as a TouchUI Dialog element attribute and its value
+ * Represents a name-value pair to be rendered as a Granite UI component's attribute and its value
  * @see Properties
  */
 @Target({ElementType.FIELD})

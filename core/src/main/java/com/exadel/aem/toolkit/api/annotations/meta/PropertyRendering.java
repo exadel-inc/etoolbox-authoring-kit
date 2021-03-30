@@ -22,15 +22,16 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
- * Defines settings for rendering a specific value of an annotation to an Granite/XML attribute, such as, the name of the
- * attribute, lexical form of the attribute's value, or whether to render attribute with a particular value or not
+ * Defines settings for rendering a specific value of an annotation to a Granite/XML attribute. These settings comprise,
+ * e.g., the name of the attribute, lexical form of the attribute's value, or whether to render the attribute with
+ * a particular value or not
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PropertyRendering {
 
     /**
-     * When set, maps to the 'name' attribute of a dialog field node
+     * When set, maps to the {@code name} attribute of a dialog field node
      * @return String value
      */
     String name() default "";
@@ -55,13 +56,13 @@ public @interface PropertyRendering {
 
     /**
      * When set, indicates that if a user-provided value matches one of the defined strings, the attribute will not
-     * be rendered (used to omit meaningless defaults from XML markup)
+     * be rendered (used to omit meaningless defaults from the resulting XML markup)
      * @return String value, or an array of strings
      */
     String[] ignoreValues() default {};
 
     /**
-     * When set to true, indicates that a user-defined value will be necessarily rendered into an XML attribute
+     * When set to true, indicates that a user-defined value will be necessarily rendered into an attribute
      * even if it maps to an empty, or a blank strong
      * @return True or false
      */
@@ -75,11 +76,11 @@ public @interface PropertyRendering {
     StringTransformation transform() default StringTransformation.NONE;
 
     /**
-     * When set, defines what value type will be used for the underlying property. the value type must be one of the JCR
-     * compliant types, such as {@code String}, {@code Long}, {@code Double}, etc. This value is used to produce a required
+     * When set, defines what value type will be used for the underlying property. The value type must be one of the JCR
+     * compliant types, such as {@code String}, {@code Long}, {@code double}, etc. This value is used to produce a required
      * type hint for the string representation of a value, e.g. when a Boolean value must be rendered as {@code "true"}
      * and not as {@code "{Boolean}true"}
-     * @return {@code Class} reference, one of JCR-compliant classes must be used
+     * @return {@code Class} reference. One of JCR-compliant classes must be used
      */
     Class<?> valueType() default _Default.class;
 }

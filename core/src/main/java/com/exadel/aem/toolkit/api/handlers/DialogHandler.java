@@ -32,9 +32,19 @@ public interface DialogHandler extends Handler {
         return "";
     }
 
+    /**
+     * Method representing the entry-point for handling data, modern style
+     * @param source Non-null {@code Source} object
+     * @param target Non-null {@code Target} object
+     */
     default void accept(Source source, Target target) {
     }
 
+    /**
+     * Method representing the entry-point for handling data, legacy style
+     * @param element Non-null DOM {@code element} object
+     * @param cls Non-null {@code Class} reference
+     */
     default void accept(Element element, Class<?> cls) {
     }
 }

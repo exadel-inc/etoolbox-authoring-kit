@@ -14,12 +14,12 @@
 package com.exadel.aem.toolkit.api.annotations.editconfig.listener;
 
 /**
- * Used to define {@code cq:listeners} node of TouchUI component configuration
+ * Used to define the {@code cq:listeners} node of a Granite UI component configuration
  */
 public @interface Listener {
     /**
      * Name of a {@code cq:listeners} attribute
-     * @return String value
+     * @return String value, non-blank
      * @see ListenerConstants
      */
     String event();

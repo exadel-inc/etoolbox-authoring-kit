@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.runtime;
 
 /**
- * Implements handling exceptions thrown in scope of AEM Authoring Toolkit routines. This is done for such purposes
+ * Implements handling exceptions thrown in the scope of a ToolKit routine. This is done for such purposes
  * as unified logging, or making decision whether Maven plugin execution should continue or stop
  */
 public interface ExceptionHandler {

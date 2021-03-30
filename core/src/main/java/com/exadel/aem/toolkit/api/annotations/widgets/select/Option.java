@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 public @interface Option {
 
     /**
-     * Maps to the 'text' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code text} attribute of this Granite UI component's node.
      * Used to define optional text displayed beside the option box
      *
      * @return String value
@@ -41,7 +41,7 @@ public @interface Option {
     String text();
 
     /**
-     * Maps to the 'value' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code value} attribute of this Granite UI component's node.
      * Used to define value to be stored when this option is checked
      *
      * @return String value
@@ -50,26 +50,26 @@ public @interface Option {
     String value();
 
     /**
-     * When set to a non-blank string value, maps to the 'icon' attribute of this TouchUI dialog component's node
+     * When set to a non-blank string value, maps to the {@code icon} attribute of this Granite UI component's node
      *
      * @return String value
      */
     String icon() default "";
 
     /**
-     * When set to a non-blank string value, maps to the 'statusIcon' attribute of this TouchUI dialog component's node
+     * When set to a non-blank string value, maps to the {@code statusIcon} attribute of this Granite UI component's node
      * @return String value
      */
     String statusIcon() default "";
 
     /**
-     * When set to a non-blank string value, maps to the 'statusText' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string value, maps to the {@code statusText} attribute of this Granite UI component's node.
      * @return String value
      */
     String statusText() default "";
 
     /**
-     * When set to a non-blank string value, maps to the 'statusVariant' attribute of this TouchUI dialog component's node
+     * When set to a non-blank string value, maps to the {@code statusVariant} attribute of this Granite UI component's node
      * @return String value
      * @see StatusVariant
      */
@@ -77,7 +77,7 @@ public @interface Option {
     StatusVariant statusVariant() default StatusVariant.INFO;
 
     /**
-     * When set to true, maps to the 'selected' attribute of this TouchUI dialog component's node.
+     * When set to true, maps to the {@code selected} attribute of this Granite UI component's node.
      * Defines that the current option is selected by default
      *
      * @return True or false
@@ -86,7 +86,7 @@ public @interface Option {
     boolean selected() default false;
 
     /**
-     * When set to true, maps to the 'disabled' attribute of this TouchUI dialog component's node.
+     * When set to true, maps to the {@code disabled} attribute of this Granite UI component's node.
      * Defines that the current option is shown in disabled state
      *
      * @return True or false

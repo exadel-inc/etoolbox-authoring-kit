@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 
 /**
- * Used to set up TagField element in TouchUI dialog
+ * Used to set up TagField element in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -31,35 +31,35 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @MapProperties
 public @interface TagField {
     /**
-     *  When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
+     *  When set to a non-blank string, maps to the 'emptyText' attribute of this Granite UI component's node.
      *  Used to define text hint for an empty TagField
      *  @return String value
      */
     String emptyText() default "";
 
     /**
-     * Maps to the 'multiple' attribute of this TouchUI dialog component's node.
+     * Maps to the 'multiple' attribute of this Granite UI component's node.
      * Used to set whether the user is able to make multiple selections
      * @return True or false
      */
     boolean multiple() default false;
 
     /**
-     * Maps to the 'forceSelection' attribute of this TouchUI dialog component's node.
+     * Maps to the 'forceSelection' attribute of this Granite UI component's node.
      * If set to true, forces the user to select only from the available choices
      * @return True or false
      */
     boolean forceSelection() default false;
 
     /**
-     * Maps to the 'autocreateTag' attribute of this TouchUI dialog component's node.
+     * Maps to the 'autocreateTag' attribute of this Granite UI component's node.
      * When set to true, create the user defined tag during form submission
      * @return True or false
      */
     boolean autocreateTag() default true;
 
     /**
-     * Maps to the 'deleteHint' attribute of this TouchUI dialog component's node.
+     * Maps to the 'deleteHint' attribute of this Granite UI component's node.
      * If set to true, generate the <a href="http://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#delete">
      * {@code @Delete}</a> attribute for the http request
      * @return True or false
@@ -67,7 +67,7 @@ public @interface TagField {
     boolean deleteHint() default true;
 
     /**
-     * Maps to the 'root' attribute of this TouchUI dialog component's node.
+     * Maps to the 'root' attribute of this Granite UI component's node.
      * Used to define the root path of the tags
      * @return String value representing valid JCR path
      */

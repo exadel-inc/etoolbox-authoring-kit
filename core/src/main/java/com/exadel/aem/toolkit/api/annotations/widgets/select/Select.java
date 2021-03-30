@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/select/index.html">
- * Select element</a> in TouchUI dialog
+ * Select element</a> in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -44,13 +44,13 @@ public @interface Select {
     Option[] options() default {};
 
     /**
-     * Used to specify the source for options handled by the AEM Authoring Toolkit's OptionProvider mechanism
+     * Used to specify the source for options handled by the ToolKit's {@code OptionProvider} mechanism
      * @return {@link OptionProvider} instance, or an empty {@code }OptionProvider} if not needed
      */
     OptionProvider optionProvider() default @OptionProvider;
 
     /**
-     * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code emptyText} attribute of this Granite UI component's node.
      * @return String value
      */
     String emptyText() default "";
@@ -92,7 +92,7 @@ public @interface Select {
     boolean emptyOption() default false;
 
     /**
-     * Maps to the 'variant' attribute of this {@code Select} widget
+     * Maps to the {@code variant} attribute of this {@code Select} widget
      * @see SelectVariant
      * @return One of {@code SelectVariant} values
      */
@@ -110,7 +110,7 @@ public @interface Select {
     boolean deleteHint() default true;
 
     /**
-     * Used to set 'ignore freshness' flag for this TouchUI component. This property is useful when having
+     * Used to set 'ignore freshness' flag for this Granite UI component. This property is useful when having
      * a newly introduced field in the form, and there is a need to specifically
      * set the default selected item
      * @return True or false

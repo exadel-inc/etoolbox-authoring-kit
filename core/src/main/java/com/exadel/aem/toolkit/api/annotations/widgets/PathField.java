@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/pathfield/index.html">
- * PathField element</a> in TouchUI dialog
+ * PathField element</a> in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -34,14 +34,14 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 public @interface PathField {
 
     /**
-     * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the 'emptyText' attribute of this Granite UI component's node.
      * Used to define text hint for an empty PathField
      * @return String value
      */
     String emptyText() default "";
 
     /**
-     * Maps to the 'root' attribute of this TouchUI dialog component's node.
+     * Maps to the 'root' attribute of this Granite UI component's node.
      * Used to define the root node from which PathField navigation starts
      * @return String value representing valid JCR path
      */

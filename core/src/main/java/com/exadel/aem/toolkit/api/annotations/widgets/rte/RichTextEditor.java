@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/rich-text-editor.html">
- * RichTextEditor</a> in TouchUI dialog and/or in-place editing configuration
+ * RichTextEditor</a> in Granite UI configuration
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -38,7 +38,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 public @interface RichTextEditor {
 
     /**
-     * Maps to the 'useFixedInlineToolbar' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code useFixedInlineToolbar} attribute of this Granite UI component's node.
      * @return True or false
      */
     boolean useFixedInlineToolbar() default true;

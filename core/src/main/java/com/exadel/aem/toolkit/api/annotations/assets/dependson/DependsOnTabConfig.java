@@ -19,11 +19,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to define set of {@link DependsOnTab} actions for the current component. For this to work properly,
- * the {@code aem-authoring-toolkit-assets} package must be added to the AEM installation
+ * Used to define set of {@link DependsOnTab} actions for the current component
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DependsOnTabConfig {
+    /**
+     * Sets the {@code DependsOnTab} actions
+     * @return One or more valid {@link DependsOnTab} objects
+     */
     DependsOnTab[] value();
 }

@@ -31,19 +31,19 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 public @interface Attribute {
 
     /**
-     * The HTML 'id' attribute
+     * The HTML {@code id} attribute
      * @return String value
      */
     String id() default "";
 
     /**
-     * The HTML 'rel' attribute
+     * The HTML {@code rel} attribute
      * @return String value
      */
     String rel() default "";
 
     /**
-     * The HTML 'class' attribute. With this property, you can assign an arbitrary CSS class, or a set of classes, space-separated, to the widget's container.
+     * The HTML {@code class} attribute. With this property, you can assign an arbitrary CSS class, or a set of classes, space-separated, to the widget's container.
      * Mind you can also use a number of <a href="https://opensource.adobe.com/coral-spectrum/dist/documentation/manual/styles.html#css-utility-classes">pre-defined utility classes</a> by Coral.
      * @return String value
      */
@@ -51,13 +51,13 @@ public @interface Attribute {
     String className() default "";
 
     /**
-     * The HTML 'title' attribute
+     * The HTML {@code title} attribute
      * @return String value
      */
     String title() default "";
 
     /**
-     * The HTML 'hidden' attribute
+     * The HTML {@code hidden} attribute
      * @return True or false
      */
     boolean hidden() default false;

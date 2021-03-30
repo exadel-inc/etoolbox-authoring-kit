@@ -39,7 +39,7 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
 
 /**
  * Implements {@link OptionProviderService} to prepare option sets for Granite-compliant custom data sources
- * used in TouchUI dialog widgets
+ * used in Granite UI widgets
  */
 @Component(service = OptionProviderService.class)
 public class OptionProviderServiceImpl implements OptionProviderService {

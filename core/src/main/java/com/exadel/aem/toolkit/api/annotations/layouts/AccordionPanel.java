@@ -22,9 +22,9 @@ import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
- * Used to set up as specific
+ * Used to set up a specific
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html">
- * Accordion panel</a> item in accordion-shaped TouchUI dialog setup or within an {@code Accordion} widget
+ * Accordion panel</a> item in an accordion-shaped Granite UI dialog or within an {@code Accordion} widget
  */
 @Target(value = ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 public @interface AccordionPanel {
 
     /**
-     * Title of current Accordion Panel
+     * Title of current Accordion panel
      * @return String value, required
      */
     String title();

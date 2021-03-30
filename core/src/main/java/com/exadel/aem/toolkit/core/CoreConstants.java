@@ -37,7 +37,7 @@ public class CoreConstants {
     public static final String SEPARATOR_SLASH = "/";
 
     /**
-     * Default (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private CoreConstants() {
     }

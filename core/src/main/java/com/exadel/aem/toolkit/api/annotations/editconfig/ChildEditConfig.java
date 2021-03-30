@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 /**
- * Defines editing configuration for a TouchUI-ready child components of the current component.
+ * Defines the editing configuration for the Granite UI child components of the current component.
  * See <a href="https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/components-basics.html#component-basics">Adobe documentation</a>
  * for details
  */
@@ -36,9 +36,9 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 public @interface ChildEditConfig {
 
     /**
-     * When set to a non-blank string, or to an array of strings, maps to the 'cq:actions' property
+     * When set to a non-blank string, or to an array of strings, maps to the {@code cq:actions} property
      * of {@code cq:childEditConfig} node
-     * @return String / array value
+     * @return String value or an array of strings
      */
     String[] actions() default {};
 

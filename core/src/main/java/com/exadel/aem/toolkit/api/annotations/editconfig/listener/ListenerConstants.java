@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.editconfig.listener;
 
 /**
- * Contains string constants used to populate cq:EditListenersConfig node of TouchUI component dialog
+ * Contains string constants used to populate the {@code cq:EditListenersConfig} node of Granite UI component setup
  */
 @SuppressWarnings("unused")
 public class ListenerConstants {

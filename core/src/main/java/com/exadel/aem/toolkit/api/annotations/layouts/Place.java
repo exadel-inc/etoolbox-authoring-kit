@@ -21,7 +21,9 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 
 /**
- * In multi-tab or multi-panel TouchUI Dialog setup, used to specify on which tab or accordion panel a dialog field is placed
+ * Used to specify the placement of a Granite UI component. The placement can be set in relation to the sibling components
+ * (see {@link Place#before()} and {@link Place#after}). In a multi-tab or multi-panel Granite UI dialog, one can
+ * specify in which section (such as a tab or accordion panel) this component is placed
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -31,7 +33,6 @@ public @interface Place {
      * If specified, contains the string that is equal to a {@link Tab} or an {@link AccordionPanel} title
      * in order to place the current widget in the appropriate container.
      * Skip this value if you don't need any specific placement
-     *
      * @return String value (optional)
      */
     String value() default "";

@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 
 /**
- * In multi-tab TouchUI Dialog setup, used to specify on which tab a dialog field is placed
+ * In multi-tab Granite UI dialog, used to specify on which tab a dialog field is placed
  * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link Place} instead
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
@@ -29,9 +29,10 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 @Deprecated
 @SuppressWarnings("squid:S1133")
 public @interface PlaceOnTab {
+
     /**
-     * String equal to appropriate {@link Tab#title()} value
-     * @return String value
+     * String equal to an appropriate {@link Tab#title()} value
+     * @return String value, non-blank
      */
     String value();
 }

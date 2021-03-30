@@ -14,8 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.assets.dependson;
 
 /**
- * Represents set of pre-defined action values for {@link DependsOn} and {@link DependsOnTab} annotations
- * For this to work properly, the {@code aem-authoring-toolkit-assets} package must be added to the AEM installation
+ * Presents the set of pre-defined action values for {@link DependsOn} and {@link DependsOnTab} annotations
  */
 @SuppressWarnings("unused")
 public class DependsOnActions {

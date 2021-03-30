@@ -14,8 +14,8 @@
 package com.exadel.aem.toolkit.api.annotations.main;
 
 /**
- * Enumerates available AEM TouchUI dialog layouts
- * @deprecated This values are no longer needed. The proper layout is set based on the container annotations,
+ * Enumerates available Granite UI dialog layouts
+ * @deprecated These values are no longer needed. The proper layout is set based on the container annotations,
  * such as {@code Tabs} or {@code Accordion} added directly to the dialog class or one of its superclasses. This will
  * be removed in a version after 2.0.1
  */

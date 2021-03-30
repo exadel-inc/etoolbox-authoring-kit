@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html">
- * Alert element</a> in TouchUI dialog
+ * Alert element</a> in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -37,7 +37,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 public @interface Alert {
 
     /**
-     * Maps to the 'variant' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code variant} attribute of this Granite UI component's node.
      *
      * @return One of {@code StatusVariant} values
      * @see StatusVariant
@@ -46,7 +46,7 @@ public @interface Alert {
     StatusVariant variant() default StatusVariant.INFO;
 
     /**
-     * Maps to the 'size' attribute of this TouchUI dialog component's node. Used to define Alert size
+     * Maps to the {@code size} attribute of this Granite UI component's node. Used to define Alert size
      * <p><u>Note:</u> only {@code "small"} and {@code "large"} values are officially supported</p>
      *
      * @return One of {@code Size} values
@@ -55,7 +55,7 @@ public @interface Alert {
     Size size() default Size.SMALL;
 
     /**
-     * When set to a non-blank string, maps to the 'text' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code text} attribute of this Granite UI component's node.
      * Used to define content HTML for Alert component
      *
      * @return String value
@@ -63,7 +63,7 @@ public @interface Alert {
     String text() default "";
 
     /**
-     * When set to a non-blank string, maps to the 'jcr:title' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code jcr:title} attribute of this Granite UI component's node.
      * Used to define header text for Alert component
      *
      * @return String value
