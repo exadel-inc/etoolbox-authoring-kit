@@ -71,7 +71,7 @@
                         <artifactId>content-package-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>Installing AAT Samples apps package</id>
+                                <id>Installing ToolKit Samples apps package</id>
                                 <goals>
                                     <goal>install</goal>
                                 </goals>
