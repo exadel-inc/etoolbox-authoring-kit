@@ -84,6 +84,8 @@ abstract class SectionFacade {
      * @param annotation The {@code Annotation} object to wrap
      * @return {@code SectionHelper} instance, or null in case of an invalid {@code annotation} argument
      */
+    @SuppressWarnings("deprecation") // Processing of container.Tab is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     static SectionFacade from(Annotation annotation) {
         if (annotation == null) {
             return null;

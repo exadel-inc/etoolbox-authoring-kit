@@ -21,6 +21,8 @@ import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
  * An abstraction of AEM Authoring Toolkit's Maven plugin runtime context for internal use within. Additional to ts ancestor,
  * provides access to {@link ReflectionContextHelper}, and the extended {@link XmlContextHelper}
  */
+@SuppressWarnings("deprecation") // RuntimeContext support is retained for compatibility and will be removed
+                                 // in a version after 2.0.1
 public interface PluginRuntimeContext extends RuntimeContext {
 
     /**

@@ -82,7 +82,6 @@ public class PluginInfo {
      * @return {@code PluginIngo} object
      */
     static PluginInfo getInstance() {
-        PluginInfo result = new PluginInfo();
         Manifest manifest = new Manifest();
         try {
             manifest.read(Thread.currentThread().getContextClassLoader().getResourceAsStream(MANIFEST_FILE_ADDRESS));

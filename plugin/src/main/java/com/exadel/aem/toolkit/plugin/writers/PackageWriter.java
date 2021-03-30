@@ -231,6 +231,7 @@ public class PackageWriter implements AutoCloseable {
         String pathByComponent = Optional.ofNullable(componentClass.getAnnotation(AemComponent.class))
             .map(AemComponent::path)
             .orElse(null);
+        @SuppressWarnings("deprecation") // "name" processing is for compatibility; will be removed in a version after 2.0.1
         String pathByDialog = Optional.ofNullable(componentClass.getAnnotation(Dialog.class))
             .map(Dialog::name)
             .orElse(null);

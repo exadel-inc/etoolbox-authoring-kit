@@ -26,6 +26,8 @@ import com.exadel.aem.toolkit.api.markers._Super;
 public class ClassMemberSetting {
 
     private ClassMember wrappedClassMember;
+    @SuppressWarnings("deprecation") // ClassField processing is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     private ClassField wrappedClassField;
 
     private Class<?> overridingSource;
@@ -35,6 +37,8 @@ public class ClassMemberSetting {
         this.wrappedClassMember = wrappedClassMember;
     }
 
+    @SuppressWarnings("deprecation") // ClassField processing is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     public ClassMemberSetting(ClassField wrappedClassField) {
         this.wrappedClassField = wrappedClassField;
     }

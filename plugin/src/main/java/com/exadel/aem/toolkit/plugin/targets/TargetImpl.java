@@ -521,6 +521,8 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
             .setTo(effectiveTarget);
     }
 
+    @SuppressWarnings("deprecation") // Processing of PropertyMapping is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     private static String getPropertyPrefix(Annotation annotation) {
         String result = StringUtils.EMPTY;
         if (annotation.annotationType().isAnnotationPresent(MapProperties.class)) {

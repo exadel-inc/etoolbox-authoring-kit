@@ -51,8 +51,9 @@ public class RichTextEditorHandler implements Handler {
     private static final String FEATURE_ALL = "*";
     static final String PLUGIN_FEATURE_SEPARATOR = "#";
 
-    private static final Pattern FEATURE_TOKEN_PATTERN = Pattern.compile("^(?:[\\w-]+#[\\w-:]+|-)$");
-    private static final Pattern FEATURE_TOKEN_ARRAY_PATTERN = Pattern.compile("^\\[\\s*(?:(?:[\\w-]+#[\\w-:]+|-)(?:\\s*,\\s*)?)+\\s*]$");
+    private static final String FEATURE_TOKEN = "(?:[\\w-]+#[\\w-:]+|-)";
+    private static final Pattern FEATURE_TOKEN_PATTERN = Pattern.compile(String.format("^%s$", FEATURE_TOKEN));
+    private static final Pattern FEATURE_TOKEN_ARRAY_PATTERN = Pattern.compile(String.format("^\\[\\s*%s(?:\\s*,\\s*%1$s)*\\s*]$", FEATURE_TOKEN));
     private static final Pattern HTML_PASTE_RULES_ALLOW_PATTERN = Pattern.compile("^allow([A-Z].+?)s?$");
 
     private static final String MALFORMED_TOKEN_EXCEPTION_MESSAGE = "Malformed feature token in @RichTextEditor";

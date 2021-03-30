@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 public @interface Tab {
 
     /**
-     * Defined the tab title
+     * Defines the tab title
      * @return String value (required)
      */
     @PropertyRendering(name = "jcr:title")

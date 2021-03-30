@@ -28,6 +28,14 @@ import org.apache.commons.lang3.ClassUtils;
  * Contains utility methods for retrieving info on Java class members
  */
 public class MemberUtil {
+
+    /**
+     * Default (instantiation-restricting) constructor
+     */
+
+    private MemberUtil() {
+    }
+
     /**
      * Retrieves the type represented by the provided Java class {@code Member}. If the method is designed to provide
      * a primitive value or a singular object, its "direct" type is returned. But if the method represents a collection,

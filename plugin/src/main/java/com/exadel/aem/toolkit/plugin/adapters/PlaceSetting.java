@@ -25,8 +25,13 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 public class PlaceSetting {
 
     private Place wrappedPlace;
+
+    @SuppressWarnings("deprecation") // PlaceOnTab support is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     private PlaceOnTab wrappedPlaceOnTab;
 
+    @SuppressWarnings("deprecation") // PlaceOnTab support is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     public PlaceSetting(Source source) {
         if (source == null) {
             return;
