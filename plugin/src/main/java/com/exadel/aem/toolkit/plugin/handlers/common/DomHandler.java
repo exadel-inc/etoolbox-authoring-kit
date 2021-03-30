@@ -13,13 +13,20 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.common;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperties;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
@@ -28,7 +35,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 
 /**
  * Modifies a DOM {@code Document} with XML-specific routines and data. This is intended
@@ -52,7 +58,6 @@ public class DomHandler {
 
     }
 
-
     /* -----------------
        Common properties
        ----------------- */
@@ -67,7 +72,7 @@ public class DomHandler {
     private void writeCommonProperties(Class<?> componentClass, Document document, String scope) {
         Arrays.stream(componentClass.getAnnotationsByType(CommonProperty.class))
             .filter(p -> StringUtils.equals(scope, p.scope()))
-            .forEach(p -> writeCommonProperty(p, XmlContextHelper.getElementNodes(p.path(), document)));
+            .forEach(p -> writeCommonProperty(p, getElementNodes(p.path(), document)));
     }
 
     /**
@@ -78,6 +83,34 @@ public class DomHandler {
      */
     private static void writeCommonProperty(CommonProperty property, List<Element> elements) {
         elements.forEach(target -> target.setAttribute(property.name(), property.value()));
+    }
+
+    /**
+     * Retrieves list of {@link Element} nodes from the current document selected by {@link XPath}
+     * @param xPath String xPath representation
+     * @param document The document to search for nodes
+     * @return List of {@code Element}s, or an empty list
+     */
+    private static List<Element> getElementNodes(String xPath, Document document) {
+        XPath xPathInstance = XPathFactory.newInstance().newXPath();
+        List<Element> result = new ArrayList<>();
+        try {
+            NodeList nodes = (NodeList) xPathInstance.evaluate(xPath, document, XPathConstants.NODESET);
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node node = nodes.item(i);
+                if (node instanceof Document) {
+                    result.add(((Document) node).getDocumentElement());
+                } else if (node instanceof Element) {
+                    result.add((Element) node);
+                }
+            }
+            if (result.isEmpty()) {
+                throw new XPathExpressionException("Resolves to null or node of non-element type");
+            }
+        } catch (XPathExpressionException e) {
+            PluginRuntime.context().getExceptionHandler().handle(String.format("Wrong XPath argument '%s'", xPath), e);
+        }
+        return result;
     }
 
 
@@ -108,6 +141,8 @@ public class DomHandler {
      * @param componentClass The {@code Class} being processed
      * @return List of values, empty or non-empty
      */
+    @SuppressWarnings("deprecation") // DialogAnnotation processing is retained for compatibility and will be removed
+                                     // in a version after 2.0.1
     private static List<DialogAnnotation> getLegacyDialogAnnotations(Class<?> componentClass) {
         return Arrays.stream(componentClass.getDeclaredAnnotations())
             .filter(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class) != null)

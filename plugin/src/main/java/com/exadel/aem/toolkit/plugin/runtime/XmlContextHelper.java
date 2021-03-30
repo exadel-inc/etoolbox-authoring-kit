@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.plugin.runtime;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,10 +27,6 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +34,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
@@ -59,6 +53,8 @@ import com.exadel.aem.toolkit.plugin.validators.Validation;
 /**
  * Processes, verifies and stores TouchUI dialog-related data to XML markup
  */
+@SuppressWarnings("deprecation") // XmlUtility is retained for compatibility reasons (used in legacy custom handlers)
+                                 // This will be retired in a version after 2.0.1
 public class XmlContextHelper implements XmlUtility {
 
     /**
@@ -520,34 +516,6 @@ public class XmlContextHelper implements XmlUtility {
             return (Element)element.getParentNode();
         }
         return getOrAddChildElement(element, nodeName);
-    }
-
-    /**
-     * Retrieves list of {@link Element} nodes from the current document selected by {@link XPath}
-     * @param xPath String xPath representation
-     * @param document The document to search for nodes
-     * @return List of {@code Element}s, or an empty list
-     */
-    public static List<Element> getElementNodes(String xPath, Document document) {
-        XPath xPathInstance = XPathFactory.newInstance().newXPath();
-        List<Element> result = new ArrayList<>();
-        try {
-            NodeList nodes = (NodeList) xPathInstance.evaluate(xPath, document, XPathConstants.NODESET);
-            for (int i = 0; i < nodes.getLength(); i++) {
-                Node node = nodes.item(i);
-                if (node instanceof Document) {
-                    result.add(((Document) node).getDocumentElement());
-                } else if (node instanceof Element) {
-                    result.add((Element) node);
-                }
-            }
-            if (result.isEmpty()) {
-                throw new XPathExpressionException("Resolves to null or node of non-element type");
-            }
-        } catch (XPathExpressionException e) {
-            PluginRuntime.context().getExceptionHandler().handle(String.format("Wrong XPath argument '%s'", xPath), e);
-        }
-        return result;
     }
 
     /**
