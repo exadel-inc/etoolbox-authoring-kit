@@ -3,15 +3,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>aem-authoring-toolkit</artifactId>
-        <groupId>com.exadel.aem</groupId>
+        <groupId>com.exadel.etoolbox</groupId>
+        <artifactId>etoolbox-authoring-kit</artifactId>
         <version>2.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>aem-authoring-toolkit-assets</artifactId>
+    <artifactId>etoolbox-authoring-kit-all</artifactId>
 
-    <name>${project.prettyName} Assets Package</name>
-    <description>AEM Authoring Toolkit package containing UI and binary assets. This is the host for subsidiary "apps" and "content" packages</description>
+    <name>${project.prettyName} - Cumulative Package</name>
+    <description>All-in-one content package for EToolbox Authoring Kit ui.apps and ui.content modules</description>
 
     <packaging>content-package</packaging>
 
@@ -20,6 +20,7 @@
     </properties>
 
     <build>
+        <finalName>${parent.artifactId}.all-${project.version}</finalName>
         <resources>
             <resource>
                 <directory>src/main/content/jcr_root</directory>
@@ -45,10 +46,10 @@
                     </properties>
                     <filters>
                         <filter>
-                            <root>/etc/packages/authoring-toolkit</root>
+                            <root>/etc/packages/${project.groupId}/${project.parent.artifactId}</root>
                             <excludes>
-                                <exclude>/etc/packages/authoring-toolkit/aem-authoring-toolkit-assets-${project.version}.zip</exclude>
-                                <exclude>/etc/packages/authoring-toolkit/.snapshot/aem-authoring-toolkit-assets-${project.version}.zip</exclude>
+                                <exclude>/etc/packages/${project.groupId}/${project.parent.artifactId}/${project.parent.artifactId}.all-${project.version}.zip</exclude>
+                                <exclude>/etc/packages/${project.groupId}/${project.parent.artifactId}/.snapshot/${project.parent.artifactId}.all-${project.version}.zip</exclude>
                             </excludes>
                         </filter>
                     </filters>
@@ -67,7 +68,7 @@
                             <excludeDefaultDirectories>true</excludeDefaultDirectories>
                             <filesets>
                                 <fileset>
-                                    <directory>${basedir}/src/main/content/jcr_root/etc/packages/authoring-toolkit</directory>
+                                    <directory>${basedir}/src/main/content/jcr_root/etc/packages/${project.groupId}/${project.parent.artifactId}</directory>
                                     <includes>
                                         <include>**</include>
                                     </includes>
@@ -92,18 +93,18 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/src/main/content/jcr_root/etc/packages/authoring-toolkit</outputDirectory>
+                            <outputDirectory>${basedir}/src/main/content/jcr_root/etc/packages/${project.groupId}/${project.parent.artifactId}</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${project.parent.basedir}/ui.apps/target</directory>
                                     <includes>
-                                        <include>aem-authoring-toolkit-ui.apps-${project.version}.zip</include>
+                                        <include>${parent.artifactId}-ui.apps-${project.version}.zip</include>
                                     </includes>
                                 </resource>
                                 <resource>
                                     <directory>${project.parent.basedir}/ui.content/target</directory>
                                     <includes>
-                                        <include>aem-authoring-toolkit-ui.content-${project.version}.zip</include>
+                                        <include>${parent.artifactId}-ui.content-${project.version}.zip</include>
                                     </includes>
                                 </resource>
                             </resources>

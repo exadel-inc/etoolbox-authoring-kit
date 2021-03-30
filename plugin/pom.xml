@@ -5,15 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.exadel.aem</groupId>
-        <artifactId>aem-authoring-toolkit</artifactId>
+        <groupId>com.exadel.etoolbox</groupId>
+        <artifactId>etoolbox-authoring-kit</artifactId>
         <version>2.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>aem-authoring-toolkit-plugin</artifactId>
+    <artifactId>etoolbox-authoring-kit-plugin</artifactId>
 
-    <name>${project.prettyName} Maven Plugin</name>
-    <description>Presents Maven plugin for creating Adobe Granite markup for AEM from Java source code</description>
+    <name>${project.prettyName} - Maven Plugin</name>
+    <description>Presents Maven plugin for creating Granite UI markup for AEM from Java source code</description>
+
     <packaging>maven-plugin</packaging>
 
     <properties>
@@ -90,8 +91,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.exadel.aem</groupId>
-            <artifactId>aem-authoring-toolkit-core</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>${parent.artifactId}-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
