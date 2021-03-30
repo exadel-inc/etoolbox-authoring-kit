@@ -300,15 +300,12 @@
     <createpagedialog
             jcr:primaryType="nt:unstructured"
             jcr:title="Create List"
-            height="{Double}480"
-            width="{Double}560"
             sling:resourceType="granite/ui/components/coral/foundation/dialog">
         <items jcr:primaryType="nt:unstructured">
             <form jcr:primaryType="nt:unstructured"
                   sling:resourceType="granite/ui/components/coral/foundation/form"
                   action="/libs/wcm/core/content/sites/createpagewizard/jcr:content"
                   foundationForm="{Boolean}true"
-                  maximized="{Boolean}true"
                   method="post"
                   style="vertical">
                 <successresponse
