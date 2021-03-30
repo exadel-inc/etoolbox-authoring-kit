@@ -27,6 +27,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(DependsOnTabConfig.class)
 public @interface DependsOnTab {
+
     /**
      * Defines the 'dependsOn' attribute
      * @return String representing value the current tab depends on, non-null

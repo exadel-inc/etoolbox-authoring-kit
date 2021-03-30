@@ -22,6 +22,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DependsOnParam {
+
     /**
      * Defines parameter name
      * The resulting attribute's name will be rendered as 'dependsOn-{action}-{name}'

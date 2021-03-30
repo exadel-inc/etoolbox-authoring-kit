@@ -23,10 +23,11 @@ import java.lang.annotation.Target;
  * Used to define {@code dependsOn} and {@code dependsOnActon} attributes as well as {@code dependsOn}-related parameters
  * of the {@code granite:data} child node of the current widget node to engage DependsOn frontend routines
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(DependsOnConfig.class)
 public @interface DependsOn {
+
     /**
      * Defines the {@code dependsOn} attribute value
      * @return String value, non-null (see DependsOn documentation for details)

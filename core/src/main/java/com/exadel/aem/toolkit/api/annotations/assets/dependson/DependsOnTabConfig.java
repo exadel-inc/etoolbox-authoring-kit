@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DependsOnTabConfig {
+
     /**
      * Sets the {@code DependsOnTab} actions
      * @return One or more valid {@link DependsOnTab} objects

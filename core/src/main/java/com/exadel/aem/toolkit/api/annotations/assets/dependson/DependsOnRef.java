@@ -22,9 +22,10 @@ import java.lang.annotation.Target;
  * Used to define {@code dependsOnRef} and {@code dependsOnRefType} attributes of {@code granite:data} child node of
  * the current widget node to engage DependsOn frontend routines
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DependsOnRef {
+
     /**
      * Defines the {@code dependsOnRef} attribute
      * If not set, {@code name} will be equal to the annotated field name

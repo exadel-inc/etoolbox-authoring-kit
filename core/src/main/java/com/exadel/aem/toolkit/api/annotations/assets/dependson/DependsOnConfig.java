@@ -21,9 +21,10 @@ import java.lang.annotation.Target;
 /**
  * Used to define the set of {@link DependsOn} actions for the current component
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DependsOnConfig {
+
     /**
      * Sets the {@code DependsOn} actions
      * @return One or more valid {@link DependsOn} objects
