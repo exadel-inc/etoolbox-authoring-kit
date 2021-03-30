@@ -61,12 +61,11 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>aem-authoring-toolkit-api</module>
         <module>core</module>
         <module>ui.apps</module>
         <module>ui.content</module>
         <module>assets</module>
-        <module>aem-authoring-toolkit-plugin</module>
+        <module>plugin</module>
     </modules>
 
     <properties>
@@ -380,7 +379,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.exadel.aem</groupId>
-                <artifactId>aem-authoring-toolkit-api</artifactId>
+                <artifactId>aem-authoring-toolkit-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

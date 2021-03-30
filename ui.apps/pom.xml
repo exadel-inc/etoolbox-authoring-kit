@@ -91,12 +91,6 @@
                                         <include>aem-authoring-toolkit-core-${project.version}.jar</include>
                                     </includes>
                                 </resource>
-                                <resource>
-                                    <directory>${project.parent.basedir}/aem-authoring-toolkit-api/target</directory>
-                                    <includes>
-                                        <include>aem-authoring-toolkit-api-${project.version}.jar</include>
-                                    </includes>
-                                </resource>
                             </resources>
                         </configuration>
                     </execution>

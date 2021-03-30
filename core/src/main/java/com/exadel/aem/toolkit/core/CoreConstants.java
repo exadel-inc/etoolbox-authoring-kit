@@ -20,6 +20,7 @@ package com.exadel.aem.toolkit.core;
 public class CoreConstants {
     public static final String PN_ITEM_RESOURCE_TYPE = "itemResourceType";
     public static final String PN_LIMIT = "limit";
+    public static final String PN_LIST_ITEM = "listItem";
     public static final String PN_OFFSET = "offset";
     public static final String PN_PATH = "path";
     public static final String PN_SELECTED = "selected";
