@@ -12,7 +12,7 @@
                             jcr:primaryType="nt:unstructured"
                             jcr:title="List"
                             sling:resourceType="wcm/core/components/policy/policy"
-                            components="[authoring-toolkit/lists/components/content/listItem]"
+                            components="[etoolbox-authoring-kit/lists/components/content/listItem]"
                             cq:styleDefaultClasses="etoolbox-list"
                             policyResourceType="wcm/foundation/components/responsivegrid">
                     </list>
