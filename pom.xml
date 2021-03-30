@@ -7,7 +7,7 @@
     <version>2.0.1-SNAPSHOT</version>
 
     <name>${project.prettyName}</name>
-    <description>Automates generating rich and responsive authoring interfaces for Adobe Experience Manager (TM) via Maven-powered build and deployment workflow</description>
+    <description>Automates generating and managing rich and responsive authoring interfaces for Adobe Experience Manager (TM)</description>
     <url>https://github.com/exadel-inc/aem-authoring-toolkit</url>
 
     <organization>
@@ -69,7 +69,7 @@
     </modules>
 
     <properties>
-        <project.prettyName>Exadel Toolbox Authoring Kit for AEM</project.prettyName>
+        <project.prettyName>Exadel Toolbox Authoring Kit</project.prettyName>
         <project.vendor>Exadel</project.vendor>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -377,11 +377,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>${project.artifactId}-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>

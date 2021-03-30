@@ -88,7 +88,7 @@
                                 <resource>
                                     <directory>${project.parent.basedir}/core/target</directory>
                                     <includes>
-                                        <include>${parent.artifactId}-core-${project.version}.jar</include>
+                                        <include>${project.parent.artifactId}-core-${project.version}.jar</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -105,7 +105,7 @@
             </plugin>
             <plugin>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>${parent.artifactId}-plugin</artifactId>
+                <artifactId>${project.parent.artifactId}-plugin</artifactId>
                 <version>${project.version}</version>
                 <executions>
                     <execution>
@@ -145,7 +145,8 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>${parent.artifactId}-core</artifactId>
+            <artifactId>${project.parent.artifactId}-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

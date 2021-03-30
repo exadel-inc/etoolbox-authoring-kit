@@ -20,7 +20,7 @@
     </properties>
 
     <build>
-        <finalName>${parent.artifactId}.all-${project.version}</finalName>
+        <finalName>${project.parent.artifactId}.all-${project.version}</finalName>
         <resources>
             <resource>
                 <directory>src/main/content/jcr_root</directory>
@@ -98,13 +98,13 @@
                                 <resource>
                                     <directory>${project.parent.basedir}/ui.apps/target</directory>
                                     <includes>
-                                        <include>${parent.artifactId}-ui.apps-${project.version}.zip</include>
+                                        <include>${project.parent.artifactId}-ui.apps-${project.version}.zip</include>
                                     </includes>
                                 </resource>
                                 <resource>
                                     <directory>${project.parent.basedir}/ui.content/target</directory>
                                     <includes>
-                                        <include>${parent.artifactId}-ui.content-${project.version}.zip</include>
+                                        <include>${project.parent.artifactId}-ui.content-${project.version}.zip</include>
                                     </includes>
                                 </resource>
                             </resources>
