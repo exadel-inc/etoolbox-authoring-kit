@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/button/index.html">
- * Button element</a> in Granite UI
+ * Button</a> component in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -49,7 +49,7 @@ public @interface Button {
 
     /**
      * When set to true, maps to the {@code disabled} attribute of this Granite UI component's node.
-     * Defines the the current option is shown in disabled state
+     * Defines that the current option is shown in disabled state
      *
      * @return True or false
      */
@@ -57,6 +57,7 @@ public @interface Button {
 
     /**
      * When set to a non-blank string, maps to the {@code autocomplete} attribute of this Granite UI component's node
+     *
      * @return String value
      */
     String autocomplete() default "off";
@@ -79,7 +80,7 @@ public @interface Button {
 
     /**
      *  When set to a non-blank string, maps to the {@code text_commentI18n} attribute of this Granite UI component's node.
-     *  Used to define I18n comment for the body text
+     *  Used to define the I18n comment for the body text
      *
      *  @return String value, non-blank
      */
@@ -96,16 +97,15 @@ public @interface Button {
 
     /**
      * Maps to the {@code active} attribute of this Granite UI component's node.
-     * Used to define initial state of the button
+     * Used to define the initial state of the button
      *
      * @return True or false
      */
     boolean active() default false;
 
     /**
-     * When set to a non-blank string, maps to the {@code icon} attribute of this Granite UI component's node.
-     * Used to define component's icon.
-     * When set, override actionConfigName
+     * Maps to the {@code icon} attribute of this Granite UI component's node.
+     * Used to define the icon of the component. When set, overrides {@code actionConfigName}
      *
      * @return String value
      */

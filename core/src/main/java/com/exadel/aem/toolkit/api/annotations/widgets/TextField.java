@@ -25,22 +25,24 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textfield/index.html">
- * TextField element</a> in Granite UI
+ * TextField</a> component in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TEXTFIELD)
 @MapProperties
 public @interface TextField {
+
     /**
-     * When set to a non-blank string, maps to the 'emptyText' attribute of this Granite UI component's node.
-     * Used to define text hint for an empty TextField
+     * When set to a non-blank string, maps to the {@code emptyText} attribute of this Granite UI component's node.
+     * Used to define the text hint for an empty TextField
      * @return String value
      */
     String emptyText() default "";
+
     /**
-     * When set to a non-blank string, maps to the 'value' attribute of this Granite UI component's node
-     * Used to define default value for a TextField
+     * When set to a non-blank string, maps to the {@code value} attribute of this Granite UI component's node
+     * Used to define the default value for a TextField
      * @return String value
      */
     String value() default "";

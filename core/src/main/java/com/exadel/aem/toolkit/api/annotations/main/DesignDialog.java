@@ -34,7 +34,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 public @interface DesignDialog {
 
     /**
-     * Maps to the {@code jcr:title} attributes of both the component root node and its {@code cq:design_dialog} sub-node
+     * Maps to the {@code jcr:title} attribute of component's {@code cq:design_dialog} node
      * @return String value, non-blank
      */
     @PropertyRendering(name = "jcr:title")
@@ -42,16 +42,16 @@ public @interface DesignDialog {
     String title() default "";
 
     /**
-     * Renders as the `height` attribute of component's {@code cq:design_dialog} node. If no value, or a value less
-     * or equal to zero provided, default {@code 480} is used
+     * Renders as the `height` attribute of component's {@code cq:design_dialog} node. If no value provided,
+     * default {@code 480} is used
      * @return Double-typed number
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
     double height() default 480;
 
     /**
-     * Renders as the `width` attribute of component's {@code cq:design_dialog} node. If no value, or a value less
-     * or equal to zero provided, default {@code 560} is used
+     * Renders as the `width` attribute of component's {@code cq:design_dialog} node. If no value provided,
+     * default {@code 560} is used
      * @return Double-typed number
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)

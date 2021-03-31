@@ -25,50 +25,51 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/switch/index.html">
- * Switch element</a> in Granite UI
+ * Switch</a> component in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.SWITCH)
 @MapProperties
 public @interface Switch {
+
     /**
-     * Maps to the 'value' attribute of this Granite UI component's node.
-     * Used to define value for a Switch in 'on' state
+     * Maps to the {@code value} attribute of this Granite UI component's node.
+     * Used to define the value for a Switch in {@code on} state
      * @return String {@code {Boolean}}-casted value
      */
     String value() default "{Boolean}true";
 
     /**
-     * Maps to the 'uncheckedValue' attribute of this Granite UI component's node.
-     * Used to define value for a Switch in 'off' state
+     * Maps to the {@code uncheckedValue} attribute of this Granite UI component's node.
+     * Used to define the value for a Switch in {@code off} state
      * @return String {@code {Boolean}}-casted value
      */
     String uncheckedValue() default "{Boolean}false";
 
     /**
-     * Maps to the 'checked' attribute of this Granite UI component's node.
-     * Used to define state for a Switch
+     * Maps to the {@code checked} attribute of this Granite UI component's node.
+     * Used to define the checked state for a Switch
      * @return True or false
      */
     boolean checked() default false;
 
     /**
-     * Maps to the 'ignoreData' attribute of this Granite UI component's node.
+     * Maps to the {@code ignoreData} attribute of this Granite UI component's node.
      * @return True or false
      */
     boolean ignoreData() default false;
 
     /**
-     * Maps to the 'onText' attribute of this Granite UI component's node.
-     * Used to define text for a Switch in 'on' state
+     * Maps to the {@code onText} attribute of this Granite UI component's node.
+     * Used to define the text for a Switch in {@code on} state
      * @return String value, non-blank
      */
     String onText() default "On";
 
     /**
-     * Maps to the 'offText' attribute of this Granite UI component's node.
-     * Used to define text for a Switch in 'off' state
+     * Maps to the {@code offText} attribute of this Granite UI component's node.
+     * Used to define the text for a Switch in {@code off} state
      * @return String value, non-blank
      */
     String offText() default "Off";

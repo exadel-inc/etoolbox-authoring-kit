@@ -140,8 +140,8 @@ public @interface Dialog {
     String helpPath() default "";
 
     /**
-     * Renders as the `height` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal
-     * to zero provided, default {@code 480} is used
+     * Renders as the `height` attribute of component's {@code cq:dialog} node. If no value provided,
+     * default {@code 480} is used
      * @return Double-typed number
      */
     @PropertyRendering(scope = Scopes.CQ_DIALOG)
@@ -149,8 +149,8 @@ public @interface Dialog {
     double height() default 480;
 
     /**
-     * Renders as the `width` attribute of component's {@code cq:dialog} node. If no value, or a value less or equal
-     * to zero provided, default {@code 560} is used
+     * Renders as the `width` attribute of component's {@code cq:dialog} node. If no value provided,
+     * default {@code 560} is used
      * @return Double-typed number
      */
     @PropertyRendering(scope = Scopes.CQ_DIALOG)

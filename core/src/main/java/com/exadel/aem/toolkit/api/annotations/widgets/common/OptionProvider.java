@@ -21,20 +21,54 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
+/**
+ * Represents a provider of options for option-selecting Granite UI components, such as {@link com.exadel.aem.toolkit.api.annotations.widgets.select.Select}
+ * or {@link com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup}. An OptionProvider manages one or more
+ * sources, such as EToolbox Lists, ACS Commons lists, tag folders, arbitrary JCR nodes with their children, etc., and
+ * renders the cumulative set of options. Above all, options can be set or appended to the list indicatively, i.e.
+ * via a string array, without the need to query for JCR values. For each of the options, specific title, value, and HTML
+ * attributes can be set
+ */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @MapProperties
 public @interface OptionProvider {
 
+    /**
+     * Allows to define one or more {@link OptionSource}s referring options stored in JCR
+     * @return Zero or more {@code OptionSource} objects
+     */
     OptionSource[] value() default {};
 
+    /**
+     * Allows to specify options that will be prepended to the list derived from JCR. If no {@code OptionSource}s are
+     * specified, the option set can as well consist exclusively of options declared here, or be the composition of
+     * values stored in {@code OptionProvider#prepend} and {@code OptionProvider#append}.
+     * <p>The specified values must follow the {@code "Title:value"} format</p>
+     * @return Optional string value, or an array of strings
+     */
     String[] prepend() default {};
 
+    /**
+     * Allows to specify options that will be appended to the list derived from JCR. If no {@code OptionSource}s are
+     * specified, the option set can as well consist exclusively of options declared here, or be the composition of
+     *      * values stored in {@code OptionProvider#prepend} and {@code OptionProvider#append}.
+     * <p>The specified values must follow the {@code "Title:value"} format</p>
+     * @return Optional string value, or an array of strings
+     */
     String[] append() default {};
 
+    /**
+     * Specifies the value selected by default
+     * @return Optional string value
+     */
     @PropertyRendering(name = "selected")
     String selectedValue() default "";
 
+    /**
+     * Specifies whether the list of options needs to be alphabetically sorted
+     * @return True or false
+     */
     @PropertyRendering(ignoreValues = "false")
     boolean sorted() default false;
 }

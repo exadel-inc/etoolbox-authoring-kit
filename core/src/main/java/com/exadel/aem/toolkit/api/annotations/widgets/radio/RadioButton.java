@@ -17,20 +17,21 @@ import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
- * Used to define an option within {@link RadioGroup#buttons()} set
+ * Used to define an option within the {@link RadioGroup#buttons()} set
  */
 @MapProperties
 public @interface RadioButton {
+
     /**
      * Maps to the {@code text} attribute of this Granite UI component's node.
-     * Used to define optional text displayed beside the option box
+     * Used to define the optional text displayed beside the option box
      * @return String value
      */
     String text();
 
     /**
      * Maps to the {@code value} attribute of this Granite UI component's node.
-     * Used to define value to be stored when this option is checked
+     * Used to define the value to be stored when this option is checked
      * @return String value
      */
     @PropertyRendering(allowBlank = true)
@@ -38,7 +39,7 @@ public @interface RadioButton {
 
     /**
      * When set to true, maps to the {@code checked} attribute of this Granite UI component's node.
-     * Defines the current option is selected by default
+     * Defines that the current option is selected by default
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")
@@ -46,7 +47,7 @@ public @interface RadioButton {
 
     /**
      * When set to true, maps to the {@code disabled} attribute of this Granite UI component's node.
-     * Defines the current option is shown in disabled state
+     * Defines that the current option is shown in disabled state
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

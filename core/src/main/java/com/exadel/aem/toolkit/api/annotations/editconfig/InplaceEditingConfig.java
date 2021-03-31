@@ -44,13 +44,15 @@ public @interface InplaceEditingConfig {
     String editElementQuery() default "";
 
     /**
-     * Used to define tag name of current in-place editor config. If not set, {@link InplaceEditingConfig#propertyName()} is used
+     * Used to define tag name of current in-place editor config. If not set, {@link InplaceEditingConfig#propertyName()}
+     * is used
      * @return String value
      */
     String name() default "";
 
     /**
-     * If more than one in-place editors configured for this component, used to differentiate between them as items in a Granite UI dropdown
+     * If more than one in-place editors are configured for this component, used to differentiate between them as items
+     * in a Granite UI dropdown
      * @return String value
      */
     String title() default "";

@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textarea/index.html">
- * TextArea element</a> in Granite UI
+ * TextArea</a> component in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -40,14 +40,14 @@ public @interface TextArea {
 
     /**
      * When set to a non-blank string, maps to the {@code value} attribute of this Granite UI component's node
-     * Used to define default value for a TextField
+     * Used to define the default value for a TextField
      * @return String value
      */
     String value() default "";
 
     /**
      * When set to a non-blank string, maps to the {@code emptyText} attribute of this Granite UI component's node.
-     * Used to define text hint for an empty TextArea
+     * Used to define the text hint for an empty TextArea
      * @return String value
      */
     String emptyText() default "";

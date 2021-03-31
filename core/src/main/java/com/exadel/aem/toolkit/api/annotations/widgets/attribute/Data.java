@@ -14,14 +14,16 @@
 package com.exadel.aem.toolkit.api.annotations.widgets.attribute;
 
 /**
- * Name-value string pair used to populate {@link Attribute#data()} array
+ * Represents a name-value string pair used to populate {@link Attribute#data()} array
  */
 public @interface Data {
+
     /**
      * Attribute name
      * @return String value, non-blank
      */
     String name();
+
     /**
      * Attribute value
      * @return String value

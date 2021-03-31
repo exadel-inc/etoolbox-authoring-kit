@@ -37,7 +37,7 @@ public interface Source {
      * Adapts the current {@code Source} instance to the provided type
      * @param adaptation {@code Class} reference indicating the desired data type
      * @param <T> The type of the resulting value
-     * @return A {@code T}-typed object or null in case the adaptation to the particular type was not possible or failed
+     * @return The {@code T}-typed object or null in case the adaptation to the particular type was not possible or failed
      */
     <T> T adaptTo(Class<T> adaptation);
 

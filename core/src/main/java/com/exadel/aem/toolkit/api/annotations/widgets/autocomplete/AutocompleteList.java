@@ -30,5 +30,10 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @ResourceType(ResourceTypes.AUTOCOMPLETE_LIST)
 @MapProperties
 public @interface AutocompleteList {
+
+    /**
+     * Allows to specify the {@code src} property of this option list
+     * @return Optional string value
+     */
     String src() default "";
 }

@@ -57,7 +57,7 @@ public @interface AemComponent {
 
     /**
      * The set of views this {@code @Component} comprises. Each view represents a class which will be scanned for the
-     * ToolKit annotations. The current class is supposed by default, whether added to the set or not.
+     * ToolKit annotations. The current class is assumed by default, whether added to the set or not.
      * @return Array {@code Class<?>} references, or an empty array
      */
     Class<?>[] views() default {};
@@ -83,7 +83,8 @@ public @interface AemComponent {
     String componentGroup() default "";
 
     /**
-     * When set to a non-blank string, maps to the {@code dialogPath} attribute of the component root node. Must represent a valid JCR path
+     * When set to a non-blank string, maps to the {@code dialogPath} attribute of the component root node. Must represent
+     * a valid JCR path
      * @return String value
      */
     @ValueRestriction(ValueRestrictions.JCR_PATH)

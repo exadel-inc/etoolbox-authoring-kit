@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html">
- * Alert element</a> in Granite UI
+ * Alert </a> component in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -38,7 +38,6 @@ public @interface Alert {
 
     /**
      * Maps to the {@code variant} attribute of this Granite UI component's node.
-     *
      * @return One of {@code StatusVariant} values
      * @see StatusVariant
      */
@@ -48,7 +47,6 @@ public @interface Alert {
     /**
      * Maps to the {@code size} attribute of this Granite UI component's node. Used to define Alert size
      * <p><u>Note:</u> only {@code "small"} and {@code "large"} values are officially supported</p>
-     *
      * @return One of {@code Size} values
      * @see Size
      */
@@ -57,7 +55,6 @@ public @interface Alert {
     /**
      * When set to a non-blank string, maps to the {@code text} attribute of this Granite UI component's node.
      * Used to define content HTML for Alert component
-     *
      * @return String value
      */
     String text() default "";
@@ -65,7 +62,6 @@ public @interface Alert {
     /**
      * When set to a non-blank string, maps to the {@code jcr:title} attribute of this Granite UI component's node.
      * Used to define header text for Alert component
-     *
      * @return String value
      */
     @PropertyRendering(name = "jcr:title")

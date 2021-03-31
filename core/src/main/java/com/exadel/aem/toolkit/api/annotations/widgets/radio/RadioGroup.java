@@ -27,7 +27,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/radiogroup/index.html">
- * RadioGroup element</a> in Granite UI
+ * RadioGroup</a> component in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -36,27 +36,27 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 public @interface RadioGroup {
 
     /**
-     * Maps to the {@code emptyText} vertical of this Granite UI component's node.
+     * Maps to the {@code vertical} attribute of this Granite UI component's node.
      * Sets whether this RadioGroup is displayed as a vertical stack
      * @return True or false
      */
     boolean vertical() default true;
 
     /**
-     * Used to specify collection of {@link RadioButton}s within this RadioGroup
+     * Used to specify the collection of {@link RadioButton}s within this RadioGroup
      * @return Single {@code @RadioButton} annotation, or an array of RadioButtons
      */
     RadioButton[] buttons() default {};
 
     /**
      * Used to specify the source for options handled by the ToolKit's {@code OptionProvider} mechanism
-     * @return {@link OptionProvider} instance, or an empty {@code }OptionProvider} if not needed
+     * @return {@link OptionProvider} instance, or an empty {@code OptionProvider} if not needed
      */
     OptionProvider buttonProvider() default @OptionProvider;
 
     /**
      * When set, the {@code datasource} node is appended to the JCR buildup of this component
-     * and populated with values of provided {@link DataSource} annotation
+     * and populated with values of the provided {@link DataSource} annotation
      * @return {@code @DataSource} instance
      */
     DataSource datasource() default @DataSource;

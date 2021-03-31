@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.widgets.imageupload;
 
 import java.lang.annotation.ElementType;
@@ -27,7 +26,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
 /**
- * Used to set up FileUpload element based on {@code cq/gui/components/authoring/dialog/fileupload} Granite component
+ * Used to set up an image uploader in Granite UI based on {@code cq/gui/components/authoring/dialog/fileupload}
+ * Granite component
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -37,21 +37,21 @@ public @interface ImageUpload {
 
     /**
      * When set to a non-blank string, maps to the {@code icon} attribute of this Granite UI component's node.
-     * Used to define component's icon
+     * Used to define the icon of the component
      * @return String value
      */
     String icon() default "";
 
     /**
      * When set to a non-blank string, maps to the {@code fileNameParameter} attribute of this Granite UI component's node.
-     * Used to determine the (relative) location where to store the name of the file
+     * Used to determine the name of JCR attribute which holds the name of the file
      * @return String value
      */
     String fileNameParameter() default "";
 
     /**
-     * When set to a non-blank string, maps to the {@code fileReferenceParameter} attribute of this Granite UI component's node.
-     * Used to determine where to store the reference of the file (when a file already uploaded on the server)
+     * When set to a non-blank string, maps to the {@code fileReferenceParameter} attribute of this Granite UI component's
+     * node. Used to determine the name of JCR attribute which holds the address of the file in DAM
      * @return String value
      */
     String fileReferenceParameter() default "";
@@ -74,7 +74,7 @@ public @interface ImageUpload {
 
     /**
      * Maps to the {@code allowUpload} attribute of this Granite UI component's node.
-     * Defines whether file uploading is allowed. Otherwise, only file picking is allowed
+     * Defines whether file uploading is allowed. If not, only file picking is allowed
      * @return True or false
      */
     boolean allowUpload() default false;

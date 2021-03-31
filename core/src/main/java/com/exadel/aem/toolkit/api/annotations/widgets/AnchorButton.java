@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html">
- * AnchorButton</a> component in a Granite UI dialog.
+ * AnchorButton</a> component in Granite UI.
  * AnchorButton represents a standard HTML hyperlink ({@code <a>}) that is styled like a button
  */
 @Target(ElementType.FIELD)
@@ -65,15 +65,15 @@ public @interface AnchorButton {
     String target() default "";
 
     /**
-     * Visually hide the text. It is RECOMMENDED that every button has a text for a11y purpose.
-     * Use this property to hide it visually, while still making it available for a11y
+     * When set to true, visually hides the text. It is recommended that every button has a text for a11y purpose.
+     * This property is used to make it not visible on screen, while being still available for a11y
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")
     boolean hideText() default false;
 
     /**
-     * Maps to the 'x-cq-linkchecker' attribute of this Granite UI component's node
+     * Maps to the {@code x-cq-linkchecker} attribute of this Granite UI component's node
      * @return One of {@link LinkCheckerVariant} values
      */
     @PropertyRendering(
@@ -84,7 +84,7 @@ public @interface AnchorButton {
     LinkCheckerVariant linkChecker() default LinkCheckerVariant.NONE;
 
     /**
-     * Maps to the icon name. e.g. “search” of this Granite UI component's node
+     * Maps to the icon name of this Granite UI component's node
      * @return String value
      */
     String icon() default "";
@@ -112,8 +112,7 @@ public @interface AnchorButton {
     boolean block() default false;
 
     /**
-     * Maps to the {@code variant} attribute of this Granite UI component's node.
-     * Used to define button variant
+     * Maps to the {@code variant} attribute of this Granite UI component's node
      * @return One of {@code ElementVariant} values
      * @see ElementVariant
      */

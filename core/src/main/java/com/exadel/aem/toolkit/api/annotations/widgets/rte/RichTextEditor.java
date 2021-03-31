@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/rich-text-editor.html">
- * RichTextEditor</a> in Granite UI configuration
+ * RichTextEditor</a> component in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -38,7 +38,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 public @interface RichTextEditor {
 
     /**
-     * Maps to the {@code useFixedInlineToolbar} attribute of this Granite UI component's node.
+     * Maps to the {@code useFixedInlineToolbar} attribute of this Granite UI component's node
      * @return True or false
      */
     boolean useFixedInlineToolbar() default true;
@@ -47,7 +47,7 @@ public @interface RichTextEditor {
      * Represents the set of "features" (i.e. plugins, corresponding toolbar icons and relevant logic) for this RichTextEditor
      * when in "windowed" (non-fullscreen) mode.
      * Most common values are exposed by {@link RteFeatures}
-     * @return Single string value, or an array of strings.
+     * @return String value, or an array of strings.
      */
     String[] features() default {};
 
@@ -55,25 +55,25 @@ public @interface RichTextEditor {
      * Represents the set of "features" (i.e. plugins, corresponding toolbar icons and relevant logic) for this RichTextEditor
      * when in fullscreen mode. If this value is not specified, same set of features is used for either mode.
      * Most common values are exposed by {@link RteFeatures}
-     * @return Single string value, or an array of strings.
+     * @return String value, or an array of strings.
      */
     String[] fullscreenFeatures() default {};
 
     /**
-     * Represents the collection of {@link IconMapping}-s to modify display of the toolbar
-     * @return Single {@code @IconMapping} value, or an array of such
+     * Represents the collection of {@link IconMapping}s to modify display of the toolbar
+     * @return {@code @IconMapping} value, or an array of such values
      */
     IconMapping[] icons() default {};
 
     /**
-     * Represents the collection of {@link ParagraphFormat}-s to build up "paraformat" dropdown
-     * @return Single {@code @ParagraphFormat} value, or an array of such
+     * Represents the collection of {@link ParagraphFormat}s to build up the "paraformat" dropdown
+     * @return {@code @ParagraphFormat} value, or an array of such values
      */
     ParagraphFormat[] formats() default {};
 
     /**
-     * Represents collection of {@link Characters} to populate "Insert symbol" popup window
-     * @return Single {@code @Characters} value, or an array of such
+     * Represents collection of {@link Characters} to populate the "Insert symbol" popup window
+     * @return {@code @Characters} value, or an array of such values
      */
     Characters[] specialCharacters() default {};
 
@@ -88,29 +88,30 @@ public @interface RichTextEditor {
     PasteMode defaultPasteMode() default PasteMode.DEFAULT;
 
     /**
-     * Defines the rules applied to html links within this RichTextEditor
+     * Defines the rules applied to HTML links within this RichTextEditor
      * @see HtmlLinkRules
      * @return Valid {@code HtmlLinkRules} annotation
      */
     HtmlLinkRules htmlLinkRules() default @HtmlLinkRules;
 
     /**
-     * Defines the rules in effect when pasting clipboard content to this RichTextEditor
+     * Defines the rules that are in effect when pasting clipboard content to this RichTextEditor
      * @see HtmlPasteRules
      * @return Valid {@code HtmlPasteRules} annotation
      */
     HtmlPasteRules htmlPasteRules() default @HtmlPasteRules;
 
     /**
-     * Defines the collection of external stylesheet (apart from default ones) used for display of this RichTextEditor's content
-     * @return Single sting value, or an array of strings
+     * Defines the collection of external stylesheets (apart from the default ones) used for display of this
+     * RichTextEditor's content
+     * @return String value, or an array of strings
      */
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     String[] externalStyleSheets() default {};
 
     /**
-     * Represents the collection of {@link Style}-s to build up the "styles" dropdown
-     * @return Single {@code Style} value, or an array of such
+     * Represents the collection of {@link Style}s to build up the "styles" dropdown
+     * @return Single {@code Style} value, or an array of such values
      */
     Style[] styles() default {};
 
@@ -123,7 +124,7 @@ public @interface RichTextEditor {
     long maxUndoSteps() default 50;
 
     /**
-     * Defines size of tab indent in this RichTextEditor
+     * Defines the size of tab indent in this RichTextEditor
      * @return Long value, non-negative
      */
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
@@ -131,7 +132,7 @@ public @interface RichTextEditor {
     long tabSize() default 4;
 
     /**
-     * Defines size of paragraph indent for e.g. list items in this RichTextEditor
+     * Defines the size of paragraph indent for e.g. list items in this RichTextEditor
      * @return Long value, non-negative
      */
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)

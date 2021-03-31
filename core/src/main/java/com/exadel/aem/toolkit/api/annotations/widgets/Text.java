@@ -33,8 +33,9 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @ResourceType(ResourceTypes.TEXT)
 @MapProperties
 public @interface Text {
+
     /**
-     * Maps to the 'text' attribute of this Granite UI component's node
+     * Maps to the {@code text} attribute of this Granite UI component's node
      * @return String value
      */
     @PropertyRendering(name = "text")

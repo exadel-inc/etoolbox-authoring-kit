@@ -27,13 +27,14 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/colorfield/index.html">
- * ColorField element</a> in Granite UI
+ * ColorField</a> component in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.COLORFIELD)
 @MapProperties("!customColors")
 public @interface ColorField {
+
     /**
      * Maps to the {@code value} attribute of this Granite UI component's node.
      * Used to define default value of ColorField
@@ -43,14 +44,14 @@ public @interface ColorField {
 
     /**
      * When set to a non-blank string, maps to the {@code emptyText} attribute of this Granite UI component's node.
-     * Used to define text hint for an empty ColorField
+     * Used to define the text hint for an empty ColorField
      * @return String value
      */
     String emptyText() default "";
 
     /**
      * Maps to the {@code variant} attribute of this Granite UI component's node.
-     * Used to specify the capabilities set of this ColorField
+     * Used to specify the behavior set of this ColorField
      * @see ColorVariant
      * @return One of {@code ColorVariant} values
      */
@@ -59,22 +60,23 @@ public @interface ColorField {
 
     /**
      * Maps to the {@code autogenerateColors} attribute of this Granite UI component's node.
-     * Used to specify the mode of auto color generating
+     * Used to specify the mode of auto color generation
      * @see GenerateColorsState
      * @return One of {@code GenerateColorsState} values
      */
     @PropertyRendering(transform = StringTransformation.LOWERCASE)
     GenerateColorsState autogenerateColors() default GenerateColorsState.OFF;
+
     /**
      * Maps to the {@code showSwatches} attribute of this Granite UI component's node.
-     * Used to specify whether swatches view should be displayed
+     * Used to specify whether the swatches should be displayed
      * @return True or false
      */
     boolean showSwatches() default true;
 
     /**
      * Maps to the {@code showProperties} attribute of this Granite UI component's node.
-     * Used to specify whether color properties view should be displayed
+     * Used to specify whether color properties should be displayed
      * @return True or false
      */
     boolean showProperties() default true;

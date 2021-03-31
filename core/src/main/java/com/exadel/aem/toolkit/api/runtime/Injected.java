@@ -20,9 +20,8 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 
-
 /**
- * Marker for fields of handlers being auto-initialized with a reference to {@link RuntimeContext}
+ * Marker for a handler field set to be auto-initialized with a reference to {@link RuntimeContext}
  *
  * @deprecated Since v. 2.0.1 users are encouraged to use new custom handlers API that is based
  * on {@link Source} and {@link Target} objects handling. Legacy API will be revoked in the versions to come

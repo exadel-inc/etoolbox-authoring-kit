@@ -38,53 +38,47 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 public @interface Hyperlink {
 
     /**
-     * Maps to the href attribute of this Granite UI component's node
-     *
+     * Maps to the {@code href} attribute of this Granite UI component's node
      * @return String value
      */
     String href();
 
     /**
      * Maps to the body text of the element of this Granite UI component's node
-     *
      * @return String value
      */
     String text();
 
     /**
-     * Maps to the href attribute of this Granite UI component's node.
+     * Effectively maps to the {@code href} attribute of this Granite UI component's node.
      * This is commonly used to produce different value based on locale
-     *
      * @return String value
+     * @see Hyperlink#href()
      */
     String hrefI18n() default "";
 
     /**
-     * Maps to the rel attribute of this Granite UI component's node
-     *
+     * Maps to the {@code rel} attribute of this Granite UI component's node
      * @return String value
      */
     String rel() default "";
 
     /**
-     * Maps to the target attribute of this Granite UI component's node
-     *
+     * Maps to the {@code target} attribute of this Granite UI component's node
      * @return String value
      */
     String target() default "";
 
     /**
-     * Visually hide the text. It is RECOMMENDED that every button has a text for a11y purpose.
-     * Use this property to hide it visually, while still making it available for a11y
-     *
+     * When set to true, visually hides the text. It is recommended that every button has a text for a11y purpose.
+     * This property is used to make it not visible on screen, while being still available for a11y
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")
     boolean hideText() default false;
 
     /**
-     * Maps to the x-cq-linkchecker attribute of this Granite UI component's node
-     *
+     * Maps to the {@code x-cq-linkchecker} attribute of this Granite UI component's node
      * @return One of {@link LinkCheckerVariant} values
      * @see LinkCheckerVariant
      */
@@ -96,15 +90,13 @@ public @interface Hyperlink {
     LinkCheckerVariant linkChecker() default LinkCheckerVariant.NONE;
 
     /**
-     * Maps to the icon name. e.g. “search” of this Granite UI component's node
-     *
+     * Maps to the icon name of this Granite UI component's node
      * @return String value
      */
     String icon() default "";
 
     /**
      * Maps to the size of the icon of this Granite UI component's node
-     *
      * @return String value, non-blank
      * @see Size
      */

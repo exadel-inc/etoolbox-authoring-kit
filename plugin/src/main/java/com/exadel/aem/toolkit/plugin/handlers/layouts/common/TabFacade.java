@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
 /**
- * Presents a {@link SectionFacade} variant for handling the modern {@code Tab} layout
+ * Presents a {@link SectionFacade} variant for handling the {@code Tab} layout
  */
 class TabFacade extends SectionFacade {
     private static final Predicate<Method> MAIN_NODE_MEMBERS = method -> StringUtils.equalsAny(

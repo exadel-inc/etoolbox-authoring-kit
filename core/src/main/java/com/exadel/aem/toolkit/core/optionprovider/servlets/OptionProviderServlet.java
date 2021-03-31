@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core.optionprovider.servlets;
 
 import java.io.IOException;
@@ -42,7 +41,7 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
 
 /**
  * Allows to set custom data source for a widget supporting Granite datasources, such as a RadioGroup or a Select.
- * Supports a number of settings that are either stored as attributes of {@code datasource} node in Granite UI  setup,
+ * Supports a number of settings that are either stored as attributes of {@code datasource} node in Granite UI setup,
  * or passed in HTTP request as query arguments. Datasource options are rendered from either a node tree, an ACS List -like
  * node structure ({@code [...]/node/jcr:content/list/[items]}), or a tag folder
  */

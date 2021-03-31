@@ -68,7 +68,7 @@ public interface Target {
     /**
      * Retrieves the collection of {@code Target} instances attached to the current instance. Each one of the children
      * would report the current {@code Target} as its parent
-     * @return An ordered (linked) {@code List} object. If no children present, an empty non-null list is returned
+     * @return An ordered (linked) {@code List} object. If there are no children, an empty non-null list is returned
      */
     List<Target> getChildren();
 
@@ -108,7 +108,7 @@ public interface Target {
      * Retrieves a {@code Target} object associated with the current instance through the path specified.
      * The path is resolved in a generic XML/filesystem style like {@code ./current/child/grandchild/../../child-sibling}.
      * If a valid relative target cannot be found, a new {@code Target} is created for every missing segment of the path.
-     * The exclusion is the missing parent path: if an object's parent does not exists, the current object is accounted
+     * The exclusion is the missing parent path: if an object's parent does not exist, the current object is accounted
      * @param path String value, non-blank
      * @return Valid {@code Target} object or null
      */
@@ -168,7 +168,7 @@ public interface Target {
      * attached to another parent, its parent is swapped for the current instance. The new child is placed at the specified
      * position
      * @param other Non-null {@code Target} object
-     * @param position Zero-bases position in the list of existing children
+     * @param position Zero-based position in the list of existing children
      */
     void addTarget(Target other, int position);
 
@@ -352,7 +352,7 @@ public interface Target {
      * Adapts the current {@code Target} instance to the provided type
      * @param adaptation {@code Class} reference indicating the desired data type
      * @param <T> The type of the resulting value
-     * @return A {@code T}-typed object or null in case the adaptation to the particular type was not possible or failed
+     * @return The {@code T}-typed object or null in case the adaptation to the particular type was not possible or failed
      */
     <T> T adaptTo(Class<T> adaptation);
 }

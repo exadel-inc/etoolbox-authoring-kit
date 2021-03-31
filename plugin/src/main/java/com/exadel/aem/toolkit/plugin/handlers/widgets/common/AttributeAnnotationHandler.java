@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a
- * {@link Source} object that define {@code granite:data} attributes for the current Granite component
+ * {@link Source} object that define {@code granite:data} and similar attributes for the current Granite component
  */
 public class AttributeAnnotationHandler implements BiConsumer<Source, Target> {
 

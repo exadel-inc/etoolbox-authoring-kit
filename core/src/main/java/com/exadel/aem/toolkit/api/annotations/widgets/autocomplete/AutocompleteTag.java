@@ -30,5 +30,10 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @ResourceType(ResourceTypes.AUTOCOMPLETE_TAG)
 @MapProperties
 public @interface AutocompleteTag {
+
+    /**
+     * Allows to specify tag title
+     * @return Optional string value
+     */
     String title() default "";
 }

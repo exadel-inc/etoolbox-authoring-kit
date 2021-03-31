@@ -26,32 +26,38 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface HtmlLinkRules {
+
     /**
      * If set to non-blank string, represents the CSS style for links to internal resources
      * @return String value
      */
     String cssInternal() default "";
+
     /**
      * If set to non-blank string, represents the CSS style for links to external resources
      * @return String value
      */
     String cssExternal() default "";
+
     /**
-     * It set, defines the set of valid protocols for links, such as 'http://', 'file://', etc.
+     * It set, defines the set of valid protocols for links, such as {@code http://}, {@code file://}, etc.
      * @return A string representing a protocol as shown above, or an array of strings
      */
     String[] protocols() default {};
+
     /**
      * It set, defines the default protocol for links
      * @return A string representing a protocol
      */
     String defaultProtocol() default "";
+
     /**
      * Defines the {@code target} attribute for a link to an internal resource
      * @see LinkTarget
      * @return One of {@code LinkTarget} values
      */
     LinkTarget targetInternal() default LinkTarget.AUTO;
+
     /**
      * Defines the {@code target} attribute for a link to an external resource
      * @see LinkTarget

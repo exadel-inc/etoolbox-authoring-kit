@@ -28,13 +28,14 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Position;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/checkbox/index.html">
- * checkbox element</a> in Granite UI
+ * Checkbox</a> component in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.CHECKBOX)
 @MapProperties("!disconnectedSublist")
 public @interface Checkbox {
+
     /**
      * Maps to the {@code text} attribute of this Granite UI component's node.
      * Used to define optional text displayed beside the Checkbox
@@ -44,15 +45,15 @@ public @interface Checkbox {
 
     /**
      * Maps to the {@code value} attribute of this Granite UI component's node.
-     * Used to define value for a Checkbox when it is checked
-     * @return String {@code {Boolean}}-casted value
+     * Used to define the value for a Checkbox when it is checked
+     * @return String value, {@code {Boolean}}-casted
      */
     String value() default "{Boolean}true";
 
     /**
      * Maps to the {@code value} attribute of this Granite UI component's node.
-     * Used to define value for a Checkbox when it is unchecked
-     * @return String {@code {Boolean}}-casted value
+     * Used to define the value for a Checkbox when it is unchecked
+     * @return String value, {@code {Boolean}}-casted
      */
     String uncheckedValue() default "{Boolean}false";
 
@@ -79,7 +80,7 @@ public @interface Checkbox {
     boolean checked() default false;
 
     /**
-     * When set, allows to define a sublist of checkboxes. Its visibility will depend on current Checkbox state
+     * When set, allows to define a sublist of checkboxes. Its visibility will depend on the current checkbox state
      * @return Reference to a class describing the sublist
      */
     Class<?>[] sublist() default {};

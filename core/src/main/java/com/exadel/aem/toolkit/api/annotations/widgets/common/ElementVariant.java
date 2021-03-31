@@ -13,6 +13,12 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
+/**
+ * Contains possible values for the {@code variant} (or similar) property of a Granite UI component,
+ * such as {@link com.exadel.aem.toolkit.api.annotations.widgets.button.Button},
+ * {@link com.exadel.aem.toolkit.api.annotations.widgets.AnchorButton}, etc. these values define the appearance
+ * of a dialog element
+ */
 public enum ElementVariant {
     PRIMARY("primary"),
     WARNING("warning"),

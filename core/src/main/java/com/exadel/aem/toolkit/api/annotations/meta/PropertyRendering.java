@@ -76,10 +76,10 @@ public @interface PropertyRendering {
     StringTransformation transform() default StringTransformation.NONE;
 
     /**
-     * When set, defines what value type will be used for the underlying property. The value type must be one of the JCR
-     * compliant types, such as {@code String}, {@code Long}, {@code double}, etc. This value is used to produce a required
-     * type hint for the string representation of a value, e.g. when a Boolean value must be rendered as {@code "true"}
-     * and not as {@code "{Boolean}true"}
+     * When set, defines what value type will be assumed for the underlying property. It must be one of the JCR compliant
+     * types, such as {@code String}, {@code long}, {@code double}, etc. This value is used to modify a default type hint
+     * or remove a type hint for the "XML-stringified" representation of a value, e.g. when a boolean value must be
+     * rendered as {@code "true"} and not as {@code "{Boolean}true"} which is by default
      * @return {@code Class} reference. One of JCR-compliant classes must be used
      */
     Class<?> valueType() default _Default.class;
