@@ -70,7 +70,7 @@ public abstract class WidgetContainerHandler {
             .filter(memberSettings ->
                 ClassUtil.getInheritanceTree(valueTypeClass)
                     .stream()
-                    .anyMatch(superclass -> superclass.equals(memberSettings.source()))
+                    .anyMatch(superclass -> superclass.equals(memberSettings.getSource()))
             )
             .collect(Collectors.toList());
 
