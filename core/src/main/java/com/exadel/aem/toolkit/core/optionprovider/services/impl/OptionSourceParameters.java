@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
 import java.io.UnsupportedEncodingException;
@@ -37,7 +36,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
 
 /**
- * Parses and serves user-specified settings for arranging the datasource for the current request
+ * Parses and serves user-specified settings for arranging a datasource for the current request
  * @see OptionProviderService
  */
 public class OptionSourceParameters {
@@ -70,7 +69,7 @@ public class OptionSourceParameters {
     }
 
     /**
-     * Gets the collection of user-specified settings specific for a datasource path
+     * Gets the collection of user-defined settings specific for a datasource path
      * @return List of {@link PathParameters} objects
      */
     List<PathParameters> getPathParameters() {
@@ -195,7 +194,7 @@ public class OptionSourceParameters {
     /**
      * Tries to extract and decode a {@code SlingHttpServletRequest} query parameter from the parameters array
      * @param parameters {@code RequestParameter} array as returned by {@link SlingHttpServletRequest#getRequestParameterMap()}
-     * @return String value, or a array of strings whether the request parameter comes as a comma-separated string
+     * @return Optional string value
      */
     private static Optional<String> extractRequestParameter(RequestParameter[] parameters) {
         if (ArrayUtils.isEmpty(parameters)) {
@@ -213,7 +212,7 @@ public class OptionSourceParameters {
     /**
      * Retrieves a {@link StringTransformation} instance from the user-provided string
      * @param source User-provided value
-     * @param altSource Alternative source to use in case {@code source} is blank
+     * @param altSource Alternative source to use if the {@code source} is blank
      * @return {@code StringTransformation} value
      */
     private static StringTransformation getTransformValue(String source, String altSource) {

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -38,7 +37,7 @@ class PathParameters {
     private StringTransformation valueTransform;
 
     /**
-     * Default (private) constructor
+     * Default (instantiation-restricting) constructor
      */
     private PathParameters() {
     }
@@ -76,7 +75,7 @@ class PathParameters {
     }
 
     /**
-     * Gets the user-specified {@code attributes} setting
+     * Gets the user-specified {@code attributes} setting parsed into a string array
      * @return Array of strings
      */
     String[] getAttributes() {
@@ -84,7 +83,7 @@ class PathParameters {
     }
 
     /**
-     * Gets the user-specified {@code attributeMembers} setting
+     * Gets the user-specified {@code attributeMembers} setting parsed into a string array
      * @return Array of strings
      */
     String[] getAttributeMembers() {
@@ -92,7 +91,7 @@ class PathParameters {
     }
 
     /**
-     * Gets the user-specified {@code textTransform} setting parsed to a string array
+     * Gets the user-specified {@code textTransform} setting
      * @return String value
      */
     StringTransformation getTextTransform() {
@@ -100,7 +99,7 @@ class PathParameters {
     }
 
     /**
-     * Gets the user-specified {@code valueTransform} setting parsed to a string array
+     * Gets the user-specified {@code valueTransform} setting
      * @return String value
      */
     StringTransformation getValueTransform() {
@@ -117,7 +116,7 @@ class PathParameters {
 
 
     /**
-     * Implements builder pattern for the {@link PathParameters}
+     * Implements the builder pattern for the {@link PathParameters}
      */
     static class Builder {
         private final PathParameters optionSourcePathParameters = new PathParameters();

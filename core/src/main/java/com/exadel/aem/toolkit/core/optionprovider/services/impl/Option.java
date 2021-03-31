@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
 import java.util.Arrays;
@@ -67,7 +66,7 @@ class Option {
     }
 
     /**
-     * Generates Granite-compliant {@link ValueMapResource} representing a particular option with specified label and value
+     * Generates a Granite-compliant {@link ValueMapResource} representing a particular option with specified label and value
      * @return {@code ValueMapResource} item that stands for the datasource option, or null in case this
      * {@code DataSourceEntry} is invalid
      */
@@ -86,7 +85,7 @@ class Option {
     }
 
     /**
-     * Gets whether this entry has enough values to be transformed to datasource option
+     * Gets whether this entry has enough values to be transformed to a datasource option
      * @return true or false
      */
     boolean isValid() {
@@ -104,7 +103,7 @@ class Option {
     }
 
     /**
-     * Gets text part of the option entry
+     * Gets the text part of the option entry
      * @return String value
      */
     String getText() {
@@ -116,7 +115,7 @@ class Option {
     }
 
     /**
-     * Gets value part of the option entry
+     * Gets the value part of the option entry
      * @return String value
      */
     String getValue() {
@@ -165,8 +164,8 @@ class Option {
     }
 
     /**
-     * Used to retrieve this option's text or value property, or a custom attribute of an underlying JCR resource
-     * @param attributeMember Reference to either {@code textMember} or {@code valueMember}, or {@code attributeMember} value
+     * Used to retrieve this option's text or value, or a custom attribute of an underlying JCR resource
+     * @param attributeMember Reference to either {@code textMember}, {@code valueMember}, or {@code attributeMember} value
      * @param attributeTransform Reference to either {@code textTransform} or {@code valueTransform} value
      * @return String value, or an empty string
      */
@@ -180,7 +179,7 @@ class Option {
         }
         // Tf [textMember]-valued or [valueMember]-valued attribute not found within this Resource, there's still
         // a chance that it may be found under jcr:content subnode (relevant for the case when current option is an
-        // "ordinary" page or a similar resource
+        // "ordinary" page or a similar resource)
         Resource effectiveResource = resource;
         if (!effectiveResource.getValueMap().containsKey(attributeMember) && effectiveResource.getChild(JcrConstants.JCR_CONTENT) != null) {
             effectiveResource = effectiveResource.getChild(JcrConstants.JCR_CONTENT);
@@ -220,7 +219,7 @@ class Option {
     }
 
     /**
-     * Implements builder pattern for the {@link Option}. Ensures that {@code DataSourceEntry} fields
+     * Implements builder pattern for the {@link Option}. Ensures that the {@code DataSourceEntry} fields
      * are initialized with proper defaults
      */
     static class Builder {
@@ -307,7 +306,7 @@ class Option {
     }
 
     /**
-     * Implements {@link Object#hashCode()} to accompany current object's {@code equals()} override
+     * Implements {@link Object#hashCode()} to accompany the current object's {@code equals()} override
      * @return Hash code as generated for this instance's {@code value}
      */
     @Override

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core.optionprovider.services;
 
 import java.util.List;
@@ -21,10 +20,11 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 
 /**
- * Prepares option sets for Granite-compliant custom data sources used in authoring dialog widgets.
- * Works with a companion Sling Http Servlet to serve option sets to Adobe Granite UI frontend
+ * Prepares option sets for Granite-compliant custom data sources used in Granite UI.
+ * Works with an accompanying Sling Http Servlet to serve option sets to the Granite UI frontend
  */
 public interface OptionProviderService {
+
     /**
      * Prepares Adobe Granite datasource options in the form of a synthetic resource
      * @param request {@code SlingHttpServletRequest} object

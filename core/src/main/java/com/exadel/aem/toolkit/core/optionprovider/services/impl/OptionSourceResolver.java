@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
 import java.util.Objects;
@@ -29,27 +28,27 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
 
 /**
- * This utility class encapsulates methods for resolving paths to datasources specified directly or via a reference
- * to path-containing node/attribute
+ * Encapsulates methods for resolving paths to datasources specified directly or via a reference to a path-containing
+ * node (attribute)
  * @see OptionProviderService
  */
 class OptionSourceResolver {
     private static final String PATH_JCR_CONTENT_LIST = "jcr:content/list";
 
     /**
-     * Default (private) constructor
+     * Default (instantiation-restricting) constructor
      */
     private OptionSourceResolver() {}
 
     /**
-     * Calls {@link OptionSourceResolver#resolvePath(SlingHttpServletRequest, String)} for the {@code path} argument,
-     * and returns a non-null return value. But if null returned, calls the same method once again
-     * for the {@code fallbackPath} argument
-     * @param request Current {@code SlingHttpServletRequest}
-     * @param path Path to {@code Resource} that either represents datasource or contains user-authored path to actual
-     *             datasource
-     * @param fallbackPath Path to {@code Resource} that either represents datasource or contains user-authored path
-     *                     to actual datasource. Applied to if {@code path} resolves to null
+     * Calls {@link OptionSourceResolver#resolvePath(SlingHttpServletRequest, String)} with the {@code path} argument,
+     * and returns a non-null resulting value. If null is returned, calls the same method once again with the
+     * {@code fallbackPath} argument
+     * @param request      Current {@code SlingHttpServletRequest}
+     * @param path         Path to {@code Resource} that either represents datasource or contains user-authored path to
+     *                     an actual datasource
+     * @param fallbackPath Path to a {@code Resource} that either represents datasource or contains the user-authored path
+     *                     to an actual datasource. Used if the {@code path} resolves to null
      * @return {@code Resource} instance, or null
      */
     static Resource resolve(SlingHttpServletRequest request, String path, String fallbackPath) {
@@ -61,14 +60,14 @@ class OptionSourceResolver {
     }
 
     /**
-     * <p>Tries to retrieve {@code Resource} instance based on user-provided path.</p>
-     * <p>Both absolute and relative paths supported.</p>
-     * <p>Also, both direct and <i>referenced</i> paths supported. For instance, if a user-provided settings
-     * contains {@code @} symbol, this is considered to be a <u>reference</u> to a <i>foreign</i> node and its attribute
-     * in which actual path to datasource is authored (say, via a dialog path picker)
+     * <p>Tries to retrieve a {@code Resource} instance based on user-provided path.</p>
+     * <p>Both absolute and relative paths are supported.</p>
+     * <p>Also, both direct and <i>referenced</i> paths are supported. For instance, if a user-provided setting
+     * contains the {@code @} symbol, this is considered to be a <u>reference</u> to a <i>foreign</i> node and its
+     * attribute in which the actual path to datasource is authored (say, via a dialog path picker)
      * @param request Current {@code SlingHttpServletRequest}
-     * @param path Path to {@code Resource} that either represents datasource or contains user-authored path to actual
-     *             datasource
+     * @param path    Path to a {@code Resource} that either represents a datasource or contains user-authored path
+     *                to an actual datasource
      * @return {@code Resource} instance, or null
      */
     private static Resource resolvePath(SlingHttpServletRequest request, String path) {
@@ -84,7 +83,7 @@ class OptionSourceResolver {
 
         Resource result;
         if (path.startsWith(CoreConstants.SEPARATOR_SLASH)) {
-            // Path starting with "/" is considered absolute so it is resolved directly  via ResourceResolver
+            // Path starting with "/" is considered absolute, so it is resolved directly  via ResourceResolver
             result = request.getResourceResolver().resolve(path);
         } else {
             // For a non-absolute path, we must resolve *target* content resource
@@ -114,12 +113,12 @@ class OptionSourceResolver {
     }
 
     /**
-     * Tries to retrieve {@code Resource} instance representing datasource based path to node where datasource path is
-     * stored, and the name of node's attribute. Both absolute and relative paths supported, and so are direct and
+     * Tries to retrieve a {@code Resource} instance representing the path to a node where the actual datasource path is
+     * stored, and the name of node's attribute. Absolute and relative paths are supported, and so are direct and
      * referenced paths
-     * @param request Current {@code SlingHttpServletRequest}
-     * @param referencePath Path to {@code Resource} that contains user-authored path to actual datasource
-     * @param referenceAttribute Name of the attribute that exposes user-authored path to actual datasource
+     * @param request            Current {@code SlingHttpServletRequest}
+     * @param referencePath      Path to the {@code Resource} that contains a user-authored path to the actual datasource
+     * @param referenceAttribute Name of the attribute that exposes a user-authored path to the actual datasource
      * @return {@code Resource} instance, or null
      */
     private static Resource resolvePath(SlingHttpServletRequest request, String referencePath, String referenceAttribute) {
@@ -139,7 +138,7 @@ class OptionSourceResolver {
     /**
      * Utility method called by {@link OptionSourceResolver#resolvePath(SlingHttpServletRequest, String)}
      * and {@link OptionSourceResolver#resolve(SlingHttpServletRequest, String, String)} to marshal
-     * retrieving <i>content</i> resource via the current {@code SlingHttpServletRequest} path info suffix, rather
+     * retrieving a <i>content</i> resource via the current {@code SlingHttpServletRequest}'s path suffix, rather
      * than the referenced Granite resource
      * @param request Current {@code SlingHttpServletRequest}
      * @param relativePath Path to another content resource
@@ -158,7 +157,6 @@ class OptionSourceResolver {
         }
         return request.getResourceResolver().getResource(contentResource, relativePath);
     }
-
 
     /**
      * Gets whether the current datasource path is a path to a tags folder
