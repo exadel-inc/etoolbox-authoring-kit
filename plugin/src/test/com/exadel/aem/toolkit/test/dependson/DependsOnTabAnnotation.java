@@ -15,33 +15,37 @@
 package com.exadel.aem.toolkit.test.dependson;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
-@Dialog(
-        name = DEFAULT_COMPONENT_NAME,
-        title = "Tabs Test Dialog",
-        tabs = {
-                @Tab(title = "First tab"),
-                @Tab(title = "Second tab")
-        }
+@AemComponent(
+        path = DEFAULT_COMPONENT_NAME,
+        title = "Tabs Test Dialog"
 )
+@Dialog
+@Tabs({
+    @Tab(title = "First tab"),
+    @Tab(title = "Second tab")
+
+})
 @DependsOnTab(query = "test-query", tabTitle = "First tab")
 @DependsOnTab(query = "test-query", tabTitle = "Second tab")
 @SuppressWarnings("unused")
 public class DependsOnTabAnnotation {
     @DialogField(label = "Field on the first tab")
     @TextField
-    @PlaceOnTab("First tab")
+    @Place("First tab")
     String field1;
 
     @DialogField(label = "Field on the second tab")
     @TextField
-    @PlaceOnTab("Second tab")
+    @Place("Second tab")
     String field2;
 }

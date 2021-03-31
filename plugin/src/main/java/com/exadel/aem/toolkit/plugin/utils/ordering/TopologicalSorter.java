@@ -133,8 +133,9 @@ class TopologicalSorter<T> {
 
     /**
      * Called by {@link TopologicalSorter#topologicalSort()} when there's no possibility to process all the nodes
-     * in a single run (due to a loop-like relation when e.g. two nodes refer to each other in their "before" hints). This
-     * method flattens the looped sequence so that a regular sort can be performed
+     * in a single run (due to a loop-like relation when e.g. two nodes refer to each other in their "before" hints).
+     * This method collects the nodes that are involved in a loop-like relation and composes a separate graph in order
+     * to perform another sorting run for these nodes separately
      * @param inDegrees Array of integer values defining the number of incoming edges
      * @return List of entities with the sorting applied
      */

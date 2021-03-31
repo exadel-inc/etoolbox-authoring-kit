@@ -30,10 +30,10 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomLegacyDialogAnnotation;
 
-@Handles(value = CustomDialogAnnotation.class)
-@SuppressWarnings("unused") // Used by ToolKit logic
+@Handles(value = CustomLegacyDialogAnnotation.class)
+@SuppressWarnings("deprecation") // References to DialogHandler, RuntimeContext are retained for compatibility
 public class LegacyCustomDialogHandler implements DialogHandler {
 
     @Override

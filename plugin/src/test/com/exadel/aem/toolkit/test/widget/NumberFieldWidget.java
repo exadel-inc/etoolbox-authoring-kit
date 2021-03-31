@@ -14,16 +14,18 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
-@Dialog(
-        name = DEFAULT_COMPONENT_NAME,
+@AemComponent(
+        path = DEFAULT_COMPONENT_NAME,
         title = "NumberField Widget Dialog"
 )
+@Dialog
 @SuppressWarnings("unused")
 public class NumberFieldWidget {
     @DialogField(label = "Valid number")

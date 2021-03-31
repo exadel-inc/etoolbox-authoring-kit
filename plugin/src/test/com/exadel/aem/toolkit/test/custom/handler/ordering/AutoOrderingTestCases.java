@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -35,7 +36,7 @@ public class AutoOrderingTestCases {
     }
 
     @Handles(value = CustomWidgetAutoOrder.class)
-    public static class CustomAutoOrder1 implements DialogWidgetHandler {
+    public static class CustomAutoOrder1 implements Handler {
 
         @Override
         public void accept(Source source, Target target) {
@@ -49,6 +50,7 @@ public class AutoOrderingTestCases {
     }
 
     @Handles(value = CustomWidgetAutoOrder.class)
+    @SuppressWarnings("deprecation") // Reference to DialogWidgetHandler retained for compatibility testing
     public static class CustomAutoOrder2 implements DialogWidgetHandler {
 
         @Override
@@ -60,7 +62,7 @@ public class AutoOrderingTestCases {
     }
 
     @Handles(CustomWidgetAutoOrder.class)
-    public static class CustomAutoOrder3 implements DialogWidgetHandler {
+    public static class CustomAutoOrder3 implements Handler {
 
         @Override
         public void accept(Source source, Target target) {

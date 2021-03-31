@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.test.component;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.widgets.FileUpload;
@@ -32,31 +33,37 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONEN
 
 @SuppressWarnings("unused")
 public class ValidationTestCases {
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = " ")
+    @AemComponent(path = DEFAULT_COMPONENT_NAME, title = " ")
+    @Dialog
     public static class InvalidTitleDialog {}
 
-    @Dialog(name = DEFAULT_COMPONENT_NAME)
+    @Dialog(name = DEFAULT_COMPONENT_NAME) // legacy "name" param is for compatibility testing
+    @SuppressWarnings("deprecation")
     public static class MissingTitleDialog {}
 
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @AemComponent(path = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @Dialog
     public static class InvalidNumberFieldDialog {
         @NumberField(value = "not-a-number", min = 0, max = 10)
         String number;
     }
 
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE) // legacy "name" param is for compatibility testing
+    @SuppressWarnings("deprecation")
     public static class InvalidImageUploadDialog {
         @ImageUpload(sizeLimit = -99)
         String image;
     }
 
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @AemComponent(path = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @Dialog
     public static class InvalidTextAreaDialog {
         @TextArea(rows = 0, cols = -99)
         String text;
     }
 
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @AemComponent(path = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @Dialog
     public static class InvalidRteCharactersDialog {
         @RichTextEditor(
                 specialCharacters = {
@@ -67,7 +74,8 @@ public class ValidationTestCases {
         String text;
     }
 
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @AemComponent(path = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @Dialog
     public static class InvalidRteParaformatDialog {
         @RichTextEditor(
                 formats = {
@@ -77,29 +85,34 @@ public class ValidationTestCases {
         String text;
     }
 
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @AemComponent(path = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @Dialog
     public static class InvalidPathDialog {
         @FileUpload(uploadUrl = "wrong path")
         String file;
     }
 
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @AemComponent(path = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @Dialog
     public static class InvalidDatePickerDialog {
         @DatePicker(minDate = @DateTimeValue(day = 1, month = 13, year = -1))
         String date;
     }
 
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @AemComponent(path = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @Dialog
     public static class InvalidCustomAnnotationDialog {
         @CustomWidgetAnnotationAuto(customColor = "yellow")
         String custom;
     }
 
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @AemComponent(path = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @Dialog
     @HtmlTag(tagName = "", className = "wrapper")
     public static class ComponentWithWrongHtmlTag1 {}
 
-    @Dialog(name = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @AemComponent(path = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @Dialog
     @HtmlTag(className = " ")
     public static class ComponentWithWrongHtmlTag2 {}
 }

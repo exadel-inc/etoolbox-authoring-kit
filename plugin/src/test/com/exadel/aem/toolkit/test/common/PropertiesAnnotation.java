@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.test.common;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
@@ -21,18 +22,20 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
+@AemComponent(
+    path = TestConstants.DEFAULT_COMPONENT_NAME,
+    title = "My AEM Component",
+    description = "The most awesome AEM component ever",
+    componentGroup = "my-brand-new-components",
+    templatePath = "/some/absolute/jcr/path",
+    resourceSuperType = "/path/to/resource",
+    cellName = "some-cell-name",
+    isContainer = true
+)
 @Dialog(
-        name = TestConstants.DEFAULT_COMPONENT_NAME,
-        title = "My AEM Component",
-        description = "The most awesome AEM component ever",
-        componentGroup = "my-brand-new-components",
-        templatePath = "/some/absolute/jcr/path",
-        resourceSuperType = "/path/to/resource",
-        cellName = "some-cell-name",
-        helpPath = "https://www.google.com/search?q=my+aem+component",
-        isContainer = true,
-        width = 800,
-        height = 600
+    helpPath = "https://www.google.com/search?q=my+aem+component",
+    width = 800,
+    height = 600
 )
 @SuppressWarnings("unused")
 public class PropertiesAnnotation {

@@ -17,8 +17,6 @@ package com.exadel.aem.toolkit.plugin.utils;
 import java.nio.file.Paths;
 
 public class TestConstants {
-    private TestConstants() {
-    }
 
     public static final String CONTENT_ROOT_PATH = "src/test/resources";
 
@@ -48,4 +46,7 @@ public class TestConstants {
     public static final String LABEL_TAB_5 = "Fifth tab";
     public static final String LABEL_TAB_6 = "Sixth tab";
     public static final String LABEL_TAB_7 = "Seventh tab";
+
+    private TestConstants() {
+    }
 }

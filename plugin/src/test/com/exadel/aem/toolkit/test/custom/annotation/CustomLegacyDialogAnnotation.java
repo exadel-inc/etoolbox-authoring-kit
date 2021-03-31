@@ -19,12 +19,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
 
-@Target({ElementType.FIELD,ElementType.METHOD})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@DialogWidgetAnnotation
-@ResourceType("test")
-public @interface CustomAnnotationForOrderingTest {
+@DialogAnnotation(source = "customDialogProcessing")
+@SuppressWarnings("deprecation")
+public @interface CustomLegacyDialogAnnotation {
 }

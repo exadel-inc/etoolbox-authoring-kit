@@ -16,12 +16,14 @@ package com.exadel.aem.toolkit.test.component;
 
 import java.util.List;
 
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
@@ -39,21 +41,15 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
-@SuppressWarnings("unused")
-@Dialog(
-        name = TestConstants.DEFAULT_COMPONENT_NAME,
+@AemComponent(
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
         title = "Component with external classes",
         description = "Component with external classes",
         componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
         resourceSuperType = "/resource/super/type",
-        tabs = {
-                @Tab(title = "Main tab"),
-                @Tab(title = ComponentWithRichTextAndExternalClasses.TAB_LINKS),
-                @Tab(title = ComponentWithRichTextAndExternalClasses.TAB_FEATURED_CARD_1),
-                @Tab(title = ComponentWithRichTextAndExternalClasses.TAB_FEATURED_CARD_2),
-        },
         disableTargeting = true
 )
+@Dialog
 @EditConfig(
         dropTargets = {
                 @DropTargetConfig(
@@ -85,6 +81,13 @@ import com.exadel.aem.toolkit.plugin.utils.TestConstants;
                 )
         }
 )
+@Tabs({
+    @Tab(title = "Main tab"),
+    @Tab(title = ComponentWithRichTextAndExternalClasses.TAB_LINKS),
+    @Tab(title = ComponentWithRichTextAndExternalClasses.TAB_FEATURED_CARD_1),
+    @Tab(title = ComponentWithRichTextAndExternalClasses.TAB_FEATURED_CARD_2)
+})
+@SuppressWarnings("unused")
 public class ComponentWithRichTextAndExternalClasses {
 
     static final String TAB_LINKS = "Links";
@@ -180,7 +183,7 @@ public class ComponentWithRichTextAndExternalClasses {
                     @RadioButton(text = LABEL_LINKS_LAYOUT_NUMBERED, value = VALUE_LINKS_LAYOUT_NUMBERED)
             }
     )
-    @PlaceOnTab(TAB_LINKS)
+    @Place(TAB_LINKS)
     private String linksLayout;
 
     @DialogField(
@@ -188,11 +191,11 @@ public class ComponentWithRichTextAndExternalClasses {
             label = LABEL_LINKS
     )
     @MultiField(value = SampleMultifieldBase.class)
-    @PlaceOnTab(TAB_LINKS)
+    @Place(TAB_LINKS)
     private List<SampleMultifieldBase> links;
 
     @FieldSet(namePrefix = PREFIX_FIRST)
-    @PlaceOnTab(TAB_FEATURED_CARD_1)
+    @Place(TAB_FEATURED_CARD_1)
     @Attribute(className = "first-card", data = {@Data(name = "data-name", value = "data-value")})
     private SampleFieldsetBase1 firstCard;
 
@@ -202,12 +205,12 @@ public class ComponentWithRichTextAndExternalClasses {
             description = DESCRIPTION_ENABLE_SECOND_CARD
     )
     @Switch
-    @PlaceOnTab(TAB_FEATURED_CARD_1)
+    @Place(TAB_FEATURED_CARD_1)
     private boolean enableSecondCard;
 
     @FieldSet(namePrefix = PREFIX_SECOND)
     @Attribute(data = {@Data(name = "second-data-name", value = "second-data-value")})
-    @PlaceOnTab(TAB_FEATURED_CARD_2)
+    @Place(TAB_FEATURED_CARD_2)
     private SampleFieldsetBase1 secondCard;
 
     @DialogField(
@@ -215,6 +218,6 @@ public class ComponentWithRichTextAndExternalClasses {
             label = LABEL_EXTENDED_LINKS
     )
     @MultiField(field = SampleMultifieldExtension.class)
-    @PlaceOnTab(TAB_LINKS)
+    @Place(TAB_LINKS)
     private List<SampleMultifieldBase> extendedLinks;
 }

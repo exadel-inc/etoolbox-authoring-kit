@@ -15,7 +15,6 @@
                 sling:resourceType="granite/ui/components/coral/foundation/tabs">
                 <items jcr:primaryType="nt:unstructured">
                     <mainTab
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Main tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -106,7 +105,6 @@
                         </items>
                     </mainTab>
                     <links
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Links"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -283,7 +281,6 @@
                         </items>
                     </links>
                     <featuredCard1
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Featured Card 1"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
@@ -393,7 +390,6 @@
                         </items>
                     </featuredCard1>
                     <featuredCard2
-                        granite:hidden="{Boolean}false"
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Featured Card 2"
                         sling:resourceType="granite/ui/components/coral/foundation/container">

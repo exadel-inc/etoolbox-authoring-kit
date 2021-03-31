@@ -14,8 +14,10 @@
 
 package com.exadel.aem.toolkit.test.component;
 
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
@@ -31,18 +33,20 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_4;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_5;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_6;
 
-@Dialog(name = TestConstants.DEFAULT_COMPONENT_NAME,
-        title = TestConstants.DEFAULT_COMPONENT_TITLE,
-        tabs = {
-            @Tab(title = LABEL_TAB_5),
-            @Tab(title = LABEL_TAB_6),
-        }
+@AemComponent(
+    path = TestConstants.DEFAULT_COMPONENT_NAME,
+    title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
+@Dialog
+@Tabs({
+    @Tab(title = LABEL_TAB_5),
+    @Tab(title = LABEL_TAB_6)
+})
 @Ignore(sections = {LABEL_TAB_4, LABEL_TAB_5})
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "deprecation"})
 public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedClassesAncestor {
 
-    @com.exadel.aem.toolkit.api.annotations.layouts.Tab(title = LABEL_TAB_1)
+    @com.exadel.aem.toolkit.api.annotations.container.Tab(title = LABEL_TAB_1) // legacy Tab is to test compatibility features
     private static class Tab1 {
         @DialogField(
                 label = "Field 1",
@@ -52,15 +56,15 @@ public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedC
         String field1;
     }
 
-    @com.exadel.aem.toolkit.api.annotations.layouts.Tab(title = LABEL_TAB_2)
+    @Tab(title = LABEL_TAB_2)
     private static class Tab2 {
         @DialogField(label="Field 2")
         @PathField(rootPath = "/content")
-        @PlaceOnTab("Second tab")
+        @Place("Second tab")
         String field2;
     }
 
-    @com.exadel.aem.toolkit.api.annotations.layouts.Tab(title = LABEL_TAB_3)
+    @Tab(title = LABEL_TAB_3)
     private static class Tab3 extends Tab1 {
         @DialogField(
                 label="Field 3",
@@ -72,7 +76,7 @@ public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedC
 
     @DialogField(ranking = -1)
     @TextField
-    @PlaceOnTab(LABEL_TAB_0)
+    @Place(LABEL_TAB_0)
     String field5;
 }
 
@@ -86,9 +90,10 @@ class ComponentWithTabsAsNestedClassesBase {
     }
 }
 
-@Dialog(
-        name = TestConstants.DEFAULT_COMPONENT_NAME,
-        title = TestConstants.DEFAULT_COMPONENT_TITLE,
-        tabs = @Tab(title = LABEL_TAB_4)
+@AemComponent(
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
+        title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
+@Dialog
+@Tabs(@Tab(title = LABEL_TAB_4))
 class ComponentWithTabsAsNestedClassesAncestor extends ComponentWithTabsAsNestedClassesBase {}

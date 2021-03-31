@@ -14,15 +14,17 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.AnchorButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.LinkCheckerVariant;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
-@Dialog(
-    name = TestConstants.DEFAULT_COMPONENT_NAME,
+@AemComponent(
+    path = TestConstants.DEFAULT_COMPONENT_NAME,
     title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
+@Dialog(title = TestConstants.DEFAULT_COMPONENT_TITLE + " 2")
 @SuppressWarnings("unused")
 public class AnchorButtonWidget {
 

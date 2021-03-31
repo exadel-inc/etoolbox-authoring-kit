@@ -14,14 +14,16 @@
 
 package com.exadel.aem.toolkit.test.widget;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Hidden;
 
-@Dialog(
-        name = "test-component",
+@AemComponent(
+        path = "test-component",
         title = "test-component-dialog"
 )
+@Dialog
 @SuppressWarnings("unused")
 public class HiddenWidget {
 

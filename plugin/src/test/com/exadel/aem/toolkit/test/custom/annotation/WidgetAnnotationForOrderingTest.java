@@ -19,10 +19,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 
-@Target(ElementType.TYPE)
+@Target({ElementType.FIELD,ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@DialogAnnotation(source = "customDialogProcessing")
-public @interface CustomDialogAnnotation {
+@ResourceType("test")
+public @interface WidgetAnnotationForOrderingTest {
 }

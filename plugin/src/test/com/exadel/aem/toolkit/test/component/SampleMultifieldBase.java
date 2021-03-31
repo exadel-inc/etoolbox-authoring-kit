@@ -14,7 +14,7 @@
 
 package com.exadel.aem.toolkit.test.component;
 
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
@@ -31,7 +31,7 @@ class SampleMultifieldBase {
             required = true
     )
     @TextField
-    @PlaceOnTab("Main tab")
+    @Place("Main tab")
     private String label;
 
     @DialogField(
@@ -43,7 +43,7 @@ class SampleMultifieldBase {
     @PathField(
             rootPath = "root/path"
     )
-    @PlaceOnTab("Main tab")
+    @Place("Main tab")
     private String url;
 
     @DialogField(
@@ -52,7 +52,7 @@ class SampleMultifieldBase {
             description = "Checkbox description"
     )
     @Checkbox
-    @PlaceOnTab("Main tab")
+    @Place("Main tab")
     private boolean checkbox;
 
     @DialogField(

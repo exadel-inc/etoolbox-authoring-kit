@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.test.component;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
@@ -44,10 +45,11 @@ public class InheritanceExceptionTestCases {
         private String text2; // will not cause an exception because of not being a rendering target
     }
 
-    @Dialog(
-            name = TestConstants.DEFAULT_COMPONENT_NAME,
-            title = TestConstants.DEFAULT_COMPONENT_TITLE
+    @AemComponent(
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
+        title = TestConstants.DEFAULT_COMPONENT_TITLE
     )
+    @Dialog
     public static class Child extends Parent {
         @DialogField(description = "Child.text1")
         @TextField
@@ -58,10 +60,11 @@ public class InheritanceExceptionTestCases {
         private String text2; // *will* cause an exception because placed above the field from grandparent class by ranking
     }
 
-    @Dialog(
-        name = TestConstants.DEFAULT_COMPONENT_NAME,
+    @AemComponent(
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
         title = TestConstants.DEFAULT_COMPONENT_TITLE
     )
+    @Dialog
     public static class Child2 extends Parent {
         @DialogField(description = "Child.text1")
         @TextArea

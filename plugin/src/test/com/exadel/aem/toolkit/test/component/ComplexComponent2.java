@@ -14,15 +14,16 @@
 
 package com.exadel.aem.toolkit.test.component;
 
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.ListenerConstants;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -54,13 +55,15 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_5;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_6;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_7;
 
-@Dialog(name = TestConstants.DEFAULT_COMPONENT_NAME,
-        title = TestConstants.DEFAULT_COMPONENT_TITLE,
-        description = TestConstants.DEFAULT_COMPONENT_DESCRIPTION,
-        componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
-        resourceSuperType = TestConstants.DEFAULT_COMPONENT_SUPERTYPE,
-        disableTargeting = true,
-        extraClientlibs = "cq.common.wcm")
+@AemComponent(
+    path = TestConstants.DEFAULT_COMPONENT_NAME,
+    title = TestConstants.DEFAULT_COMPONENT_TITLE,
+    description = TestConstants.DEFAULT_COMPONENT_DESCRIPTION,
+    componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
+    resourceSuperType = TestConstants.DEFAULT_COMPONENT_SUPERTYPE,
+    disableTargeting = true
+)
+@Dialog(extraClientlibs = "cq.common.wcm")
 @Tabs({
     @Tab(title = LABEL_TAB_1),
     @Tab(title = LABEL_TAB_2),
@@ -192,7 +195,7 @@ public class ComplexComponent2 {
             description = "description enable gradient"
     )
     @Checkbox(checked = true)
-    @PlaceOnTab(LABEL_TAB_2)
+    @Place(LABEL_TAB_2)
     private Boolean gradient;
 
     @DialogField(
@@ -202,7 +205,7 @@ public class ComplexComponent2 {
             required = true
     )
     @TextField
-    @PlaceOnTab(LABEL_TAB_3)
+    @Place(LABEL_TAB_3)
     private String mediaText;
 
     @DialogField(
@@ -212,7 +215,7 @@ public class ComplexComponent2 {
             required = true
     )
     @TextField
-    @PlaceOnTab(LABEL_TAB_3)
+    @Place(LABEL_TAB_3)
     private String textContent;
 
     @DialogField
@@ -220,12 +223,12 @@ public class ComplexComponent2 {
             @Data(name = "feed-dialog", value = "1")
     })
     @FieldSet(namePrefix = FEED_1, title = "Feed first")
-    @PlaceOnTab(LABEL_TAB_4)
+    @Place(LABEL_TAB_4)
     private FeedFieldSet feedFirst;
 
     @DialogField
     @FieldSet(namePrefix = FEED_1, title = "Feed first element")
-    @PlaceOnTab(LABEL_TAB_4)
+    @Place(LABEL_TAB_4)
     private ElementFieldSet feedFirstElement;
 
     @DialogField(
@@ -234,18 +237,18 @@ public class ComplexComponent2 {
             description = "description enable feed 1"
     )
     @Switch
-    @PlaceOnTab(LABEL_TAB_4)
+    @Place(LABEL_TAB_4)
     private boolean enableFeedFirst;
 
     @DialogField()
     @Attribute(data = {@Data(name = "feed-dialog", value = "2")})
     @FieldSet(namePrefix = FEED_2_1, title = "Feed", namePostfix = "/postfix")
-    @PlaceOnTab(LABEL_TAB_4)
+    @Place(LABEL_TAB_4)
     private FeedFieldSet feed;
 
     @DialogField
     @FieldSet(namePrefix = FEED_2_2, title = "Feed Second Element")
-    @PlaceOnTab(LABEL_TAB_4)
+    @Place(LABEL_TAB_4)
     private ElementFieldSet feedSecondElement;
 
     @DialogField(
@@ -254,12 +257,12 @@ public class ComplexComponent2 {
             description = "description enable primary element"
     )
     @Switch
-    @PlaceOnTab(LABEL_TAB_5)
+    @Place(LABEL_TAB_5)
     private boolean primaryElementEnable;
 
     @DialogField
     @FieldSet(namePrefix = PRIMARY, title = PRIMARY_ELEMENT_LABEL)
-    @PlaceOnTab(LABEL_TAB_5)
+    @Place(LABEL_TAB_5)
     private ElementIconFieldSet primaryElement;
 
     @DialogField(
@@ -268,12 +271,12 @@ public class ComplexComponent2 {
             description = "description enable secondary element"
     )
     @Switch
-    @PlaceOnTab(LABEL_TAB_5)
+    @Place(LABEL_TAB_5)
     private boolean secondaryElementEnable;
 
     @DialogField()
     @FieldSet(namePrefix = SECONDARY, title = SECONDARY_ELEMENT_LABEL)
-    @PlaceOnTab(LABEL_TAB_5)
+    @Place(LABEL_TAB_5)
     private ElementIconFieldSet secondaryElement;
 
     @DialogField(
@@ -282,12 +285,12 @@ public class ComplexComponent2 {
             description = "description enable video element"
     )
     @Switch
-    @PlaceOnTab(LABEL_TAB_5)
+    @Place(LABEL_TAB_5)
     private boolean videoElementEnable;
 
     @DialogField
     @FieldSet(title = VIDEO_ELEMENT_LABEL, namePrefix = "pre", namePostfix = "fix")
-    @PlaceOnTab(LABEL_TAB_5)
+    @Place(LABEL_TAB_5)
     private VideoElementFieldSet videoElement;
 
     @DialogField(
@@ -296,7 +299,7 @@ public class ComplexComponent2 {
             required = true
     )
     @ImageUpload(sizeLimit = 100L)
-    @PlaceOnTab(LABEL_TAB_6)
+    @Place(LABEL_TAB_6)
     private String imagePath;
 
     @DialogField(
@@ -306,7 +309,7 @@ public class ComplexComponent2 {
     )
     @ImageUpload(sizeLimit = 0L)
     @Extends(value = ComplexComponent2.class, field = "imagePath")
-    @PlaceOnTab(LABEL_TAB_6)
+    @Place(LABEL_TAB_6)
     private String productImagePath;
 
     @DialogField(
@@ -315,7 +318,7 @@ public class ComplexComponent2 {
             description = "descriptionEnableWidget"
     )
     @Checkbox
-    @PlaceOnTab(LABEL_TAB_7)
+    @Place(LABEL_TAB_7)
     private boolean enableWidget;
 
     @DialogField(
@@ -324,7 +327,7 @@ public class ComplexComponent2 {
             description = "description widget"
     )
     @PathField
-    @PlaceOnTab(LABEL_TAB_7)
+    @Place(LABEL_TAB_7)
     private String widget;
 
 
@@ -413,8 +416,8 @@ public class ComplexComponent2 {
 
         @DialogField(
                 name = "field_feed_channel",
-                label = "label feed chanel",
-                description = "description feed chanel",
+                label = "label feed channel",
+                description = "description feed channel",
                 required = true
         )
         @PathField(rootPath = "/root/path")
