@@ -20,24 +20,39 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 
+/**
+ * Implements {@link Source} to expose metadata specific for the underlying annotation
+ */
 public class AnnotationSourceImpl extends AdaptationBase<Source> implements Source {
     private final Annotation value;
 
+    /**
+     * Initializes a class instance storing a reference to the {@code Annotation} object that serves as the metadata source
+     */
     public AnnotationSourceImpl(Annotation value) {
         super(Source.class);
         this.value = value;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return value != null ? value.annotationType().getName() : StringUtils.EMPTY;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isValid() {
         return value != null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <A> A adaptTo(Class<A> adaptation) {
         if (adaptation == null) {

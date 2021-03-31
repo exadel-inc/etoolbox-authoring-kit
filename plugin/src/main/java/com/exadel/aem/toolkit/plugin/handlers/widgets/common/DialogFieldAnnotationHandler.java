@@ -46,7 +46,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         String name = StringUtils.defaultIfEmpty(
             getNameByDialogFieldProperty(dialogField),
             NamingUtil.stripGetterPrefix(source.getName()));
-        String slingSuffix = getSuffixByDialogFieldProperty(dialogField);
+        String slingSuffix = getSlingSuffixByDialogFieldProperty(dialogField);
 
         String prefix = target.getNamePrefix();
         // In case there are multiple sources in multifield container, their "name" values must not be preceded
@@ -89,7 +89,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
      * @param dialogField {@code DialogField} instance
      * @return String value (empty string is returned if no Sling suffix found)
      */
-    private static String getSuffixByDialogFieldProperty(DialogField dialogField) {
+    private static String getSlingSuffixByDialogFieldProperty(DialogField dialogField) {
         if (!StringUtils.contains(dialogField.name(), CoreConstants.SEPARATOR_AT)) {
             return StringUtils.EMPTY;
         }

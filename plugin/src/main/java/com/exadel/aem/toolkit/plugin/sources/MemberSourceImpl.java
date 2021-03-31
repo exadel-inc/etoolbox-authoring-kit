@@ -22,23 +22,35 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 
+/**
+ * Presents an abstract implementation of {@link Source} that exposes metadata specific for the underlying class member
+ */
 public abstract class MemberSourceImpl extends SourceImpl implements MemberSource {
 
     private final Class<?> reportingClass;
 
+    /**
+     * Initializes a class instance storing a reference to the {@code Class} the current member is reported by
+     * @param reportingClass {@code Class} reference
+     */
     MemberSourceImpl(Class<?> reportingClass) {
         this.reportingClass = reportingClass;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Class<?> getReportingClass() {
         return this.reportingClass;
     }
 
-    abstract Class<?> getPlainReturnType();
-
+    /**
+     * {@inheritDoc}
+     */
     @SuppressWarnings("deprecation") // Usage of Multifield#field is retained for compatibility and will be removed after v. 2.0.1
     @Override
     public Class<?> getValueType() {
@@ -58,6 +70,17 @@ public abstract class MemberSourceImpl extends SourceImpl implements MemberSourc
         return result;
     }
 
+    /**
+     * Retrieves the return type of the underlying Java class member (field or method). If the class member returns
+     * an array value, or a collection, the type of an array/collection element is returned.
+     * @return Non-null {@code Class} reference
+     */
+    abstract Class<?> getPlainReturnType();
+
+    /**
+     * Gets whether the current class member has a widget annotation - the one with {@code sling:resourceType} specified
+     * @return True or false
+     */
     boolean isWidgetAnnotationPresent() {
         return Arrays.stream(adaptTo(Annotation[].class))
             .anyMatch(annotation -> annotation.annotationType().isAnnotationPresent(ResourceType.class)

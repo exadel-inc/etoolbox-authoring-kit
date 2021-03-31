@@ -311,6 +311,9 @@ public class AnnotationUtil {
             this.extensionMethods = extensionMethods;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) {
             if (source == null && method.getName().equals(METHOD_TO_STRING)) {

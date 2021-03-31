@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.exceptions;
 
 /**
@@ -19,7 +18,13 @@ package com.exadel.aem.toolkit.plugin.exceptions;
  * such as a custom handler
  */
 public class ExtensionApiException extends RuntimeException {
-    public ExtensionApiException(Class<?> customType, Exception cause) {
-        super("Could not invoke " + customType.getName(), cause);
+
+    /**
+     * Initializes a class instance with a reference to the failed class and an exception cause specified
+     * @param value Non-null {@code Class} object
+     * @param cause Non-null {@code Exception} object
+     */
+    public ExtensionApiException(Class<?> value, Exception cause) {
+        super("Could not invoke " + value.getName(), cause);
     }
 }

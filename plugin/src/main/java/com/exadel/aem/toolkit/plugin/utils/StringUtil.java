@@ -61,7 +61,7 @@ public class StringUtil {
     private StringUtil() {
     }
 
-/* ----------------------
+    /* ----------------------
        Formatting plain types
        ---------------------- */
 

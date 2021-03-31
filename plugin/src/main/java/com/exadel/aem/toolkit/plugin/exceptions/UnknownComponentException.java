@@ -11,18 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.exceptions;
 
 import java.nio.file.Path;
 
 /**
- * Represents the plugin-specific exception thrown when a processable (not out-filtered) Java component
- * doesn't meet a component folder
+ * Represents the plugin-specific exception thrown when a processable Java component does not match a component folder
  * in the package
  */
 public class UnknownComponentException extends RuntimeException {
-    public UnknownComponentException(Path path) {
-        super(String.format("Component at %s not present in the package", path));
+
+    /**
+     * Initializes a class instance with the component's path specified
+     * @param value Non-null {@code Path} object
+     */
+   public UnknownComponentException(Path value) {
+        super(String.format("Component at %s not present in the package", value));
     }
 }

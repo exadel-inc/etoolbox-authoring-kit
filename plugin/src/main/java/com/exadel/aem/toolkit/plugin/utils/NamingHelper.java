@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 /**
  * Helper class for creating standard compliant names for XML entities designed to work together
- * with the {@link NamingUtil}
+ * with {@link NamingUtil}
  */
 class NamingHelper {
     private static final String VERB_SEPARATOR = "_";
@@ -111,11 +111,11 @@ class NamingHelper {
     }
 
     /**
-     * Creates an XML compliant node name that is unique among children of  a specified XNL element by optionally adding
+     * Creates an XML compliant node name that is unique among children of a specified entity by optionally adding
      * an incremental number index to the name
      * @param source String value to test and optionally transform
      * @param defaultValue String value to be used as a default or a valid prefix
-     * @param context {@code Element} instance to search for existing child nodes
+     * @param context {@code Target} instance to search for existing child nodes
      * @return String value
      */
     String getUniqueName(String source, String defaultValue, Target context) {
@@ -130,6 +130,14 @@ class NamingHelper {
         return result;
     }
 
+    /**
+     * Creates an XML compliant node name that is unique among children of a specified entity by optionally adding
+     * an incremental number index to the name
+     * @param source String value to test and optionally transform
+     * @param defaultValue String value to be used as a default or a valid prefix
+     * @param context {@code Element} instance to search for existing child nodes
+     * @return String value
+     */
     String getUniqueName(String source, String defaultValue, Element context) {
         String result = getValidName(source, defaultValue);
         if (context == null) {

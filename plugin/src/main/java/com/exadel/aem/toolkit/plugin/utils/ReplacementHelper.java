@@ -35,9 +35,10 @@ import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
- * Helper class used in {@code Source} processing stream for managing replacements as set by user
+ * Helper class used in {@code Source} processing stream for managing source replacements as set by user. Designed to
+ * work with {@link ClassUtil}
  */
-public class ReplacementHelper {
+class ReplacementHelper {
     private static final SourceReplacingCollector SOURCE_REPLACING = new SourceReplacingCollector();
 
     private final List<Source> internal;
@@ -97,22 +98,40 @@ public class ReplacementHelper {
         return result;
     }
 
+    /**
+     * Retrieves the {@code Collector} instance performing  replacements in the stream of {@code Source}s as
+     * determined by the {@link Replace} annotations managed by the {@code Source} objects. The collector complies
+     * with the Java Stream API so that it serves as the terminal operator in a {@code .collect()} method call
+     * @return {@code Collector} object
+     */
     public static Collector<Source, ReplacementHelper, List<Source>> processSourceReplace() {
         return SOURCE_REPLACING;
     }
 
+    /**
+     * Implements {@code Collector<Source, ReplacementHelper, List<Source>>} to run the replacements as determined by
+     * the {@link Replace} annotations managed by the {@code Source} objects
+     */
     private static class SourceReplacingCollector implements Collector<Source, ReplacementHelper, List<Source>> {
-
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Supplier<ReplacementHelper> supplier() {
             return ReplacementHelper::new;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public BiConsumer<ReplacementHelper, Source> accumulator() {
             return (left, right) -> left.internal.add(right);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public BinaryOperator<ReplacementHelper> combiner() {
             return (left, right) -> {
@@ -121,11 +140,17 @@ public class ReplacementHelper {
             };
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Function<ReplacementHelper, List<Source>> finisher() {
             return ReplacementHelper::processInternal;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Set<Characteristics> characteristics() {
             return Sets.immutableEnumSet(Characteristics.UNORDERED);

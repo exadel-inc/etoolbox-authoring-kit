@@ -32,7 +32,6 @@ public class MemberUtil {
     /**
      * Default (instantiation-restricting) constructor
      */
-
     private MemberUtil() {
     }
 

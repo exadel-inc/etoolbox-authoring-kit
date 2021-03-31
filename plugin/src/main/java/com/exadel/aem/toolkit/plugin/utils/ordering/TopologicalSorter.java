@@ -21,16 +21,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Implements topological sorting
- * {@code List<Orderable<T>>} is a collection of nodes that will be sorted
- * {@code List<List<Orderable<T>>>} is a collection of ordered lists used to represent a finite graph.
- * Each list describes the list of neighbors of a node in the graph
+ * Implements topological sorting for the {@link OrderingUtil} methods. The two collections are internally managed:
+ * {@code List<Orderable<T>>} - a collection of entities that must be sorted; and {@code List<List<Orderable<T>>>} -
+ * a collection of ordered lists used to represent a finite graph (each list describing neighbors of a node in the graph)
+ * @param <T> Type of the sorted entities
+ * @see OrderingUtil
  */
 class TopologicalSorter<T> {
 
     private final List<Orderable<T>> nodes;
     private final List<List<Orderable<T>>> adjacencyList;
 
+    /**
+     * Initializes a class instance
+     * @param nodes Collection of entities to be sorted
+     */
     public TopologicalSorter(List<Orderable<T>> nodes) {
         this.nodes = nodes;
         this.adjacencyList = new ArrayList<>(this.nodes.size());
@@ -41,6 +46,10 @@ class TopologicalSorter<T> {
         initAdjacencyList();
     }
 
+    /**
+     * Performs the main sorting routine
+     * @return List of entities with the sorting applied
+     */
     public List<Orderable<T>> topologicalSort() {
         // Array to store how much edges incoming to the i node
         int[] inDegrees = new int[this.nodes.size()];
@@ -97,6 +106,9 @@ class TopologicalSorter<T> {
         return sortedOrder;
     }
 
+    /**
+     * Initializes the collection of ordered lists used to represent a finite graph
+     */
     private void initAdjacencyList() {
         for (int i = 0; i < this.nodes.size(); i++) {
             Orderable<T> currNode = this.nodes.get(i);
@@ -119,6 +131,13 @@ class TopologicalSorter<T> {
         }
     }
 
+    /**
+     * Called by {@link TopologicalSorter#topologicalSort()} when there's no possibility to process all the nodes
+     * in a single run (due to a loop-like relation when e.g. two nodes refer to each other in their "before" hints). This
+     * method flattens the looped sequence so that a regular sort can be performed
+     * @param inDegrees Array of integer values defining the number of incoming edges
+     * @return List of entities with the sorting applied
+     */
     private List<Orderable<T>> sortLoop(int[] inDegrees) {
         List<Orderable<T>> loopNodes = new ArrayList<>();
         for (int i = 0; i < this.nodes.size(); i++) {

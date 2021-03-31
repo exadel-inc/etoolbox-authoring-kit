@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.exceptions.handlers;
 
 import java.util.List;
@@ -25,8 +24,8 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Implements the "selective" kind of {@link com.exadel.aem.toolkit.api.runtime.ExceptionHandler}, that is, the one
- * that throws {@link com.exadel.aem.toolkit.plugin.exceptions.PluginException}s and so terminates Maven workflow
- * in case one of the specific internal exceptions (listed ln constructor's on;ly argument) is thrown, and otherwise
+ * that throws {@link com.exadel.aem.toolkit.plugin.exceptions.PluginException}s and so terminates a Maven workflow
+ * in case one of the specific internal exceptions (listed ln constructor's only argument) is thrown, or otherwise
  * falls back to {@code PermissiveExceptionHandler} behavior
  */
 class SelectiveExceptionHandler extends PermissiveExceptionHandler {
@@ -35,6 +34,10 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
 
     private final List<String> exceptionTokens;
 
+    /**
+     * Initializes an instance of {@code SelectiveExceptionHandler} with pre-defined exception qualifiers
+     * @param exceptionTokens {@code List} of string values
+     */
     SelectiveExceptionHandler(List<String> exceptionTokens) {
         this.exceptionTokens = exceptionTokens;
     }
@@ -53,6 +56,9 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
         super.handle(message, cause);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean shouldTerminateOn(Class<? extends Exception> exceptionType) {
         for (String exceptionToken : exceptionTokens) {

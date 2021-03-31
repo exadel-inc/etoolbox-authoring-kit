@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.adapters;
 
 import java.lang.annotation.Annotation;
@@ -36,7 +35,7 @@ public class ResourceTypeSetting {
     private final Source wrappedSource;
 
     /**
-     * Constructor per {@link Adaptable} contract
+     * Instance constructor per the {@link Adaptable} contract
      * @param source {@code Source} object that will be used for extracting resource type
      */
     public ResourceTypeSetting(Source source) {

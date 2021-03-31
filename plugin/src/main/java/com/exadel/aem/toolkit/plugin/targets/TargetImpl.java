@@ -46,6 +46,10 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 
+/**
+ * Implements {@link Target} to manage a tree-like data structure that is further rendered in a Granite UI component
+ * or a component configurations
+ */
 public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     private static final String PARENT_PATH = "..";
@@ -68,7 +72,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     private String scope;
 
     /**
-     * Default constructor
+     * Initializes a class instance with the instance name and parent reference specified
      * @param name Non-blank string representing the name of the new instance
      * @param parent Nullable {@code Target} object that will serve as the parent reference
      */

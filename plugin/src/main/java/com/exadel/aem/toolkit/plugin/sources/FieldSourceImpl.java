@@ -20,47 +20,78 @@ import java.lang.reflect.Modifier;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 
+/**
+ * Implements {@link Source} to expose metadata specific for the underlying class field
+ */
 public class FieldSourceImpl extends MemberSourceImpl {
 
     private final Field field;
 
+    /**
+     * Initializes a class instance with references to the managed field and the {@code Class} the current field is
+     * reported by
+     * @param field {@code Field} object
+     * @param reportingClass {@code Class} reference
+     */
     public FieldSourceImpl(Field field, Class<?> reportingClass) {
         super(reportingClass);
         this.field = field;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return field != null ? field.getName() : StringUtils.EMPTY;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Class<?> getDeclaringClass() {
         return field != null ? field.getDeclaringClass() : null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     Class<?> getPlainReturnType() {
         return MemberUtil.getPlainType(field);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     Annotation[] getDeclaredAnnotations() {
         return field != null ? field.getDeclaredAnnotations() : null;
     }
 
-    @Override
-    <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
-        return field != null ? field.getDeclaredAnnotation(annotationClass) : null;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass) {
         return field != null ? field.getAnnotationsByType(annotationClass) : null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
+        return field != null ? field.getDeclaredAnnotation(annotationClass) : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isValid() {
         return field != null
@@ -69,6 +100,9 @@ public class FieldSourceImpl extends MemberSourceImpl {
             && isWidgetAnnotationPresent();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T adaptTo(Class<T> adaptation) {
         if (adaptation.equals(Field.class) || adaptation.equals(Member.class)) {

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.exceptions.handlers;
 
 import org.apache.commons.lang3.ClassUtils;
@@ -23,7 +22,7 @@ import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
 /**
  * Implements the "permissive" kind of {@link com.exadel.aem.toolkit.api.runtime.ExceptionHandler}, that is, the one
  * that never throws {@link com.exadel.aem.toolkit.plugin.exceptions.PluginException}s and therefore doesn't terminate
- * Maven workflow
+ * a Maven workflow
  */
 class PermissiveExceptionHandler implements ExceptionHandler {
     static final Logger LOG = LoggerFactory.getLogger("EToolbox Authoring Kit");
@@ -43,6 +42,9 @@ class PermissiveExceptionHandler implements ExceptionHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean shouldTerminateOn(Class<? extends Exception> exceptionType) {
         return false;

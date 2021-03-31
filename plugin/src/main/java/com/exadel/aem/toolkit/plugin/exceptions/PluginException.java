@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.exceptions;
 
 /**
@@ -19,13 +18,21 @@ package com.exadel.aem.toolkit.plugin.exceptions;
  * maven build workflow as required
  */
 public class PluginException extends RuntimeException {
-    public PluginException(String message) {
-        super(message);
+
+    /**
+     * Initializes a class instance with an exception message specified
+     * @param value String value, non-blank
+     */
+    public PluginException(String value) {
+        super(value);
     }
-    public PluginException(Exception cause) {
-        super(cause);
-    }
-    public PluginException(String message, Exception cause) {
-        super(message, cause);
+
+    /**
+     * Initializes a class instance with an exception message and a cause specified
+     * @param value String value, non-blank
+     * @param cause Non-null {@code Exception} object
+     */
+    public PluginException(String value, Exception cause) {
+        super(value, cause);
     }
 }
