@@ -34,6 +34,7 @@ import com.day.cq.tagging.Tag;
 import com.day.cq.tagging.TagConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
@@ -56,8 +57,8 @@ class Option {
     private String[] attributeMembers;
     private String[] attributes;
 
-    private StringTransform textTransform;
-    private StringTransform valueTransform;
+    private StringTransformation textTransform;
+    private StringTransformation valueTransform;
 
     /**
      * Default (instantiation-restricting) constructor
@@ -146,7 +147,7 @@ class Option {
             Arrays.stream(attributeMembers)
                     .filter(StringUtils::isNotBlank)
                     .forEach(attributeMember -> {
-                        String attributeValue = getCustomAttribute(attributeMember, StringTransform.NONE);
+                        String attributeValue = getCustomAttribute(attributeMember, StringTransformation.NONE);
                         if (StringUtils.isNotBlank(attributeValue)) {
                             result.put(attributeMember.replace(CoreConstants.SEPARATOR_COLON, CoreConstants.SEPARATOR_HYPHEN), attributeValue);
                         }
@@ -165,11 +166,11 @@ class Option {
 
     /**
      * Used to retrieve this option's text or value property, or a custom attribute of an underlying JCR resource
-     * @param attributeMember Reference to either {@code textMember} or {@code valueMember}, or an {@code attributeMember} values
-     * @param attributeTransform Reference to either {@code textTransform} or {@code valueTransform} values
+     * @param attributeMember Reference to either {@code textMember} or {@code valueMember}, or {@code attributeMember} value
+     * @param attributeTransform Reference to either {@code textTransform} or {@code valueTransform} value
      * @return String value, or an empty string
      */
-    private String getCustomAttribute(String attributeMember, StringTransform attributeTransform) {
+    private String getCustomAttribute(String attributeMember, StringTransformation attributeTransform) {
         if (!isValid(resource)) {
             return StringUtils.EMPTY;
         } else if (CoreConstants.PARAMETER_ID.equals(attributeMember)) {
@@ -177,15 +178,18 @@ class Option {
         } else if (CoreConstants.PARAMETER_NAME.equals(attributeMember)) {
             return resource.getName();
         }
-        // if [textMember]-valued or [valueMember]-valued attribute not found within this Resource, there's still
+        // Tf [textMember]-valued or [valueMember]-valued attribute not found within this Resource, there's still
         // a chance that it may be found under jcr:content subnode (relevant for the case when current option is an
-        // "ordinary" page or similar resource
+        // "ordinary" page or a similar resource
         Resource effectiveResource = resource;
         if (!effectiveResource.getValueMap().containsKey(attributeMember) && effectiveResource.getChild(JcrConstants.JCR_CONTENT) != null) {
             effectiveResource = effectiveResource.getChild(JcrConstants.JCR_CONTENT);
         }
         String result = Objects.requireNonNull(effectiveResource).getValueMap().get(attributeMember, StringUtils.EMPTY);
-        return attributeTransform.getTransformation().apply(result);
+        if (StringUtils.isBlank(result) || attributeTransform == null) {
+            return result;
+        }
+        return attributeTransform.apply(result);
     }
 
     /**
@@ -265,12 +269,12 @@ class Option {
             return this;
         }
 
-        Builder textTransform(StringTransform value) {
+        Builder textTransform(StringTransformation value) {
             dataSourceOption.textTransform = value;
             return this;
         }
 
-        Builder valueTransform(StringTransform value) {
+        Builder valueTransform(StringTransformation value) {
             dataSourceOption.valueTransform = value;
             return this;
         }
@@ -283,10 +287,10 @@ class Option {
                 dataSourceOption.valueMember = CoreConstants.PN_VALUE;
             }
             if (dataSourceOption.textTransform == null) {
-                dataSourceOption.textTransform = StringTransform.NONE;
+                dataSourceOption.textTransform = StringTransformation.NONE;
             }
             if (dataSourceOption.valueTransform == null) {
-                dataSourceOption.valueTransform = StringTransform.NONE;
+                dataSourceOption.valueTransform = StringTransformation.NONE;
             }
             return dataSourceOption;
         }

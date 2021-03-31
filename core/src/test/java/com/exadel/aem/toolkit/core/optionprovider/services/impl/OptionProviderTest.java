@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
 
@@ -80,8 +81,8 @@ public class OptionProviderTest {
         Assert.assertEquals("none", StringUtils.substringAfter(parameters.getPrependOptions()[0], ":"));
         Assert.assertEquals("prefix\\\\:value", StringUtils.substringAfter(parameters.getAppendOptions()[0], ":"));
         // Checking transform params
-        Assert.assertEquals(StringTransform.UPPERCASE, parameters.getPathParameters().get(0).getTextTransform());
-        Assert.assertEquals(StringTransform.LOWERCASE, parameters.getPathParameters().get(1).getValueTransform());
+        Assert.assertEquals(StringTransformation.UPPERCASE, parameters.getPathParameters().get(0).getTextTransform());
+        Assert.assertEquals(StringTransformation.LOWERCASE, parameters.getPathParameters().get(1).getValueTransform());
 
         // Checking 'sorted' param
         Assert.assertTrue(parameters.isSorted());

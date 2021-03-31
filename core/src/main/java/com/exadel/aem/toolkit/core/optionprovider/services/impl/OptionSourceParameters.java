@@ -32,6 +32,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
 
@@ -210,17 +211,17 @@ public class OptionSourceParameters {
 
 
     /**
-     * Gets {@link StringTransform} instance from the user-provided string
+     * Retrieves a {@link StringTransformation} instance from the user-provided string
      * @param source User-provided value
      * @param altSource Alternative source to use in case {@code source} is blank
-     * @return {@code TextTransform} value
+     * @return {@code StringTransformation} value
      */
-    private static StringTransform getTransformValue(String source, String altSource) {
+    private static StringTransformation getTransformValue(String source, String altSource) {
         String effectiveSource = StringUtils.defaultIfBlank(source, altSource);
-        StringTransform result = EnumUtils.getEnum(StringTransform.class,
-                StringUtils.defaultIfBlank(effectiveSource, StringTransform.NONE.toString()).toUpperCase());
+        StringTransformation result = EnumUtils.getEnum(StringTransformation.class,
+                StringUtils.defaultIfBlank(effectiveSource, StringTransformation.NONE.toString()).toUpperCase());
         if (result == null) {
-            result = StringTransform.NONE;
+            result = StringTransformation.NONE;
         }
         return result;
     }

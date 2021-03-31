@@ -17,6 +17,7 @@ package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
 
 /**
@@ -33,8 +34,8 @@ class PathParameters {
     private String[] attributes;
     private String[] attributeMembers;
 
-    private StringTransform textTransform;
-    private StringTransform valueTransform;
+    private StringTransformation textTransform;
+    private StringTransformation valueTransform;
 
     /**
      * Default (private) constructor
@@ -94,7 +95,7 @@ class PathParameters {
      * Gets the user-specified {@code textTransform} setting parsed to a string array
      * @return String value
      */
-    StringTransform getTextTransform() {
+    StringTransformation getTextTransform() {
         return textTransform;
     }
 
@@ -102,7 +103,7 @@ class PathParameters {
      * Gets the user-specified {@code valueTransform} setting parsed to a string array
      * @return String value
      */
-    StringTransform getValueTransform() {
+    StringTransformation getValueTransform() {
         return valueTransform;
     }
 
@@ -154,12 +155,12 @@ class PathParameters {
             return this;
         }
 
-        Builder textTransform(StringTransform value) {
+        Builder textTransform(StringTransformation value) {
             optionSourcePathParameters.textTransform = value;
             return this;
         }
 
-        Builder valueTransform(StringTransform value) {
+        Builder valueTransform(StringTransformation value) {
             optionSourcePathParameters.valueTransform = value;
             return this;
         }

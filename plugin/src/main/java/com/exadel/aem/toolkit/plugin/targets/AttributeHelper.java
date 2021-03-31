@@ -26,7 +26,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
-import com.google.common.base.CaseFormat;
 
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
@@ -68,7 +67,7 @@ public class AttributeHelper<T, V> {
     /**
      * Creates a new {@code AttributeSettingHelper} instance parametrized with holder type and value type
      * @param holderType Type of attribute holder
-     * @param valueType Type of value to be stored
+     * @param valueType  Type of value to be stored
      */
     private AttributeHelper(Class<T> holderType, Class<V> valueType) {
         this.holderType = holderType;
@@ -103,7 +102,7 @@ public class AttributeHelper<T, V> {
 
 
     /**
-     * Stores attribute value defined by the wrapped {@code Annotation} property to the given target
+     * Stores the attribute value defined by the wrapped {@code Annotation} property to the given target
      * @param target Value holder instance
      */
     public void setTo(T target) {
@@ -126,7 +125,7 @@ public class AttributeHelper<T, V> {
     }
 
     /**
-     * Stores provided attribute value to the given target
+     * Stores the provided attribute value to the given target
      * @param value  Value to store
      * @param target Value holder instance
      */
@@ -145,7 +144,7 @@ public class AttributeHelper<T, V> {
     }
 
     /**
-     * Stores provided attribute value collection to the given target
+     * Stores the provided attribute values collection to the given target
      * @param value  Value to store
      * @param target Value holder instance
      */
@@ -166,8 +165,8 @@ public class AttributeHelper<T, V> {
 
 
     /**
-     * Assigns {@code String}-casted attribute value to the given target
-     * @param value String to store as the attribute
+     * Assigns a {@code String}-casted attribute value to the given target
+     * @param value  String to store as the attribute
      * @param target Value holder instance
      */
     private void setValue(String value, T target) {
@@ -225,7 +224,7 @@ public class AttributeHelper<T, V> {
 
 
     /**
-     * Tries to cast generic value to current instance's type
+     * Tries to cast a generic value to the current instance's type
      * @param value Raw value
      * @return Type-casted value, or null
      */
@@ -234,16 +233,16 @@ public class AttributeHelper<T, V> {
             return null;
         }
         if (isEnum) {
-            return valueType.cast(transform(value.toString(), transformation));
+            return valueType.cast(transform(transformation, value.toString()));
         } else if (valueType.equals(String.class)) {
-            String result = transform(valueType.cast(value).toString(), transformation);
+            String result = transform(transformation, valueType.cast(value).toString());
             return valueType.cast(result);
         }
         return valueType.cast(value);
     }
 
     /**
-     * Casts generic value to the array possessing entries of current instance's type
+     * Casts a generic value to the array possessing entries of current instance's type
      * @param value Raw value
      * @return Array of type-casted values
      */
@@ -256,26 +255,16 @@ public class AttributeHelper<T, V> {
     }
 
     /**
-     * Transform an {@code enum} value to uppercase, lowercase or camel-case
-     * depending on particular AEM component's specification
-     * @param value Raw string value
+     * Applies an optional user-set transformation to the provided attribute value casted to string
      * @param transformation {@link StringTransformation} variant
+     * @param value          Raw string value
      * @return Transformed string value
      */
-    private static String transform(String value, StringTransformation transformation) {
-        if (transformation == null || StringUtils.isBlank(value)) {
+    private static String transform(StringTransformation transformation, String value) {
+        if (transformation == null) {
             return value;
         }
-        switch (transformation) {
-            case LOWERCASE:
-                return value.toLowerCase();
-            case UPPERCASE:
-                return value.toUpperCase();
-            case CAMELCASE:
-                return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, value.toLowerCase());
-            default:
-                return value;
-        }
+        return transformation.apply(value);
     }
 
 
@@ -297,7 +286,7 @@ public class AttributeHelper<T, V> {
     /**
      * Retrieves an AttributeSettingHelper instance for a particular {@code Annotation}'s property
      * @param annotation {@code Annotation} object to handle
-     * @param property     {@code Method} that represents the annotation's property
+     * @param property   {@code Method} that represents the annotation's property
      * @return New {@code AttributeSettingHelper} instance
      */
     public static AttributeHelper<Target, Object> forAnnotationProperty(Annotation annotation, Method property) {
@@ -321,7 +310,7 @@ public class AttributeHelper<T, V> {
         /**
          * Retrieves an AttributeSettingHelper instance for a particular {@code Annotation}'s property
          * @param annotation {@code Annotation} object to handle
-         * @param property     {@code Method} that represents the annotation's property
+         * @param property   {@code Method} that represents the annotation's property
          * @return New {@code AttributeSettingHelper} instance
          */
         @SuppressWarnings("unchecked")
@@ -370,7 +359,7 @@ public class AttributeHelper<T, V> {
         }
 
         /**
-         * Gets whether specific annotation property/method can be rendered to XML
+         * Gets whether a specific annotation property/method can be rendered to XML
          * @param method {@code Method} instance representing an annotation property
          * @return True or false
          */
@@ -392,7 +381,7 @@ public class AttributeHelper<T, V> {
         }
 
         /**
-         * Gets whether value of specific type can be rendered to XML
+         * Gets whether a value of specific type can be rendered to XML
          * @param valueType Annotation's property {@code Class}
          * @return True or false
          */

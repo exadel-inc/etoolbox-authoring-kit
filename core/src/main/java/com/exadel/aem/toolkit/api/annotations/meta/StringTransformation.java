@@ -13,12 +13,43 @@
  */
 package com.exadel.aem.toolkit.api.annotations.meta;
 
+import java.util.function.UnaryOperator;
+
+import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringUtils;
+import com.google.common.base.CaseFormat;
+
 /**
- * Enumerates valid transformations of a string value while rendering as an attribute of a Granite UI entity
+ * Enumerates transformations of a string value that can be applied when rendering as an attribute of a Granite UI entity
  */
 public enum StringTransformation {
-    NONE,
-    UPPERCASE,
-    LOWERCASE,
-    CAMELCASE
+
+    NONE(null),
+    UPPERCASE(String::toUpperCase),
+    LOWERCASE(String::toLowerCase),
+    CAMELCASE(string -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, string.toLowerCase())),
+    CAPITALIZE(string -> WordUtils.capitalizeFully(string, new char[] {' ', '-'}));
+
+    private final UnaryOperator<String> transformation;
+
+    /**
+     * Initializes this enum entry with a stored transformation routine
+     * @param transformation {@code UnaryOperator} value
+     */
+    StringTransformation(UnaryOperator<String> transformation) {
+        this.transformation = transformation;
+    }
+
+    /**
+     * Applies a transformation to the provided string
+     * @param value The string to be transformed
+     * @return Resulting string value
+     */
+    public String apply(String value) {
+        if (StringUtils.isBlank(value) || transformation == null) {
+            return value;
+        }
+        return transformation.apply(value);
+    }
+
 }
