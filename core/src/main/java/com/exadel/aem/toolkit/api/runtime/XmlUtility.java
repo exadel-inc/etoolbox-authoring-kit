@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
  * on {@link Source} and {@link Target} objects handling. Legacy API will be removed in the versions to come
  */
 @Deprecated
-@SuppressWarnings({"unused", "squid:S1133"})
+@SuppressWarnings("squid:S1133")
 public interface XmlUtility {
 
     /**

@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
  * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link Handler} instead
  */
 @Deprecated
-@SuppressWarnings({"unused", "squid:S1133"}) // See deprecation message
+@SuppressWarnings("squid:S1133") // See deprecation message
 public interface DialogHandler extends Handler {
 
     /**
