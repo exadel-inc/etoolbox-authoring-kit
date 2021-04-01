@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.exceptions.handlers;
 
 import java.util.List;
@@ -25,8 +24,8 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Implements the "selective" kind of {@link com.exadel.aem.toolkit.api.runtime.ExceptionHandler}, that is, the one
- * that throws {@link com.exadel.aem.toolkit.plugin.exceptions.PluginException}s and so terminates Maven workflow
- * in case one of the specific internal exceptions (listed ln constructor's on;ly argument) is thrown, and otherwise
+ * that throws {@link com.exadel.aem.toolkit.plugin.exceptions.PluginException}s and so terminates a Maven workflow
+ * in case one of the specific internal exceptions (listed ln constructor's only argument) is thrown, or otherwise
  * falls back to {@code PermissiveExceptionHandler} behavior
  */
 class SelectiveExceptionHandler extends PermissiveExceptionHandler {
@@ -35,6 +34,10 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
 
     private final List<String> exceptionTokens;
 
+    /**
+     * Initializes an instance of {@code SelectiveExceptionHandler} with pre-defined exception qualifiers
+     * @param exceptionTokens {@code List} of string values
+     */
     SelectiveExceptionHandler(List<String> exceptionTokens) {
         this.exceptionTokens = exceptionTokens;
     }
@@ -53,6 +56,9 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
         super.handle(message, cause);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean shouldTerminateOn(Class<? extends Exception> exceptionType) {
         for (String exceptionToken : exceptionTokens) {
@@ -70,9 +76,9 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
      * Called from {@link SelectiveExceptionHandler#shouldTerminateOn(Class)} to decide whether the exception class provided
      * matches the exception token (string values defining an exception or a set of exceptions) and, if so, what verdict
      * ("terminate" or "pass") should be made
-     * @param exceptionType {@code Class<?>} reference pointing to the particular Exception
+     * @param exceptionType  {@code Class<?>} reference pointing to the particular Exception
      * @param exceptionToken String representing the particular exception token
-     * @param inverse Boolean value saying whether the inversion sign is present in the match
+     * @param inverse        Boolean value saying whether the inversion sign is present in the match
      * @return {@code Optional} value saying the exception does match the token, if non-empty. Then, the internal boolean
      * value represents the verdict
      */

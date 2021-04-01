@@ -11,18 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.targets;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 /**
- * Factory class used to create {@link Target} instances
+ * Contains factory methods for creating {@link Target} instances
  */
 public class Targets {
 
     /**
-     * Default private (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private Targets() {
     }
@@ -38,7 +37,7 @@ public class Targets {
 
     /**
      * Creates a new unattached (root) {@code Target} instance with the specified name and scope
-     * @param name Name of the instance, non-blank String
+     * @param name  Name of the instance, non-blank String
      * @param scope Scope of the instance, see {@link com.exadel.aem.toolkit.api.annotations.meta.Scopes} for details
      * @return {@code Target} object
      */
@@ -52,7 +51,7 @@ public class Targets {
      * Creates a new unattached {@code Target} instance with the specified name and parent. Unlike
      * {@link Target#createTarget(String)}, this method will not automatically add the newly created instance to the
      * parent's collection
-     * @param name Name of the instance, non-blank String
+     * @param name   Name of the instance, non-blank String
      * @param parent Reference to a parent {@code Target} instance
      * @return {@code Target} object
      */

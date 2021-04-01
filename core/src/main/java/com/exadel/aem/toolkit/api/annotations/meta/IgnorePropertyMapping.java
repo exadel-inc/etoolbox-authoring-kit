@@ -19,9 +19,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks that property/properties of a specific annotation not to be automatically mapped to Granite attributes
- * If set to entire annotation, this setting is eligible to all its properties unless explicitly marked with {@link MapProperties}
- * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link MapProperties} instead
+ * Marks that a property (properties) of a specific annotation are not to be automatically mapped to Granite attributes.
+ * If set to an entire annotation, this setting is legitimate to all of its properties unless explicitly marked with
+ * {@link MapProperties}
+ * @deprecated This is deprecated and will be removed in a version after 2.0.2. Please use {@link MapProperties} instead
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

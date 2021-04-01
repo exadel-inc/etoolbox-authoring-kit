@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.exceptions;
 
 /**
@@ -19,7 +18,12 @@ package com.exadel.aem.toolkit.plugin.exceptions;
  * no valid fields present, duplicate field entries detected, etc.
  */
 public class InvalidLayoutException extends RuntimeException {
-    public InvalidLayoutException(String message) {
-        super(message);
+
+    /**
+     * Initializes a class instance with an exception message specified
+     * @param value String value, non-blank
+     */
+    public InvalidLayoutException(String value) {
+        super(value);
     }
 }

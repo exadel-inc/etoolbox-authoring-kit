@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fileupload/index.html">
- * FileUpload element</a> in TouchUI dialog
+ * FileUpload</a> component in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -39,50 +39,44 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 public @interface FileUpload {
 
     /**
-     * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
-     * Used to define text hint for an empty FileUpload
-     *
+     * When set to a non-blank string, maps to the {@code emptyText} attribute of this Granite UI component's node.
+     * Used to define a text hint for an empty FileUpload
      * @return String value
      */
     String emptyText() default "";
 
     /**
-     * Maps to the 'async' attribute of this TouchUI dialog component's node.
-     * Used to set possibility asynchronous upload
-     *
+     * Maps to the {@code async} attribute of this Granite UI component's node.
+     * Defines the possibility of asynchronous upload
      * @return True or false
      */
     boolean async() default true;
 
     /**
-     * Maps to the 'multiple' attribute of this TouchUI dialog component's node.
-     * Used to set possibility for multiple files upload
-     *
+     * Maps to the {@code multiple} attribute of this Granite UI component's node.
+     * Defines the possibility for multiple files to be uploaded at once
      * @return True or false
      */
     boolean multiple() default false;
 
     /**
-     * Maps to the 'autoStart' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code autoStart} attribute of this Granite UI component's node.
      * If true, the upload starts automatically once the file is selected
-     *
      * @return True or false
      */
     boolean autoStart() default true;
 
     /**
-     * Maps to the 'uploadUrl' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code uploadUrl} attribute of this Granite UI component's node.
      * Used to determine the URL where to upload the file
-     *
      * @return String value representing valid JCR path
      */
     @ValueRestriction(ValueRestrictions.JCR_PATH)
     String uploadUrl();
 
     /**
-     * When set to a positive number, maps to the 'sizeLimit' attribute of this TouchUI dialog component's node.
+     * When set to a positive number, maps to the {@code sizeLimit} attribute of this Granite UI component's node.
      * Used to determine the file size limit
-     *
      * @return Long value
      */
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
@@ -90,59 +84,53 @@ public @interface FileUpload {
     long sizeLimit() default 0;
 
     /**
-     * Maps to the 'mimeTypes' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code mimeTypes} attribute of this Granite UI component's node.
      * Defines the browse and selection filter for file selection
-     *
      * @return String value, or an array of strings
+     * @see com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUploadConstants
      */
     String[] mimeTypes() default {};
 
     /**
-     * Maps to the 'variant' attribute of this TouchUI dialog component's node.
-     * Used to define button variant
-     *
+     * Maps to the {@code variant} attribute of this Granite UI component's node.
+     * Used to define the button variant
      * @return One of {@code ElementVariant} values
      * @see ElementVariant
      */
     ElementVariant variant() default ElementVariant.PRIMARY;
 
     /**
-     * Maps to the 'text' attribute of this TouchUI dialog component's node.
+     * Maps to the {@code text} attribute of this Granite UI component's node.
      * Used to define the text of the button
-     *
      * @return String value
      */
     String text() default "Upload";
 
     /**
-     * Maps to the 'hideText' attribute of this TouchUI dialog component's node.
-     * Used to define whether text is hidden
-     *
+     * Maps to the {@code hideText} attribute of this Granite UI component's node.
+     * Used to define whether the text is hidden
      * @return True or false
      */
     boolean hideText() default false;
 
     /**
-     * Maps to the 'size' attribute of this TouchUI dialog component's node. Used to define button size
+     * Maps to the {@code size} attribute of this Granite UI component's node. Used to define the button size
      * <p><u>Note:</u> only {@code "medium"} and {@code "large"} values are officially supported</p>
-     *
      * @return One of {@code Size} values
      * @see Size
      */
     Size size() default Size.MEDIUM;
 
     /**
-     * When set to a non-blank string, maps to the 'icon' attribute of this TouchUI dialog component's node.
-     * Used to define component's icon
-     *
+     * When set to a non-blank string, maps to the {@code icon} attribute of this Granite UI component's node.
+     * Used to define the component's icon
      * @return String value
      */
     String icon() default "";
 
     /**
-     * Maps to the 'iconSize' attribute of this TouchUI dialog component's node.
-     * Used to define icon size
-     *
+     * Maps to the {@code iconSize} attribute of this Granite UI component's node.
+     * Used to define the icon size
      * @return One of {@code Size} values
      * @see Size
      */

@@ -11,17 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.custom.handler.ordering;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.exadel.aem.toolkit.api.handlers.DialogWidgetHandler;
+import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomAnnotationForOrderingTest;
+import com.exadel.aem.toolkit.test.custom.annotation.WidgetAnnotationForOrderingTest;
 
 @SuppressWarnings("unused")
 public class ManualOrderingTestCases {
@@ -37,8 +36,8 @@ public class ManualOrderingTestCases {
         ATTRIBUTE_LIST.add("customHandler5");
     }
 
-    @Handles(value = CustomAnnotationForOrderingTest.class, before = CustomHandler1.class, after = CustomHandler0.class)
-    public static class CustomHandler0 implements DialogWidgetHandler {
+    @Handles(value = WidgetAnnotationForOrderingTest.class, before = CustomHandler1.class, after = CustomHandler0.class)
+    public static class CustomHandler0 implements Handler {
 
         @Override
         public void accept(Source source, Target target) {
@@ -52,8 +51,8 @@ public class ManualOrderingTestCases {
         }
     }
 
-    @Handles(value = CustomAnnotationForOrderingTest.class, before = CustomHandler3.class, after = CustomHandler1.class)
-    public static class CustomHandler1 implements DialogWidgetHandler {
+    @Handles(value = WidgetAnnotationForOrderingTest.class, before = CustomHandler3.class, after = CustomHandler1.class)
+    public static class CustomHandler1 implements Handler {
 
         @Override
         public void accept(Source source, Target target) {
@@ -66,8 +65,8 @@ public class ManualOrderingTestCases {
         }
     }
 
-    @Handles(value = CustomAnnotationForOrderingTest.class, before = CustomHandler3.class ,after = CustomHandler0.class)
-    public static class CustomHandler2 implements DialogWidgetHandler {
+    @Handles(value = WidgetAnnotationForOrderingTest.class, before = CustomHandler3.class ,after = CustomHandler0.class)
+    public static class CustomHandler2 implements Handler {
 
         @Override
         public void accept(Source source, Target target) {
@@ -79,8 +78,8 @@ public class ManualOrderingTestCases {
         }
     }
 
-    @Handles(value = CustomAnnotationForOrderingTest.class, before = CustomHandler0.class, after = CustomHandler3.class)
-    public static class CustomHandler3 implements DialogWidgetHandler {
+    @Handles(value = WidgetAnnotationForOrderingTest.class, before = CustomHandler0.class, after = CustomHandler3.class)
+    public static class CustomHandler3 implements Handler {
 
         @Override
         public void accept(Source source, Target target) {
@@ -91,8 +90,8 @@ public class ManualOrderingTestCases {
         }
     }
 
-    @Handles(value = CustomAnnotationForOrderingTest.class, after = CustomHandler3.class)
-    public static class CustomHandler4 implements DialogWidgetHandler {
+    @Handles(value = WidgetAnnotationForOrderingTest.class, after = CustomHandler3.class)
+    public static class CustomHandler4 implements Handler {
 
         @Override
         public void accept(Source source, Target target) {
@@ -102,8 +101,8 @@ public class ManualOrderingTestCases {
         }
     }
 
-    @Handles(value = CustomAnnotationForOrderingTest.class, after = CustomHandler3.class)
-    public static class CustomHandler5 implements DialogWidgetHandler {
+    @Handles(value = WidgetAnnotationForOrderingTest.class, after = CustomHandler3.class)
+    public static class CustomHandler5 implements Handler {
 
         @Override
         public void accept(Source source, Target target) {

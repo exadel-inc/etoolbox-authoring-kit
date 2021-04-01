@@ -11,18 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.widget;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.Hyperlink;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.LinkCheckerVariant;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
-@Dialog(
-    name = TestConstants.DEFAULT_COMPONENT_NAME,
+@AemComponent(
+    path = TestConstants.DEFAULT_COMPONENT_NAME,
     title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
+@Dialog
 @SuppressWarnings("unused")
 public class HyperlinkWidget {
 

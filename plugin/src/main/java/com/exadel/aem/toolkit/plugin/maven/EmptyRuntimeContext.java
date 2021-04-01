@@ -19,7 +19,7 @@ import com.exadel.aem.toolkit.plugin.runtime.ReflectionContextHelper;
 import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 
 /**
- * The fallback implementation of {@link PluginRuntimeContext} for the AEM Authoring Toolkit plugin instance that
+ * The fallback implementation of {@link PluginRuntimeContext} for the ToolKit Maven plugin instance that
  * has not been properly and completely initialized
  */
 class EmptyRuntimeContext implements PluginRuntimeContext {

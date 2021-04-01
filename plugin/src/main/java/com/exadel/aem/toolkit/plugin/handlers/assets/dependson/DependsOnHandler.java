@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.handlers.assets.dependson;
 
 import java.util.Arrays;
@@ -36,7 +35,8 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for AEM Authoring Toolkit {@code DependsOn} functionality
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
+ * object that define relations between Granite components per {@code DependsOn} specification
  */
 public class DependsOnHandler implements BiConsumer<Source, Target> {
 
@@ -45,9 +45,9 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     private static final String TERM_SEPARATOR = "-";
 
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {
@@ -61,8 +61,8 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
 
     /**
      * Called by {@link DependsOnHandler#accept(Source, Target)} to store particular {@code DependsOn} value in {@link Target}
-     * @param value Current {@link DependsOn} value
-     * @param target Current {@link Target} instance
+     * @param value  Current {@link DependsOn} value
+     * @param target Resulting {@code Target} object
      */
     private static void handleDependsOn(DependsOn value, Target target) {
         if (StringUtils.isAnyBlank(value.query(), value.action())) {
@@ -80,7 +80,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     /**
      * Called by {@link DependsOnHandler#accept(Source, Target)} to store {@code DependsOnConfig} value in {@link Target}
      * @param value  Current {@link DependsOnConfig} value
-     * @param target Current {@link Target} instance
+     * @param target Resulting {@code Target} object
      */
     private static void handleDependsOnConfig(DependsOnConfig value, Target target) {
         List<DependsOn> validDeclarations = Arrays.stream(value.value())
@@ -115,12 +115,12 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Build {@code DependsOnParam} parameters for the passed {@code DependsOn} annotation
-     * Param pattern:<br>
+     * Builds {@code DependsOnParam} parameters for the passed {@code DependsOn} annotation
+     * Parameters pattern is:<br>
      * - for the first action (index = 0): {@code dependson-{action}-{param}}<br>
      * - otherwise: {@code dependson-{action}-{param}-{index}}
-     * @param dependsOn current {@link DependsOn} value
-     * @param index     index of action
+     * @param dependsOn Current {@link DependsOn} value
+     * @param index     Action index
      */
     private static Map<String, String> buildParamsMap(DependsOn dependsOn, int index){
         Map<String, String> valueMap = new HashMap<>();
@@ -137,8 +137,8 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
 
     /**
      * Called by {@link DependsOnHandler#accept(Source, Target)} to store particular {@code DependsOnRef} value in {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     private static void handleDependsOnRefValue(Source source, Target target) {
         DependsOnRef value = source.adaptTo(DependsOnRef.class);

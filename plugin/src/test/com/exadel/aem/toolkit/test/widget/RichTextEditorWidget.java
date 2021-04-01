@@ -11,9 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.widget;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.AllowElement;
@@ -30,8 +30,11 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.Style;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
-@Dialog(name = DEFAULT_COMPONENT_NAME,
-        title = "Rich Text Editor Dialog")
+@AemComponent(
+    path = DEFAULT_COMPONENT_NAME,
+    title = "Rich Text Editor Dialog"
+)
+@Dialog
 @SuppressWarnings("unused")
 public class RichTextEditorWidget {
     @DialogField(label = "Rich Text Editor")

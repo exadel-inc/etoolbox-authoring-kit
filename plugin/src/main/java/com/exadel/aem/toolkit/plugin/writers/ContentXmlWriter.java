@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing component-wide attributes (writes data to the
- * {@code .content.xml} file within the current component folder before package is uploaded
+ * {@code .content.xml} file within the current component folder before package is uploaded)
  */
 class ContentXmlWriter extends PackageEntryWriter {
 

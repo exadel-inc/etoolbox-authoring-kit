@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -21,5 +21,6 @@ public class ActionConstants {
     public static final String DELETE = "delete";
     public static final String INSERT = "insert";
     public static final String COPYMOVE = "copymove";
-    private ActionConstants(){}
+
+    private ActionConstants() {}
 }

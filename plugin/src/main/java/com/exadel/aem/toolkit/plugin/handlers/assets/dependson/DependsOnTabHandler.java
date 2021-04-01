@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.handlers.assets.dependson;
 
 import java.util.Arrays;
@@ -36,7 +35,8 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
 /**
- * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for the {@code DependsOnTab} functionality
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
+ * object that define relations between Granite container components (Tabs) per {@code DependsOn} specification
  */
 @Handles(
     value = {DependsOnTab.class, DependsOnTabConfig.class},
@@ -51,7 +51,7 @@ public class DependsOnTabHandler implements Handler {
         DialogConstants.NN_ITEMS);
 
     /**
-     * Processes relevant data that can be extracted from the given {@code Source} and stores in into the provided {@code Target}
+     * Processes relevant data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
@@ -63,8 +63,8 @@ public class DependsOnTabHandler implements Handler {
 
     /**
      * Called by {@link DependsOnTabHandler#accept(Source, Target)} to store particular {@code DependsOnTab} value
-     * @param value Current {@link DependsOnTab} value
-     * @param target Current {@link Target} instance
+     * @param value  Current {@link DependsOnTab} value
+     * @param target Resulting {@code Target} object
      */
     private void handleDependsOnTab(DependsOnTab value, Target target) {
         if (!target.exists(TAB_ITEMS_NODE_PATH)) {
@@ -91,8 +91,8 @@ public class DependsOnTabHandler implements Handler {
 
     /**
      * Called by {@link DependsOnTabHandler#accept(Source, Target)} to store particular {@code DependsOnTab} value
-     * @param value Current {@link DependsOnTabConfig} value
-     * @param target Current {@link Target} instance
+     * @param value  Current {@link DependsOnTabConfig} value
+     * @param target Resulting {@code Target} object
      */
     private void handleDependsOnTabConfig(DependsOnTabConfig value, Target target) {
         Arrays.stream(value.value()).forEach(val -> handleDependsOnTab(val, target));

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core.optionprovider.servlets;
 
 import java.io.IOException;
@@ -38,13 +37,16 @@ import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.SimpleDataSource;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
+import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
 
 /**
- * Allows to set custom data source for a TouchUI widget supporting Granite datasources, such as a RadioGroup or a Select.
- * Supports a number of settings that are either stored as attributes of {@code datasource} node in TouchUI dialog,
- * or passed in HTTP request as query arguments. Datasource options are rendered from either a node tree, an ACS List -like
- * node structure ({@code [...]/node/jcr:content/list/[items]}), or a tag folder
+ * Allows setting custom data source for a widget that is supporting Granite datasources, such as a {@link RadioGroup}
+ * or a {@link Select}. Supports a number of settings that are either stored as attributes of the {@code datasource} node
+ * in Granite UI setup, or passed in HTTP request as query arguments. Datasource options are rendered from either
+ * a node tree, an EToolbox List / ACS List -like node structure ({@code [...]/node/jcr:content/list/[items]}),
+ * or a tag folder
  */
 @Component(
     service = Servlet.class,
@@ -68,9 +70,9 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
     private transient OptionProviderService optionProvider;
 
     /**
-     * Processes HTTP GET request to the current endpoint and outputs a {@link SimpleDataSource} or a JSON string
+     * Processes HTTP GET requests to the current endpoint and outputs a {@link SimpleDataSource} or a JSON string
      * according to the query parameters
-     * @param request {@code SlingHttpServletRequest} instance
+     * @param request  {@code SlingHttpServletRequest} instance
      * @param response {@code SlingHttpServletResponse} instance
      */
     @Override
@@ -112,7 +114,7 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Generates JSON representation of the options list as requested by user
+     * Generates the JSON representation of the options list as requested by user
      * @param entries List of datasource options
      * @return JSON string
      */
@@ -131,10 +133,10 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Called by {@link OptionProviderServlet#getJsonOutput(List)} to create insides on a JSON entity representing
+     * Called by {@link OptionProviderServlet#getJsonOutput(List)} to create internals on a JSON entity representing
      * a single datasource option
      * @param writer {@code JSONWriter} instance
-     * @param entry {@code Resource} to take data from
+     * @param entry  {@code Resource} to take data from
      */
     private static void writeResourceAttributes(JSONWriter writer, Resource entry) throws JSONException {
         writer.key(ATTRIBUTE_TEXT).value(entry.getValueMap().get(ATTRIBUTE_TEXT, String.class));

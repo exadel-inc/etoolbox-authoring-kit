@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.custom;
 
 import java.util.regex.Pattern;
@@ -25,13 +24,13 @@ public class CustomValidator implements Validator {
     private static final Pattern COLOR_PATTERN = Pattern.compile("^(red|green|blue)$", Pattern.CASE_INSENSITIVE);
 
     @Override
-    public boolean test(Object obj) {
-        return isApplicableTo(obj) && (StringUtils.isEmpty(obj.toString()) || COLOR_PATTERN.matcher(obj.toString()).matches());
+    public boolean test(Object value) {
+        return isApplicableTo(value) && (StringUtils.isEmpty(value.toString()) || COLOR_PATTERN.matcher(value.toString()).matches());
     }
 
     @Override
-    public boolean isApplicableTo(Object obj) {
-        return obj instanceof String;
+    public boolean isApplicableTo(Object value) {
+        return value instanceof String;
     }
 
     @Override

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
@@ -20,22 +19,25 @@ import com.exadel.aem.toolkit.api.annotations.layouts.LayoutType;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
-@Dialog(
-    name = DEFAULT_COMPONENT_NAME,
-    title = "Tabs Test Dialog",
+@AemComponent(
+    path = DEFAULT_COMPONENT_NAME,
+    title = "Tabs Test Dialog"
+)
+@Dialog( // legacy tabs property is retained for compatibility testing
     tabs = {
         @com.exadel.aem.toolkit.api.annotations.container.Tab(title = "First tab"),
         @com.exadel.aem.toolkit.api.annotations.container.Tab(title = "Second tab"),
         @com.exadel.aem.toolkit.api.annotations.container.Tab(title = "Third tab")
     }
 )
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "deprecation"})
 public class TabsWidget {
     @DialogField(label = "Field on the first tab")
     @TextField

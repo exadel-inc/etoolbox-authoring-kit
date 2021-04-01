@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -14,12 +14,12 @@
 package com.exadel.aem.toolkit.api.annotations.editconfig.listener;
 
 /**
- * Used to define {@code cq:listeners} node of TouchUI component configuration
+ * Used to define the {@code cq:listeners} node of a Granite UI component configuration
  */
 public @interface Listener {
     /**
      * Name of a {@code cq:listeners} attribute
-     * @return String value
+     * @return String value, non-blank
      * @see ListenerConstants
      */
     String event();

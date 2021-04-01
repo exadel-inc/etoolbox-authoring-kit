@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
 import java.util.ArrayList;
@@ -39,11 +38,14 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
 
 /**
  * Implements {@link OptionProviderService} to prepare option sets for Granite-compliant custom data sources
- * used in TouchUI dialog widgets
+ * used in Granite UI widgets
  */
 @Component(service = OptionProviderService.class)
 public class OptionProviderServiceImpl implements OptionProviderService {
 
+    /**
+    * {@inheritDoc}
+     */
     @Override
     public List<Resource> getOptions(SlingHttpServletRequest request) {
         Set<Option> options = new LinkedHashSet<>();
@@ -92,7 +94,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
     }
 
     /**
-     * Called from {@link OptionProviderServiceImpl#getOptions(SlingHttpServletRequest)} to extract list
+     * Called from {@link OptionProviderServiceImpl#getOptions(SlingHttpServletRequest)} to extract a list
      * of {@link Option} items from the particular datasource
      * @param dataSource {@code Resource} instance representing selected datasource
      * @param parameters Path-related user settings that came with the request
@@ -119,10 +121,10 @@ public class OptionProviderServiceImpl implements OptionProviderService {
     }
 
     /**
-     * Generates list of user-specified extra options that are outside the normal JCR structure
+     * Generates a list of user-specified extra options that are outside the normal JCR structure
      * @param resourceResolver {@code ResourceResolver} instance to create "virtual" datasource entry resource
-     * @param optionStrings Array of Strings representing extra options
-     * @param skip List of the [already existing] options to omit in the extra options collection
+     * @param optionStrings    Array of strings representing extra options
+     * @param skip             List of the [already existing] options to omit in the extra options collection
      * @return List of "virtual" datasource items resources that can be merged to the original resource list
      */
     private static List<Option> getExtraOptions(ResourceResolver resourceResolver,

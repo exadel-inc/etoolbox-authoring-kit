@@ -25,7 +25,7 @@
         <port>4502</port>
         <serviceUrl>http://${host}:${port}/crx/packmgr/service.jsp</serviceUrl>
         <project.jcrAppFolder>authoring-toolkit/samples</project.jcrAppFolder>
-        <aat.version>2.0.1-SNAPSHOT</aat.version>
+        <toolkit.version>2.0.1-SNAPSHOT</toolkit.version>
         <project.vendor>Exadel</project.vendor>
     </properties>
 
@@ -80,7 +80,7 @@
                     </configuration>
                     <executions>
                         <execution>
-                            <id>Creating AAT Samples package</id>
+                            <id>Creating ToolKit Samples package</id>
                             <goals>
                                 <goal>package</goal>
                             </goals>
@@ -93,7 +93,7 @@
                 <plugin>
                     <groupId>com.exadel.aem</groupId>
                     <artifactId>aem-authoring-toolkit-plugin</artifactId>
-                    <version>${aat.version}</version>
+                    <version>${toolkit.version}</version>
                     <executions>
                         <execution>
                             <goals>
@@ -139,17 +139,17 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- AAT-Specific -->
+            <!-- ToolKit-specific -->
             <dependency>
                 <groupId>com.exadel.aem</groupId>
                 <artifactId>aem-authoring-toolkit-core</artifactId>
-                <version>${aat.version}</version>
+                <version>${toolkit.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.exadel.aem</groupId>
                 <artifactId>aem-authoring-toolkit-assets</artifactId>
-                <version>${aat.version}</version>
+                <version>${toolkit.version}</version>
                 <type>zip</type>
             </dependency>
 

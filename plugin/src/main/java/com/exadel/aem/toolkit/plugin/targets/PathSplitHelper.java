@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.targets;
 
 import java.util.ArrayList;
@@ -24,14 +23,23 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
+/**
+ * Helper class containing methods to manage and traverse relative paths by which {@link Target} instances are related
+ * to each other
+ */
 class PathSplitHelper {
 
     private final String path;
     private List<Pair<Integer, Integer>> escapedSequences;
 
+    /**
+     * Instantiation-restricting constructor
+     * @param path Path value, non-blank string expected
+     */
     private PathSplitHelper(String path) {
         this.path = path;
         if (path == null
@@ -42,6 +50,10 @@ class PathSplitHelper {
         escapedSequences = getEscapedSequences(path);
     }
 
+    /**
+     * Gets whether the path associated with instance can be split in chunks
+     * @return True or false
+     */
     boolean isSplittable() {
         if (escapedSequences == null || escapedSequences.isEmpty()) {
             return StringUtils.contains(path, CoreConstants.SEPARATOR_SLASH);
@@ -57,6 +69,10 @@ class PathSplitHelper {
         return false;
     }
 
+    /**
+     * Retrieves a sequence of path chunks
+     * @return {@code Queue} object
+     */
     Queue<String> getChunks() {
         if (path == null) {
             return new LinkedList<>();
@@ -92,10 +108,12 @@ class PathSplitHelper {
         return result;
     }
 
-    static PathSplitHelper of(String path) {
-        return new PathSplitHelper(path);
-    }
-
+    /**
+     * Finds in the provided {@code path} char sequences that are "escaped" from splitting despite containing
+     * a split character
+     * @param path Path value
+     * @return {@code List} of numeric pairs, each representing the starting and ending position of an escaped sequence
+     */
     private static List<Pair<Integer, Integer>> getEscapedSequences(String path) {
         List<Pair<Integer, Integer>> result = new ArrayList<>();
         int opening = path.indexOf(DialogConstants.DOUBLE_QUOTE);
@@ -108,5 +126,13 @@ class PathSplitHelper {
             opening = path.indexOf(DialogConstants.DOUBLE_QUOTE, closing + 1);
         }
         return result;
+    }
+
+    /**
+     * Initializes a class instance with the absolute or relative paths specified
+     * @param path Path value, non-blank string expected
+     */
+    static PathSplitHelper of(String path) {
+        return new PathSplitHelper(path);
     }
 }

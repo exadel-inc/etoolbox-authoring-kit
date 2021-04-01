@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.custom.handler;
 
 import java.util.Optional;
@@ -30,10 +29,10 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomLegacyDialogAnnotation;
 
-@Handles(value = CustomDialogAnnotation.class)
-@SuppressWarnings("unused") // Used by AAT Plugin logic
+@Handles(value = CustomLegacyDialogAnnotation.class)
+@SuppressWarnings("deprecation") // References to DialogHandler, RuntimeContext are retained for compatibility
 public class LegacyCustomDialogHandler implements DialogHandler {
 
     @Override

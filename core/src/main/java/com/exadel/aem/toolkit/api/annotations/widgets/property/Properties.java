@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -19,11 +19,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represent collection of additional properties that may be assigned to a TouchUI Dialog element node
+ * Represents a collection of additional properties that can be assigned to a Granite UI component
  * @see Property
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Properties {
+
+    /**
+     * Array of {@link Property} objects
+     * @return One or more {@code Property} annotations
+     */
     Property[] value();
 }

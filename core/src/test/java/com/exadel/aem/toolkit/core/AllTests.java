@@ -11,27 +11,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.maven;
+package com.exadel.aem.toolkit.core;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingTest;
+import com.exadel.aem.toolkit.core.lists.models.ListItemTest;
+import com.exadel.aem.toolkit.core.lists.services.ListHelperServiceTest;
+import com.exadel.aem.toolkit.core.lists.servlets.ItemComponentsServletTest;
+import com.exadel.aem.toolkit.core.lists.servlets.ListsServletTest;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderTest;
 
 /**
  * Shortcut class for running all available test cases in a batch
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    TargetsTest.class,
-    OrderingTest.class,
-    ComponentsTest.class,
-    WidgetsTest.class,
-    ValidationsTest.class,
-    IgnoreTest.class,
-    ExceptionsTest.class,
-    DependsOnTest.class
+    ListItemTest.class,
+    ListHelperServiceTest.class,
+    ItemComponentsServletTest.class,
+    ListsServletTest.class,
+    OptionProviderTest.class
 })
 public class AllTests {
 }

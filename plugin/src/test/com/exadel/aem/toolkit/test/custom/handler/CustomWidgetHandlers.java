@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.custom.handler;
 
 import java.lang.reflect.Field;
@@ -45,6 +44,7 @@ public class CustomWidgetHandlers {
     }
 
     @Handles(value = CustomWidgetAnnotation.class)
+    @SuppressWarnings("deprecation") // References to DialogWidgetHandler, RuntimeContext are retained for compatibility
     public static class CustomWidgetHandler1 implements DialogWidgetHandler {
 
         @Override
@@ -65,7 +65,7 @@ public class CustomWidgetHandlers {
     }
 
     @Handles(value = CustomWidgetAnnotation.class, after = CustomWidgetHandler1.class)
-    public static class CustomWidgetHandler2 implements DialogWidgetHandler {
+    public static class CustomWidgetHandler2 implements Handler {
 
         @Override
         public void accept(Source source, Target target) {
@@ -76,7 +76,7 @@ public class CustomWidgetHandlers {
     }
 
     @Handles(value = CustomWidgetAnnotation.class, after = CustomWidgetHandler2.class)
-    public static class CustomWidgetHandler3 implements DialogWidgetHandler {
+    public static class CustomWidgetHandler3 implements Handler {
 
         @Override
         public void accept(Source source, Target target) {
@@ -86,7 +86,7 @@ public class CustomWidgetHandlers {
     }
 
     @HandlesWidgets(value = CustomNonMappingWidgetAnnotation.class)
-    @SuppressWarnings("unused")
+    @SuppressWarnings("deprecation") // Reference to HandlesWidgets is retained for compatibility testing
     public static class CustomNonMappingWidgetHandler implements DialogWidgetHandler {
 
         @Override
@@ -101,8 +101,7 @@ public class CustomWidgetHandlers {
     }
 
     @Handles(value = MultiField.class, before = CustomMultifieldHandler.class, after = CustomNonMappingWidgetHandler.class)
-    @SuppressWarnings("unused")
-    public static class CustomMultifieldHandler implements DialogWidgetHandler {
+    public static class CustomMultifieldHandler implements Handler {
 
         @Override
         public void accept(Source source, Target target) {
@@ -111,7 +110,6 @@ public class CustomWidgetHandlers {
     }
 
     @Handles(value = PathField.class, scope = Scopes.CQ_DESIGN_DIALOG)
-    @SuppressWarnings("unused")
     public static class CustomScopeLimitedHandler implements Handler {
 
         @Override

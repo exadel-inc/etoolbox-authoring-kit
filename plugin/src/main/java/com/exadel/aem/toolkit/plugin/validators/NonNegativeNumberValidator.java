@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.validators;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,18 +25,18 @@ public class NonNegativeNumberValidator extends NumberValidator {
 
     /**
      * Tests that the provided number is non-negative
-     * @param obj Generic representation of number
+     * @param value Generic representation of number
      * @return True or false
      */
     @Override
-    public boolean test(Object obj) {
-        if (!super.test(obj)) {
+    public boolean test(Object value) {
+        if (!super.test(value)) {
             return false;
         }
-        if (StringUtils.EMPTY.equals(obj)) {
+        if (StringUtils.EMPTY.equals(value)) {
             return true;
         }
-        return Double.parseDouble(obj.toString()) >= 0d;
+        return Double.parseDouble(value.toString()) >= 0d;
     }
 
     /**

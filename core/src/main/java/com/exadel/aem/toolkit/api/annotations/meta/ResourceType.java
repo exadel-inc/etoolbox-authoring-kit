@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -19,11 +19,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to specify the {@code sling:resourceType} of a TouchUI Dialog field.
- * Accepts s non-blank string representing JCR path
+ * Used to specify the {@code sling:resourceType} for an annotation describing a Granite UI component
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ResourceType {
+
+    /**
+     * Defines the path to the component in JCR
+     * @return Non-blank string
+     */
     String value();
 }

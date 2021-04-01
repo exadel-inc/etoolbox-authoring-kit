@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.handlers.widgets;
 
 import java.util.Arrays;
@@ -31,8 +30,8 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * {@code BiConsumer<Source, Target>} implementation used to create markup responsible for Granite UI {@code ColorField} widget functionality
- * within the {@code cq:dialog} node
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
+ * object that define the Granite UI {@code ColorField} widget look and behavior
  */
 @Handles(ColorField.class)
 public class ColorFieldHandler implements Handler {
@@ -40,9 +39,9 @@ public class ColorFieldHandler implements Handler {
     private static final String SKIPPED_COLOR_NODE_NAME_SYMBOLS = "^\\w+";
 
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {

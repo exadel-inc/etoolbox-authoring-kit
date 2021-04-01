@@ -65,7 +65,7 @@ public class ReflectionContextHelper {
     private List<Validator> validators;
 
     /**
-     * Default (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private ReflectionContextHelper() {
     }
@@ -104,7 +104,7 @@ public class ReflectionContextHelper {
     /**
      * Retrieves list of {@link Handler} instances that match the provided annotations and scope. The collection returned
      * is ordered to honor the relations set by {@code before} and {@code after} anchors
-     * @param scope Non-null string representing the scope that the handlers must match
+     * @param scope       Non-null string representing the scope that the handlers must match
      * @param annotations Non-null array of {@code Annotation} objects, usually representing annotations of a method
      *                    or a class
      * @return {@code List} of handler instances, ordered
@@ -119,7 +119,7 @@ public class ReflectionContextHelper {
     /**
      * Retrieves list of {@link Handler} instances that match the provided annotation types and scope. The collection
      * returned is ordered to honor the relations set by {@code before} and {@code after} anchors
-     * @param scope Non-null string representing the scope that the handlers must match
+     * @param scope           Non-null string representing the scope that the handlers must match
      * @param annotationTypes Non-null array of {@code Class} objects
      * @return {@code List} of handler instances, ordered
      */
@@ -150,9 +150,9 @@ public class ReflectionContextHelper {
     /**
      * Tests whether the given handler fits for the conditions defined by the set of manageable annotations and the
      * {@code Scope} value
-     * @param scope String value representing the scope that the handlers must match
-     * @param handler {@code Handler} instance to test
-     * @param annotations Array of {@code Annotation} objects, usually representing annotations of a method or a class
+     * @param scope       String value representing the scope that the handlers must match
+     * @param handler     {@code Handler} instance to test
+     * @param annotations Array of {@code Annotation} objects, usually representing annotations of a method or class
      * @return True or false
      */
     private static boolean isHandlerMatches(Handler handler, String scope, Annotation[] annotations) {
@@ -162,14 +162,14 @@ public class ReflectionContextHelper {
     /**
      * Tests whether the given handler fits for the conditions defined by the set of manageable annotations and the
      * {@code Scope} value
-     * @param handler {@code Handler} instance to test
-     * @param scope String value representing the scope that the handlers must match
+     * @param handler         {@code Handler} instance to test
+     * @param scope           String value representing the scope that the handlers must match
      * @param annotationTypes Array of {@code Class} references, usually representing types of annotations of a method
      *                        or a class
      * @return True or false
      */
     @SuppressWarnings("deprecation") // HandlesWidgets processing is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+    // in a version after 2.0.2
     private static boolean isHandlerMatches(Handler handler, String scope, Class<?>[] annotationTypes) {
         Handles handles = handler.getClass().getDeclaredAnnotation(Handles.class);
         HandlesWidgets handlesWidgets = handler.getClass().getDeclaredAnnotation(HandlesWidgets.class);
@@ -182,17 +182,17 @@ public class ReflectionContextHelper {
         boolean isMatchByType = Arrays.stream(handledAnnotationTypes)
             .anyMatch(annotationType -> Arrays.asList(annotationTypes).contains(annotationType));
 
-        String[] handlerScopes = handles != null ? handles.scope() : new String[] {Scopes.DEFAULT};
+        String[] handlerScopes = handles != null ? handles.scope() : new String[]{Scopes.DEFAULT};
         // Try to guess appropriate scopes for the handler judging by the annotations it handles
         // (so that if it handles e.g. @ChildEditConfig, the scope for the handler is exactly ChildEditConfig)
         if (handles != null && handlerScopes.length == 1 && handlerScopes[0].equals(Scopes.DEFAULT)) {
-            handlerScopes = new String[] {ScopeUtil.designate(handles.value())};
+            handlerScopes = new String[]{ScopeUtil.designate(handles.value())};
         }
         // If still no particular scopes, try to guess by the mere annotations added to the current class
         // (so that if there's e.g. @Dialog, and the handler has no particular scope, it is considered the handler
         // is also for the dialog)
         if (handlerScopes.length == 1 && handlerScopes[0].equals(Scopes.DEFAULT)) {
-            handlerScopes = new String[] {ScopeUtil.designate(annotationTypes)};
+            handlerScopes = new String[]{ScopeUtil.designate(annotationTypes)};
         }
         boolean isMatchByScope = ScopeUtil.fits(scope, handlerScopes);
 
@@ -200,20 +200,20 @@ public class ReflectionContextHelper {
     }
 
     /**
-     * Creates new instance of a handler by {@code Class} reference and populates the runtime context
+     * Creates a new instance of a handler by {@code Class} reference and populates the runtime context
      * @param handlerClass The handler class to instantiate
-     * @param <T> Handler type
+     * @param <T>          Handler type
      * @return New handler instance
      */
     @SuppressWarnings("deprecation") // RuntimeContext and @Injected are processed for compatibility, to be removed in
-                                     // a version after 2.0.1
+    // a version after 2.0.2
     private static <T> T getHandlerInstance(Class<? extends T> handlerClass) {
         T instance = getInstance(handlerClass);
         if (instance != null) {
             Arrays.stream(handlerClass.getDeclaredFields())
-                    .filter(field -> field.isAnnotationPresent(Injected.class)
-                            && ClassUtils.isAssignable(field.getType(), RuntimeContext.class))
-                    .forEach(field -> populateRuntimeContext(instance, field));
+                .filter(field -> field.isAnnotationPresent(Injected.class)
+                    && ClassUtils.isAssignable(field.getType(), RuntimeContext.class))
+                .forEach(field -> populateRuntimeContext(instance, field));
         }
         return instance;
     }
@@ -221,9 +221,10 @@ public class ReflectionContextHelper {
     /**
      * Used to set a reference to {@link PluginRuntimeContext} to the handler instance
      * @param handler Handler instance
-     * @param field The field of handler to populate
+     * @param field   The field of handler to populate
      */
-    @SuppressWarnings("squid:S3011") // Access elevation is preserved for compatibility until context injection is retired
+    @SuppressWarnings("squid:S3011")
+    // Access elevation is preserved for compatibility until context injection is retired
     private static void populateRuntimeContext(Object handler, Field field) {
         field.setAccessible(true);
         try {
@@ -239,9 +240,8 @@ public class ReflectionContextHelper {
        --------------------- */
 
     /**
-     * Initializes as necessary and returns collection of {@code Validator}s defined within the Compile
-     * scope of the AEM Authoring Toolkit Maven plugin
-     *
+     * Initializes as necessary and returns collection of {@code Validator}s defined within the execution scope
+     * of the ToolKit Maven plugin
      * @return {@code List} of instances
      */
     public List<Validator> getValidators() {
@@ -263,7 +263,7 @@ public class ReflectionContextHelper {
     /**
      * Creates a new instance object of the specified {@code Class}
      * @param instanceClass The class to instantiate
-     * @param <T> Instance type
+     * @param <T>           Instance type
      * @return New object instance
      */
     private static <T> T getInstance(Class<? extends T> instanceClass) {
@@ -286,14 +286,13 @@ public class ReflectionContextHelper {
     /**
      * Used to initialize {@code PluginReflectionUtility} instance based on list of available classpath entries in the
      * scope of this Maven plugin
-     *
      * @param elements    List of classpath elements to be used in reflection routines
      * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
      *                    If not specified, all available components will be processed
      * @return {@link ReflectionContextHelper} instance
      */
     public static ReflectionContextHelper fromCodeScope(List<String> elements, String packageBase) {
-        URL[] urls = new URL[] {};
+        URL[] urls = new URL[]{};
         if (elements != null) {
             urls = elements.stream()
                 .map(File::new)

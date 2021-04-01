@@ -19,13 +19,12 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.common.ContainerHandler;
 
 /**
- * The handler for a accordion-shaped TouchUI dialog
+ * The {@link ContainerHandler} variant for an accordion-shaped Granite UI dialog
  */
 public class AccordionContainerHandler extends ContainerHandler {
 
     /**
-     * Implements {@code BiConsumer<Source, Target>} pattern to process component-backing Java class and append
-     * the results to the given target representing a Granite UI root node
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */

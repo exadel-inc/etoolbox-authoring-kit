@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.adapters;
 
 import java.lang.annotation.Annotation;
@@ -36,7 +35,7 @@ public class ResourceTypeSetting {
     private final Source wrappedSource;
 
     /**
-     * Constructor per {@link Adaptable} contract
+     * Instance constructor per the {@link Adaptable} contract
      * @param source {@code Source} object that will be used for extracting resource type
      */
     public ResourceTypeSetting(Source source) {
@@ -66,7 +65,7 @@ public class ResourceTypeSetting {
     }
 
     /**
-     * Called by {@link ResourceTypeSetting#getValue()} to try and retrieve the resource type value if declared
+     * Called by {@link ResourceTypeSetting#getValue()} to try to retrieve the resource type value if declared
      * by {@link ResourceType}
      * @param annotations Collection of {@code Annotation} object to search for the resource type
      * @return String value if found; otherwise, null
@@ -81,7 +80,7 @@ public class ResourceTypeSetting {
     }
 
     /**
-     * Called by {@link ResourceTypeSetting#getValue()} to try and retrieve the resource type value if produces
+     * Called by {@link ResourceTypeSetting#getValue()} to try to retrieve the resource type value if produces
      * by any of the annotations' properties
      * @param annotations Collection of {@code Annotation} object to search for the resource type
      * @return String value if found; otherwise, null

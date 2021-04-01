@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -19,7 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 
 /**
- * Defines a target for a drag-and-drop operation in a TouchUI dialog. Upon properties of this annotation,
+ * Defines a target for a drag-and-drop operation in Granite UI. Upon processing this annotation,
  * a {@code cq:editConfig/cq:dropTargets/[targetName]} node within a component's buildup is created
  * See <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#main-pars_title_2_tckaux_refd_">AEM Components documentation</a>
  */
@@ -28,19 +28,19 @@ import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 public @interface DropTargetConfig {
 
     /**
-     * Maps to the 'accept' attribute of {@code cq:editConfig/cq:dropTargets/[targetName]} node
+     * Maps to the {@code accept} attribute of {@code cq:editConfig/cq:dropTargets/<targetName>} node
      * @return Non-blank string, or an array of strings
      */
     String[] accept() default {};
 
     /**
-     * Maps to the 'groups' attribute of {@code cq:editConfig/cq:dropTargets/[targetName]} node
+     * Maps to the {@code groups} attribute of {@code cq:editConfig/cq:dropTargets/<targetName>} node
      * @return Non-blank string, or an array of strings
      */
     String[] groups() default {};
 
     /**
-     * Maps to the 'propertyName' attribute of {@code cq:editConfig/cq:dropTargets/[targetName]} node
+     * Maps to the {@code propertyName} attribute of {@code cq:editConfig/cq:dropTargets/<targetName>} node
      * @return Non-blank string
      */
     String propertyName();

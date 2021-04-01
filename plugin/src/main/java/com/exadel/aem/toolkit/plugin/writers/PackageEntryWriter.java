@@ -92,7 +92,7 @@ abstract class PackageEntryWriter {
             Files.deleteIfExists(existingFilePath);
             if (!Scopes.COMPONENT.equals(getScope())) {
                 // We take into account that the markup could be stored by hand in e.g. _cq_dialog/.content.xml structure
-                // instead of _cq_dialog.xml file. Therefore, both the "file" and the "folder" must be deleted,
+                // instead of _cq_dialog.xml file. Therefore, both the "file" and "folder" must be deleted,
                 // or we might end up with two versions of component markup within same package
                 Path nestedFolderPath = componentPath.resolve(StringUtils.substringBeforeLast(
                     getScope(),
@@ -109,7 +109,7 @@ abstract class PackageEntryWriter {
     /**
      * Used to store XML markup filled with annotation data taken from current {@code Class} instance
      * @param componentClass {@link Class} to analyze
-     * @param componentPath {@link Path} representing a file within a file system the data is written to
+     * @param componentPath  {@link Path} representing a file within a file system the data is written to
      */
     final void writeXml(Class<?> componentClass, Path componentPath) {
         try (Writer writer = Files.newBufferedWriter(componentPath.resolve(getScope()), StandardOpenOption.CREATE)) {

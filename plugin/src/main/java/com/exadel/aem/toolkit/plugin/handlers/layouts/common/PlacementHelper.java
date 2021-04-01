@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
 
 import java.lang.reflect.Member;
@@ -54,10 +53,10 @@ public class PlacementHelper {
     private static final String REASON_DISORDER = "parent class field will be shown";
     private static final String REASON_DIFFERENT_RESTYPE = "different resource types provided";
 
+
     /* -------------------------------
        Private fields and constructors
        ------------------------------- */
-
 
     private Target container;
     private List<SectionFacade> sectionHelpers;
@@ -66,7 +65,7 @@ public class PlacementHelper {
     private final List<Source> processedMembers;
 
     /**
-     * Default (hiding) constructor
+     * Default (instantiation-preventing) constructor
      */
     private PlacementHelper() {
         processedMembers = new ArrayList<>();
@@ -129,9 +128,9 @@ public class PlacementHelper {
     }
 
 
-    /* --------------
-       Static methods
-       -------------- */
+    /* -----------------------
+       Private utility methods
+       ----------------------- */
 
 
     /**
@@ -268,7 +267,7 @@ public class PlacementHelper {
 
         /**
          * Assigns the reference to a {@code Target} object
-         * @param value {@code Target} instance representing a TouchUI dialog tab or accordion panel. This one can be
+         * @param value {@code Target} instance representing a Granite UI dialog tab or accordion panel. This one can be
          *              modified during the execution, by adding new child containers
          * @return This instance
          */

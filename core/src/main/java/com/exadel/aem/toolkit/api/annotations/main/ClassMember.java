@@ -23,21 +23,21 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
- * Used to refer a particular member (field or method) of a class defined by the class reference and the name
+ * Used to refer a particular member (field or method) of a class defined by the class reference, and the name
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ClassMember {
 
     /**
-     * The Java class possessing the member. If not specified, the class currently processed by the AEM Authoring Toolkit's
+     * The Java class possessing the member. If not specified, the class currently processed by the ToolKit's Maven
      * plugin will be used
      * @return {@code Class<?>} instance
      */
     Class<?> source() default _Default.class;
 
     /**
-     * When set to a non-blank String, defines name of the member, must refer to an actual field or method name. Otherwise.
+     * When set to a non-blank String, defines the name of the member, must refer to an actual field or method name. Otherwise.
      * name of the current field will be used
      * @return String value
      */

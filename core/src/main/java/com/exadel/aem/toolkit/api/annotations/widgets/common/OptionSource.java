@@ -19,24 +19,66 @@ import java.lang.annotation.RetentionPolicy;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
+/**
+ * Represents a single option source that can be defined for an {@link OptionProvider}. An option source points to
+ * an option storage, such as a JCR path, and specifies the way to render the data from this particular storage
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OptionSource {
 
+    /**
+     * Used to specify the precise address the options can be retrieved from, such as a JCR path
+     * @return String value, non-blank
+     */
     @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String value();
 
+    /**
+     * Used to specify the fallback address the options can be retrieved from when the main source ({@link OptionSource#value()})
+     * is not valid or unreachable
+     * @return Optional string value
+     */
     String fallbackPath() default "";
 
+    /**
+     * If set, specifies the name of an attribute of the underlying option resource (such as a JCR node) to be used as
+     * the selectable option's text
+     * @return String value
+     */
     String textMember() default "";
 
+    /**
+     * If set, specifies the name of an attribute of the underlying option resource (such as a JCR node) to be used as
+     * the selectable option's text
+     * @return String value
+     */
     String valueMember() default "";
 
+    /**
+     * If set, specifies one or more names of attributes of the underlying option resource (such as a JCR node)
+     * that are to be rendered as the selectable option's attributes
+     * @return String value, or an array of strings
+     */
     String[] attributeMembers() default {};
 
+    /**
+     * If set, specifies one or more string values that are to be rendered as the selectable option's attributes
+     * @return String value, or an array of strings
+     */
     String[] attributes() default {};
 
+    /**
+     * If set, specifies the way to transform option text as it is coming from a storage before rendering in UI
+     * @return String value
+     * @see com.exadel.aem.toolkit.api.annotations.meta.StringTransformation
+     */
     String textTransform() default "";
 
+    /**
+     * If set, specifies the way to transform option value as it is coming from a storage before rendering in UI
+     * @return String value
+     * @see com.exadel.aem.toolkit.api.annotations.meta.StringTransformation
+     */
     String valueTransform() default "";
 
 }

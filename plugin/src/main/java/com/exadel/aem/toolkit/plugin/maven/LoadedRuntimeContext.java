@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
- * The implementation of {@link PluginRuntimeContext} for the AEM Authoring Toolkit plugin instance that
+ * The implementation of {@link PluginRuntimeContext} for the ToolKit Maven plugin instance that
  * has been properly initialized
  */
 class LoadedRuntimeContext implements PluginRuntimeContext {
@@ -85,7 +85,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
         private final Consumer<LoadedRuntimeContext> onComplete;
 
         /**
-         * Creates new instance of this Builder
+         * Creates a new instance of this Builder
          * @param onComplete Routine that will be triggered upon Builder completion (basically, assigning the created
          *                   {@code LoadedRuntimeContext} to the global {@code PluginRuntime} instance
          */

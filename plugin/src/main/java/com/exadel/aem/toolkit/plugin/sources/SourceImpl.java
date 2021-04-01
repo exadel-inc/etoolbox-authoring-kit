@@ -18,18 +18,44 @@ import java.lang.annotation.Annotation;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 
+/**
+ * Presents a basic implementation of {@link Source} that exposes metadata specific for the underlying class or
+ * class member
+ */
 public abstract class SourceImpl extends AdaptationBase<Source> implements Source {
 
+    /**
+     * Default constructor
+     */
     SourceImpl() {
         super(Source.class);
     }
 
+    /**
+     * Retrieves annotations attached to the underlying entity
+     * @return Array of {@code Annotation} objects
+     */
     abstract Annotation[] getDeclaredAnnotations();
 
-    abstract <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass);
-
+    /**
+     * Retrieves annotations of a particular type attached to the underlying entity
+     * @param annotationClass {@code Class} of the annotations
+     * @param <T>             Annotation type reflected by the {@code annotationClass} argument
+     * @return Array of {@code Annotation} objects
+     */
     abstract <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass);
 
+    /**
+     * Retrieves an annotation of particular type attached to the underlying entity
+     * @param annotationClass {@code Class} of the annotation to get
+     * @param <T> Annotation type reflected by the {@code annotationClass} argument
+     * @return {@code T}-typed annotation object
+     */
+    abstract <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass);
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T adaptTo(Class<T> adaptation) {
         if (adaptation == null) {

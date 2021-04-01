@@ -22,17 +22,18 @@ import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
  * Used to refer to a particular field of a class defined by the class reference and the name
- * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link ClassMember} instead
+ * @deprecated This is deprecated and will be removed in a version after 2.0.2. Please use {@link ClassMember} instead
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Deprecated
-@SuppressWarnings("squid:S1133")
+@SuppressWarnings({"squid:S1133", "DeprecatedIsStillUsed"}) // the processing of ClassField is retained for compatibility
+                                                            // and will be removed in a version after 2.0.2
 public @interface ClassField {
 
     /**
-     * The Java class possessing the member. If not specified, the class currently processed by the AEM Authoring Toolkit's
-     * plugin will be used
+     * The Java class possessing the member. If not specified, the class currently processed by the ToolKit Maven plugin
+     * will be used
      * @return {@code Class<?>} instance
      */
     Class<?> source() default _Default.class;

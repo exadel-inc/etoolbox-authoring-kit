@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -14,21 +14,26 @@
 package com.exadel.aem.toolkit.api.annotations.meta;
 
 /**
- * Represents abstraction of routine used to validate annotations values before rendering them as XML attributes
+ * Presents the abstraction of a routine used to validate annotations values before rendering them as Granite UI entity
+ * attributes
  */
 public interface Validator {
+
     /**
-     * When implemented in a validator class, tests provided {@code Annotation}, primitive, or primitive wrapper against a criteria
-     * @param obj Value being tested
+     * When implemented in a validator class, tests the provided {@code Annotation}, primitive, or primitive wrapper
+     * against some criteria
+     * @param value Value being tested
      * @return True or false
      */
-    boolean test(Object obj);
+    boolean test(Object value);
+
     /**
      * When implemented in a validator class, used to define if this validation is relevant for a value
-     * @param obj Value being tested
+     * @param value Value being tested
      * @return True or false
      */
-    boolean isApplicableTo(Object obj);
+    boolean isApplicableTo(Object value);
+
     /**
      * In a validator class, returns an explanation why a tested value is invalid
      * @return Non-blank string

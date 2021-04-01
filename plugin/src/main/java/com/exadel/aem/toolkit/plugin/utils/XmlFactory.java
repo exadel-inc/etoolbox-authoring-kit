@@ -55,7 +55,7 @@ public class XmlFactory {
 
 
     /**
-     * Default private (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private XmlFactory() {
     }

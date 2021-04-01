@@ -11,10 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.component;
 
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
@@ -33,7 +32,7 @@ class SampleFieldsetBase1 {
             description = "Title's description"
     )
     @TextField
-    @PlaceOnTab("Main tab")
+    @Place("Main tab")
     private String title;
 
     @DialogField(
@@ -47,7 +46,7 @@ class SampleFieldsetBase1 {
                     RteFeatures.LINKS_UNLINK
             }
     )
-    @PlaceOnTab("Main tab")
+    @Place("Main tab")
     private String description;
 
     @DialogField(
@@ -56,7 +55,7 @@ class SampleFieldsetBase1 {
             description = DESCRIPTION_CAPTION
     )
     @TextField
-    @PlaceOnTab("Main tab")
+    @Place("Main tab")
     private String caption;
 
     @DialogField(
@@ -66,7 +65,7 @@ class SampleFieldsetBase1 {
             required = true
     )
     @TextField
-    @PlaceOnTab("Labels's tab")
+    @Place("Labels' tab")
     private String label;
 
     @DialogField(
@@ -78,7 +77,7 @@ class SampleFieldsetBase1 {
     @PathField(
             rootPath = "root/path"
     )
-    @PlaceOnTab("URL's tab")
+    @Place("URL's tab")
     private String url;
 
     @DialogField(
@@ -87,6 +86,6 @@ class SampleFieldsetBase1 {
             description = "Description for text on image"
     )
     @TextField
-    @PlaceOnTab("Main tab")
+    @Place("Main tab")
     private String imageText;
 }

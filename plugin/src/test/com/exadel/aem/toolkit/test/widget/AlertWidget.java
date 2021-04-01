@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
@@ -22,10 +21,10 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @Dialog(
-        name = DEFAULT_COMPONENT_NAME,
+        name = DEFAULT_COMPONENT_NAME, // name property is retained for compatibility testing
         title = "Alert Widget Dialog"
 )
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "deprecation"})
 public class AlertWidget {
 
     @Alert(

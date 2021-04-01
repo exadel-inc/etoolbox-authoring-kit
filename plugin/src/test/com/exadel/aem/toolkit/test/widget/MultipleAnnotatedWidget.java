@@ -11,12 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.widget;
 
 import java.util.List;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
@@ -26,16 +26,17 @@ import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomLegacyDialogAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
-@Dialog(
-        name = DEFAULT_COMPONENT_NAME,
+@AemComponent(
+        path = DEFAULT_COMPONENT_NAME,
         title = "Dialog with Multiple-Annotated Fields"
 )
-@CustomDialogAnnotation
+@Dialog
+@CustomLegacyDialogAnnotation
 @SuppressWarnings("unused")
 public class MultipleAnnotatedWidget {
     @DialogField(

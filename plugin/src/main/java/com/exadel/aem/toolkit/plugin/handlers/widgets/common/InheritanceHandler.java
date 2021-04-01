@@ -29,8 +29,8 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
 
 /**
- * Handler for processing Granite UI widgets features "inherited" by the current {@code Source} from other {@code Source}s
- * via {@link Extends} mechanism
+ * Implements {@code BiConsumer} to modify {@link Target} instance in the way that it copies applicable values from
+ * another {@code Target} the current Granite UI component inherits via the {@link Extends} mechanism
  */
 public class InheritanceHandler implements BiConsumer<Source, Target> {
     private final BiConsumer<Source, Target> descendantChain;
@@ -39,9 +39,9 @@ public class InheritanceHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {
@@ -87,7 +87,7 @@ public class InheritanceHandler implements BiConsumer<Source, Target> {
 
     /**
      * Finds among the annotations of the provided {@code Source} the first annotation that defines a widget (i.e. has
-     * a valid {@link ResourceType} meta-annotation
+     * a valid {@link ResourceType} meta-annotation)
      * @param source Current {@link Source} instance
      * @return {@code Annotation} object or null in case no compliant annotation found
      */

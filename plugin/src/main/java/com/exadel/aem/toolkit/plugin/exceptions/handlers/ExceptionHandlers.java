@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.exceptions.handlers;
 
 import java.util.Arrays;
@@ -24,18 +23,21 @@ import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
- * The factory-like class for getting an instance of {@link ExceptionHandler} that matches the value specified in
- * the {@code terminateOn} AEM Authoring Toolkit plugin setting
+ * Contains factory methods for retrieving an instance of {@link ExceptionHandler} that matches the value specified in
+ * the {@code terminateOn} ToolKit Maven plugin setting
  */
 public class ExceptionHandlers {
     private static final String EXCEPTION_TOKEN_NONE = "none";
 
+    /**
+     * Default (instantiation-restricting) constructor
+     */
     private ExceptionHandlers() {
     }
 
     /**
-     * Gets the instance of {@link ExceptionHandler} that matches the value specified in
-     * the {@code terminateOn} AEM Authoring Toolkit plugin setting
+     * Retrieves an instance of {@link ExceptionHandler} that matches the value specified in the {@code terminateOn}
+     * ToolKit plugin setting
      * @param value Setting value
      * @return {@code ExceptionHandler} instance
      */

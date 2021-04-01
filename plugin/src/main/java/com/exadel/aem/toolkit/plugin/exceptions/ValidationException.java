@@ -13,14 +13,19 @@
  */
 package com.exadel.aem.toolkit.plugin.exceptions;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 /**
- * Represents the plugin-specific exception produced when validation of an AEM Authoring Toolkit annotation value fails
+ * Represents the plugin-specific exception produced when the validation of an ToolKit annotation value fails
  */
 public class ValidationException extends RuntimeException {
-    public ValidationException(String message) {
-        super(message);
-    }
-    public ValidationException(String messageTemplate, Object ... args) {
-        this(String.format(messageTemplate, args));
+
+    /**
+     * Initializes a class instance with an exception message template and arbitrary number of arguments specified
+     * @param value String value representing the message template, non-blank
+     * @param args Optional arguments that can be rendered in the template
+     */
+    public ValidationException(String value, Object... args) {
+        super(ArrayUtils.isEmpty(args) ? value : String.format(value, args));
     }
 }

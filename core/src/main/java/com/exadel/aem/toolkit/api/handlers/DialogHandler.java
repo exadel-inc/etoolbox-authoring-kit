@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -18,10 +18,10 @@ import org.w3c.dom.Element;
 /**
  * Represents an abstraction of logic for handling a dialog annotation.
  * Serves as the marker interface for creating and enumerating handlers instances
- * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link Handler} instead
+ * @deprecated This is deprecated and will be removed in a version after 2.0.2. Please use {@link Handler} instead
  */
 @Deprecated
-@SuppressWarnings({"unused", "squid:S1133"}) // See deprecation message
+@SuppressWarnings("squid:S1133") // See deprecation message
 public interface DialogHandler extends Handler {
 
     /**
@@ -32,9 +32,19 @@ public interface DialogHandler extends Handler {
         return "";
     }
 
+    /**
+     * Method representing the entry-point for handling data, modern style
+     * @param source Non-null {@code Source} object
+     * @param target Non-null {@code Target} object
+     */
     default void accept(Source source, Target target) {
     }
 
+    /**
+     * Method representing the entry-point for handling data, legacy style
+     * @param element Non-null DOM {@code element} object
+     * @param cls     Non-null {@code Class} reference
+     */
     default void accept(Element element, Class<?> cls) {
     }
 }

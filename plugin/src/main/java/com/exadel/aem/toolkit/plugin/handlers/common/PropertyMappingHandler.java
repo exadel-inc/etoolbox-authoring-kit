@@ -33,13 +33,16 @@ import com.exadel.aem.toolkit.plugin.utils.ScopeUtil;
  */
 public class PropertyMappingHandler implements BiConsumer<Source, Target> {
 
+    /**
+     * Enumerates built-in annotations that are out of the common property mapping flow
+     */
     private static final List<Class<? extends Annotation>> SPECIALLY_PROCESSED = Arrays.asList(
         AemComponent.class,
         Dialog.class
     );
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores in into the provided {@code Target}
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */

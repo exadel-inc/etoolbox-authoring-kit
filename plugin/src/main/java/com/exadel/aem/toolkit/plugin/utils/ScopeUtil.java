@@ -57,7 +57,7 @@ public class ScopeUtil {
 
     /**
      * Gets whether the given scope matches the provided class {@code Member}
-     * @param scope Non-null string value representing a scope
+     * @param scope  Non-null string value representing a scope
      * @param member Non-null {@code Member} instance
      * @return True or false
      */
@@ -73,10 +73,10 @@ public class ScopeUtil {
 
     /**
      * Gets whether the given scope matches the provided {@code Annotation}
-     * @param scope Non-null string value representing a scope
+     * @param scope      Non-null string value representing a scope
      * @param annotation Non-null {@code Annotation} instance
-     * @param context Array of sibling annotations to decide on the scope of the current annotation if set to default,
-     *                nullable
+     * @param context    Array of sibling annotations to decide on the scope of the current annotation if set to default,
+     *                   nullable
      * @return True or false
      */
     public static boolean fits(String scope, Annotation annotation, Annotation[] context) {
@@ -85,14 +85,14 @@ public class ScopeUtil {
         }
         String[] scopes = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).scope();
         if (scopes.length == 1 && scopes[0].equals(Scopes.DEFAULT) && ArrayUtils.isNotEmpty(context)) {
-            scopes = new String[] {designate(Arrays.stream(context).map(Annotation::annotationType).toArray(Class<?>[]::new))};
+            scopes = new String[]{designate(Arrays.stream(context).map(Annotation::annotationType).toArray(Class<?>[]::new))};
         }
         return ArrayUtils.contains(scopes, scope) || ArrayUtils.contains(scopes, Scopes.DEFAULT);
     }
 
     /**
      * Gets whether the given scope matches one or more other scopes
-     * @param scope Non-null string value representing a scope
+     * @param scope  Non-null string value representing a scope
      * @param others Non-null array of {@code Scope} objects
      * @return True or false
      */

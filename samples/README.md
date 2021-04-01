@@ -33,16 +33,16 @@ This project contains examples of using *AEM Authoring Toolkit* functionality vi
     - [@DependsOnRef](#dependsonref)
     - [@DependsOnTab](#dependsontab)
     - [@DependsOnParam](#dependsonparam)
-    
 
-## Project structure and installation    
-The project consists of three modules: the **core** module containing *Toolkit*-annotated Sling models; the **apps** module that contains matching AEM components; and the **content** module used to deploy sandboxing pages and supplementary AEM entities. 
 
-To compile and install the project's artifacts to the local Maven repository use `mvn clean install` command. To deploy the installation to an arbitrary AEM instance, run `mvn clean install -Pinstall-samples`. 
+## Project structure and installation
+The project consists of three modules: the **core** module containing *Toolkit*-annotated Sling models; the **apps** module that contains matching AEM components; and the **content** module used to deploy sandboxing pages and supplementary AEM entities.
+
+To compile and install the project's artifacts to the local Maven repository use `mvn clean install` command. To deploy the installation to an arbitrary AEM instance, run `mvn clean install -Pinstall-samples`.
 
 The content is deployed to *http://localhost:4502* by default; however you can control the target with the additional command line switches like `-Dhost=some_host`, `-Dport=XXXX`.
 
-You can also control the version of `AEM Authoring Toolkit` API and Maven plugin called by the project. To do this, use the command line switch `-Daat.version=<arbitrary release or snapshot>`.
+You can also control the version of `AEM Authoring Toolkit` API and Maven plugin called by the project. To do this, use the command line switch `-Dtoolkit.version=<arbitrary release or snapshot>`.
 
 
 ***
@@ -50,13 +50,13 @@ You can also control the version of `AEM Authoring Toolkit` API and Maven plugin
 ## Annotations reference
 
 Sling models with the examples are placed in the **core** module.
-    
+
 #### `@Dialog`, `@DialogField`, `@Tab`, `@PlaceOnTab`
 
 These annotations are used in nearly every model.
 
   * Tab in the form of a nested class is used in the [HomelandComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/HomelandComponent.java).
-  
+
   ```
     @Dialog(
           ...
@@ -70,9 +70,9 @@ These annotations are used in nearly every model.
         public static class HomelandTab { ... }
     }
   ```
-    
+
   * Tabs in the form of an array of `@Tab` within `@Dialog` are used in all models except for HomelandComponent.
-    
+
   ```
     @Dialog(
         ...
@@ -207,7 +207,7 @@ This annotation is used in the [WarriorComponent](./core/src/main/java/com/exade
 
 ## Custom annotations and handlers
 
-An instance of a custom annotation is used to implement the *field name postfix" feature for the `@FieldSet`. 
+An instance of a custom annotation is used to implement the *field name postfix" feature for the `@FieldSet`.
 The example is placed in the the **core** module (package `com.exadel.aem.toolkit.samples.annotations`).
 Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.annotations.handlers`.
 
@@ -218,7 +218,7 @@ Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.anno
 #### `@DependsOn`
 
 This annotation is used in:
- - [AbilitiesComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/AbilitiesComponent.java) 
+ - [AbilitiesComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/AbilitiesComponent.java)
     - to switch visibility (default action) of a multifield with the simple boolean query:
    ```
    @DependsOn(query = "@ability === 'magic'")
@@ -231,7 +231,7 @@ This annotation is used in:
        params = { @DependsOnParam(name = "msg", value = "Too powerful!")}
    )
    ```
- - [WarriorDescriptionComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java) 
+ - [WarriorDescriptionComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java)
    - to get *colorTheme* property from the following path:
    ```
    @DependsOn(
@@ -241,15 +241,15 @@ This annotation is used in:
    ```
    - to call custom action that changes tags scope of `@Autocomplete` depending on a color theme:
    ```
-   @DependsOn(query = "@isDarkColorTheme", action = "namespaceFilter") 
+   @DependsOn(query = "@isDarkColorTheme", action = "namespaceFilter")
    ```
- - [ShoppingListComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/ShoppingListComponent.java) to switch visibility and disable a textfield with the group boolean query (using back-forward class selector); 
+ - [ShoppingListComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/ShoppingListComponent.java) to switch visibility and disable a textfield with the group boolean query (using back-forward class selector);
  and to set default text for a textfield depending on its state:
    ```
    @DependsOn(query = "@@checkbox(coral-panel |> .products-fieldSet).every(item => item)")
    @DependsOn(query = "@@checkbox.every(item => item)", action = DependsOnActions.DISABLED)
    @DependsOn(query = "AATSamples.getShoppingDefaultText(@@checkbox(coral-panel |> .weapon-fieldSet), @this)", action = DependsOnActions.SET)
-   ``` 
+   ```
 
 #### `@DependsOnRef`
 
@@ -258,7 +258,7 @@ This annotation is used in [AbilitiesComponent](./core/src/main/java/com/exadel/
 #### `@DependsOnTab`
 
 This annotation is used in the [WarriorDescriptionComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java) to switch visibility of tabs with simple boolean queries:
-    
+
     @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUITS, query = "@likesFruit")
     @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_MOVIES, query = "@likesMovies")
 

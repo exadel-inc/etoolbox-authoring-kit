@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.api.handlers;
 import java.util.function.BiConsumer;
 
 /**
- * Represents an abstraction of logic for handling a Toolkit annotation.
+ * Presents an abstraction of logic for handling a manageable annotation.
  * Serves as the marker interface for creating and enumerating handlers instances
  */
 public interface Handler extends BiConsumer<Source, Target> {

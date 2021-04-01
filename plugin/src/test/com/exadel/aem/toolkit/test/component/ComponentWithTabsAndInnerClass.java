@@ -11,11 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.component;
 
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -34,14 +35,16 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_1;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_2;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_3;
 
-@Dialog(name = TestConstants.DEFAULT_COMPONENT_NAME,
-        title = TestConstants.DEFAULT_COMPONENT_TITLE,
-        tabs = {
-                @Tab(title = LABEL_TAB_1),
-                @Tab(title = LABEL_TAB_2),
-                @Tab(title = LABEL_TAB_3)
-        }
+@AemComponent(
+    path = TestConstants.DEFAULT_COMPONENT_NAME,
+    title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
+@Dialog
+@Tabs({
+    @Tab(title = LABEL_TAB_1),
+    @Tab(title = LABEL_TAB_2),
+    @Tab(title = LABEL_TAB_3)
+})
 @SuppressWarnings("unused")
 public class ComponentWithTabsAndInnerClass {
 
@@ -58,26 +61,26 @@ public class ComponentWithTabsAndInnerClass {
                     @Data(name = "field1-data1", value = "value-data1"),
                     @Data(name = "field1-data2", value = "value-data2")
             })
-    @PlaceOnTab(LABEL_TAB_1)
+    @Place(LABEL_TAB_1)
     String field1;
 
     @DialogField(label="Field 2")
     @PathField(rootPath = "/content")
-    @PlaceOnTab(LABEL_TAB_2)
+    @Place(LABEL_TAB_2)
     String field2;
 
     @DialogField(label="Field 2.1", wrapperClass = "my-wrapper-class")
     @TextField
-    @PlaceOnTab(LABEL_TAB_3)
+    @Place(LABEL_TAB_3)
     String field3;
 
     @DialogField(description = "This is the second second field")
     @Checkbox(text = "Checkbox 2")
-    @PlaceOnTab(LABEL_TAB_1)
+    @Place(LABEL_TAB_1)
     String field4;
 
     @FieldSet(title = "Field set example")
-    @PlaceOnTab(LABEL_TAB_2)
+    @Place(LABEL_TAB_2)
     FieldSetExample fieldSet;
 
     static class FieldSetExample{
@@ -106,6 +109,6 @@ public class ComponentWithTabsAndInnerClass {
             @Option(text = "4 star", value = "4"),
             @Option(text = "5 star", value = "5")
     }, emptyText = "Select rating" )
-    @PlaceOnTab(LABEL_TAB_3)
+    @Place(LABEL_TAB_3)
     String dropdown;
 }

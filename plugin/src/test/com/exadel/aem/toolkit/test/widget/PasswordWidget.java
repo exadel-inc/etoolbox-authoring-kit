@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
@@ -19,10 +18,11 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.Password;
+import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
 @AemComponent(
-        path = "test-component",
-        title = "test-component-dialog"
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
+        title = "Password Widget Dialog"
 )
 @Dialog
 @SuppressWarnings("unused")

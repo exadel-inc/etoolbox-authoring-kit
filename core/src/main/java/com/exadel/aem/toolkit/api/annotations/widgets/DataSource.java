@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 /**
  * Allows to define a {@code datasource} node for a {@link com.exadel.aem.toolkit.api.annotations.widgets.select.Select}
  * or a {@link com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup} annotation
- * Use this to specify either an ACS Commons list source or a custom datasource for your selection or radioGroup
+ * Use this to specify either an EToolbox List / ACS Commons list source or a custom datasource for selection
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -46,8 +46,8 @@ public @interface DataSource {
     String path() default "";
 
     /**
-     * Used to specify collection of {@link Property}s within this DataSource
-     * @return Single {@code @Property} annotation, or an array of Properties
+     * Used to specify collection of {@link Property}s within this {@code DataSource}
+     * @return Single {@code @Property} annotation, or an array of properties
      */
     Property[] properties() default {};
 }

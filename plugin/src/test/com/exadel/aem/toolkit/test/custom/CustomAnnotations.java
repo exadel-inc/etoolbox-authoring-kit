@@ -11,28 +11,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.custom;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomAnnotationForOrderingTest;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotationAuto;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomLegacyDialogAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomNonMappingWidgetAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAutoOrder;
 import com.exadel.aem.toolkit.test.custom.annotation.DialogAnnotationForOrderingTest;
+import com.exadel.aem.toolkit.test.custom.annotation.WidgetAnnotationForOrderingTest;
 
 @AemComponent(
     path = "test-component",
     title = "test-component-dialog"
 )
 @Dialog
-@CustomDialogAnnotation
+@CustomLegacyDialogAnnotation
 @CustomDialogAnnotationAuto(
     field1 = "value1",
     field2 = 2
@@ -62,6 +61,6 @@ public class CustomAnnotations {
     @CustomWidgetAutoOrder
     String getTestAutoOrder;
 
-    @CustomAnnotationForOrderingTest
+    @WidgetAnnotationForOrderingTest
     boolean getTestOrder;
 }

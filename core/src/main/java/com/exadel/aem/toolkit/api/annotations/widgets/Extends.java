@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -21,20 +21,21 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
- * Used to mark that this field must inherit annotations values from another field
- * specified by type and field name
+ * Used to mark that a field or method must inherit its ToolKit configuration from another field specified by the class
+ * reference and field/method name
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Extends {
+
     /**
      * Class to inherit setup from
-     * @return {@code Class<?>} object
+     * @return {@code Class} object
      */
     Class<?> value() default _Default.class;
 
     /**
-     * Field name (if not specified, the field with identical name to the current field's name is implied)
+     * Field name (if not specified, the field with name identical to the current field's name is assumed)
      * @return Optional String value
      */
     String field() default "";

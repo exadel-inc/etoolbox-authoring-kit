@@ -29,7 +29,8 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * Handler used to prepare data for {@link MultiField} widget rendering
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
+ * object that define the Granite UI {@code MultiField} widget look and behavior
  */
 @Handles(MultiField.class)
 public class MultiFieldHandler extends WidgetContainerHandler implements Handler {
@@ -37,10 +38,9 @@ public class MultiFieldHandler extends WidgetContainerHandler implements Handler
     private static final String EMPTY_MULTIFIELD_EXCEPTION_MESSAGE = "No valid fields found in multifield class ";
 
     /**
-     * Implements the {@code BiConsumer<Source, Target} pattern to process settings specified by {@link MultiField}
-     * and provide data for widget rendering
-     * @param source Member that defines a {@code MultiField}
-     * @param target Data structure used for rendering
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {
@@ -48,7 +48,7 @@ public class MultiFieldHandler extends WidgetContainerHandler implements Handler
         String name = target.getAttributes().get(DialogConstants.PN_NAME);
         target.getAttributes().remove(DialogConstants.PN_NAME);
 
-        // Get the filtered members collection for the current container; early return if collection is empty
+        // Get the filtered members' collection for the current container; early return if collection is empty
         List<Source> sources = getEntriesForContainer(source, true);
         if (sources.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
@@ -68,8 +68,8 @@ public class MultiFieldHandler extends WidgetContainerHandler implements Handler
     /**
      * Places multiple widget sources to the container of the {@code Target} multifield
      * @param sources The collection of {@link Source} instances to become multifield children
-     * @param target Current {@link Target} instance
-     * @param name The {@code name} attribute fot the target multifield
+     * @param target  Current {@link Target} instance
+     * @param name    The {@code name} attribute fot the target multifield
      */
     private void placeMultiple(List<Source> sources, Target target, String name) {
         target.attribute(DialogConstants.PN_COMPOSITE, true);

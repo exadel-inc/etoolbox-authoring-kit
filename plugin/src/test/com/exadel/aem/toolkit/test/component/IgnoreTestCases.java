@@ -11,13 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.component;
 
 import java.util.List;
 
 import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
@@ -37,28 +37,31 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_3;
 
 @SuppressWarnings("unused")
 public class IgnoreTestCases {
-    @Dialog(
-            name = TestConstants.DEFAULT_COMPONENT_NAME,
-            title = TestConstants.DEFAULT_COMPONENT_NAME
+    @AemComponent(
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
+        title = TestConstants.DEFAULT_COMPONENT_NAME
     )
+    @Dialog
     @Ignore(
         members ={
-                    @ClassMember(source = SelectWidget.class, value = "timezone"),
-                    @ClassMember(source = SelectWidget.class, value = "optionList"),
-                    @ClassMember(source = SelectWidget.class, value = "rating")
-    })
+            @ClassMember(source = SelectWidget.class, value = "timezone"),
+            @ClassMember(source = SelectWidget.class, value = "optionList"),
+            @ClassMember(source = SelectWidget.class, value = "rating")
+        })
     public static class IgnoreMembersFixedColumnsLayout extends SelectWidget {}
 
 
-    @Dialog(
-            name = TestConstants.DEFAULT_COMPONENT_NAME,
+    @AemComponent(
+            path = TestConstants.DEFAULT_COMPONENT_NAME,
             title = TestConstants.DEFAULT_COMPONENT_NAME
     )
-    @IgnoreFields({
+    @Dialog
+    @IgnoreFields({ // Legacy API bits preserved for compatibility testing
             @ClassField(source = TabsWidget.class, field = "field3"),
             @ClassField(field = "field4") // source value falls back to the annotated class'es type
     })
     @IgnoreTabs(LABEL_TAB_3)
+    @SuppressWarnings("deprecation")
     public static class IgnoreMembersTabsLayout extends TabsWidget {
         @DialogField
         @TextField
@@ -66,10 +69,11 @@ public class IgnoreTestCases {
     }
 
 
-    @Dialog(
-        name = TestConstants.DEFAULT_COMPONENT_NAME,
+    @AemComponent(
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
         title = TestConstants.DEFAULT_COMPONENT_NAME
     )
+    @Dialog
     @Ignore(
         sections = "Basic2",
         members = @ClassMember(source = AccordionWidget.class, value = "field1")
@@ -80,10 +84,11 @@ public class IgnoreTestCases {
         private String field2;
     }
 
-    @Dialog(
-            name = TestConstants.DEFAULT_COMPONENT_NAME,
+    @AemComponent(
+            path = TestConstants.DEFAULT_COMPONENT_NAME,
             title = TestConstants.DEFAULT_COMPONENT_NAME
     )
+    @Dialog
     @Ignore(
         members = {
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, value = "field1"),
@@ -93,7 +98,7 @@ public class IgnoreTestCases {
     })
     public static class IgnoreMembersInFieldSet extends ComponentWithTabsAndInnerClass {
         @FieldSet(title = "Field set example")
-        @PlaceOnTab(LABEL_TAB_2)
+        @Place(LABEL_TAB_2)
         FieldSetExampleCut fieldSet;
 
         @Ignore(
@@ -102,20 +107,21 @@ public class IgnoreTestCases {
         private static class FieldSetExampleCut extends FieldSetExample {}
     }
 
-    @Dialog(
-            name = TestConstants.DEFAULT_COMPONENT_NAME,
+    @AemComponent(
+            path = TestConstants.DEFAULT_COMPONENT_NAME,
             title = TestConstants.DEFAULT_COMPONENT_NAME
     )
-    @IgnoreFields({
-            @ClassField(source = ComponentWithTabsAndInnerClass.class, field = "field1"),
-            @ClassField(source = ComponentWithTabsAndInnerClass.class, field = "field2"),
-            @ClassField(source = ComponentWithTabsAndInnerClass.class, field = "dropdown"),
-            @ClassField(source = ComponentWithTabsAndInnerClass.class, field = "fieldSet"),
-            @ClassField(field = "localIgnored")
+    @Dialog
+    @Ignore(members = {
+            @ClassMember(source = ComponentWithTabsAndInnerClass.class, value = "field1"),
+            @ClassMember(source = ComponentWithTabsAndInnerClass.class, value = "field2"),
+            @ClassMember(source = ComponentWithTabsAndInnerClass.class, value = "dropdown"),
+            @ClassMember(source = ComponentWithTabsAndInnerClass.class, value = "fieldSet"),
+            @ClassMember("localIgnored")
     })
     public static class IgnoreMembersImposedOnFieldSet extends ComponentWithTabsAndInnerClass {
         @FieldSet(title = "Field set example")
-        @PlaceOnTab(LABEL_TAB_2)
+        @Place(LABEL_TAB_2)
         @Ignore(
             members = @ClassMember(value = "field6")
         ) // sourceClass value falls back to the annotated field's type
@@ -126,10 +132,11 @@ public class IgnoreTestCases {
         String localIgnored;
     }
 
-    @Dialog(
-            name = TestConstants.DEFAULT_COMPONENT_NAME,
+    @AemComponent(
+            path = TestConstants.DEFAULT_COMPONENT_NAME,
             title = TestConstants.DEFAULT_COMPONENT_NAME
     )
+    @Dialog
     @Ignore(
         members = {
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, value = "field1"),
@@ -139,10 +146,11 @@ public class IgnoreTestCases {
     })
     public static class IgnoreMembersImposedOnFieldSetClassLevel extends ComponentWithTabsAndInnerClass {}
 
-    @Dialog(
-            name = TestConstants.DEFAULT_COMPONENT_NAME,
+    @AemComponent(
+            path = TestConstants.DEFAULT_COMPONENT_NAME,
             title = TestConstants.DEFAULT_COMPONENT_NAME
     )
+    @Dialog
     public static class IgnoreMembersInMultifield {
         @DialogField
         @MultiField(value = SampleMultifieldCut.class)
@@ -156,10 +164,11 @@ public class IgnoreTestCases {
         private static class SampleMultifieldCut extends SampleMultifieldBase {}
     }
 
-    @Dialog(
-            name = TestConstants.DEFAULT_COMPONENT_NAME,
+    @AemComponent(
+            path = TestConstants.DEFAULT_COMPONENT_NAME,
             title = TestConstants.DEFAULT_COMPONENT_NAME
     )
+    @Dialog
     public static class IgnoreMembersImposedOnMultifield {
         @DialogField
         @MultiField(value = SampleMultifieldBase.class)
@@ -171,10 +180,11 @@ public class IgnoreTestCases {
         private List<SampleMultifieldBase> links;
     }
 
-    @Dialog(
-            name = TestConstants.DEFAULT_COMPONENT_NAME,
+    @AemComponent(
+            path = TestConstants.DEFAULT_COMPONENT_NAME,
             title = TestConstants.DEFAULT_COMPONENT_NAME
     )
+    @Dialog
     @Ignore(
         members = {
             @ClassMember(source = SampleMultifieldBase.class, value = "checkbox"),

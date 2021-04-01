@@ -24,14 +24,28 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
+/**
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with values originating from a {@link Source}
+ * object that define additional properties of a Granite UI component
+ */
 public class PropertyAnnotationHandler implements BiConsumer<Source, Target> {
 
+    /**
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
+     */
     @Override
     public void accept(Source source, Target target) {
-        Arrays.stream(source.adaptTo(Property[].class))
-            .forEach(p -> acceptProperty(p, target));
+        Arrays.stream(source.adaptTo(Property[].class)).forEach(p -> acceptProperty(p, target));
     }
 
+    /**
+     * Called by {@link PropertyAnnotationHandler#accept(Source, Target)} to process particular {@link Property} objects
+     * extractable from the given {@code Source}
+     * @param property Current {@code Property} object
+     * @param target   Resulting {@code Target} object
+     */
     private void acceptProperty(Property property, Target target) {
         String propertyName;
         String propertyPath;

@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -15,8 +15,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 /**
  * Contains common string constants used for size setup
- *
- * @deprecated These constants are deprecated in favour of {@link Size} enum and will be removed in a version after 2.0.1
+ * @deprecated These constants are deprecated in favour of {@link Size} enum and will be removed in a version after 2.0.2
  */
 @SuppressWarnings({"unused", "squid:S1133"})
 @Deprecated

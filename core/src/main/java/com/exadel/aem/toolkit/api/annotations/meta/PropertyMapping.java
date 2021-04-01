@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -19,10 +19,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks that properties of a specific annotation are expected to be automatically mapped to XML attributes
- * of the current XML node or an optional child node. This setting extends to all the properties unless
+ * Marks that properties of a specific annotation are expected to be automatically mapped to the attributes
+ * of the current Granite UI entity. This setting extends to all the properties unless
  * a narrower list is specified via {@link PropertyMapping#mappings()}
- * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link MapProperties} instead
+ * @deprecated This is deprecated and will be removed in a version after 2.0.2. Please use {@link MapProperties} instead
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
 @SuppressWarnings("squid:S1133")
 public @interface PropertyMapping {
     /**
-     * When initialized to a non-blank value, allows setting name prefix for a current field or all the eligible fields
+     * When initialized to a non-blank value, allows setting name prefix for a current field or all the relevant fields
      * of current annotation
      * @return String value
      */

@@ -11,11 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.widget;
 
 import java.util.List;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
@@ -24,17 +24,18 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
-@Dialog(
-        name = DEFAULT_COMPONENT_NAME,
+@AemComponent(
+        path = DEFAULT_COMPONENT_NAME,
         title = "MultiField Widget Dialog"
 )
+@Dialog
 @SuppressWarnings("unused")
 public class MultiFieldWidget {
     @DialogField(
             label="Multifield 1",
             description = "Multifield definition with source class specified"
     )
-    @MultiField(field = MultiFieldContainer.class)
+    @MultiField(MultiFieldContainer.class)
     String multiField1;
 
     @DialogField(

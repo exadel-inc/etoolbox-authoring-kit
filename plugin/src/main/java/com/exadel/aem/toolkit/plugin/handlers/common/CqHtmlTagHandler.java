@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 public class CqHtmlTagHandler implements BiConsumer<Source, Target> {
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores in into the provided {@code Target}
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */

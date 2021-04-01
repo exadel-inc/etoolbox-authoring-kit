@@ -91,7 +91,7 @@ abstract class XmlNodeBuilderBase {
     /**
      * Stores RichTextEditor feature to configuration XML markup
      * @param pluginId RTE Plugin name
-     * @param feature Feature identifier
+     * @param feature  Feature identifier
      */
     abstract void store(String pluginId, String feature);
 

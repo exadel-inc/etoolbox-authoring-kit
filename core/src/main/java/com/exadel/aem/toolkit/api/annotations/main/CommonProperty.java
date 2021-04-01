@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -22,9 +22,8 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 /**
- * Used to populate {@link CommonProperties} value with set of name-value string pairs. They are rendered as XML nodes'
- * attributes
- * To define appropriate XML node, node's scope and {@code XPath} can be specified
+ * Used to populate the {@link CommonProperties} value with set of name-value string pairs. They are rendered as
+ * XML nodes' attributes. To define an appropriate XML node, its scope and {@code XPath} can be specified
  * @see CommonProperties
  * @see Scopes
  */
@@ -48,13 +47,13 @@ public @interface CommonProperty {
     /**
      * Specifies the scope to deal with, i.e. whether this attribute is rendered to {@code cq:Component} (component root),
      * {@code cq:dialog}, {@code cq:editorConfig} or any other appropriate JCR node
-     * @return One of {@code XmlScope} values
+     * @return String values representing a valid scope
      */
     String scope() default Scopes.COMPONENT;
 
     /**
      * Specifies the path to target node relative to node defined by {@link CommonProperty#scope()}
-     * @return String representing JCR path, namespace-agnostic (i.e. 'editConfig' instead of 'cq:editConfig', etc.)
+     * @return String representing a JCR path, namespace-agnostic (i.e. 'editConfig' instead of 'cq:editConfig', etc.)
      */
     String path() default "/";
 }

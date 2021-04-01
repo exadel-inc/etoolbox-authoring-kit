@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
  * Used to set up an entry in {@code RichTextEditor#specialCharacters()} array.
  * Represents a <a href="https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/configure-rich-text-editor-plug-ins.html#main-pars_title_4">
  * name-entity pair</a>, or a <a href="https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/configure-rich-text-editor-plug-ins.html#main-pars_title_5">
- *     range of character codes</a> for characters displayed in an "Insert Symbol" dialog
+ *     range of character codes</a> for characters displayed in the "Insert Symbol" dialog
  * @see RichTextEditor
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -34,22 +34,26 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 @ValueRestriction("com.exadel.aem.toolkit.plugin.validators.CharactersObjectValidator")
 @MapProperties
 public @interface Characters {
+
     /**
      * In a name-entity buildup, represents the name of a character entry
      * @return String value, non-blank
      */
     String name() default "";
+
     /**
      * In a name-entity buildup, represents the entity code of a character entry
      * @return String value, non-blank
      */
     String entity() default "";
+
     /**
      * In a range buildup, represents the first position in the Unicode subset
      * @return Long value, greater than zero
      */
     @PropertyRendering(ignoreValues = "0")
     long rangeStart() default 0;
+
     /**
      * In a range buildup, represents the last position in the Unicode subset
      * @return Long value, greater than zero

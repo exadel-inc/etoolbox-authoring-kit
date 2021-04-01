@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.widgets.accessory;
 
 import java.lang.annotation.ElementType;
@@ -23,29 +22,29 @@ import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 
 /**
- * Used to specify class members and/or markup sections that could have been rendered into this dialog
- * or dialog part but should be ignored (skipped) instead.
- * Typically this is used in the case when current dialog class or a fieldset extends another class and can expose
- * one or more {@code DialogField}s or {@code Tab}s / {@code AccordionPanel}s from superclass that are not actually needed
+ * Used to specify class members and/or sections that could have been rendered into this dialog or dialog part but should
+ * be instead ignored (skipped). This is commonly used when the current dialog class or fieldset extends another class and
+ * would expose one or more {@code DialogField}s or {@code Tab}s / {@code AccordionPanel}s from superclass that are not
+ * actually needed
  */
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Ignore {
 
     /**
-     * Enumerates class members to be skipped when rendering a dialog or a dialog part.
+     * Enumerates class members to be skipped when rendering a dialog or dialog part.
      * Each member is specified by a reference to a {@code Class} and the name of a field or method
-     * @see ClassMember
      * @return One or more {@code ClassMember} annotations
+     * @see ClassMember
      */
     ClassMember[] members() default {};
 
     /**
      * Enumerates container sections, such as Tabs or Accordion panels, to be skipped when rendering a dialog
-     * or a dialog part. Each section is specified by its title
+     * or dialog part. Each section is specified by its title
+     * @return One or more String values
      * @see com.exadel.aem.toolkit.api.annotations.container.Tab
      * @see AccordionPanel
-     * @return One or more String values
      */
     String[] sections() default {};
 }

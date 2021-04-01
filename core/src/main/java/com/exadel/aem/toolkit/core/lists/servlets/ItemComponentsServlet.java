@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core.lists.servlets;
 
 import java.util.ArrayList;
@@ -45,7 +44,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Provides the collection of AEM resources that represent EToolbox Lists items
- * to be displayed in a TouchUI {@code Select} widget
+ * to be displayed in a Granite UI {@code Select} widget
  */
 @Component(
     service = Servlet.class,
@@ -64,7 +63,6 @@ public class ItemComponentsServlet extends SlingSafeMethodsServlet {
     /**
      * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest}
      * a {@code DataSource} object filled with item components that are list items
-     *
      * @param request  {@code SlingHttpServletRequest} instance
      * @param response {@code SlingHttpServletResponse} instance
      */

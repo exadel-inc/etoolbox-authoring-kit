@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.widgets.accessory;
 
 import java.lang.annotation.ElementType;
@@ -27,7 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
  * indicates that an arbitrary array of widgets of this type should be rendered instead of a singular widget.
  * <br><br>
  * Technically, for a statement like "{@code @SomeWidget @Multiple private String field... }", there will be rendered
- * a {@code Multifield} that may contain an arbitrary number of {@code SomeWidget}s
+ * a {@code Multifield} that can contain an arbitrary number of {@code SomeWidget}s
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

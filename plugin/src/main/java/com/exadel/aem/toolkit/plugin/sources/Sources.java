@@ -21,12 +21,12 @@ import java.lang.reflect.Method;
 import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
- * Factory class used to create {@link Source} instances
+ * Contains factory methods for creating {@link Source} instances
  */
 public class Sources {
 
     /**
-     * Default (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private Sources() {
     }
@@ -42,9 +42,9 @@ public class Sources {
 
     /**
      * Creates a {@link Source} facade for a Java class member
-     * @param value {@code Method} or a {@code Field} for which a source facade is created
-     * @param reportingClass {@code Class<?>} pointer determining the class that "reports" the AEM Authoring Toolkit's plugin
-     *                       of current member (can be a class where this member was declared or a descendant of
+     * @param value          {@code Method} or a {@code Field} for which a source facade is created
+     * @param reportingClass {@code Class<?>} pointer determining the class that "reports" to the ToolKit Maven plugin
+     *                       about the current member (can be a class where this member was declared or a descendant of
      *                       some superclass that uses the member for UI rendering)
      * @return {@code Source} instance
      */

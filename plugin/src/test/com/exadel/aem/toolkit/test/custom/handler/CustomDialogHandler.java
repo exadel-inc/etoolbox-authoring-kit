@@ -17,10 +17,10 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomLegacyDialogAnnotation;
 
-@Handles(value = CustomDialogAnnotation.class)
-@SuppressWarnings("unused") // Used by AAT Plugin logic
+@Handles(value = CustomLegacyDialogAnnotation.class)
+@SuppressWarnings("unused") // Used by ToolKit Plugin logic
 public class CustomDialogHandler implements Handler {
 
     @Override

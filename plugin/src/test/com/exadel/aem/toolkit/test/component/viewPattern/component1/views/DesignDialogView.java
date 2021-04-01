@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.component.viewPattern.component1.views;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.LayoutType;
@@ -122,8 +121,8 @@ public class DesignDialogView implements Addition, Addition2 {
 
 }
 
+@SuppressWarnings("unused")
 interface Addition {
-
     @DialogField(label = "Rating", ranking = 100)
     @Select(options = {
         @Option(text = "1 star", value = "1"),
@@ -138,8 +137,8 @@ interface Addition {
     }
 }
 
+@SuppressWarnings("unused")
 interface Addition2 {
-
     @DialogField(ranking = 300)
     @TextField(value = "text")
     @Place(LABEL_TAB_3)

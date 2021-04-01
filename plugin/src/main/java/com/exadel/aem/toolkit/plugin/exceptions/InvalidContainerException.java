@@ -11,23 +11,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.exceptions;
 
 /**
  * Represents the plugin-specific exception thrown when there is no possibility to operate a particular container section
- * (the container sections, such as a Tab or an AccordionPanel, with such name does not exist, or there are no tabs
+ * (the container sections, such as a Tab or an AccordionPanel, with such a name does not exist, or there are no tabs
  * in the current setup)
  */
 public class InvalidContainerException extends RuntimeException {
     private static final String SECTIONS_NOT_DEFINED_MESSAGE = "No container sections defined for the dialog";
     private static final String SECTION_NOT_DEFINED_MESSAGE_TEMPLATE = "Container section \"%s\" is not defined";
 
+    /**
+     * Initializes a class instance with the default exception message
+     */
     public InvalidContainerException() {
         super(SECTIONS_NOT_DEFINED_MESSAGE);
     }
 
-    public InvalidContainerException(String tabTitle) {
-        super(String.format(SECTION_NOT_DEFINED_MESSAGE_TEMPLATE, tabTitle));
+    /**
+     * Initializes a class instance with the provided container title
+     * @param title String value, non-blank
+     */
+    public InvalidContainerException(String title) {
+        super(String.format(SECTION_NOT_DEFINED_MESSAGE_TEMPLATE, title));
     }
 }

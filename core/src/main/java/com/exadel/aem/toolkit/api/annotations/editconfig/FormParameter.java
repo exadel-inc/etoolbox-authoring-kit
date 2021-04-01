@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -14,16 +14,19 @@
 package com.exadel.aem.toolkit.api.annotations.editconfig;
 
 /**
- * Used to populate {@link EditConfig#formParameters()} setting. If one or more {@code FormParameters} set for this
- * editing configuration, a {@code cq:editConfig/cq:FormParameters} node is created and filled in the current component's buildup
- * See <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#main-pars_title_8_waqwbc_refd_">AEM Components documentation</a>
+ * Used to populate {@link EditConfig#formParameters()} setting. If one or more {@code FormParameter}s are set for this
+ * editing configuration, a {@code cq:editConfig/cq:FormParameters} node is created and filled in the current component's
+ * configuration. See <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#main-pars_title_8_waqwbc_refd_">
+ *     AEM Components documentation</a>
  */
 public @interface FormParameter {
+
     /**
      * Stores attribute name
      * @return String value, non-blank
      */
     String name();
+
     /**
      * Stores arbitrary attribute value
      * @return String value

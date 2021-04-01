@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.validators;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,20 +25,20 @@ public class NotBlankValidator implements Validator {
 
     /**
      * Tests that the provided string is not blank
-     * @param obj Raw string value
+     * @param value Raw string value
      * @return True or false
      */
     @Override
-    public boolean test(Object obj) {
-        return isApplicableTo(obj) && StringUtils.isNotBlank(obj.toString());
+    public boolean test(Object value) {
+        return isApplicableTo(value) && StringUtils.isNotBlank(value.toString());
     }
 
     /**
      * {@inheritDoc}. In {@code NotBlankValidator}, defines the allow-all kind of predicate
      */
     @Override
-    public boolean isApplicableTo(Object obj) {
-        return obj != null;
+    public boolean isApplicableTo(Object value) {
+        return value != null;
     }
 
     /**

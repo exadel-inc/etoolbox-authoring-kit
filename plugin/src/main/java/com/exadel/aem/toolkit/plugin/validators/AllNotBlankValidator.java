@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.validators;
 
 import java.lang.annotation.Annotation;
@@ -30,15 +29,15 @@ public class AllNotBlankValidator implements Validator {
 
     /**
      * Tests that all String-typed properties of the provided annotation are not blank
-     * @param obj Annotation instance
+     * @param value Annotation instance
      * @return True or false
      */
     @Override
-    public boolean test(Object obj) {
-        if (!isApplicableTo(obj)) {
+    public boolean test(Object value) {
+        if (!isApplicableTo(value)) {
             return false;
         }
-        Annotation annotation = (Annotation) obj;
+        Annotation annotation = (Annotation) value;
         return Arrays.stream(annotation.annotationType().getDeclaredMethods())
                 .filter(method -> method.getReturnType().equals(String.class))
                 .allMatch(method -> StringUtils.isNotBlank(AnnotationUtil.getProperty(annotation, method, StringUtils.EMPTY).toString()));
@@ -46,12 +45,12 @@ public class AllNotBlankValidator implements Validator {
 
     /**
      * Returns whether this object is of {@code Annotation} type
-     * @param obj Tested value
+     * @param value Tested value
      * @return True or false
      */
     @Override
-    public boolean isApplicableTo(Object obj) {
-        return obj instanceof Annotation;
+    public boolean isApplicableTo(Object value) {
+        return value instanceof Annotation;
     }
 
     /**

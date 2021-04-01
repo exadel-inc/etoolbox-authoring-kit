@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.api.markers._Default;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html">
- * Multifield element</a> in TouchUI dialog
+ * Multifield</a> component in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.api.markers._Default;
 public @interface MultiField {
 
     /**
-     * Used to specify a class that provides fields for this Multifield
+     * Used to specify a class that provides fields for this MultiField
      * @return Reference to a class
      * @deprecated Please use {@link MultiField#value()} instead
      */

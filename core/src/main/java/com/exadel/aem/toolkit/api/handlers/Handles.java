@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
- * Used to specify one or more AEM Authoring Toolkit annotations processed by a handler class, and also to marshal
+ * Used to specify one or more ToolKit annotations processed by a handler class, and also to marshal
  * invocation order if multiple handlers are attached to the same annotation
  */
 @Target(ElementType.TYPE)
@@ -31,17 +31,18 @@ import com.exadel.aem.toolkit.api.markers._Default;
 public @interface Handles {
 
     /**
-     * Enumerates AEM Authoring Toolkit annotations this handler processes
-     * @return An {@code Annotation} or an array of annotations
+     * Enumerates the ToolKit annotations this handler processes
+     * @return A {@code Class} reference, or an array of classes
      */
     Class<? extends Annotation>[] value();
 
     /**
      * When set, specifies one or more scopes in which this handler is effective, i.e. whether it will be triggered
      * for {@code cq:Component} (component root), {@code cq:dialog}, {@code cq:editorConfig}, or any other appropriate
-     * JCR node. Default value is equal to "all applicable scopes". The latter, though, differs in meaning for widget
-     * annotation handlers (where it is {@code cq:dialog} and {@code cq:design_dialog} together) and class-wide annotation
-     * handlers. In the latter case, the default scope when not specified is the scope of built-in annotations present
+     * JCR node. Default value is equal to "all applicable scopes".
+     * <p>The latter, however, differs in meaning for widget annotation handlers (where it is {@code cq:dialog} and
+     * {@code cq:design_dialog} together) and class-wide annotation handlers. In the latter case, the default scope
+     * matches the scope of the built-in annotations present</p>
      * @return One or more {@code Scope} values
      * @see Scopes
      */

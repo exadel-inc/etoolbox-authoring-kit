@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,14 +22,16 @@ import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
+/**
+ * Presents a {@link SectionFacade} variant for handling the {@code Accordion} layout
+ */
 class AccordionPanelFacade extends SectionFacade {
     private final AccordionPanel panel;
 
     /**
      * Creates a new {@code SectionHelper} wrapped around the specified {@link AccordionPanel} object
-     *
-     * @param panel {@code AccordionPanel} object
-     * @param isLayout   True if the current section is a dialog layout section; false if it is a dialog widget section
+     * @param panel    {@code AccordionPanel} object
+     * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */
     AccordionPanelFacade(AccordionPanel panel, boolean isLayout) {
         super(isLayout);

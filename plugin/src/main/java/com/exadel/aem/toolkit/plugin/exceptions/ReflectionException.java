@@ -11,18 +11,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.exceptions;
 
 /**
  * Represents the plugin-specific exception due to one of exceptions produced by {@code java.lang.reflect} routines
  */
 public class ReflectionException extends RuntimeException {
-    public ReflectionException(String message, Exception inner) {
-        super(message, inner);
+
+    /**
+     * Initializes a class instance with an exception message and cause specified
+     * @param value String value, non-blank
+     * @param cause Non-null {@code Exception} object
+     */
+    public ReflectionException(String value, Exception cause) {
+        super(value, cause);
     }
 
-    public ReflectionException(Class<?> reflected, String fieldName) {
-        super(String.format("Field '%s' not present in %s", fieldName, reflected));
+    /**
+     * Initializes a class instance with references to a failed class and member
+     * @param reflected Non-null {@code Class} reference
+     * @param member String value, non-blank
+     */
+    public ReflectionException(Class<?> reflected, String member) {
+        super(String.format("Member '%s' not present in %s", member, reflected));
     }
 }

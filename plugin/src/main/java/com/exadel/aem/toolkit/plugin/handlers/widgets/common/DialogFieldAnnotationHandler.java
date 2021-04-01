@@ -26,14 +26,16 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
 /**
- * Handler for storing {@link DialogField} properties to a Granite UI widget node
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
+ * object that define the common attributes of a Granite dialog component, such as {@code name}, {@code label},
+ * {@code description}, etc.
  */
 public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> {
 
     /**
-     * Processes the user-defined data and writes it to {@link Target}
-     * @param source Current {@link Source} instance
-     * @param target Current {@link Target} instance
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {
@@ -44,7 +46,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         String name = StringUtils.defaultIfEmpty(
             getNameByDialogFieldProperty(dialogField),
             NamingUtil.stripGetterPrefix(source.getName()));
-        String slingSuffix = getSuffixByDialogFieldProperty(dialogField);
+        String slingSuffix = getSlingSuffixByDialogFieldProperty(dialogField);
 
         String prefix = target.getNamePrefix();
         // In case there are multiple sources in multifield container, their "name" values must not be preceded
@@ -87,7 +89,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
      * @param dialogField {@code DialogField} instance
      * @return String value (empty string is returned if no Sling suffix found)
      */
-    private static String getSuffixByDialogFieldProperty(DialogField dialogField) {
+    private static String getSlingSuffixByDialogFieldProperty(DialogField dialogField) {
         if (!StringUtils.contains(dialogField.name(), CoreConstants.SEPARATOR_AT)) {
             return StringUtils.EMPTY;
         }
@@ -101,7 +103,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
     /**
      * Called by {@link DialogFieldAnnotationHandler#accept(Source, Target)} to merge parts of a field name avoiding
      * prefix collisions
-     * @param left Left part of the merging, usually a field prefix
+     * @param left  Left part of the merging, usually a field prefix
      * @param right Right part of the merging, usually a field name
      * @return String value
      */

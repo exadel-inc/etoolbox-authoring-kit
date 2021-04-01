@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -30,5 +30,10 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @ResourceType(ResourceTypes.TAGS)
 @MapProperties
 public @interface AutocompleteDatasource {
+
+    /**
+     * Allows to specify one or more namespaces this datasource manages
+     * @return Optional namespace string, or an array of strings
+     */
     String[] namespaces() default "";
 }

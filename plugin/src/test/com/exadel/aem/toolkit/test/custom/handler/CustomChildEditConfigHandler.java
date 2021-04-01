@@ -20,7 +20,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 @Handles(value = ChildEditConfig.class)
-@SuppressWarnings("unused") // Used by AAT Plugin logic
+@SuppressWarnings("unused") // Used by ToolKit logic
 public class CustomChildEditConfigHandler implements Handler {
 
     @Override

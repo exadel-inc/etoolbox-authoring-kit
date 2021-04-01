@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -20,11 +20,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to specify that an {@link Annotation} defined in code is to be processed as the AEM Component /
- * AEM TouchUI Dialog annotation
- * @deprecated Since v 2.0.1, there's no need to specially mark a custom annotation as soon as it is either automatically
+ * Used to specify that an {@link Annotation} defined in code is to be processed as the AEM Component / Granite UI annotation
+ * @deprecated Since v. 2.0.1, there's no need to specially mark a custom annotation as soon as it is either automatically
  * processed with {@link MapProperties} or handled with a {@link com.exadel.aem.toolkit.api.handlers.Handler}.
- * {@code DialogAnnotation} will be removed in a version after 2.0.1
+ * {@code DialogAnnotation} will be removed in a version after 2.0.2
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)

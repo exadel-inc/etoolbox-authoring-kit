@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
  * Used to set up <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/docs/server/commonattrs.html">
- * global HTML attributes</a> added to a rendered HTML tag
+ * global HTML attributes</a> that are added to a rendered HTML tag
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -31,40 +31,42 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 public @interface Attribute {
 
     /**
-     * The HTML 'id' attribute
-     * @return String value
+     * The HTML {@code id} attribute
+     * @return Optional string value
      */
     String id() default "";
 
     /**
-     * The HTML 'rel' attribute
-     * @return String value
+     * The HTML {@code rel} attribute
+     * @return Optional string value
      */
     String rel() default "";
 
     /**
-     * The HTML 'class' attribute. With this property, you can assign an arbitrary CSS class, or a set of classes, space-separated, to the widget's container.
-     * Mind you can also use a number of <a href="https://opensource.adobe.com/coral-spectrum/dist/documentation/manual/styles.html#css-utility-classes">pre-defined utility classes</a> by Coral.
-     * @return String value
+     * The HTML {@code class} attribute. With this property, you can assign an arbitrary CSS class, or a set of classes,
+     * space-separated, to the widget's container.
+     * Mind that you can also use a number of <a href="https://opensource.adobe.com/coral-spectrum/dist/documentation/manual/styles.html#css-utility-classes">
+     *     pre-defined utility classes</a>
+     * @return Optional string value
      */
     @PropertyRendering(name = "class")
     String className() default "";
 
     /**
-     * The HTML 'title' attribute
-     * @return String value
+     * The HTML {@code title} attribute
+     * @return Optional string value
      */
     String title() default "";
 
     /**
-     * The HTML 'hidden' attribute
+     * The HTML {@code hidden} attribute
      * @return True or false
      */
     boolean hidden() default false;
 
     /**
      * Optional collection of extra attributes represented as name-value pairs
-     * @return Single {@code @Data} annotation value, or an array of {@code @Data}
+     * @return {@code @Data} annotation value, or an array of {@code @Data}
      */
     Data[] data() default {};
 }

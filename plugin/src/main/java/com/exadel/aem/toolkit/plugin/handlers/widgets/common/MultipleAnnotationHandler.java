@@ -42,16 +42,18 @@ import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * Handler for creating ad-hoc {@code Multifield}s for {@link Multiple}-marked dialog fields
+ * Implements {@code BiConsumer} to modify {@link Target} instance in order to create an ad-hoc {@code Multifield}
+ * for a {@link Multiple}-marked dialog field
  */
+
 public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     private static final String PREFIX_GRANITE = "granite:*";
     private static final String POSTFIX_NESTED = "_nested";
 
     /**
-     * Processes the user-defined data and writes it to XML entity
-     * @param source {@code Source} instance referring to the class member being processed
-     * @param target {@code Target} instance
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {
@@ -93,7 +95,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Gets whether the given {@link Target} is a representation of a fieldset (judged by the fact it has an nonempty subnode
+     * Gets whether the given {@link Target} is a representation of a fieldset (judged by the fact it has a nonempty subnode
      * named "items")
      * @param target {@code Target} instance
      * @return True or false
@@ -105,7 +107,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
 
     /**
      * Gets whether the currently rendered XML element is a Granite {@code Multifield} element (judged by the fact
-     * it has appropriate resource type and a nonempty subnode named "items")
+     * it has an appropriate resource type and a nonempty subnode named "items")
      * @param target {@code Target} instance
      * @return True or false
      */
@@ -168,7 +170,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * @param target Previously created {@code Target} being converted to a synthetic multifield
      */
     private void wrapNestedMultifield(Source source, Target target) {
-        // Wee will create new "field" subresource but we need it "detached" not to mingle with existing "field" subresource
+        // We will create new "field" subresource but we need it "detached" not to mingle with existing "field" subresource
         Target fieldSubresource = Targets.newInstance(DialogConstants.NN_FIELD, target);
         Target itemsSubresource = fieldSubresource.createTarget(DialogConstants.NN_ITEMS);
         Target nestedMultifield = itemsSubresource.createTarget(source.getName() + POSTFIX_NESTED);
@@ -234,8 +236,8 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     /**
      * Migrates attributes and child nodes between {@code source} and {@code target}. Whether particular attributes
      * and child nodes are copied, moved or left alone, is defined by the {@code policies} map
-     * @param from Element to serve as the source of migration
-     * @param to Element to serve as the target of migration
+     * @param from     Element to serve as the source of migration
+     * @param to       Element to serve as the target of migration
      * @param policies Map containing attribute names (must start with {@code @}), child node names (must start with
      *                 {@code ./}) and the action appropriate, whether to copy element, move, or leave intact. Wildcard
      *                 symbol ({@code *}) is to specify common policy for multiple elements

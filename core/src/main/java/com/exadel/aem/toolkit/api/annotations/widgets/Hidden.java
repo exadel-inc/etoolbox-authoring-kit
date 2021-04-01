@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -25,16 +25,17 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/hidden/index.html">
- * Hidden element</a> in TouchUI dialog
+ * Hidden</a> component in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.HIDDEN)
 @MapProperties
 public @interface Hidden {
+
     /**
-     * When set to a non-blank string, maps to the 'value' attribute of this TouchUI dialog component's node
-     * Used to define default value for a Hidden field
+     * When set to a non-blank string, maps to the {@code value} attribute of this Granite UI component's node.
+     * Used to define the default value for a Hidden field
      * @return String value
      */
     String value() default "";

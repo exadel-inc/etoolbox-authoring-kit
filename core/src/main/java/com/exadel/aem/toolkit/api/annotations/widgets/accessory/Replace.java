@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.widgets.accessory;
 
 import java.lang.annotation.ElementType;
@@ -23,19 +22,19 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 
 /**
  * Used to specify a member of the current class or any of the superclasses that will be skipped and replaced
- * by the current member and the widget attached to it.
- * This annotation is useful for "altering" a member from a superclass, e.g. when we have
+ * by the current member, and the widget attached to it.
+ * <p>This annotation is useful for "altering" a member from a superclass, e.g. when we have
  * a {@code @DialogField @TextField private String text;} field in a superclass and need to have the virtually same field
- * in a descendant class, but a property of {@code @DialogField} or {@code @TextField} should be changed.
- * The replacing member will occupy the same place in widgets stack as the member being replaced unless it specifies
- * another particular position (by e.g. {@code ranking} property)
+ * in a descendant class, but a property of {@code @DialogField} or {@code @TextField} should be changed.</p>
+ * <p>The replacing member will occupy the same place in widgets stack as the member being replaced unless it specifies
+ * another particular position (by e.g. {@code ranking} property)</p>
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Replace {
 
     /**
-     * Specifies the member to be replaced by the current one
+     * Specifies the member to be replaced with the current one
      * @see ClassMember
      * @return Valid {@link ClassMember} structure
      */

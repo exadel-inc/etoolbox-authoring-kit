@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -23,9 +23,9 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 
 /**
- * Used to define an option within {@link Select#options()} set
+ * Used to define an option within the {@link Select#options()} set
  * See documentation on <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/select/index.html">
- * Select element</a>
+ * Select</a> component
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -33,43 +33,40 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 public @interface Option {
 
     /**
-     * Maps to the 'text' attribute of this TouchUI dialog component's node.
-     * Used to define optional text displayed beside the option box
-     *
+     * Maps to the {@code text} attribute of this Granite UI component's node.
+     * Used to define the optional text displayed beside the option box
      * @return String value
      */
     String text();
 
     /**
-     * Maps to the 'value' attribute of this TouchUI dialog component's node.
-     * Used to define value to be stored when this option is checked
-     *
+     * Maps to the {@code value} attribute of this Granite UI component's node.
+     * Used to define the value to be stored when this option is checked
      * @return String value
      */
     @PropertyRendering(allowBlank = true)
     String value();
 
     /**
-     * When set to a non-blank string value, maps to the 'icon' attribute of this TouchUI dialog component's node
-     *
+     * When set to a non-blank string, maps to the {@code icon} attribute of this Granite UI component's node
      * @return String value
      */
     String icon() default "";
 
     /**
-     * When set to a non-blank string value, maps to the 'statusIcon' attribute of this TouchUI dialog component's node
+     * When set to a non-blank string, maps to the {@code statusIcon} attribute of this Granite UI component's node
      * @return String value
      */
     String statusIcon() default "";
 
     /**
-     * When set to a non-blank string value, maps to the 'statusText' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code statusText} attribute of this Granite UI component's node.
      * @return String value
      */
     String statusText() default "";
 
     /**
-     * When set to a non-blank string value, maps to the 'statusVariant' attribute of this TouchUI dialog component's node
+     * When set to a non-blank string, maps to the {@code statusVariant} attribute of this Granite UI component's node
      * @return String value
      * @see StatusVariant
      */
@@ -77,18 +74,16 @@ public @interface Option {
     StatusVariant statusVariant() default StatusVariant.INFO;
 
     /**
-     * When set to true, maps to the 'selected' attribute of this TouchUI dialog component's node.
+     * When set to true, maps to the {@code selected} attribute of this Granite UI component's node.
      * Defines that the current option is selected by default
-     *
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")
     boolean selected() default false;
 
     /**
-     * When set to true, maps to the 'disabled' attribute of this TouchUI dialog component's node.
+     * When set to true, maps to the {@code disabled} attribute of this Granite UI component's node.
      * Defines that the current option is shown in disabled state
-     *
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

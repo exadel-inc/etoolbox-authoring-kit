@@ -11,11 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.component;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
@@ -27,24 +27,26 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_1;
 @SuppressWarnings("unused")
 public class ExceptionsTestCases {
 
-    @Dialog(
-            name = DEFAULT_COMPONENT_NAME,
-            title = DEFAULT_COMPONENT_TITLE
+    @AemComponent(
+        path = DEFAULT_COMPONENT_NAME,
+        title = DEFAULT_COMPONENT_TITLE
     )
+    @Dialog
     public static class ComponentWithNonexistentTab extends ComplexComponent1 {
         @TextField
-        @PlaceOnTab(LABEL_TAB_1)
+        @Place(LABEL_TAB_1)
         String validField;
 
         @TextField
-        @PlaceOnTab(LABEL_TAB_0)
+        @Place(LABEL_TAB_0)
         String invalidField;
     }
 
-    @Dialog(
-            name = DEFAULT_COMPONENT_NAME,
-            title = DEFAULT_COMPONENT_TITLE
+    @AemComponent(
+        path = DEFAULT_COMPONENT_NAME,
+        title = DEFAULT_COMPONENT_TITLE
     )
+    @Dialog
     @DependsOnTab(tabTitle = LABEL_TAB_1, query = "true")
     @DependsOnTab(tabTitle = LABEL_TAB_0, query = "true")
     public static class ComponentWithNonexistentDependsOnTab extends ComplexComponent1 {}

@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/select/index.html">
- * Select element</a> in TouchUI dialog
+ * Select</a> component in Granite UI
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -38,19 +38,19 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 public @interface Select {
 
     /**
-     * Used to specify collection of {@link Option}s within this Select
+     * Used to specify the collection of {@link Option}s within this Select
      * @return Single {@code Option} annotation, or an array of Options
      */
     Option[] options() default {};
 
     /**
-     * Used to specify the source for options handled by the AEM Authoring Toolkit's OptionProvider mechanism
-     * @return {@link OptionProvider} instance, or an empty {@code }OptionProvider} if not needed
+     * Used to specify the source for options handled by the ToolKit's {@code OptionProvider} mechanism
+     * @return {@link OptionProvider} instance, or an empty {@code OptionProvider} if not needed
      */
     OptionProvider optionProvider() default @OptionProvider;
 
     /**
-     * When set to a non-blank string, maps to the 'emptyText' attribute of this TouchUI dialog component's node.
+     * When set to a non-blank string, maps to the {@code emptyText} attribute of this Granite UI component's node
      * @return String value
      */
     String emptyText() default "";
@@ -84,15 +84,15 @@ public @interface Select {
     boolean ordered() default false;
 
     /**
-     * It set to true, an empty option added to this {@code Select} widget.
-     * Empty option is an option having both value and text equal to empty string
+     * It set to true, an empty option is added to this {@code Select} widget.
+     * Empty option is an option having both its {@code value} and {@code text} equal to an empty string
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")
     boolean emptyOption() default false;
 
     /**
-     * Maps to the 'variant' attribute of this {@code Select} widget
+     * Maps to the {@code variant} attribute of this {@code Select} widget
      * @see SelectVariant
      * @return One of {@code SelectVariant} values
      */
@@ -103,16 +103,16 @@ public @interface Select {
     SelectVariant variant() default SelectVariant.DEFAULT;
 
     /**
-     * If set to true, the SlingPostServlet @Delete hidden input is added to the HTTP form based on the field name
+     * If set to true, the @Delete hidden input is added to the HTTP form based on the field name. Its value will be
+     * processed by the Sling HTTP post servlet
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "true")
     boolean deleteHint() default true;
 
     /**
-     * Used to set 'ignore freshness' flag for this TouchUI component. This property is useful when having
-     * a newly introduced field in the form, and there is a need to specifically
-     * set the default selected item
+     * Used to set "ignore freshness" flag for this Granite UI component. This property is useful when there is
+     * a newly introduced field in the form, and there is need to specifically set the default selected item
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

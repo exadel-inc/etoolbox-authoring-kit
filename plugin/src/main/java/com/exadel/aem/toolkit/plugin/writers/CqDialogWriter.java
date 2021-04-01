@@ -20,8 +20,8 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 /**
- * The {@link PackageEntryWriter} implementation for storing AEM TouchUI dialog definition (writes data to the
- * {@code _cq_dialog.xml} file within the current component folder before package is uploaded
+ * The {@link PackageEntryWriter} implementation for storing Granite UI dialog definition (writes data to the
+ * {@code _cq_dialog.xml} file within the current component folder before package is uploaded)
  */
 class CqDialogWriter extends PackageEntryWriter {
 
@@ -30,7 +30,7 @@ class CqDialogWriter extends PackageEntryWriter {
     /**
      * Basic constructor
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
-     * @param scope Current scope value
+     * @param scope       Current scope value
      */
     CqDialogWriter(Transformer transformer, String scope) {
         super(transformer);

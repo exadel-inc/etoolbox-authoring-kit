@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.api.annotations.widgets.accessory;
 
 import java.lang.annotation.ElementType;
@@ -24,21 +23,22 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 
 /**
  * Used to specify fields that are ignored (skipped) when preparing data for Granite component rendering.
- * Typically used for the case when current dialog class or a fieldset extends another class and can expose
+ * Used for the case when the current dialog class or fieldset extends another class and would expose
  * one or more {@code DialogField}s from superclass that are not actually needed
  * @see ClassField
- * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link Ignore} instead
+ * @deprecated This is deprecated and will be removed in a version after 2.0.2. Please use {@link Ignore} instead
  */
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Deprecated
 @SuppressWarnings("squid:S1133")
 public @interface IgnoreFields {
+
     /**
-     * Enumerates class members to be skipped when rendering a dialog or a dialog part.
+     * Enumerates class members to be skipped when rendering a dialog or dialog part.
      * Each member is specified by a reference to a {@code Class} and the name of a field or method
-     * @see ClassMember
      * @return One or more {@code ClassMember} annotations
+     * @see ClassMember
      */
     ClassField[] value();
 }

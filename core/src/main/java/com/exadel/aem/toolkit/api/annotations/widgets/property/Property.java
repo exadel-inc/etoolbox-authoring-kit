@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -20,7 +20,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represent a name-value pair to be rendered as a TouchUI Dialog element attribute and its value
+ * Represents a name-value pair to be rendered as a Granite UI component's attribute and its value
  * @see Properties
  */
 @Target({ElementType.FIELD})
@@ -31,7 +31,7 @@ public @interface Property {
     /**
      * Indicates the attribute name
      * Relative path can be defined in such a way that the substring before the ultimate `/`
-     * represents path, and the substring after the ultimate `/` represents property name.
+     * represents the path, and the substring after the ultimate `/` represents the property name.
      * @return String value, non-blank
      */
     String name();

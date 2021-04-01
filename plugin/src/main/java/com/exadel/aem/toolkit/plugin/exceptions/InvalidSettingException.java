@@ -11,15 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.exceptions;
 
 /**
- * Represents the plugin-specific exception produced for a generic invalid setting of AEM Authoring Toolkit,
+ * Represents the plugin-specific exception produced for a generic invalid setting of the ToolKit,
  * such as a reference to an unreachable component class, or an invalid resource type
  */
 public class InvalidSettingException extends RuntimeException {
-    public InvalidSettingException(String message) {
-        super(message);
+
+    /**
+     * Initializes a class instance with an exception message specified
+     * @param value String value, non-blank
+     */
+    public InvalidSettingException(String value) {
+        super(value);
     }
 }

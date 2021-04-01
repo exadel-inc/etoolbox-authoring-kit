@@ -14,7 +14,9 @@
 package com.exadel.aem.toolkit.plugin.utils;
 
 /**
- * Contains common string constants used as AEM TouchUI Component and Dialog building blocks
+ * Contains common string constants used for AEM Granite UI component and dialog rendering within the ToolKit Maven plugin
+ * workflow
+ * @see com.exadel.aem.toolkit.core.CoreConstants
  * @see <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/user-guide.html?topic=/experience-manager/6-5/sites/developing/morehelp/components.ug.js">Adobe documentation</a>
  */
 public class DialogConstants {

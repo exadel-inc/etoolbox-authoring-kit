@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -23,8 +23,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
 /**
- * Used to set up an entry in {@link RichTextEditor#styles()} array. Represents matching between HTML style to mark selected text
- * with and its description in the <a href="https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/configure-rich-text-editor-plug-ins.html#main-pars_title_11">
+ * Used to set up an entry in {@link RichTextEditor#styles()} array. Represents a matching between an HTML style to mark
+ * selected text with and its description in the <a href="https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/configure-rich-text-editor-plug-ins.html#main-pars_title_11">
  *     styles</a> dropdown menu
  * @see RichTextEditor
  */
@@ -33,11 +33,13 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @ValueRestriction(ValueRestrictions.ALL_NOT_BLANK)
 @MapProperties
 public @interface Style {
+
     /**
      * Represents the CSS class added to the selected text
      * @return String value, non-blank
      */
     String cssName();
+
     /**
      * Represents the label shown in the dropdown for this style
      * @return String value, non-blank

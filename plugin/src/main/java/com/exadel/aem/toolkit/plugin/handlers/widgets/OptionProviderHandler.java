@@ -51,8 +51,8 @@ abstract class OptionProviderHandler {
     /**
      * Adds a particular option represented by an annotation in a {@code Select}'s or {@code RadioGroup}'s option set
      * to the given {@code Target}
-     * @param option {@code Annotation} object representing a selection option
-     * @param optionValue String that exposes value of the option
+     * @param option        {@code Annotation} object representing a selection option
+     * @param optionValue   String that exposes value of the option
      * @param parentElement {@code Target} instance to store the option in
      */
     void appendOption(Annotation option, String optionValue, Target parentElement) {
@@ -105,9 +105,9 @@ abstract class OptionProviderHandler {
     /**
      * Called by {@link OptionProviderHandler#appendOptionProvider(OptionProvider, Target)} to store options related
      * to the particular option path into the given datasource {@code Target}
-     * @param optionSource Values provided by an {@code OptionSource} member of an {@code OptionProvider} annotation
+     * @param optionSource      Values provided by an {@code OptionSource} member of an {@code OptionProvider} annotation
      * @param datasourceElement {@code Target} instance to store data in
-     * @param postfix Special key added to every attribute name to distinguish it from the others
+     * @param postfix           Special key added to every attribute name to distinguish it from the others
      */
     private static void populateSourceAttributes(OptionSource optionSource, Target datasourceElement, String postfix) {
         datasourceElement.attribute(CoreConstants.PN_PATH + postfix, optionSource.value());

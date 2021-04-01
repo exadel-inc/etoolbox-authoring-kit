@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
 
 import java.lang.annotation.Annotation;
@@ -23,12 +36,15 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
+/**
+ * Presents a common base for handler classes responsible for laying out child components within Granite UI
+ */
 public abstract class WidgetContainerHandler {
 
     /**
      * Retrieves the list of sources that match the current container. This is performed by calling {@code ClassUtil#getSources()}
      * with the additional predicate that allows to filter out sources that are set to be ignored at either
-     * the "member itself" level or the "declaring class" level
+     * the "member itself" level, or the "declaring class" level
      * @param container         Current {@link Source} instance
      * @param useReportingClass True to use {@link MemberSource#getReportingClass()} to look for ignored members (this is
      *                          the case for {@code Multifield} or {@code FieldSet}-bound members);
@@ -36,7 +52,7 @@ public abstract class WidgetContainerHandler {
      * @return {@code List<Source>} containing placeable members, or an empty collection
      */
     @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+                                     // in a version after 2.0.2
     protected List<Source> getEntriesForContainer(Source container, boolean useReportingClass) {
         Class<?> valueTypeClass = container.adaptTo(MemberSource.class).getValueType();
         Class<?> reportingClass = useReportingClass ? container.adaptTo(MemberSource.class).getReportingClass() : valueTypeClass;
@@ -67,7 +83,7 @@ public abstract class WidgetContainerHandler {
             .filter(memberSettings ->
                 ClassUtil.getInheritanceTree(valueTypeClass)
                     .stream()
-                    .anyMatch(superclass -> superclass.equals(memberSettings.source()))
+                    .anyMatch(superclass -> superclass.equals(memberSettings.getSource()))
             )
             .collect(Collectors.toList());
 
@@ -92,7 +108,7 @@ public abstract class WidgetContainerHandler {
     }
 
     /**
-     * Used to fill in multi-section containers nested within a TouchUI dialog. This method extracts container sections,
+     * Used to fill in multi-section containers nested within a Granite UI dialog. This method extracts container sections,
      * such as {@code Tab}s or {@code AccordionPanel}s, from the current {@code Source} and fills in the {@code Target}
      * with them
      * @param member          Class member holding a multi-section container

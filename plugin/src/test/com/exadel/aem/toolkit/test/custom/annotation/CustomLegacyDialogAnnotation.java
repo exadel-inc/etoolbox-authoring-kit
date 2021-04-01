@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.custom.annotation;
 
 import java.lang.annotation.ElementType;
@@ -24,5 +23,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @DialogAnnotation(source = "customDialogProcessing")
-public @interface CustomDialogAnnotation {
+@SuppressWarnings("deprecation")
+public @interface CustomLegacyDialogAnnotation {
 }

@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.writers.PackageWriter;
 
 /**
- * Represents the entry-point of AEM Authoring Toolkit execution
+ * Represents the entry-point of the EToolbox Authoring Kit (the ToolKit) Maven plugin execution
  */
 @Mojo(name = "aem-authoring", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyCollection = ResolutionScope.COMPILE)
 @SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
@@ -53,7 +53,7 @@ public class PluginMojo extends AbstractMojo {
     private String terminateOn;
 
     /**
-     * Executes AEM Authoring Toolkit Maven plugin. This is done by initializing {@link PluginRuntime} and then
+     * Executes the ToolKit Maven plugin. This is done by initializing {@link PluginRuntime} and then
      * enumerating classpath entries present in the Maven reactor. Relevant AEM component classes (POJOs or Sling models)
      * are extracted and processed with {@link PackageWriter} instance created for particular Maven project; the result
      * is written down to the AEM package zip file. The method is run once for each package module that has AEM Authoring

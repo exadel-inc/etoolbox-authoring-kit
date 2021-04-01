@@ -34,10 +34,16 @@ import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
+/**
+ * Contains methods for ordering ToolKit handlers and class members involved in generating Granite UI entities
+ */
 public class OrderingUtil {
 
     private static final String BUILTIN_HANDLERS_ROOT = "com.exadel.aem.toolkit.plugin.handlers";
 
+    /**
+     * Default (instantiation-restricting) constructor
+     */
     private OrderingUtil() {
     }
 
@@ -45,6 +51,13 @@ public class OrderingUtil {
        Sorting methods
        --------------- */
 
+    /**
+     * Sorts the collection of ToolKit handlers respecting the {@code before} and {@code after} hints specified
+     * in the attached {@link Handles} annotations
+     * @param handlers List of handlers to be sorted
+     * @param <T>      Type of handler objects
+     * @return {@code List} that preserves the sequence of sorted items
+     */
     public static <T> List<T> sortHandlers(List<T> handlers) {
         if (handlers.size() < 2) {
             return handlers;
@@ -63,11 +76,11 @@ public class OrderingUtil {
         for (int i = 0; i < orderableHandlers.size(); i++) {
             Handles handles = orderableHandlers.get(i).getValue().getClass().getDeclaredAnnotation(Handles.class);
             if (!_Default.class.equals(handles.before())) {
-                Orderable<T> before = find(handles.before().getName(), orderableHandlers);
+                Orderable<T> before = findSibling(handles.before().getName(), orderableHandlers);
                 orderableHandlers.get(i).setBefore(before);
             }
             if (!_Default.class.equals(handles.after())) {
-                Orderable<T> after = find(handles.after().getName(), orderableHandlers);
+                Orderable<T> after = findSibling(handles.after().getName(), orderableHandlers);
                 orderableHandlers.get(i).setAfter(after);
             }
         }
@@ -76,6 +89,12 @@ public class OrderingUtil {
         return Streams.concat(nonOrderableHandlers.stream(), sortedStream).collect(Collectors.toList());
     }
 
+    /**
+     * Sorts the collection of {@code Source} objects respecting the {@code before} and {@code after} hints
+     * specified in the managed {@link Place} annotations
+     * @param sources List of {@code Source} objects to be sorted
+     * @return {@code List} that preserves the sequence of sorted items
+     */
     public static List<Source> sortMembers(List<Source> sources) {
         if (sources.size() < 2) {
             return sources;
@@ -83,7 +102,7 @@ public class OrderingUtil {
 
         List<Orderable<Source>> list = new ArrayList<>(sources.size());
         for (Source source : sources) {
-            list.add(new Orderable<>(createName(source), source));
+            list.add(new Orderable<>(createId(source), source));
         }
 
         for (int i = 0; i < sources.size(); i++) {
@@ -91,17 +110,21 @@ public class OrderingUtil {
             if (place != null) {
                 ClassMember classMemberBefore = place.before();
                 if (StringUtils.isNotBlank(classMemberBefore.value())) {
-                    Orderable<Source> before = find(createName(
-                        classMemberBefore,
-                        sources.get(i).adaptTo(MemberSource.class).getDeclaringClass()),
+                    Orderable<Source> before = findSibling(
+                        createId(
+                            classMemberBefore,
+                            sources.get(i).adaptTo(MemberSource.class).getDeclaringClass()
+                        ),
                         list);
                     list.get(i).setBefore(before);
                 }
                 ClassMember classMemberAfter = place.after();
                 if (StringUtils.isNotBlank(classMemberAfter.value())) {
-                    Orderable<Source> after = find(createName(
-                        classMemberAfter,
-                        sources.get(i).adaptTo(MemberSource.class).getDeclaringClass()),
+                    Orderable<Source> after = findSibling(
+                        createId(
+                            classMemberAfter,
+                            sources.get(i).adaptTo(MemberSource.class).getDeclaringClass()
+                        ),
                         list);
                     list.get(i).setAfter(after);
                 }
@@ -113,28 +136,53 @@ public class OrderingUtil {
             .collect(Collectors.toList());
     }
 
-    private static <T> Orderable<T> find(String find, List<Orderable<T>> list) {
-        for (Orderable<T> orderable : list) {
-            if (orderable.getName().equals(find)) {
+    /**
+     * Called by {@link OrderingUtil#sortMembers(List)} to pick up an appropriate sibling of the current class member
+     * defined by an {@code id} within the given {@code scope} of siblings
+     * @param id    Identifier of the member to look for
+     * @param scope {@code List} of orderable objects representing the searchable scope
+     * @param <T>   Type of the orderable objects
+     * @return The {@code Orderable} object matching the identifier, or null
+     */
+    private static <T> Orderable<T> findSibling(String id, List<Orderable<T>> scope) {
+        for (Orderable<T> orderable : scope) {
+            if (orderable.getName().equals(id)) {
                 return orderable;
             }
         }
         return null;
     }
 
-    private static String createName(Source source) {
-        return createName(source.adaptTo(MemberSource.class).getDeclaringClass(), source.getName());
+    /**
+     * Creates an identifier usable in {@link OrderingUtil#findSibling(String, List)} method calls
+     * @param source {@code Source} object
+     * @return String value
+     */
+    private static String createId(Source source) {
+        return createId(source.adaptTo(MemberSource.class).getDeclaringClass(), source.getName());
     }
 
-    private static String createName(ClassMember classMember, Class<?> defaultClass) {
+    /**
+     * Creates an identifier usable in {@link OrderingUtil#findSibling(String, List)} method calls
+     * @param classMember  {@code ClassMember} object
+     * @param defaultClass {@code Class} reference
+     * @return String value
+     */
+    private static String createId(ClassMember classMember, Class<?> defaultClass) {
         if (_Default.class.equals(classMember.source())) {
-            return createName(defaultClass, classMember.value());
+            return createId(defaultClass, classMember.value());
         }
-        return createName(classMember.source(), classMember.value());
+        return createId(classMember.source(), classMember.value());
     }
 
-    private static String createName(Class<?> cls, String name) {
-        return cls.getName() + DialogConstants.SEPARATOR_DOT + name;
+    /**
+     * Creates an identifier usable in {@link OrderingUtil#findSibling(String, List)} method calls
+     * @param targetClass {@code Class} reference
+     * @param name        Class member name
+     * @return String value
+     */
+    private static String createId(Class<?> targetClass, String name) {
+        return targetClass.getName() + DialogConstants.SEPARATOR_DOT + name;
     }
 
 
@@ -149,7 +197,7 @@ public class OrderingUtil {
      * @param f2 Second comparison member, non-null
      * @return Integer value per {@code Comparator#compare(Object, Object)} convention
      */
-    public static int compareByRank(Source f1, Source f2)  {
+    public static int compareByRank(Source f1, Source f2) {
         if (f1 != null && f2 == null) {
             return -1;
         } else if (f1 == null && f2 != null) {
@@ -232,5 +280,4 @@ public class OrderingUtil {
         }
         return h1.getClass().getName().compareTo(h2.getClass().getName());
     }
-
 }

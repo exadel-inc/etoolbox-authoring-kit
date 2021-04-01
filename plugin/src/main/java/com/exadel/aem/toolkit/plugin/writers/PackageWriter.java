@@ -231,7 +231,7 @@ public class PackageWriter implements AutoCloseable {
         String pathByComponent = Optional.ofNullable(componentClass.getAnnotation(AemComponent.class))
             .map(AemComponent::path)
             .orElse(null);
-        @SuppressWarnings("deprecation") // "name" processing is for compatibility; will be removed in a version after 2.0.1
+        @SuppressWarnings("deprecation") // "name" processing is for compatibility; will be removed in a version after 2.0.2
         String pathByDialog = Optional.ofNullable(componentClass.getAnnotation(Dialog.class))
             .map(Dialog::name)
             .orElse(null);
@@ -246,7 +246,7 @@ public class PackageWriter implements AutoCloseable {
     /**
      * Initializes an instance of {@link PackageWriter} profiled for the current {@link MavenProject} and the tree of
      * folders storing AEM components' data
-     * @param project {@code MavenProject instance}
+     * @param project            {@code MavenProject instance}
      * @param componentsBasePath Path to the sub-folder within package under which AEM component folders are situated
      * @return {@code PackageWriter} instance
      */
@@ -273,8 +273,8 @@ public class PackageWriter implements AutoCloseable {
     /**
      * Initializes an instance of {@link PackageWriter} profiled for the particular {@link FileSystem} representing
      * the structure of the package
-     * @param fileSystem Current {@link FileSystem} instance
-     * @param projectName Name of the project this file system contains information for
+     * @param fileSystem         Current {@link FileSystem} instance
+     * @param projectName        Name of the project this file system contains information for
      * @param componentsBasePath Path to the sub-folder within package under which AEM component folders are situated
      * @return {@code PackageWriter} instance
      */

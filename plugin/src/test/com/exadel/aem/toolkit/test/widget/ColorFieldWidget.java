@@ -11,9 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.widget;
 
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.CommonProperty;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
@@ -22,11 +22,13 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorVariant;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.GenerateColorsState;
+import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
-@Dialog(
-        name = "test-component",
-        title = "test-component-dialog"
+@AemComponent(
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
+        title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
+@Dialog
 @HtmlTag(
         className = "wrapper",
         tagName = "span"

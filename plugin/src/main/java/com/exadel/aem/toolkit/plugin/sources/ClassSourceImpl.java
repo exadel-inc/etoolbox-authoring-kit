@@ -17,39 +17,65 @@ import java.lang.annotation.Annotation;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.exadel.aem.toolkit.api.handlers.Source;
+
+/**
+ * Implements {@link Source} to expose metadata specific for the underlying Java class
+ */
 public class ClassSourceImpl extends SourceImpl {
 
     private final Class<?> value;
 
+    /**
+     * Initializes a class instance storing a reference to the {@code Class} that serves as the metadata source
+     */
     ClassSourceImpl(Class<?> value) {
         this.value = value;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return isValid() ? value.getName() : StringUtils.EMPTY;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     Annotation[] getDeclaredAnnotations() {
         return value != null ? value.getDeclaredAnnotations() : null;
     }
 
-    @Override
-    <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
-        return value != null ? value.getDeclaredAnnotation(annotationClass) : null;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass) {
         return value != null ? value.getAnnotationsByType(annotationClass) : null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
+        return value != null ? value.getDeclaredAnnotation(annotationClass) : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isValid() {
         return value != null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T adaptTo(Class<T> adaptation) {
         if (Class.class.equals(adaptation)) {

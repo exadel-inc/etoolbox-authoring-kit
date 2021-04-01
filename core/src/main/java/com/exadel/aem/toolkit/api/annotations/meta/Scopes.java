@@ -14,8 +14,8 @@
 package com.exadel.aem.toolkit.api.annotations.meta;
 
 /**
- * Enumerates standard scopes that the Authoring Kit entities can belong to. Technically, each standard scope represents
- * a node in a component's node tree in JCR
+ * Enumerates the standard scopes that the Authoring Kit entities can belong to. Technically, each standard scope
+ * represents a node in a component's node tree in JCR
  */
 public class Scopes {
 
@@ -27,9 +27,6 @@ public class Scopes {
     public static final String CQ_CHILD_EDIT_CONFIG = "_cq_childEditConfig.xml";
     public static final String CQ_HTML_TAG = "_cq_htmlTag.xml";
 
-    /**
-     * Default (instantiation-restricting) constructor
-     */
     private Scopes() {
     }
 }

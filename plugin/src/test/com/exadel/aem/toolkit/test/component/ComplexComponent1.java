@@ -11,19 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.test.component;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants;
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
@@ -45,20 +45,22 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_4;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_5;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_6;
 
-@Dialog(
-        name = TestConstants.DEFAULT_COMPONENT_NAME,
+@AemComponent(
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
         title = TestConstants.DEFAULT_COMPONENT_TITLE,
         description = "test component",
         componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
         resourceSuperType = "resource/super/type",
         disableTargeting = true,
-        isContainer = true,
-        width = 800,
-        extraClientlibs = {
-                "cq.common.wcm",
-                "core.wcm.page.properties",
-                "cq.wcm.msm.properties"
-        }
+        isContainer = true
+)
+@Dialog(
+    width = 800,
+    extraClientlibs = {
+        "cq.common.wcm",
+        "core.wcm.page.properties",
+        "cq.wcm.msm.properties"
+    }
 )
 @EditConfig(
         actions = {
@@ -203,7 +205,7 @@ public class ComplexComponent1 extends ComplexComponent1Parent {
             required = true
     )
     @TextField
-    @PlaceOnTab(LABEL_TAB_1)
+    @Place(LABEL_TAB_1)
     private String firstField;
 
     @DialogField(
@@ -220,7 +222,7 @@ public class ComplexComponent1 extends ComplexComponent1Parent {
                     RteFeatures.SUBSUPERSCRIPT_SUPERSCRIPT
             }
     )
-    @PlaceOnTab(LABEL_TAB_1)
+    @Place(LABEL_TAB_1)
     private String secondField;
 
     @DialogField(
@@ -236,22 +238,22 @@ public class ComplexComponent1 extends ComplexComponent1Parent {
                     @Option(text = "Third", value = "3"),
                     @Option(text = "Fourth", value = "4")
             })
-    @PlaceOnTab(LABEL_TAB_1)
+    @Place(LABEL_TAB_1)
     private String thirdField;
 
     @DialogField
     @FieldSet(namePrefix = PREFIX_FIRST_PRIMARY_DIALOG, namePostfix = "postfix")
-    @PlaceOnTab(LABEL_TAB_2)
+    @Place(LABEL_TAB_2)
     private SampleFieldsetBase2 firstPrimaryDialog;
 
     @DialogField
     @FieldSet(namePrefix = PREFIX_SECOND_PRIMARY_DIALOG)
-    @PlaceOnTab(LABEL_TAB_2)
+    @Place(LABEL_TAB_2)
     private SampleFieldsetBase2 secondPrimaryDialog;
 
     @DialogField
     @FieldSet(namePrefix = PREFIX_THIRD_PRIMARY_DIALOG)
-    @PlaceOnTab(LABEL_TAB_2)
+    @Place(LABEL_TAB_2)
     private SampleFieldsetBase2 thirdPrimaryDialog;
 
     @DialogField(
@@ -260,7 +262,7 @@ public class ComplexComponent1 extends ComplexComponent1Parent {
     )
     @Switch
     @DependsOnRef(name = "first")
-    @PlaceOnTab(LABEL_TAB_3)
+    @Place(LABEL_TAB_3)
     private boolean firstSecondaryDialogEnabled;
 
     @DialogField
@@ -269,7 +271,7 @@ public class ComplexComponent1 extends ComplexComponent1Parent {
             namePrefix = PREFIX_FIRST_SECONDARY_DIALOG
     )
     @DependsOn(query = "@first")
-    @PlaceOnTab(LABEL_TAB_3)
+    @Place(LABEL_TAB_3)
     private SampleFieldsetAncestor firstSecondaryDialog;
 
     @DialogField(
@@ -277,7 +279,7 @@ public class ComplexComponent1 extends ComplexComponent1Parent {
             label = LABEL_SECONDARY_DIALOG_ENABLED
     )
     @Switch
-    @PlaceOnTab(LABEL_TAB_3)
+    @Place(LABEL_TAB_3)
     private boolean secondSecondaryDialogEnabled;
 
     @DialogField
@@ -285,7 +287,7 @@ public class ComplexComponent1 extends ComplexComponent1Parent {
             title = TITLE_SECOND_SECONDARY_DIALOG,
             namePrefix = PREFIX_SECOND_SECONDARY_DIALOG
     )
-    @PlaceOnTab(LABEL_TAB_3)
+    @Place(LABEL_TAB_3)
     private SampleFieldsetAncestor secondSecondaryDialog;
 
     @DialogField(
@@ -295,7 +297,7 @@ public class ComplexComponent1 extends ComplexComponent1Parent {
     )
     @TextField
     @NumberField(min = 0)
-    @PlaceOnTab(LABEL_TAB_5)
+    @Place(LABEL_TAB_5)
     private Integer sampleFirstNumberField;
 
     @DialogField(
@@ -305,19 +307,20 @@ public class ComplexComponent1 extends ComplexComponent1Parent {
     )
     @TextField
     @NumberField(min = 0)
-    @PlaceOnTab(LABEL_TAB_5)
+    @Place(LABEL_TAB_5)
     private Integer sampleSecondNumberField;
 
     @DialogField
     @FieldSet(namePostfix = "/fieldset /on /tab#6")
-    @PlaceOnTab(LABEL_TAB_6)
+    @Place(LABEL_TAB_6)
     private SampleFieldsetBase3 sampleFieldSet;
 }
 
-@Dialog(
-        name = TestConstants.DEFAULT_COMPONENT_NAME + "-parent",
+@AemComponent(
+        path = TestConstants.DEFAULT_COMPONENT_NAME + "-parent",
         title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
+@Dialog
 @Tabs({
     @Tab(title = LABEL_TAB_3),
     @Tab(title = LABEL_TAB_2)

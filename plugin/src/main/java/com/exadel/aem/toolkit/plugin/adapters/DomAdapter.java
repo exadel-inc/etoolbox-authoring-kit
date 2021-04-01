@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.plugin.adapters;
 
 import java.util.Map;
@@ -65,7 +64,7 @@ public class DomAdapter {
 
     /**
      * Retrieves an {@code Element} populated with data for the {@code Target} passed upon class initialization.
-     * The element is created via the provided {@code Document} instance but stays "unattached" so as to form an isolated
+     * The element is created via the provided {@code Document} instance but stays "unattached" to form an isolated
      * structure that may be used e.g. in legacy handlers
      * @param sourceDocument Document used as a factory for new elements
      * @return {@code Document} instance, or null in case an exception occurred when creating the return value
@@ -88,8 +87,8 @@ public class DomAdapter {
     /**
      * Implements creating a DOM element with the {@code Document} source and {@code Target} provided
      * @param sourceDocument Document used as a factory for new elements
-     * @param target {@code Target} instance holding the data for rendering
-     * @param isRoot True to create a document element; false to create an ordinary nested element
+     * @param target         {@code Target} instance holding the data for rendering
+     * @param isRoot         True to create a document element; false to create an ordinary nested element
      * @return {@code Element} instance
      */
     private static Element createElement(Document sourceDocument, Target target, boolean isRoot) {
