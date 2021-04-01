@@ -72,7 +72,7 @@ public abstract class MemberSourceImpl extends SourceImpl implements MemberSourc
 
     /**
      * Retrieves the return type of the underlying Java class member (field or method). If the class member returns
-     * an array value, or a collection, the type of an array/collection element is returned.
+     * an array value, or a collection, the type of array/collection element is returned.
      * @return Non-null {@code Class} reference
      */
     abstract Class<?> getPlainReturnType();

@@ -65,7 +65,7 @@ public class DomAdapter {
 
     /**
      * Retrieves an {@code Element} populated with data for the {@code Target} passed upon class initialization.
-     * The element is created via the provided {@code Document} instance but stays "unattached" so as to form an isolated
+     * The element is created via the provided {@code Document} instance but stays "unattached" to form an isolated
      * structure that may be used e.g. in legacy handlers
      * @param sourceDocument Document used as a factory for new elements
      * @return {@code Document} instance, or null in case an exception occurred when creating the return value

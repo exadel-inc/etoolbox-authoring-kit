@@ -375,7 +375,7 @@ public class RichTextEditorHandler implements Handler {
     }
 
     /**
-     * Gets a string representation of a {@link Characters} object for using with child targets creation. The return
+     * Gets a string representation of a {@link Characters} object for using with the child targets creation. The return
      * value differs depending on whether it is a character range or a particular entity
      * @param characters {@code Characters} annotation
      * @return String value

@@ -220,7 +220,7 @@ public interface Target {
     /**
      * Retrieves an attribute of the current instance specified by name
      * @param name Name of the attribute, non-null string
-     * @param defaultValue The value to return if attribute with such name is not found
+     * @param defaultValue The value to return if attribute with such a name is not found
      * @return Nullable string value
      */
     default String getAttribute(String name, String defaultValue) {

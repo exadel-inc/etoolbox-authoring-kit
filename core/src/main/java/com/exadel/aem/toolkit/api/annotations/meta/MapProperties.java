@@ -19,9 +19,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks that the properties of a specific annotation are expected to be automatically mapped to attributes of a Granite UI
+ * Marks that the properties of a specific annotation are expected to be automatically mapped to the attributes of a Granite UI
  * entity. This setting extends to all the properties of annotation unless a narrower list is specified via {@link MapProperties#value()}.
- * <p>In addition, this annotation can be used to specify the scope the properties are mapped in (e.g. {@link Scopes#COMPONENT}
+ * <p>In addition, this annotation can be used to specify the scope the properties are mapped in e.g. {@link Scopes#COMPONENT}
  * certifies that the properties are valid for {@code .content.xml} and not for a {@code cq:dialog} node. Annotation
  * handlers can use this value to adjust their behavior.</p>
  * <p>Moreover, a specific prefix can be specified that will be prepended to all the automatically mapped properties</p>

@@ -112,7 +112,7 @@ class PathSplitHelper {
      * Finds in the provided {@code path} char sequences that are "escaped" from splitting despite containing
      * a split character
      * @param path Path value
-     * @return {@code List} of numeric pairs, each representing the starting and the ending position of an escaped sequence
+     * @return {@code List} of numeric pairs, each representing the starting and ending position of an escaped sequence
      */
     private static List<Pair<Integer, Integer>> getEscapedSequences(String path) {
         List<Pair<Integer, Integer>> result = new ArrayList<>();

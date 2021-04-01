@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
  * on {@link Source} and {@link Target} objects handling. Legacy API will be removed in the versions to come
  */
 @Deprecated
-@SuppressWarnings("squid:S1133")
+@SuppressWarnings({"unused", "squid:S1133"})
 public interface XmlUtility {
 
     /**
@@ -195,7 +195,7 @@ public interface XmlUtility {
     void appendDataAttributes(Element element, Data[] data);
 
     /**
-     * Appends values to an {@code Element} node, storing them within {@code granite:data} predefined subnode
+     * Appends the values to an {@code Element} node, storing them within {@code granite:data} predefined subnode
      * @param element Element to store data in
      * @param data Provided values as a {@code Map<String, String>} instance
      */
@@ -203,7 +203,7 @@ public interface XmlUtility {
 
     /**
      * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
-     * Appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
+     * The appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
      * or a child node
      * If child node with same name already exists, it is updated with attribute values of the newcoming node
      * @param parent Routine than provides Element to serve as parent

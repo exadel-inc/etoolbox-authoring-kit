@@ -85,7 +85,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
         private final Consumer<LoadedRuntimeContext> onComplete;
 
         /**
-         * Creates new instance of this Builder
+         * Creates a new instance of this Builder
          * @param onComplete Routine that will be triggered upon Builder completion (basically, assigning the created
          *                   {@code LoadedRuntimeContext} to the global {@code PluginRuntime} instance
          */

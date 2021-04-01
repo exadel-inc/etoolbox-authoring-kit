@@ -15,7 +15,7 @@ package com.exadel.aem.toolkit.plugin.exceptions;
 
 /**
  * Represents the plugin-specific exception thrown when there is no possibility to operate a particular container section
- * (the container sections, such as a Tab or an AccordionPanel, with such name does not exist, or there are no tabs
+ * (the container sections, such as a Tab or an AccordionPanel, with such a name does not exist, or there are no tabs
  * in the current setup)
  */
 public class InvalidContainerException extends RuntimeException {

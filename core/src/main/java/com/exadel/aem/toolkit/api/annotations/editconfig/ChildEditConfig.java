@@ -38,7 +38,7 @@ public @interface ChildEditConfig {
     /**
      * When set to a non-blank string, or to an array of strings, maps to the {@code cq:actions} property
      * of {@code cq:childEditConfig} node
-     * @return String value or an array of strings
+     * @return String value, or an array of strings
      */
     String[] actions() default {};
 

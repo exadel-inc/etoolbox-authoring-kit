@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 
 /**
  * Used to specify class members and/or sections that could have been rendered into this dialog or dialog part but should
- * be instead ignored (skipped). This is commonly used when current dialog class or a fieldset extends another class and
+ * be instead ignored (skipped). This is commonly used when the current dialog class or fieldset extends another class and
  * would expose one or more {@code DialogField}s or {@code Tab}s / {@code AccordionPanel}s from superclass that are not
  * actually needed
  */
@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 public @interface Ignore {
 
     /**
-     * Enumerates class members to be skipped when rendering a dialog or a dialog part.
+     * Enumerates class members to be skipped when rendering a dialog or dialog part.
      * Each member is specified by a reference to a {@code Class} and the name of a field or method
      * @return One or more {@code ClassMember} annotations
      * @see ClassMember
@@ -42,7 +42,7 @@ public @interface Ignore {
 
     /**
      * Enumerates container sections, such as Tabs or Accordion panels, to be skipped when rendering a dialog
-     * or a dialog part. Each section is specified by its title
+     * or dialog part. Each section is specified by its title
      * @return One or more String values
      * @see com.exadel.aem.toolkit.api.annotations.container.Tab
      * @see AccordionPanel

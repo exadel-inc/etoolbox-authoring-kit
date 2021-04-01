@@ -19,7 +19,7 @@ package com.exadel.aem.toolkit.plugin.exceptions;
 public class ReflectionException extends RuntimeException {
 
     /**
-     * Initializes a class instance with an exception message and a cause specified
+     * Initializes a class instance with an exception message and cause specified
      * @param value String value, non-blank
      * @param cause Non-null {@code Exception} object
      */

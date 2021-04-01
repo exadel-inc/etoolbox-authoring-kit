@@ -46,7 +46,7 @@ public class DomHandler {
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided DOM {@code Document}
      * @param source {@code Source} object used for data retrieval
      * @param document Resulting {@code Document} object
-     * @param scope Non-blank string representing a ordinary component part scope
+     * @param scope Non-blank string representing an ordinary component part scope
      * @see Scopes
      */
     public void accept(Source source, Document document, String scope) {
@@ -67,7 +67,7 @@ public class DomHandler {
      * picked by an {@link javax.xml.xpath.XPath}
      * @param componentClass Current {@code Class} instance
      * @param document Resulting {@code Document} object
-     * @param scope Non-blank string representing a ordinary component part scope
+     * @param scope Non-blank string representing an ordinary component part scope
      */
     private void writeCommonProperties(Class<?> componentClass, Document document, String scope) {
         Arrays.stream(componentClass.getAnnotationsByType(CommonProperty.class))

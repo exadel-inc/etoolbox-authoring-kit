@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 public @interface ResourceType {
 
     /**
-     * Defines path to the component in JCR
+     * Defines the path to the component in JCR
      * @return Non-blank string
      */
     String value();

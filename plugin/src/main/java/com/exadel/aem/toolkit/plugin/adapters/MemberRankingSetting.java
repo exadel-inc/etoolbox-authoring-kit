@@ -56,7 +56,7 @@ public class MemberRankingSetting {
     }
 
     /**
-     * Modifies the the ranking associated with this instance
+     * Modifies the ranking associated with this instance
      * @param ranking Integer value
      */
     public void setRanking(int ranking) {

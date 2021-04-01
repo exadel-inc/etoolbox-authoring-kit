@@ -95,7 +95,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Gets whether the given {@link Target} is a representation of a fieldset (judged by the fact it has an nonempty subnode
+     * Gets whether the given {@link Target} is a representation of a fieldset (judged by the fact it has a nonempty subnode
      * named "items")
      * @param target {@code Target} instance
      * @return True or false
@@ -107,7 +107,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
 
     /**
      * Gets whether the currently rendered XML element is a Granite {@code Multifield} element (judged by the fact
-     * it has appropriate resource type and a nonempty subnode named "items")
+     * it has an appropriate resource type and a nonempty subnode named "items")
      * @param target {@code Target} instance
      * @return True or false
      */
@@ -170,7 +170,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * @param target Previously created {@code Target} being converted to a synthetic multifield
      */
     private void wrapNestedMultifield(Source source, Target target) {
-        // Wee will create new "field" subresource but we need it "detached" not to mingle with existing "field" subresource
+        // We will create new "field" subresource but we need it "detached" not to mingle with existing "field" subresource
         Target fieldSubresource = Targets.newInstance(DialogConstants.NN_FIELD, target);
         Target itemsSubresource = fieldSubresource.createTarget(DialogConstants.NN_ITEMS);
         Target nestedMultifield = itemsSubresource.createTarget(source.getName() + POSTFIX_NESTED);

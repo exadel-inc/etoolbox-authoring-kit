@@ -59,7 +59,7 @@ public @interface NumberField {
 
     /**
      * Maps to the {@code step} attribute of this Granite UI component's node.
-     * Used to define delta between two sequential numbers when a user spins this NumberField
+     * Used to define the delta between two sequential numbers when a user spins this NumberField
      * @return Double value
      */
     double step() default 1;

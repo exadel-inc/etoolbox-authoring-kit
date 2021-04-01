@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 
 /**
  * Used to specify a member of the current class or any of the superclasses that will be skipped and replaced
- * by the current member and the widget attached to it.
+ * by the current member, and the widget attached to it.
  * <p>This annotation is useful for "altering" a member from a superclass, e.g. when we have
  * a {@code @DialogField @TextField private String text;} field in a superclass and need to have the virtually same field
  * in a descendant class, but a property of {@code @DialogField} or {@code @TextField} should be changed.</p>

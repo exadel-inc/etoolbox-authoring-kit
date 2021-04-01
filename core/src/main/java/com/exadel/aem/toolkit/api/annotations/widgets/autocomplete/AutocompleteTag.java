@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 public @interface AutocompleteTag {
 
     /**
-     * Allows to specify tag title
+     * Allows specifying tag title
      * @return Optional string value
      */
     String title() default "";

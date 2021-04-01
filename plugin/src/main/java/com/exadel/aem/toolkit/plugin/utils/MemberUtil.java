@@ -37,7 +37,7 @@ public class MemberUtil {
 
     /**
      * Retrieves the type represented by the provided Java class {@code Member}. If the method is designed to provide
-     * a primitive value or a singular object, its "direct" type is returned. But if the method represents a collection,
+     * a primitive value or a singular object, its "direct" type is returned. If the method represents a collection,
      * type of array's element is returned
      *
      * @param member The member to analyze, a {@link Field} or {@link Method} reference expected

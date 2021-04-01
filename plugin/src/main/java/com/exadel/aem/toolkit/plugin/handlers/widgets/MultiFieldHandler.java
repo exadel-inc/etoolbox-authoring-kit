@@ -48,7 +48,7 @@ public class MultiFieldHandler extends WidgetContainerHandler implements Handler
         String name = target.getAttributes().get(DialogConstants.PN_NAME);
         target.getAttributes().remove(DialogConstants.PN_NAME);
 
-        // Get the filtered members collection for the current container; early return if collection is empty
+        // Get the filtered members' collection for the current container; early return if collection is empty
         List<Source> sources = getEntriesForContainer(source, true);
         if (sources.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(

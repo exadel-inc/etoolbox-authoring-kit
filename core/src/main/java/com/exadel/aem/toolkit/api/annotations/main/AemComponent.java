@@ -31,8 +31,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
  * Represents the back-end part of an AEM component - an entity used to supply component metadata in accordance with
  * {@code Adobe Granite API}.<br><br>
  * <p>
- * In a most basic case, the {@code @Component} is the Java class that defines a Sling model or a POJO
- * with the annotations to build an authoring dialog upon (particularly, the {@code @Dialog} annotation.<br><br>
+ * In a most basic case, the {@code @Component} is the Java class that defines a Sling model or POJO
+ * with the annotations to build an authoring dialog upon (particularly, the {@code @Dialog} annotation).<br><br>
  * <p>
  * Otherwise, a {@code @Component} may comprise a set of classes, each responsible for an aspect of the component's
  * presentation or behavior: a Sling model, a class to build {@code Dialog} view, a class to build {@code Design dialog}

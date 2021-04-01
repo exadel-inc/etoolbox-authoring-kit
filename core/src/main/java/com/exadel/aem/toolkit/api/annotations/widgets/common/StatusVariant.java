@@ -15,7 +15,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 /**
  * Contains possible values for the {@code statusVariant} (or similar) property of a Granite UI component used to describe
- * the status of an option or a message
+ * the status of an option or message
  */
 public enum StatusVariant {
     ERROR("error"),

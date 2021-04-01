@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
  */
 @Handles(Heading.class)
 public class HeadingHandler implements Handler {
-    private static final String EXCEPTION_MESSAGE = "A non blank string must be specified for this Heading's text";
+    private static final String EXCEPTION_MESSAGE = "A non-blank string must be specified for this Heading's text";
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}

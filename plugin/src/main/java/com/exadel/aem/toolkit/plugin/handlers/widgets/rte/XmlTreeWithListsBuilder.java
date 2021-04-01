@@ -63,7 +63,7 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
         String mapKey = StringUtils.substringBefore(feature, RichTextEditorHandler.PLUGIN_FEATURE_SEPARATOR);
         // if pluginId is the same as 'plugin#' part in feature token, do not duplicate the 'plugin' part in the map
         // otherwise store feature token as it comes (might be needed if this is a popover builder, and it contains tokens
-        // (i.e. buttons) that come from different plugins
+        // (i.e. buttons) that come from different plugins)
         String mapValue = (StringUtils.isNoneEmpty(pluginId, mapKey) && !pluginId.equals(mapKey))
                 ? feature
                 : StringUtils.substringAfter(feature, RichTextEditorHandler.PLUGIN_FEATURE_SEPARATOR);

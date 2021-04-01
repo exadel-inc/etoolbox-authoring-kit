@@ -205,7 +205,7 @@ public @interface Dialog {
     DialogLayout layout() default DialogLayout.FIXED_COLUMNS;
 
     /**
-     * When set to a non-blank string or an array of strings, renders as the {@code extraClientlibs} attribute
+     * When set to a non-blank string or array of strings, renders as the {@code extraClientlibs} attribute
      * of component's {@code cq:dialog} node
      * @return String value, or an array of strings
      */

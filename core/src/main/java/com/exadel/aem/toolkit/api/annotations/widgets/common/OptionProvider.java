@@ -41,7 +41,7 @@ public @interface OptionProvider {
     OptionSource[] value() default {};
 
     /**
-     * Allows to specify options that will be prepended to the list derived from JCR. If no {@code OptionSource}s are
+     * Allows specifying options that will be prepended to the list derived from JCR. If no {@code OptionSource}s are
      * specified, the option set can as well consist exclusively of options declared here, or be the composition of
      * values stored in {@code OptionProvider#prepend} and {@code OptionProvider#append}.
      * <p>The specified values must follow the {@code "Title:value"} format</p>
@@ -50,7 +50,7 @@ public @interface OptionProvider {
     String[] prepend() default {};
 
     /**
-     * Allows to specify options that will be appended to the list derived from JCR. If no {@code OptionSource}s are
+     * Allows specifying options that will be appended to the list derived from JCR. If no {@code OptionSource}s are
      * specified, the option set can as well consist exclusively of options declared here, or be the composition of
      *      * values stored in {@code OptionProvider#prepend} and {@code OptionProvider#append}.
      * <p>The specified values must follow the {@code "Title:value"} format</p>

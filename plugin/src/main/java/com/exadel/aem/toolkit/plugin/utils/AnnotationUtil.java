@@ -199,7 +199,7 @@ public class AnnotationUtil {
     /**
      * Gets a filter routine to select properties of the given annotation eligible for automatic mapping.
      * If one of the property-mapping annotations is present in the annotation given, the filter combs through
-     * the methods and picks those ones satisfying the mapping; otherwise a neutral (pass-all) filter is imposed
+     * the methods and picks those satisfying the mapping; otherwise a neutral (pass-all) filter is imposed
      * @param annotation {@code Annotation} object to use methods from
      * @return {@code Predicate<Method>} instance
      */

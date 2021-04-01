@@ -39,7 +39,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 public @interface EditConfig {
 
     /**
-     * When set to a non-blank string or an array of strings, maps to the {@code cq:actions} property
+     * When set to a non-blank string or array of strings, maps to the {@code cq:actions} property
      * of {@code cq:editConfig} node
      * @return String / array value
      */

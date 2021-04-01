@@ -404,7 +404,7 @@ public class XmlContextHelper implements XmlUtility {
 
     /**
      * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
-     * Appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
+     * The appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
      * or a child node
      * If child node with same name already exists, it is updated with attribute values of the arriving node
      * @param parent Element to serve as parent

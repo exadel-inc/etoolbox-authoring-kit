@@ -18,7 +18,7 @@ import com.exadel.aem.toolkit.plugin.runtime.ReflectionContextHelper;
 import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 
 /**
- * An abstraction of the ToolKit Maven plugin runtime context for internal use. It addition to its ancestor's functionality,
+ * An abstraction of the ToolKit Maven plugin runtime context for internal use. In addition to its ancestor's functionality,
  * provides access to {@link ReflectionContextHelper}, and the extended {@link XmlContextHelper}
  */
 @SuppressWarnings("deprecation") // RuntimeContext support is retained for compatibility and will be removed

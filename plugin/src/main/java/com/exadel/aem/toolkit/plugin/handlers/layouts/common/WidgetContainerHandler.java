@@ -44,7 +44,7 @@ public abstract class WidgetContainerHandler {
     /**
      * Retrieves the list of sources that match the current container. This is performed by calling {@code ClassUtil#getSources()}
      * with the additional predicate that allows to filter out sources that are set to be ignored at either
-     * the "member itself" level or the "declaring class" level
+     * the "member itself" level, or the "declaring class" level
      * @param container         Current {@link Source} instance
      * @param useReportingClass True to use {@link MemberSource#getReportingClass()} to look for ignored members (this is
      *                          the case for {@code Multifield} or {@code FieldSet}-bound members);

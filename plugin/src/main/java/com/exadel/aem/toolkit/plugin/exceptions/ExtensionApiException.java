@@ -20,7 +20,7 @@ package com.exadel.aem.toolkit.plugin.exceptions;
 public class ExtensionApiException extends RuntimeException {
 
     /**
-     * Initializes a class instance with a reference to the failed class and an exception cause specified
+     * Initializes a class instance with a reference to the failed class, and an exception cause specified
      * @param value Non-null {@code Class} object
      * @param cause Non-null {@code Exception} object
      */

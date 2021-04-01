@@ -87,7 +87,7 @@ public class InheritanceHandler implements BiConsumer<Source, Target> {
 
     /**
      * Finds among the annotations of the provided {@code Source} the first annotation that defines a widget (i.e. has
-     * a valid {@link ResourceType} meta-annotation
+     * a valid {@link ResourceType} meta-annotation)
      * @param source Current {@link Source} instance
      * @return {@code Annotation} object or null in case no compliant annotation found
      */

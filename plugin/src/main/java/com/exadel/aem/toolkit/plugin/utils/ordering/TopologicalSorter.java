@@ -51,14 +51,14 @@ class TopologicalSorter<T> {
      * @return List of entities with the sorting applied
      */
     public List<Orderable<T>> topologicalSort() {
-        // Array to store how much edges incoming to the i node
+        // Array to store how many edges are incoming to the i node
         int[] inDegrees = new int[this.nodes.size()];
         // Deque for bfs that store nodes in special order for bfs
         Deque<Orderable<T>> deque = new LinkedList<>();
         // List to store sorted order
         List<Orderable<T>> sortedOrder = new ArrayList<>(this.nodes.size());
 
-        // Loop to count how much edges incoming to the i node
+        // Loop to count how many edges are incoming to the i node
         for (int i = 0; i < this.nodes.size(); i++) {
             for (Orderable<T> node : this.adjacencyList.get(i)) {
                 inDegrees[node.getPosition()]++;
@@ -89,7 +89,7 @@ class TopologicalSorter<T> {
 
             int indexOfCurrentNode = currentNode.getPosition();
 
-            // Iterate trough all neighbors for current node (that means bfs)
+            // Iterate a trough all neighbors for the current node (that means bfs)
             for (Orderable<T> adjacent : this.adjacencyList.get(indexOfCurrentNode)) {
                 int indexOfNeighborNode = adjacent.getPosition();
                 inDegrees[indexOfNeighborNode]--;

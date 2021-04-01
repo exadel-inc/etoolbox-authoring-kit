@@ -32,7 +32,7 @@ public @interface Handles {
 
     /**
      * Enumerates the ToolKit annotations this handler processes
-     * @return A {@code Class} reference or an array of classes
+     * @return A {@code Class} reference, or an array of classes
      */
     Class<? extends Annotation>[] value();
 

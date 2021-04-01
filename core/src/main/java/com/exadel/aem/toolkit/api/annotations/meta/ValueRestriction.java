@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 public @interface ValueRestriction {
 
     /**
-     * Fully qualified name of a class implementing {@link Validator} that processes the current restriction.
+     * Specifies a fully qualified name of a class implementing {@link Validator} that processes the current restriction.
      * If a name of a non-existent class specified, no restriction will be applied
      * @return String value, non-blank
      */

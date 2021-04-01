@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
- * Used to mark that a field or a method must inherit its ToolKit configuration from another field specified by the class
+ * Used to mark that a field or method must inherit its ToolKit configuration from another field specified by the class
  * reference and field/method name
  */
 @Target({ElementType.FIELD, ElementType.METHOD})

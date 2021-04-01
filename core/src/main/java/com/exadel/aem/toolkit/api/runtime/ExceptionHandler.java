@@ -36,7 +36,7 @@ public interface ExceptionHandler {
 
     /**
      * Gets whether an exception of the specified class would cause the AEM Authoring Toolkit's Maven plugin to terminate.
-     * Should the user choose to skip this particular exception or all the exceptions in the plugins configuration,
+     * Should the user choose to skip this particular exception or all the exceptions in the plugin's configuration,
      * this function must return false, otherwise it returns true
      * @param exceptionType Class of {@link Exception} to test on
      * @return True or false

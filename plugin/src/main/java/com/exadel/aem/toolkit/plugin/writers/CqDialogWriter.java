@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing Granite UI dialog definition (writes data to the
- * {@code _cq_dialog.xml} file within the current component folder before package is uploaded
+ * {@code _cq_dialog.xml} file within the current component folder before package is uploaded)
  */
 class CqDialogWriter extends PackageEntryWriter {
 

@@ -152,7 +152,7 @@ public class ReflectionContextHelper {
      * {@code Scope} value
      * @param scope String value representing the scope that the handlers must match
      * @param handler {@code Handler} instance to test
-     * @param annotations Array of {@code Annotation} objects, usually representing annotations of a method or a class
+     * @param annotations Array of {@code Annotation} objects, usually representing annotations of a method or class
      * @return True or false
      */
     private static boolean isHandlerMatches(Handler handler, String scope, Annotation[] annotations) {
@@ -200,7 +200,7 @@ public class ReflectionContextHelper {
     }
 
     /**
-     * Creates new instance of a handler by {@code Class} reference and populates the runtime context
+     * Creates a new instance of a handler by {@code Class} reference and populates the runtime context
      * @param handlerClass The handler class to instantiate
      * @param <T> Handler type
      * @return New handler instance
