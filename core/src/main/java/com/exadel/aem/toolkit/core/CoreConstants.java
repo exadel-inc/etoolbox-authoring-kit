@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core;
 
 /**
@@ -20,6 +19,7 @@ package com.exadel.aem.toolkit.core;
 public class CoreConstants {
     public static final String PN_ITEM_RESOURCE_TYPE = "itemResourceType";
     public static final String PN_LIMIT = "limit";
+    public static final String PN_LIST_ITEM = "listItem";
     public static final String PN_OFFSET = "offset";
     public static final String PN_PATH = "path";
     public static final String PN_SELECTED = "selected";
@@ -35,10 +35,8 @@ public class CoreConstants {
     public static final String SEPARATOR_HYPHEN = "-";
     public static final String SEPARATOR_SLASH = "/";
 
-    public static final String SUBSERVICE_READ = "authoringToolkitReader";
-
     /**
-     * Default (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private CoreConstants() {
     }

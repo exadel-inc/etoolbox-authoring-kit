@@ -8,12 +8,12 @@
             <components jcr:primaryType="nt:unstructured">
                 <responsivegrid jcr:primaryType="nt:unstructured">
                     <list
-                            jcr:description="Policy for AAT Lists"
+                            jcr:description="Policy for EToolbox Lists"
                             jcr:primaryType="nt:unstructured"
                             jcr:title="List"
                             sling:resourceType="wcm/core/components/policy/policy"
                             components="[authoring-toolkit/lists/components/content/listItem]"
-                            cq:styleDefaultClasses="aembox-list"
+                            cq:styleDefaultClasses="etoolbox-list"
                             policyResourceType="wcm/foundation/components/responsivegrid">
                     </list>
                 </responsivegrid>

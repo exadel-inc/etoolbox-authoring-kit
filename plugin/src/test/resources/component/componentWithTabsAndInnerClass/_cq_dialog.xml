@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          jcr:title="Test Component"
+          width="{Double}560.0"
+          height="{Double}480.0">
+    <content jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <tabs jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/tabs">
+                <items jcr:primaryType="nt:unstructured">
+                    <firstTab jcr:primaryType="nt:unstructured" jcr:title="First tab"
+                              sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <field1 disabled="{Boolean}false" fieldDescription="This is the first field."
+                                    fieldLabel="Field 1" granite:class="field1-attribute-class"
+                                    granite:hidden="{Boolean}false" granite:id="field1-id"
+                                    jcr:primaryType="nt:unstructured" name="./field1" renderHidden="{Boolean}true"
+                                    required="{Boolean}false"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    wrapperClass="my-class">
+                                <granite:data field1-data1="value-data1" field1-data2="value-data2"
+                                              jcr:primaryType="nt:unstructured"/>
+                            </field1>
+                            <field4 autosubmit="{Boolean}false" checked="{Boolean}false" disabled="{Boolean}false"
+                                    fieldDescription="This is the second second field" jcr:primaryType="nt:unstructured"
+                                    name="./field4" renderHidden="{Boolean}false" required="{Boolean}false"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
+                                    text="Checkbox 2" uncheckedValue="{Boolean}false" value="{Boolean}true"/>
+                        </items>
+                    </firstTab>
+                    <secondTab jcr:primaryType="nt:unstructured" jcr:title="Second tab"
+                               sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <field2 disabled="{Boolean}false" fieldLabel="Field 2" jcr:primaryType="nt:unstructured"
+                                    name="./field2" renderHidden="{Boolean}false" required="{Boolean}false"
+                                    rootPath="/content"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"/>
+                            <fieldSet jcr:primaryType="nt:unstructured" jcr:title="Field set example"
+                                      sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <field6 disabled="{Boolean}false" jcr:primaryType="nt:unstructured" name="./field6"
+                                            renderHidden="{Boolean}false" required="{Boolean}false"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                    <field7 disabled="{Boolean}false" jcr:primaryType="nt:unstructured" name="./field7"
+                                            renderHidden="{Boolean}false" required="{Boolean}false"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                    <field8 disabled="{Boolean}false" jcr:primaryType="nt:unstructured" name="./field8"
+                                            renderHidden="{Boolean}false" required="{Boolean}false"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/radiogroup"
+                                            vertical="{Boolean}true">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <item1 jcr:primaryType="nt:unstructured" text="Button 1" value="1"/>
+                                            <item2 jcr:primaryType="nt:unstructured" text="Button 2" value="2"/>
+                                            <item3 jcr:primaryType="nt:unstructured" text="Button 3" value="3"/>
+                                        </items>
+                                    </field8>
+                                </items>
+                            </fieldSet>
+                        </items>
+                    </secondTab>
+                    <thirdTab jcr:primaryType="nt:unstructured" jcr:title="Third tab"
+                              sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <field3 jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./field3"
+                                    disabled="{Boolean}false"
+                                    fieldLabel="Field 2.1"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"
+                                    wrapperClass="my-wrapper-class"/>
+                            <dropdown jcr:primaryType="nt:unstructured"
+                                      sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                      name="./dropdown"
+                                      disabled="{Boolean}false"
+                                      emptyText="Select rating"
+                                      fieldLabel="Rating"
+                                      renderHidden="{Boolean}false"
+                                      required="{Boolean}false">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <item1 jcr:primaryType="nt:unstructured" text="1 star" value="1"/>
+                                    <item2 jcr:primaryType="nt:unstructured" text="2 star" value="2"/>
+                                    <item3 jcr:primaryType="nt:unstructured" text="3 star" value="3"/>
+                                    <item4 jcr:primaryType="nt:unstructured" text="4 star" value="4"/>
+                                    <item5 jcr:primaryType="nt:unstructured" text="5 star" value="5"/>
+                                </items>
+                            </dropdown>
+                        </items>
+                    </thirdTab>
+                </items>
+            </tabs>
+        </items>
+    </content>
+</jcr:root>

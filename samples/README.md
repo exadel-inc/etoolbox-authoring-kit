@@ -42,7 +42,7 @@ To compile and install the project's artifacts to the local Maven repository use
 
 The content is deployed to *http://localhost:4502* by default; however you can control the target with the additional command line switches like `-Dhost=some_host`, `-Dport=XXXX`.
 
-You can also control the version of `AEM Authoring Toolkit` API and Maven plugin called by the project. To do this, use the command line switch `-Daat.version=<arbitrary release or snapshot>`.
+You can also control the version of `AEM Authoring Toolkit` API and Maven plugin called by the project. To do this, use the command line switch `-Dtoolkit.version=<arbitrary release or snapshot>`.
 
 
 ***

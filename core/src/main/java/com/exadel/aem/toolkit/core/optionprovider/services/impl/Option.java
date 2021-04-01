@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
 import java.util.Arrays;
@@ -34,6 +33,7 @@ import com.day.cq.tagging.Tag;
 import com.day.cq.tagging.TagConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
@@ -56,17 +56,17 @@ class Option {
     private String[] attributeMembers;
     private String[] attributes;
 
-    private StringTransform textTransform;
-    private StringTransform valueTransform;
+    private StringTransformation textTransform;
+    private StringTransformation valueTransform;
 
     /**
-     * Default (hiding) constructor
+     * Default (instantiation-restricting) constructor
      */
     private Option() {
     }
 
     /**
-     * Generates Granite-compliant {@link ValueMapResource} representing a particular option with specified label and value
+     * Generates a Granite-compliant {@link ValueMapResource} representing a particular option with specified label and value
      * @return {@code ValueMapResource} item that stands for the datasource option, or null in case this
      * {@code DataSourceEntry} is invalid
      */
@@ -85,12 +85,12 @@ class Option {
     }
 
     /**
-     * Gets whether this entry has enough values to be transformed to datasource option
+     * Gets whether this entry has enough values to be transformed to a datasource option
      * @return true or false
      */
     boolean isValid() {
         return StringUtils.isNotBlank(getText())
-                && (isValid(resource) || resourceResolver != null);
+            && (isValid(resource) || resourceResolver != null);
     }
 
     /**
@@ -103,7 +103,7 @@ class Option {
     }
 
     /**
-     * Gets text part of the option entry
+     * Gets the text part of the option entry
      * @return String value
      */
     String getText() {
@@ -115,7 +115,7 @@ class Option {
     }
 
     /**
-     * Gets value part of the option entry
+     * Gets the value part of the option entry
      * @return String value
      */
     String getValue() {
@@ -144,32 +144,32 @@ class Option {
         }
         if (ArrayUtils.isNotEmpty(attributeMembers)) {
             Arrays.stream(attributeMembers)
-                    .filter(StringUtils::isNotBlank)
-                    .forEach(attributeMember -> {
-                        String attributeValue = getCustomAttribute(attributeMember, StringTransform.NONE);
-                        if (StringUtils.isNotBlank(attributeValue)) {
-                            result.put(attributeMember.replace(CoreConstants.SEPARATOR_COLON, CoreConstants.SEPARATOR_HYPHEN), attributeValue);
-                        }
-                    });
+                .filter(StringUtils::isNotBlank)
+                .forEach(attributeMember -> {
+                    String attributeValue = getCustomAttribute(attributeMember, StringTransformation.NONE);
+                    if (StringUtils.isNotBlank(attributeValue)) {
+                        result.put(attributeMember.replace(CoreConstants.SEPARATOR_COLON, CoreConstants.SEPARATOR_HYPHEN), attributeValue);
+                    }
+                });
         }
         if (ArrayUtils.isNotEmpty(attributes)) {
             Arrays.stream(attributes)
-                    .map(attr -> attr.split(OptionSourceParameters.KEV_VALUE_SEPARATOR_PATTERN, 2))
-                    .filter(parts -> ArrayUtils.getLength(parts) == 2 && StringUtils.isNotBlank(parts[0]))
-                    .forEach(parts -> result.put(
-                            parts[0].replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, CoreConstants.SEPARATOR_HYPHEN).trim(),
-                            parts[1].trim()));
+                .map(attr -> attr.split(OptionSourceParameters.KEV_VALUE_SEPARATOR_PATTERN, 2))
+                .filter(parts -> ArrayUtils.getLength(parts) == 2 && StringUtils.isNotBlank(parts[0]))
+                .forEach(parts -> result.put(
+                    parts[0].replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, CoreConstants.SEPARATOR_HYPHEN).trim(),
+                    parts[1].trim()));
         }
         return result;
     }
 
     /**
-     * Used to retrieve this option's text or value property, or a custom attribute of an underlying JCR resource
-     * @param attributeMember Reference to either {@code textMember} or {@code valueMember}, or an {@code attributeMember} values
-     * @param attributeTransform Reference to either {@code textTransform} or {@code valueTransform} values
+     * Used to retrieve this option's text or value, or a custom attribute of an underlying JCR resource
+     * @param attributeMember    Reference to either {@code textMember}, {@code valueMember}, or {@code attributeMember} value
+     * @param attributeTransform Reference to either {@code textTransform} or {@code valueTransform} value
      * @return String value, or an empty string
      */
-    private String getCustomAttribute(String attributeMember, StringTransform attributeTransform) {
+    private String getCustomAttribute(String attributeMember, StringTransformation attributeTransform) {
         if (!isValid(resource)) {
             return StringUtils.EMPTY;
         } else if (CoreConstants.PARAMETER_ID.equals(attributeMember)) {
@@ -177,15 +177,18 @@ class Option {
         } else if (CoreConstants.PARAMETER_NAME.equals(attributeMember)) {
             return resource.getName();
         }
-        // if [textMember]-valued or [valueMember]-valued attribute not found within this Resource, there's still
+        // Tf [textMember]-valued or [valueMember]-valued attribute not found within this Resource, there's still
         // a chance that it may be found under jcr:content subnode (relevant for the case when current option is an
-        // "ordinary" page or similar resource
+        // "ordinary" page or a similar resource)
         Resource effectiveResource = resource;
         if (!effectiveResource.getValueMap().containsKey(attributeMember) && effectiveResource.getChild(JcrConstants.JCR_CONTENT) != null) {
             effectiveResource = effectiveResource.getChild(JcrConstants.JCR_CONTENT);
         }
         String result = Objects.requireNonNull(effectiveResource).getValueMap().get(attributeMember, StringUtils.EMPTY);
-        return attributeTransform.getTransformation().apply(result);
+        if (StringUtils.isBlank(result) || attributeTransform == null) {
+            return result;
+        }
+        return attributeTransform.apply(result);
     }
 
     /**
@@ -216,7 +219,7 @@ class Option {
     }
 
     /**
-     * Implements builder pattern for the {@link Option}. Ensures that {@code DataSourceEntry} fields
+     * Implements builder pattern for the {@link Option}. Ensures that the {@code DataSourceEntry} fields
      * are initialized with proper defaults
      */
     static class Builder {
@@ -265,12 +268,12 @@ class Option {
             return this;
         }
 
-        Builder textTransform(StringTransform value) {
+        Builder textTransform(StringTransformation value) {
             dataSourceOption.textTransform = value;
             return this;
         }
 
-        Builder valueTransform(StringTransform value) {
+        Builder valueTransform(StringTransformation value) {
             dataSourceOption.valueTransform = value;
             return this;
         }
@@ -283,10 +286,10 @@ class Option {
                 dataSourceOption.valueMember = CoreConstants.PN_VALUE;
             }
             if (dataSourceOption.textTransform == null) {
-                dataSourceOption.textTransform = StringTransform.NONE;
+                dataSourceOption.textTransform = StringTransformation.NONE;
             }
             if (dataSourceOption.valueTransform == null) {
-                dataSourceOption.valueTransform = StringTransform.NONE;
+                dataSourceOption.valueTransform = StringTransformation.NONE;
             }
             return dataSourceOption;
         }
@@ -303,7 +306,7 @@ class Option {
     }
 
     /**
-     * Implements {@link Object#hashCode()} to accompany current object's {@code equals()} override
+     * Implements {@link Object#hashCode()} to accompany the current object's {@code equals()} override
      * @return Hash code as generated for this instance's {@code value}
      */
     @Override

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          jcr:title="Test Component"
+          width="{Double}560.0"
+          height="{Double}480.0">
+    <content jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <tabs jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/tabs">
+                <items jcr:primaryType="nt:unstructured">
+                    <zerothTab jcr:primaryType="nt:unstructured"
+                             sling:resourceType="granite/ui/components/coral/foundation/container"
+                             jcr:title="Zeroth tab">
+                        <items jcr:primaryType="nt:unstructured">
+                            <field5 jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./field5"
+                                    disabled="{Boolean}false"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false">
+                            </field5>
+                            <field0 jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./field0"
+                                    disabled="{Boolean}false"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false">
+                            </field0>
+                        </items>
+                    </zerothTab>
+                    <firstTab jcr:primaryType="nt:unstructured"
+                              sling:resourceType="granite/ui/components/coral/foundation/container"
+                              jcr:title="First tab"
+                              granite:hidden="{Boolean}false">
+                        <items jcr:primaryType="nt:unstructured">
+                            <field1 jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./field1"
+                                    fieldLabel="Field 1"
+                                    fieldDescription="This is the first field."
+                                    disabled="{Boolean}false"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false">
+                            </field1>
+                        </items>
+                    </firstTab>
+                    <secondTab jcr:primaryType="nt:unstructured"
+                               sling:resourceType="granite/ui/components/coral/foundation/container"
+                               jcr:title="Second tab">
+                        <items jcr:primaryType="nt:unstructured">
+                            <field2 jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                    name="./field2"
+                                    fieldLabel="Field 2"
+                                    rootPath="/content"
+                                    disabled="{Boolean}false"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"/>
+                        </items>
+                    </secondTab>
+                    <thirdTab jcr:primaryType="nt:unstructured"
+                              sling:resourceType="granite/ui/components/coral/foundation/container"
+                              jcr:title="Third tab">
+                        <items jcr:primaryType="nt:unstructured">
+                            <field3 jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./field3"
+                                    fieldLabel="Field 3"
+                                    disabled="{Boolean}false"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"
+                                    wrapperClass="my-wrapper-class"/>
+                        </items>
+                    </thirdTab>
+                    <sixthTab jcr:primaryType="nt:unstructured"
+                             sling:resourceType="granite/ui/components/coral/foundation/container"
+                             jcr:title="Sixth tab">
+                        <items jcr:primaryType="nt:unstructured"/>
+                    </sixthTab>
+                </items>
+            </tabs>
+        </items>
+    </content>
+</jcr:root>

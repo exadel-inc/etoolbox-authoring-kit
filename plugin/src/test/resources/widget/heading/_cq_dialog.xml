@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0" height="{Double}480.0" jcr:primaryType="nt:unstructured"
+          jcr:title="test-component-dialog" sling:resourceType="cq/gui/components/authoring/dialog"
+          width="{Double}560.0">
+    <content jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+        <layout jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
+        <items jcr:primaryType="nt:unstructured">
+            <column jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/container">
+                <items jcr:primaryType="nt:unstructured">
+                    <heading1 sling:resourceType="granite/ui/components/coral/foundation/heading"
+                              jcr:primaryType="nt:unstructured"
+                              text="test-text"
+                              level="{Long}1"/>
+                    <heading2 sling:resourceType="granite/ui/components/coral/foundation/heading"
+                              jcr:primaryType="nt:unstructured"
+                              text="test-text"
+                              level="{Long}6"/>
+                </items>
+            </column>
+        </items>
+    </content>
+</jcr:root>

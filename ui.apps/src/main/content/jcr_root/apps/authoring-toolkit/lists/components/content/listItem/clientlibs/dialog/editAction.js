@@ -22,12 +22,12 @@
         order: 'before COPY',
         isNonMulti: true,
         condition: function (editable) {
-            return editable.type === ns.AATLists.WRAPPER_RES_TYPE;
+            return editable.type === ns.EToolboxLists.WRAPPER_RES_TYPE;
         },
         handler: function (editable) {
             const config = editable.dom.find(CONFIG_SELECTOR);
             const itemPath = config.attr(DIALOG_PATH_ATTR);
-            itemPath && ns.AATLists.launchReferenceDialog(editable, itemPath);
+            itemPath && ns.EToolboxLists.launchReferenceDialog(editable, itemPath);
         }
     };
 

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core.lists.servlets;
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(MockitoJUnitRunner.class)
 public class ListsServletTest {
     private static final String SIMPLE_LIST_PATH = "/content/authoring-toolkit/lists/simpleList";
-    private static final String CUSTOM_LIST_PATH = "/content/authoring-toolkit/lists/aembox-lists/customList";
+    private static final String CUSTOM_LIST_PATH = "/content/authoring-toolkit/lists/etoolbox-lists/customList";
     private static final String DATASOURCE_PATH = "/datasource";
 
     @Rule
@@ -65,7 +64,7 @@ public class ListsServletTest {
 
     @Test
     public void shouldReturnDataSourceFromContent() {
-        List<String> expected = Arrays.asList("simpleList", "aembox-lists");
+        List<String> expected = Arrays.asList("simpleList", "etoolbox-lists");
 
         context.request().setResource(context.resourceResolver().getResource(DATASOURCE_PATH));
         servlet.doGet(context.request(), context.response());

@@ -24,7 +24,7 @@ As the Toolkit was developed, thorough comparative investigation of Coral v.2 an
        - [@DialogField](#dialogfield)
        - [Widget annotations A-Z](#widget-annotations-a-z)
        - [Fields grouping and multiplying](#fields-grouping-and-multiplying)
-       - [Common attributes of felds](#common-attributes-of-fields)
+       - [Common attributes of fields](#common-attributes-of-fields)
        - [Implementing RichTextEditor](#implementing-richtexteditor)
    - [Altering field's decoration tag with @HtmlTag](#altering-fields-decoration-tag-with-htmltag)
    - [Fields inheritance and ways to cancel it](#fields-inheritance-and-ways-to-cancel-it)
@@ -74,8 +74,8 @@ Feel free to clone the project sources and run ```mvn clean install``` from the 
 ```xml
 <dependency>
    <groupId>com.exadel.aem</groupId>
-   <artifactId>aem-authoring-toolkit-api</artifactId>
-   <version>1.0.1</version> <!-- prefer latest stable version whenever possible -->
+   <artifactId>aem-authoring-toolkit-core</artifactId>
+   <version>2.0.1</version> <!-- prefer latest stable version whenever possible -->
 </dependency>
 ```
 2) Insert plugin's config in the _\<plugins>_ section of the POM file of your **package**:
@@ -1074,7 +1074,7 @@ public class CustomMultifieldHandler implements DialogWidgetHandler {}
    ```
 
 #### Runtime methods for custom handlers
-If you define in your handler class a field of type `RuntimeContext` marked with `@Injected` annotation, the link to the global *RuntimeContext* object will be injected by the Maven plugin. It allows to engage a number of utility methods and techniques, such as those of the [`XmlUtility`](aem-authoring-toolkit-api/src/main/java/com/exadel/aem/toolkit/api/runtime/XmlUtility.java) interface. Of special interest are the methods `.createNodeElement()` with overloads for creating nodes with specific *jcr:primaryType*, *sling:resourceType* and other attributes, `.appendChild()` with overloads for appending or merging a newcomer node to a set of existing child nodes of a local root, and `.setAttribute()` with overloads for populating previously created node with generic-typed annotation values, optionally validated and then optionally fallen back to defaults.
+If you define in your handler class a field of type `RuntimeContext` marked with `@Injected` annotation, the link to the global *RuntimeContext* object will be injected by the Maven plugin. It allows to engage a number of utility methods and techniques, such as those of the [`XmlUtility`](core/src/main/java/com/exadel/aem/toolkit/api/runtime/XmlUtility.java) interface. Of special interest are the methods `.createNodeElement()` with overloads for creating nodes with specific *jcr:primaryType*, *sling:resourceType* and other attributes, `.appendChild()` with overloads for appending or merging a newcomer node to a set of existing child nodes of a local root, and `.setAttribute()` with overloads for populating previously created node with generic-typed annotation values, optionally validated and then optionally fallen back to defaults.
 
 Developer can (and is encouraged to) also call `.getExceptionHandler()` method whenever his or her logic is ought to throw or manage an exception. This way, all the exceptions from either built-in or custom routines are managed uniformly.
 
@@ -1298,7 +1298,7 @@ public class DependsOnSample {
 }
 ```
 ### Lists
-AEMBox Lists provide a flexible way to create, store and retrieve lists of structured items, e.g. a list of HTTP status codes and their desctiptions:
+EToolbox Lists provide a flexible way to create, store and retrieve lists of structured items, e.g. a list of HTTP status codes and their desctiptions:
 ```
 + list
   + item1
@@ -1316,7 +1316,7 @@ Each list is an AEM page, which means that it can be placed anywhere in the cont
 #### Usage
 
 ###### Creating a new list
-AEMBox Lists can be created and managed either from Sites Console, or from Lists Console (Tools -> AEMBox -> AEMBox List). Click Create -> List and specify list's Title, Name and Item Component.
+EToolbox Lists can be created and managed either from Sites Console, or from Lists Console (Tools -> EToolbox -> EToolbox List). Click Create -> List and specify list's Title, Name and Item Component.
 "Simple List Item" component is provided out-of-the-box and consists of "jcr:title" and "value" fields. In order to add a new Item Component to the dropdown, add `@ListItem` annotation to this component.
 
 ```java
@@ -1334,7 +1334,7 @@ public class ListItemComponent {
 You can customize the item's view by adding `itemPreview.html` to your Item Component. This preview will be displayed next to item properties.
 
 ###### Editing lists
-AEMBox Lists can be edited similarly to any other page. You may change the type of Item Component used in this list (even after the list has been populated with data) via page properties.
+EToolbox Lists can be edited similarly to any other page. You may change the type of Item Component used in this list (even after the list has been populated with data) via page properties.
 
 ###### Retrieving lists' content programmatically
 [ListsHelper](core/src/main/java/com/exadel/aem/toolkit/core/lists/util/ListsHelper.java) is a helper class that provides the ability to retrieve any list by its path. See examples below:
@@ -1345,7 +1345,7 @@ AEMBox Lists can be edited similarly to any other page. You may change the type 
 You can find more examples in [ListsHelperTest](core/src/test/java/com/exadel/aem/toolkit/core/lists/util/ListsHelperTest.java)
 
 ###### Populating dropdown widgets from a datasource.
-AEMBox Lists can be used as a data source for any widget consuming granite datasources.
+EToolbox Lists can be used as a data source for any widget consuming granite datasources.
 (todo: add an example of @Datasource + Lists)
 
 ## Samples

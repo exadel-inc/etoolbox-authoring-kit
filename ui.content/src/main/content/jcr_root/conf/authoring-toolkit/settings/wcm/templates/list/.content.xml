@@ -4,6 +4,6 @@
     <jcr:content
         cq:templateType="/conf/authoring-toolkit/settings/wcm/template-types/list"
         jcr:primaryType="cq:PageContent"
-        jcr:title="AAT List page"
+        jcr:title="EToolbox List page"
         status="enabled"/>
 </jcr:root>
