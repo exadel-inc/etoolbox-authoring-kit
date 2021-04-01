@@ -82,19 +82,25 @@ public class DungeonsComponent {
             @Option(text = "Ice valley", value = "2")
         })
         @DependsOnRef(name = "dungeon")
-        @Properties(
-            value = @Property(name = "sling:hideChildren", value = "*"))
+        @Properties(@Property(name = "sling:hideChildren", value = "*"))
         @Place("Dungeons select")
         @Default(values = "1")
         @ValueMapValue
         String dungeonsSelect;
 
+        @Hyperlink(
+            href = "https://i.picsum.photos/id/127/4032/2272.jpg?hmac=QFoFT2_eb_DCqjdlj09UFgUHwI_zefDTBdECRz9lO5Q",
+            text = "Dungeon profile image",
+            target = "_blank"
+        )
         @DependsOn(query = "@dungeon === '1'")
-        @Hyperlink(href = "https://media.graphcms.com/BmLxDCt5SaSHWx4rt6xy", text = "Dungeon profile image", target = "_blank")
         private String profileLink;
 
+        @Hyperlink(
+            href = "https://i.picsum.photos/id/13/2500/1667.jpg?hmac=SoX9UoHhN8HyklRA4A3vcCWJMVtiBXUg0W4ljWTor7s",
+            text = "Dungeon profile image",
+            target = "_blank")
         @DependsOn(query = "@dungeon === '2'")
-        @Hyperlink(href = "https://cg4.cgsociety.org/uploads/images/medium/penemenn-ice-valley-1-11885220-8day.jpg", text = "Dungeon profile image", target = "_blank")
         private String profileLink2;
     }
 

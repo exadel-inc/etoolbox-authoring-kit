@@ -67,7 +67,7 @@ import com.exadel.aem.toolkit.samples.utils.ListUtils;
 
 @AemComponent(
     path = "content/warrior-description-component",
-    title = "Warrior Description Component",
+    title = "Description Component",
     description = "Tell us about your warrior",
     resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
     componentGroup = GroupConstants.COMPONENT_GROUP

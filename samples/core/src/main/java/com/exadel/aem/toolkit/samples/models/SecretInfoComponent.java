@@ -82,7 +82,7 @@ public class SecretInfoComponent {
     @DialogField
     @Button(
         type = ButtonType.SUBMIT,
-        text = "save",
+        text = "Save",
         icon = "edit",
         command = "shift+s",
         block = true

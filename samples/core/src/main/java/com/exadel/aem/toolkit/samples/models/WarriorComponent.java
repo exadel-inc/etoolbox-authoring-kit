@@ -41,7 +41,7 @@ import com.exadel.aem.toolkit.samples.constants.PathConstants;
 @AemComponent(
     path = "content/warrior-component",
     title = "Warrior Component",
-    description = "Make your own warrior",
+    description = "Create your own warrior",
     resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
     componentGroup = GroupConstants.COMPONENT_CONTAINER_GROUP,
     isContainer = true
