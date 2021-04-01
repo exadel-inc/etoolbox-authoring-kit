@@ -8,7 +8,7 @@
 
     <name>${project.prettyName}</name>
     <description>Automates generating and managing rich and responsive authoring interfaces for Adobe Experience Manager (TM)</description>
-    <url>https://github.com/exadel-inc/aem-authoring-toolkit</url>
+    <url>https://github.com/exadel-inc/etoolbox-authoring-kit</url>
 
     <organization>
         <name>Exadel, Inc.</name>
@@ -36,9 +36,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/exadel-inc/aem-authoring-toolkit.git</connection>
-        <developerConnection>scm:git:git@github.com:exadel-inc/aem-authoring-toolkit.git</developerConnection>
-        <url>https://github.com/exadel-inc/aem-authoring-toolkit</url>
+        <connection>scm:git:git://github.com/exadel-inc/etoolbox-authoring-kit.git</connection>
+        <developerConnection>scm:git:git@github.com:exadel-inc/etoolbox-authoring-kit.git</developerConnection>
+        <url>https://github.com/exadel-inc/etoolbox-authoring-kit</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -55,7 +55,7 @@
 
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/exadel-inc/aem-authoring-toolkit/issues</url>
+        <url>https://github.com/exadel-inc/etoolbox-authoring-kit/issues</url>
     </issueManagement>
 
     <packaging>pom</packaging>
