@@ -154,7 +154,7 @@
             <!-- Internal -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>aem-authoring-toolkit-samples-core</artifactId>
+                <artifactId>etoolbox-authoring-kit-samples-core</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
         </dependencies>

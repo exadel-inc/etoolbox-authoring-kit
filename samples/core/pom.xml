@@ -10,7 +10,7 @@
         <version>2.0.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>aem-authoring-toolkit-samples-core</artifactId>
+    <artifactId>etoolbox-authoring-kit-samples-core</artifactId>
 
     <name>Exadel Toolbox Authoring Kit - Samples Core</name>
 

@@ -5,7 +5,6 @@
             jcr:primaryType="cq:PageContent"
             jcr:title="EToolbox Authoring Kit Samples"
             sling:resourceType="etoolbox-authoring-kit/samples/components/page/sample-page"
-            cq:template="etoolbox-authoring-kit/samples/template/sample-page"
             cq:designPath="/apps/settings/wcm/designs/etoolbox-authoring-kit-samples">
     </jcr:content>
 </jcr:root>

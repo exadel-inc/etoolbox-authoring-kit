@@ -43,7 +43,7 @@ import com.exadel.aem.toolkit.samples.utils.ListUtils;
     componentGroup = GroupConstants.COMPONENT_GROUP
 )
 @Dialog(
-    extraClientlibs = "authoring-toolkit.samples.authoring"
+    extraClientlibs = "etoolbox-authoring-kit.samples.authoring"
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ShoppingListComponent {

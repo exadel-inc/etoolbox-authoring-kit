@@ -12,7 +12,7 @@
                 <section jcr:primaryType="nt:unstructured"/>
             </parsys>
             <warrior-component jcr:primaryType="nt:unstructured"
-                               sling:resourceType="authoring-toolkit/samples/components/content/warrior-component">
+                               sling:resourceType="etoolbox-authoring-kit/samples/components/content/warrior-component">
                 <parsys jcr:primaryType="nt:unstructured"
                                  sling:resourceType="wcm/foundation/components/parsys"
                                  components="[group:ToolKit Samples - Components]"/>

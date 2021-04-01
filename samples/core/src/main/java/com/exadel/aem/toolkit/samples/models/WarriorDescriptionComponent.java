@@ -73,7 +73,7 @@ import com.exadel.aem.toolkit.samples.utils.ListUtils;
     componentGroup = GroupConstants.COMPONENT_GROUP
 )
 @Dialog(
-    extraClientlibs = "authoring-toolkit.samples.authoring"
+    extraClientlibs = "etoolbox-authoring-kit.samples.authoring"
 )
 @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUIT, query = "@likesFruit")
 @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_MOVIES, query = "@likesMovies")

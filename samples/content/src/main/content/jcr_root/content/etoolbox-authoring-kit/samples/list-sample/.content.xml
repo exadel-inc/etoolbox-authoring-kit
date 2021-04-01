@@ -3,7 +3,7 @@
           xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           jcr:primaryType="cq:Page">
     <jcr:content jcr:primaryType="cq:PageContent"
-                 cq:template="/conf/authoring-toolkit/settings/wcm/templates/list"
+                 cq:template="/conf/etoolbox-authoring-kit/settings/wcm/templates/list"
                  jcr:title="Coral Icons"
                  jcr:description="Shows an example of EToolbox List"
                  itemResourceType="/apps/etoolbox-authoring-kit/lists/components/content/simpleListItem"

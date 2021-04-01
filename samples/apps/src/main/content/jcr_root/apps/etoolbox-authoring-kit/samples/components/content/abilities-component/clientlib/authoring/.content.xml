@@ -3,7 +3,7 @@
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
           jcr:primaryType="cq:ClientLibraryFolder"
           allowProxy="{Boolean}true"
-          categories="[authoring-toolkit.samples.authoring]"
+          categories="[etoolbox-authoring-kit.samples.authoring]"
           dependencies="[cq.authoring.dependson]"
           jsProcessor="[min:gcc;languageIn=ECMASCRIPT_2015,compilationLevel=advanced,languageOut=ECMASCRIPT5]"
 />
