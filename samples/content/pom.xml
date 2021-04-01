@@ -5,14 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>aem-authoring-toolkit-samples</artifactId>
-        <groupId>com.exadel.aem</groupId>
-        <version>2.0.0-SNAPSHOT</version>
+        <artifactId>etoolbox-authoring-kit-samples</artifactId>
+        <groupId>com.exadel.etoolbox</groupId>
+        <version>2.0.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>aem-authoring-toolkit-samples-content</artifactId>
-    <name>AEM Authoring Toolkit - Samples Content</name>
-    <version>2.0.0-SNAPSHOT</version>
+
+    <name>Exadel Toolbox Authoring Kit - Samples Content</name>
+
     <packaging>content-package</packaging>
 
     <build>
@@ -55,7 +56,7 @@
                         <artifactId>content-package-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>Installing AAT Samples content package</id>
+                                <id>Installing ToolKit Samples content package</id>
                                 <goals>
                                     <goal>install</goal>
                                 </goals>
