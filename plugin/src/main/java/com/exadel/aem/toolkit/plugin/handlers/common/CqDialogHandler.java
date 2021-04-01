@@ -102,12 +102,12 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
      * on layout annotations provided for the component class. If no specific annotations found, the default layout,
      * which is {@link DialogLayout#FIXED_COLUMNS}, returned
      * @param source {@code Source} object used for data retrieval
-     * @param scope Value indicating whether to look for a {@code Dialog}, or {@code DesignDialog} annotation as a possible
-     *              source of layout
+     * @param scope  Value indicating whether to look for a {@code Dialog}, or {@code DesignDialog} annotation as a possible
+     *               source of layout
      * @return {@code DialogLayout} value
      */
     @SuppressWarnings("deprecation") // Processing of Dialog#tabs is retained for compatibility and will be removed
-                                     // in a version after 2.0.2
+    // in a version after 2.0.2
     private static DialogLayout getLayout(Source source, String scope) {
         DialogLayout result = DialogLayout.FIXED_COLUMNS;
 
@@ -146,7 +146,7 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
      * @return {@code DialogLayout} value
      */
     @SuppressWarnings("deprecation") // Processing of container.Tab is retained for compatibility and will be removed
-                                     // in a version after 2.0.2
+    // in a version after 2.0.2
     private static DialogLayout getLayoutFromNestedClasses(Class<?> componentClass) {
         if (ArrayUtils.isEmpty(componentClass.getDeclaredClasses())) {
             return DialogLayout.FIXED_COLUMNS;

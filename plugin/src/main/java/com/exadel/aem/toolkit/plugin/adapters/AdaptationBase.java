@@ -48,7 +48,7 @@ public abstract class AdaptationBase<T> {
      * Implements the basic adaptation functionality. This method is expected to be overridden by a descendant class
      * and internally called within an overriding method for the fallback result
      * @param adaptation {@code Class} reference indicating the desired data type
-     * @param <A> The type of the resulting value
+     * @param <A>        The type of the resulting value
      * @return The {@code A}-typed object, or null in case the adaptation to the particular type was not possible or failed
      */
     public <A> A adaptTo(Class<A> adaptation) {

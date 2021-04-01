@@ -44,7 +44,7 @@ public class PropertyAnnotationHandler implements BiConsumer<Source, Target> {
      * Called by {@link PropertyAnnotationHandler#accept(Source, Target)} to process particular {@link Property} objects
      * extractable from the given {@code Source}
      * @param property Current {@code Property} object
-     * @param target Resulting {@code Target} object
+     * @param target   Resulting {@code Target} object
      */
     private void acceptProperty(Property property, Target target) {
         String propertyName;

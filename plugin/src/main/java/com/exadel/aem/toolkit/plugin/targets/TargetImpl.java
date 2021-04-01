@@ -73,7 +73,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     /**
      * Initializes a class instance with the instance name and parent reference specified
-     * @param name Non-blank string representing the name of the new instance
+     * @param name   Non-blank string representing the name of the new instance
      * @param parent Nullable {@code Target} object that will serve as the parent reference
      */
     TargetImpl(String name, Target parent) {
@@ -167,7 +167,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         }
         return attributes.isEmpty()
             || attributes.getOrDefault(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
-                .equals(DialogConstants.NT_UNSTRUCTURED);
+            .equals(DialogConstants.NT_UNSTRUCTURED);
     }
 
     /* ----------------
@@ -242,7 +242,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     /**
      * Retrieves or creates as necessary a {@code Target} object related to the current instance by the provided path
-     * @param path String value, non-blank
+     * @param path            String value, non-blank
      * @param createIfMissing True to create a {@code Target} for the unmatched path segment; otherwise, false
      * @return New {@code Target} instance
      */
@@ -359,7 +359,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     /**
      * Performs a recursive search for a matching descendant {@code Target} with the provided filter
      * @param current {@code Target object} children of which are currently tested
-     * @param filter {@code Predicate} to test the descendants of the current target
+     * @param filter  {@code Predicate} to test the descendants of the current target
      * @return Relevant descendant {@code Target} object, or null
      */
     private static Target findChild(Target current, Predicate<Target> filter) {
@@ -394,8 +394,8 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
 
     /**
      * Performs a recursive search for matching descendant {@code Target}s with the provided filter
-     * @param current {@code Target object} children of which are currently tested
-     * @param filter {@code Predicate} to test the descendants of the current target
+     * @param current    {@code Target object} children of which are currently tested
+     * @param filter     {@code Predicate} to test the descendants of the current target
      * @param collection {@code List} object accumulating the relevant targets
      */
     private static void findChildren(Target current, Predicate<Target> filter, List<Target> collection) {
@@ -605,7 +605,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     /**
      * Called by {@link TargetImpl#attributes(Annotation, Predicate)} in order to store annotation properties
      * to the current instance
-     * @param value {@code Annotation} object used as the source of attribute names and values
+     * @param value  {@code Annotation} object used as the source of attribute names and values
      * @param filter {@code Predicate} used to sort out irrelevant properties
      */
     private void populateAnnotationProperties(Annotation value, Predicate<Method> filter) {
@@ -621,7 +621,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         List<Method> propertySources = Arrays.stream(value.annotationType().getDeclaredMethods())
             .filter(filter)
             .collect(Collectors.toList());
-        for (Method propertySource: propertySources) {
+        for (Method propertySource : propertySources) {
             populateAnnotationProperty(value, propertySource, effectiveTarget);
         }
     }
@@ -629,7 +629,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     /**
      * Called by {@link TargetImpl#populateAnnotationProperties(Annotation, Predicate)} to store the value of a particular
      * annotation property
-     * @param value {@code Annotation} object used as the source of attribute names and values
+     * @param value  {@code Annotation} object used as the source of attribute names and values
      * @param method {@code Method} reference representing the annotation property
      * @param target Resulting {@code Target} object
      */
@@ -680,7 +680,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
      * @return String value
      */
     @SuppressWarnings("deprecation") // Processing of PropertyMapping is retained for compatibility and will be removed
-                                     // in a version after 2.0.2
+    // in a version after 2.0.2
     private static String getPropertyPrefix(Annotation annotation) {
         String result = StringUtils.EMPTY;
         if (annotation.annotationType().isAnnotationPresent(MapProperties.class)) {
@@ -694,7 +694,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     /**
      * Merges two string attributes expressing either plain values or inline value lists into the resulting string.
      * This method leaves no duplicate elements
-     * @param first First string value
+     * @param first  First string value
      * @param second Second string value
      * @return String containing the merged value
      */

@@ -20,7 +20,6 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 /**
  * An abstraction of the ToolKit Maven plugin runtime context. Provides access to {@link XmlUtility}, and
  * {@link ExceptionHandler}
- *
  * @deprecated Since v. 2.0.1 users are encouraged to use the new custom handlers API that is based
  * on {@link Source} and {@link Target} objects handling. Legacy API will be revoked in the versions to come
  */

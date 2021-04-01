@@ -59,7 +59,7 @@ public class ClassUtil {
      * Retrieves a sequential list of {@link Source} objects representing manageable members that belong to
      * a certain {@code Class} (and its superclasses) and match provided criteria represented by a {@code Predicate}
      * @param targetClass The class to extract sources from
-     * @param condition Nullable {@code Predicate<Member>} instance that helps to pick up appropriate fields and methods
+     * @param condition   Nullable {@code Predicate<Member>} instance that helps to pick up appropriate fields and methods
      * @return List of {@code Source} objects
      */
     @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
@@ -115,7 +115,7 @@ public class ClassUtil {
     /**
      * Retrieves a list of ancestors of a specific {@code Class}, started from the "top" of the inheritance
      * tree. {@code Object} class is not added to the hierarchy
-     * @param targetClass The class to analyze
+     * @param targetClass   The class to analyze
      * @param includeTarget Whether to include the {@code targetClass} itself to the hierarchy
      * @return List of {@code Class} objects
      */

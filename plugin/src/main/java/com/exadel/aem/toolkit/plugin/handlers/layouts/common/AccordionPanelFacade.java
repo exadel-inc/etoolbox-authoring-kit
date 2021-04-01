@@ -31,9 +31,8 @@ class AccordionPanelFacade extends SectionFacade {
 
     /**
      * Creates a new {@code SectionHelper} wrapped around the specified {@link AccordionPanel} object
-     *
-     * @param panel {@code AccordionPanel} object
-     * @param isLayout   True if the current section is a dialog layout section; false if it is a dialog widget section
+     * @param panel    {@code AccordionPanel} object
+     * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */
     AccordionPanelFacade(AccordionPanel panel, boolean isLayout) {
         super(isLayout);

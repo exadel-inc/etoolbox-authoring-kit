@@ -23,16 +23,16 @@ public interface ExceptionHandler {
      * Handles an exception
      * @param e {@code Exception} instance
      */
-    default void handle (Exception e) {
+    default void handle(Exception e) {
         handle(e.getMessage(), e);
     }
 
     /**
      * Handles an exception with a supplementary message
      * @param message {@code String} value
-     * @param cause {@code Exception} instance
+     * @param cause   {@code Exception} instance
      */
-    void handle (String message, Exception cause);
+    void handle(String message, Exception cause);
 
     /**
      * Gets whether an exception of the specified class would cause the AEM Authoring Toolkit's Maven plugin to terminate.

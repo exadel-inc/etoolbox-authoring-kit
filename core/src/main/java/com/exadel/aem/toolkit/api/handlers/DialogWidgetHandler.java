@@ -45,7 +45,7 @@ public interface DialogWidgetHandler extends Handler {
     /**
      * Method representing the entry-point for handling data, legacy style
      * @param element Non-null DOM {@code element} object
-     * @param field Non-null {@code Field} reference
+     * @param field   Non-null {@code Field} reference
      */
     default void accept(Element element, Field field) {
     }

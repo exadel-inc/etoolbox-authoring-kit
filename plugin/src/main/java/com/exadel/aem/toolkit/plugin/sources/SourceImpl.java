@@ -40,7 +40,7 @@ public abstract class SourceImpl extends AdaptationBase<Source> implements Sourc
     /**
      * Retrieves annotations of a particular type attached to the underlying entity
      * @param annotationClass {@code Class} of the annotations
-     * @param <T> Annotation type reflected by the {@code annotationClass} argument
+     * @param <T>             Annotation type reflected by the {@code annotationClass} argument
      * @return Array of {@code Annotation} objects
      */
     abstract <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass);

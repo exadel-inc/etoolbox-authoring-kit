@@ -26,14 +26,12 @@ public @interface DependsOnParam {
     /**
      * Defines parameter name
      * The resulting attribute's name will be rendered as 'dependsOn-{action}-{name}'
-     *
      * @return String value, non-blank
      */
     String name();
 
     /**
      * Defines parameter value
-     *
      * @return String value, non-blank
      */
     String value();

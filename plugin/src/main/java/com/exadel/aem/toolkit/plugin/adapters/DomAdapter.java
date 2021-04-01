@@ -88,8 +88,8 @@ public class DomAdapter {
     /**
      * Implements creating a DOM element with the {@code Document} source and {@code Target} provided
      * @param sourceDocument Document used as a factory for new elements
-     * @param target {@code Target} instance holding the data for rendering
-     * @param isRoot True to create a document element; false to create an ordinary nested element
+     * @param target         {@code Target} instance holding the data for rendering
+     * @param isRoot         True to create a document element; false to create an ordinary nested element
      * @return {@code Element} instance
      */
     private static Element createElement(Document sourceDocument, Target target, boolean isRoot) {

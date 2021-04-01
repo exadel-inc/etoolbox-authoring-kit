@@ -63,7 +63,7 @@ public class DependsOnTabHandler implements Handler {
 
     /**
      * Called by {@link DependsOnTabHandler#accept(Source, Target)} to store particular {@code DependsOnTab} value
-     * @param value Current {@link DependsOnTab} value
+     * @param value  Current {@link DependsOnTab} value
      * @param target Resulting {@code Target} object
      */
     private void handleDependsOnTab(DependsOnTab value, Target target) {
@@ -91,7 +91,7 @@ public class DependsOnTabHandler implements Handler {
 
     /**
      * Called by {@link DependsOnTabHandler#accept(Source, Target)} to store particular {@code DependsOnTab} value
-     * @param value Current {@link DependsOnTabConfig} value
+     * @param value  Current {@link DependsOnTabConfig} value
      * @param target Resulting {@code Target} object
      */
     private void handleDependsOnTabConfig(DependsOnTabConfig value, Target target) {

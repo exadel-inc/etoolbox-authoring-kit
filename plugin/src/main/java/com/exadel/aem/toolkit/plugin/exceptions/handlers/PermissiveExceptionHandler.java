@@ -31,7 +31,7 @@ class PermissiveExceptionHandler implements ExceptionHandler {
      * Logs the handled exception. Checked exceptions are logged as error messages, and unchecked exceptions are logged
      * as warnings
      * @param message Attached exception message
-     * @param cause Base exception
+     * @param cause   Base exception
      */
     @Override
     public void handle(String message, Exception cause) {

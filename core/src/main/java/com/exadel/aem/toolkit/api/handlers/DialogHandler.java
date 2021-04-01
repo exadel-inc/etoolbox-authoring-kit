@@ -43,7 +43,7 @@ public interface DialogHandler extends Handler {
     /**
      * Method representing the entry-point for handling data, legacy style
      * @param element Non-null DOM {@code element} object
-     * @param cls Non-null {@code Class} reference
+     * @param cls     Non-null {@code Class} reference
      */
     default void accept(Element element, Class<?> cls) {
     }

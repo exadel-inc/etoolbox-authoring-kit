@@ -30,7 +30,7 @@ class CqDialogWriter extends PackageEntryWriter {
     /**
      * Basic constructor
      * @param transformer {@code Transformer} instance used to serialize XML DOM document to an output stream
-     * @param scope Current scope value
+     * @param scope       Current scope value
      */
     CqDialogWriter(Transformer transformer, String scope) {
         super(transformer);

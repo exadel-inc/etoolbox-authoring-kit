@@ -33,7 +33,7 @@ public class MethodSourceImpl extends MemberSourceImpl {
     /**
      * Initializes a class instance with references to the managed method and the {@code Class} the current method is
      * reported by
-     * @param method {@code Method} object
+     * @param method         {@code Method} object
      * @param reportingClass {@code Class} reference
      */
     MethodSourceImpl(Method method, Class<?> reportingClass) {

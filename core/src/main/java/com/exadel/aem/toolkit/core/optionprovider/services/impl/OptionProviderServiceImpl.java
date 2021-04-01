@@ -123,8 +123,8 @@ public class OptionProviderServiceImpl implements OptionProviderService {
     /**
      * Generates a list of user-specified extra options that are outside the normal JCR structure
      * @param resourceResolver {@code ResourceResolver} instance to create "virtual" datasource entry resource
-     * @param optionStrings Array of strings representing extra options
-     * @param skip List of the [already existing] options to omit in the extra options collection
+     * @param optionStrings    Array of strings representing extra options
+     * @param skip             List of the [already existing] options to omit in the extra options collection
      * @return List of "virtual" datasource items resources that can be merged to the original resource list
      */
     private static List<Option> getExtraOptions(ResourceResolver resourceResolver,

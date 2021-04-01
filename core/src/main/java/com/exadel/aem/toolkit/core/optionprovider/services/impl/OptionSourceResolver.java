@@ -140,7 +140,7 @@ class OptionSourceResolver {
      * and {@link OptionSourceResolver#resolve(SlingHttpServletRequest, String, String)} to marshal
      * retrieving a <i>content</i> resource via the current {@code SlingHttpServletRequest}'s path suffix, rather
      * than the referenced Granite resource
-     * @param request Current {@code SlingHttpServletRequest}
+     * @param request      Current {@code SlingHttpServletRequest}
      * @param relativePath Path to another content resource
      * @return {@code Resource} instance, or null
      */

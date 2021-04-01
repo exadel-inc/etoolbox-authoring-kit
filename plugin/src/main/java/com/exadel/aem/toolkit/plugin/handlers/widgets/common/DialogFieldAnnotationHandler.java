@@ -103,7 +103,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
     /**
      * Called by {@link DialogFieldAnnotationHandler#accept(Source, Target)} to merge parts of a field name avoiding
      * prefix collisions
-     * @param left Left part of the merging, usually a field prefix
+     * @param left  Left part of the merging, usually a field prefix
      * @param right Right part of the merging, usually a field name
      * @return String value
      */

@@ -58,7 +58,7 @@ public class AnnotationUtil {
      * Retrieves property value of the specified annotation. This method wraps up exception handling, therefore, can be
      * used within functional calls, etc
      * @param annotation The annotation used for value retrieval
-     * @param method {@code Method} object representing the annotation's property
+     * @param method     {@code Method} object representing the annotation's property
      * @return Method invocation result, or null if an internal exception was thrown
      */
     public static Object getProperty(Annotation annotation, Method method) {
@@ -68,8 +68,8 @@ public class AnnotationUtil {
     /**
      * Retrieves property value of the specified annotation. This method wraps up exception handling, therefore, can be
      * used within functional calls, etc
-     * @param annotation The annotation used for value retrieval
-     * @param method {@code Method} object representing the annotation's property
+     * @param annotation   The annotation used for value retrieval
+     * @param method       {@code Method} object representing the annotation's property
      * @param defaultValue Value to return in case of an exception
      * @return Method invocation result, or the default value if an internal exception was thrown
      */
@@ -97,7 +97,7 @@ public class AnnotationUtil {
     /**
      * Gets whether an {@code Annotation} property has a value which is not default
      * @param annotation The annotation to analyze
-     * @param method The method representing the property
+     * @param method     The method representing the property
      * @return True or false
      */
     public static boolean propertyIsNotDefault(Annotation annotation, Method method) {
@@ -134,7 +134,7 @@ public class AnnotationUtil {
      * Retrieves list of properties of an {@code Annotation} object as a key-value map. The keys are the method names
      * this annotation possesses, and the values are the results of methods' invocation
      * @param annotation The annotation instance to analyze
-     * @param filter {@code Predicate<Method>} do decide whether the current method is eligible for collection
+     * @param filter     {@code Predicate<Method>} do decide whether the current method is eligible for collection
      * @return {@code Map<String, Object>} instance containing property names and values
      */
     private static Map<String, Object> getProperties(Annotation annotation, Predicate<Method> filter) {
@@ -203,8 +203,9 @@ public class AnnotationUtil {
      * @param annotation {@code Annotation} object to use methods from
      * @return {@code Predicate<Method>} instance
      */
-    @SuppressWarnings("deprecation") // Processing of PropertyMapping and IgnorePropertyMapping is retained for compatibility
-                                     // and will be removed in a version after 2.0.2
+    @SuppressWarnings("deprecation")
+    // Processing of PropertyMapping and IgnorePropertyMapping is retained for compatibility
+    // and will be removed in a version after 2.0.2
     public static Predicate<Method> getPropertyMappingFilter(Annotation annotation) {
         Stream<String> mappingsByMapProperties = Optional.ofNullable(annotation)
             .map(Annotation::annotationType)

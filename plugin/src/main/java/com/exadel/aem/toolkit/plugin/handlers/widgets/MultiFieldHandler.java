@@ -68,8 +68,8 @@ public class MultiFieldHandler extends WidgetContainerHandler implements Handler
     /**
      * Places multiple widget sources to the container of the {@code Target} multifield
      * @param sources The collection of {@link Source} instances to become multifield children
-     * @param target Current {@link Target} instance
-     * @param name The {@code name} attribute fot the target multifield
+     * @param target  Current {@link Target} instance
+     * @param name    The {@code name} attribute fot the target multifield
      */
     private void placeMultiple(List<Source> sources, Target target, String name) {
         target.attribute(DialogConstants.PN_COMPOSITE, true);

@@ -81,8 +81,8 @@ public interface Target {
 
     /**
      * Retrieves the scope this {@code Target} is associated with
-     * @see com.exadel.aem.toolkit.api.annotations.meta.Scopes
      * @return String value
+     * @see com.exadel.aem.toolkit.api.annotations.meta.Scopes
      */
     String getScope();
 
@@ -140,7 +140,7 @@ public interface Target {
      * attached to another parent, its parent is swapped for the current instance. The new child is placed before the
      * specified existing child
      * @param other Non-null {@code Target} object
-     * @param near Existing child {@code Target} of the current instance
+     * @param near  Existing child {@code Target} of the current instance
      */
     default void addTarget(Target other, Target near) {
         addTarget(other, near, false);
@@ -150,8 +150,8 @@ public interface Target {
      * Adds an existing {@code Target} object as a child of the current instance. If the other {@code Target} has been
      * attached to another parent, its parent is swapped for the current instance. The new child is placed either before
      * or after the specified existing child
-     * @param other Non-null {@code Target} object
-     * @param near Existing child {@code Target} of the current instance
+     * @param other      Non-null {@code Target} object
+     * @param near       Existing child {@code Target} of the current instance
      * @param placeAfter True to insert the new child after the specified sibling. Otherwise, it will be inserted before
      *                   the existing sibling
      */
@@ -167,7 +167,7 @@ public interface Target {
      * Adds an existing {@code Target} object as a child of the current instance. If the other {@code Target} has been
      * attached to another parent, its parent is swapped for the current instance. The new child is placed at the specified
      * position
-     * @param other Non-null {@code Target} object
+     * @param other    Non-null {@code Target} object
      * @param position Zero-based position in the list of existing children
      */
     void addTarget(Target other, int position);
@@ -219,7 +219,7 @@ public interface Target {
 
     /**
      * Retrieves an attribute of the current instance specified by name
-     * @param name Name of the attribute, non-null string
+     * @param name         Name of the attribute, non-null string
      * @param defaultValue The value to return if attribute with such a name is not found
      * @return Nullable string value
      */
@@ -229,7 +229,7 @@ public interface Target {
 
     /**
      * Sets a string attribute of the current instance. Call to this method can be trailed by other method calls
-     * @param name Name of the attribute, non-null string
+     * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
      * @return Current instance
      */
@@ -238,7 +238,7 @@ public interface Target {
     /**
      * Sets an attribute of the current instance being an array of strings. Call to this method can be trailed by other
      * method calls
-     * @param name Name of the attribute, non-null string
+     * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
      * @return Current instance
      */
@@ -246,7 +246,7 @@ public interface Target {
 
     /**
      * Sets a boolean attribute of the current instance. Call to this method can be trailed by other method calls
-     * @param name Name of the attribute, non-null string
+     * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
      * @return Current instance
      */
@@ -255,7 +255,7 @@ public interface Target {
     /**
      * Sets an attribute of the current instance being an array of boolean values. Call to this method can be trailed by
      * other method calls
-     * @param name Name of the attribute, non-null string
+     * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
      * @return Current instance
      */
@@ -264,7 +264,7 @@ public interface Target {
     /**
      * Sets an attribute of the current instance being a long-typed number. Call to this method can be trailed by other
      * method calls
-     * @param name Name of the attribute, non-null string
+     * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
      * @return Current instance
      */
@@ -273,7 +273,7 @@ public interface Target {
     /**
      * Sets an attribute of the current instance being an array of long-typed numbers. Call to this method can be trailed
      * by other method calls
-     * @param name Name of the attribute, non-null string
+     * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
      * @return Current instance
      */
@@ -282,7 +282,7 @@ public interface Target {
     /**
      * Sets an attribute of the current instance being a double-typed number. Call to this method can be trailed by other
      * method calls
-     * @param name Name of the attribute, non-null string
+     * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
      * @return Current instance
      */
@@ -291,7 +291,7 @@ public interface Target {
     /**
      * Sets an attribute of the current instance being an array of double-typed numbers. Call to this method can be trailed
      * by other method calls
-     * @param name Name of the attribute, non-null string
+     * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
      * @return Current instance
      */
@@ -300,7 +300,7 @@ public interface Target {
     /**
      * Sets an attribute of the current instance being a {@code Date} object. Call to this method can be trailed by other
      * method calls
-     * @param name Name of the attribute, non-null string
+     * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
      * @return Current instance
      */
@@ -309,7 +309,7 @@ public interface Target {
     /**
      * Sets an attribute of the current instance being an array of {@code Date} objects. Call to this method can be trailed
      * by other method calls
-     * @param name Name of the attribute, non-null string
+     * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
      * @return Current instance
      */
@@ -336,7 +336,7 @@ public interface Target {
     /**
      * Assigns attributes to the current instance based on the provided {@code Annotation} object. Properties of the
      * annotation become the attribute names and values. Call to this method can be trailed by other method calls
-     * @param value {@code Annotation} object used as the source of data
+     * @param value  {@code Annotation} object used as the source of data
      * @param filter {@code Predicate} used to sort out irrelevant properties
      * @return Current instance
      */
@@ -351,7 +351,7 @@ public interface Target {
     /**
      * Adapts the current {@code Target} instance to the provided type
      * @param adaptation {@code Class} reference indicating the desired data type
-     * @param <T> The type of the resulting value
+     * @param <T>        The type of the resulting value
      * @return The {@code T}-typed object or null in case the adaptation to the particular type was not possible or failed
      */
     <T> T adaptTo(Class<T> adaptation);

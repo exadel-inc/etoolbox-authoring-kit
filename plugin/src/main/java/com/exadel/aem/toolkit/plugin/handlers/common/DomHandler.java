@@ -44,9 +44,9 @@ public class DomHandler {
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided DOM {@code Document}
-     * @param source {@code Source} object used for data retrieval
+     * @param source   {@code Source} object used for data retrieval
      * @param document Resulting {@code Document} object
-     * @param scope Non-blank string representing an ordinary component part scope
+     * @param scope    Non-blank string representing an ordinary component part scope
      * @see Scopes
      */
     public void accept(Source source, Document document, String scope) {
@@ -66,8 +66,8 @@ public class DomHandler {
      * Maps the values set in {@link CommonProperties} annotation to nodes of a DOM document being built. The nodes are
      * picked by an {@link javax.xml.xpath.XPath}
      * @param componentClass Current {@code Class} instance
-     * @param document Resulting {@code Document} object
-     * @param scope Non-blank string representing an ordinary component part scope
+     * @param document       Resulting {@code Document} object
+     * @param scope          Non-blank string representing an ordinary component part scope
      */
     private void writeCommonProperties(Class<?> componentClass, Document document, String scope) {
         Arrays.stream(componentClass.getAnnotationsByType(CommonProperty.class))
@@ -87,7 +87,7 @@ public class DomHandler {
 
     /**
      * Retrieves list of {@link Element} nodes from the current document selected by {@link XPath}
-     * @param xPath String xPath representation
+     * @param xPath    String xPath representation
      * @param document The document to search for nodes
      * @return List of {@code Element}s, or an empty list
      */
@@ -122,7 +122,7 @@ public class DomHandler {
      * Finds and triggers legacy handlers (those consuming the pair of {@code Element} and {@code Class<?>} references)
      * that operate class-wide
      * @param componentClass The {@code Class<?>} that a legacy handler processes
-     * @param element DOM {@code Element} object
+     * @param element        DOM {@code Element} object
      */
     @SuppressWarnings({"deprecation", "squid:S1905"}) // DialogHandler reference and DialogHandler#accept(Element, Class)
     // method are retained for compatibility and will be removed in a version after 2.0.2

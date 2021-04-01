@@ -27,7 +27,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html">
  * Alert</a> component in Granite UI
- *
  * @deprecated This annotation is deprecated and will be removed in a version after 2.0.2.
  * Please use {@link com.exadel.aem.toolkit.api.annotations.widgets.Alert}
  */
@@ -41,7 +40,6 @@ public @interface Alert {
 
     /**
      * Maps to the {@code variant} attribute of this Granite UI component's node.
-     *
      * @return Alert style
      */
     String variant() default "";
@@ -49,7 +47,6 @@ public @interface Alert {
     /**
      * Maps to the {@code size} attribute of this Granite UI component's node.
      * Used to define Alert size
-     *
      * @return One of {@code AlertSize} values
      * @see AlertSize
      */
@@ -58,7 +55,6 @@ public @interface Alert {
     /**
      * When set to a non-blank string, maps to the {@code text} attribute of this Granite UI component's node.
      * Used to define content HTML for Alert component
-     *
      * @return String value
      */
     String text() default "";
@@ -66,7 +62,6 @@ public @interface Alert {
     /**
      * When set to a non-blank string, maps to the {@code jcr:title} attribute of this Granite UI component's node.
      * Used to define header text for Alert component
-     *
      * @return String value
      */
     @PropertyRendering(name = "jcr:title")

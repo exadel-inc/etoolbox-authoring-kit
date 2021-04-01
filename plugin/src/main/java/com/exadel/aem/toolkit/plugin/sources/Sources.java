@@ -42,7 +42,7 @@ public class Sources {
 
     /**
      * Creates a {@link Source} facade for a Java class member
-     * @param value {@code Method} or a {@code Field} for which a source facade is created
+     * @param value          {@code Method} or a {@code Field} for which a source facade is created
      * @param reportingClass {@code Class<?>} pointer determining the class that "reports" to the ToolKit Maven plugin
      *                       about the current member (can be a class where this member was declared or a descendant of
      *                       some superclass that uses the member for UI rendering)

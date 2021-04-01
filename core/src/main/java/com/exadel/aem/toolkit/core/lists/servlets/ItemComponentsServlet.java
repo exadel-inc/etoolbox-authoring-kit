@@ -64,7 +64,6 @@ public class ItemComponentsServlet extends SlingSafeMethodsServlet {
     /**
      * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest}
      * a {@code DataSource} object filled with item components that are list items
-     *
      * @param request  {@code SlingHttpServletRequest} instance
      * @param response {@code SlingHttpServletResponse} instance
      */

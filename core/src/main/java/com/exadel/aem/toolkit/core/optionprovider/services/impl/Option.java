@@ -90,7 +90,7 @@ class Option {
      */
     boolean isValid() {
         return StringUtils.isNotBlank(getText())
-                && (isValid(resource) || resourceResolver != null);
+            && (isValid(resource) || resourceResolver != null);
     }
 
     /**
@@ -144,28 +144,28 @@ class Option {
         }
         if (ArrayUtils.isNotEmpty(attributeMembers)) {
             Arrays.stream(attributeMembers)
-                    .filter(StringUtils::isNotBlank)
-                    .forEach(attributeMember -> {
-                        String attributeValue = getCustomAttribute(attributeMember, StringTransformation.NONE);
-                        if (StringUtils.isNotBlank(attributeValue)) {
-                            result.put(attributeMember.replace(CoreConstants.SEPARATOR_COLON, CoreConstants.SEPARATOR_HYPHEN), attributeValue);
-                        }
-                    });
+                .filter(StringUtils::isNotBlank)
+                .forEach(attributeMember -> {
+                    String attributeValue = getCustomAttribute(attributeMember, StringTransformation.NONE);
+                    if (StringUtils.isNotBlank(attributeValue)) {
+                        result.put(attributeMember.replace(CoreConstants.SEPARATOR_COLON, CoreConstants.SEPARATOR_HYPHEN), attributeValue);
+                    }
+                });
         }
         if (ArrayUtils.isNotEmpty(attributes)) {
             Arrays.stream(attributes)
-                    .map(attr -> attr.split(OptionSourceParameters.KEV_VALUE_SEPARATOR_PATTERN, 2))
-                    .filter(parts -> ArrayUtils.getLength(parts) == 2 && StringUtils.isNotBlank(parts[0]))
-                    .forEach(parts -> result.put(
-                            parts[0].replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, CoreConstants.SEPARATOR_HYPHEN).trim(),
-                            parts[1].trim()));
+                .map(attr -> attr.split(OptionSourceParameters.KEV_VALUE_SEPARATOR_PATTERN, 2))
+                .filter(parts -> ArrayUtils.getLength(parts) == 2 && StringUtils.isNotBlank(parts[0]))
+                .forEach(parts -> result.put(
+                    parts[0].replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, CoreConstants.SEPARATOR_HYPHEN).trim(),
+                    parts[1].trim()));
         }
         return result;
     }
 
     /**
      * Used to retrieve this option's text or value, or a custom attribute of an underlying JCR resource
-     * @param attributeMember Reference to either {@code textMember}, {@code valueMember}, or {@code attributeMember} value
+     * @param attributeMember    Reference to either {@code textMember}, {@code valueMember}, or {@code attributeMember} value
      * @param attributeTransform Reference to either {@code textTransform} or {@code valueTransform} value
      * @return String value, or an empty string
      */

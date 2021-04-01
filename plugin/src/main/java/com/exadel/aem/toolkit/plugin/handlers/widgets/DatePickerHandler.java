@@ -90,8 +90,8 @@ public class DatePickerHandler implements Handler {
 
     /**
      * Writes formatted {@link DateTimeValue} attribute to node
-     * @param value The {@code DateTimeValue} to store
-     * @param target {@link Target} to store data in
+     * @param value     The {@code DateTimeValue} to store
+     * @param target    {@link Target} to store data in
      * @param attribute Name of date-preserving attribute
      * @param formatter {@link DateTimeFormatter} instance
      */

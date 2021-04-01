@@ -81,7 +81,7 @@ public class RichTextEditorHandler implements Handler {
     /**
      * Processes the user-defined data and writes it to XML entity
      * @param rteAnnotation Current {@link RichTextEditor} instance
-     * @param target Resulting {@code Target} object
+     * @param target        Resulting {@code Target} object
      */
     public void accept(RichTextEditor rteAnnotation, Target target) {
         this.rteAnnotation = rteAnnotation;
@@ -170,10 +170,10 @@ public class RichTextEditorHandler implements Handler {
      * Called by {@link RichTextEditorHandler#accept(Source, Target)} to facilitate single feature token from the
      * {@link RichTextEditor#features()} or {@link RichTextEditor#fullscreenFeatures()} collection to one or more appropriate
      * {@code XmlNodeBuilder}-s
-     * @param featureItem A mutually linked pair consisting of a {@code XmlNodeBuilder} for either {@code features()}
-     *                    or {@code fullscreenFeatures()} or the current RTE config, and a particular feature token
+     * @param featureItem      A mutually linked pair consisting of a {@code XmlNodeBuilder} for either {@code features()}
+     *                         or {@code fullscreenFeatures()} or the current RTE config, and a particular feature token
      * @param tableEditBuilder Additional {@code XmlNodeBuilder} for the tables node
-     * @param pluginsBuilder Additional {@code XmlNodeBuilder} for the plugins node
+     * @param pluginsBuilder   Additional {@code XmlNodeBuilder} for the plugins node
      */
     private static void processFeatureItem(
             ImmutablePair<XmlNodeWithListBuilder,String> featureItem,

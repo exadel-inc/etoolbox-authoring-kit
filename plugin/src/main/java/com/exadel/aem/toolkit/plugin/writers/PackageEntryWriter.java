@@ -109,7 +109,7 @@ abstract class PackageEntryWriter {
     /**
      * Used to store XML markup filled with annotation data taken from current {@code Class} instance
      * @param componentClass {@link Class} to analyze
-     * @param componentPath {@link Path} representing a file within a file system the data is written to
+     * @param componentPath  {@link Path} representing a file within a file system the data is written to
      */
     final void writeXml(Class<?> componentClass, Path componentPath) {
         try (Writer writer = Files.newBufferedWriter(componentPath.resolve(getScope()), StandardOpenOption.CREATE)) {

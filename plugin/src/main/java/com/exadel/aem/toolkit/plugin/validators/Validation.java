@@ -41,7 +41,6 @@ public class Validation {
 
     /**
      * Default constructor
-     *
      * @param testRoutine {@link Validator} instance to be used for testing
      */
     private Validation(Validator testRoutine) {
@@ -66,7 +65,7 @@ public class Validation {
 
     /**
      * Retrieves appropriate {@code Validation} for specific annotation property
-     * @param type Annotation type
+     * @param type       Annotation type
      * @param methodName Annotation's property name
      * @return {@code Validation} instance
      */

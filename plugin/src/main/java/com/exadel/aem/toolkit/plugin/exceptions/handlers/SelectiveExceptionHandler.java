@@ -76,9 +76,9 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
      * Called from {@link SelectiveExceptionHandler#shouldTerminateOn(Class)} to decide whether the exception class provided
      * matches the exception token (string values defining an exception or a set of exceptions) and, if so, what verdict
      * ("terminate" or "pass") should be made
-     * @param exceptionType {@code Class<?>} reference pointing to the particular Exception
+     * @param exceptionType  {@code Class<?>} reference pointing to the particular Exception
      * @param exceptionToken String representing the particular exception token
-     * @param inverse Boolean value saying whether the inversion sign is present in the match
+     * @param inverse        Boolean value saying whether the inversion sign is present in the match
      * @return {@code Optional} value saying the exception does match the token, if non-empty. Then, the internal boolean
      * value represents the verdict
      */

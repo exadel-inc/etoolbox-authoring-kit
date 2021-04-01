@@ -72,7 +72,7 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
     /**
      * Processes HTTP GET requests to the current endpoint and outputs a {@link SimpleDataSource} or a JSON string
      * according to the query parameters
-     * @param request {@code SlingHttpServletRequest} instance
+     * @param request  {@code SlingHttpServletRequest} instance
      * @param response {@code SlingHttpServletResponse} instance
      */
     @Override
@@ -136,7 +136,7 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
      * Called by {@link OptionProviderServlet#getJsonOutput(List)} to create internals on a JSON entity representing
      * a single datasource option
      * @param writer {@code JSONWriter} instance
-     * @param entry {@code Resource} to take data from
+     * @param entry  {@code Resource} to take data from
      */
     private static void writeResourceAttributes(JSONWriter writer, Resource entry) throws JSONException {
         writer.key(ATTRIBUTE_TEXT).value(entry.getValueMap().get(ATTRIBUTE_TEXT, String.class));

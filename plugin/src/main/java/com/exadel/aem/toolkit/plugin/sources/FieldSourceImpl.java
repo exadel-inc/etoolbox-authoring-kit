@@ -33,7 +33,7 @@ public class FieldSourceImpl extends MemberSourceImpl {
     /**
      * Initializes a class instance with references to the managed field and the {@code Class} the current field is
      * reported by
-     * @param field {@code Field} object
+     * @param field          {@code Field} object
      * @param reportingClass {@code Class} reference
      */
     public FieldSourceImpl(Field field, Class<?> reportingClass) {

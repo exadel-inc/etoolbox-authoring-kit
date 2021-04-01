@@ -38,9 +38,8 @@ class TabFacade extends SectionFacade {
 
     /**
      * Creates a new {@code SectionHelper} wrapped around the specified {@link Tab} object
-     *
-     * @param tab {@code Tab} object this helper wraps
-     * @param isLayout   True if the current section is a dialog layout section; false if it is a dialog widget section
+     * @param tab      {@code Tab} object this helper wraps
+     * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */
     TabFacade(Tab tab, boolean isLayout) {
         super(isLayout);

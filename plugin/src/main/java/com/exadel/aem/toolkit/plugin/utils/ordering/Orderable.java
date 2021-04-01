@@ -30,7 +30,7 @@ class Orderable<T> {
 
     /**
      * Initializes a class instance with the name and payload value provided
-     * @param name Name of the instance
+     * @param name  Name of the instance
      * @param value The wrapped object (payload)
      */
     public Orderable(String name, T value) {

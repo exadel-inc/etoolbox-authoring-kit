@@ -98,7 +98,7 @@ public class ClassMemberSetting {
      * Used to swap the fallback values received upon the instance initialization with the provided specific values. Calls
      * to this method can be chained
      * @param source Non-null {@code Class} reference
-     * @param name Member name, non-blank string
+     * @param name   Member name, non-blank string
      * @return The current instance
      */
     public ClassMemberSetting populateDefaults(Class<?> source, String name) {

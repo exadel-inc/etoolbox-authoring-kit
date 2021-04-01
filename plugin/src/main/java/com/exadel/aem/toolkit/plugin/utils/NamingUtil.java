@@ -34,7 +34,8 @@ public class NamingUtil {
     /**
      * Default (instantiation-preventing) constructor
      */
-    private NamingUtil() {}
+    private NamingUtil() {
+    }
 
     /**
      * Creates a valid {@code name} property for a Granite UI field
@@ -85,7 +86,7 @@ public class NamingUtil {
     /**
      * Creates a valid node name rendition for use with XML/JCR. If a name cannot be created from the provided string,
      * the provided {@code defaultValue} is returned
-     * @param value String used as the source for the name
+     * @param value        String used as the source for the name
      * @param defaultValue Fallback string
      * @return String value
      */
@@ -96,9 +97,9 @@ public class NamingUtil {
     /**
      * Creates a valid and unique node name rendition for use with XML/JCR taking into account the existing sibling
      * nodes situated within the same parent context
-     * @param value String used as the source for the name
+     * @param value        String used as the source for the name
      * @param defaultValue Fallback string
-     * @param context {@code Target} object representing the sibling nodes container
+     * @param context      {@code Target} object representing the sibling nodes container
      * @return String value
      */
     public static String getUniqueName(String value, String defaultValue, Target context) {
@@ -108,9 +109,9 @@ public class NamingUtil {
     /**
      * Creates a valid and unique node name rendition for use with XML/JCR taking into account the existing sibling
      * nodes situated within the same parent context
-     * @param value String used as the source for the name
+     * @param value        String used as the source for the name
      * @param defaultValue Fallback string
-     * @param context {@code Element} object representing the sibling nodes container
+     * @param context      {@code Element} object representing the sibling nodes container
      * @return String value
      */
     public static String getUniqueName(String value, String defaultValue, Element context) {

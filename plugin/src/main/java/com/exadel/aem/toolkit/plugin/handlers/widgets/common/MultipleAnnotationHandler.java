@@ -236,8 +236,8 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     /**
      * Migrates attributes and child nodes between {@code source} and {@code target}. Whether particular attributes
      * and child nodes are copied, moved or left alone, is defined by the {@code policies} map
-     * @param from Element to serve as the source of migration
-     * @param to Element to serve as the target of migration
+     * @param from     Element to serve as the source of migration
+     * @param to       Element to serve as the target of migration
      * @param policies Map containing attribute names (must start with {@code @}), child node names (must start with
      *                 {@code ./}) and the action appropriate, whether to copy element, move, or leave intact. Wildcard
      *                 symbol ({@code *}) is to specify common policy for multiple elements

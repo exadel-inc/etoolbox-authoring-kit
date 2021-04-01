@@ -55,7 +55,7 @@ public class OrderingUtil {
      * Sorts the collection of ToolKit handlers respecting the {@code before} and {@code after} hints specified
      * in the attached {@link Handles} annotations
      * @param handlers List of handlers to be sorted
-     * @param <T> Type of handler objects
+     * @param <T>      Type of handler objects
      * @return {@code List} that preserves the sequence of sorted items
      */
     public static <T> List<T> sortHandlers(List<T> handlers) {
@@ -139,9 +139,9 @@ public class OrderingUtil {
     /**
      * Called by {@link OrderingUtil#sortMembers(List)} to pick up an appropriate sibling of the current class member
      * defined by an {@code id} within the given {@code scope} of siblings
-     * @param id Identifier of the member to look for
+     * @param id    Identifier of the member to look for
      * @param scope {@code List} of orderable objects representing the searchable scope
-     * @param <T> Type of the orderable objects
+     * @param <T>   Type of the orderable objects
      * @return The {@code Orderable} object matching the identifier, or null
      */
     private static <T> Orderable<T> findSibling(String id, List<Orderable<T>> scope) {
@@ -164,7 +164,7 @@ public class OrderingUtil {
 
     /**
      * Creates an identifier usable in {@link OrderingUtil#findSibling(String, List)} method calls
-     * @param classMember {@code ClassMember} object
+     * @param classMember  {@code ClassMember} object
      * @param defaultClass {@code Class} reference
      * @return String value
      */
@@ -178,7 +178,7 @@ public class OrderingUtil {
     /**
      * Creates an identifier usable in {@link OrderingUtil#findSibling(String, List)} method calls
      * @param targetClass {@code Class} reference
-     * @param name Class member name
+     * @param name        Class member name
      * @return String value
      */
     private static String createId(Class<?> targetClass, String name) {
@@ -197,7 +197,7 @@ public class OrderingUtil {
      * @param f2 Second comparison member, non-null
      * @return Integer value per {@code Comparator#compare(Object, Object)} convention
      */
-    public static int compareByRank(Source f1, Source f2)  {
+    public static int compareByRank(Source f1, Source f2) {
         if (f1 != null && f2 == null) {
             return -1;
         } else if (f1 == null && f2 != null) {

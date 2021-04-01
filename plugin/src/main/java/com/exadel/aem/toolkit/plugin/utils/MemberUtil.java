@@ -39,7 +39,6 @@ public class MemberUtil {
      * Retrieves the type represented by the provided Java class {@code Member}. If the method is designed to provide
      * a primitive value or a singular object, its "direct" type is returned. If the method represents a collection,
      * type of array's element is returned
-     *
      * @param member The member to analyze, a {@link Field} or {@link Method} reference expected
      * @return Appropriate {@code Class} instance or null if an invalid {@code Member} provided
      */
@@ -62,8 +61,7 @@ public class MemberUtil {
     /**
      * Retrieves the underlying parameter type of the provided Java class {@code Member}. If the method is an array
      * or a collection, the item (parameter) type is returned; otherwise, the mere method type is returned
-     *
-     * @param member The member to analyze, a {@link Field} or {@link Method} reference expected
+     * @param member       The member to analyze, a {@link Field} or {@link Method} reference expected
      * @param defaultValue The value to return if parameter type extraction fails
      * @return Extracted {@code Class} instance, or the {@code defaultValue}
      */
