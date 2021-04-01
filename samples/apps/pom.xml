@@ -10,7 +10,7 @@
         <version>2.0.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>etoolbox-authoring-kit-samples-apps</artifactId>
+    <artifactId>etoolbox-authoring-kit-samples-ui.apps</artifactId>
 
     <name>Exadel Toolbox Authoring Kit - Samples Apps</name>
 

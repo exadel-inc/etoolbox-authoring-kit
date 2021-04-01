@@ -14,8 +14,8 @@
 
     <modules>
         <module>core</module>
-        <module>apps</module>
-        <module>content</module>
+        <module>ui.apps</module>
+        <module>ui.content</module>
     </modules>
 
     <properties>
@@ -86,7 +86,7 @@
                                 <goal>package</goal>
                             </goals>
                             <configuration>
-                                <group>${project.groupId}/${project.artifactId}</group>
+                                <group>${project.groupId}/${project.parent.artifactId}</group>
                             </configuration>
                         </execution>
                     </executions>
