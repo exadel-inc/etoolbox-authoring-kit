@@ -3,10 +3,10 @@
           jcr:primaryType="cq:Page" xmlns:cq="http://www.day.com/jcr/cq/1.0">
     <jcr:content
             jcr:primaryType="cq:PageContent"
-            jcr:title="AEM Authoring Toolkit Samples"
-            sling:resourceType="authoring-toolkit/samples/components/page/sample-page"
-            cq:template="authoring-toolkit/samples/template/sample-page"
-            cq:designPath="/apps/settings/wcm/designs/toolkit-samples">
+            jcr:title="EToolbox Authoring Kit Samples"
+            sling:resourceType="etoolbox-authoring-kit/samples/components/page/sample-page"
+            cq:template="etoolbox-authoring-kit/samples/template/sample-page"
+            cq:designPath="/apps/settings/wcm/designs/etoolbox-authoring-kit-samples">
     </jcr:content>
 </jcr:root>
 
