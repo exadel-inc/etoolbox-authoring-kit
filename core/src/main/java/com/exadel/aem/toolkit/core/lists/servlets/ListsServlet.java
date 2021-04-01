@@ -57,12 +57,12 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 @Component(
     service = Servlet.class,
     property = {
-        "sling.servlet.resourceTypes=/apps/authoring-toolkit/datasources/lists",
+        "sling.servlet.resourceTypes=/apps/etoolbox-authoring-kit/datasources/lists",
         "sling.servlet.methods=" + HttpConstants.METHOD_GET
     }
 )
 public class ListsServlet extends SlingSafeMethodsServlet {
-    private static final String LIST_TEMPLATE_NAME = "/conf/authoring-toolkit/settings/wcm/templates/list";
+    private static final String LIST_TEMPLATE_NAME = "/conf/etoolbox-authoring-kit/settings/wcm/templates/list";
     private static final String PATH_JCR_CONTENT = CoreConstants.SEPARATOR_SLASH + JcrConstants.JCR_CONTENT;
     private static final String PREFIX_REP = "rep:";
 

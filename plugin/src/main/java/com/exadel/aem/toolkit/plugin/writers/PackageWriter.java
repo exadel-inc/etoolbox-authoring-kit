@@ -59,7 +59,7 @@ public class PackageWriter implements AutoCloseable {
     private static final String FILESYSTEM_PREFIX = "jar:";
     private static final Map<String, String> FILESYSTEM_OPTIONS = ImmutableMap.of("create", "true");
 
-    private static final String PACKAGE_INFO_DIRECTORY = "META-INF/authoring-toolkit";
+    private static final String PACKAGE_INFO_DIRECTORY = "META-INF/etoolbox-authoring-kit";
     private static final String PACKAGE_INFO_FILE_NAME = "version.info";
 
     private static final String CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE = "Cannot write to package ";

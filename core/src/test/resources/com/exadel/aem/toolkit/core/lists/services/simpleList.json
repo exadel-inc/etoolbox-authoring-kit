@@ -3,9 +3,9 @@
   "jcr:content": {
     "jcr:primaryType": "cq:PageContent",
     "jcr:title": "Simple List Page",
-    "cq:template": "/conf/authoring-toolkit/settings/wcm/templates/list",
-    "itemResourceType": "/apps/authoring-toolkit/lists/components/content/simpleItem",
-    "sling:resourceType": "authoring-toolkit/lists/components/structure/page-list",
+    "cq:template": "/conf/etoolbox-authoring-kit/settings/wcm/templates/list",
+    "itemResourceType": "/apps/etoolbox-authoring-kit/lists/components/content/simpleItem",
+    "sling:resourceType": "etoolbox-authoring-kit/lists/components/structure/page-list",
     "option": "existingComponent",
     "list": {
       "jcr:primaryType": "nt:unstructured",
@@ -14,28 +14,28 @@
         "jcr:primaryType": "nt:unstructured",
         "jcr:title": "key1",
         "value": "value1",
-        "sling:resourceType": "authoring-toolkit/lists/components/content/listItem"
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
       },
       "list_item_938979398": {
         "jcr:primaryType": "nt:unstructured",
         "jcr:title": "key2",
         "value": "value2",
-        "sling:resourceType": "authoring-toolkit/lists/components/content/listItem"
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
       },
       "list_item_124336589": {
         "jcr:primaryType": "nt:unstructured",
         "jcr:title": "key1",
         "value": "value3",
-        "sling:resourceType": "authoring-toolkit/lists/components/content/listItem"
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
       },
       "list_item_empty": {
         "jcr:primaryType": "nt:unstructured",
-        "sling:resourceType": "authoring-toolkit/lists/components/content/listItem"
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
       },
       "list_item_empty2": {
         "jcr:primaryType": "nt:unstructured",
         "value": "value4",
-        "sling:resourceType": "authoring-toolkit/lists/components/content/listItem"
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
       }
     }
   }

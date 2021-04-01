@@ -3,15 +3,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>aem-authoring-toolkit</artifactId>
-        <groupId>com.exadel.aem</groupId>
-        <version>2.0.1-SNAPSHOT</version>
+        <groupId>com.exadel.etoolbox</groupId>
+        <artifactId>etoolbox-authoring-kit</artifactId>
+        <version>2.0.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>aem-authoring-toolkit-core</artifactId>
+    <artifactId>etoolbox-authoring-kit-core</artifactId>
 
-    <name>${project.prettyName} Core</name>
-    <description>Contains AEM Authoring Toolkit API and core functionality</description>
+    <name>${project.prettyName} - Core</name>
+    <description>Contains API and core functionality</description>
 
     <packaging>jar</packaging>
 

@@ -2,13 +2,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.exadel.aem</groupId>
-    <artifactId>aem-authoring-toolkit</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
+    <groupId>com.exadel.etoolbox</groupId>
+    <artifactId>etoolbox-authoring-kit</artifactId>
+    <version>2.0.2-SNAPSHOT</version>
 
     <name>${project.prettyName}</name>
-    <description>Automates generating rich and responsive authoring interfaces for Adobe Experience Manager (TM) via Maven-powered build and deployment workflow</description>
-    <url>https://github.com/exadel-inc/aem-authoring-toolkit</url>
+    <description>Automates generating and managing rich and responsive authoring interfaces for Adobe Experience Manager (TM)</description>
+    <url>https://github.com/exadel-inc/etoolbox-authoring-kit</url>
 
     <organization>
         <name>Exadel, Inc.</name>
@@ -17,8 +17,8 @@
 
     <developers>
         <developer>
-            <id>edmtp</id>
-            <name>Exadel DMTP Team</name>
+            <id>exadel-martech</id>
+            <name>Exadel MarTech Team</name>
             <organization>Exadel, Inc.</organization>
             <organizationUrl>https://exadel.com</organizationUrl>
             <roles>
@@ -36,9 +36,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/exadel-inc/aem-authoring-toolkit.git</connection>
-        <developerConnection>scm:git:git@github.com:exadel-inc/aem-authoring-toolkit.git</developerConnection>
-        <url>https://github.com/exadel-inc/aem-authoring-toolkit</url>
+        <connection>scm:git:git://github.com/exadel-inc/etoolbox-authoring-kit.git</connection>
+        <developerConnection>scm:git:git@github.com:exadel-inc/etoolbox-authoring-kit.git</developerConnection>
+        <url>https://github.com/exadel-inc/etoolbox-authoring-kit</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -55,7 +55,7 @@
 
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/exadel-inc/aem-authoring-toolkit/issues</url>
+        <url>https://github.com/exadel-inc/etoolbox-authoring-kit/issues</url>
     </issueManagement>
 
     <packaging>pom</packaging>
@@ -64,12 +64,12 @@
         <module>core</module>
         <module>ui.apps</module>
         <module>ui.content</module>
-        <module>assets</module>
+        <module>all</module>
         <module>plugin</module>
     </modules>
 
     <properties>
-        <project.prettyName>AEM Authoring Toolkit</project.prettyName>
+        <project.prettyName>Exadel Toolbox Authoring Kit</project.prettyName>
         <project.vendor>Exadel</project.vendor>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -93,7 +93,7 @@
                     <version>0.5.1</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <group>${project.parent.artifactId}</group>
+                        <group>${project.parent.groupId}/${project.parent.artifactId}</group>
                         <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
                         <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
                         <properties>
@@ -120,7 +120,7 @@
                                 <goal>package</goal>
                             </goals>
                             <configuration>
-                                <group>authoring-toolkit</group>
+                                <group>${project.parent.groupId}/${project.parent.artifactId}</group>
                             </configuration>
                         </execution>
                     </executions>
@@ -377,11 +377,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.exadel.aem</groupId>
-                <artifactId>aem-authoring-toolkit-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
