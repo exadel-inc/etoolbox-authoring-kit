@@ -15,15 +15,16 @@
 package com.exadel.aem.toolkit.samples.annotations.handlers;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.handlers.DialogHandler;
+import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 @Handles(Dialog.class)
-public class DialogTitlePostfixHandler implements DialogHandler {
+public class DialogTitlePostfixHandler implements Handler {
 
     @Override
-    public void accept(Class<?> cls, Target target) {
+    public void accept(Source source, Target target) {
         String title = target.getAttribute("jcr:title");
         target.attribute("jcr:title", title.replace("Component", "Dialog"));
     }
