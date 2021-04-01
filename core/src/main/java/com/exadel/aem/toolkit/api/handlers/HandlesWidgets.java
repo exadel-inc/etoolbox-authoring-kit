@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 
 /**
  * Used to specify one or more Granite UI dialog widget annotations for a handler
- * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link Handles} instead
+ * @deprecated This is deprecated and will be removed in a version after 2.0.2. Please use {@link Handles} instead
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

@@ -107,7 +107,7 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
      * @return {@code DialogLayout} value
      */
     @SuppressWarnings("deprecation") // Processing of Dialog#tabs is retained for compatibility and will be removed
-    // in a version after 2.0.1
+                                     // in a version after 2.0.2
     private static DialogLayout getLayout(Source source, String scope) {
         DialogLayout result = DialogLayout.FIXED_COLUMNS;
 
@@ -146,7 +146,7 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
      * @return {@code DialogLayout} value
      */
     @SuppressWarnings("deprecation") // Processing of container.Tab is retained for compatibility and will be removed
-    // in a version after 2.0.1
+                                     // in a version after 2.0.2
     private static DialogLayout getLayoutFromNestedClasses(Class<?> componentClass) {
         if (ArrayUtils.isEmpty(componentClass.getDeclaredClasses())) {
             return DialogLayout.FIXED_COLUMNS;

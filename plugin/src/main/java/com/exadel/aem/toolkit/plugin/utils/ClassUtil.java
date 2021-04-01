@@ -63,7 +63,7 @@ public class ClassUtil {
      * @return List of {@code Source} objects
      */
     @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+                                     // in a version after 2.0.2
     public static List<Source> getSources(Class<?> targetClass, Predicate<Source> condition) {
         List<Source> raw = new ArrayList<>();
         List<ClassMemberSetting> ignoredClassMembers = new ArrayList<>();

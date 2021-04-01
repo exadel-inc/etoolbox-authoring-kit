@@ -54,7 +54,7 @@ import com.exadel.aem.toolkit.plugin.validators.Validation;
  * Processes, verifies and stores Granite UI-related data to XML markup
  */
 @SuppressWarnings("deprecation") // XmlUtility is retained for compatibility reasons (used in legacy custom handlers)
-                                 // This will be retired in a version after 2.0.1
+                                 // This will be retired in a version after 2.0.2
 public class XmlContextHelper implements XmlUtility {
 
     /**

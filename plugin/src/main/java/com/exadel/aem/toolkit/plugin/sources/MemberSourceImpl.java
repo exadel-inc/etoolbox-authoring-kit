@@ -51,7 +51,7 @@ public abstract class MemberSourceImpl extends SourceImpl implements MemberSourc
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("deprecation") // Usage of Multifield#field is retained for compatibility and will be removed after v. 2.0.1
+    @SuppressWarnings("deprecation") // Usage of Multifield#field is retained for compatibility and will be removed after 2.0.2
     @Override
     public Class<?> getValueType() {
         // Retrieve the "immediate" return type

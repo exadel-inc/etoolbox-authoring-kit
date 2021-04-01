@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
 /**
  * Represents an abstraction of logic for handling a dialog annotation.
  * Serves as the marker interface for creating and enumerating handlers instances
- * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link Handler} instead
+ * @deprecated This is deprecated and will be removed in a version after 2.0.2. Please use {@link Handler} instead
  */
 @Deprecated
 @SuppressWarnings("squid:S1133") // See deprecation message

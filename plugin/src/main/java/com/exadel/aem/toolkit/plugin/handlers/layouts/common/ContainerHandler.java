@@ -221,7 +221,7 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
      *                       source, or a {@code DesignDialog} source
      */
     @SuppressWarnings("deprecation") // Processing of container.Tab class and Dialog#tabs() method is retained for
-                                     // compatibility and will be removed in a version after 2.0.1
+                                     // compatibility and will be removed in a version after 2.0.2
     private void appendSectionsFromClassLevel(List<SectionFacade> accumulator, Class<?> componentClass, String scope) {
         com.exadel.aem.toolkit.api.annotations.container.Tab[] legacyTabs = null;
         Tab[] tabs = null;
@@ -299,7 +299,7 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
      * @return Array of strings, non-null
      */
     @SuppressWarnings("deprecation") // Processing of IgnoreTabs annotation is retained for
-                                     // compatibility and will be removed in a version after 2.0.1
+                                     // compatibility and will be removed in a version after 2.0.2
     private static String[] getIgnoredSectionTitles(Class<?> componentClass) {
         String[] result = ArrayUtils.EMPTY_STRING_ARRAY;
         if (componentClass.isAnnotationPresent(IgnoreTabs.class)) {

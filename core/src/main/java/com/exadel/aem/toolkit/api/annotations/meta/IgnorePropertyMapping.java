@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  * Marks that a property (properties) of a specific annotation are not to be automatically mapped to Granite attributes.
  * If set to an entire annotation, this setting is legitimate to all of its properties unless explicitly marked with
  * {@link MapProperties}
- * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link MapProperties} instead
+ * @deprecated This is deprecated and will be removed in a version after 2.0.2. Please use {@link MapProperties} instead
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

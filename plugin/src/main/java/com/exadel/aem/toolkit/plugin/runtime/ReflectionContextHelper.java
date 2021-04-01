@@ -169,7 +169,7 @@ public class ReflectionContextHelper {
      * @return True or false
      */
     @SuppressWarnings("deprecation") // HandlesWidgets processing is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+                                     // in a version after 2.0.2
     private static boolean isHandlerMatches(Handler handler, String scope, Class<?>[] annotationTypes) {
         Handles handles = handler.getClass().getDeclaredAnnotation(Handles.class);
         HandlesWidgets handlesWidgets = handler.getClass().getDeclaredAnnotation(HandlesWidgets.class);
@@ -206,7 +206,7 @@ public class ReflectionContextHelper {
      * @return New handler instance
      */
     @SuppressWarnings("deprecation") // RuntimeContext and @Injected are processed for compatibility, to be removed in
-                                     // a version after 2.0.1
+                                     // a version after 2.0.2
     private static <T> T getHandlerInstance(Class<? extends T> handlerClass) {
         T instance = getInstance(handlerClass);
         if (instance != null) {

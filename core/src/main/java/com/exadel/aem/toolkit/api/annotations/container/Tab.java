@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 
 /**
  * Used to define specific tab in multi-tab Granite UI dialog setup
- * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use
+ * @deprecated This is deprecated and will be removed in a version after 2.0.2. Please use
  * {@link com.exadel.aem.toolkit.api.annotations.layouts.Tab} instead
  */
 @Target(ElementType.TYPE)

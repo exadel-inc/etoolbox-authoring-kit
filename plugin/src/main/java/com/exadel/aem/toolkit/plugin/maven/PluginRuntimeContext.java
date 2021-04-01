@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
  * provides access to {@link ReflectionContextHelper}, and the extended {@link XmlContextHelper}
  */
 @SuppressWarnings("deprecation") // RuntimeContext support is retained for compatibility and will be removed
-                                 // in a version after 2.0.1
+                                 // in a version after 2.0.2
 public interface PluginRuntimeContext extends RuntimeContext {
 
     /**

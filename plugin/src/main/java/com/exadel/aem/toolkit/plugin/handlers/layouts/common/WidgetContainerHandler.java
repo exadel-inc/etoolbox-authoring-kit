@@ -52,7 +52,7 @@ public abstract class WidgetContainerHandler {
      * @return {@code List<Source>} containing placeable members, or an empty collection
      */
     @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+                                     // in a version after 2.0.2
     protected List<Source> getEntriesForContainer(Source container, boolean useReportingClass) {
         Class<?> valueTypeClass = container.adaptTo(MemberSource.class).getValueType();
         Class<?> reportingClass = useReportingClass ? container.adaptTo(MemberSource.class).getReportingClass() : valueTypeClass;

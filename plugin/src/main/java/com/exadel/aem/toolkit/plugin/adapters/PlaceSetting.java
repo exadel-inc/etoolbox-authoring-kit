@@ -29,7 +29,7 @@ public class PlaceSetting {
     private Place wrappedPlace;
 
     @SuppressWarnings("deprecation") // PlaceOnTab support is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+                                     // in a version after 2.0.2
     private PlaceOnTab wrappedPlaceOnTab;
 
     /**
@@ -37,7 +37,7 @@ public class PlaceSetting {
      * @param source {@code Source} object that will be used for extracting resource type
      */
     @SuppressWarnings("deprecation") // PlaceOnTab support is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+                                     // in a version after 2.0.2
     public PlaceSetting(Source source) {
         if (source == null) {
             return;

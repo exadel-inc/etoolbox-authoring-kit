@@ -125,7 +125,7 @@ public class DomHandler {
      * @param element DOM {@code Element} object
      */
     @SuppressWarnings({"deprecation", "squid:S1905"}) // DialogHandler reference and DialogHandler#accept(Element, Class)
-    // method are retained for compatibility and will be removed in a version after 2.0.1
+    // method are retained for compatibility and will be removed in a version after 2.0.2
     private static void applyLegacyDialogHandlers(Class<?> componentClass, Element element) {
         List<DialogAnnotation> customAnnotations = getLegacyDialogAnnotations(componentClass);
         PluginRuntime.context().getReflection().getHandlers().stream()
@@ -142,7 +142,7 @@ public class DomHandler {
      * @return List of values, empty or non-empty
      */
     @SuppressWarnings("deprecation") // DialogAnnotation processing is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+                                     // in a version after 2.0.2
     private static List<DialogAnnotation> getLegacyDialogAnnotations(Class<?> componentClass) {
         return Arrays.stream(componentClass.getDeclaredAnnotations())
             .filter(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class) != null)

@@ -30,7 +30,7 @@ public class ClassMemberSetting {
 
     private ClassMember wrappedClassMember;
     @SuppressWarnings("deprecation") // ClassField processing is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+                                     // in a version after 2.0.2
     private ClassField wrappedClassField;
 
     private Class<?> overridingSource;
@@ -49,7 +49,7 @@ public class ClassMemberSetting {
      * @param value Non-null {@code ClassField} object
      */
     @SuppressWarnings("deprecation") // ClassField processing is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+                                     // in a version after 2.0.2
     public ClassMemberSetting(ClassField value) {
         this.wrappedClassField = value;
     }

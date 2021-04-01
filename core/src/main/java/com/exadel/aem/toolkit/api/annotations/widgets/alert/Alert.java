@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html">
  * Alert</a> component in Granite UI
  *
- * @deprecated This annotation is deprecated and will be removed in a version after 2.0.1.
+ * @deprecated This annotation is deprecated and will be removed in a version after 2.0.2.
  * Please use {@link com.exadel.aem.toolkit.api.annotations.widgets.Alert}
  */
 @Target({ElementType.FIELD, ElementType.METHOD})

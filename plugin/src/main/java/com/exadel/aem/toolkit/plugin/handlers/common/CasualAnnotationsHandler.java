@@ -67,7 +67,7 @@ public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
      */
     @Override
     @SuppressWarnings("deprecation") // DialogWidgetHandler processing is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+                                     // in a version after 2.0.2
     public void accept(Source source, Target target) {
         List<Handler> handlers = getEffectiveHandlers(source, target.getScope());
 
@@ -99,7 +99,7 @@ public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
      * @return List of {@code Handler} instances
      */
     @SuppressWarnings("deprecation") // DialogWidgetHandler processing is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+                                     // in a version after 2.0.2
     private List<Handler> getEffectiveHandlers(Source source, String scope) {
         if (predefinedHandlers != null && !predefinedHandlers.isEmpty()) {
             return predefinedHandlers;
@@ -128,7 +128,7 @@ public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
      * @return Stream of {@link DialogWidgetHandler} instances
      */
     @SuppressWarnings("deprecation") // DialogWidgetHandler processing is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+                                     // in a version after 2.0.2
     private static Stream<DialogWidgetHandler> getMatchedHandlersByName(String source) {
         if (StringUtils.isEmpty(source)) {
             return Stream.empty();

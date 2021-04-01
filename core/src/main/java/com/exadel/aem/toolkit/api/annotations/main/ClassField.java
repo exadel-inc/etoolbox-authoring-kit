@@ -22,13 +22,13 @@ import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
  * Used to refer to a particular field of a class defined by the class reference and the name
- * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link ClassMember} instead
+ * @deprecated This is deprecated and will be removed in a version after 2.0.2. Please use {@link ClassMember} instead
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Deprecated
 @SuppressWarnings({"squid:S1133", "DeprecatedIsStillUsed"}) // the processing of ClassField is retained for compatibility
-                                                            // and will be removed in a version after 2.0.1
+                                                            // and will be removed in a version after 2.0.2
 public @interface ClassField {
 
     /**

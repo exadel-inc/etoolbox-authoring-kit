@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
  * Used for the case when the current dialog class or fieldset extends another class and would expose
  * one or more {@code DialogField}s from superclass that are not actually needed
  * @see ClassField
- * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link Ignore} instead
+ * @deprecated This is deprecated and will be removed in a version after 2.0.2. Please use {@link Ignore} instead
  */
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

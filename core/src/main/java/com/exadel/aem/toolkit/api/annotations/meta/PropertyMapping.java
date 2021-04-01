@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  * Marks that properties of a specific annotation are expected to be automatically mapped to the attributes
  * of the current Granite UI entity. This setting extends to all the properties unless
  * a narrower list is specified via {@link PropertyMapping#mappings()}
- * @deprecated This is deprecated and will be removed in a version after 2.0.1. Please use {@link MapProperties} instead
+ * @deprecated This is deprecated and will be removed in a version after 2.0.2. Please use {@link MapProperties} instead
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)

@@ -18,7 +18,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
  * status of an option or message
  *
  * @deprecated These constants are deprecated in favour of {@link StatusVariant} enum and will be removed
- * in a version after 2.0.1
+ * in a version after 2.0.2
  */
 @Deprecated
 @SuppressWarnings({"unused", "squid:S1133"})

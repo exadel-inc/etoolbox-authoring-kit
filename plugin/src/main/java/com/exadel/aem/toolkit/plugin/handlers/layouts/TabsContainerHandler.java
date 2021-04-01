@@ -43,7 +43,7 @@ public class TabsContainerHandler extends ContainerHandler {
      * @param target Resulting {@code Target} object
      */
     @SuppressWarnings("deprecation") // Processing container.Tab is retained for compatibility and will be removed
-                                     // in a version after 2.0.1
+                                     // in a version after 2.0.2
     @Override
     public void accept(Source source, Target target) {
         populateContainer(

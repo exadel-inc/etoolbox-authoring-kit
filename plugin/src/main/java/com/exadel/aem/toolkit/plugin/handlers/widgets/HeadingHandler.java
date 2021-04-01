@@ -37,8 +37,8 @@ public class HeadingHandler implements Handler {
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
-    @SuppressWarnings("deprecation") // Use of Heading#text will be removed after version 2.0.1
     @Override
+    @SuppressWarnings("deprecation") // Use of Heading#text will be removed after version 2.0.2
     public void accept(Source source, Target target) {
         Heading heading = source.adaptTo(Heading.class);
         if (StringUtils.isAllBlank(heading.value(), heading.text())) {
