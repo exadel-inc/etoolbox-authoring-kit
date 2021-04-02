@@ -8,7 +8,7 @@ The DependsOn Plug-in is a clientlib that executes defined actions on dependent 
 
 The DependsOn Plug-in uses data attributes to get the expected configuration.
 To define data attributes from JCR, use the _**granite:data**_ sub-node under the widget node.
-AEM Authoring Toolkit provides a set of annotations to use DependsOn from Java code.
+EToolbox Authoring Kit provides a set of annotations to use DependsOn from Java code.
 
 The DependsOn workflow consists of the following steps:
 
@@ -234,7 +234,7 @@ Static action’s params can be passed through data attributes with the followin
  - for multiple actions of the same type additional actions params should end with `-{index}` (1 for the second action, 2 for the third).
  e.g. `data-dependson-validate-msg-1` will be used by second `validate` action as invalid state message
 
-#### Authoring Toolkit DependsOn Annotations
+#### EToolbox Authoring Kit DependsOn Annotations
 
 * `@DependsOn` - to define a single DependsOn Action with the Query. Multiple annotations per element can be used.
 
