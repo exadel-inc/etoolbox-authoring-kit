@@ -72,10 +72,10 @@ public class ShoppingListComponent {
     @DialogField(label = LABEL_ANSWER)
     @TextField(emptyText = "Check all checkboxes to disable this text field")
     @DependsOn(
-        query = "ToolKitSamples.getShoppingDefaultText(@@checkbox(.coral-Form-fieldset |> .weapon-fieldSet), @this)",
+        query = "ToolKitSamples.getShoppingDefaultText(@@checkbox(coral-dialog-content |> .weapon-fieldSet), @this)",
         action = DependsOnActions.SET
     )
-    @DependsOn(query = "@@checkbox(.coral-Form-fieldset |> .products-fieldSet).every(item => item)")
+    @DependsOn(query = "@@checkbox(coral-dialog-content |> .products-fieldSet).every(item => item)")
     @DependsOn(
         query = "@@checkbox.every(item => item)",
         action = DependsOnActions.DISABLED
