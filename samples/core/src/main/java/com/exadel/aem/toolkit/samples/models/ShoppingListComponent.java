@@ -14,7 +14,6 @@
 
 package com.exadel.aem.toolkit.samples.models;
 
-import com.exadel.aem.toolkit.samples.utils.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
@@ -24,7 +23,7 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
@@ -34,22 +33,20 @@ import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 import com.exadel.aem.toolkit.samples.models.fieldsets.ProductsFieldSet;
 import com.exadel.aem.toolkit.samples.models.fieldsets.WeaponFieldSet;
+import com.exadel.aem.toolkit.samples.utils.ListUtils;
 
+@AemComponent(
+    path = "content/shopping-list-component",
+    title = "Shopping List Component",
+    description = "Choose what your warrior needs",
+    resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
+    componentGroup = GroupConstants.COMPONENT_GROUP
+)
 @Dialog(
-        name = "content/shopping-list-component",
-        title = "Shopping List Component",
-        description = "Choose what your warrior needs",
-        resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = GroupConstants.COMPONENT_GROUP,
-        tabs = {
-                @Tab(title = ShoppingListComponent.TAB_MAIN),
-        },
-        extraClientlibs = "authoring-toolkit.samples.authoring"
+    extraClientlibs = "etoolbox-authoring-kit.samples.authoring"
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ShoppingListComponent {
-
-    static final String TAB_MAIN = "Shopping list";
 
     private static final String DESCRIPTION_PRODUCTS_FIELD_SET = "Check all checkboxes from this group to show the text field";
 
@@ -74,9 +71,15 @@ public class ShoppingListComponent {
 
     @DialogField(label = LABEL_ANSWER)
     @TextField(emptyText = "Check all checkboxes to disable this text field")
-    @DependsOn(query = "AATSamples.getShoppingDefaultText(@@checkbox(coral-panel |> .weapon-fieldSet), @this)", action = DependsOnActions.SET)
-    @DependsOn(query = "@@checkbox(coral-panel |> .products-fieldSet).every(item => item)")
-    @DependsOn(query = "@@checkbox.every(item => item)", action = DependsOnActions.DISABLED)
+    @DependsOn(
+        query = "ToolKitSamples.getShoppingDefaultText(@@checkbox(coral-dialog-content |> .weapon-fieldSet), @this)",
+        action = DependsOnActions.SET
+    )
+    @DependsOn(query = "@@checkbox(coral-dialog-content |> .products-fieldSet).every(item => item)")
+    @DependsOn(
+        query = "@@checkbox.every(item => item)",
+        action = DependsOnActions.DISABLED
+    )
     @ValueMapValue
     private String answer;
 
@@ -86,7 +89,7 @@ public class ShoppingListComponent {
 
     public String getText() {
         String shoppingList = ListUtils.joinNonBlank(ListUtils.COMMA_SPACE_DELIMITER,
-                productsFieldSet.getProducts(), weaponFieldSet.getWeapon());
+            productsFieldSet.getProducts(), weaponFieldSet.getWeapon());
         StringBuilder text = new StringBuilder(shoppingList);
 
         if (StringUtils.isEmpty(shoppingList)) {

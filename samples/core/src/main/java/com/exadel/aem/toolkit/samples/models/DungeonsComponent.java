@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
@@ -38,16 +39,17 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 
-@Dialog(
-    name = "content/dungeons-component",
+@AemComponent(
+    path = "content/dungeons-component",
     title = "Dungeons Component",
     description = "Choose a dungeon for your warrior",
-    resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
+    resourceSuperType = "etoolbox-authoring-kit/samples/components/content/parent-select-component",
     componentGroup = GroupConstants.COMPONENT_GROUP
 )
+@Dialog
 @Accordion(value = @AccordionPanel(title = "Main"))
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class DungeonsComponent extends ParentSelectComponent {
+public class DungeonsComponent {
 
     private static final String LABEL_DUNGEON_RULES = "Make your own dungeons rules";
     private static final String LABEL_DUNGEON_SELECT = "Dungeons select";
@@ -56,7 +58,6 @@ public class DungeonsComponent extends ParentSelectComponent {
     private static final String DEFAULT_ICE_VALLEY_TEXT = "ice valley, where you can lose your arm from strong frost,";
     private static final String DEFAULT_RULES = "no rules!";
 
-    @ValueMapValue
     @DialogField(label = LABEL_DUNGEON_RULES)
     @Extends(value = WarriorDescriptionComponent.class, field = "description")
     @RichTextEditor(
@@ -66,15 +67,8 @@ public class DungeonsComponent extends ParentSelectComponent {
             RteFeatures.LISTS_UNORDERED
         })
     @Place("Main")
+    @ValueMapValue
     private String dungeonRules;
-
-    @DependsOn(query = "@dungeon === '1'")
-    @Hyperlink(href = "https://media.graphcms.com/BmLxDCt5SaSHWx4rt6xy", text = "Dungeon profile image", target = "_blank")
-    private String profileLink;
-
-    @DependsOn(query = "@dungeon === '2'")
-    @Hyperlink(href = "https://cg4.cgsociety.org/uploads/images/medium/penemenn-ice-valley-1-11885220-8day.jpg", text = "Dungeon profile image", target = "_blank")
-    private String profileLink2;
 
     @Accordion(
         value = @AccordionPanel(title = LABEL_DUNGEON_SELECT))
@@ -82,19 +76,32 @@ public class DungeonsComponent extends ParentSelectComponent {
     DungeonSelect dungeon;
 
     static class DungeonSelect {
-        @ValueMapValue
-        @Default(values = "1")
         @DialogField(label = LABEL_DUNGEON_SELECT)
         @Select(options = {
             @Option(text = "Rotten swamps", value = "1"),
             @Option(text = "Ice valley", value = "2")
         })
         @DependsOnRef(name = "dungeon")
-        @Properties(
-            value = @Property(name = "sling:hideChildren", value = "*"))
+        @Properties(@Property(name = "sling:hideChildren", value = "*"))
         @Place("Dungeons select")
+        @Default(values = "1")
+        @ValueMapValue
         String dungeonsSelect;
 
+        @Hyperlink(
+            href = "https://i.picsum.photos/id/127/4032/2272.jpg?hmac=QFoFT2_eb_DCqjdlj09UFgUHwI_zefDTBdECRz9lO5Q",
+            text = "Dungeon profile image",
+            target = "_blank"
+        )
+        @DependsOn(query = "@dungeon === '1'")
+        private String profileLink;
+
+        @Hyperlink(
+            href = "https://i.picsum.photos/id/13/2500/1667.jpg?hmac=SoX9UoHhN8HyklRA4A3vcCWJMVtiBXUg0W4ljWTor7s",
+            text = "Dungeon profile image",
+            target = "_blank")
+        @DependsOn(query = "@dungeon === '2'")
+        private String profileLink2;
     }
 
     public String getDungeonRules() {

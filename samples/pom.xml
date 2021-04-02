@@ -4,17 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>aem-authoring-toolkit-samples</artifactId>
-    <groupId>com.exadel.aem</groupId>
-    <name>AEM Authoring Toolkit - Samples</name>
+    <groupId>com.exadel.etoolbox</groupId>
+    <artifactId>etoolbox-authoring-kit-samples</artifactId>
     <version>2.0.2-SNAPSHOT</version>
+
+    <name>Exadel Toolbox Authoring Kit - Samples</name>
 
     <packaging>pom</packaging>
 
     <modules>
         <module>core</module>
-        <module>apps</module>
-        <module>content</module>
+        <module>ui.apps</module>
+        <module>ui.content</module>
     </modules>
 
     <properties>
@@ -24,7 +25,7 @@
         <host>localhost</host>
         <port>4502</port>
         <serviceUrl>http://${host}:${port}/crx/packmgr/service.jsp</serviceUrl>
-        <project.jcrAppFolder>authoring-toolkit/samples</project.jcrAppFolder>
+        <project.jcrAppFolder>etoolbox-authoring-kit/samples</project.jcrAppFolder>
         <toolkit.version>2.0.2-SNAPSHOT</toolkit.version>
         <project.vendor>Exadel</project.vendor>
     </properties>
@@ -85,7 +86,7 @@
                                 <goal>package</goal>
                             </goals>
                             <configuration>
-                                <group>authoring-toolkit-samples</group>
+                                <group>${project.groupId}/${project.parent.artifactId}</group>
                             </configuration>
                         </execution>
                     </executions>
@@ -111,19 +112,18 @@
 
     <dependencyManagement>
         <dependencies>
-
             <!-- Foreign -->
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>osgi.annotation</artifactId>
-                <version>6.0.1</version>
-                <scope>provided</scope>
-            </dependency>
             <dependency>
                 <groupId>com.adobe.aem</groupId>
                 <artifactId>uber-jar</artifactId>
                 <version>6.4.0</version>
                 <classifier>apis</classifier>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -133,12 +133,11 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>javax.inject</groupId>
-                <artifactId>javax.inject</artifactId>
-                <version>1</version>
+                <groupId>org.osgi</groupId>
+                <artifactId>osgi.annotation</artifactId>
+                <version>6.0.1</version>
                 <scope>provided</scope>
             </dependency>
-
             <!-- ToolKit-specific -->
             <dependency>
                 <groupId>com.exadel.etoolbox</groupId>
@@ -152,11 +151,10 @@
                 <version>${toolkit.version}</version>
                 <type>zip</type>
             </dependency>
-
             <!-- Internal -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>aem-authoring-toolkit-samples-core</artifactId>
+                <artifactId>etoolbox-authoring-kit-samples-core</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
         </dependencies>
