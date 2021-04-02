@@ -3,7 +3,7 @@
           jcr:primaryType="cq:Page" xmlns:cq="http://www.day.com/jcr/cq/1.0">
     <jcr:content
             jcr:primaryType="cq:PageContent"
-            jcr:title="EToolbox Authoring Kit Samples"
+            jcr:title="EToolbox Authoring Kit Samples - Page"
             sling:resourceType="etoolbox-authoring-kit/samples/components/page/sample-page"
             cq:designPath="/apps/settings/wcm/designs/etoolbox-authoring-kit-samples">
     </jcr:content>
