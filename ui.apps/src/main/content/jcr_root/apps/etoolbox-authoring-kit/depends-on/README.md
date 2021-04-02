@@ -1,6 +1,6 @@
 ## DependsOn Plug-in Client Library
 
-Authors _Alexey Stsefanovich (ala'n)_ and _Yana Bernatskaya (YanaBr)_
+Authors: _Alexey Stsefanovich (ala'n)_, _Yana Bernatskaya (YanaBr)_, _Stepan Miakchilo_, _Liubou Masiuk_
 
 Version _2.5.0_
 
