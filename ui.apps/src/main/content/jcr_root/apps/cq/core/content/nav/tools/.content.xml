@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           jcr:primaryType="nt:unstructured">
-    <aem-custom-lists jcr:primaryType="nt:unstructured"
-                      jcr:title="AAT Lists"
-                      id="aat-lists_view"
-                      target="_blank">
-        <card jcr:primaryType="nt:unstructured"
-                  jcr:title="AAT List"
-                  jcr:description="AAT list"
+    <etoolbox jcr:primaryType="nt:unstructured"
+                      jcr:title="EToolbox">
+        <lists jcr:primaryType="nt:unstructured"
+                  jcr:title="EToolbox Lists"
+                  jcr:description="Allows to manage lists of structured data"
                   order="2000"
-                  sling:orderBefore="forms"
-                  href="/aat-lists.html"
-                  id="cq-aat-lists"
+                  href="/etoolbox-lists.html"
                   icon="viewList"
                   sling:resourceType="crx/core/components/welcome/tool">
-        </card>
-    </aem-custom-lists>
+        </lists>
+    </etoolbox>
 </jcr:root>

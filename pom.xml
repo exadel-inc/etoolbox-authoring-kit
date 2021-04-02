@@ -2,13 +2,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.exadel.aem</groupId>
-    <artifactId>aem-authoring-toolkit</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <groupId>com.exadel.etoolbox</groupId>
+    <artifactId>etoolbox-authoring-kit</artifactId>
+    <version>2.0.2-SNAPSHOT</version>
 
     <name>${project.prettyName}</name>
-    <description>Automates generating rich and responsive authoring interfaces for Adobe Experience Manager (TM) via Maven-powered build and deployment workflow</description>
-    <url>https://github.com/exadel-inc/aem-authoring-toolkit</url>
+    <description>Automates generating and managing rich and responsive authoring interfaces for Adobe Experience Manager (TM)</description>
+    <url>https://github.com/exadel-inc/etoolbox-authoring-kit</url>
 
     <organization>
         <name>Exadel, Inc.</name>
@@ -17,8 +17,8 @@
 
     <developers>
         <developer>
-            <id>edmtp</id>
-            <name>Exadel DMTP Team</name>
+            <id>exadel-martech</id>
+            <name>Exadel MarTech Team</name>
             <organization>Exadel, Inc.</organization>
             <organizationUrl>https://exadel.com</organizationUrl>
             <roles>
@@ -36,9 +36,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/exadel-inc/aem-authoring-toolkit.git</connection>
-        <developerConnection>scm:git:git@github.com:exadel-inc/aem-authoring-toolkit.git</developerConnection>
-        <url>https://github.com/exadel-inc/aem-authoring-toolkit</url>
+        <connection>scm:git:git://github.com/exadel-inc/etoolbox-authoring-kit.git</connection>
+        <developerConnection>scm:git:git@github.com:exadel-inc/etoolbox-authoring-kit.git</developerConnection>
+        <url>https://github.com/exadel-inc/etoolbox-authoring-kit</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -55,22 +55,21 @@
 
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/exadel-inc/aem-authoring-toolkit/issues</url>
+        <url>https://github.com/exadel-inc/etoolbox-authoring-kit/issues</url>
     </issueManagement>
 
     <packaging>pom</packaging>
 
     <modules>
-        <module>aem-authoring-toolkit-api</module>
         <module>core</module>
         <module>ui.apps</module>
         <module>ui.content</module>
-        <module>assets</module>
-        <module>aem-authoring-toolkit-plugin</module>
+        <module>all</module>
+        <module>plugin</module>
     </modules>
 
     <properties>
-        <project.prettyName>AEM Authoring Toolkit</project.prettyName>
+        <project.prettyName>Exadel Toolbox Authoring Kit</project.prettyName>
         <project.vendor>Exadel</project.vendor>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -91,35 +90,67 @@
                 <plugin>
                     <groupId>com.day.jcr.vault</groupId>
                     <artifactId>content-package-maven-plugin</artifactId>
-                    <version>0.0.24</version>
+                    <version>0.5.1</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <group>${project.parent.artifactId}</group>
+                        <group>${project.parent.groupId}/${project.parent.artifactId}</group>
+                        <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
+                        <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
                         <properties>
                             <name>${project.name}</name>
                             <description>${project.name}</description>
                             <version>${project.version}</version>
+                            <created>${maven.build.timestamp}</created>
+                            <createdBy>${project.vendor}</createdBy>
                             <packagePath>${project.artifactId}-${project.version}.zip</packagePath>
                         </properties>
-                        <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
-                        <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
+                        <archive>
+                            <manifestEntries>
+                                <Built-By>${project.vendor}</Built-By>
+                                <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
+                                <Implementation-Title>${project.name}</Implementation-Title>
+                                <Implementation-Version>${project.version}</Implementation-Version>
+                            </manifestEntries>
+                        </archive>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <id>build-package</id>
+                            <goals>
+                                <goal>package</goal>
+                            </goals>
+                            <configuration>
+                                <group>${project.parent.groupId}/${project.parent.artifactId}</group>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>5.1.1</version>
-                    <inherited>true</inherited>
                     <extensions>true</extensions>
                     <configuration>
                         <exportScr>true</exportScr>
                         <instructions>
                             <Import-Package>*;resolution:=optional</Import-Package>
-                            <exportScr>true</exportScr>
                             <_dsannotations>*</_dsannotations>
                             <_metatypeannotations>*</_metatypeannotations>
                         </instructions>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <id>generate-scr-metadata</id>
+                            <goals>
+                                <goal>manifest</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -170,6 +201,7 @@
                             <manifestEntries>
                                 <Built-By>${project.vendor}</Built-By>
                                 <Build-Jdk>${java.version}</Build-Jdk>
+                                <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
                                 <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
                                 <Bundle-Name>${project.name}</Bundle-Name>
                                 <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
@@ -329,8 +361,7 @@
                             <artifactId>content-package-maven-plugin</artifactId>
                             <executions>
                                 <execution>
-                                    <id>build-assets</id>
-                                    <phase>install</phase>
+                                    <id>deploy-to-instance</id>
                                     <goals>
                                         <goal>install</goal>
                                     </goals>
@@ -340,40 +371,17 @@
                     </plugins>
                 </pluginManagement>
             </build>
-
         </profile>
+
     </profiles>
-
-    <repositories>
-        <repository>
-            <id>adobe</id>
-            <name>Adobe Public Repository</name>
-            <url>http://repo.adobe.com/nexus/content/groups/public</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-		<pluginRepository>
-			<id>adobe</id>
-			<name>Adobe Public Repository</name>
-			<url>http://repo.adobe.com/nexus/content/groups/public/</url>
-			<layout>default</layout>
-		</pluginRepository>
-	</pluginRepositories>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.exadel.aem</groupId>
-                <artifactId>aem-authoring-toolkit-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>30.0-jre</version>
-                <scope>compile</scope>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.jimfs</groupId>
@@ -406,17 +414,10 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.8.1</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-core</artifactId>
                 <version>3.6.1</version>
                 <type>jar</type>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.plugin-tools</groupId>
@@ -433,7 +434,7 @@
             <dependency>
                 <groupId>org.apache.sling</groupId>
                 <artifactId>org.apache.sling.api</artifactId>
-                <version>2.20.0</version>
+                <version>2.16.4</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -505,5 +506,23 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>adobe</id>
+            <name>Adobe Public Repository</name>
+            <url>http://repo.adobe.com/nexus/content/groups/public</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>adobe</id>
+            <name>Adobe Public Repository</name>
+            <url>http://repo.adobe.com/nexus/content/groups/public/</url>
+            <layout>default</layout>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>

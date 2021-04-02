@@ -3,20 +3,20 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>aem-authoring-toolkit</artifactId>
-        <groupId>com.exadel.aem</groupId>
-        <version>2.0.0-SNAPSHOT</version>
+        <groupId>com.exadel.etoolbox</groupId>
+        <artifactId>etoolbox-authoring-kit</artifactId>
+        <version>2.0.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>aem-authoring-toolkit-bundle</artifactId>
+    <artifactId>etoolbox-authoring-kit-core</artifactId>
 
-    <name>${project.prettyName} Bundle</name>
-    <description>Contains AEM Authoring Toolkit classes and interfaces intended for use within an OSGi container</description>
+    <name>${project.prettyName} - Core</name>
+    <description>Contains API and core functionality</description>
 
     <packaging>jar</packaging>
 
     <properties>
-        <sonar.coverage.jacoco.xmlReportPaths>../${project.parent.artifactId}-plugin/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>../plugin/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <build>
@@ -28,22 +28,10 @@
                 <configuration>
                     <instructions>
                         <Import-Package>javax.inject;javax.annotation;version=0.0.0,*;resolution:=optional</Import-Package>
-                        <Sling-Model-Packages>
-                            com.exadel.aem.toolkit.bundle.models,
-                            com.exadel.aem.toolkit.bundle.lists.models
-                        </Sling-Model-Packages>
-                        <Export-Package>com.exadel.aem.toolkit.bundle.*</Export-Package>
+                        <Sling-Model-Packages>com.exadel.aem.toolkit.core.lists.models</Sling-Model-Packages>
+                        <Export-Package>com.exadel.aem.toolkit.api.*,com.exadel.aem.toolkit.core.*</Export-Package>
                     </instructions>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>generate-metadata</id>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -56,9 +44,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -72,9 +57,6 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <configuration>
-                    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -93,13 +75,29 @@
             </build>
         </profile>
 
+        <profile>
+            <id>deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 
     <dependencies>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
         <dependency>
             <groupId>io.wcm</groupId>
             <artifactId>io.wcm.testing.aem-mock.junit4</artifactId>
@@ -119,10 +117,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
@@ -152,11 +146,6 @@
             <groupId>com.adobe.aem</groupId>
             <artifactId>uber-jar</artifactId>
             <classifier>apis</classifier>
-        </dependency>
-        <dependency>
-            <groupId>com.exadel.aem</groupId>
-            <artifactId>aem-authoring-toolkit-api</artifactId>
-            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 

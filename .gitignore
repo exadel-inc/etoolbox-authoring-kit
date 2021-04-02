@@ -59,11 +59,7 @@ hs_err_pid*
 
 
 ### Maven ###
-target/classes/
-target/generated-sources/
-target/maven-archiver/
-target/maven-status/
-target/test-classes/
+target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup

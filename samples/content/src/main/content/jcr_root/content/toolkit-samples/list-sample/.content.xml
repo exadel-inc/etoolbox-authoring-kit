@@ -5,7 +5,7 @@
     <jcr:content jcr:primaryType="cq:PageContent"
                  cq:template="/conf/authoring-toolkit/settings/wcm/templates/list"
                  jcr:title="Coral Icons"
-                 jcr:description="Shows an example of AAT List"
+                 jcr:description="Shows an example of EToolbox List"
                  itemResourceType="/apps/authoring-toolkit/lists/components/content/simpleListItem"
                  sling:resourceType="authoring-toolkit/lists/components/structure/page-list">
         <list jcr:primaryType="nt:unstructured"
@@ -13,19 +13,19 @@
             <list_item_1 jcr:primaryType="nt:unstructured"
                          jcr:title="Add"
                          value="add"
-                         sling:resourceType="authoring-toolkit/lists/components/content/internal/listItem"/>
+                         sling:resourceType="authoring-toolkit/lists/components/content/listItem"/>
             <list_item_2 jcr:primaryType="nt:unstructured"
                          jcr:title="Square Brackets"
                          value="bracketsSquare"
-                         sling:resourceType="authoring-toolkit/lists/components/content/internal/listItem"/>
+                         sling:resourceType="authoring-toolkit/lists/components/content/listItem"/>
             <list_item_3 jcr:primaryType="nt:unstructured"
                          jcr:title="Share file"
                          value="fileShare"
-                         sling:resourceType="authoring-toolkit/lists/components/content/internal/listItem"/>
+                         sling:resourceType="authoring-toolkit/lists/components/content/listItem"/>
             <list_item_4 jcr:primaryType="nt:unstructured"
                          jcr:title="Delete Filter"
                          value="filterDelete"
-                         sling:resourceType="authoring-toolkit/lists/components/content/internal/listItem"/>
+                         sling:resourceType="authoring-toolkit/lists/components/content/listItem"/>
         </list>
     </jcr:content>
 </jcr:root>

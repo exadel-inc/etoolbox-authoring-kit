@@ -1,0 +1,50 @@
+{
+  "jcr:primaryType": "cq:Component",
+  "jcr:title": "Simple List Item",
+  "listItem": "true",
+  "jcr:content": {
+    "jcr:primaryType": "nt:unstructured",
+    "jcr:title": "Simple List Item",
+    "sling:resourceType": "cq/gui/components/authoring/dialog",
+    "cq:template": "/conf/etoolbox-authoring-kit/settings/wcm/templates/list",
+    "content": {
+      "jcr:primaryType": "nt:unstructured",
+      "sling:resourceType": "granite/ui/components/coral/foundation/container",
+      "items": {
+        "jcr:primaryType": "nt:unstructured",
+        "tabs": {
+          "jcr:primaryType": "nt:unstructured",
+          "sling:resourceType": "granite/ui/components/coral/foundation/tabs",
+          "items": {
+            "jcr:primaryType": "nt:unstructured",
+            "mainConfig": {
+              "jcr:primaryType": "nt:unstructured",
+              "granite:hidden": "false",
+              "jcr:title": "Main Config",
+              "sling:resourceType": "granite/ui/components/coral/foundation/container",
+              "items": {
+                "jcr:primaryType": "nt:unstructured",
+                "code": {
+                  "jcr:primaryType": "nt:unstructured",
+                  "fieldDescription": "Provide Item Code.",
+                  "fieldLabel": "Code",
+                  "name": "./code",
+                  "required": "true",
+                  "sling:resourceType": "granite/ui/components/coral/foundation/form/textfield"
+                },
+                "description": {
+                  "jcr:primaryType": "nt:unstructured",
+                  "fieldDescription": "Provide Item Description.",
+                  "fieldLabel": "Description",
+                  "name": "./description",
+                  "required": "true",
+                  "sling:resourceType": "granite/ui/components/coral/foundation/form/textfield"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

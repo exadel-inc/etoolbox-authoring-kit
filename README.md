@@ -1,16 +1,14 @@
-# AEM Authoring Toolkit
-![AEM Authoring Toolkit Logo](https://github.com/exadel-inc/aem-authoring-toolkit/blob/master/aem-authoring-toolkit-assets/src/main/content/META-INF/vault/definition/thumbnail.png)
+# Exadel Toolbox Authoring Kit for AEM
+![EToolbox Authoring Kit Logo](https://github.com/exadel-inc/etoolbox-authoring-kit/blob/master/etoolbox-authoring-kit-assets/src/main/content/META-INF/vault/definition/thumbnail.png)
 
-**AEM Authoring Toolkit** is the set of tools for creating comprehensive TouchUI dialogs for AEM components  with use of existing and/or specially designed Java classes.
+Exadel Toolbox Authoring Kit, or simply the **ToolKit**, is the set of tools for creating robust Granite / Touch UI dialogs and plenty of other authoring interfaces for Adobe Experience Manager (TM) with use of Java classes.
 
-The Toolkit is aimed at providing the fastest and most intuitive way to supplement an AEM component based on a Sling model class or a POJO with a _Touch UI_ dialog and in-place editing interface.
+The ToolKit is aimed at providing the fastest and most intuitive way to supplement an AEM component based on a Sling model or a POJO with a _Touch UI_ dialog and in-place editing interface.
 
-Resulting dialogs and editors are compliant with the newest facilities of AEM 6.4+ / Coral UI v.3+ and have support for Coral UI v.2.
-
-As the Toolkit was developed, thorough comparative investigation of Coral v.2 and Coral v.3 has been carried out, their features and drawbacks tested, so that backward compatibility is preserved to a highest degree.
+The ToolKit is compliant with the newest facilities of AEM 6.4 / 6.5, Coral UI v.3+, and has support for Coral UI v.2.
 
 ***
-> Practice to use AEM Authoring Toolkit with our sandbox project under [_samples_](/samples/README.md)
+> Practice using the ToolKit with our sandbox project under [_samples_](/samples/README.md)
 >
 ***
 
@@ -24,7 +22,7 @@ As the Toolkit was developed, thorough comparative investigation of Coral v.2 an
        - [@DialogField](#dialogfield)
        - [Widget annotations A-Z](#widget-annotations-a-z)
        - [Fields grouping and multiplying](#fields-grouping-and-multiplying)
-       - [Common attributes of felds](#common-attributes-of-fields)
+       - [Common attributes of fields](#common-attributes-of-fields)
        - [Implementing RichTextEditor](#implementing-richtexteditor)
    - [Altering field's decoration tag with @HtmlTag](#altering-fields-decoration-tag-with-htmltag)
    - [Fields inheritance and ways to cancel it](#members-inheritance-and-ways-to-cancel-it)
@@ -80,30 +78,73 @@ The **Toolkit**
 
 The **Toolkit** has been developed in the course of _Exadel&trade; Digital Marketing Practice_. It is an evolving project that has yet to reach its maturity. Many new features are planned to be implemented, and more testing for the present features is required.
 
-The authors heartily welcome the creative input from the AEM community worldwide to bring the best of programming techniques and design for creating best authoring and user experience.
+The authors heartily welcome the creative input from the AEM community worldwide to bring the best of programming techniques and design for creating the best authoring and user experience.
 
 ## Installation
+
+### Compiling project by hand
+Feel free to clone the project sources and run ```mvn clean install``` from the project's root folder. The plugin and the API artifacts will be installed in local .m2 repository. The cumulative _etoolbox-authoring-kit-all_ package will be found under _/all/target_ folder of the project. You can then deploy it to your AEM authoring instance as usual.
 
 ### Using precompiled artifacts
 1) Insert dependency to the core module in the _\<dependencies>_ section of the POM file of your **bundle**:
 ```xml
 <dependency>
    <groupId>com.exadel.aem</groupId>
-   <artifactId>aem-authoring-toolkit-core</artifactId>
+   <artifactId>etoolbox-authoring-kit-core</artifactId>
    <version>2.0.2</version> <!-- prefer latest stable version whenever possible -->
     <scope>provided</scope> <!-- do not use compile or runtime scope!-->
 </dependency>
 ```
+2) Insert plugin's config in the _\<plugins>_ section of the POM file of your **package**:
+```xml
+
+<plugin>
+    <groupId>com.exadel.aem</groupId>
+    <artifactId>etoolbox-authoring-kit-plugin</artifactId>
+    <version>1.1.0</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>aem-authoring</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <!-- MANDATORY: Place here the path to the node under which your component nodes are stored -->
+        <componentsPathBase>jcr_root/apps/projectName/components</componentsPathBase>
+        <!-- OPTIONAL: specify root package for component classes -->
+        <componentsReferenceBase>com.acme.project.samples</componentsReferenceBase>
+        <!-- OPTIONAL: specify list of exceptions, comma-separated, that would cause
+             this plugin to terminate the build process.
+             See section "terminateOn setting" below -->
+        <terminateOn>ALL</terminateOn>
+    </configuration>
+</plugin>
+```
+### Installing assets
+For some of the **Toolkit**'s features to work properly, namely the `DependsOn` set of instructions, you need to deploy the _etoolbox-authoring-kit-assets-[version].zip_ package to your AEM author instance.
+
+If you compile the **Toolkit** from the source code, you'll find the zip file under _./etoolbox-authoring-kit/etoolbox-authoring-kit-assets/target_ directory.
+
+If you are using ready artifacts, the easiest way is to append the `DependsOn` package to one of your content packages. Since `DependsOn` is small in size, this will not hamper your deployment process.
+
+If you choose to import the source code and build the project by hand, run Maven with *install-assets* profile like `mvn clean install -Pinstall-assets`. You may need to change the following values in the *properties* part of the project's main _POM_ file:
+```
+<aem.host>10.0.0.1</aem.host> <!-- Your AEM instance address or hostname -->
+<aem.port>4502</aem.port> <!-- Your AEM instance port -->
+```
+
+Add the following dependency to your content package's _POM_ file.
 2) Insert dependency to the assets module in the _\<dependencies>_ section of the POM file of your **package**:
 ```xml
 <dependency>
     <groupId>com.exadel.aem</groupId>
-    <artifactId>aem-authoring-toolkit-assets</artifactId>
+    <artifactId>etoolbox-authoring-kit-all</artifactId>
     <version>2.0.2</version>
     <type>content-package</type>
 </dependency>
 ```
-Then specify the subpackage in your _Vault_ plugin (refer to your content plugin documentation for particulars).
+ And then specify the subpackage in your _Vault_ plugin (refer to your content plugin documentation for particulars).
  ```xml
     <plugin>
         <groupId>com.day.jcr.vault</groupId>
@@ -114,7 +155,7 @@ Then specify the subpackage in your _Vault_ plugin (refer to your content plugin
             <subPackages>
                 <subPackage>
                     <groupId>com.exadel.aem</groupId>
-                    <artifactId>aem-authoring-toolkit-assets</artifactId>
+                    <artifactId>etoolbox-authoring-kit-all</artifactId>
                     <filter>true</filter>
                 </subPackage>
             </subPackages>
@@ -208,7 +249,7 @@ public class Dialog {
 ```
 (Note the `layout = DialogLayout.TABS` assignment. This is to specify that the dialog *must* display fields encapsulated in nested classes per corresponding tabs. If `layout` is skipped, or set to its default `FIXED_COLUMNS` value, tabs will not show and only "immediate" fields of the basic class will be displayed).
 
-The other way of laying out tabs is to define array of `@Tab` within `@Dialog` annotation. Then, to settle a field to a certain tab you will need  to add `@PlaceOn` annotation to this particular field.  The values of `@PlaceOn` must correspond to the *title* value of the desired tab. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that tab title is specified everywhere in the very same format, no extra spaces, etc.
+The other way of laying out tabs is to define an array of `@Tab` within `@Dialog` annotation. Then, to settle a field to a certain tab you will need  to add `@PlaceOn` annotation to this particular field.  The values of `@PlaceOn` must correspond to the *title* value of the desired tab. This is a somewhat more flexible technique which avoids creating nested classes and allows freely moving fields. You only need to ensure that tab title is specified everywhere in the very same format, no extra spaces, etc.
 ```java
 @Dialog(
     name = "test-component",
@@ -1091,7 +1132,7 @@ public class CustomMultifieldHandler implements DialogWidgetHandler {}
    ```
 
 #### Runtime methods for custom handlers
-If you define in your handler class a field of type `RuntimeContext` marked with `@Injected` annotation, the link to the global *RuntimeContext* object will be injected by the Maven plugin. It allows to engage a number of utility methods and techniques, such as those of the [`XmlUtility`](aem-authoring-toolkit-api/src/main/java/com/exadel/aem/toolkit/api/runtime/XmlUtility.java) interface. Of special interest are the methods `.createNodeElement()` with overloads for creating nodes with specific *jcr:primaryType*, *sling:resourceType* and other attributes, `.appendChild()` with overloads for appending or merging a newcomer node to a set of existing child nodes of a local root, and `.setAttribute()` with overloads for populating previously created node with generic-typed annotation values, optionally validated and then optionally fallen back to defaults.
+If you define in your handler class a field of type `RuntimeContext` marked with `@Injected` annotation, the link to the global *RuntimeContext* object will be injected by the Maven plugin. It allows to engage a number of utility methods and techniques, such as those of the [`XmlUtility`](core/src/main/java/com/exadel/aem/toolkit/api/runtime/XmlUtility.java) interface. Of special interest are the methods `.createNodeElement()` with overloads for creating nodes with specific *jcr:primaryType*, *sling:resourceType* and other attributes, `.appendChild()` with overloads for appending or merging a newcomer node to a set of existing child nodes of a local root, and `.setAttribute()` with overloads for populating previously created node with generic-typed annotation values, optionally validated and then optionally fallen back to defaults.
 
 Developer can (and is encouraged to) also call `.getExceptionHandler()` method whenever his or her logic is ought to throw or manage an exception. This way, all the exceptions from either built-in or custom routines are managed uniformly.
 
@@ -1251,7 +1292,7 @@ Pay attention to the third and forth `@CommonProperty`-s. Specifying the *path* 
 Note that XPath parser is namespace-agnostic. That is why you need to use */root/inplaceEditing...* instead of */jcr:root/cq:inplaceEditing...* in the sample above.
 
 #### Debugging custom logic
-You can debug the aem-authoring-toolkit's plugin while building your app. In order to do it run your build in debug mode e.g.:
+You can debug the ToolKit's plugin while building your app. In order to do it run your build in debug mode e.g.:
 ```
 mvnDebug clean install -PautoInstallPackage
 ```
@@ -1315,7 +1356,7 @@ public class DependsOnSample {
 }
 ```
 ### Lists
-AEM Authoring Toolkit Lists provide a flexible way to create, store and retrieve lists of structured items, e.g. a list of HTTP status codes and their desctiptions:
+EToolbox Lists provide a flexible way to create, store and retrieve lists of structured items, e.g. a list of HTTP status codes and their desctiptions:
 ```
 + list
   + item1
@@ -1333,32 +1374,36 @@ Each list is an AEM page, which means that it can be placed anywhere in the cont
 #### Usage
 
 ###### Creating a new list
-AAT Lists can be created and managed either from Sites Console, or from Lists Console (Tools -> AAT Lists -> AAT List (todo: change to agreed naming)). Click Create -> List and specify list's Title, Name and Item Component.
+EToolbox Lists can be created and managed either from Sites Console, or from Lists Console (Tools -> EToolbox -> EToolbox List). Click Create -> List and specify list's Title, Name and Item Component.
 "Simple List Item" component is provided out-of-the-box and consists of "jcr:title" and "value" fields. In order to add a new Item Component to the dropdown, add `@ListItem` annotation to this component.
 
 ```java
-@Dialog(
+@AemComponent(
     name = "content/listItemComponent",
     title = "List Item"
 )
+@Dialog
 @ListItem
 public class ListItemComponent {
   ...
 }
 ```
+
+You can customize the item's view by adding `itemPreview.html` to your Item Component. This preview will be displayed next to item properties.
+
 ###### Editing lists
-AAT Lists can be edited similarly to any other page. You may change the type of Item Component used in this list (even after the list has been populated with data) via page properties.
+EToolbox Lists can be edited similarly to any other page. You may change the type of Item Component used in this list (even after the list has been populated with data) via page properties.
 
 ###### Retrieving lists' content programmatically
-[ListsHelper](core/src/main/java/com/exadel/aem/toolkit/bundle/lists/util/ListsHelper.java) is a helper class that provides the ability to retrieve any list by its path. See examples below:
+[ListsHelper](core/src/main/java/com/exadel/aem/toolkit/core/lists/util/ListsHelper.java) is a helper class that provides the ability to retrieve any list by its path. See examples below:
 ```java
    List<ItemModel> models = CustomListsHelper.getList(resolver, "/content/myList", ItemModel.class);
    Map<String, String> mapping = CustomListsHelper.getMap(resolver, "/content/myList");
 ```
-You can find more examples in [ListsHelperTest](core/src/test/java/com/exadel/aem/toolkit/bundle/lists/util/ListsHelperTest.java)
+You can find more examples in [ListsHelperTest](core/src/test/java/com/exadel/aem/toolkit/core/lists/util/ListsHelperTest.java)
 
 ###### Populating dropdown widgets from a datasource.
-AAT Lists can be used as a data source for any widget consuming granite datasources.
+EToolbox Lists can be used as a data source for any widget consuming granite datasources.
 (todo: add an example of @Datasource + Lists)
 
 ## Samples
