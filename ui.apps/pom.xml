@@ -3,15 +3,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>aem-authoring-toolkit</artifactId>
-        <groupId>com.exadel.aem</groupId>
-        <version>2.0.0-SNAPSHOT</version>
+        <groupId>com.exadel.etoolbox</groupId>
+        <artifactId>etoolbox-authoring-kit</artifactId>
+        <version>2.0.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>aem-authoring-toolkit-ui.apps</artifactId>
+    <artifactId>etoolbox-authoring-kit-ui.apps</artifactId>
 
-    <name>${project.prettyName} UI Applications</name>
-    <description>AEM Authoring Toolkit assets designed for the /apps section of AEM instance</description>
+    <name>${project.prettyName} - UI Applications</name>
+    <description>Presents assets designed for the /apps section of an AEM instance</description>
 
     <packaging>content-package</packaging>
 
@@ -20,7 +20,7 @@
     </properties>
 
     <build>
-        <sourceDirectory>src/main/content/jcr_root/apps/authoring-toolkit/depends-on/js</sourceDirectory>
+        <sourceDirectory>src/main/content/jcr_root/apps/${project.parent.artifactId}/depends-on/js</sourceDirectory>
         <resources>
             <resource>
                 <directory>src/main/content/jcr_root</directory>
@@ -43,17 +43,27 @@
                     <properties>
                         <description>${project.description}</description>
                     </properties>
-                    <filters>
-                        <filter>
-                            <root>/apps/authoring-toolkit/install/aem-authoring-toolkit-api-${project.version}.jar</root>
-                            <mode>replace</mode>
-                        </filter>
-                        <filter>
-                            <root>/apps/authoring-toolkit/install/aem-authoring-toolkit-core-${project.version}.jar</root>
-                            <mode>replace</mode>
-                        </filter>
-                    </filters>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>clean-install-folder</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>${basedir}/src/main/content/jcr_root/apps/${project.parent.artifactId}/install</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -73,18 +83,12 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/src/main/content/jcr_root/apps/authoring-toolkit/install</outputDirectory>
+                            <outputDirectory>${basedir}/src/main/content/jcr_root/apps/${project.parent.artifactId}/install</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${project.parent.basedir}/core/target</directory>
                                     <includes>
-                                        <include>*.jar</include>
-                                    </includes>
-                                </resource>
-                                <resource>
-                                    <directory>${project.parent.basedir}/aem-authoring-toolkit-api/target</directory>
-                                    <includes>
-                                        <include>*.jar</include>
+                                        <include>${project.parent.artifactId}-core-${project.version}.jar</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -100,9 +104,9 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.exadel.aem</groupId>
-                <artifactId>aem-authoring-toolkit-plugin</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>${project.parent.artifactId}-plugin</artifactId>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -111,7 +115,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <componentsPathBase>jcr_root/apps/authoring-toolkit/lists/components</componentsPathBase>
+                    <componentsPathBase>jcr_root/apps/${project.parent.artifactId}/lists/components</componentsPathBase>
                     <terminateOn>ALL</terminateOn>
                 </configuration>
             </plugin>
@@ -141,8 +145,8 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>aem-authoring-toolkit-core</artifactId>
-            <version>${project.parent.version}</version>
+            <artifactId>${project.parent.artifactId}-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

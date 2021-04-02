@@ -7,7 +7,7 @@
     <artifactId>aem-authoring-toolkit-samples</artifactId>
     <groupId>com.exadel.aem</groupId>
     <name>AEM Authoring Toolkit - Samples</name>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
@@ -25,7 +25,7 @@
         <port>4502</port>
         <serviceUrl>http://${host}:${port}/crx/packmgr/service.jsp</serviceUrl>
         <project.jcrAppFolder>authoring-toolkit/samples</project.jcrAppFolder>
-        <aat.version>2.0.0-SNAPSHOT</aat.version>
+        <toolkit.version>2.0.2-SNAPSHOT</toolkit.version>
         <project.vendor>Exadel</project.vendor>
     </properties>
 
@@ -80,7 +80,7 @@
                     </configuration>
                     <executions>
                         <execution>
-                            <id>Creating AAT Samples package</id>
+                            <id>Creating ToolKit Samples package</id>
                             <goals>
                                 <goal>package</goal>
                             </goals>
@@ -91,9 +91,9 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>com.exadel.aem</groupId>
-                    <artifactId>aem-authoring-toolkit-plugin</artifactId>
-                    <version>${aat.version}</version>
+                    <groupId>com.exadel.etoolbox</groupId>
+                    <artifactId>etoolbox-authoring-kit-plugin</artifactId>
+                    <version>${toolkit.version}</version>
                     <executions>
                         <execution>
                             <goals>
@@ -139,17 +139,17 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- AAT-Specific -->
+            <!-- ToolKit-specific -->
             <dependency>
-                <groupId>com.exadel.aem</groupId>
-                <artifactId>aem-authoring-toolkit-api</artifactId>
-                <version>${aat.version}</version>
+                <groupId>com.exadel.etoolbox</groupId>
+                <artifactId>etoolbox-authoring-kit-core</artifactId>
+                <version>${toolkit.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.exadel.aem</groupId>
-                <artifactId>aem-authoring-toolkit-assets</artifactId>
-                <version>${aat.version}</version>
+                <groupId>com.exadel.etoolbox</groupId>
+                <artifactId>etoolbox-authoring-kit-all</artifactId>
+                <version>${toolkit.version}</version>
                 <type>zip</type>
             </dependency>
 
@@ -164,8 +164,8 @@
 
     <repositories>
         <repository>
-            <id>aem-authoring-toolkit-snapshots</id>
-            <name>Toolkit Snapshot</name>
+            <id>toolkit-snapshots</id>
+            <name>ToolKit Snapshot</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>
@@ -182,8 +182,8 @@
 
     <pluginRepositories>
         <pluginRepository>
-            <id>aem-authoring-toolkit-snapshots</id>
-            <name>Toolkit Snapshot</name>
+            <id>toolkit-snapshots</id>
+            <name>ToolKit Snapshots</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>

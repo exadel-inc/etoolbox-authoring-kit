@@ -1,12 +1,12 @@
 {
   "jcr:primaryType": "cq:Component",
   "jcr:title": "Generic List Item",
-  "aatListItem": "true",
+  "listItem": "true",
   "jcr:content": {
     "jcr:primaryType": "nt:unstructured",
     "jcr:title": "Generic List Item",
     "sling:resourceType": "cq/gui/components/authoring/dialog",
-    "cq:template": "/conf/authoring-toolkit/settings/wcm/templates/list",
+    "cq:template": "/conf/etoolbox-authoring-kit/settings/wcm/templates/list",
     "content": {
       "jcr:primaryType": "nt:unstructured",
       "sling:resourceType": "granite/ui/components/coral/foundation/container",

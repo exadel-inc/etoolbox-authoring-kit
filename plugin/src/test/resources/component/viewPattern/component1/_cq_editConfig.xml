@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          cq:actions="[edit,copymove,insert,delete]"
+          cq:inherit="{Boolean}false"
+          jcr:primaryType="cq:EditConfig"
+          editConfigHandlerProp1="value1">
+    <cq:dropTargets jcr:primaryType="nt:unstructured">
+        <target1
+            jcr:primaryType="cq:DropTargetConfig"
+            accept="[targets/.*]"
+            groups="[TargetsGroup]"
+            propertyName="drop_target1/reference"/>
+        <target2
+            jcr:primaryType="cq:DropTargetConfig"
+            accept="[targets/.*]"
+            groups="[TargetsGroup]"
+            propertyName="drop_target2/reference"/>
+        <target3
+            jcr:primaryType="cq:DropTargetConfig"
+            accept="[targets/.*]"
+            groups="[TargetsGroup]"
+            propertyName="drop_target3/reference"/>
+    </cq:dropTargets>
+    <cq:inplaceEditing
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="cq:InplaceEditingConfig"
+        active="{Boolean}true"
+        editorType="hybrid">
+        <cq:childEditors jcr:primaryType="nt:unstructured">
+            <title
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Title"
+                type="title"/>
+            <description
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Description"
+                type="text"/>
+            <primary1_topicTitle
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Primary Topic 1 Title"
+                type="primary_type"/>
+            <primary1_topicDescription
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Primary Topic 1 Description"
+                type="text"/>
+            <primary2_topicTitle
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Primary Topic 2 Title"
+                type="primary_type"/>
+            <primary2_topicDescription
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Primary Topic 2 Description"
+                type="text"/>
+            <primary3_topicTitle
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Primary Topic 3 Title"
+                type="primary_type"/>
+            <primary3_topicDescription
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Primary Topic 3 Description"
+                type="text"/>
+            <secondary1_topicTitle
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Secondary Topic 1 Title"
+                type="secondary_type"/>
+            <secondary1_topicDescription
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Secondary Topic 1 Description"
+                type="text"/>
+            <secondary2_topicTitle
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Secondary Topic 2 Title"
+                type="secondary_type"/>
+            <secondary2_topicDescription
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Secondary Topic 2 Description"
+                type="text"/>
+        </cq:childEditors>
+        <config jcr:primaryType="nt:unstructured">
+            <title
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".editable-title"
+                propertyName="./title"
+                textPropertyName="./title"/>
+            <description
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".editable-description"
+                propertyName="./description"
+                textPropertyName="./description">
+                <uiSettings jcr:primaryType="nt:unstructured">
+                    <cui jcr:primaryType="nt:unstructured">
+                        <inline
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                        <fullscreen
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                    </cui>
+                </uiSettings>
+                <rtePlugins jcr:primaryType="nt:unstructured">
+                    <subsuperscript
+                        jcr:primaryType="nt:unstructured"
+                        features="[subscript,superscript]"/>
+                    <links
+                        jcr:primaryType="nt:unstructured"
+                        features="[modifylink,unlink]"/>
+                    <styles jcr:primaryType="nt:unstructured"/>
+                </rtePlugins>
+            </description>
+            <primary1_topicTitle
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".editable-prtopic1title"
+                propertyName="../primary1_topicTitle"
+                textPropertyName="../primary1_topicTitle"/>
+            <primary1_topicDescription
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".editable-prtopic1description"
+                propertyName="./primary1_topicDescription"
+                textPropertyName="./primary1_topicDescription">
+                <uiSettings jcr:primaryType="nt:unstructured">
+                    <cui jcr:primaryType="nt:unstructured">
+                        <inline
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                        <fullscreen
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                    </cui>
+                </uiSettings>
+                <rtePlugins jcr:primaryType="nt:unstructured">
+                    <subsuperscript
+                        jcr:primaryType="nt:unstructured"
+                        features="[subscript,superscript]"/>
+                    <links
+                        jcr:primaryType="nt:unstructured"
+                        features="[modifylink,unlink]"/>
+                    <styles jcr:primaryType="nt:unstructured"/>
+                </rtePlugins>
+            </primary1_topicDescription>
+            <primary2_topicTitle
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".editable-prtopic2title"
+                propertyName="./primary2_topicTitle"
+                textPropertyName="./primary2_topicTitle"/>
+            <primary2_topicDescription
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".editable-prtopic2description"
+                propertyName="./primary2_topicDescription"
+                textPropertyName="./primary2_topicDescription">
+                <uiSettings jcr:primaryType="nt:unstructured">
+                    <cui jcr:primaryType="nt:unstructured">
+                        <inline
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                        <fullscreen
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                    </cui>
+                </uiSettings>
+                <rtePlugins jcr:primaryType="nt:unstructured">
+                    <subsuperscript
+                        jcr:primaryType="nt:unstructured"
+                        features="[subscript,superscript]"/>
+                    <links
+                        jcr:primaryType="nt:unstructured"
+                        features="[modifylink,unlink]"/>
+                    <styles jcr:primaryType="nt:unstructured"/>
+                </rtePlugins>
+            </primary2_topicDescription>
+            <primary3_topicTitle
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".editable-prtopic3title"
+                propertyName="./primary3_topicTitle"
+                textPropertyName="./primary3_topicTitle"/>
+            <primary3_topicDescription
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".editable-prtopic3description"
+                propertyName="./primary3_topicDescription"
+                textPropertyName="./primary3_topicDescription">
+                <uiSettings jcr:primaryType="nt:unstructured">
+                    <cui jcr:primaryType="nt:unstructured">
+                        <inline
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                        <fullscreen
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                    </cui>
+                </uiSettings>
+                <rtePlugins jcr:primaryType="nt:unstructured">
+                    <subsuperscript
+                        jcr:primaryType="nt:unstructured"
+                        features="[subscript,superscript]"/>
+                    <links
+                        jcr:primaryType="nt:unstructured"
+                        features="[modifylink,unlink]"/>
+                    <styles jcr:primaryType="nt:unstructured"/>
+                </rtePlugins>
+            </primary3_topicDescription>
+            <secondary1_topicTitle
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".editable-sectopic1title"
+                propertyName="./secondary1_topicTitle"
+                textPropertyName="./secondary1_topicTitle"/>
+            <secondary1_topicDescription
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".editable-sectopic1description"
+                propertyName="./secondary1_topicDescription"
+                textPropertyName="./secondary1_topicDescription">
+                <uiSettings jcr:primaryType="nt:unstructured">
+                    <cui jcr:primaryType="nt:unstructured">
+                        <inline
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                        <fullscreen
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                    </cui>
+                </uiSettings>
+                <rtePlugins jcr:primaryType="nt:unstructured">
+                    <subsuperscript
+                        jcr:primaryType="nt:unstructured"
+                        features="[subscript,superscript]"/>
+                    <links
+                        jcr:primaryType="nt:unstructured"
+                        features="[modifylink,unlink]"/>
+                    <styles jcr:primaryType="nt:unstructured"/>
+                </rtePlugins>
+            </secondary1_topicDescription>
+            <secondary2_topicTitle
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".editable-sectopic2title"
+                propertyName="./secondary2_topicTitle"
+                textPropertyName="./secondary2_topicTitle"/>
+            <secondary2_topicDescription
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".editable-sectopic2description"
+                propertyName="./secondary2_topicDescription"
+                textPropertyName="./secondary2_topicDescription">
+                <uiSettings jcr:primaryType="nt:unstructured">
+                    <cui jcr:primaryType="nt:unstructured">
+                        <inline
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                        <fullscreen
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                    </cui>
+                </uiSettings>
+                <rtePlugins jcr:primaryType="nt:unstructured">
+                    <subsuperscript
+                        jcr:primaryType="nt:unstructured"
+                        features="[subscript,superscript]"/>
+                    <links
+                        jcr:primaryType="nt:unstructured"
+                        features="[modifylink,unlink]"/>
+                    <styles jcr:primaryType="nt:unstructured"/>
+                </rtePlugins>
+            </secondary2_topicDescription>
+        </config>
+    </cq:inplaceEditing>
+</jcr:root>

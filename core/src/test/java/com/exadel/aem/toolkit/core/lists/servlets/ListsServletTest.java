@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core.lists.servlets;
 
 import java.util.ArrayList;
@@ -39,8 +38,8 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListsServletTest {
-    private static final String SIMPLE_LIST_PATH = "/content/authoring-toolkit/lists/simpleList";
-    private static final String CUSTOM_LIST_PATH = "/content/authoring-toolkit/lists/aembox-lists/customList";
+    private static final String SIMPLE_LIST_PATH = "/content/etoolbox-authoring-kit/lists/simpleList";
+    private static final String CUSTOM_LIST_PATH = "/content/etoolbox-authoring-kit/lists/etoolbox-lists/customList";
     private static final String DATASOURCE_PATH = "/datasource";
 
     @Rule
@@ -58,14 +57,14 @@ public class ListsServletTest {
         context.load().json("/com/exadel/aem/toolkit/core/lists/services/customList.json", CUSTOM_LIST_PATH);
         context.load().json("/com/exadel/aem/toolkit/core/lists/datasource/datasource.json", DATASOURCE_PATH);
 
-        Mockito.when(expressionResolver.resolve("${requestPathInfo.suffix}", Locale.US, String.class, context.request())).thenReturn("/content/authoring-toolkit/lists");
+        Mockito.when(expressionResolver.resolve("${requestPathInfo.suffix}", Locale.US, String.class, context.request())).thenReturn("/content/etoolbox-authoring-kit/lists");
         Mockito.when(expressionResolver.resolve("${requestPathInfo.selectors[0]}", Locale.US, Integer.class, context.request())).thenReturn(0);
         Mockito.when(expressionResolver.resolve("${empty requestPathInfo.selectors[1] ? &quot;41&quot; : requestPathInfo.selectors[1] + 1}", Locale.US, Integer.class, context.request())).thenReturn(100);
     }
 
     @Test
     public void shouldReturnDataSourceFromContent() {
-        List<String> expected = Arrays.asList("simpleList", "aembox-lists");
+        List<String> expected = Arrays.asList("simpleList", "etoolbox-lists");
 
         context.request().setResource(context.resourceResolver().getResource(DATASOURCE_PATH));
         servlet.doGet(context.request(), context.response());

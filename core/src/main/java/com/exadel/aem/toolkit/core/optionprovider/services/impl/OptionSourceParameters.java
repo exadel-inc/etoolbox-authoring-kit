@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
 import java.io.UnsupportedEncodingException;
@@ -32,11 +31,12 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
 
 /**
- * Parses and serves user-specified settings for arranging the datasource for the current request
+ * Parses and serves user-specified settings for arranging a datasource for the current request
  * @see OptionProviderService
  */
 public class OptionSourceParameters {
@@ -69,7 +69,7 @@ public class OptionSourceParameters {
     }
 
     /**
-     * Gets the collection of user-specified settings specific for a datasource path
+     * Gets the collection of user-defined settings specific for a datasource path
      * @return List of {@link PathParameters} objects
      */
     List<PathParameters> getPathParameters() {
@@ -118,45 +118,45 @@ public class OptionSourceParameters {
         final ValueMap repository = getParameterRepository(request);
 
         List<String> pathRelatedKeys = repository.keySet().stream()
-                .filter(key -> key.startsWith(QUERY_KEY_PATH)
-                        && !repository.get(key, StringUtils.EMPTY).isEmpty())
-                .sorted()
-                .collect(Collectors.toList());
+            .filter(key -> key.startsWith(QUERY_KEY_PATH)
+                && !repository.get(key, StringUtils.EMPTY).isEmpty())
+            .sorted()
+            .collect(Collectors.toList());
 
-        for (String pathKey: pathRelatedKeys) {
+        for (String pathKey : pathRelatedKeys) {
             String suffix = StringUtils.substringAfter(pathKey, QUERY_KEY_PATH);
             result.pathParameters.add(
-                    PathParameters.builder()
-                            .path(repository.get(pathKey, String.class))
-                            .fallbackPath(
-                                    repository.get(QUERY_KEY_FALLBACK_PATH + suffix, String.class),
-                                    repository.get(QUERY_KEY_FALLBACK_PATH, String.class)
-                            )
-                            .textMember(
-                                    repository.get(QUERY_KEY_TEXT_MEMBER + suffix, String.class),
-                                    repository.get(QUERY_KEY_TEXT_MEMBER, String.class)
-                            )
-                            .valueMember(
-                                    repository.get(QUERY_KEY_VALUE_MEMBER + suffix, String.class),
-                                    repository.get(QUERY_KEY_VALUE_MEMBER, String.class)
-                            )
-                            .attributeMembers(
-                                    repository.get(QUERY_KEY_ATTRIBUTE_MEMBERS + suffix, String[].class),
-                                    repository.get(QUERY_KEY_ATTRIBUTE_MEMBERS, String[].class)
-                            )
-                            .attributes(
-                                    repository.get(QUERY_KEY_ATTRIBUTES + suffix, String[].class),
-                                    repository.get(QUERY_KEY_ATTRIBUTES, String[].class)
-                            )
-                            .textTransform(getTransformValue(
-                                    repository.get(QUERY_KEY_TEXT_TRANSFORM + suffix, String.class),
-                                    repository.get(QUERY_KEY_TEXT_TRANSFORM, String.class)
-                            ))
-                            .valueTransform(getTransformValue(
-                                    repository.get(QUERY_KEY_VALUE_TRANSFORM + suffix, String.class),
-                                    repository.get(QUERY_KEY_VALUE_TRANSFORM, String.class)
-                            ))
-                            .build()
+                PathParameters.builder()
+                    .path(repository.get(pathKey, String.class))
+                    .fallbackPath(
+                        repository.get(QUERY_KEY_FALLBACK_PATH + suffix, String.class),
+                        repository.get(QUERY_KEY_FALLBACK_PATH, String.class)
+                    )
+                    .textMember(
+                        repository.get(QUERY_KEY_TEXT_MEMBER + suffix, String.class),
+                        repository.get(QUERY_KEY_TEXT_MEMBER, String.class)
+                    )
+                    .valueMember(
+                        repository.get(QUERY_KEY_VALUE_MEMBER + suffix, String.class),
+                        repository.get(QUERY_KEY_VALUE_MEMBER, String.class)
+                    )
+                    .attributeMembers(
+                        repository.get(QUERY_KEY_ATTRIBUTE_MEMBERS + suffix, String[].class),
+                        repository.get(QUERY_KEY_ATTRIBUTE_MEMBERS, String[].class)
+                    )
+                    .attributes(
+                        repository.get(QUERY_KEY_ATTRIBUTES + suffix, String[].class),
+                        repository.get(QUERY_KEY_ATTRIBUTES, String[].class)
+                    )
+                    .textTransform(getTransformValue(
+                        repository.get(QUERY_KEY_TEXT_TRANSFORM + suffix, String.class),
+                        repository.get(QUERY_KEY_TEXT_TRANSFORM, String.class)
+                    ))
+                    .valueTransform(getTransformValue(
+                        repository.get(QUERY_KEY_VALUE_TRANSFORM + suffix, String.class),
+                        repository.get(QUERY_KEY_VALUE_TRANSFORM, String.class)
+                    ))
+                    .build()
             );
         }
 
@@ -184,7 +184,7 @@ public class OptionSourceParameters {
         if (datasourceChild != null) {
             result.putAll(datasourceChild.getValueMap());
         }
-        request.getRequestParameterMap().forEach((k,v) -> extractRequestParameter(v)
+        request.getRequestParameterMap().forEach((k, v) -> extractRequestParameter(v)
             .ifPresent(value -> result.put(k, value.contains(CoreConstants.SEPARATOR_COMMA)
                 ? value.split(CoreConstants.SEPARATOR_COMMA)
                 : value)));
@@ -194,7 +194,7 @@ public class OptionSourceParameters {
     /**
      * Tries to extract and decode a {@code SlingHttpServletRequest} query parameter from the parameters array
      * @param parameters {@code RequestParameter} array as returned by {@link SlingHttpServletRequest#getRequestParameterMap()}
-     * @return String value, or a array of strings whether the request parameter comes as a comma-separated string
+     * @return Optional string value
      */
     private static Optional<String> extractRequestParameter(RequestParameter[] parameters) {
         if (ArrayUtils.isEmpty(parameters)) {
@@ -210,17 +210,17 @@ public class OptionSourceParameters {
 
 
     /**
-     * Gets {@link StringTransform} instance from the user-provided string
-     * @param source User-provided value
-     * @param altSource Alternative source to use in case {@code source} is blank
-     * @return {@code TextTransform} value
+     * Retrieves a {@link StringTransformation} instance from the user-provided string
+     * @param source    User-provided value
+     * @param altSource Alternative source to use if the {@code source} is blank
+     * @return {@code StringTransformation} value
      */
-    private static StringTransform getTransformValue(String source, String altSource) {
+    private static StringTransformation getTransformValue(String source, String altSource) {
         String effectiveSource = StringUtils.defaultIfBlank(source, altSource);
-        StringTransform result = EnumUtils.getEnum(StringTransform.class,
-                StringUtils.defaultIfBlank(effectiveSource, StringTransform.NONE.toString()).toUpperCase());
+        StringTransformation result = EnumUtils.getEnum(StringTransformation.class,
+            StringUtils.defaultIfBlank(effectiveSource, StringTransformation.NONE.toString()).toUpperCase());
         if (result == null) {
-            result = StringTransform.NONE;
+            result = StringTransformation.NONE;
         }
         return result;
     }

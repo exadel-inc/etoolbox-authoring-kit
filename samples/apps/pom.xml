@@ -7,12 +7,12 @@
     <parent>
         <artifactId>aem-authoring-toolkit-samples</artifactId>
         <groupId>com.exadel.aem</groupId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.0.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>aem-authoring-toolkit-samples-apps</artifactId>
     <name>AEM Authoring Toolkit - Samples Apps</name>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
     <packaging>content-package</packaging>
 
     <build>
@@ -51,8 +51,8 @@
                     </embeddeds>
                     <subPackages>
                         <subPackage>
-                            <groupId>com.exadel.aem</groupId>
-                            <artifactId>aem-authoring-toolkit-assets</artifactId>
+                            <groupId>com.exadel.etoolbox</groupId>
+                            <artifactId>etoolbox-authoring-kit-all</artifactId>
                             <filter>true</filter>
                         </subPackage>
                     </subPackages>
@@ -71,7 +71,7 @@
                         <artifactId>content-package-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>Installing AAT Samples apps package</id>
+                                <id>Installing ToolKit Samples apps package</id>
                                 <goals>
                                     <goal>install</goal>
                                 </goals>
@@ -79,8 +79,8 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>com.exadel.aem</groupId>
-                        <artifactId>aem-authoring-toolkit-plugin</artifactId>
+                        <groupId>com.exadel.etoolbox</groupId>
+                        <artifactId>etoolbox-authoring-kit-plugin</artifactId>
                         <configuration>
                             <componentsPathBase>jcr_root/apps/${project.jcrAppFolder}/components</componentsPathBase>
                         </configuration>
@@ -100,8 +100,8 @@
             <artifactId>aem-authoring-toolkit-samples-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.exadel.aem</groupId>
-            <artifactId>aem-authoring-toolkit-assets</artifactId>
+            <groupId>com.exadel.etoolbox</groupId>
+            <artifactId>etoolbox-authoring-kit-all</artifactId>
             <type>zip</type>
         </dependency>
     </dependencies>

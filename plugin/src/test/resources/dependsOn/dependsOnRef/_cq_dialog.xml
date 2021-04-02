@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          jcr:title="Test Component"
+          height="{Double}480.0"
+          width="{Double}560.0">
+    <content jcr:primaryType="nt:unstructured"
+             sling:resourceType="granite/ui/components/coral/foundation/container">
+        <layout jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
+        <items jcr:primaryType="nt:unstructured">
+            <column jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/container">
+                <items jcr:primaryType="nt:unstructured">
+                    <defaultReferenceName jcr:primaryType="nt:unstructured"
+                                          sling:resourceType="cq/gui/components/authoring/dialog/fileupload"
+                                          name="./defaultReferenceName"
+                                          allowUpload="{Boolean}false"
+                                          mimeTypes="[image]"
+                                          disabled="{Boolean}false"
+                                          renderHidden="{Boolean}false"
+                                          required="{Boolean}false">
+                        <granite:data jcr:primaryType="nt:unstructured" dependsOnRef="defaultReferenceName"/>
+                    </defaultReferenceName>
+                    <referenceName jcr:primaryType="nt:unstructured"
+                                   sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                   name="./referenceName"
+                                   disabled="{Boolean}false"
+                                   renderHidden="{Boolean}false"
+                                   required="{Boolean}false">
+                        <granite:data jcr:primaryType="nt:unstructured" dependsOnRef="nameOnly"/>
+                    </referenceName>
+                    <referenceNameAndType jcr:primaryType="nt:unstructured"
+                                          sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                                          disabled="{Boolean}false"
+                                          name="./referenceNameAndType"
+                                          renderHidden="{Boolean}false"
+                                          required="{Boolean}false"
+                                          rootPath="/">
+                        <granite:data jcr:primaryType="nt:unstructured" dependsOnRef="nameAndType"
+                                      dependsOnRefType="boolstring"/>
+                    </referenceNameAndType>
+                    <lazyReference jcr:primaryType="nt:unstructured"
+                                   sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                   name="./lazyReference"
+                                   disabled="{Boolean}false"
+                                   renderHidden="{Boolean}false"
+                                   required="{Boolean}false">
+                        <granite:data jcr:primaryType="nt:unstructured" dependsOnRef="lazyReference" dependsOnRefLazy=""/>
+                    </lazyReference>
+                    <typeAuto jcr:primaryType="nt:unstructured"
+                              sling:resourceType="cq/gui/components/authoring/dialog/richtext"
+                              name="./typeAuto"
+                              disabled="{Boolean}false"
+                              renderHidden="{Boolean}false"
+                              required="{Boolean}false"
+                              useFixedInlineToolbar="{Boolean}true">
+                        <granite:data jcr:primaryType="nt:unstructured" dependsOnRef="typeAuto"/>
+                    </typeAuto>
+                </items>
+            </column>
+        </items>
+    </content>
+</jcr:root>

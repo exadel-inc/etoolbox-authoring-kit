@@ -1,0 +1,28 @@
+name: eslint
+
+on:
+    push:
+        branches: [ master, develop*, release* ]
+    pull_request:
+        branches: [ master, develop*, release* ]
+    workflow_dispatch:
+
+env:
+    node-version: 14.x
+
+jobs:
+    eslint:
+        runs-on: ubuntu-latest
+
+        steps:
+            -   uses: actions/checkout@v2
+            -   name: Use Node v${{ env.node-version }}
+                uses: actions/setup-node@v1
+                with:
+                    node-version: ${{ env.node-version }}
+            -   name: Install NPM Dependencies
+                run: npm ci
+                working-directory: ui.apps
+            -   name: Run Linting & Tests
+                run: npm run lint
+                working-directory: ui.apps
