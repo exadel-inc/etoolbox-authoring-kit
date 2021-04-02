@@ -6,7 +6,7 @@ Version _2.5.0_
 
 The DependsOn Plug-in is a clientlib that executes defined actions on dependent fields.
 
-The DependsOn Plug-in uses data attributes to fetch the expected configuration.
+The DependsOn Plug-in uses data attributes to get the expected configuration.
 To define data attributes from JCR, use the _**granite:data**_ sub-node under the widget node.
 AEM Authoring Toolkit provides a set of annotations to use DependsOn from Java code.
 
@@ -52,7 +52,7 @@ For referenced fields:
 ##### Actions
 
 Built-in plug-in actions are:
-* `visibility` - hide the element if the Query result is 'falsy'
+* `visibility` - hide the element if the Query result is 'falsy'. <u>This is the default action that is applied when no action is specified.</u>
 * `tab-visibility` - hide the tab or the element's parent tab if the Query result is 'falsy'
 * `set` - set the Query result as the field's value (undefined Query result skipped)
 * `set-if-blank` - set the Query result as the field's value only if the current value is blank (undefined Query result skipped)
@@ -60,16 +60,12 @@ Built-in plug-in actions are:
 * `required` - set the required marker of the field from the Query result.
 * `validate` - set the validation state of the field from the Query result.
 * `disabled` - set the field's disabled state from the Query result.
-* `update-options` - changes the option set of a Granite Select component if it depends on a value of a foreign component (e.g. another component can alter the JCR path from which current Select's options are taken).
-
-
-If the action is not specified then `visibility` is used by default.
 
 ##### Async actions
 
 Built-in plug-in async actions:
 * `fetch` - an action to set the result of fetching an arbitrary resource.
-It uses Query as a target path to a node or property.
+It uses Query result as a target path to a node or property.
 The path should end with the property name or '/' to retrieve the whole node.
 The path can be relative (e.g. 'node/property' or '../../property') or absolute ('whole/path/to/the/node/property').
 _Additional parameters:_
@@ -78,11 +74,15 @@ _Additional parameters:_
    Note: If the mapping result is `undefined` then the action will not change the current value.
    * `postfix` (optional, `.json` by default) - a string to append to the path if it is not already presented
 
+##### Widget-specific actions
+* `update-options` - changes the option set of a Granite Select component based on the path from the Query result. The path can lead to any endpoint that is supported by the Option Provider mechanism.
+
 ##### Action Registry
 
 Custom action can be specified using `Granite.DependsOnPlugin.ActionRegistry`.
 
-An action should have a name (allowed symbols: a-z, 0-9, -) and function to execute.
+An action should have a name and function to execute.
+Action names support lower-case letters, numbers and '-'. All upper-case letters will be transformed to lower case.
 For example built-in `set` action is defined as follows:
 ```javascript
 Granite.DependsOnPlugin.ActionRegistry.register('set', function setValue(value) {
@@ -105,6 +105,8 @@ If the type is not specified manually, it will be chosen automatically based on 
 (see _preferableType_ in the ElementsAccessor definition).
 
 In any other case (e.g. if the type is `any`), no cast will be performed.
+
+Note: If you use a Hidden field to save a temporary boolean result, use `boolstring` reference type in order to retrieve it.
 
 ##### ElementsAccessor Registry
 
@@ -203,10 +205,8 @@ There are two versions of references available in the Queries:
  'Multiple' reference always returns an array in the Query.
 
 Note: 'multiple' reference triggers Query update on any group update: changing some of group’s fields value or adding/removing a referenced field.
-So usage of a 'multiple' reference can slow down Queries’ performance.
 
-Reference cannot be named 'this', because 'this' is reserved to refer to the value of the current element.
-The current element can be referenced using `@this` reference. It is not necessary to specify a reference name in this case.
+'this' is a reserved word for reference names. Using `@this` you can retrieve the value of the current element. In this case there is no need to specify a reference name unless you want to use it outside the current element.
 
 The area to find a referenced field can be narrowed down by providing the Scope.
 The Scope is a CSS Selector of the closest container element.
@@ -248,7 +248,7 @@ DependsOn produces three types of debug notifications:
 
 - Critical errors: DependsOn will throw an Error on a configuration mismatch (like unknown action name, illegal custom accessor registration, etc.)
 - Error messages: not blocking runtime messages (Query evaluation errors, unreachable references, etc.)
-- Warn messages: potentially unexpected results warning
+- Warn messages: potentially unexpected results warning or deprecared functionality
 
 A couple of useful APIs can be used in runtime to check the current DependsOnState. The following expressions can be evaluated in the browser console:
 
@@ -467,7 +467,7 @@ public class Component {
 
 #### 7. Query function usage
 
-Global functions are available in the Queries (note: only pure functions are supported, as Query recalculates only on reference change).
+Global functions are available in the Queries (note: it is recommended to use 'pure' functions because the query is recalculated on each reference change and side effects may produce unexpected results).
 
 ```java
     public class Component {
@@ -549,7 +549,7 @@ public class Component {
 
 #### 11. Group references
 
-This example allows you to select `active` in only one item in multifield.
+This example allows you to select `active` for only one item in multifield.
 ```java
 public class MultifieldItem {
     @DependsOnRef(name = "active")
