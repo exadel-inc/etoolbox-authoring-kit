@@ -23,7 +23,7 @@
                                     text="List">
                             <data jcr:primaryType="nt:unstructured"
                                   nesting="hide"
-                                  src.uritemplate="/mnt/overlay/authoring-toolkit/lists/components/content/console/createpagedialog.html{+id}"/>
+                                  src.uritemplate="/mnt/overlay/etoolbox-authoring-kit/lists/components/content/console/createpagedialog.html{+id}"/>
                         </createlist>
                     </items>
                 </create>

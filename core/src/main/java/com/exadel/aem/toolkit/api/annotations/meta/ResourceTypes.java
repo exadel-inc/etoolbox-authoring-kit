@@ -42,7 +42,7 @@ public class ResourceTypes {
     public static final String MULTIFIELD = "granite/ui/components/coral/foundation/form/multifield";
     public static final String NESTED_CHECKBOX_LIST = "granite/ui/components/coral/foundation/form/nestedcheckboxlist";
     public static final String NUMBERFIELD = "granite/ui/components/coral/foundation/form/numberfield";
-    public static final String OPTION_PROVIDER = "authoring-toolkit/datasources/option-provider";
+    public static final String OPTION_PROVIDER = "etoolbox-authoring-kit/datasources/option-provider";
     public static final String PASSFIELD = "granite/ui/components/coral/foundation/form/password";
     public static final String PATHFIELD = "granite/ui/components/coral/foundation/form/pathfield";
     public static final String RADIOGROUP = "granite/ui/components/coral/foundation/form/radiogroup";
