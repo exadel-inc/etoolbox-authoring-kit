@@ -1,5 +1,5 @@
 # Exadel Toolbox Authoring Kit for AEM
-![EToolbox Authoring Kit Logo](https://github.com/exadel-inc/etoolbox-authoring-kit/blob/master/etoolbox-authoring-kit-assets/src/main/content/META-INF/vault/definition/thumbnail.png)
+![EToolbox Authoring Kit Logo](https://github.com/exadel-inc/etoolbox-authoring-kit/blob/master/all/src/main/content/META-INF/vault/definition/thumbnail.png)
 
 Exadel Toolbox Authoring Kit, or simply the **ToolKit**, is the set of tools for creating robust Granite / Touch UI dialogs and plenty of other authoring interfaces for Adobe Experience Manager (TM) with use of Java classes.
 
