@@ -248,7 +248,7 @@ This annotation is used in:
    ```
    @DependsOn(query = "@@checkbox(coral-panel |> .products-fieldSet).every(item => item)")
    @DependsOn(query = "@@checkbox.every(item => item)", action = DependsOnActions.DISABLED)
-   @DependsOn(query = "AATSamples.getShoppingDefaultText(@@checkbox(coral-panel |> .weapon-fieldSet), @this)", action = DependsOnActions.SET)
+   @DependsOn(query = "ToolKitSamples.getShoppingDefaultText(@@checkbox(coral-panel |> .weapon-fieldSet), @this)", action = DependsOnActions.SET)
    ```
 
 #### `@DependsOnRef`
