@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Adaptable {
+public @interface Adapts {
 
     /**
      * Specifies an entity, such as a {@code Source} or a {@code Target}, that can be adapted to the underlying custom class

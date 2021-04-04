@@ -19,14 +19,14 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ClassUtils;
 
-import com.exadel.aem.toolkit.api.handlers.Adaptable;
+import com.exadel.aem.toolkit.api.handlers.Adapts;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 /**
- * Presents a base for utility classes implementing {@link Adaptable}
+ * Presents a base for utility classes implementing {@link Adapts}
  * @param <T> Generic type of the adaptable, e.g. {@link Source} or {@link Target}
  */
 public abstract class AdaptationBase<T> {
@@ -58,8 +58,8 @@ public abstract class AdaptationBase<T> {
         if (adaptationsCache != null && adaptationsCache.containsKey(adaptation)) {
             return adaptation.cast(adaptationsCache.get(adaptation));
         }
-        if (adaptation.isAnnotationPresent(Adaptable.class)
-            && reflectedClass.equals(adaptation.getAnnotation(Adaptable.class).value())) {
+        if (adaptation.isAnnotationPresent(Adapts.class)
+            && reflectedClass.equals(adaptation.getAnnotation(Adapts.class).value())) {
             try {
                 Object result = adaptation.getConstructor(reflectedClass).newInstance(this);
                 if (adaptationsCache == null) {

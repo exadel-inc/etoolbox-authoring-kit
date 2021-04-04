@@ -48,7 +48,7 @@ public @interface MapProperties {
      * When set, specifies one or more scopes this annotation can be mapped to,
      * i.e. whether this is rendered to {@code cq:Component} (component root), {@code cq:dialog}, {@code cq:editorConfig},
      * or any other appropriate JCR node. Default value is equal to "all applicable scopes".
-     * <p>Note: this value has no effect for the properties that are managed by a specific built-in or custom handler.
+     * <p>Note: this value has no effect for the properties that are rendered by a specific built-in or custom handler.
      * Also, it can be overridden by a {@link PropertyRendering#scope()} setting if specified at the property level</p>
      * @return One or more {@code Scope} values
      * @see Scopes
