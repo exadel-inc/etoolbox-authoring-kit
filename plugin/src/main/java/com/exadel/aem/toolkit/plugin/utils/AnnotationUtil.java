@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
@@ -44,8 +46,6 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
  */
 public class AnnotationUtil {
     private static final String INVOCATION_EXCEPTION_MESSAGE_TEMPLATE = "Could not invoke method '%s' on %s";
-
-    private static final Predicate<Method> MAP_ALL_PROPERTIES = member -> true;
 
     /**
      * Default (instantiation-preventing) constructor
@@ -203,8 +203,7 @@ public class AnnotationUtil {
      * @return {@code Predicate<Method>} instance
      */
     @SuppressWarnings("deprecation")
-    // Processing of PropertyMapping and IgnorePropertyMapping is retained for compatibility
-    // and will be removed in a version after 2.0.2
+    // Processing of PropertyMapping is retained for compatibility and will be removed in a version after 2.0.2
     public static Predicate<Method> getPropertyMappingFilter(Annotation annotation) {
         Stream<String> mappingsByMapProperties = Optional.ofNullable(annotation)
             .map(Annotation::annotationType)
@@ -220,20 +219,24 @@ public class AnnotationUtil {
             .map(Arrays::stream)
             .orElse(Stream.empty());
 
-        List<String> effectiveMappings = Stream.concat(mappingsByMapProperties, mappingsByPropertyMapping)
+        List<String> cumulativeMappings = Stream.concat(mappingsByMapProperties, mappingsByPropertyMapping)
             .filter(StringUtils::isNotBlank)
             .collect(Collectors.toList());
 
-        if (effectiveMappings.isEmpty()) {
-            return MAP_ALL_PROPERTIES;
+        if (cumulativeMappings.size() == 1 && cumulativeMappings.get(0).contains(CoreConstants.SEPARATOR_COMMA)) {
+            cumulativeMappings = Pattern.compile(CoreConstants.SEPARATOR_COMMA)
+                .splitAsStream(cumulativeMappings.get(0))
+                .map(String::trim)
+                .collect(Collectors.toList());
         }
-        return method -> {
-            if (effectiveMappings.stream().anyMatch(mapping -> !mapping.startsWith(DialogConstants.NEGATION))) {
-                return effectiveMappings.contains(method.getName())
-                    && !method.isAnnotationPresent(IgnorePropertyMapping.class);
-            }
-            return effectiveMappings.stream().noneMatch(mapping -> mapping.equals(DialogConstants.NEGATION + method.getName()));
-        };
+        if (cumulativeMappings.stream().allMatch(mapping -> mapping.startsWith(DialogConstants.NEGATION))) {
+            cumulativeMappings.add(DialogConstants.WILDCARD);
+        }
+        final List<String> finalEffectiveMappings = cumulativeMappings.stream()
+            .map(mapping -> DialogConstants.VALUE_ALL.equals(mapping) ? DialogConstants.WILDCARD : mapping)
+            .distinct()
+            .collect(Collectors.toList());
+        return method -> isMatch(method, finalEffectiveMappings);
     }
 
     /**
@@ -282,6 +285,28 @@ public class AnnotationUtil {
         } catch (NoSuchMethodException e) {
             return null;
         }
+    }
+
+    /**
+     * Called by {@link AnnotationUtil#getPropertyMappingFilter(Annotation)} to test the given annotation property
+     * against the set of mappings: whether the method name matches the mappings set
+     * @param method   {@code Annotation} method
+     * @param mappings {@code List} of strings representing the mappings
+     * @return True or false
+     */
+    @SuppressWarnings({"squid:S1874", "deprecation"})
+    // Processing of IgnorePropertyMapping is retained for compatibility and will be removed in a version after 2.0.2
+    private static boolean isMatch(Method method, List<String> mappings) {
+        if (mappings.contains(DialogConstants.VALUE_NONE)) {
+            return false;
+        }
+        if (mappings.stream().anyMatch(mapping -> !mapping.startsWith(DialogConstants.NEGATION) && !DialogConstants.WILDCARD.equals(mapping))) {
+            return mappings.contains(method.getName())
+                && !method.isAnnotationPresent(IgnorePropertyMapping.class);
+        }
+        return mappings.stream().noneMatch(mapping -> mapping.equals(DialogConstants.NEGATION + method.getName()))
+            && mappings.contains(DialogConstants.WILDCARD);
+
     }
 
     /**

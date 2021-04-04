@@ -186,13 +186,13 @@ public class ReflectionContextHelper {
         // Try to guess appropriate scopes for the handler judging by the annotations it handles
         // (so that if it handles e.g. @ChildEditConfig, the scope for the handler is exactly ChildEditConfig)
         if (handles != null && handlerScopes.length == 1 && handlerScopes[0].equals(Scopes.DEFAULT)) {
-            handlerScopes = new String[]{ScopeUtil.designate(handles.value())};
+            handlerScopes = ScopeUtil.designate(handles.value());
         }
         // If still no particular scopes, try to guess by the mere annotations added to the current class
         // (so that if there's e.g. @Dialog, and the handler has no particular scope, it is considered the handler
         // is also for the dialog)
         if (handlerScopes.length == 1 && handlerScopes[0].equals(Scopes.DEFAULT)) {
-            handlerScopes = new String[]{ScopeUtil.designate(annotationTypes)};
+            handlerScopes = ScopeUtil.designate(annotationTypes);
         }
         boolean isMatchByScope = ScopeUtil.fits(scope, handlerScopes);
 

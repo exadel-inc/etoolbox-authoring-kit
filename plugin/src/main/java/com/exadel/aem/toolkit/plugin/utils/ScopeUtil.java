@@ -85,7 +85,7 @@ public class ScopeUtil {
         }
         String[] scopes = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).scope();
         if (scopes.length == 1 && scopes[0].equals(Scopes.DEFAULT) && ArrayUtils.isNotEmpty(context)) {
-            scopes = new String[]{designate(Arrays.stream(context).map(Annotation::annotationType).toArray(Class<?>[]::new))};
+            scopes = designate(Arrays.stream(context).map(Annotation::annotationType).toArray(Class<?>[]::new));
         }
         return ArrayUtils.contains(scopes, scope) || ArrayUtils.contains(scopes, Scopes.DEFAULT);
     }
@@ -112,16 +112,16 @@ public class ScopeUtil {
      * @param annotationTypes Non-null array of {@code Class} references representing annotation types
      * @return Array of strings representing valid scopes. Default is the array containing the single "default scope" entry
      */
-    public static String designate(Class<?>[] annotationTypes) {
+    public static String[] designate(Class<?>[] annotationTypes) {
         if (ArrayUtils.isEmpty(annotationTypes)) {
-            return Scopes.DEFAULT;
+            return new String[] {Scopes.DEFAULT};
         }
         if (ArrayUtils.contains(annotationTypes, Dialog.class) && !ArrayUtils.contains(annotationTypes, DesignDialog.class)) {
-            return Scopes.CQ_DIALOG;
+            return new String[] {Scopes.CQ_DIALOG};
         }
         for (Class<?> annotationType : ENTRY_POINT_ANNOTATION_TYPES) {
             if (ArrayUtils.contains(annotationTypes, annotationType)) {
-                return annotationType.getDeclaredAnnotation(MapProperties.class).scope()[0];
+                return annotationType.getDeclaredAnnotation(MapProperties.class).scope();
             }
         }
         List<String> scopesByMapProperties = Arrays.stream(annotationTypes)
@@ -130,9 +130,9 @@ public class ScopeUtil {
                 : Stream.of(Scopes.DEFAULT))
             .distinct()
             .collect(Collectors.toList());
-        if (scopesByMapProperties.size() == 1) {
-            return scopesByMapProperties.get(0);
+        if (annotationTypes.length == 1 || scopesByMapProperties.size() == 1) {
+            return scopesByMapProperties.toArray(new String[0]);
         }
-        return Scopes.DEFAULT;
+        return new String[] {Scopes.DEFAULT};
     }
 }
