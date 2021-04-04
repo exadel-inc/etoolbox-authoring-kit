@@ -297,7 +297,7 @@ public class AnnotationUtil {
     @SuppressWarnings({"squid:S1874", "deprecation"})
     // Processing of IgnorePropertyMapping is retained for compatibility and will be removed in a version after 2.0.2
     private static boolean isMatch(Method method, List<String> mappings) {
-        if (mappings.contains(DialogConstants.VALUE_NONE)) {
+        if (mappings.isEmpty() || mappings.contains(DialogConstants.VALUE_NONE)) {
             return false;
         }
         if (mappings.stream().anyMatch(mapping -> !mapping.startsWith(DialogConstants.NEGATION) && !DialogConstants.WILDCARD.equals(mapping))) {
