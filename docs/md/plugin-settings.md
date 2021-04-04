@@ -1,5 +1,14 @@
 [Main page](../../README.md)
 ## Plugin settings
+
+### componentsPathBase setting
+
+Specifies the path to a folder in the current package where the AEM components are situated. Whenever you specify the `path` property of `@AemComponent` its value is appended to the _componentsPathBase_. This setting is mandatory.
+
+### componentsReferenceBase setting
+
+Specifies the root package to scan for AEM components' backend Java classes. This setting is optional. It can be used to limit the scope of classes scanned by the plugin. By default, the plugin would scan all the classes available in the classpath, spanning across bundles. This can be undesirable if e.g. there can be found several Java classes referring to the same AEM component.
+
 ### "terminateOn" setting
 
 Specifies the list of exceptions, comma-separated, that would cause this plugin to terminate

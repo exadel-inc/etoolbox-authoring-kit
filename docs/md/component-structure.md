@@ -1,12 +1,15 @@
 [Main page](../../README.md)
+
 ## @AemComponent
-`@AemComponent` is your entry point for creating authoring logic for a component. When added to a Java class, this annotation contains the generic properties of the component such as *title*, *description*, etc.
 
-Besides, `@AemComponent` can contain references to other Java classes that are also taking part in creating markup for the current component. It means that if you need an *editConfig* you can add the `@EditConfig` to that very Java class were `@AemComponent` annotation is already present. Or else you can add `@EditConfig` to another Java class and put reference to that class in the *views* collection of `@AemComponent`.
+`@AemComponent` is your entry point to creating component authoring interfaces, such as a *Dialog*, a _Design dialog_, or an _In-place editing config_. When added to a Java class, this annotation must contain generic properties of the component such as *title*, *description*, etc.
 
-Please take note that you need either to put an annotation such as `@Dialog`, `@EditConfig`, etc to the same Java class as AemComponent or add it to another class and then add the class reference to the *views* collection. You don't need to do both.
+Additionally, `@AemComponent` can contain references to other Java classes that can be referred to as “views”. If, for instance, you need *editConfig*, you can add the `@EditConfig` to the Java class where the `@AemComponent` annotation is already present. You can also add `@EditConfig` to another Java class and put a reference to that class in the *views* collection of `@AemComponent`.
 
-See the code snippet below, which displays all `@AemComponent` properties currently supported:
+Take note that you need either to put an annotation such as `@Dialog` or `@EditConfig` in the same Java class as @AemComponent or add it to another class and then add the class reference to the *views* collection. You don't need to do both.
+
+See the code snippet below, which displays all currently supported `@AemComponent` properties:
+
 ```java
 @AemComponent(
     path = "content/my-component",
@@ -23,37 +26,53 @@ See the code snippet below, which displays all `@AemComponent` properties curren
         EditConfig.class
     }
 )
-public class ComplexComponentHolder { /* ... */ }
+public class ComplexComponentHolder {/* ... */}
 ```
 
 ### @Dialog
-`@Dialog` is used for defining component's TouchUI dialog by creating and populating *\<cq:dialog>* node.
+
+`@Dialog` is used for defining component's Touch UI dialog by creating and populating *\<cq:dialog>* node.
+
 ```java
 @Dialog(
-    title = "My AEM Component",
+    title = "My AEM Dialog",
     helpPath = "https://www.google.com/search?q=my+aem+component",
     width = 800,
     height = 600,
     extraClientlibs = "cq.common.wcm"
 )
-public class MyComponentDialog { /* ... */ }
+public class MyComponentDialog {/* ... */}
 ```
+If you specify *title* in `@Dialog`, it will override the title specified in @AemComponent. Skip this if you need to have the same title rendered for the component itself and for the dialog.
 
 ### @DesignDialog
-`@DesignDialog` is used for defining component's TouchUI dialog by creating and populating *\<cq:design_dialog>* node.
+
+`@DesignDialog` is used for defining component's Touch UI dialog by creating and populating *\<cq:design_dialog>* node.
+
 ```java
 @DesignDialog(
     title = "My AEM Component",
     width = 800,
     height = 600
 )
-public class DesignDialogView{ /* ... */ }
+public class DesignDialogView {/* ... */}
 ```
 
-### EditConfig settings
-If you wish to engage such TouchUI dialog features as listeners or in-place editing (those living in *\<cq:editConfig>* node and, accordingly, *_cq_editConfig.xml* file), add `@EditConfig` annotation to your Java class and put this class to AemComponent's views property.
+If you specify *title* in `@DesignDialog`, it will override the title specified in @AemComponent. Skip this if you need to have the same title rendered for the component itself and for the design dialog.
 
-It facilitates setting of the following properties and features:
+### Dialog layouts
+
+Both the Touch UI dialog and design dialog can have either a relative simple or s complex structure. This is why they can either have a plain "all in the same screen display or be organized with use of nested sections, or containers.
+
+In the first case, no specific setup is required. A dialog is automatically assigned the *"fixed column"* style.
+
+Otherwise, a dialog can be rendered in one or more tabs, or be organized as an *accordion* with one or more panels. To achieve this, you need to put the `@Tabs` or `@Accordion` annotation respectively beside your `@Dialog`/`@DesignDialog`. See [Laying out your dialog](dialog-layout.md) for details.
+
+### EditConfig settings
+
+If you wish to engage TouchUI dialog features like listeners or in-place editing (those living in *\<cq:editConfig>* node and, accordingly, *_cq_editConfig.xml* file), add an `@EditConfig` annotation to your Java class (same as above, you can as well add the annotation to a separate class and then put the reference to this class into @AemComponent's *views* property).
+
+`@EditConfig` facilitates setting of the following properties and features:
 
 - Actions
 - Empty text
@@ -64,11 +83,46 @@ It facilitates setting of the following properties and features:
 - In-place editing
 - Listeners
 
+Here is a basic sample of an `@EditConfig` with several of the parameters specified:
+```java
+@EditConfig(
+        emptyText = "Input here",
+        listeners = {
+            @Listener(
+                event = ListenerConstants.EVENT*AFTER*INSERT,
+                action = ListenerConstants.ACTION*REFRESH*PAGE
+            ),
+            @Listener(
+                event = ListenerConstants.EVENT*AFTER*DELETE,
+                action = ListenerConstants.ACTION*REFRESH*PAGE
+            )
+        },
+        dropTargets = {
+                @DropTargetConfig(
+                        nodeName = "logo",
+                        accept = "image/.*",
+                        groups = "media",
+                        propertyName = "logo/fileReference"
+                ),
+                @DropTargetConfig(
+                        nodeName = "background",
+                        accept = "image/.*",
+                        groups = "media",
+                        propertyName = "background/fileReference"
+                )
+        },
+        formParameters = {
+                @FormParameter(name = "param1", value = "value1"),
+                @FormParameter(name = "param2", value = "value2")
+        }
+)
+public class ImageEditor {/* ... */}
+```
 #### In-place editing configurations
-To specify in-place editing configurations for your component, populate the  *inplaceEditing* property of `@EditConfig` annotation like follows.
+
+To specify in-place editing configurations for your component, populate the *inplaceEditing* property of `@EditConfig` annotation as follows:
 
 ```java
-@Dialog(name = "componentName")
 @EditConfig(
     inplaceEditing = @InplaceEditingConfig(
         type = EditorType.TEXT,
@@ -80,12 +134,14 @@ To specify in-place editing configurations for your component, populate the  *in
 public class CustomPropertiesDialog {
     @DialogField
     @TextField
-    String field1;
+    String header;
 }
 ```
-Note that if you use `type = EditorType.PLAINTEXT`, there is an additional required *textPropertyName* value. If you do not specify a value for that, same string as for *propertyName* will be used.
 
-There is the possibility to create [multiple in-place editors](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/multiple-inplace-editors.html) like in the following snippet:
+Note that if you use `type = EditorType.PLAINTEXT`, there is an additional required *textPropertyName* value. If you do not specify a value, the same *propertyName* string will be used.
+
+It’s also possible to create [multiple in-place editors](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/multiple-inplace-editors.html) as in the following snippet
+
 ```java
 @Dialog(name = "componentName")
 @EditConfig(
@@ -104,18 +160,17 @@ There is the possibility to create [multiple in-place editors](https://helpx.ado
         )
     }
 )
-public class CustomPropertiesDialog {
-    @DialogField
-    @TextField
-    String field1;
-}
+public class CustomPropertiesDialog {/* ... */}
 ```
-#### RichText configuration for the in-place editing
-With an in-place configuration of `type = EditorType.TEXT`, a *richTextConfig* may be specified with syntax equivalent to that of `@RichTextEditor` component annotation.
-Here is a very basic example of "richTextConfig" for an in-place editor
+
+#### RichText configuration for in-place editing
+
+With an in-place configuration of `type = EditorType.TEXT`, a *richTextConfig* can be specified with syntax equivalent to that of a [@RichTextEditor annotation](configuring-rte.md).
+Here is a very basic example of a *richTextConfig* for an in-place editor
+
 ```java
 @InplaceEditingConfig (
-    type = EditorType.TEXT, ...
+    type = EditorType.TEXT,
     richTextConfig = @RichTextEditor(
         features = {
             RteFeatures.UNDO_UNDO,
@@ -128,36 +183,43 @@ Here is a very basic example of "richTextConfig" for an in-place editor
         htmlPasteRules = @HtmlPasteRules(
             allowBold = false,
             allowImages = false,
-            allowLists = AllowElement.REPLACE_WITH_PARAGRAPHS,
-            allowTables = AllowElement.REPLACE_WITH_PARAGRAPHS
+            allowLists = AllowElement.REPLACE*WITH*PARAGRAPHS,
+            allowTables = AllowElement.REPLACE*WITH*PARAGRAPHS
         )
     )
 )
-class DialogSample { /* ... */ }
+class DialogSample {/* ... */}
 ```
-Ever simpler, you can specify the richText field to "extend" RTE configuration specified for a Touch-UI dialog elsewhere in your project:
 
-```java
+Even more simply, you can specify the *richText* field to "extend" RTE configuration for a Touch UI dialog elsewhere in your project:
+
+```
 @InplaceEditingConfig (
     type = EditorType.TEXT,
     richText = @Extends(value = HelloWorld.class, field = "myRteAnnotatedField"),
     richTextConfig = @RichTextEditor(/* ... */)
 )
 ```
-From the above snippet you can see that *richText* and *richTextConfig* work together fine. Configuration inherited via *richText* can be altered by whatever properties specified in *richTextConfig*. If you use both in the same `@InplaceEditingConfig`, plain values, such as strings and numbers, specified for the `@Extends`-ed field are overwritten by their correlates from *richTextConfig*. But array-typed values (such as *features*, *specialCharacters*, *formats*, etc.) are actually merged. So you can design a fairly basic set of features, styles, formats to store in a field somewhere in your project and then implement several *richTextConfig*-s with more comprehensive and different feature sets.
+
+From the above snippet, you can see that *richText* and *richTextConfig* work together fine. A configuration inherited via *richText* can be altered by whatever properties that are specified in *richTextConfig*.
+
+If you use both in the same `@InplaceEditingConfig`, plain values, such as strings and numbers, specified for the `@Extends`-ed field are overwritten by their correlates from *richTextConfig*.
+
+On the other hand, array-typed values (such as *features*, *specialCharacters*, *formats*, etc.) are actually merged. So you can design a fairly basic set of features, styles, and formats to store in a field somewhere in your project and then implement several *richTextConfig*-s with more comprehensive feature sets.
 
 ### ChildEditConfig settings
-Apart from *\<cq:editConfig>* itself, the Adobe Granite gives you possibility to define some in-place editing features for the children of the current component. This is done via the *\<cq:childEditConfig>* node having generally the same structure as *\<cq:editConfig>*.
 
-It facilitates setting of the following properties and features:
+In addition to *\<cq:editConfig>* itself, Adobe Granite makes it possible to define some in-place editing features for the current component’s children. This is done via the *\<cq:childEditConfig>* with the same general structure as *\<cq:editConfig>*.
+
+It facilitates the setting of the following properties and features:
 
 - Actions
 - Drop targets
 - Listeners
 
-Usage is as follows:
+Usage:
+
 ```java
-@Dialog(name = "parentComponent")
 @ChildEditConfig(
     actions = {"edit", "copymove"}
 )
@@ -167,14 +229,22 @@ public class Dialog {
     String field1;
 }
 ```
-### Altering field's decoration tag with @HtmlTag
-To create a specific [decoration tag](https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/decoration-tag.html) for your widget, you need to mark your Java class with `@HtmlTag` and put this class to Component's views property. Then the *\<cq:htmlTag>* node will be added to your component's nodeset.
+
+### Altering a decoration tag for a field with @HtmlTag
+
+To create a specific [decoration tag](https://docs.adobe.com/content/help/en/experience-manager-65/developing/components/decoration-tag.html) for your widget, you need to mark your Java class with `@HtmlTag` and put this class to the Component's views property. Then the *\<cq:htmlTag>* node will be added to your component's nodeset.
+
 ```java
 @HtmlTag(
     className = "my-class",
     tagName = "span"
 )
-public class MyComponentDialog { /* ... */ }
+public class MyComponentDialog {/* ... */}
 ```
 
-####See also: [@Extends-ing fields annotations](reusing-code.md#extends-ing-fields-annotations)
+***
+####See also
+
+- [Laying out your dialog](dialog-layout.md)
+- [Configuring RichTextEditor](configuring-rte.md)
+- [@Extends-ing fields annotations](reusing-code.md#extends-ing-fields-annotations)
