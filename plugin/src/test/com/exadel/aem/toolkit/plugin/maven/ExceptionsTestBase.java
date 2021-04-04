@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.FileSystemHelper;
 import com.exadel.aem.toolkit.plugin.writers.TestXmlUtility;
 
@@ -32,7 +33,7 @@ public abstract class ExceptionsTestBase {
         PluginRuntime.contextBuilder()
             .classPathElements(DefaultTestBase.CLASSPATH_ELEMENTS)
             .packageBase(StringUtils.EMPTY)
-            .terminateOn("all")
+            .terminateOn(DialogConstants.VALUE_ALL)
             .build();
     }
 

@@ -148,5 +148,8 @@ public class DialogConstants {
     public static final String PN_VALUE_MEMBER = "valueMember";
     public static final String PN_VALUE_TRANSFORM = "valueTransform";
 
+    public static final String VALUE_ALL = "all";
+    public static final String VALUE_NONE = "none";
+
     private DialogConstants() {}
 }

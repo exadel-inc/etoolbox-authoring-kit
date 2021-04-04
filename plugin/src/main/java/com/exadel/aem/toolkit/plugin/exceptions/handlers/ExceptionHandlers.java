@@ -21,13 +21,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Contains factory methods for retrieving an instance of {@link ExceptionHandler} that matches the value specified in
  * the {@code terminateOn} ToolKit Maven plugin setting
  */
 public class ExceptionHandlers {
-    private static final String EXCEPTION_TOKEN_NONE = "none";
 
     /**
      * Default (instantiation-restricting) constructor
@@ -42,7 +42,7 @@ public class ExceptionHandlers {
      * @return {@code ExceptionHandler} instance
      */
     public static ExceptionHandler forSetting(String value) {
-        if (StringUtils.isBlank(value) || EXCEPTION_TOKEN_NONE.equalsIgnoreCase(value)) {
+        if (StringUtils.isBlank(value) || DialogConstants.VALUE_NONE.equalsIgnoreCase(value)) {
             return new PermissiveExceptionHandler();
         }
         List<String> exceptionTokens = Arrays.stream(StringUtils.split(value, CoreConstants.SEPARATOR_COMMA))
