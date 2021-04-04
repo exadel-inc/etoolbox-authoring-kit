@@ -18,18 +18,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@DialogWidgetAnnotation(source = "testCustomAnnotation")
+@MapProperties(value = "none", scope = {Scopes.COMPONENT, Scopes.CQ_DIALOG})
 @ResourceType("test-components/form/customfield")
-@SuppressWarnings({"unused", "deprecation"}) // @DialogWidgetAnnotation is retained for compatibility testing;
-// will be removed in a version after 2.0.0
-public @interface CustomWidgetAnnotation {
-
-    @PropertyRendering(name = "custom")
-    String customField() default "Non-overridden value";
+@SuppressWarnings("unused")
+public @interface CustomScopedNonMappingWidgetAnnotation {
+    String customField();
 }

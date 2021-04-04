@@ -41,10 +41,10 @@ public class PropertiesAnnotation {
     @DialogField
     @TextField
     @Properties({
-            @Property(name = "simpleProperty", value = "value"),
-            @Property(name = "../emptyValueProperty", value = ""),
-            @Property(name = "../siblingNode/newProperty", value = "value"),
-            @Property(name = "ad/wrong f@ield! NamE", value = "non-latin символы"),
+        @Property(name = "simpleProperty", value = "value"),
+        @Property(name = "../emptyValueProperty", value = ""),
+        @Property(name = "../siblingNode/newProperty", value = "value"),
+        @Property(name = "ad/wrong f@ield! NamE", value = "non-latin символы"),
     })
     String field;
 }

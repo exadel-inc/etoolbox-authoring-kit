@@ -42,7 +42,7 @@ public class TabsWidget {
     @DialogField(label = "Field on the first tab")
     @TextField
     @Place("First tab")
-    String field1;
+    private String field1;
 
     @Tabs(
         value = {
@@ -56,19 +56,19 @@ public class TabsWidget {
         padding = false // this one should be ignored
     )
     @Place("First tab")
-    TabsExample tabsField;
+    private TabsExample tabsField;
 
     @DialogField(label = "Field on the second tab")
     @TextField
     @Place("Second tab")
-    String field2;
+    private String field2;
 
     @DialogField(description = "Field on the third tab")
     @TextField
     @Place("Third tab")
     String field3;
 
-    static class TabsExample {
+    private static class TabsExample {
         @DialogField(label = "Field 1 on the inner Tab")
         @TextField
         @Place("First Inner")

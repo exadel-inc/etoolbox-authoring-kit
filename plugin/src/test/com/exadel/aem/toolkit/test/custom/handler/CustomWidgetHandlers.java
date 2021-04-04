@@ -31,6 +31,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomNonMappingWidgetAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomScopedNonMappingWidgetAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
 
 @SuppressWarnings("unused")
@@ -87,7 +88,7 @@ public class CustomWidgetHandlers {
 
     @HandlesWidgets(value = CustomNonMappingWidgetAnnotation.class)
     @SuppressWarnings("deprecation") // Reference to HandlesWidgets is retained for compatibility testing
-    public static class CustomNonMappingWidgetHandler implements DialogWidgetHandler {
+    public static class CustomNonMappingWidgetHandler1 implements DialogWidgetHandler {
 
         @Override
         public String getName() {
@@ -100,7 +101,16 @@ public class CustomWidgetHandlers {
         }
     }
 
-    @Handles(value = MultiField.class, before = CustomMultifieldHandler.class, after = CustomNonMappingWidgetHandler.class)
+    @Handles(value = CustomScopedNonMappingWidgetAnnotation.class)
+    public static class CustomNonMappingWidgetHandler2 implements Handler {
+
+        @Override
+        public void accept(Source source, Target target) {
+            target.attribute("customProcessing", "turned on");
+        }
+    }
+
+    @Handles(value = MultiField.class, before = CustomMultifieldHandler.class, after = CustomNonMappingWidgetHandler1.class)
     public static class CustomMultifieldHandler implements Handler {
 
         @Override

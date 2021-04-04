@@ -22,8 +22,9 @@ import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties(value = "!field3") // This will have its scope defined dynamically: when appended to a class already
-                                  // possessing e.g. @Dialog, it will have cq:dialog scope, etc.
+@MapProperties(value = "!field3")
+// This will have its scope defined dynamically: when appended to a class already
+// possessing e.g. @Dialog, it will have cq:dialog scope, etc.
 public @interface CustomDialogAnnotationAuto {
 
     String field1() default "";
