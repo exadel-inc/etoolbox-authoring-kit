@@ -13,10 +13,8 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.autocomplete;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
@@ -25,7 +23,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 /**
  * Used to set up {@link Autocomplete#datasource()} property
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TAGS)
 @MapProperties

@@ -13,10 +13,8 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.rte;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
@@ -30,7 +28,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
  * @see RichTextEditor
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
 @ValueRestriction("com.exadel.aem.toolkit.plugin.validators.CharactersObjectValidator")
 @MapProperties
 public @interface Characters {

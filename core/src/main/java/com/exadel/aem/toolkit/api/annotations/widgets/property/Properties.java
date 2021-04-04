@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  * Represents a collection of additional properties that can be assigned to a Granite UI component
  * @see Property
  */
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Properties {
 

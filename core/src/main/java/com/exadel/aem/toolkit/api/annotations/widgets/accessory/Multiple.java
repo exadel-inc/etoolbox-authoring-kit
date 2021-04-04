@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
  * Technically, for a statement like "{@code @SomeWidget @Multiple private String field... }", there will be rendered
  * a {@code Multifield} that can contain an arbitrary number of {@code SomeWidget}s
  */
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Multiple {
 }

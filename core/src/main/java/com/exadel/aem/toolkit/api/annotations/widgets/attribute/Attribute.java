@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
  * Used to set up <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/docs/server/commonattrs.html">
  * global HTML attributes</a> that are added to a rendered HTML tag
  */
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @MapProperties(prefix = "granite:")
 public @interface Attribute {

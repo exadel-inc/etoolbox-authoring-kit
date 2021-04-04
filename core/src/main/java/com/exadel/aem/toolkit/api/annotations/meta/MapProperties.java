@@ -33,13 +33,16 @@ public @interface MapProperties {
     /**
      * Defines mapping rules for the properties (methods) of the current annotation. Default rule is that all the property
      * values of an appropriate type (string, number, enum) are mapped. The specific rules are:
-     * <p>1) If one or more properties names are specified "as they are", only these properties are mapped.</p>
-     * <p>2) Otherwise, if one or more names are specified with the prepended negation sign ("{@code !}"), all the properties
-     * <i>except</i> the specified ones are mapped.</p>
-     * <p>3) If there are names with and without "{@code !}" sign, rule (1) is in effect
+     * <p>1) If  are specified, all the properties are mapped.</p>
+     * <p>2) If one or more property names are specified "as they are", and the values does not end with "{@code *}"
+     * or "{@code all}", only the directly named properties are mapped.</p>
+     * <p>3) Otherwise, if one or more names are specified with the prepended negation sign ("{@code !}"), all the
+     * properties <i>except</i> the specified ones are mapped.</p>
+     * <p>4) If there are names with and without "{@code !}" sign, rule (2) is in effect.
+     * <p>5) If "{@code none}" is specified, there is no automapping
      * @return Array of strings, or an empty array
      */
-    String[] value() default {};
+    String[] value() default "*";
 
     /**
      * When set, specifies one or more scopes this annotation can be mapped to,

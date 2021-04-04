@@ -13,10 +13,8 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
@@ -29,7 +27,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
  * via a string array, without the need to query for JCR values. For each of the options, specific title, value, and HTML
  * attributes can be set
  */
-@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @MapProperties
 public @interface OptionProvider {

@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
  * Represents a name-value pair to be rendered as a Granite UI component's attribute and its value
  * @see Properties
  */
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(Properties.class)
 public @interface Property {
