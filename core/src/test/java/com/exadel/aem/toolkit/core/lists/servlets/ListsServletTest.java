@@ -53,8 +53,8 @@ public class ListsServletTest {
 
     @Before
     public void setUp() {
-        context.load().json("/com/exadel/aem/toolkit/core/lists/services/simpleList.json", SIMPLE_LIST_PATH);
-        context.load().json("/com/exadel/aem/toolkit/core/lists/services/customList.json", CUSTOM_LIST_PATH);
+        context.load().json("/com/exadel/aem/toolkit/core/lists/utils/simpleList.json", SIMPLE_LIST_PATH);
+        context.load().json("/com/exadel/aem/toolkit/core/lists/utils/customList.json", CUSTOM_LIST_PATH);
         context.load().json("/com/exadel/aem/toolkit/core/lists/datasource/datasource.json", DATASOURCE_PATH);
 
         Mockito.when(expressionResolver.resolve("${requestPathInfo.suffix}", Locale.US, String.class, context.request())).thenReturn("/content/etoolbox-authoring-kit/lists");

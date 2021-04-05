@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.lists.services;
+package com.exadel.aem.toolkit.core.lists.utils;
 
 import java.util.List;
 import java.util.Map;
@@ -28,12 +28,11 @@ import org.junit.Test;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
-import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 
-public class ListHelperServiceTest {
+public class ListHelperTest {
 
     private static final String SIMPLE_LIST_PATH = "/content/etoolbox-lists/simpleList";
     private static final String CUSTOM_LIST_PATH = "/content/etoolbox-lists/customList";
@@ -43,8 +42,8 @@ public class ListHelperServiceTest {
 
     @Before
     public void setUp() {
-        context.load().json("/com/exadel/aem/toolkit/core/lists/services/simpleList.json", SIMPLE_LIST_PATH);
-        context.load().json("/com/exadel/aem/toolkit/core/lists/services/customList.json", CUSTOM_LIST_PATH);
+        context.load().json("/com/exadel/aem/toolkit/core/lists/utils/simpleList.json", SIMPLE_LIST_PATH);
+        context.load().json("/com/exadel/aem/toolkit/core/lists/utils/customList.json", CUSTOM_LIST_PATH);
         context.addModelsForClasses(SimpleListItem.class, ItemModel.class);
     }
 
