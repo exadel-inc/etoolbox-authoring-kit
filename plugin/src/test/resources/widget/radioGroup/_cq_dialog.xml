@@ -51,7 +51,8 @@
                                     textMember="jcr:title"
                                     valueMember="name"
                                     attributeMembers="[first,second]"
-                                    textTransform="capitalize"/>
+                                    textTransform="capitalize"
+                                    valueTransform="lowercase"/>
                     </group3>
                 </items>
             </column>

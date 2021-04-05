@@ -21,6 +21,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
@@ -128,11 +129,15 @@ abstract class OptionProviderHandler {
         if (ArrayUtils.isNotEmpty(optionSource.attributes())) {
             datasourceElement.attribute(DialogConstants.PN_ATTRIBUTES + postfix, optionSource.attributes());
         }
-        if (StringUtils.isNotBlank(optionSource.textTransform())) {
-            datasourceElement.attribute(DialogConstants.PN_TEXT_TRANSFORM + postfix, optionSource.textTransform());
+        if (!optionSource.textTransform().equals(StringTransformation.NONE)) {
+            datasourceElement.attribute(
+                DialogConstants.PN_TEXT_TRANSFORM + postfix,
+                optionSource.textTransform().toString().toLowerCase());
         }
-        if (StringUtils.isNotBlank(optionSource.valueTransform())) {
-            datasourceElement.attribute(DialogConstants.PN_VALUE_TRANSFORM + postfix, optionSource.valueTransform());
+        if (!optionSource.valueTransform().equals(StringTransformation.NONE)) {
+            datasourceElement.attribute(
+                DialogConstants.PN_VALUE_TRANSFORM + postfix,
+                optionSource.valueTransform().toString().toLowerCase());
         }
     }
 }

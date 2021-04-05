@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
@@ -72,13 +73,12 @@ public @interface OptionSource {
      * @return String value
      * @see com.exadel.aem.toolkit.api.annotations.meta.StringTransformation
      */
-    String textTransform() default "";
+    StringTransformation textTransform() default StringTransformation.NONE;
 
     /**
      * If set, specifies the way to transform option value as it is coming from a storage before rendering in UI
      * @return String value
      * @see com.exadel.aem.toolkit.api.annotations.meta.StringTransformation
      */
-    String valueTransform() default "";
-
+    StringTransformation valueTransform() default StringTransformation.NONE;
 }
