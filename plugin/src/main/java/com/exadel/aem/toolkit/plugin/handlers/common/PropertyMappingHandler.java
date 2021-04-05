@@ -47,7 +47,7 @@ public class PropertyMappingHandler implements BiConsumer<Source, Target> {
      * @param target Resulting {@code Target} object
      */
     @Override
-    @SuppressWarnings("deprecation") // PropertyMapping usage to be removed in a version after 2.0.1
+    @SuppressWarnings("deprecation") // PropertyMapping usage to be removed in a version after 2.0.2
     public void accept(Source source, Target target) {
         Annotation[] annotations = source.adaptTo(Annotation[].class);
         Arrays.stream(annotations)

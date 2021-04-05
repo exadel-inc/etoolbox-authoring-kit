@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
  * An abstraction of class encapsulating routines for XML generation and handling
- * @deprecated Since v. 2.0.1 users are encouraged to use new custom handlers API that is based
+ * @deprecated Since v. 2.0.2 users are encouraged to use new custom handlers API that is based
  * on {@link Source} and {@link Target} objects handling. Legacy API will be removed in the versions to come
  */
 @Deprecated
