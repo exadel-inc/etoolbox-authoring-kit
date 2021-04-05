@@ -18,9 +18,9 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.exadel.aem.toolkit.core.lists.models.ListItemTest;
-import com.exadel.aem.toolkit.core.lists.services.ListHelperServiceTest;
 import com.exadel.aem.toolkit.core.lists.servlets.ItemComponentsServletTest;
 import com.exadel.aem.toolkit.core.lists.servlets.ListsServletTest;
+import com.exadel.aem.toolkit.core.lists.utils.ListHelperTest;
 import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderTest;
 
 /**
@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderTe
 @RunWith(Suite.class)
 @SuiteClasses({
     ListItemTest.class,
-    ListHelperServiceTest.class,
+    ListHelperTest.class,
     ItemComponentsServletTest.class,
     ListsServletTest.class,
     OptionProviderTest.class

@@ -17,13 +17,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
-import com.exadel.aem.toolkit.api.handlers.Adaptable;
+import com.exadel.aem.toolkit.api.handlers.Adapts;
 import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
  * Adapts a {@link Source} object to manage the associated placement data derived from source annotations
  */
-@Adaptable(Source.class)
+@Adapts(Source.class)
 public class PlaceSetting {
 
     private Place wrappedPlace;
@@ -33,7 +33,7 @@ public class PlaceSetting {
     private PlaceOnTab wrappedPlaceOnTab;
 
     /**
-     * Instance constructor per the {@link Adaptable} contract
+     * Instance constructor per the {@link Adapts} contract
      * @param source {@code Source} object that will be used for extracting resource type
      */
     @SuppressWarnings("deprecation") // PlaceOnTab support is retained for compatibility and will be removed

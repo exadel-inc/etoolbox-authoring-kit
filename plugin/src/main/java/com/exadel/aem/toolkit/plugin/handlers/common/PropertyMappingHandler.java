@@ -20,7 +20,7 @@ import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.plugin.utils.ScopeUtil;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties set to be automatically mapped
- * fot the use of meta-annotation such as {@link com.exadel.aem.toolkit.api.annotations.meta.MapProperties}
+ * fot the use of meta-annotation such as {@link AnnotationRendering}
  */
 public class PropertyMappingHandler implements BiConsumer<Source, Target> {
 
@@ -52,12 +52,12 @@ public class PropertyMappingHandler implements BiConsumer<Source, Target> {
         Annotation[] annotations = source.adaptTo(Annotation[].class);
         Arrays.stream(annotations)
             // to make sure the annotation has one of "mapping" meta-annotations
-            .filter(annotation -> annotation.annotationType().isAnnotationPresent(MapProperties.class)
+            .filter(annotation -> annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)
                 || annotation.annotationType().isAnnotationPresent(PropertyMapping.class))
             // to sort out annotations with specific mapping processing
             .filter(annotation -> !SPECIALLY_PROCESSED.contains(annotation.annotationType()))
-            // for the exact case when @MapProperties present -- to make sure the scope is right
-            .filter(annotation -> !annotation.annotationType().isAnnotationPresent(MapProperties.class)
+            // for the exact case when @AnnotationRendering is present -- to make sure the scope is right
+            .filter(annotation -> !annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)
                 || ScopeUtil.fits(target.getScope(), annotation, annotations))
 
             .forEach(annotation -> target.attributes(annotation, AnnotationUtil.getPropertyMappingFilter(annotation)));

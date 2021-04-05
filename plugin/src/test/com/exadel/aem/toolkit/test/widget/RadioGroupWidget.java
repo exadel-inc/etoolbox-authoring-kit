@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.test.widget;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
@@ -55,7 +56,8 @@ public class RadioGroupWidget {
             textMember = "jcr:title",
             valueMember = "name",
             attributeMembers = {"first", "second"},
-            textTransform = "capitalize")
+            textTransform = StringTransformation.CAPITALIZE,
+            valueTransform = StringTransformation.LOWERCASE)
     ))
     String group3;
 }

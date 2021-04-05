@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
@@ -80,12 +80,12 @@ public class ScopeUtil {
      * @return True or false
      */
     public static boolean fits(String scope, Annotation annotation, Annotation[] context) {
-        if (!annotation.annotationType().isAnnotationPresent(MapProperties.class)) {
+        if (!annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)) {
             return false;
         }
-        String[] scopes = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).scope();
+        String[] scopes = annotation.annotationType().getDeclaredAnnotation(AnnotationRendering.class).scope();
         if (scopes.length == 1 && scopes[0].equals(Scopes.DEFAULT) && ArrayUtils.isNotEmpty(context)) {
-            scopes = new String[]{designate(Arrays.stream(context).map(Annotation::annotationType).toArray(Class<?>[]::new))};
+            scopes = designate(Arrays.stream(context).map(Annotation::annotationType).toArray(Class<?>[]::new));
         }
         return ArrayUtils.contains(scopes, scope) || ArrayUtils.contains(scopes, Scopes.DEFAULT);
     }
@@ -106,33 +106,33 @@ public class ScopeUtil {
     /**
      * Picks up an appropriate scope value judging by the annotation types provided. If one of the annotation types is that
      * of an entry-point annotation, such as {@link AemComponent}, {@link Dialog}, {@link EditConfig}, etc., the corresponding
-     * scope is returned (first choice). Otherwise, if the annotation types provided all have {@link MapProperties meta-annotation}
+     * scope is returned (first choice). Otherwise, if the annotation types provided all have {@link AnnotationRendering meta-annotation}
      * and share same {@code scope} value, the scope which is common for all of them is returned (second choice).
      * Else, default scope is returned
      * @param annotationTypes Non-null array of {@code Class} references representing annotation types
      * @return Array of strings representing valid scopes. Default is the array containing the single "default scope" entry
      */
-    public static String designate(Class<?>[] annotationTypes) {
+    public static String[] designate(Class<?>[] annotationTypes) {
         if (ArrayUtils.isEmpty(annotationTypes)) {
-            return Scopes.DEFAULT;
+            return new String[] {Scopes.DEFAULT};
         }
         if (ArrayUtils.contains(annotationTypes, Dialog.class) && !ArrayUtils.contains(annotationTypes, DesignDialog.class)) {
-            return Scopes.CQ_DIALOG;
+            return new String[] {Scopes.CQ_DIALOG};
         }
         for (Class<?> annotationType : ENTRY_POINT_ANNOTATION_TYPES) {
             if (ArrayUtils.contains(annotationTypes, annotationType)) {
-                return annotationType.getDeclaredAnnotation(MapProperties.class).scope()[0];
+                return annotationType.getDeclaredAnnotation(AnnotationRendering.class).scope();
             }
         }
-        List<String> scopesByMapProperties = Arrays.stream(annotationTypes)
-            .flatMap(annotationType -> annotationType.isAnnotationPresent(MapProperties.class)
-                ? Arrays.stream(annotationType.getDeclaredAnnotation(MapProperties.class).scope())
+        List<String> scopesByAnnotationRendering = Arrays.stream(annotationTypes)
+            .flatMap(annotationType -> annotationType.isAnnotationPresent(AnnotationRendering.class)
+                ? Arrays.stream(annotationType.getDeclaredAnnotation(AnnotationRendering.class).scope())
                 : Stream.of(Scopes.DEFAULT))
             .distinct()
             .collect(Collectors.toList());
-        if (scopesByMapProperties.size() == 1) {
-            return scopesByMapProperties.get(0);
+        if (annotationTypes.length == 1 || scopesByAnnotationRendering.size() == 1) {
+            return scopesByAnnotationRendering.toArray(new String[0]);
         }
-        return Scopes.DEFAULT;
+        return new String[] {Scopes.DEFAULT};
     }
 }

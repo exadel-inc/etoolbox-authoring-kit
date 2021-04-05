@@ -13,10 +13,8 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.datepicker;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 
@@ -24,7 +22,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
  * Used to set up {@link DatePicker#minDate()} and {@link DatePicker#maxDate()} values in an intuitive format
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
 @ValueRestriction("com.exadel.aem.toolkit.plugin.validators.DateTimeValidator")
 public @interface DateTimeValue {
     int day() default 0;

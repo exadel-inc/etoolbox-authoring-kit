@@ -20,6 +20,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotationAuto;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomLegacyDialogAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomNonMappingWidgetAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomScopedNonMappingWidgetAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAutoOrder;
@@ -37,12 +38,18 @@ import com.exadel.aem.toolkit.test.custom.annotation.WidgetAnnotationForOrdering
     field2 = 2
 )
 @DialogAnnotationForOrderingTest
+@CustomScopedNonMappingWidgetAnnotation(customField = "dummy value")
 @SuppressWarnings("unused")
 public class CustomAnnotations {
     @DialogField
     @CustomWidgetAnnotation(customField = "Overridden value")
     @CustomNonMappingWidgetAnnotation
     String testCustomAnnotation;
+
+    @DialogField
+    @CustomWidgetAnnotation(customField = "Overridden value")
+    @CustomScopedNonMappingWidgetAnnotation(customField = "dummy value")
+    String testScopedCustomAnnotation;
 
     @DialogField
     @TextField

@@ -17,14 +17,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassField;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
-import com.exadel.aem.toolkit.api.handlers.Adaptable;
+import com.exadel.aem.toolkit.api.handlers.Adapts;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.api.markers._Super;
 
 /**
- * Implements {@link Adaptable} to manage class membership data derived from source annotations
+ * Implements {@link Adapts} to manage class membership data derived from source annotations
  */
 public class ClassMemberSetting {
 

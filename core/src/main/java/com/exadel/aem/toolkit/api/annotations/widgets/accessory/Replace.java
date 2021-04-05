@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
  * <p>The replacing member will occupy the same place in widgets stack as the member being replaced unless it specifies
  * another particular position (by e.g. {@code ranking} property)</p>
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Replace {
 

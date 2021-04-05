@@ -38,9 +38,9 @@
                                       active="{Boolean}true"/>
                         <items jcr:primaryType="nt:unstructured">
                             <accordion jcr:primaryType="nt:unstructured"
-                                       margin="{Boolean}false"
+                                       margin="{Boolean}true"
                                        multiple="{Boolean}false"
-                                       variant="default"
+                                       variant="large"
                                        sling:resourceType="granite/ui/components/coral/foundation/accordion">
                                 <items jcr:primaryType="nt:unstructured">
                                     <accordionWidgetPanel1 jcr:primaryType="nt:unstructured"

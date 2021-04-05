@@ -19,22 +19,22 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.handlers.Adaptable;
+import com.exadel.aem.toolkit.api.handlers.Adapts;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
- * Implements {@link Adaptable} for rendering a {@link Target} instance into a DOM {@code Document}
+ * Implements {@link Adapts} for rendering a {@link Target} instance into a DOM {@code Document}
  */
-@Adaptable(Target.class)
+@Adapts(Target.class)
 public class DomAdapter {
 
     private final Target target;
 
     /**
-     * Constructor per {@link Adaptable} contract
+     * Constructor per {@link Adapts} contract
      * @param target {@code Target} object that will be used as a source of data for rendering
      */
     public DomAdapter(Target target) {

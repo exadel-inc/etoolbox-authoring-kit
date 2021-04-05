@@ -21,6 +21,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
@@ -111,8 +112,8 @@ abstract class OptionProviderHandler {
      */
     private static void populateSourceAttributes(OptionSource optionSource, Target datasourceElement, String postfix) {
         datasourceElement.attribute(CoreConstants.PN_PATH + postfix, optionSource.value());
-        if (StringUtils.isNotBlank(optionSource.fallbackPath())) {
-            datasourceElement.attribute(DialogConstants.PN_FALLBACK_PATH + postfix, optionSource.fallbackPath());
+        if (StringUtils.isNotBlank(optionSource.fallback())) {
+            datasourceElement.attribute(DialogConstants.PN_FALLBACK_PATH + postfix, optionSource.fallback());
         }
         if (StringUtils.isNotBlank(optionSource.textMember())) {
             datasourceElement.attribute(DialogConstants.PN_TEXT_MEMBER + postfix, optionSource.textMember());
@@ -128,11 +129,15 @@ abstract class OptionProviderHandler {
         if (ArrayUtils.isNotEmpty(optionSource.attributes())) {
             datasourceElement.attribute(DialogConstants.PN_ATTRIBUTES + postfix, optionSource.attributes());
         }
-        if (StringUtils.isNotBlank(optionSource.textTransform())) {
-            datasourceElement.attribute(DialogConstants.PN_TEXT_TRANSFORM + postfix, optionSource.textTransform());
+        if (!optionSource.textTransform().equals(StringTransformation.NONE)) {
+            datasourceElement.attribute(
+                DialogConstants.PN_TEXT_TRANSFORM + postfix,
+                optionSource.textTransform().toString().toLowerCase());
         }
-        if (StringUtils.isNotBlank(optionSource.valueTransform())) {
-            datasourceElement.attribute(DialogConstants.PN_VALUE_TRANSFORM + postfix, optionSource.valueTransform());
+        if (!optionSource.valueTransform().equals(StringTransformation.NONE)) {
+            datasourceElement.attribute(
+                DialogConstants.PN_VALUE_TRANSFORM + postfix,
+                optionSource.valueTransform().toString().toLowerCase());
         }
     }
 }

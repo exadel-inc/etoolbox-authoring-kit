@@ -13,22 +13,19 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.autocomplete;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 
 /**
  * Used to set up {@link Autocomplete#options()} property
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.AUTOCOMPLETE_LIST)
-@MapProperties
+@AnnotationRendering(properties = "all")
 public @interface AutocompleteList {
 
     /**

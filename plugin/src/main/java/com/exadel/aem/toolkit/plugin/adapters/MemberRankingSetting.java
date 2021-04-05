@@ -14,20 +14,20 @@
 package com.exadel.aem.toolkit.plugin.adapters;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.handlers.Adaptable;
+import com.exadel.aem.toolkit.api.handlers.Adapts;
 import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
  * Adapts a {@link DialogField} object to manage the {@code rank} property
  */
-@Adaptable(Source.class)
+@Adapts(Source.class)
 public class MemberRankingSetting {
 
     private int ranking;
     private boolean unset;
 
     /**
-     * Instance constructor per the {@link Adaptable} contract
+     * Instance constructor per the {@link Adapts} contract
      * @param source {@code Source} object that will be used for extracting resource type
      */
     public MemberRankingSetting(Source source) {

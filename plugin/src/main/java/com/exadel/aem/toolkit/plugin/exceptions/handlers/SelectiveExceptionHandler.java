@@ -29,7 +29,6 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
  * falls back to {@code PermissiveExceptionHandler} behavior
  */
 class SelectiveExceptionHandler extends PermissiveExceptionHandler {
-    private static final String EXCEPTION_TOKEN_ALL = "all";
     private static final String PACKAGE_POSTFIX = ".*";
 
     private final List<String> exceptionTokens;
@@ -83,7 +82,7 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
      * value represents the verdict
      */
     private Optional<Boolean> isMatch(Class<? extends Exception> exceptionType, String exceptionToken, boolean inverse) {
-        if (StringUtils.equalsAnyIgnoreCase(exceptionToken, EXCEPTION_TOKEN_ALL, DialogConstants.WILDCARD)) {
+        if (StringUtils.equalsAnyIgnoreCase(exceptionToken, DialogConstants.VALUE_ALL, DialogConstants.WILDCARD)) {
             return !inverse ? Optional.of(true) : Optional.empty();
         }
         if (exceptionToken.endsWith(PACKAGE_POSTFIX)) {

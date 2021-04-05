@@ -13,12 +13,10 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.select;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 
@@ -27,9 +25,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
  * See documentation on <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/select/index.html">
  * Select</a> component
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties
+@AnnotationRendering(properties = "all")
 public @interface Option {
 
     /**

@@ -18,7 +18,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 
 /**
@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties
+@AnnotationRendering(properties = "all")
 public @interface DataSource {
 
     /**

@@ -114,7 +114,8 @@
                                       emptyText="Select rating"
                                       fieldLabel="Rating"
                                       renderHidden="{Boolean}false"
-                                      required="{Boolean}false">
+                                      required="{Boolean}false"
+                                      designDialogSpecial="This is added to Nullable@DesignDialog">
                                 <items jcr:primaryType="nt:unstructured">
                                     <item1 jcr:primaryType="nt:unstructured" text="1 star" value="1"/>
                                     <item2 jcr:primaryType="nt:unstructured" text="2 star" value="2"/>

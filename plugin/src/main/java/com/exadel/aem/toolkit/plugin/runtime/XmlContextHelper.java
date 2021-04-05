@@ -35,7 +35,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
@@ -308,12 +308,12 @@ public class XmlContextHelper implements XmlUtility {
 
     @Override
     public void mapProperties(Element element, Annotation annotation, List<String> skipped) {
-        if (!annotation.annotationType().isAnnotationPresent(MapProperties.class)
+        if (!annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)
             && !annotation.annotationType().isAnnotationPresent(PropertyMapping.class)) {
             return;
         }
-        String prefix = annotation.annotationType().isAnnotationPresent(MapProperties.class)
-            ? annotation.annotationType().getDeclaredAnnotation(MapProperties.class).prefix()
+        String prefix = annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)
+            ? annotation.annotationType().getDeclaredAnnotation(AnnotationRendering.class).prefix()
             : annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
         String nodePrefix = prefix.contains(CoreConstants.SEPARATOR_SLASH)
             ? StringUtils.substringBeforeLast(prefix, CoreConstants.SEPARATOR_SLASH)
@@ -341,8 +341,8 @@ public class XmlContextHelper implements XmlUtility {
             name = StringUtils.defaultIfBlank(propertyRendering.name(), name);
             ignorePrefix = propertyRendering.ignorePrefix();
         }
-        String prefix = annotation.annotationType().isAnnotationPresent(MapProperties.class)
-            ? annotation.annotationType().getDeclaredAnnotation(MapProperties.class).prefix()
+        String prefix = annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)
+            ? annotation.annotationType().getDeclaredAnnotation(AnnotationRendering.class).prefix()
             : annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
         String namePrefix = prefix.contains(CoreConstants.SEPARATOR_SLASH)
             ? StringUtils.substringAfterLast(prefix, CoreConstants.SEPARATOR_SLASH)

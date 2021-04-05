@@ -29,6 +29,7 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.FileSystemHelper;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 import com.exadel.aem.toolkit.plugin.writers.TestXmlUtility;
@@ -64,7 +65,7 @@ public abstract class DefaultTestBase {
         PluginRuntime.contextBuilder()
                 .classPathElements(CLASSPATH_ELEMENTS)
                 .packageBase(StringUtils.EMPTY)
-                .terminateOn("none")
+                .terminateOn(DialogConstants.VALUE_NONE)
                 .build();
     }
 

@@ -13,10 +13,8 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.rte;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
  * Used to set up <a href="https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/configure-rich-text-editor-plug-ins.html#pastemodes">
@@ -24,7 +22,6 @@ import java.lang.annotation.Target;
  * @see RichTextEditor
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
 public @interface HtmlPasteRules {
 
     /**

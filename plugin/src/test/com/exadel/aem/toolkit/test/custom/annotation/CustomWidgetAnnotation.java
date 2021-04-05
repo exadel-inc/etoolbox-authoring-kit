@@ -26,7 +26,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 @Retention(RetentionPolicy.RUNTIME)
 @DialogWidgetAnnotation(source = "testCustomAnnotation")
 @ResourceType("test-components/form/customfield")
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "deprecation"}) // @DialogWidgetAnnotation is retained for compatibility testing;
+// will be removed in a version after 2.0.0
 public @interface CustomWidgetAnnotation {
 
     @PropertyRendering(name = "custom")

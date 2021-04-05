@@ -35,7 +35,7 @@ import java.util.stream.LongStream;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
@@ -683,8 +683,8 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     // in a version after 2.0.2
     private static String getPropertyPrefix(Annotation annotation) {
         String result = StringUtils.EMPTY;
-        if (annotation.annotationType().isAnnotationPresent(MapProperties.class)) {
-            result = annotation.annotationType().getDeclaredAnnotation(MapProperties.class).prefix();
+        if (annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)) {
+            result = annotation.annotationType().getDeclaredAnnotation(AnnotationRendering.class).prefix();
         } else if (annotation.annotationType().isAnnotationPresent(PropertyMapping.class)) {
             result = annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
         }

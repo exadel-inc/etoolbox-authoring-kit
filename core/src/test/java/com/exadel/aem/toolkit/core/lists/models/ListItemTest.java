@@ -39,7 +39,7 @@ public class ListItemTest {
     @Before
     public void setUp() {
         ResourceResolver resolver = context.resourceResolver();
-        context.load().json("/com/exadel/aem/toolkit/core/lists/services/simpleList.json", SIMPLE_LIST_PATH);
+        context.load().json("/com/exadel/aem/toolkit/core/lists/utils/simpleList.json", SIMPLE_LIST_PATH);
         listItem = resolver.resolve(SIMPLE_LIST_PATH + LIST_ITEM_PATH).adaptTo(ListItemModel.class);
     }
 

@@ -18,12 +18,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties(value = "!field3") // This will have its scope defined dynamically: when appended to a class already
-                                  // possessing e.g. @Dialog, it will have cq:dialog scope, etc.
+@AnnotationRendering(properties = "!field3")
+// This will have its scope defined dynamically: when appended to a class already
+// possessing e.g. @Dialog, it will have cq:dialog scope, etc.
 public @interface CustomDialogAnnotationAuto {
 
     String field1() default "";
