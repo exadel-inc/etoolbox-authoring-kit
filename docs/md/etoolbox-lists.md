@@ -1,6 +1,7 @@
 [Main page](../../README.md)
+
 # Lists
-AEM Authoring Toolkit Lists provide a flexible way to create, store and retrieve lists of structured items, e.g. a list of HTTP status codes and their desctiptions:
+AEM Authoring Toolkit Lists provide a flexible way to create, store and retrieve lists of structured items, e.g. a list of HTTP status codes and their descriptions:
 ```
 + list
   + item1
