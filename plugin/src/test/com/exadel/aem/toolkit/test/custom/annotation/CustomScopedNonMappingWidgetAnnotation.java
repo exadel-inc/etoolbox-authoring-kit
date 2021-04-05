@@ -18,13 +18,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties(value = "none", scope = {Scopes.COMPONENT, Scopes.CQ_DIALOG})
+@AnnotationRendering(properties = "none", scope = {Scopes.COMPONENT, Scopes.CQ_DIALOG})
 @ResourceType("test-components/form/customfield")
 @SuppressWarnings("unused")
 public @interface CustomScopedNonMappingWidgetAnnotation {

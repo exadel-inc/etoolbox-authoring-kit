@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
 
 import com.day.cq.wcm.api.NameConstants;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties(scope = Scopes.CQ_HTML_TAG)
+@AnnotationRendering(scope = Scopes.CQ_HTML_TAG)
 public @interface HtmlTag {
 
     /**

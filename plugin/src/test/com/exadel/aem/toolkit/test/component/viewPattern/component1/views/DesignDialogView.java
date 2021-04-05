@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.test.component.viewPattern.component1.views;
 
+import javax.annotation.Nullable;
+
 import com.exadel.aem.toolkit.api.annotations.layouts.LayoutType;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
@@ -118,7 +120,6 @@ public class DesignDialogView implements Addition, Addition2 {
     public String getDropdown3() {
         return null;
     }
-
 }
 
 @SuppressWarnings("unused")
@@ -132,6 +133,7 @@ interface Addition {
         @Option(text = "5 star", value = "5")
     }, emptyText = "Select rating")
     @Place(LABEL_TAB_3)
+    @Nullable
     default String getDropdown() {
         return null;
     }

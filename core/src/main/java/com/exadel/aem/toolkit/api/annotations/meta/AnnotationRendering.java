@@ -19,30 +19,30 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks that the properties of a specific annotation are expected to be automatically mapped to the attributes of a Granite UI
- * entity. This setting extends to all the properties of annotation unless a narrower list is specified via {@link MapProperties#value()}.
- * <p>In addition, this annotation can be used to specify the scope the properties are mapped in e.g. {@link Scopes#COMPONENT}
- * certifies that the properties are valid for {@code .content.xml} and not for a {@code cq:dialog} node. Annotation
- * handlers can use this value to adjust their behavior.</p>
- * <p>Moreover, a specific prefix can be specified that will be prepended to all the automatically mapped properties</p>
+ * Defines settings for rendering data declared by an annotation int a Granite UI entity. They extend to all the properties
+ * of the underlying annotation unless a narrower list is specified via {@link AnnotationRendering#properties()}.
+ * <p>In addition, this annotation can be used to specify the scope the properties are rendered within.
+ * E.g. {@link Scopes#COMPONENT} certifies that the properties are valid for {@code .content.xml} and not for a
+ * {@code cq:dialog} node. Annotation handlers can use this value to adjust their behavior.</p>
+ * <p>A specific prefix can be specified that will be prepended to all the automatically mapped properties</p>
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MapProperties {
+public @interface AnnotationRendering {
 
     /**
-     * Defines mapping rules for the properties (methods) of the current annotation. Default rule is that all the property
-     * values of an appropriate type (string, number, enum) are mapped. The specific rules are:
-     * <p>1) If  are specified, all the properties are mapped.</p>
-     * <p>2) If one or more property names are specified "as they are", and the values does not end with "{@code *}"
+     * Defines the rules for the automapping of the current annotation's properties (methods). Default rule is that all
+     * the property values of an appropriate type (string, number, enum) are mapped. The more specific rules are:
+     * <p>1) If "{@code *}" or "{@code all}" are specified, all the appropriate properties are mapped.</p>
+     * <p>2) If one or more property names are specified "as they are", and the properties list does not end with "{@code *}"
      * or "{@code all}", only the directly named properties are mapped.</p>
-     * <p>3) Otherwise, if one or more names are specified with the prepended negation sign ("{@code !}"), all the
-     * properties <i>except</i> the specified ones are mapped.</p>
+     * <p>3) If one or more names are specified with the prepended negation sign ("{@code !}"), they are not mapped
+     * while the rest are mapped.</p>
      * <p>4) If there are names with and without "{@code !}" sign, rule (2) is in effect.
      * <p>5) If "{@code none}" is specified, there is no automapping
      * @return Array of strings, or an empty array
      */
-    String[] value() default "*";
+    String[] properties() default "*";
 
     /**
      * When set, specifies one or more scopes this annotation can be mapped to,

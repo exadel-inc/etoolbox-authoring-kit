@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.rte;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @ValueRestriction(ValueRestrictions.ALL_NOT_BLANK)
-@MapProperties
+@AnnotationRendering(properties = "all")
 public @interface ParagraphFormat {
 
     /**

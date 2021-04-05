@@ -18,7 +18,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 
@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.AUTOCOMPLETE)
-@MapProperties
+@AnnotationRendering(properties = "all")
 public @interface Autocomplete {
 
     /**

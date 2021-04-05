@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.test.custom.handler;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 import org.w3c.dom.Element;
 
@@ -125,6 +126,15 @@ public class CustomWidgetHandlers {
         @Override
         public void accept(Source source, Target target) {
             target.attribute("designDialogSpecial", "This is added to PathField@DesignDialog");
+        }
+    }
+
+    @Handles(value = Nullable.class, scope = Scopes.CQ_DESIGN_DIALOG)
+    public static class ThirdPartyAnnotationHandler implements Handler {
+
+        @Override
+        public void accept(Source source, Target target) {
+            target.attribute("designDialogSpecial", "This is added to Nullable@DesignDialog");
         }
     }
 }

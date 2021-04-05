@@ -33,8 +33,8 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
@@ -205,10 +205,10 @@ public class AnnotationUtil {
     @SuppressWarnings("deprecation")
     // Processing of PropertyMapping is retained for compatibility and will be removed in a version after 2.0.2
     public static Predicate<Method> getPropertyMappingFilter(Annotation annotation) {
-        Stream<String> mappingsByMapProperties = Optional.ofNullable(annotation)
+        Stream<String> mappingsByAnnotationRendering = Optional.ofNullable(annotation)
             .map(Annotation::annotationType)
-            .map(annotationType -> annotationType.getAnnotation(MapProperties.class))
-            .map(MapProperties::value)
+            .map(annotationType -> annotationType.getAnnotation(AnnotationRendering.class))
+            .map(AnnotationRendering::properties)
             .map(Arrays::stream)
             .orElse(Stream.empty());
 
@@ -219,7 +219,7 @@ public class AnnotationUtil {
             .map(Arrays::stream)
             .orElse(Stream.empty());
 
-        List<String> cumulativeMappings = Stream.concat(mappingsByMapProperties, mappingsByPropertyMapping)
+        List<String> cumulativeMappings = Stream.concat(mappingsByAnnotationRendering, mappingsByPropertyMapping)
             .filter(StringUtils::isNotBlank)
             .collect(Collectors.toList());
 

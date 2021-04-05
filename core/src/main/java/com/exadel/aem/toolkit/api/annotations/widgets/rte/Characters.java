@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.rte;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 
@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @ValueRestriction("com.exadel.aem.toolkit.plugin.validators.CharactersObjectValidator")
-@MapProperties
+@AnnotationRendering(properties = "all")
 public @interface Characters {
 
     /**

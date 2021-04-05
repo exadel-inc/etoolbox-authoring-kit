@@ -13,13 +13,13 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.radio;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
  * Used to define an option within the {@link RadioGroup#buttons()} set
  */
-@MapProperties
+@AnnotationRendering(properties = "all")
 public @interface RadioButton {
 
     /**

@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.select;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import com.exadel.aem.toolkit.api.annotations.meta.MapProperties;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 
@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
  * Select</a> component
  */
 @Retention(RetentionPolicy.RUNTIME)
-@MapProperties
+@AnnotationRendering(properties = "all")
 public @interface Option {
 
     /**
