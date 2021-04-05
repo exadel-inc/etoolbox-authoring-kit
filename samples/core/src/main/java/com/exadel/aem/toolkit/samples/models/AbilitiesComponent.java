@@ -14,6 +14,9 @@
 
 package com.exadel.aem.toolkit.samples.models;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
@@ -23,29 +26,29 @@ import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnParam;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
-import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 
+@AemComponent(
+    path = "content/abilities-component",
+    title = "Abilities Component",
+    description = "Abilities of your warrior",
+    resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
+    componentGroup = GroupConstants.COMPONENT_GROUP
+)
 @Dialog(
-        name = "content/abilities-component",
-        title = "Abilities",
-        description = "Abilities of your warrior",
-        resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = GroupConstants.COMPONENT_GROUP,
-        tabs = {
-                @Tab(title = AbilitiesComponent.TAB_ABILITIES)
-        },
-        extraClientlibs = "authoring-toolkit.samples.authoring"
+    extraClientlibs = "authoring-toolkit.samples.authoring"
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class AbilitiesComponent {
@@ -57,64 +60,64 @@ public class AbilitiesComponent {
     private static final String LABEL_ABILITY_LEVEL = "Warrior experience";
     private static final String DESCRIPTION_ABILITY_LEVEL = "Enter your warrior ability level";
 
-    static final String TAB_ABILITIES = "Abilities";
+    private static final String TAB_ABILITIES = "Abilities";
 
     @Heading(value = "Here you can choose abilities", level = 2)
-    String heading;
+    private String heading;
 
-    @DialogField(ranking = 2)
+    @DialogField
     @Select(
-            options = {
-                    @Option(
-                            selected = true,
-                            text = "Intelligence",
-                            value = "intelligence"
-                    ),
-                    @Option(
-                            text = "Strength",
-                            value = "strength"
-                    ),
-                    @Option(
-                            text = "Magic",
-                            value = "magic"
-                    )
-            },
-            emptyText = "Select ability")
+        options = {
+            @Option(
+                selected = true,
+                text = "Intelligence",
+                value = "intelligence"
+            ),
+            @Option(
+                text = "Strength",
+                value = "strength"
+            ),
+            @Option(
+                text = "Magic",
+                value = "magic"
+            )
+        },
+        emptyText = "Select ability")
     @DependsOnRef(name = "ability")
-    @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
+    @Place(AbilitiesComponent.TAB_ABILITIES)
     @ValueMapValue
     private String ability;
 
     @DialogField(
-            name = FIELD_ELEMENTS,
-            label = LABEL_ELEMENTS,
-            description = DESCRIPTION_ELEMENTS,
-            ranking = 3
+        name = FIELD_ELEMENTS,
+        label = LABEL_ELEMENTS,
+        description = DESCRIPTION_ELEMENTS
     )
-    @MultiField(field = Element.class)
+    @TextField
+    @Multiple
     @DependsOn(
-            query = "@this.length <= 3",
-            action = DependsOnActions.VALIDATE,
-            params = {@DependsOnParam(name = "msg", value = "Too powerful!")}
+        query = "@this.length <= 3",
+        action = DependsOnActions.VALIDATE,
+        params = @DependsOnParam(name = "msg", value = "Too powerful!")
     )
     @DependsOn(query = "@ability === 'magic'")
-    @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
+    @Place(
+        value = AbilitiesComponent.TAB_ABILITIES,
+        after = @ClassMember("ability")
+    )
     @ValueMapValue(name = FIELD_ELEMENTS)
-    private String[] elements;
-
-    private class Element {
-        @TextField
-        @DialogField
-        public String element;
-    }
+    private List<String> elements;
 
     @DialogField(
-            label = LABEL_ABILITY_LEVEL,
-            description = DESCRIPTION_ABILITY_LEVEL,
-            ranking = 1
+        label = LABEL_ABILITY_LEVEL,
+        description = DESCRIPTION_ABILITY_LEVEL
     )
     @NumberField(min = 0, max = 100)
-    @PlaceOnTab(AbilitiesComponent.TAB_ABILITIES)
+    @Place(
+        value = AbilitiesComponent.TAB_ABILITIES,
+        after = @ClassMember("heading"),
+        before = @ClassMember("ability")
+    )
     @ValueMapValue
     private int abilityLevel;
 
@@ -122,8 +125,8 @@ public class AbilitiesComponent {
         return ability;
     }
 
-    public String[] getElements() {
-        return (elements != null) ? elements : new String[0];
+    public List<String> getElements() {
+        return (elements != null) ? elements : Collections.emptyList();
     }
 
     public String getAbilityLevel() {

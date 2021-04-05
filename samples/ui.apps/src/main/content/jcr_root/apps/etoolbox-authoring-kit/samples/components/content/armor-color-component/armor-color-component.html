@@ -1,0 +1,18 @@
+<sly data-sly-use.data="com.exadel.aem.toolkit.samples.models.ArmorColorComponent"></sly>
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"></sly>
+<sly data-sly-call="${clientlib.css @ categories='etoolbox-authoring-kit.samples.components'}"></sly>
+
+<div class="armor-color-wrap">
+    <div class="armor-color-item"><span class="armor-label">Helmet color</span>
+        <div class="armor-color"
+             style="background-color: ${data.helmetColor || '#A9A9A9' @ context='styleString'}"></div>
+    </div>
+    <div class="armor-color-item"><span class="armor-label">Armor color</span>
+        <div class="armor-color"
+             style="background-color: ${data.armorColor || '#A9A9A9' @context='styleString'}"></div>
+    </div>
+    <div class="armor-color-item"><span class="armor-label">Shoes color</span>
+        <div class="armor-color"
+             style="background-color: ${data.shoesColor || '#A9A9A9' @context='styleString'}"></div>
+    </div>
+</div>

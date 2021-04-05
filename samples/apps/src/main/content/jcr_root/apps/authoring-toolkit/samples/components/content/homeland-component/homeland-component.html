@@ -1,8 +1,0 @@
-<sly data-sly-use.data="com.exadel.aem.toolkit.samples.models.HomelandComponent"></sly>
-<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"></sly>
-<sly data-sly-call="${clientlib.css @ categories='authoring-toolkit.samples.components'}"></sly>
-
-<div class="warrior-homeland-wrap">
-    <span class="warrior-homeland-title">${'{0} homeland' @ format=[data.warriorName]}</span>
-    <img class="warrior-homeland-image cq-dd-homelandImage" src="${data.homelandImage @ context='uri'}" alt="Your warrior has no home">
-</div>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/content/etoolbox-authoring-kit/samples" mode="merge"/>
+    <filter root="/content/cq:tags/movies"/>
+    <filter root="/content/cq:tags/fruit"/>
+    <filter root="/etc/tags/fruit"/>
+    <filter root="/etc/tags/movies"/>
+    <!-- Clean-up filter - Not necessary for a new installation -->
+    <filter root="/content/toolkit-samples"/>
+</workspaceFilter>

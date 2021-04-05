@@ -131,7 +131,7 @@ This annotation is used in the [ArmorColorComponent](./core/src/main/java/com/ex
 
 `@ImageUpload` is used in the [HomelandComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/HomelandComponent.java).
 
-`@FileUpload` is generally used in a similar manner:
+`@FileUpload` is generally used similarly:
 
 ```java
 public class FileUploadDialog {
@@ -208,7 +208,7 @@ This annotation is used in the [WarriorComponent](./core/src/main/java/com/exade
 ## Custom annotations and handlers
 
 An instance of a custom annotation is used to implement the *field name postfix" feature for the `@FieldSet`.
-The example is placed in the the **core** module (package `com.exadel.aem.toolkit.samples.annotations`).
+The example is placed in the **core** module (package `com.exadel.aem.toolkit.samples.annotations`).
 Annotation handler is placed in the package `com.exadel.aem.toolkit.samples.annotations.handlers`.
 
 ***
@@ -248,7 +248,7 @@ This annotation is used in:
    ```
    @DependsOn(query = "@@checkbox(coral-panel |> .products-fieldSet).every(item => item)")
    @DependsOn(query = "@@checkbox.every(item => item)", action = DependsOnActions.DISABLED)
-   @DependsOn(query = "AATSamples.getShoppingDefaultText(@@checkbox(coral-panel |> .weapon-fieldSet), @this)", action = DependsOnActions.SET)
+   @DependsOn(query = "ToolKitSamples.getShoppingDefaultText(@@checkbox(coral-panel |> .weapon-fieldSet), @this)", action = DependsOnActions.SET)
    ```
 
 #### `@DependsOnRef`
@@ -272,5 +272,5 @@ This annotation is used in the [AbilitiesComponent](./core/src/main/java/com/exa
        params = { @DependsOnParam(name = "msg", value = "Too powerful!")}
    )
    ```
-Custom *DependsOn* actions are placed in the [`abilities-component`](./apps/src/main/content/jcr_root/apps/authoring-toolkit/samples/components/content/abilities-component/clientlib/authoring/altVisibility.js) and [`warrior-description-component`](./apps/src/main/content/jcr_root/apps/authoring-toolkit/samples/components/content/warrior-description-component/clientlib/authoring) folders.
+Custom *DependsOn* actions are placed in the [`abilities-component`](./apps/src/main/content/jcr_root/apps/etoolbox-authoring-kit/samples/components/content/abilities-component/clientlib/authoring/altVisibility.js) and [`warrior-description-component`](./apps/src/main/content/jcr_root/apps/etoolbox-authoring-kit/samples/components/content/warrior-description-component/clientlib/authoring) folders.
 
