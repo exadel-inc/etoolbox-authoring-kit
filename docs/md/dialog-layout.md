@@ -60,7 +60,7 @@ public class MyComponent {
     String field3;
 }
 ```
- Tabs declared this way are virtually "inherited" from a superclass to a descendant class. The following setup is pretty valid:
+ Tabs declared this way are virtually "inherited" from a superclass to a descendant class. The following setup is valid:
 
 ```java
 @Tabs({

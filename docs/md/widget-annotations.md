@@ -2,11 +2,11 @@
 
 ## Defining dialog fields
 
-Dialog fields are the Granite UI / Touch UI entities usually  built around at HTTP web for element (`<input>`). Granite UI provides a vast scope of dialog elements, such as text fields, RTEs, date pickers, path pickers, etc.
+Dialog fields are the Granite UI / Touch UI entities usually built around an HTTP web form element (`<input>`). Granite UI provides a vast scope of dialog elements, such as text fields, RTEs, date pickers, path pickers, etc.
 
-<small>All of these are generally referred to as "widgets" in the document below, despite the fact that the Granite UI documentation would most of the time name them "components". This our special naming is introduced not to mix up the components as "building bricks" of a dialog with "true" AEM components that represent a Java backed _plus_ the package folder.</small>
+<small>All of these are generally referred to as "widgets" in the document below, despite the fact that the Granite UI documentation would most of the time name them "components". Our special naming is introduced not to mix up the components as "building bricks" of a dialog with "true" AEM components that represent a Java backend _plus_ the package folder.</small>
 
-The ToolKit makes use of the `@DialogField` annotation and the set of specific annotations, such as `@TextField`, `@Checkbox`, `@DatePicker`, etc., as discussed further below. They can be applied to either a class field or a method (methods of both class and interface are supported).
+The ToolKit makes use of `@DialogField` annotation and the set of specific annotations, such as `@TextField`, `@Checkbox`, `@DatePicker`, etc., as discussed further below. They can be applied to either a class field or a method (methods of both class and interface are supported).
 
 ### DialogField
 
@@ -14,9 +14,9 @@ The ToolKit makes use of the `@DialogField` annotation and the set of specific a
 * Resource type: /libs/granite/ui/components/coral/foundation/form/field
 * See spec: [Field](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html)
 
-Used for defining common properties of a dialog field, such as the *name* attribute (specifies under which name the value will be persisted, equals to the class' field name if not specified), and *label*, *description*, *required*, *disabled*, *wrapperClass*, and *renderHidden*. In addition, `@DialogField` makes it possible to order fields inside the dialog container by specifying a *ranking* value.
+Used for defining common properties of a dialog field, such as *name* attribute (specifies under which name the value will be persisted, equals to the class' field name if not specified), *label*, *description*, *required*, *disabled*, *wrapperClass*, and *renderHidden*. In addition, `@DialogField` makes it possible to order fields inside a container by specifying a *ranking* value.
 
-Typically, `@DialogField` is used in a pair with a widget annotations (e.g. `@TextField`).
+Typically, `@DialogField` is used in a pair with a widget annotation (e.g. `@TextField`).
 
 ```java
 @Dialog
@@ -35,13 +35,15 @@ public class Dialog {
 ```
 Please note that if `@DialogField` is specified but a widget annotation is not, the field will not be rendered. This is because `@DialogField` exposes only the most common information about a field and does not specify which HTML component to use.
 
-The other way around, you can specify a widget annotation and omit the `@DialogField`. A field like this will be rendered (without *label* and *description*, etc.), but its value will not be persisted. This usage may ba handy indeed if you need a merely "temporary" or "service" field.
+The other way around, you can specify a widget annotation and omit the `@DialogField`. A field like this will be rendered (without *label* and *description*, etc.), but its value will not be persisted. This usage may be handy if you need a merely "temporary" or "service" field.
 
 In cases when the dialog class extends another class that has some fields marked with widget annotations, relevant fields from both the superclass and child class are rendered. All fields from the superclass and child class (even those sharing the same name) are considered different and rendered separately.
 
-Still, namesake fields may interfere if rendered within the same container (dialog or tab). Therefore, avoid “field name collisions” between a superclass and a child class where possible. Even so, if you wish to engage in some deliberate "field overriding", refer to chapters on the use of `@Extends`, `@Replace` and `@Ignore`.
+Still, namesake fields may interfere if rendered within the same container (dialog or tab). Therefore, avoid “field name collisions” between a superclass and a child class where possible. Even so, if you wish to do some deliberate "field overriding", refer to the [chapter](reusing-code.md) speaking about the use of `@Extends`, `@Replace` and `@Ignore`.
 
-Unless manually aligned with use of a `@Place` annotation (see), the fields are sorted in order of their *ranking*. If several fields have the same (or default) *ranking*, they are rendered in the order in which they appear in the source code. Fields collected from ancestral classes have precedence over fields from child classes.
+Unless manually aligned with `@Place` annotation, the fields are sorted in order of their *ranking*. If several fields have the same (or default) *ranking*, they are rendered in the order in which they appear in the source code. Class fields appear before class methods. Fields collected from ancestral classes have precedence over fields from child classes.
+
+There are specific recommendations concerning fields' and methods' ordering. See the [Ordering widgets](#ordering-widgets) section below.
 
 ## Widgets (A-Z)
 
@@ -82,6 +84,9 @@ public class DialogWithAccordion {
     }
 }
 ```
+
+*Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
+
 Apart from this usage, `@Accordion` can be specified at class level as the layout hint for the entire dialog. See [Laying out your dialog](dialog-layout.md) for details.
 
 ### Alert
@@ -92,7 +97,7 @@ Apart from this usage, `@Accordion` can be specified at class level as the layou
 
 Used to render a component responsible for showing conditional alerts to the users in Touch UI dialogs. Usage is similar to the following:
 
-*Note:* this widget annotation does not need to be accompanied by a `@DialogWidget`.
+*Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
 ```java
 public class DialogWithAlert{
@@ -127,6 +132,8 @@ public class DialogWithAnchorButton {
     String field;
 }
 ```
+
+*Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
 ### Autocomplete
 
@@ -168,7 +175,7 @@ public class DialogWithButton {
     String field;
 }
 ```
-*Note:* this widget annotation does not need to be accompanied by a `@DialogWidget`.
+*Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
 ### Checkbox
 
@@ -181,6 +188,7 @@ Used to produce either simple or complex (nested) checkbox inputs in Touch UI di
 Simple checkbox usage is as follows:
 ```java
 public class DialogWithCheckbox {
+    @DialogField
     @Checkbox(
         text = "Is option enabled?",
         value = "{Boolean}true",            // These are the defaults. You may override them
@@ -199,21 +207,26 @@ Sometimes you’ll need to supply a list of sub-level checkboxes to a parent che
 ```java
 @Dialog
 public class NestedCheckboxListDialog {
+    @DialogField
     @Checkbox(text = "Level 1 Checkbox", sublist = Sublist.class)
     private boolean option1L1;
 
     private static class Sublist {
+        @DialogField
         @Checkbox(text = "Level 2 Checkbox 1")
         boolean option2L1;
 
+        @DialogField
         @Checkbox(text = "Level 2 Checkbox 2", sublist = Sublist2.class)
         boolean option2L2;
     }
 
     private static class Sublist2 {
+        @DialogField
         @Checkbox(text = "Level 3 Checkbox 1")
         boolean option3L1;
 
+        @DialogField
         @Checkbox(text = "Level 3 Checkbox 2")
         boolean option3L2;
     }
@@ -229,6 +242,7 @@ public class NestedCheckboxListDialog {
 Used to render inputs for storing color values in Touch UI dialogs.
 ```java
 public class DialogWithColorField {
+    @DialogField
     @ColorField(
         value = "#4488CC",
         emptyText = "test-string",
@@ -341,7 +355,7 @@ public class DialogWithHeading {
     String heading;
 }
 ```
-*Note:* this widget annotation does not need to be accompanied by a `@DialogWidget`.
+*Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
 ### Hidden
 
@@ -383,7 +397,7 @@ public class DialogWithHyperlink {
     String field;
 }
 ```
-*Note:* this widget annotation does not need to be accompanied by a `@DialogWidget`.
+*Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
 ### MultiField
 
@@ -457,7 +471,7 @@ public class DialogWithPathField {
 
 * `@RadioGroup`
 * Resource type: /libs/granite/ui/components/coral/foundation/form/radiogroup
-* See spec: [RadioGroup](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html?highlight=alert)
+* See spec: [RadioGroup](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/radiogroup/index.html)
 
 Renders groups of RadioButtons in Touch UI dialogs. The usage is as follows:
 
@@ -614,6 +628,8 @@ public class DialogWithTabs {
     }
 }
 ```
+*Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
+
 Apart from this usage, `@Tabs` can be specified at class level as the layout hint for the entire dialog (see [Laying out your dialog](dialog-layout.md) for details). Take note that the `@Tabs` annotation contains properties for both usages, but not every property is meaningful for either. Refer to the Javadoc on `@Tabs` to learn which properties should be used for tabs at class level and tabs as a widget respectively.
 
 ### Text
@@ -630,7 +646,7 @@ public class DialogWithText {
     String textHolder;
 }
 ```
-*Note:* this widget annotation does not need to be accompanied by a `@DialogWidget`.
+*Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
 ### TextArea
 
@@ -693,9 +709,9 @@ Widgets created upon class fields are placed in dialogs in the order they appear
 
 If there are widgets build upon both class fields and methods, the field-based ones come first.
 
-This behavior can be altered in tow ways. First is the usage or _ranking_ property of `@DialogField`. Ranking can equal to an integer value, no matter negative or positive. Fields with smaller ranking come first. Rankings persist across the superclass - child class relation and can be used in "insert" fields from a subclass in between fields of a superclass.
+This behavior can be altered in two ways. First is the usage or *ranking* property of `@DialogField`. Ranking can equal to an integer value, no matter negative or positive. Fields with smaller ranking come first. Rankings persist across the superclass - child class relation and can be used in "insert" fields from a subclass in between fields of a superclass.
 
-In some respects using rankings is not quite convenient. That is why there is another mechanism, You can attach `@Place(before = @ClassMember("anotherFieldName"))` or `@Place(after = @ClassMember(source = Another.class, value "anotherFieldName"))` to the field or method you want to be precisely placed.
+In some respects using *rankings* is not quite convenient. That is why there is another mechanism, You can attach `@Place(before = @ClassMember("anotherFieldName"))` or `@Place(after = @ClassMember(source = Another.class, value "anotherFieldName"))` to the field or method you want to be precisely placed.
 
 The *before* and *after* parameters accept a `@ClassMember` argument. In its turn, the `@ClassMember` can contain the name of a relative field/method and optionally a reference to a class this fields originates from. When no class reference specified, the current class is assumed.
 

@@ -4,7 +4,7 @@
 
 ### Custom annotations. Annotation scopes
 
-When creating markup for the Granite UI, the ToolKit handles data that comes from the project's source code. Most of the time this is  Java annotations such as `@AemComponent`, `@EditConfig` or, to say, `DatePicker.
+When creating markup for the Granite UI, the ToolKit handles data that comes from the project's source code. Most of the time it comes from Java annotations such as `@AemComponent`, `@EditConfig` or, to say, `@DatePicker`.
 
 You can create such annotations yourself. In the most basic case, the only thing you need is to declare an arbitrary annotation and attach the `@AnnotationRendering` meta-annotation to it.
 
@@ -82,7 +82,7 @@ public @interface CustomAnnotation {
 }
 ```
 
-*name* is used to alter the name of the current attribute in JCR (in particular, to use a namespaced name) so that it is not equal to the name of the property. On the contrary,*ignorePrefix*, allows stripping off a name prefix if defined at an upper level (e.g. in the FieldSet).
+*name* is used to alter the name of the attribute in JCR (in particular, to use a namespaced name) so that it is not equal to the name of the property. On the contrary,*ignorePrefix*, allows stripping off a name prefix if defined at an upper level (e.g. in the FieldSet).
 
 *scope* helps to alter the scope (whether it has been set at the `@AnnotationRendering` level or remains the default one) for this particular property.
 
@@ -136,7 +136,7 @@ There is no restriction regarding what annotations can be handled: built-in ones
 
 #### Source object
 
-The first argument of a handler's `accept` method is the `Source` - a generic data provider that matches the entity (a Java class, or a class member) the handler is called for. If the current handler is invoked dut to an annotation attached to a class, the *Source* represents, roughly speaking, the class itself. But if the annotation was a method's or a field's annotation, the *Source* stands for the underlying member.
+The first argument of a handler's `accept` method is the `Source` - a generic data provider that matches the entity (a Java class, or a class member) the handler is called for. If the current handler is invoked due to an annotation attached to a class, the *Source* represents, roughly speaking, the class itself. But if the annotation was a method's or a field's annotation, the *Source* stands for the underlying member.
 
 The *Source* is further specified by calling the `adaptTo()` method which accepts the only argument - the adapter type. You can e.g. call `source.adaptTo(Annotation[].class)` to get the array of annotations attached to the source-reflected class, or class member. Also, you can specify a particular annotation like `source.adaptTo(DialogField.class)`. If the referred annotation is not actually present, `null` is returned. To mitigate null pointer management you can call `tryAdaptTo()` method that will return an `Optional` object.
 

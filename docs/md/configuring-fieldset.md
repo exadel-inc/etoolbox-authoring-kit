@@ -6,7 +6,7 @@
 * Resource type: /libs/granite/ui/components/coral/foundation/form/fieldset
 * See spec: [FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html)
 
-|The *FieldSet* is used to logically group a number of fields. The goal is achieved with the use of an external or a nested class that encapsulates grouping fields. Then an *\<OtherClass>*-typed field is declared and `@FieldSet` annotation is added.
+The *FieldSet* is used to logically group a number of fields. The goal is achieved with the use of an external or a nested class that encapsulates grouping fields. Then an *\<OtherClass>*-typed field is declared and `@FieldSet` annotation is added.
 
 The ToolKit will guess the kind of group of widgets to render through the type of the underlying field, but you might as well specify a particular type by setting the *value* property.
 

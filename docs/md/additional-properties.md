@@ -42,7 +42,7 @@ Yet another mechanism available is to specify custom properties at Java class le
 
 - for setting entire component's attributes (those exposed in *.content.xml* file);
 - for setting attributes of *\<cq:dialog>* root node (*_cq_dialog.xml* file);
-- for setting attributes of *\<cq:editConfig>* node (*_cq_editConfig.xml* file).
+- for setting attributes of *\<cq:editConfig>* root node (*_cq_editConfig.xml* file).
 
 For these goals the `@CommonProperties` annotation is designed. It accepts similar arguments to those of `@Properties` annotation. Yet you can also specify the XML scope for each `@CommonProperty` (this exactly means: in which of the XML trees, or files, the attribute will be stored, default is *.content.xml*) and a relative path to the root node. See the code snippet:
 

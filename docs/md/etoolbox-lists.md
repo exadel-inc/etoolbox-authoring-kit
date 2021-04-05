@@ -29,9 +29,8 @@ If you need a more developed list item, declare it in Java the same way you woul
 There's no limitation to the complexity of List Item. Here is how an item for storing an HTTP status code and its metadata could look like:
 
 ```java
-
 @AemComponent(
-    path = "content/listItems/statusCode",
+    path = "listItems/statusCode",
     title = "Status Code List Item"
 )
 @Dialog
@@ -50,11 +49,14 @@ public class StatusCodeListItem {
     private String icon;
 }
 ```
+The List Items have a default view which enumerates all the available properties. However, this can be customized. You can add an Item preview section to a List Item. To do this, create a new `itemPreview.html` file in your Item's folder (in our case, `/apps/listItems/statusCode`). This preview will be displayed next to the properties.
 
 ### Editing a List
+
 The Lists can be edited similarly to any other page. You can change the type of *Item Component* used in a list (even after the list has been populated with data) via the page properties.
 
 ### Retrieving Lists' content programmatically
+
 [ListHelper](../../core/src/main/java/com/exadel/aem/toolkit/core/lists/utils/ListHelper.java) is a helper class that provides the ability to retrieve contents of any list by its path. See examples below:
 ```
    List<ItemModel> models = CustomListsHelper.getList(resolver, "/content/myList", ItemModel.class);
@@ -63,5 +65,27 @@ The Lists can be edited similarly to any other page. You can change the type of 
 You can find more examples in [ListHelperTest](../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
 
 #### Populating dropdown widgets from a datasource.
-AAT Lists can be used as a data source for any widget consuming granite datasources.
-(todo: add an example of @Datasource + Lists)
+EToolbox Lists can be used as a data source for any widget consuming Granite datasources like in the following example:
+
+```java
+@AemComponent(
+        path = "path/to/my/component",
+        title = "My AEM Component"
+)
+@Dialog
+public class MyComponent {
+    @DialogField
+    @Select(
+        optionProvider = @OptionProvider(
+            value = @OptionSource(
+                value = "/content/path/to/etoolbox/list",
+                textMember = "icon",
+                valueMember = "code"
+            ),
+            sorted = true
+        )
+    )
+    String optionList;
+}
+```
+

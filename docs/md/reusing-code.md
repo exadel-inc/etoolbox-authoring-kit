@@ -38,7 +38,7 @@ The `@Ignore` setting is *not* inherited, unlike fields themselves, and works on
 
 With the ToolKit, dialog sections (tabs or accordion panels) declared in a superclass are also "inherited" by the descendant class, and the layout instructions (`@Place`) are in effect even if referring to a superclass container.
 
-Surely, there's the possibility to ignore an "inherited" section as well. Add the `@Ignore` annotation to the current class (not a class member this time) and fill in its *sections* property. It accepts a single string equal to the title of the ignored section, or an array of strings.
+Surely, there's a possibility to ignore an "inherited" section as well. Add the `@Ignore` annotation to the current class (not a class member this time) and fill in its *sections* property. It accepts a single string equal to the title of the ignored section, or an array of strings.
 
 ```java
 @Dialog(
@@ -74,10 +74,11 @@ Several dialog fields, such as the RichTextEditor field, may require vast and so
 
 One of the powerful features of the ToolKit is its extension/inheritance technique that helps to cope with that issue.
 
-Suppose that you have marked a private String sampleText; in your HelloWorld.java class with several ToolKit annotations and wish to use the same set of  annotations for private String anotherField; in this or another class.
+Suppose that you have marked a `private String sampleText;` in your *HelloWorld.java* with several ToolKit annotations and wish to use the same set of annotations for `private String anotherField;` in this or another class.
 
-To achieve this, add the `@Extends` annotation (the one that contains a pointer pointing to *sampleText*) to the *anotherText* field. Whatever field-specific annotation you defined for the *sampleText* field will now be "inherited" by *anotherText*. You can still add another `@TextField` to *anotherText* with properties that were not specified in *sampleText* field or have different values there. Thereby "inheritance with overriding" is achieved. See the following snippet:
-```
+To achieve this, add the `@Extends` annotation (the one that contains a pointer to *sampleText*) to *anotherText* field. Whatever widget annotation you defined for the *sampleText* field will now be "inherited" by *anotherText*.
+<br>You can still add another `@TextField` to *anotherText* with properties that were not specified in *sampleText* or have different values there. Thereby "inheritance with overriding" is achieved. See the following snippet:
+```java
 public class CustomPropetiesDialog {
     @DialogField(label = "My text field")
     @Extends(value = HelloWorld.class, field = "sampleText")
@@ -86,9 +87,9 @@ public class CustomPropetiesDialog {
     /* ... */
 }
 ```
-The ToolKit will first look for the *sampleText* field in *HelloWorld* class and, if found, will use that field's `@DialogField` and `@DatePicker` annotations to prepare an XML markup for the current field. For properties such as *label* or *emptyText* that have local "overrides", the local values will be used, and the rest will be taken from the *anotherText* field.
+The ToolKit will first look for the *sampleText* field in *HelloWorld.java* and, if it is found, will use that field's `@DialogField` and `@DatePicker` annotations to prepare an XML markup for the current field. For properties such as *label* or *emptyText* that have local "overrides", the local values will be used, and the rest will be taken from the *anotherText* field.
 
-Note that it is possible that the "parent" field in its own turn `@Extends`-es some third "grandparent" field, so rendering starts from "grandparent" (same as it is with inheriting class members in object-oriented programming).
+Note: it is possible that the "parent" field in its own turn `@Extends`-es some third "grandparent" field, so rendering starts from "grandparent" (same as it is with inheriting class members in object-oriented programming).
 
 You should still make sure that all the fields involved have the same component annotation. A field marked with, say, `@DatePicker` will not extend some `@Checkbox` field, and so on.
 

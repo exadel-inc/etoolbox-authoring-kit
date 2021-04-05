@@ -68,11 +68,11 @@ public class MyComponent {
 
 *value* - contains one or more `@OptionSource` objects each referring to a single data source (see below);
 
-*prepend* - if specified, defines one or more extra options that will be inserted in the beginning of the option list regardless of items acquired via option source(-s). This may be a kind of "none" or "default" option. Each extra option string must consist of a label and a value separated with colon (`:`). A value may be an empty string, in that case the option ends with the `:` sign. If a label or a value themselves must contain a colon, that one is escaped with `\`. If option with similar is *value* already present, the extra option will not be added;
+*prepend* - if specified, defines one or more extra options that will be inserted in the beginning of the option list independently of items acquired via the option source(-s). This may be a kind of "none" or "default" option. Each extra option string must consist of a label and a value separated with colon (`:`). A value may be an empty string, in that case the option ends with the `:` sign. If a label or a value themselves must contain a colon, that one is escaped with `\`. If option with a similar *value* is already present, the extra option will not be added;
 
-*append* - same as *prepend* but the extra item(-s) are appended to the option list. A valid list may consist of only prepended and/or appended options without the "external" part;
+*append* - same as *prepend*, but the extra item(-s) are appended to the option list. A valid list may consist of only prepended and/or appended options without the "external" part;
 
-*selectedValue* - if set to a string that matches a value or a label of one of the datasource options, this option will be rendered as selected by default;
+*selectedValue* - if set to a string that matches the value or the label of one of the datasource options, this option will be rendered as selected by default;
 
 *sorted* - if set to true, options will be sorted in their labels' alphabetical order regardless of the order they arrived from JCR. However, the *prepended* and *appended* options will appear in the order they were specified by the developer, and will remain in the beginning and in the end, respectively.
 *
@@ -117,19 +117,21 @@ Here's how it may look like in Java code:
 )
 @Dialog
 public class MyComponent {
+    private static final String PATH_REFERENCE = "@path";
+
     @DialogField(label = "Select option list")
     @PathField(rootPath = "/etc/tags")
     @DependsOnRef
     private String path;
 
     @DialogField(label = "Select option")
-    @Select(optionProvider = @OptionProvider(@OptionSource("@path"))) // @path refers to the attribute named "path" in the same JCR node
+    @Select(optionProvider = @OptionProvider(@OptionSource(PATH_REFERENCE))) // @path refers to the attribute named "path" in the same JCR node
     @DependsOn(
-        query = "@path2",
+        query = PATH_REFERENCE,
         action = "update-datasource",
         params = {
             @DependsOnParam(name = "sorted", value = "true"),
-            @DependsOnParam(name = "append", value = "None:node")
+            @DependsOnParam(name = "append", value = "None:none")
         }
     )
     private String selectedOption;
@@ -142,8 +144,3 @@ The facility that makes it possible to dynamically update selectable options is 
 #### See also
 
 [Programming dynamic dialog behavior: DependsOn plugin client library](depends-on.md)
-
-
-
-
-

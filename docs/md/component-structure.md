@@ -6,7 +6,7 @@
 
 Additionally, `@AemComponent` can contain references to other Java classes that can be referred to as “views”. If, for instance, you need *editConfig*, you can add the `@EditConfig` to the Java class where the `@AemComponent` annotation is already present. You can also add `@EditConfig` to another Java class and put a reference to that class in the *views* collection of `@AemComponent`.
 
-Take note that you need either to put an annotation such as `@Dialog` or `@EditConfig` in the same Java class as @AemComponent or add it to another class and then add the class reference to the *views* collection. You don't need to do both.
+Take note that you need either to put an annotation such as `@Dialog` or `@EditConfig` in the same Java class as `@AemComponent` or add it to another class and then add the class reference to the *views* collection. You don't need to do both.
 
 See the code snippet below, which displays all currently supported `@AemComponent` properties:
 
@@ -58,11 +58,11 @@ If you specify *title* in `@Dialog`, it will override the title specified in @Ae
 public class DesignDialogView {/* ... */}
 ```
 
-If you specify *title* in `@DesignDialog`, it will override the title specified in @AemComponent. Skip this if you need to have the same title rendered for the component itself and for the design dialog.
+If you specify *title* in `@DesignDialog`, it will override the title specified in `@AemComponent`. Skip this if you need to have the same title rendered for the component itself and for the design dialog.
 
 ### Dialog layouts
 
-Both the Touch UI dialog and design dialog can have either a relative simple or s complex structure. This is why they can either have a plain "all in the same screen display or be organized with use of nested sections, or containers.
+Both the Touch UI dialog and design dialog can have either a relative simple or a complex structure. This is why they can either have a plain "all in the same screen" display or be organized with use of nested sections, or containers.
 
 In the first case, no specific setup is required. A dialog is automatically assigned the *"fixed column"* style.
 
