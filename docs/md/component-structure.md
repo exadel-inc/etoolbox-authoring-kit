@@ -70,7 +70,7 @@ Otherwise, a dialog can be rendered in one or more tabs, or be organized as an *
 
 ### EditConfig settings
 
-If you wish to engage TouchUI dialog features like listeners or in-place editing (those living in *\<cq:editConfig>* node and, accordingly, *_cq_editConfig.xml* file), add an `@EditConfig` annotation to your Java class (same as above, you can as well add the annotation to a separate class and then put the reference to this class into @AemComponent's *views* property).
+If you wish to engage Touch UI dialog features like listeners or in-place editing (those living in *\<cq:editConfig>* node and, accordingly, *_cq_editConfig.xml* file), add an `@EditConfig` annotation to your Java class (same as above, you can as well add the annotation to a separate class and then put the reference to this class into @AemComponent's *views* property).
 
 `@EditConfig` facilitates setting of the following properties and features:
 
