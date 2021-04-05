@@ -111,8 +111,8 @@ abstract class OptionProviderHandler {
      */
     private static void populateSourceAttributes(OptionSource optionSource, Target datasourceElement, String postfix) {
         datasourceElement.attribute(CoreConstants.PN_PATH + postfix, optionSource.value());
-        if (StringUtils.isNotBlank(optionSource.fallbackPath())) {
-            datasourceElement.attribute(DialogConstants.PN_FALLBACK_PATH + postfix, optionSource.fallbackPath());
+        if (StringUtils.isNotBlank(optionSource.fallback())) {
+            datasourceElement.attribute(DialogConstants.PN_FALLBACK_PATH + postfix, optionSource.fallback());
         }
         if (StringUtils.isNotBlank(optionSource.textMember())) {
             datasourceElement.attribute(DialogConstants.PN_TEXT_MEMBER + postfix, optionSource.textMember());

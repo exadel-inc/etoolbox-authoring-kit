@@ -38,7 +38,7 @@ public @interface OptionSource {
      * is not valid or unreachable
      * @return Optional string value
      */
-    String fallbackPath() default "";
+    String fallback() default "";
 
     /**
      * If set, specifies the name of an attribute of the underlying option resource (such as a JCR node) to be used as
