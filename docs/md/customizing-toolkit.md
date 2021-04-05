@@ -140,7 +140,7 @@ The first argument of a handler's `accept` method is the `Source` - a generic da
 
 The *Source* is further specified by calling the `adaptTo()` method which accepts the only argument - the adapter type. You can e.g. call `source.adaptTo(Annotation[].class)` to get the array of annotations attached to the source-reflected class, or class member. Also, you can specify a particular annotation like `source.adaptTo(DialogField.class)`. If the referred annotation is not actually present, `null` is returned. To mitigate null pointer management you can call `tryAdaptTo()` method that will return an `Optional` object.
 
-There is a bunch of predefined source adapters. For instance, a source object can be adapted to `MemberSource` that has several properties specific for member-based sources (refer to the Javadoc for details).
+There is a bunch of predefined source adapters. For instance, a source object can be adapted to `MemberSource` that has several properties specific for member-based sources (refer to this [javadoc](../../core/src/main/java/com/exadel/aem/toolkit/api/handlers/MemberSource.java) for details).
 
 You can create your own adapter that would encapsulate some reasonable logic. See the following code snippet which shows how to virtually turn a ToolKit annotation into a writable Java entity:
 
@@ -252,7 +252,7 @@ And the next snippet shows how to retrieve an ancestor with the particular name:
 Target root = currentTarget.findParent(t -> t.getName().equals("jcr:root"))
 ```
 
-There are much more possibilities. For deeper detail, see the Javadoc of `Target` interface.
+There are much more possibilities. For deeper detail, see the inline documentation on [Target](../../core/src/main/java/com/exadel/aem/toolkit/api/handlers/Target.java).
 
 Same as the *Source*, *Target* is an adaptable entity. By default, *Target* adapts to `DomAdapter` with the possibility to be serialized to an XML DOM document. You can also apply any custom adapters in the way describe in the "Source object" division.
 

@@ -484,7 +484,7 @@ public class DialogWithRadioGroup {
 }
 ```
 
-You can also define an _optionProvider_ that will produce options based on a wide variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on `@OptionProvider`.
+Just as for a `@RadioGroup`, you can define an *optionProvider* that will produce options based on a wide variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on [OptionProvider](option-provider.md).
 
 ### RichTextEditor
 
@@ -548,7 +548,7 @@ public class DialogWithDropdown {
 }
 ```
 
-Just as for a `@RadioGroup`, you can define an _optionProvider_ that will produce options based on a wide variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on `@OptionProvider`.
+Just as for a `@RadioGroup`, you can define an *optionProvider* that will produce options based on a wide variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on [OptionProvider](option-provider.md).
 
 ### Switch
 
@@ -733,4 +733,6 @@ The resulting widget sequence will be: the text field for *namePrefix*, the text
 - [Grouping fields with FieldSet](configuring-fieldset.md)
 - [Multiplying fields](multiplying-fields.md)
 - [Additional properties of components, dialogs and fields](additional-properties.md)
+- [Programming dynamic dialog behavior: DependsOn plugin client library](depends-on.md)
+- [Feeding data to selection widgets with OptionProvider](option-provider.md)
 

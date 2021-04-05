@@ -1,4 +1,6 @@
-## DependsOn Plug-in Client Library
+[Main page](../../README.md)
+
+## DependsOn Plugin Client Library
 
 Authors: _Alexey Stsefanovich (ala'n)_, _Yana Bernatskaya (YanaBr)_, _Stepan Miakchilo_, _Liubou Masiuk_
 
@@ -75,7 +77,8 @@ _Additional parameters:_
    * `postfix` (optional, `.json` by default) - a string to append to the path if it is not already presented
 
 ##### Widget-specific actions
-* `update-options` - changes the option set of a Granite Select component based on the path from the Query result. The path can lead to any endpoint that is supported by the Option Provider mechanism.
+
+* `update-options` - changes the option set of a Granite Select component based on the path from the Query result. The path can lead to any endpoint that is supported by the [Option Provider mechanism](option-provider.md).
 
 ##### Action Registry
 
@@ -726,3 +729,7 @@ public class Component {
     private String alertGetter;
 }
 ```
+***
+#### See also
+
+[Feeding data to selection widgets with OptionProvider](option-provider.md)

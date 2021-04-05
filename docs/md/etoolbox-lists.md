@@ -1,7 +1,10 @@
 [Main page](../../README.md)
 
-# Lists
-AEM Authoring Toolkit Lists provide a flexible way to create, store and retrieve lists of structured items, e.g. a list of HTTP status codes and their descriptions:
+## Managing structured data with EToolbox Lists
+
+EToolbox Lists, or simply *Lists*, is an accessory of the ToolKit that represents a contribution to the Exadel Toolbox package
+
+The Lists provide a flexible way to create, store and retrieve lists of structured items, e.g. a list of HTTP status codes and their descriptions:
 ```
 + list
   + item1
@@ -12,36 +15,52 @@ AEM Authoring Toolkit Lists provide a flexible way to create, store and retrieve
     - description = "Not Found"
 ```
 
-A list consists of a number of items, the structure and authoring dialog of every item is defined by an arbitrary AEM component (a.k.a. Item Component).
-Each list is an AEM page, which means that it can be placed anywhere in the content structure; lists can be created, edited, localized and published via TouchUI interface.
+A List consists of a number of items, the structure and authoring dialog of every item is defined by an arbitrary AEM component (a.k.a. *Item Component*).
+Each list is an AEM page, which means that it can be placed anywhere in the content structure. Lists can be created, edited, localized and published via Touch UI interface.
 
+### Creating a new List
 
-## Usage
+Lists can be created and managed either from the common Sites Console, or from the dedicated Lists Console (Tools -> EToolbox -> EToolbox Lists). Click Create -> List and specify the list's *Title*, *Name* and *Item Component*.
 
-#### Creating a new list
-AAT Lists can be created and managed either from Sites Console, or from Lists Console (Tools -> AAT Lists -> AAT List (todo: change to agreed naming)). Click Create -> List and specify list's Title, Name and Item Component.
-"Simple List Item" component is provided out-of-the-box and consists of "jcr:title" and "value" fields. In order to add a new Item Component to the dropdown, add `@ListItem` annotation to this component.
+For a new installation, there will be the only Item Component in stock. It is the *Simple List Item* - the one that consists of *jcr:title* and *value* fields to cover the most basic use cases.
+
+If you need a more developed list item, declare it in Java the same way you would do it for a regular AEM component; then add the `@ListItem` marker annotation.
+
+There's no limitation to the complexity of List Item. Here is how an item for storing an HTTP status code and its metadata could look like:
 
 ```java
-@Dialog(
-    name = "content/listItemComponent",
-    title = "List Item"
+
+@AemComponent(
+    path = "content/listItems/statusCode",
+    title = "Status Code List Item"
 )
+@Dialog
 @ListItem
-public class ListItemComponent {
-  ...
+public class StatusCodeListItem {
+    @DialogField(label = "Status Code")
+    @NumberField(min = 200, max = 599)
+    private int code;
+
+    @DialogField(label = "Description")
+    @TextField
+    private String description;
+
+    @DialogField(label = "Status Icon")
+    @ImageUpload
+    private String icon;
 }
 ```
-#### Editing lists
-AAT Lists can be edited similarly to any other page. You may change the type of Item Component used in this list (even after the list has been populated with data) via page properties.
 
-#### Retrieving lists' content programmatically
-[ListsHelper](../../core/src/main/java/com/exadel/aem/toolkit/bundle/lists/util/ListsHelper.java) is a helper class that provides the ability to retrieve any list by its path. See examples below:
-```java
+### Editing a List
+The Lists can be edited similarly to any other page. You can change the type of *Item Component* used in a list (even after the list has been populated with data) via the page properties.
+
+### Retrieving Lists' content programmatically
+[ListHelper](../../core/src/main/java/com/exadel/aem/toolkit/core/lists/utils/ListHelper.java) is a helper class that provides the ability to retrieve contents of any list by its path. See examples below:
+```
    List<ItemModel> models = CustomListsHelper.getList(resolver, "/content/myList", ItemModel.class);
    Map<String, String> mapping = CustomListsHelper.getMap(resolver, "/content/myList");
 ```
-You can find more examples in [ListsHelperTest](../../core/src/test/java/com/exadel/aem/toolkit/bundle/lists/util/ListsHelperTest.java)
+You can find more examples in [ListHelperTest](../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
 
 #### Populating dropdown widgets from a datasource.
 AAT Lists can be used as a data source for any widget consuming granite datasources.

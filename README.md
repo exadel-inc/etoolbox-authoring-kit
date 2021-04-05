@@ -116,7 +116,7 @@ You can as well use <u>other means</u> to get the content package deployed to th
 
 ## Common use cases
 
-####1. Auto-generated Touch UI dialog, edit config and component detail for an AEM component
+#### 1. Auto-generated Touch UI dialog, edit config and component detail for an AEM component
 
 - <u>In the package module</u>: you only need the _component.html_ file in your _/apps/.../path/to/my/component_ folder
 - <u>In the bundle module</u>:
@@ -147,7 +147,7 @@ public class MyComponentModel {
 }
 ```
 
-####2. Auto-generated Touch UI dialog, design dialog, edit config and component detail for an AEM component (unites multiple Java files)
+#### 2. Auto-generated Touch UI dialog, design dialog, edit config and component detail for an AEM component (unites multiple Java files)
 
 - <u>In the package module</u>: you only need the _component.html_ file in your _/apps/.../path/to/my/component_ folder
 - <u>In the bundle module</u>:
@@ -169,8 +169,9 @@ public class MyComplexComponentPojo {
         required = true)
     @TextField
     private String text;
-    /* ... */
 }
+
+/* ...Elsewhere in the code */
 
 @EditConfig(
     dropTargets = @DropTargetConfig(
@@ -190,6 +191,8 @@ public class MyComplexComponentPojo {
 public interface EditConfigHolder { // Can be reused across many components
 }
 
+/* ...Elsewhere in the code */
+
 @DesignDialog(title = "Complex Component Design")
 public class DesignDialogHolder { // Can be reused across many components
     @DialogField(
@@ -201,7 +204,7 @@ public class DesignDialogHolder { // Can be reused across many components
 }
 ```
 
-####3. Touch UI dialog with its content organized in tabs; contains a FieldSet
+#### 3. Touch UI dialog with its content organized in tabs; contains a FieldSet
 - <u>In the package module</u>: you only need the _component.html_ file in your _/apps/.../path/to/my/component_ folder
 - <u>In the bundle module</u>:
 
@@ -235,6 +238,8 @@ public class CompositeComponentModel {
     private MyFieldSet myFieldSet1;
 }
 
+/* ...Elsewhere in the code */
+
 @Model(adaptables = Resource.class)
 public class MyFieldSet { // Could as well be a private nested class in CompositeComponentModel
     @ValueMapValue
@@ -249,7 +254,7 @@ public class MyFieldSet { // Could as well be a private nested class in Composit
 }
 ```
 
-####4. Touch UI dialog with a MultiField
+#### 4. Touch UI dialog with a MultiField
 - <u>In the package module</u>: you only need the _component.html_ file in your _/apps/.../path/to/my/component_ folder
 - <u>In the bundle module</u>:
 
@@ -285,7 +290,7 @@ public class MultifieldsSample {
 }
 ```
 
-####5. Touch UI dialog with a dynamically displayed content (this is also a custom item for an EToolbox List)
+#### 5. Touch UI dialog with a dynamically displayed content (this is also a custom item for an EToolbox List)
 
 - <u>In the package module</u>: you only need the _component.html_ file in your _/apps/.../path/to/list/item_ folder
 - <u>In the bundle module</u>:
@@ -316,16 +321,17 @@ public class ListItemSample {
     private String description;
 }
 
-/* ... elsewhere in the code */
+/* ...Elsewhere in the code */
+
 public class ListConsumer {
     private List<ListItemSample> myList = ListHelper.getList(resourceResolver, "/content/path/to/list", ListItemSample.class);
 }
 ```
-Plenty more code snippets are available in the [Enhanced component management](#enhanced-component-management) section and in the _samples_ project.
+Plenty more code snippets are available in the [Component management](#component-management) section and in the _samples_ project.
 
 ## Features reference
 
-#### Component and management
+#### Component management
 
 - [Component structure](docs/md/component-structure.md)
 - [Laying out your dialog](docs/md/dialog-layout.md)
@@ -339,13 +345,13 @@ Plenty more code snippets are available in the [Enhanced component management](#
 
 #### Enhanced authoring experience
 
-- [Programming dynamic dialog behavior: DependsOn](./ui.apps/src/main/content/jcr_root/apps/etoolbox-authoring-kit/depends-on/README.md)
+- [Programming dynamic dialog behavior: DependsOn plugin client library](docs/md/depends-on.md)
 - [Managing structured data with EToolbox Lists](docs/md/etoolbox-lists.md)
-
+- [Feeding data to selection widgets with OptionProvider](docs/md/option-provider.md)
 
 ## Working with sample code
 
-Examples of how to use the ToolKit and its DependsOn microframework are presented in the [Samples](samples) module.
+Examples of how to use the ToolKit and the DependsOn client library are presented in the [Samples](samples) module.
 
 Run `mvn clean install -P install-samples` from the root folder of [Samples](samples) to install the sample project.
 
