@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/apps/cq/core/content/nav/tools/etoolbox/lists"/>
+    <filter root="/apps/wcm/core/content/sites/actions/secondary/create/items/createlist"/>
+
+    <filter root="/apps/etoolbox-authoring-kit/clientlib-injector"/>
+    <filter root="/apps/etoolbox-authoring-kit/lists"/>
+    <filter root="/apps/etoolbox-authoring-kit/depends-on"/>
+    <filter root="/apps/etoolbox-authoring-kit/depends-on-injector"/>
+    <filter root="/apps/etoolbox-authoring-kit/install"/>
+
+    <!-- The following filters clear old directories in JCR content. They can be removed after v.2 release -->
+    <filter root="/apps/authoring-toolkit"/>
+    <filter root="/apps/cq/core/content/nav/tools/aembox/lists"/>
+</workspaceFilter>

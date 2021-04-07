@@ -2,13 +2,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.exadel.aem</groupId>
-    <artifactId>aem-authoring-toolkit</artifactId>
-    <version>1.2.1</version>
+    <groupId>com.exadel.etoolbox</groupId>
+    <artifactId>etoolbox-authoring-kit</artifactId>
+    <version>2.0.2</version>
 
     <name>${project.prettyName}</name>
-    <description>Automates generating rich and responsive authoring interfaces for Adobe Experience Manager (TM) via Maven-powered build and deployment workflow</description>
-    <url>https://github.com/exadel-inc/aem-authoring-toolkit</url>
+    <description>Automates generating and managing rich and responsive authoring interfaces for Adobe Experience Manager (TM)</description>
+    <url>https://github.com/exadel-inc/etoolbox-authoring-kit</url>
 
     <organization>
         <name>Exadel, Inc.</name>
@@ -17,8 +17,8 @@
 
     <developers>
         <developer>
-            <id>edmtp</id>
-            <name>Exadel DMTP Team</name>
+            <id>exadel-martech</id>
+            <name>Exadel MarTech Team</name>
             <organization>Exadel, Inc.</organization>
             <organizationUrl>https://exadel.com</organizationUrl>
             <roles>
@@ -36,9 +36,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/exadel-inc/aem-authoring-toolkit.git</connection>
-        <developerConnection>scm:git:git@github.com:exadel-inc/aem-authoring-toolkit.git</developerConnection>
-        <url>https://github.com/exadel-inc/aem-authoring-toolkit</url>
+        <connection>scm:git:git://github.com/exadel-inc/etoolbox-authoring-kit.git</connection>
+        <developerConnection>scm:git:git@github.com:exadel-inc/etoolbox-authoring-kit.git</developerConnection>
+        <url>https://github.com/exadel-inc/etoolbox-authoring-kit</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -55,23 +55,27 @@
 
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/exadel-inc/aem-authoring-toolkit/issues</url>
+        <url>https://github.com/exadel-inc/etoolbox-authoring-kit/issues</url>
     </issueManagement>
 
     <packaging>pom</packaging>
 
     <modules>
-        <module>aem-authoring-toolkit-api</module>
-        <module>aem-authoring-toolkit-plugin</module>
-        <module>aem-authoring-toolkit-assets</module>
+        <module>core</module>
+        <module>ui.apps</module>
+        <module>ui.content</module>
+        <module>all</module>
+        <module>plugin</module>
     </modules>
 
     <properties>
-        <project.prettyName>AEM Authoring Toolkit</project.prettyName>
+        <project.prettyName>Exadel Toolbox Authoring Kit</project.prettyName>
         <project.vendor>Exadel</project.vendor>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.jdkSpec>1.8</project.build.jdkSpec>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
 
         <sonar.projectKey>${project.artifactId}</sonar.projectKey>
         <sonar.java.binaries>target/classes</sonar.java.binaries>
@@ -84,6 +88,71 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>com.day.jcr.vault</groupId>
+                    <artifactId>content-package-maven-plugin</artifactId>
+                    <version>0.5.1</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <group>${project.parent.groupId}/${project.parent.artifactId}</group>
+                        <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
+                        <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
+                        <properties>
+                            <name>${project.name}</name>
+                            <description>${project.name}</description>
+                            <version>${project.version}</version>
+                            <created>${maven.build.timestamp}</created>
+                            <createdBy>${project.vendor}</createdBy>
+                            <packagePath>${project.artifactId}-${project.version}.zip</packagePath>
+                        </properties>
+                        <archive>
+                            <manifestEntries>
+                                <Built-By>${project.vendor}</Built-By>
+                                <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
+                                <Implementation-Title>${project.name}</Implementation-Title>
+                                <Implementation-Version>${project.version}</Implementation-Version>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>build-package</id>
+                            <goals>
+                                <goal>package</goal>
+                            </goals>
+                            <configuration>
+                                <group>${project.parent.groupId}/${project.parent.artifactId}</group>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>5.1.1</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <exportScr>true</exportScr>
+                        <instructions>
+                            <Import-Package>*;resolution:=optional</Import-Package>
+                            <_dsannotations>*</_dsannotations>
+                            <_metatypeannotations>*</_metatypeannotations>
+                        </instructions>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>generate-scr-metadata</id>
+                            <goals>
+                                <goal>manifest</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.6.1</version>
@@ -95,6 +164,36 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>1.4.1</version>
+                    <configuration>
+                        <rules>
+                            <requireMavenVersion>
+                                <version>3.3.9</version>
+                                <message>Maven version 3.3.9 or above is required</message>
+                            </requireMavenVersion>
+                            <requireJavaVersion>
+                                <version>1.8</version>
+                                <message>Project is designed for compilation with at least Java 8</message>
+                            </requireJavaVersion>
+                        </rules>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>enforce-versions</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.1.2</version>
                     <configuration>
@@ -102,6 +201,7 @@
                             <manifestEntries>
                                 <Built-By>${project.vendor}</Built-By>
                                 <Build-Jdk>${java.version}</Build-Jdk>
+                                <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
                                 <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
                                 <Bundle-Name>${project.name}</Bundle-Name>
                                 <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
@@ -125,23 +225,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>com.day.jcr.vault</groupId>
-                    <artifactId>content-package-maven-plugin</artifactId>
-                    <version>0.0.24</version>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <group>${project.parent.artifactId}</group>
-                        <properties>
-                            <name>${project.name}</name>
-                            <description>${project.name}</description>
-                            <version>${project.version}</version>
-                            <packagePath>${project.artifactId}-${project.version}.zip</packagePath>
-                        </properties>
-                        <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
-                        <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
-                    </configuration>
-                </plugin>
-                <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
                     <version>1.6.7</version>
@@ -157,6 +240,10 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
             </plugin>
@@ -165,7 +252,8 @@
 
     <profiles>
 
-        <profile><id>test</id>
+        <profile>
+            <id>test</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -177,11 +265,17 @@
                             <artifactId>jacoco-maven-plugin</artifactId>
                             <version>0.8.5</version>
                             <executions>
-                                <execution><id>agent</id>
-                                    <goals><goal>prepare-agent</goal></goals>
+                                <execution>
+                                    <id>agent</id>
+                                    <goals>
+                                        <goal>prepare-agent</goal>
+                                    </goals>
                                 </execution>
-                                <execution><id>report</id>
-                                    <goals><goal>report</goal></goals>
+                                <execution>
+                                    <id>report</id>
+                                    <goals>
+                                        <goal>report</goal>
+                                    </goals>
                                 </execution>
                             </executions>
                         </plugin>
@@ -190,7 +284,8 @@
             </build>
         </profile>
 
-        <profile><id>deploy</id>
+        <profile>
+            <id>deploy</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -199,12 +294,15 @@
                     <plugins>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-source-plugin</artifactId>
-                            <version>3.0.1</version>
+                            <artifactId>maven-gpg-plugin</artifactId>
+                            <version>1.6</version>
                             <executions>
-                                <execution><id>attach-sources</id>
-                                    <phase>package</phase>
-                                    <goals><goal>jar-no-fork</goal></goals>
+                                <execution>
+                                    <id>sign-artifacts</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>sign</goal>
+                                    </goals>
                                 </execution>
                             </executions>
                         </plugin>
@@ -216,20 +314,26 @@
                                 <encoding>UTF-8</encoding>
                             </configuration>
                             <executions>
-                                <execution><id>attach-javadoc</id>
+                                <execution>
+                                    <id>attach-javadoc</id>
                                     <phase>package</phase>
-                                    <goals><goal>jar</goal></goals>
+                                    <goals>
+                                        <goal>jar</goal>
+                                    </goals>
                                 </execution>
                             </executions>
                         </plugin>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-gpg-plugin</artifactId>
-                            <version>1.6</version>
+                            <artifactId>maven-source-plugin</artifactId>
+                            <version>3.0.1</version>
                             <executions>
-                                <execution><id>sign-artifacts</id>
-                                    <phase>verify</phase>
-                                    <goals><goal>sign</goal></goals>
+                                <execution>
+                                    <id>attach-sources</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>jar-no-fork</goal>
+                                    </goals>
                                 </execution>
                             </executions>
                         </plugin>
@@ -244,20 +348,181 @@
             </build>
         </profile>
 
-        <profile><id>install-assets</id>
+        <profile>
+            <id>install-assets</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.day.jcr.vault</groupId>
+                            <artifactId>content-package-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>deploy-to-instance</id>
+                                    <goals>
+                                        <goal>install</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
         </profile>
+
     </profiles>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>30.0-jre</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.jimfs</groupId>
+                <artifactId>jimfs</artifactId>
+                <version>1.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.wcm</groupId>
+                <artifactId>io.wcm.testing.aem-mock.junit4</artifactId>
+                <version>3.1.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet.jsp</groupId>
+                <artifactId>jsp-api</artifactId>
+                <version>2.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.jcr</groupId>
+                <artifactId>jcr</artifactId>
+                <version>2.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-core</artifactId>
+                <version>3.6.1</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugin-tools</groupId>
+                <artifactId>maven-plugin-annotations</artifactId>
+                <version>3.4</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-api</artifactId>
+                <version>3.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>org.apache.sling.api</artifactId>
+                <version>2.16.4</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>org.apache.sling.jcr.resource</artifactId>
+                <version>3.0.18</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.sling</groupId>
+                <artifactId>org.apache.sling.testing.sling-mock-oak</artifactId>
+                <version>2.1.10-1.16.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>2.7.22</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>osgi.annotation</artifactId>
+                <version>8.0.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>osgi.cmpn</artifactId>
+                <version>6.0.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>osgi.core</artifactId>
+                <version>8.0.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>0.9.11</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>1.7.28</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.xmlunit</groupId>
+                <artifactId>xmlunit-core</artifactId>
+                <version>2.6.3</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.adobe.aem</groupId>
+                <artifactId>uber-jar</artifactId>
+                <version>6.4.0</version>
+                <classifier>apis</classifier>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>adobe</id>
+            <name>Adobe Public Repository</name>
+            <url>http://repo.adobe.com/nexus/content/groups/public</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+
     <pluginRepositories>
-		<pluginRepository>
-			<id>adobe</id>
-			<name>Adobe Public Repository</name>
-			<url>http://repo.adobe.com/nexus/content/groups/public/</url>
-			<layout>default</layout>
-		</pluginRepository>
-	</pluginRepositories>
+        <pluginRepository>
+            <id>adobe</id>
+            <name>Adobe Public Repository</name>
+            <url>http://repo.adobe.com/nexus/content/groups/public/</url>
+            <layout>default</layout>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content jcr:primaryType="nt:unstructured">
+        <actions jcr:primaryType="nt:unstructured">
+            <secondary jcr:primaryType="nt:unstructured">
+                <create jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/pulldown"
+                        text="Create"
+                        variant="primary"
+                        trackingFeature="aem:sites:globalcreate">
+                    <items jcr:primaryType="nt:unstructured">
+                        <createlist granite:rel="cq-siteadmin-admin-create-list"
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/collection/actionlink"
+                                    action="foundation.dialog"
+                                    icon="textRomanLowercase"
+                                    rel="cq-siteadmin-admin-create-list"
+                                    relScope="item"
+                                    target=".cq-siteadmin-admin-childpages"
+                                    text="List">
+                            <data jcr:primaryType="nt:unstructured"
+                                  nesting="hide"
+                                  src.uritemplate="/mnt/overlay/etoolbox-authoring-kit/lists/components/content/console/createpagedialog.html{+id}"/>
+                        </createlist>
+                    </items>
+                </create>
+            </secondary>
+        </actions>
+    </jcr:content>
+</jcr:root>

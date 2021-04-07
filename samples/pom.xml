@@ -4,27 +4,30 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>aem-authoring-toolkit-samples</artifactId>
-    <groupId>com.exadel.aem</groupId>
-    <name>AEM Authoring Toolkit - Samples</name>
-    <version>1.2.1</version>
+    <groupId>com.exadel.etoolbox</groupId>
+    <artifactId>etoolbox-authoring-kit-samples</artifactId>
+    <version>2.0.2</version>
+
+    <name>Exadel Toolbox Authoring Kit - Samples</name>
 
     <packaging>pom</packaging>
 
     <modules>
         <module>core</module>
-        <module>apps</module>
-        <module>content</module>
+        <module>ui.apps</module>
+        <module>ui.content</module>
     </modules>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <host>localhost</host>
         <port>4502</port>
         <serviceUrl>http://${host}:${port}/crx/packmgr/service.jsp</serviceUrl>
-        <project.jcrAppFolder>authoring-toolkit/samples</project.jcrAppFolder>
-        <aat.version>1.2.1</aat.version>
+        <project.jcrAppFolder>etoolbox-authoring-kit/samples</project.jcrAppFolder>
+        <toolkit.version>2.0.2</toolkit.version>
+        <project.vendor>Exadel</project.vendor>
     </properties>
 
     <build>
@@ -33,7 +36,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>4.2.1</version>
+                    <version>5.1.1</version>
                     <extensions>true</extensions>
                     <configuration>
                         <instructions>
@@ -49,8 +52,22 @@
                     <version>2.5.2</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.1.2</version>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <Built-By>${project.vendor}</Built-By>
+                                <Build-Jdk>${java.version}</Build-Jdk>
+                                <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
+                                <Bundle-Name>${project.name}</Bundle-Name>
+                                <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                                <Bundle-Version>${project.version}</Bundle-Version>
+                                <Bundle-License>http://www.apache.org/licenses/LICENSE-2.0.txt</Bundle-License>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>com.day.jcr.vault</groupId>
@@ -64,17 +81,20 @@
                     </configuration>
                     <executions>
                         <execution>
-                            <id>Creating AEM package</id>
+                            <id>Creating ToolKit Samples package</id>
                             <goals>
                                 <goal>package</goal>
                             </goals>
+                            <configuration>
+                                <group>${project.groupId}/${project.parent.artifactId}</group>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>com.exadel.aem</groupId>
-                    <artifactId>aem-authoring-toolkit-plugin</artifactId>
-                    <version>${aat.version}</version>
+                    <groupId>com.exadel.etoolbox</groupId>
+                    <artifactId>etoolbox-authoring-kit-plugin</artifactId>
+                    <version>${toolkit.version}</version>
                     <executions>
                         <execution>
                             <goals>
@@ -92,19 +112,18 @@
 
     <dependencyManagement>
         <dependencies>
-
             <!-- Foreign -->
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>osgi.annotation</artifactId>
-                <version>6.0.1</version>
-                <scope>provided</scope>
-            </dependency>
             <dependency>
                 <groupId>com.adobe.aem</groupId>
                 <artifactId>uber-jar</artifactId>
                 <version>6.4.0</version>
                 <classifier>apis</classifier>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -114,29 +133,28 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>javax.inject</groupId>
-                <artifactId>javax.inject</artifactId>
-                <version>1</version>
+                <groupId>org.osgi</groupId>
+                <artifactId>osgi.annotation</artifactId>
+                <version>6.0.1</version>
                 <scope>provided</scope>
             </dependency>
-
-            <!-- AAT-Specific -->
+            <!-- ToolKit-specific -->
             <dependency>
-                <groupId>com.exadel.aem</groupId>
-                <artifactId>aem-authoring-toolkit-api</artifactId>
-                <version>${aat.version}</version>
+                <groupId>com.exadel.etoolbox</groupId>
+                <artifactId>etoolbox-authoring-kit-core</artifactId>
+                <version>${toolkit.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.exadel.aem</groupId>
-                <artifactId>aem-authoring-toolkit-assets</artifactId>
-                <version>${aat.version}</version>
+                <groupId>com.exadel.etoolbox</groupId>
+                <artifactId>etoolbox-authoring-kit-all</artifactId>
+                <version>${toolkit.version}</version>
                 <type>zip</type>
             </dependency>
-
             <!-- Internal -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>aem-authoring-toolkit-samples-core</artifactId>
+                <artifactId>etoolbox-authoring-kit-samples-core</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
         </dependencies>
@@ -144,8 +162,8 @@
 
     <repositories>
         <repository>
-            <id>aem-authoring-toolkit-snapshots</id>
-            <name>Toolkit Snapshot</name>
+            <id>toolkit-snapshots</id>
+            <name>ToolKit Snapshot</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>
@@ -162,8 +180,8 @@
 
     <pluginRepositories>
         <pluginRepository>
-            <id>aem-authoring-toolkit-snapshots</id>
-            <name>Toolkit Snapshot</name>
+            <id>toolkit-snapshots</id>
+            <name>ToolKit Snapshots</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>

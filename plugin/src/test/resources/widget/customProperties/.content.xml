@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0" componentGroup="my-brand-new-components"
+          cq:cellName="some-cell-name" cq:isContainer="true" cq:templatePath="/some/absolute/jcr/path"
+          jcr:description="The most awesome AEM component ever" jcr:primaryType="cq:Component"
+          jcr:title="My AEM Component" sling:resourceSuperType="/path/to/resource"/>

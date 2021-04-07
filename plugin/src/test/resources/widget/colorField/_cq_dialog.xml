@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          jcr:title="Test Component"
+          height="{Double}480.0"
+          width="{Double}560.0"
+          test="test">
+    <content jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+        <layout jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
+        <items jcr:primaryType="nt:unstructured">
+            <column jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/container">
+                <items jcr:primaryType="nt:unstructured">
+                    <color jcr:primaryType="nt:unstructured"
+                           sling:resourceType="granite/ui/components/coral/foundation/form/colorfield"
+                           name="./color"
+                           value="#4488CC"
+                           autogenerateColors="shades"
+                           disabled="{Boolean}false"
+                           emptyText="test-string"
+                           renderHidden="{Boolean}false"
+                           required="{Boolean}false"
+                           showSwatches="{Boolean}false"
+                           showProperties="{Boolean}false"
+                           showDefaultColors="{Boolean}false"
+                           validation="[foundation.jcr.name]"
+                           variant="swatch">
+                        <items jcr:primaryType="nt:unstructured">
+                            <colorff0000 jcr:primaryType="nt:unstructured" value="#FF0000"/>
+                            <color00ff00 jcr:primaryType="nt:unstructured" value="#00FF00"/>
+                            <color0000ff jcr:primaryType="nt:unstructured" value="#0000FF"/>
+                        </items>
+                    </color>
+                </items>
+            </column>
+        </items>
+    </content>
+</jcr:root>

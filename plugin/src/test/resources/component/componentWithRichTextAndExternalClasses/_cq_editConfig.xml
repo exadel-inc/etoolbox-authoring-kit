@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    cq:inherit="{Boolean}false"
+    jcr:primaryType="cq:EditConfig">
+    <cq:dropTargets jcr:primaryType="nt:unstructured">
+        <featuredimage1
+            jcr:primaryType="cq:DropTargetConfig"
+            accept="[image/.*]"
+            groups="[media]"
+            propertyName="firstImage1reference1"/>
+        <featuredimage2
+            jcr:primaryType="cq:DropTargetConfig"
+            accept="[image/.*]"
+            groups="[media]"
+            propertyName="second_Image2reference2"/>
+    </cq:dropTargets>
+    <cq:inplaceEditing
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="cq:InplaceEditingConfig"
+        active="{Boolean}true"
+        editorType="hybrid">
+        <cq:childEditors jcr:primaryType="nt:unstructured">
+            <header
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Label Header"
+                type="type of inplace editing"/>
+            <description
+                jcr:primaryType="cq:ChildEditorConfig"
+                title="Label description"
+                type="text"/>
+        </cq:childEditors>
+        <config jcr:primaryType="nt:unstructured">
+            <header
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".cl-editable-header"
+                propertyName="./header"
+                textPropertyName="./header"/>
+            <description
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq:InplaceEditingConfig"
+                editElementQuery=".cl-editable-description"
+                propertyName="./description"
+                textPropertyName="./description">
+                <uiSettings jcr:primaryType="nt:unstructured">
+                    <cui jcr:primaryType="nt:unstructured">
+                        <inline
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                        <fullscreen
+                            jcr:primaryType="nt:unstructured"
+                            toolbar="[links#modifylink,links#unlink,subsuperscript#subscript,subsuperscript#superscript]"/>
+                    </cui>
+                </uiSettings>
+                <rtePlugins jcr:primaryType="nt:unstructured">
+                    <subsuperscript
+                        jcr:primaryType="nt:unstructured"
+                        features="[subscript,superscript]"/>
+                    <links
+                        jcr:primaryType="nt:unstructured"
+                        features="[modifylink,unlink]"/>
+                    <styles jcr:primaryType="nt:unstructured"/>
+                </rtePlugins>
+            </description>
+        </config>
+    </cq:inplaceEditing>
+</jcr:root>

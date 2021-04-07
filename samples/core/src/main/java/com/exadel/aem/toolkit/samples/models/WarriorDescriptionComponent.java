@@ -14,11 +14,31 @@
 
 package com.exadel.aem.toolkit.samples.models;
 
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
+import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import com.day.cq.tagging.Tag;
 import com.day.cq.tagging.TagManager;
-import com.exadel.aem.toolkit.api.annotations.assets.dependson.*;
-import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRefTypes;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
@@ -31,46 +51,46 @@ import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DatePickerType;
 import com.exadel.aem.toolkit.api.annotations.widgets.datepicker.DateTimeValue;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
-import com.exadel.aem.toolkit.api.annotations.widgets.rte.*;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.AllowElement;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.HtmlLinkRules;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.HtmlPasteRules;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.IconMapping;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.LinkTarget;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.ParagraphFormat;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
+import com.exadel.aem.toolkit.api.annotations.widgets.rte.Style;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 import com.exadel.aem.toolkit.samples.utils.ListUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.Self;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
-import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-@Dialog(
-        name = "content/warrior-description-component",
-        title = "Warrior Description Component",
-        description = "Tell us about your warrior",
-        resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = GroupConstants.COMPONENT_GROUP,
-        tabs = {
-                @Tab(title = WarriorDescriptionComponent.TAB_MAIN),
-                @Tab(title = WarriorDescriptionComponent.TAB_TASTES),
-                @Tab(title = WarriorDescriptionComponent.TAB_FRUITS),
-                @Tab(title = WarriorDescriptionComponent.TAB_MOVIES)
-        },
-        extraClientlibs = "authoring-toolkit.samples.authoring"
+@AemComponent(
+    path = "content/warrior-description-component",
+    title = "Description Component",
+    description = "Tell us about your warrior",
+    resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
+    componentGroup = GroupConstants.COMPONENT_GROUP
 )
-@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUITS, query = "@likesFruit")
+@Dialog(
+    extraClientlibs = "etoolbox-authoring-kit.samples.authoring"
+)
+@DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_FRUIT, query = "@likesFruit")
 @DependsOnTab(tabTitle = WarriorDescriptionComponent.TAB_MOVIES, query = "@likesMovies")
+@Tabs(
+    value = {
+        @Tab(title = WarriorDescriptionComponent.TAB_MAIN),
+        @Tab(title = WarriorDescriptionComponent.TAB_TASTES),
+        @Tab(title = WarriorDescriptionComponent.TAB_FRUIT),
+        @Tab(title = WarriorDescriptionComponent.TAB_MOVIES)
+    }
+)
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class WarriorDescriptionComponent {
 
     static final String TAB_MAIN = "Main info";
     static final String TAB_TASTES = "Tastes";
-    static final String TAB_FRUITS = "Fruits";
+    static final String TAB_FRUIT = "Fruit";
     static final String TAB_MOVIES = "Movies";
 
     private static final String LABEL_BIRTHDAY = "Birthday";
@@ -101,105 +121,105 @@ public class WarriorDescriptionComponent {
     private Resource resource;
 
     @DialogField
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_MAIN)
+    @Place(WarriorDescriptionComponent.TAB_MAIN)
     @RichTextEditor(
-            features = {
-                    RteFeatures.UNDO_UNDO,
-                    RteFeatures.UNDO_REDO,
-                    RteFeatures.SEPARATOR,
-                    RteFeatures.Popovers.EDIT_ALL,
-                    RteFeatures.SEPARATOR,
-                    RteFeatures.Popovers.FORMAT_ALL,
-                    RteFeatures.Popovers.STYLES,
-                    RteFeatures.Popovers.JUSTIFY_ALL,
-                    RteFeatures.SEPARATOR,
-                    RteFeatures.MISCTOOLS_SPECIALCHARS,
-                    RteFeatures.SEPARATOR,
-                    RteFeatures.Popovers.PARAFORMAT
-            },
-            htmlPasteRules = @HtmlPasteRules(
-                    allowImages = false,
-                    allowLists = AllowElement.DISALLOW,
-                    allowTables = AllowElement.DISALLOW
-            ),
-            externalStyleSheets = {PathConstants.EXTERNAL_STYLE_PATH},
-            styles = {
-                    @Style(cssName = "rte-style", text = "Aggressive style"),
-            },
-            icons = {
-                    @IconMapping(command = "#styles", icon = "textColor"),
-                    @IconMapping(command = "#edit", icon = "textEdit")
-            },
-            htmlLinkRules = @HtmlLinkRules(
-                    targetInternal = LinkTarget.MANUAL,
-                    targetExternal = LinkTarget.BLANK,
-                    protocols = {"http://", "https://"},
-                    defaultProtocol = "https://"
-            ),
-            specialCharacters = {
-                    @Characters(name = "Copyright", entity = "&copy"),
-                    @Characters(name = "Euro sign", entity = "&#x20AC"),
-                    @Characters(name = "Trademark", entity = "&#x2122"),
-                    @Characters(rangeStart = 48, rangeEnd = 70),
-            },
-            formats = {
-                    @ParagraphFormat(tag = "h1", description = "My custom header"),
-                    @ParagraphFormat(tag = "h2", description = "My custom subheader")
-            }
+        features = {
+            RteFeatures.UNDO_UNDO,
+            RteFeatures.UNDO_REDO,
+            RteFeatures.SEPARATOR,
+            RteFeatures.Popovers.EDIT_ALL,
+            RteFeatures.SEPARATOR,
+            RteFeatures.Popovers.FORMAT_ALL,
+            RteFeatures.Popovers.STYLES,
+            RteFeatures.Popovers.JUSTIFY_ALL,
+            RteFeatures.SEPARATOR,
+            RteFeatures.MISCTOOLS_SPECIALCHARS,
+            RteFeatures.SEPARATOR,
+            RteFeatures.Popovers.PARAFORMAT
+        },
+        htmlPasteRules = @HtmlPasteRules(
+            allowImages = false,
+            allowLists = AllowElement.DISALLOW,
+            allowTables = AllowElement.DISALLOW
+        ),
+        externalStyleSheets = {PathConstants.EXTERNAL_STYLE_PATH},
+        styles = {
+            @Style(cssName = "rte-style", text = "Aggressive style"),
+        },
+        icons = {
+            @IconMapping(command = "#styles", icon = "textColor"),
+            @IconMapping(command = "#edit", icon = "textEdit")
+        },
+        htmlLinkRules = @HtmlLinkRules(
+            targetInternal = LinkTarget.MANUAL,
+            targetExternal = LinkTarget.BLANK,
+            protocols = {"http://", "https://"},
+            defaultProtocol = "https://"
+        ),
+        specialCharacters = {
+            @Characters(name = "Copyright", entity = "&copy"),
+            @Characters(name = "Euro sign", entity = "&#x20AC"),
+            @Characters(name = "Trademark", entity = "&#x2122"),
+            @Characters(rangeStart = 48, rangeEnd = 70),
+        },
+        formats = {
+            @ParagraphFormat(tag = "h1", description = "My custom header"),
+            @ParagraphFormat(tag = "h2", description = "My custom subheader")
+        }
     )
     @ValueMapValue
     private String description;
 
     @DialogField(
-            label = LABEL_BIRTHDAY,
-            description = DESCRIPTION_BIRTHDAY
+        label = LABEL_BIRTHDAY,
+        description = DESCRIPTION_BIRTHDAY
     )
     @DatePicker(
-            type = DatePickerType.DATE,
-            displayedFormat = "DD.MM.YYYY",
-            valueFormat = "DD.MM.YYYY",
-            maxDate = @DateTimeValue(day = 1, month = 12, year = 2019),
-            typeHint = TypeHint.STRING
+        type = DatePickerType.DATE,
+        displayedFormat = "DD.MM.YYYY",
+        valueFormat = "DD.MM.YYYY",
+        maxDate = @DateTimeValue(day = 1, month = 12, year = 2025),
+        typeHint = TypeHint.STRING
     )
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_MAIN)
+    @Place(WarriorDescriptionComponent.TAB_MAIN)
     @ValueMapValue
     private String birthday;
 
     @DialogField(label = LABEL_LIKES_FRUIT)
     @Checkbox
     @DependsOnRef(name = "likesFruit")
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_TASTES)
+    @Place(WarriorDescriptionComponent.TAB_TASTES)
     @ValueMapValue
     private boolean likesFruit;
 
     @DialogField(label = LABEL_FRUIT)
     @Autocomplete(
-            multiple = true,
-            forceSelection = true,
-            datasource = @AutocompleteDatasource(namespaces = "fruit")
+        multiple = true,
+        forceSelection = true,
+        datasource = @AutocompleteDatasource(namespaces = "fruit")
     )
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_FRUITS)
+    @Place(WarriorDescriptionComponent.TAB_FRUIT)
     @ValueMapValue
     private String[] fruit;
 
     @DialogField(
-            label = LABEL_CHARACTER,
-            description = DESCRIPTION_CHARACTER,
-            ranking = 4
+        label = LABEL_CHARACTER,
+        description = DESCRIPTION_CHARACTER,
+        ranking = 4
     )
     @RadioGroup(buttons = {
-            @RadioButton(text = "Funny", value = "always smile creepily", checked = true),
-            @RadioButton(text = "Sad", value = "always steal your handkerchief"),
-            @RadioButton(text = "Angry", value = "always ignore you")
+        @RadioButton(text = "Funny", value = "always smile creepily", checked = true),
+        @RadioButton(text = "Sad", value = "always steal your handkerchief"),
+        @RadioButton(text = "Angry", value = "always ignore you")
     })
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_MAIN)
+    @Place(WarriorDescriptionComponent.TAB_MAIN)
     @ValueMapValue
     private String character;
 
     @DialogField(label = LABEL_LIKES_MOVIES)
     @Checkbox
     @DependsOnRef(name = "likesMovies")
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_TASTES)
+    @Place(WarriorDescriptionComponent.TAB_TASTES)
     @ValueMapValue
     private boolean likesMovies;
 
@@ -211,21 +231,21 @@ public class WarriorDescriptionComponent {
 
     @DialogField(label = LABEL_MOVIES)
     @Autocomplete(
-            multiple = true,
-            forceSelection = true,
-            datasource = @AutocompleteDatasource(namespaces = "movies")
+        multiple = true,
+        forceSelection = true,
+        datasource = @AutocompleteDatasource(namespaces = "movies")
     )
     @DependsOn(query = "@isDarkColorTheme", action = "namespaceFilter")
-    @PlaceOnTab(WarriorDescriptionComponent.TAB_MOVIES)
+    @Place(WarriorDescriptionComponent.TAB_MOVIES)
     @ValueMapValue
     private String[] movies;
 
     public String getWarriorName() {
         return Optional.ofNullable(resource.getParent())
-                .map(Resource::getParent)
-                .map(Resource::getValueMap)
-                .map(valueMap -> valueMap.get("name", String.class))
-                .orElse(WarriorComponent.DEFAULT_NAME);
+            .map(Resource::getParent)
+            .map(Resource::getValueMap)
+            .map(valueMap -> valueMap.get("name", String.class))
+            .orElse(WarriorComponent.DEFAULT_NAME);
     }
 
     public String getDescription() {
@@ -239,8 +259,8 @@ public class WarriorDescriptionComponent {
     public String getMovies() {
         if (likesMovies && movies != null) {
             String moviesString = Arrays.stream(movies)
-                    .map(movie -> movie.replaceAll("^.*/(.*)$", "$1"))
-                    .collect(Collectors.joining(ListUtils.COMMA_SPACE_DELIMITER));
+                .map(movie -> movie.replaceAll("^.*/(.*)$", "$1"))
+                .collect(Collectors.joining(ListUtils.COMMA_SPACE_DELIMITER));
             return MOVIES_TEXT + moviesString;
         }
         return DEFAULT_MOVIES_TEXT;
@@ -251,11 +271,11 @@ public class WarriorDescriptionComponent {
             TagManager tagManager = resourceResolver.adaptTo(TagManager.class);
             if (tagManager != null) {
                 return (FRUIT_TEXT +
-                        Arrays.stream(fruit)
-                                .map(tagManager::resolve)
-                                .filter(Objects::nonNull)
-                                .map(Tag::getTitle)
-                                .collect(Collectors.joining(ListUtils.COMMA_SPACE_DELIMITER)));
+                    Arrays.stream(fruit)
+                        .map(tagManager::resolve)
+                        .filter(Objects::nonNull)
+                        .map(Tag::getTitle)
+                        .collect(Collectors.joining(ListUtils.COMMA_SPACE_DELIMITER)));
             }
         }
         return DEFAULT_FRUIT_TEXT;

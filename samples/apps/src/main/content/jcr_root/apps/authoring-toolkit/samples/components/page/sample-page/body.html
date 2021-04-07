@@ -1,9 +1,0 @@
-<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"></sly>
-<sly data-sly-call="${clientlib.css @ categories='authoring-toolkit.samples.components'}"></sly>
-
-<body>
-    <header class="page-header"><h1 class="page-title">${pageProperties.jcr:title @ context='html'}</h1></header>
-    <div class="component-wrap">
-        <sly data-sly-resource="${'content' @ resourceType='/libs/foundation/components/parsys'}"></sly>
-    </div>
-</body>

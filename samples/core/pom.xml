@@ -5,20 +5,20 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>aem-authoring-toolkit-samples</artifactId>
-        <groupId>com.exadel.aem</groupId>
-        <version>1.2.1</version>
+        <artifactId>etoolbox-authoring-kit-samples</artifactId>
+        <groupId>com.exadel.etoolbox</groupId>
+        <version>2.0.2</version>
     </parent>
+
+    <artifactId>etoolbox-authoring-kit-samples-core</artifactId>
+
+    <name>Exadel Toolbox Authoring Kit - Samples Core</name>
+
+    <packaging>bundle</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <artifactId>aem-authoring-toolkit-samples-core</artifactId>
-    <name>AEM Authoring Toolkit - Samples Core</name>
-    <version>1.2.1</version>
-
-    <packaging>bundle</packaging>
 
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
@@ -37,10 +37,7 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.annotation</artifactId>
-        </dependency>
+        <!-- Foreign -->
         <dependency>
             <groupId>com.adobe.aem</groupId>
             <artifactId>uber-jar</artifactId>
@@ -51,8 +48,13 @@
             <artifactId>javax.inject</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.exadel.aem</groupId>
-            <artifactId>aem-authoring-toolkit-api</artifactId>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.annotation</artifactId>
+        </dependency>
+        <!-- Internal -->
+        <dependency>
+            <groupId>com.exadel.etoolbox</groupId>
+            <artifactId>etoolbox-authoring-kit-core</artifactId>
         </dependency>
     </dependencies>
 </project>

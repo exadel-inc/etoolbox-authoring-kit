@@ -1,0 +1,7 @@
+.lists-create-button {
+    position: relative;
+    margin-top: .9375rem;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+}

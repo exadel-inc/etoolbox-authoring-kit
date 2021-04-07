@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="cq:Page" xmlns:cq="http://www.day.com/jcr/cq/1.0">
+    <jcr:content
+            jcr:primaryType="cq:PageContent"
+            jcr:title="EToolbox Authoring Kit Samples - Page"
+            sling:resourceType="etoolbox-authoring-kit/samples/components/page/sample-page"
+            cq:designPath="/apps/settings/wcm/designs/etoolbox-authoring-kit-samples">
+    </jcr:content>
+</jcr:root>
+
