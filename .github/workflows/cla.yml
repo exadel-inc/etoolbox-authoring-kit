@@ -12,7 +12,7 @@ jobs:
       - name: "CLA Assistant"
         if: (github.event.comment.body == 'recheckcla' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
         # Alpha Release
-        uses: cla-assistant/github-action@v2.0.1-alpha
+        uses: cla-assistant/github-action@v2.1.2-beta
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PERSONAL_ACCESS_TOKEN : ${{ secrets.PERSONAL_ACCESS_TOKEN }}
@@ -20,7 +20,7 @@ jobs:
           path-to-signatures: 'signatures/version1/cla.json'
           path-to-cla-document: 'https://github.com/exadel-inc/aem-authoring-toolkit/blob/master/CLA.md'
           branch: 'cla'
-          allowlist: smiakchilo,bot*
+          allowlist: bot*,*
 
           create-file-commit-message: '[Tech] Created file for storing CLA Signatures'
           signed-commit-message: '[Tech] $contributorName has signed the CLA in #$pullRequestNo'
