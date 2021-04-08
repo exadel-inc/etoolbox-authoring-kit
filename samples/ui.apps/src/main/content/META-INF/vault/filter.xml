@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/apps/etoolbox-authoring-kit/samples/"/>
+    <filter root="/apps/settings/wcm/designs/etoolbox-authoring-kit-samples"/>
+    <!-- Clean-up filters - Not necessary for a new installation -->
+    <filter root="/apps/settings/wcm/designs/toolkit-samples"/>
+    <filter root="/etc/packages/authoring-toolkit-samples"/>
+</workspaceFilter>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          width="{Double}560.0"
+          height="{Double}480.0"
+          jcr:primaryType="nt:unstructured"
+          jcr:title="TagField Widget Dialog"
+          sling:resourceType="cq/gui/components/authoring/dialog">
+    <content jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+        <layout jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
+        <items jcr:primaryType="nt:unstructured">
+            <column jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+                <items jcr:primaryType="nt:unstructured">
+                    <tag1 jcr:primaryType="nt:unstructured"
+                         multiple="{Boolean}false"
+                         forceSelection="{Boolean}false"
+                         autocreateTag="{Boolean}true"
+                         deleteHint="{Boolean}true"
+                         rootPath="/"
+                         disabled="{Boolean}false"
+                         fieldLabel="Tag1"
+                         name="./tag1"
+                         renderHidden="{Boolean}false"
+                         required="{Boolean}false"
+                         sling:resourceType="cq/gui/components/coral/common/form/tagfield"/>
+                    <tag2 jcr:primaryType="nt:unstructured"
+                          multiple="{Boolean}true"
+                          emptyText="empty text"
+                          forceSelection="{Boolean}true"
+                          autocreateTag="{Boolean}false"
+                          deleteHint="{Boolean}false"
+                          rootPath="/content"
+                          disabled="{Boolean}false"
+                          name="./tag2"
+                          renderHidden="{Boolean}false"
+                          required="{Boolean}false"
+                          sling:resourceType="cq/gui/components/coral/common/form/tagfield"/>
+                </items>
+            </column>
+        </items>
+    </content>
+</jcr:root>

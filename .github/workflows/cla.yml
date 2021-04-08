@@ -1,0 +1,27 @@
+name: "CLA Assistant"
+on:
+  issue_comment:
+    types: [created]
+  pull_request_target:
+    types: [opened,closed,synchronize]
+
+jobs:
+  CLAssistant:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "CLA Assistant"
+        if: (github.event.comment.body == 'recheckcla' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
+        # Alpha Release
+        uses: cla-assistant/github-action@v2.1.2-beta
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PERSONAL_ACCESS_TOKEN : ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          path-to-signatures: 'signatures/version1/cla.json'
+          path-to-cla-document: 'https://github.com/exadel-inc/aem-authoring-toolkit/blob/master/CLA.md'
+          branch: 'cla'
+          allowlist: bot*
+
+          create-file-commit-message: '[Tech] Created file for storing CLA Signatures'
+          signed-commit-message: '[Tech] $contributorName has signed the CLA in #$pullRequestNo'
+          custom-notsigned-prcomment: 'Thank you for your submission, we really appreciate it. We ask that you sign our  <a href="$pathToCLADocument">Contributor Licence Agreement</a> before we can accept your contribution. You can sign the CLA by just posting a Pull Request Comment same as the below format.'

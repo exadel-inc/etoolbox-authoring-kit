@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured">
+    <etoolbox jcr:primaryType="nt:unstructured"
+                      jcr:title="EToolbox">
+        <lists jcr:primaryType="nt:unstructured"
+                  jcr:title="EToolbox Lists"
+                  jcr:description="Allows to manage lists of structured data"
+                  order="2000"
+                  href="/etoolbox-lists.html"
+                  icon="viewList"
+                  sling:resourceType="crx/core/components/welcome/tool">
+        </lists>
+    </etoolbox>
+</jcr:root>

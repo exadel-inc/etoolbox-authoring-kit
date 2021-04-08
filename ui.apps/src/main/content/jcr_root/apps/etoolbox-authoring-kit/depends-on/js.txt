@@ -1,0 +1,37 @@
+# Core Handlers
+js/dependsOnUtils.js
+js/utils/dependsOnRequestCache.js
+
+js/dependsOnElementAccessors.js
+js/references/dependsOnObservedReference.js
+js/references/dependsOnElementReference.js
+js/references/dependsOnGroupReference.js
+
+# Core
+js/dependsOnActionRegistry.js
+js/dependsOnQueryProcessor.js
+js/dependsOnQueryObserver.js
+
+# Accessors
+js/accessors/dependsOnCoralNoWrapperFieldsAccessor.js
+js/accessors/dependsOnCoralSwitcherAccessors.js
+js/accessors/dependsOnCoralRTEAccessor.js
+js/accessors/dependsOnCQFileUploadAccessor.js
+js/accessors/dependsOnCoralMultiFieldAccessor.js
+js/accessors/dependsOnCoralCheckboxAccessor.js
+js/accessors/dependsOnCoralHeadingAccessor.js
+js/accessors/dependsOnCoralAlertAccessor.js
+js/accessors/dependsOnCoralPathFieldAccessor.js
+js/accessors/dependsOnCoralColorFieldAccessor.js
+js/accessors/dependsOnCoralDatePickerAccessor.js
+js/accessors/dependsOnCoralNumberInputAccessor.js
+
+# Actions
+js/actions/dependsOnCoralBasicActions.js
+js/actions/dependsOnCoralValidateAction.js
+js/actions/dependsOnFetchAction.js
+js/actions/dependsOnCoralTabAction.js
+js/actions/dependsOnUpdateOptionsAction.js
+
+# Init
+js/dependsOn.js

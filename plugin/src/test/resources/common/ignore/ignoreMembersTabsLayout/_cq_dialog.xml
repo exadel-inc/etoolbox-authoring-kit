@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          jcr:title="test-component"
+          height="{Double}480.0"
+          width="{Double}560.0">
+    <content jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <tabs jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/tabs">
+                <items jcr:primaryType="nt:unstructured">
+                    <firstTab granite:hidden="{Boolean}false" jcr:primaryType="nt:unstructured" jcr:title="First tab"
+                              sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <field1 disabled="{Boolean}false" fieldLabel="Field on the first tab"
+                                    jcr:primaryType="nt:unstructured" name="./field1" renderHidden="{Boolean}false"
+                                    required="{Boolean}false"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                            <tabsField jcr:primaryType="nt:unstructured"
+                                       sling:resourceType="granite/ui/components/coral/foundation/tabs"
+                                       margin="{Boolean}false"
+                                       maximized="{Boolean}true"
+                                       orientation="horizontal"
+                                       size="M"
+                                       trackingFeature="feature1"
+                                       trackingWidgetName="widget1">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <firstInner jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/container"
+                                                jcr:title="First Inner"
+                                                trackingElement="first">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <innerFieldInTab jcr:primaryType="nt:unstructured"
+                                                             sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                             name="./innerFieldInTab"
+                                                             fieldLabel="Field 1 on the inner Tab"
+                                                             disabled="{Boolean}false"
+                                                             renderHidden="{Boolean}false"
+                                                             required="{Boolean}false"/>
+                                        </items>
+                                    </firstInner>
+                                    <secondInner jcr:primaryType="nt:unstructured"
+                                                 sling:resourceType="granite/ui/components/coral/foundation/container"
+                                                 jcr:title="Second Inner"
+                                                 trackingElement="second">
+                                        <parentConfig jcr:primaryType="nt:unstructured"
+                                                      active="{Boolean}true"
+                                                      icon="some/icon"
+                                                      padding="{Boolean}true"/>
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <accordion jcr:primaryType="nt:unstructured"
+                                                       margin="{Boolean}false"
+                                                       multiple="{Boolean}false"
+                                                       variant="default"
+                                                       sling:resourceType="granite/ui/components/coral/foundation/accordion">
+                                                <items jcr:primaryType="nt:unstructured">
+                                                    <firstPanel jcr:primaryType="nt:unstructured"
+                                                                sling:resourceType="granite/ui/components/coral/foundation/container"
+                                                                jcr:title="First Panel">
+                                                        <parentConfig jcr:primaryType="nt:unstructured"
+                                                                      active="{Boolean}true"/>
+                                                        <items jcr:primaryType="nt:unstructured">
+                                                            <field6 disabled="{Boolean}false"
+                                                                    jcr:primaryType="nt:unstructured"
+                                                                    name="./field6"
+                                                                    renderHidden="{Boolean}false"
+                                                                    required="{Boolean}false"
+                                                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                                        </items>
+                                                    </firstPanel>
+                                                </items>
+                                            </accordion>
+                                        </items>
+                                    </secondInner>
+                                </items>
+                            </tabsField>
+                        </items>
+                    </firstTab>
+                    <secondTab granite:hidden="{Boolean}false" jcr:primaryType="nt:unstructured" jcr:title="Second tab"
+                               sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <field2 disabled="{Boolean}false" fieldLabel="Field on the second tab"
+                                    jcr:primaryType="nt:unstructured" name="./field2" renderHidden="{Boolean}false"
+                                    required="{Boolean}false"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                        </items>
+                    </secondTab>
+                </items>
+            </tabs>
+        </items>
+    </content>
+</jcr:root>

@@ -1,0 +1,14 @@
+<sly data-sly-use.data="com.exadel.aem.toolkit.samples.models.AbilitiesComponent"></sly>
+<sly data-sly-use.elements="/apps/etoolbox-authoring-kit/samples/components/content/abilities-component/content/elements-list.html"></sly>
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"></sly>
+<sly data-sly-call="${clientlib.all @ categories='etoolbox-authoring-kit.samples.components'}"></sly>
+
+<div class="warrior-ability">
+    <div class="warrior-ability-main">
+        <span class="warrior-ability-title">Ability:</span>
+        <span class="warrior-ability-value">${data.ability || 'intelligence' @ context='text'}</span>
+    </div>
+    <span class="warrior-ability-level">level ${data.abilityLevel || "0" @context='text'}</span>
+    <sly data-sly-test="${data.ability == 'magic'}" data-sly-call="${elements.elements @ data=data}"></sly>
+</div>
+

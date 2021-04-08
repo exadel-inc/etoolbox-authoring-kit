@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/conf/etoolbox-authoring-kit"/>
+
+    <!-- The following filter clears an old directory in JCR content. This can be removed after v.2 release -->
+    <filter root="/conf/authoring-toolkit"/>
+</workspaceFilter>

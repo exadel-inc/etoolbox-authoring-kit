@@ -1,0 +1,26 @@
+{
+  "jcr:primaryType": "cq:Page",
+  "jcr:content": {
+    "jcr:primaryType": "cq:PageContent",
+    "jcr:title": "Custom List Page",
+    "cq:template": "/conf/etoolbox-authoring-kit/settings/wcm/templates/list",
+    "itemResourceType": "/apps/etoolbox-authoring-kit/lists/components/content/customItem",
+    "sling:resourceType": "etoolbox-authoring-kit/lists/components/structure/page-list",
+    "list": {
+      "jcr:primaryType": "nt:unstructured",
+      "sling:resourceType": "wcm/foundation/components/responsivegrid",
+      "list_item_1006003058": {
+        "jcr:primaryType": "nt:unstructured",
+        "textValue": "Hello",
+        "booleanValue": true,
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
+      },
+      "list_item_938979398": {
+        "jcr:primaryType": "nt:unstructured",
+        "textValue": "World",
+        "booleanValue": false,
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
+      }
+    }
+  }
+}

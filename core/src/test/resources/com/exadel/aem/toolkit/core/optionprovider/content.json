@@ -1,0 +1,51 @@
+{
+  "jcr:primaryType": "nt:unstructured",
+  "datasource": {
+    "jcr:primaryType": "nt:unstructured",
+    "sling:resourceType": "apps/etoolbox-authoring-kit/datasources/option-provider",
+    "path": "/content/options",
+    "valueTransform2": "lowercase",
+    "textTransform": "capitalize",
+    "prepend": "None:none",
+    "append": "More:prefix\\:more"
+  },
+  "optionsPathHolder": {
+    "jcr:primaryType": "nt:unstructured",
+    "moreOptionsPath": "/content/moreOptions"
+  },
+  "options": {
+    "jcr:primaryType": "nt:folder",
+    "option0": {
+      "jcr:primaryType": "nt:unstructured",
+      "jcr:title": "option 0",
+      "value": "value0"
+    },
+    "option1": {
+      "jcr:primaryType": "nt:unstructured",
+      "jcr:title": "option 1",
+      "value": "value1"
+    },
+    "option2": {
+      "jcr:primaryType": "nt:unstructured",
+      "jcr:title": "option 2",
+      "value": "value2"
+    }
+  },
+  "moreOptions": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType": "nt:unstructured",
+      "list": {
+        "jcr:primaryType": "nt:unstructured",
+        "option3": {
+          "text": "Option 3",
+          "value": "value3"
+        },
+        "option4": {
+          "text": "Option 4",
+          "value": "value4"
+        }
+      }
+    }
+  }
+}

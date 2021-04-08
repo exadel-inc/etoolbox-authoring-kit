@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          jcr:title="Select Widget Dialog"
+          width="{Double}560.0"
+          height="{Double}480.0">
+    <content jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+        <layout jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
+        <items jcr:primaryType="nt:unstructured">
+            <column jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+                <items jcr:primaryType="nt:unstructured">
+                    <rating jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                            name="./rating"
+                            fieldLabel="Rating"
+                            disabled="{Boolean}false"
+                            emptyText="Select rating"
+                            multiple="{Boolean}true"
+                            renderHidden="{Boolean}false"
+                            required="{Boolean}false"
+                            translateOptions="{Boolean}false"
+                            variant="quick">
+                        <items jcr:primaryType="nt:unstructured">
+                            <item jcr:primaryType="nt:unstructured" text="Empty" value=""/>
+                            <item1 jcr:primaryType="nt:unstructured" text="Blank" value=" "/>
+                            <item2 jcr:primaryType="nt:unstructured"
+                                   text="1 star"
+                                   value="1"
+                                   selected="{Boolean}true"
+                                   statusIcon="/content/dam/samples/icons/1-star-rating.png"
+                                   statusText="This is to set 1-star rating"
+                                   statusVariant="success"/>
+                            <item3 jcr:primaryType="nt:unstructured" text="2 stars" value="2"/>
+                            <item4 jcr:primaryType="nt:unstructured" text="3 stars" value="3"/>
+                            <item5 jcr:primaryType="nt:unstructured" text="4 stars" value="4" disabled="{Boolean}true"/>
+                            <item6 jcr:primaryType="nt:unstructured" text="5 stars" value="5" disabled="{Boolean}true"/>
+                        </items>
+                    </rating>
+                    <timezone jcr:primaryType="nt:unstructured"
+                              sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                              name="./timezone"
+                              fieldLabel="Timezone"
+                              disabled="{Boolean}false"
+                              emptyOption="{Boolean}true"
+                              emptyText="Select timezone"
+                              ordered="{Boolean}true"
+                              renderHidden="{Boolean}false"
+                              required="{Boolean}false">
+                        <items jcr:primaryType="nt:unstructured">
+                            <item0200 jcr:primaryType="nt:unstructured" text="UTC +2" value="+02:00"/>
+                            <item0100 jcr:primaryType="nt:unstructured" text="UTC +1" value="+01:00"/>
+                            <item0000 jcr:primaryType="nt:unstructured" text="UTC" value="00:00"/>
+                            <item1 jcr:primaryType="nt:unstructured" text="UTC -1" value="-01:00"/>
+                            <item2 jcr:primaryType="nt:unstructured" text="UTC -2" value="-02:00"/>
+                        </items>
+                    </timezone>
+                    <optionList jcr:primaryType="nt:unstructured"
+                              sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                              name="./optionList"
+                              fieldLabel="Provided options list"
+                              disabled="{Boolean}false"
+                              renderHidden="{Boolean}false"
+                              required="{Boolean}false">
+                        <datasource jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="/apps/etoolbox-authoring-kit/datasources/option-provider"
+                                    prepend="[None:none]"
+                                    path1="/path/to/acs/list"
+                                    path2="/path/to/acs/list2"
+                                    fallbackPath2="/path/to/acs/list3"
+                                    textMember2="pageTitle"
+                                    selected="none"
+                                    sorted="{Boolean}true"/>
+                    </optionList>
+                    <acsListOptions jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                    name="./acsListOptions"
+                                    fieldLabel="ACS options list"
+                                    deleteHint="{Boolean}false"
+                                    disabled="{Boolean}false"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false">
+                        <datasource jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="acs/list/resource/type"
+                                    path="/path/to/acs/list"/>
+                    </acsListOptions>
+                </items>
+            </column>
+        </items>
+    </content>
+</jcr:root>

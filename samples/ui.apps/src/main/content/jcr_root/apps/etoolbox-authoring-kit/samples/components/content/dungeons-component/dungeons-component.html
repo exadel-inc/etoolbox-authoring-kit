@@ -1,0 +1,15 @@
+<sly data-sly-use.data="com.exadel.aem.toolkit.samples.models.DungeonsComponent"></sly>
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"></sly>
+<sly data-sly-call="${clientlib.all @ categories='etoolbox-authoring-kit.samples.components'}"></sly>
+
+<div class="dungeon-wrap">
+    <span class="dungeon-title">Dungeon</span>
+    <div class="dungeon-text-wrap">
+        <span class="dungeon-text">
+            <span>Once upon a time in the ${data.dungeonDescription @ context='text'}</span>
+            <span> the warrior has started his adventure. </span>
+            <span>There are some rules in this dungeon: ${data.dungeonRules @ context='html'}</span>
+        </span>
+    </div>
+</div>
+

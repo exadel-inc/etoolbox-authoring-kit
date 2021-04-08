@@ -1,0 +1,9 @@
+<sly data-sly-use.data="com.exadel.aem.toolkit.samples.models.WarriorDescriptionComponent"></sly>
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"></sly>
+<sly data-sly-call="${clientlib.all @ categories='etoolbox-authoring-kit.samples.components'}"></sly>
+
+<div class="warrior-description">
+    <span class="warrior-description-title">${'{0}&#39;s history' @ format=[data.warriorName], context='html'}</span>
+    <span class="warrior-description-text">${'{0}. {1}'
+            @context='html', format=[data.initDescription, data.description]}</span>
+</div>

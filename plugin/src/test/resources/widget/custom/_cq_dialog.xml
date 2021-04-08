@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="nt:unstructured"
+          jcr:title="test-component-dialog"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          height="{Double}480.0"
+          width="{Double}560.0"
+          className="CustomAnnotations"
+          fullyQualifiedClassName="com.exadel.aem.toolkit.test.custom.CustomAnnotations"
+          autoField1="value1"
+          field2="{Long}2"
+          customProcessing="turned on"
+          property1="order3"
+          property2="order1"
+          property3="order2">
+    <content
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/container">
+        <layout
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
+        <items jcr:primaryType="nt:unstructured">
+            <column
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/container">
+                <items jcr:primaryType="nt:unstructured">
+                    <testCustomAnnotation
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="test-components/form/customfield"
+                        customProcessing="turned on"
+                        disabled="{Boolean}false"
+                        name="./testCustomAnnotation"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false"
+                        customWidgetHandler2="customWidgetHandler2"
+                        customWidgetHandler3="customWidgetHandler3">
+                        <customElement jcr:primaryType="nt:unstructured" customField="Overridden value"/>
+                    </testCustomAnnotation>
+                    <testScopedCustomAnnotation
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="test-components/form/customfield"
+                        customProcessing="turned on"
+                        disabled="{Boolean}false"
+                        name="./testScopedCustomAnnotation"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false"
+                        customWidgetHandler2="customWidgetHandler2"
+                        customWidgetHandler3="customWidgetHandler3">
+                        <customElement jcr:primaryType="nt:unstructured" customField="Overridden value"/>
+                    </testScopedCustomAnnotation>
+                    <testCustomAnnotationDefault
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                        disabled="{Boolean}false"
+                        name="./testCustomAnnotationDefault"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false"
+                        customWidgetHandler2="customWidgetHandler2"
+                        customWidgetHandler3="customWidgetHandler3">
+                        <customElement jcr:primaryType="nt:unstructured" customField="Non-overridden value"/>
+                    </testCustomAnnotationDefault>
+                    <testCustomAnnotationAuto
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="test-components/form/customfield"
+                        disabled="{Boolean}false"
+                        name="./testCustomAnnotationAuto"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false"
+                        cq:levelUp="Level up value">
+                        <granite:data jcr:primaryType="nt:unstructured" cq:custom="Overridden value"/>
+                    </testCustomAnnotationAuto>
+                    <testCustomAnnotationAutoDefault
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                        disabled="{Boolean}false"
+                        name="./testCustomAnnotationAutoDefault"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false"
+                        cq:levelUp="Level up value">
+                        <granite:data jcr:primaryType="nt:unstructured" cq:custom="Non-overridden value"/>
+                    </testCustomAnnotationAutoDefault>
+                    <testAutoOrder jcr:primaryType="nt:unstructured"
+                                   customAutoOrder1="customAutoOrder1"
+                                   customAutoOrder2="customAutoOrder2"
+                                   customAutoOrder3="customAutoOrder3"
+                                   sling:resourceType="test"/>
+                    <testOrder jcr:primaryType="nt:unstructured"
+                               customHandler0="customHandler0"
+                               customHandler1="customHandler1"
+                               customHandler2="customHandler2"
+                               customHandler3="customHandler3"
+                               customHandler4="customHandler4"
+                               customHandler5="customHandler5"
+                               sling:resourceType="test"/>
+                    <customChild jcr:primaryType="nt:unstructured"/>
+                </items>
+            </column>
+        </items>
+    </content>
+</jcr:root>

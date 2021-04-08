@@ -21,10 +21,16 @@ import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
+import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
+import com.exadel.aem.toolkit.api.annotations.widgets.Hyperlink;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
@@ -33,18 +39,17 @@ import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 
-@Dialog(
-        name = "content/dungeons-component",
-        title = "Dungeons Component",
-        description = "Choose a dungeon for your warrior",
-        resourceSuperType = "authoring-toolkit/samples/components/content/parent-select-component",
-        componentGroup = GroupConstants.COMPONENT_GROUP,
-        tabs = {
-                @Tab(title = ParentSelectComponent.TAB_MAIN)
-        }
+@AemComponent(
+    path = "content/dungeons-component",
+    title = "Dungeons Component",
+    description = "Choose a dungeon for your warrior",
+    resourceSuperType = "etoolbox-authoring-kit/samples/components/content/parent-select-component",
+    componentGroup = GroupConstants.COMPONENT_GROUP
 )
+@Dialog
+@Accordion(value = @AccordionPanel(title = "Main"))
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class DungeonsComponent extends ParentSelectComponent {
+public class DungeonsComponent {
 
     private static final String LABEL_DUNGEON_RULES = "Make your own dungeons rules";
     private static final String LABEL_DUNGEON_SELECT = "Dungeons select";
@@ -56,30 +61,55 @@ public class DungeonsComponent extends ParentSelectComponent {
     @DialogField(label = LABEL_DUNGEON_RULES)
     @Extends(value = WarriorDescriptionComponent.class, field = "description")
     @RichTextEditor(
-            features = {
-                    RteFeatures.SEPARATOR,
-                    RteFeatures.LISTS_ORDERED,
-                    RteFeatures.LISTS_UNORDERED
-            })
+        features = {
+            RteFeatures.SEPARATOR,
+            RteFeatures.LISTS_ORDERED,
+            RteFeatures.LISTS_UNORDERED
+        })
+    @Place("Main")
     @ValueMapValue
     private String dungeonRules;
 
-    @DialogField(label = LABEL_DUNGEON_SELECT)
-    @Select(options = {
+    @Accordion(
+        value = @AccordionPanel(title = LABEL_DUNGEON_SELECT))
+    @Place("Main")
+    DungeonSelect dungeon;
+
+    static class DungeonSelect {
+        @DialogField(label = LABEL_DUNGEON_SELECT)
+        @Select(options = {
             @Option(text = "Rotten swamps", value = "1"),
             @Option(text = "Ice valley", value = "2")
-    })
-    @Properties(value = {@Property(name = "sling:hideChildren", value = "*")})
-    @Default(values = "1")
-    @ValueMapValue
-    private String dungeon;
+        })
+        @DependsOnRef(name = "dungeon")
+        @Properties(@Property(name = "sling:hideChildren", value = "*"))
+        @Place("Dungeons select")
+        @Default(values = "1")
+        @ValueMapValue
+        String dungeonsSelect;
+
+        @Hyperlink(
+            href = "https://i.picsum.photos/id/127/4032/2272.jpg?hmac=QFoFT2_eb_DCqjdlj09UFgUHwI_zefDTBdECRz9lO5Q",
+            text = "Dungeon profile image",
+            target = "_blank"
+        )
+        @DependsOn(query = "@dungeon === '1'")
+        private String profileLink;
+
+        @Hyperlink(
+            href = "https://i.picsum.photos/id/13/2500/1667.jpg?hmac=SoX9UoHhN8HyklRA4A3vcCWJMVtiBXUg0W4ljWTor7s",
+            text = "Dungeon profile image",
+            target = "_blank")
+        @DependsOn(query = "@dungeon === '2'")
+        private String profileLink2;
+    }
 
     public String getDungeonRules() {
         return StringUtils.defaultIfBlank(dungeonRules, DEFAULT_RULES);
     }
 
     public String getDungeonDescription() {
-        if ("1".equals(dungeon)) {
+        if ("1".equals(dungeon.dungeonsSelect)) {
             return DEFAULT_ROTTEN_SWAMPS_TEXT;
         }
         return DEFAULT_ICE_VALLEY_TEXT;

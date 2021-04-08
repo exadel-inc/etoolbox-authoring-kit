@@ -14,15 +14,8 @@
 
 package com.exadel.aem.toolkit.samples.models;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
-import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
-import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.main.DialogLayout;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
-import com.exadel.aem.toolkit.samples.constants.GroupConstants;
-import com.exadel.aem.toolkit.samples.constants.PathConstants;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
@@ -30,30 +23,38 @@ import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ChildResource;
 import org.apache.sling.models.annotations.injectorspecific.Self;
 
-import java.util.Optional;
+import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
+import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
+import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
+import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
+import com.exadel.aem.toolkit.samples.constants.GroupConstants;
+import com.exadel.aem.toolkit.samples.constants.PathConstants;
 
-@Dialog(
-        name = "content/homeland-component",
-        title = "Homeland Component",
-        description = "Homeland of your warrior",
-        resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
-        componentGroup = GroupConstants.COMPONENT_GROUP,
-        layout = DialogLayout.TABS
+@AemComponent(
+    path = "content/homeland-component",
+    title = "Homeland Component",
+    description = "Homeland of your warrior",
+    resourceSuperType = PathConstants.FOUNDATION_PARBASE_PATH,
+    componentGroup = GroupConstants.COMPONENT_GROUP
 )
+@Dialog
 @EditConfig(
-        dropTargets = {
-                @DropTargetConfig(
-                        propertyName = "./homelandImage/fileReference",
-                        nodeName = "homelandImage",
-                        accept = "image/.*",
-                        groups = "media"
-                )
-        }
+    dropTargets = {
+        @DropTargetConfig(
+            propertyName = "./homelandImage/fileReference",
+            nodeName = "homelandImage",
+            accept = "image/.*",
+            groups = "media"
+        )
+    }
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class HomelandComponent {
 
-    static final String TAB_HOMELAND = "Homeland";
+    private static final String TAB_HOMELAND = "Homeland";
 
     @Self
     private HomelandTab homelandTab;
@@ -69,8 +70,8 @@ public class HomelandComponent {
         Resource currentResource;
 
         @DialogField(
-                name = FIELD_HOMELAND_IMAGE,
-                description = DESCRIPTION_HOMELAND_IMAGE
+            name = FIELD_HOMELAND_IMAGE,
+            description = DESCRIPTION_HOMELAND_IMAGE
         )
         @ImageUpload
         @ChildResource
@@ -85,10 +86,10 @@ public class HomelandComponent {
 
         public String getWarriorName() {
             return Optional.ofNullable(currentResource.getParent())
-                    .map(Resource::getParent)
-                    .map(Resource::getValueMap)
-                    .map(valueMap -> valueMap.get("name", String.class))
-                    .orElse(WarriorComponent.DEFAULT_NAME);
+                .map(Resource::getParent)
+                .map(Resource::getValueMap)
+                .map(valueMap -> valueMap.get("name", String.class))
+                .orElse(WarriorComponent.DEFAULT_NAME);
         }
     }
 

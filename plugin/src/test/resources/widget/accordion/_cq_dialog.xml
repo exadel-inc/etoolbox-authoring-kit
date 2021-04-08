@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          jcr:title="Accordion Test Dialog"
+          width="{Double}560.0"
+          height="{Double}480.0">
+    <content jcr:primaryType="nt:unstructured"
+             sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <accordion
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/accordion">
+                <items jcr:primaryType="nt:unstructured">
+                    <basic
+                            jcr:primaryType="nt:unstructured"
+                            jcr:title="Basic"
+                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <parentConfig jcr:primaryType="nt:unstructured"
+                                      disabled="{Boolean}true"/>
+                        <items jcr:primaryType="nt:unstructured">
+                            <field1 jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./field1"
+                                    disabled="{Boolean}false"
+                                    fieldLabel="Field 1"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"/>
+                        </items>
+                    </basic>
+                    <basic2
+                            jcr:primaryType="nt:unstructured"
+                            jcr:title="Basic2"
+                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <parentConfig jcr:primaryType="nt:unstructured"
+                                      active="{Boolean}true"/>
+                        <items jcr:primaryType="nt:unstructured">
+                            <accordion jcr:primaryType="nt:unstructured"
+                                       margin="{Boolean}true"
+                                       multiple="{Boolean}false"
+                                       variant="large"
+                                       sling:resourceType="granite/ui/components/coral/foundation/accordion">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <accordionWidgetPanel1 jcr:primaryType="nt:unstructured"
+                                                           sling:resourceType="granite/ui/components/coral/foundation/container"
+                                                           jcr:title="Accordion Widget Panel 1">
+                                        <parentConfig
+                                                jcr:primaryType="nt:unstructured"
+                                                disabled="{Boolean}true"/>
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <field6 disabled="{Boolean}false" jcr:primaryType="nt:unstructured"
+                                                    name="./field6"
+                                                    renderHidden="{Boolean}false" required="{Boolean}false"
+                                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                        </items>
+                                    </accordionWidgetPanel1>
+                                </items>
+                            </accordion>
+                        </items>
+                    </basic2>
+                </items>
+            </accordion>
+        </items>
+    </content>
+</jcr:root>
