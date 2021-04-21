@@ -26,7 +26,7 @@ It is an open and growing project. The authors heartily welcome the creative inp
 1) Insert dependency to the core module in the _\<dependencies>_ section of the POM file of your **bundle** module:
 ```xml
 <dependency>
-   <groupId>com.exadel.aem</groupId>
+   <groupId>com.exadel.etoolbox</groupId>
    <artifactId>etoolbox-authoring-kit-core</artifactId>
    <version>2.0.2</version> <!-- prefer latest stable version whenever possible -->
     <scope>provided</scope> <!-- do not use compile or runtime scope!-->
@@ -36,7 +36,7 @@ It is an open and growing project. The authors heartily welcome the creative inp
 ```xml
 
 <plugin>
-    <groupId>com.exadel.aem</groupId>
+    <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit-plugin</artifactId>
     <version>2.0.2</version>
     <executions>
@@ -68,7 +68,7 @@ You need to do two steps.
 1) Insert dependency to the cumulative _all_ module in the _\<dependencies>_ section of the POM file of your **package**:
 ```xml
 <dependency>
-    <groupId>com.exadel.aem</groupId>
+    <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit-all</artifactId>
     <version>2.0.2</version>
     <type>content-package</type>
@@ -84,7 +84,7 @@ You need to do two steps.
             <!-- ... -->
             <subPackages>
                 <subPackage>
-                    <groupId>com.exadel.aem</groupId>
+                    <groupId>com.exadel.etoolbox</groupId>
                     <artifactId>etoolbox-authoring-kit-all</artifactId>
                     <filter>true</filter>
                 </subPackage>
