@@ -48,9 +48,10 @@ public class OptionSourceParameters {
     private static final String QUERY_KEY_APPEND_OPTIONS = "append";
     private static final String QUERY_KEY_ATTRIBUTE_MEMBERS = "attributeMembers";
     private static final String QUERY_KEY_ATTRIBUTES = "attributes";
-    private static final String QUERY_KEY_PATH = "path";
+    private static final String QUERY_KEY_EXCLUDE_OPTIONS = "exclude";
     private static final String QUERY_KEY_FALLBACK_PATH = "fallbackPath";
     private static final String QUERY_KEY_PREPEND_OPTIONS = "prepend";
+    private static final String QUERY_KEY_PATH = "path";
     private static final String QUERY_KEY_SORTED = "sorted";
     private static final String QUERY_KEY_TEXT_MEMBER = "textMember";
     private static final String QUERY_KEY_TEXT_TRANSFORM = "textTransform";
@@ -62,6 +63,7 @@ public class OptionSourceParameters {
     private final List<PathParameters> pathParameters;
     private String[] appendOptions;
     private String[] prependOptions;
+    private String[] excludeOptions;
     private String selectedValue;
     private boolean sorted;
 
@@ -78,23 +80,31 @@ public class OptionSourceParameters {
     }
 
     /**
-     * Gets the user-specified {@code append} setting
+     * Gets the user-specified {@code append} setting value
      * @return Array of strings, or null
      */
-    String[] getAppendOptions() {
+    String[] getAppendedOptions() {
         return appendOptions;
     }
 
     /**
-     * Gets the user-specified {@code prepend} setting
+     * Gets the user-specified {@code prepend} setting value
      * @return Array of strings, or null
      */
-    String[] getPrependOptions() {
+    String[] getPrependedOptions() {
         return prependOptions;
     }
 
     /**
-     * Gets the user-specified {@code selectedValue} setting
+     * Gets the user-specified {@code exclude} setting value
+     * @return Array of strings, or null
+     */
+    String[] getExcludedOptions() {
+        return excludeOptions;
+    }
+
+    /**
+     * Gets the user-specified {@code selectedValue} setting value
      * @return String value
      */
     String getSelectedValue() {
@@ -163,6 +173,7 @@ public class OptionSourceParameters {
 
         result.appendOptions = repository.get(QUERY_KEY_APPEND_OPTIONS, String[].class);
         result.prependOptions = repository.get(QUERY_KEY_PREPEND_OPTIONS, String[].class);
+        result.excludeOptions = repository.get(QUERY_KEY_EXCLUDE_OPTIONS, String[].class);
 
         result.selectedValue = repository.get(CoreConstants.PN_SELECTED, String.class);
         result.sorted = repository.get(QUERY_KEY_SORTED, Boolean.FALSE.toString()).equalsIgnoreCase(Boolean.TRUE.toString());
@@ -210,7 +221,6 @@ public class OptionSourceParameters {
             return Optional.empty();
         }
     }
-
 
     /**
      * Retrieves a {@link StringTransformation} instance from the user-provided string
