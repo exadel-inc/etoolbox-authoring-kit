@@ -159,9 +159,8 @@ public class OptionProviderServiceImpl implements OptionProviderService {
                 .collect(Collectors.toList());
     }
 
-
     /**
-     * Browser through the provided list of options and removes the items that match the user-provided {@code exclude}
+     * Browses through the provided list of options and removes the items that match the user-provided {@code exclude}
      * setting
      * @param options Collection of {@code Option} objects to test
      * @param excludeStrings Value of the user-specified {@code exclude} setting
