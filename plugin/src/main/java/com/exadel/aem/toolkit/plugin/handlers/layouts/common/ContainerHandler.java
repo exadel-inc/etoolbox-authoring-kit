@@ -233,8 +233,7 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
         }
         if (componentClass.getDeclaredAnnotation(Tabs.class) != null) {
             tabs = componentClass.getDeclaredAnnotation(Tabs.class).value();
-        }
-        if (componentClass.getDeclaredAnnotation(Accordion.class) != null) {
+        } else if (componentClass.getDeclaredAnnotation(Accordion.class) != null) {
             panels = componentClass.getDeclaredAnnotation(Accordion.class).value();
         }
         Stream.of(

@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.test.component;
 
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
@@ -71,6 +72,10 @@ public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedC
         )
         @TextField
         String field3;
+    }
+
+    @AccordionPanel(title = "Panel 1") // Will be ignored because "tabs" layout is in effect
+    private static class Panel1 {
     }
 
     @DialogField(ranking = -1)

@@ -47,7 +47,7 @@ It is an open and growing project. The authors heartily welcome the creative inp
         </execution>
     </executions>
     <configuration>
-        <!-- MANDATORY: Place here the path to the node under which your component nodes are stored -->
+        <!-- RECOMMENDED: Place here the path to the node under which your component nodes are stored -->
         <componentsPathBase>jcr_root/apps/projectName/components</componentsPathBase>
         <!-- OPTIONAL: specify root package for component classes -->
         <componentsReferenceBase>com.acme.project.samples</componentsReferenceBase>
@@ -122,7 +122,7 @@ You can as well use <u>other means</u> to get the content package deployed to th
 - <u>In the bundle module</u>:
 ```java
 @Model(adaptables = Resource.class) // Sling annotation
-@AemComponent( // Added for the ToolKit to account for this class, and to populate .content.xml
+@AemComponent( // To mark this class as processed by the ToolKit, and to populate .content.xml
     path = "path/to/my/component",
     title = "Simple Text Component",
     componentGroup = "My Components"
@@ -153,8 +153,8 @@ public class MyComponentModel {
 - <u>In the bundle module</u>:
 ```java
 @AemComponent(
-    path = "path/to/my/component",
-    title = "Complex Component",
+    path = "/apps/path/to/my/component", // You can specify either a relative path that will start from the point
+    title = "Complex Component",         // specified by the "componentsPathBase" setting, or an "absolute" one
     componentGroup = "My Components",
     views = {
         EditConfigHolder.class,

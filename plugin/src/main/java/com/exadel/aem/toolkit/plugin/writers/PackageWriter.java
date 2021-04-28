@@ -42,6 +42,7 @@ import com.google.common.collect.Streams;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.UnknownComponentException;
@@ -59,6 +60,7 @@ public class PackageWriter implements AutoCloseable {
     private static final String FILESYSTEM_PREFIX = "jar:";
     private static final Map<String, String> FILESYSTEM_OPTIONS = ImmutableMap.of("create", "true");
 
+    private static final String PACKAGE_ROOT_DIRECTORY = "jcr_root";
     private static final String PACKAGE_INFO_DIRECTORY = "META-INF/etoolbox-authoring-kit";
     private static final String PACKAGE_INFO_FILE_NAME = "version.info";
 
@@ -141,15 +143,25 @@ public class PackageWriter implements AutoCloseable {
      * @param componentClass Current {@code Class} instance
      */
     public void write(Class<?> componentClass) {
-        String relativeComponentPath = getComponentPath(componentClass);
-        if (StringUtils.isBlank(relativeComponentPath)) {
+        String providedComponentPath = getComponentPath(componentClass);
+        if (StringUtils.isBlank(providedComponentPath)) {
             ValidationException validationException = new ValidationException(COMPONENT_NAME_MISSING_EXCEPTION_MESSAGE + componentClass.getSimpleName());
             PluginRuntime.context().getExceptionHandler().handle(validationException);
             return;
         }
-        Path componentPath = fileSystem.getPath(componentsBasePath, relativeComponentPath);
-        if (!Files.isWritable(componentPath)) {
-            PluginRuntime.context().getExceptionHandler().handle(new UnknownComponentException(componentPath));
+
+        Path fullComponentPath;
+        if (providedComponentPath.startsWith(PACKAGE_ROOT_DIRECTORY)) {
+            fullComponentPath = fileSystem.getPath(providedComponentPath);
+        } else if (providedComponentPath.startsWith(CoreConstants.SEPARATOR_SLASH + PACKAGE_ROOT_DIRECTORY)) {
+            fullComponentPath = fileSystem.getPath(providedComponentPath.substring(1));
+        } else if (providedComponentPath.startsWith(CoreConstants.SEPARATOR_SLASH)) {
+            fullComponentPath = fileSystem.getPath(PACKAGE_ROOT_DIRECTORY + providedComponentPath);
+        } else {
+            fullComponentPath = fileSystem.getPath(componentsBasePath, providedComponentPath);
+        }
+        if (!Files.isWritable(fullComponentPath)) {
+            PluginRuntime.context().getExceptionHandler().handle(new UnknownComponentException(fullComponentPath));
             return;
         }
 
@@ -162,8 +174,8 @@ public class PackageWriter implements AutoCloseable {
         }
 
         viewsByWriter.forEach((writer, view) -> {
-            writer.cleanUp(componentPath);
-            writer.writeXml(view, componentPath);
+            writer.cleanUp(fullComponentPath);
+            writer.writeXml(view, fullComponentPath);
         });
     }
 
