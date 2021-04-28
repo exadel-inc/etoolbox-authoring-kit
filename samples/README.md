@@ -1,6 +1,6 @@
-# AEM Authoring Toolkit Samples
+# Exadel Authoring Kit for AEM Samples
 
-This project contains examples of using *AEM Authoring Toolkit* functionality via several AEM components. Here you can find many built-in and custom *Toolkit* annotations, as well as *DependsOn* annotations and actions.
+This project contains examples of using *Exadel Toolbox Authoring Kit* (*ToolKit*) functionality via several AEM components. Here you can find many built-in and custom *ToolKit* annotations, as well as *DependsOn* annotations and actions.
 
 ## Table of contents
 1. [Project structure and installation](#project-structure-and-installation)
@@ -14,8 +14,9 @@ This project contains examples of using *AEM Authoring Toolkit* functionality vi
     - [@EditConfig, @InplaceEditingConfig](#editconfig-inplaceeditingconfig)
     - [@Extends](#extends)
     - [@FieldSet](#fieldset)
-    - [@ImageUpload (@FileUpload)](#imageupload-fileupload)
     - [@Hidden](#hidden)
+    - [@ImageUpload (@FileUpload)](#imageupload-fileupload)
+    - [@Include](#include)
     - [@MultiField](#multifield)
     - [@NumberField](#numberfield)
     - [@Password](#password)
@@ -36,13 +37,13 @@ This project contains examples of using *AEM Authoring Toolkit* functionality vi
 
 
 ## Project structure and installation
-The project consists of three modules: the **core** module containing *Toolkit*-annotated Sling models; the **apps** module that contains matching AEM components; and the **content** module used to deploy sandboxing pages and supplementary AEM entities.
+The project consists of three modules: the **core** module containing *ToolKit*-annotated Sling models; the **apps** module that contains matching AEM components; and the **content** module used to deploy sandboxing pages and supplementary AEM entities.
 
 To compile and install the project's artifacts to the local Maven repository use `mvn clean install` command. To deploy the installation to an arbitrary AEM instance, run `mvn clean install -Pinstall-samples`.
 
 The content is deployed to *http://localhost:4502* by default; however you can control the target with the additional command line switches like `-Dhost=some_host`, `-Dport=XXXX`.
 
-You can also control the version of `AEM Authoring Toolkit` API and Maven plugin called by the project. To do this, use the command line switch `-Dtoolkit.version=<arbitrary release or snapshot>`.
+You can also control the version of *ToolKit* API and Maven plugin called by the project. To do this, use the command line switch `-Dtoolkit.version=<arbitrary release or snapshot>`.
 
 
 ***
@@ -127,6 +128,10 @@ This annotation is used in the [WarriorDescriptionComponent](./core/src/main/jav
 
 This annotation is used in the [ArmorColorComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/ArmorColorComponent.java) and [ShoppingListComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/ShoppingListComponent.java).
 
+#### `@Hidden`
+
+This annotation is used in the [WarriorDescriptionComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java).
+
 #### `@ImageUpload`, `@FileUpload`
 
 `@ImageUpload` is used in the [HomelandComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/HomelandComponent.java).
@@ -152,10 +157,9 @@ public class FileUploadDialog {
     String file;
 }
 ```
+#### `@Include`
 
-#### `@Hidden`
-
-This annotation is used in the [WarriorDescriptionComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/WarriorDescriptionComponent.java).
+This annotation is used in the [DungeonsComponent](./core/src/main/java/com/exadel/aem/toolkit/samples/models/DungeonsComponent.java).
 
 #### `@MultiField`
 

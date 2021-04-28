@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content jcr:primaryType="cq:PageContent"
+                 jcr:title="EToolbox Authoring Kit Samples - Resources Root">
+        <external jcr:primaryType="nt:unstructured"
+                  target="https://en.wikipedia.org/wiki/Keep"
+                  width="480"
+                  height="360"/>
+    </jcr:content>
+</jcr:root>

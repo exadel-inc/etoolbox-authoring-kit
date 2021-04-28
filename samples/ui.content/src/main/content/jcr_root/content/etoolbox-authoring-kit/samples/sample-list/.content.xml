@@ -4,7 +4,7 @@
           jcr:primaryType="cq:Page">
     <jcr:content jcr:primaryType="cq:PageContent"
                  cq:template="/conf/etoolbox-authoring-kit/settings/wcm/templates/list"
-                 jcr:title="Coral Icons"
+                 jcr:title="EToolbox Authoring Kit Samples - Coral Icons List"
                  jcr:description="Shows an example of EToolbox List"
                  itemResourceType="/apps/etoolbox-authoring-kit/lists/components/content/simpleListItem"
                  sling:resourceType="etoolbox-authoring-kit/lists/components/structure/page-list">
