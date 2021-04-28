@@ -44,10 +44,9 @@ public @interface Include {
     String path();
 
     /**
-     * Maps to the {@code resourceType} attribute of this Granite UI component's node. Represents the resource type of the
-     * included resource
-     * @return String value, non-blank
+     * When set to a non-blank value, maps to the {@code resourceType} attribute of this Granite UI component's node.
+     * Represents the resource type of the included resource (if not set, the type specified in resource itself is used)
+     * @return String value
      */
-    @ValueRestriction(ValueRestrictions.NOT_BLANK)
-    String resourceType();
+    String resourceType() default "";
 }

@@ -120,8 +120,7 @@ public class DungeonsComponent {
         private String profileLink2;
 
         @Include(
-            path = "/content/etoolbox-authoring-kit/samples/resources/jcr:content/external",
-            resourceType = "foundation/components/external"
+            path = "/content/etoolbox-authoring-kit/samples/resources/jcr:content/external"
         )
         private String externalResourceHolder;
     }
