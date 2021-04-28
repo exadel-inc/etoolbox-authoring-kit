@@ -19,6 +19,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
@@ -31,6 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.api.annotations.widgets.Hyperlink;
+import com.exadel.aem.toolkit.api.annotations.widgets.Include;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
@@ -73,9 +75,24 @@ public class DungeonsComponent {
     @Accordion(
         value = @AccordionPanel(title = LABEL_DUNGEON_SELECT))
     @Place("Main")
+    @Self
     DungeonSelect dungeon;
 
-    static class DungeonSelect {
+    public String getDungeonRules() {
+        return StringUtils.defaultIfBlank(dungeonRules, DEFAULT_RULES);
+    }
+
+    public String getDungeonDescription() {
+        if ("1".equals(dungeon.dungeonsSelect)) {
+            return DEFAULT_ROTTEN_SWAMPS_TEXT;
+        }
+        return DEFAULT_ICE_VALLEY_TEXT;
+    }
+
+    @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+    public static class DungeonSelect {
+
+        @Default(values = "1")
         @DialogField(label = LABEL_DUNGEON_SELECT)
         @Select(options = {
             @Option(text = "Rotten swamps", value = "1"),
@@ -84,7 +101,6 @@ public class DungeonsComponent {
         @DependsOnRef(name = "dungeon")
         @Properties(@Property(name = "sling:hideChildren", value = "*"))
         @Place("Dungeons select")
-        @Default(values = "1")
         @ValueMapValue
         String dungeonsSelect;
 
@@ -102,16 +118,11 @@ public class DungeonsComponent {
             target = "_blank")
         @DependsOn(query = "@dungeon === '2'")
         private String profileLink2;
-    }
 
-    public String getDungeonRules() {
-        return StringUtils.defaultIfBlank(dungeonRules, DEFAULT_RULES);
-    }
-
-    public String getDungeonDescription() {
-        if ("1".equals(dungeon.dungeonsSelect)) {
-            return DEFAULT_ROTTEN_SWAMPS_TEXT;
-        }
-        return DEFAULT_ICE_VALLEY_TEXT;
+        @Include(
+            path = "/content/etoolbox-authoring-kit/samples/resources/jcr:content/external",
+            resourceType = "foundation/components/external"
+        )
+        private String externalResourceHolder;
     }
 }
