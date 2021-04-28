@@ -17,11 +17,13 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.testing.mock.sling.servlet.MockRequestPathInfo;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
@@ -40,6 +42,7 @@ public class OptionProviderTest {
         context.load().json("/com/exadel/aem/toolkit/core/optionprovider/content.json", "/content");
         context.request().setResource(context.resourceResolver().getResource("/content"));
         optionProvider = context.registerInjectActivateService(new OptionProviderServiceImpl());
+        ((MockRequestPathInfo) context.request().getRequestPathInfo()).setResourcePath("/apps/" + ResourceTypes.OPTION_PROVIDER);
     }
 
     @Test
@@ -63,7 +66,7 @@ public class OptionProviderTest {
             + "&append=More:prefix\\\\:value"
             + "&attributes=a:value,b:value";
 
-        context.request().setQueryString(queryString);  // hence we merge parameters from the query string to those from
+        context.request().setQueryString(queryString);  // This way we merge parameters from the query string to those from
                                                         // the underlying resource
         OptionSourceParameters parameters = OptionSourceParameters.forRequest(context.request());
         // Checking paths

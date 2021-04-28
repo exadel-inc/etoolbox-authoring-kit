@@ -31,6 +31,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
@@ -184,10 +185,12 @@ public class OptionSourceParameters {
         if (datasourceChild != null) {
             result.putAll(datasourceChild.getValueMap());
         }
-        request.getRequestParameterMap().forEach((k, v) -> extractRequestParameter(v)
-            .ifPresent(value -> result.put(k, value.contains(CoreConstants.SEPARATOR_COMMA)
-                ? value.split(CoreConstants.SEPARATOR_COMMA)
-                : value)));
+        if (StringUtils.endsWithIgnoreCase(request.getRequestPathInfo().getResourcePath(), ResourceTypes.OPTION_PROVIDER)) {
+            request.getRequestParameterMap().forEach((k, v) -> extractRequestParameter(v)
+                .ifPresent(value -> result.put(k, value.contains(CoreConstants.SEPARATOR_COMMA)
+                    ? value.split(CoreConstants.SEPARATOR_COMMA)
+                    : value)));
+        }
         return result;
     }
 
