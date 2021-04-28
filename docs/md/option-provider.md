@@ -72,6 +72,8 @@ public class MyComponent {
 
 *append* - same as *prepend*, but the extra item(-s) are appended to the option list. A valid list may consist of only prepended and/or appended options without the "external" part;
 
+*exclude* - if specified, defines one or more options (coming from an external source) that should be skipped for the current component. A string passed must match either the option's value, or text. The matching is case-insensitive. The wildcard symbol (*) can be used in matching strings;
+
 *selectedValue* - if set to a string that matches the value or the label of one of the datasource options, this option will be rendered as selected by default;
 
 *sorted* - if set to true, options will be sorted in their labels' alphabetical order regardless of the order they arrived from JCR. However, the *prepended* and *appended* options will appear in the order they were specified by the developer, and will remain in the beginning and in the end, respectively.

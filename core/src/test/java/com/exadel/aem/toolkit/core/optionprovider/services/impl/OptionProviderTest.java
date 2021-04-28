@@ -64,6 +64,7 @@ public class OptionProviderTest {
             + "&valueTransform1=lowercase"
             + "&prepend=None:none"
             + "&append=More:prefix\\\\:value"
+            + "&exclude=some*,*ing"
             + "&attributes=a:value,b:value";
 
         context.request().setQueryString(queryString);  // This way we merge parameters from the query string to those from
@@ -80,8 +81,11 @@ public class OptionProviderTest {
         Assert.assertEquals(textMember2, parameters.getPathParameters().get(2).getTextMember());
         Assert.assertEquals(valueMember2, parameters.getPathParameters().get(2).getValueMember());
         // Checking 'append' and 'prepend' params
-        Assert.assertEquals("none", StringUtils.substringAfter(parameters.getPrependOptions()[0], ":"));
-        Assert.assertEquals("prefix\\\\:value", StringUtils.substringAfter(parameters.getAppendOptions()[0], ":"));
+        Assert.assertEquals("none", StringUtils.substringAfter(parameters.getPrependedOptions()[0], ":"));
+        Assert.assertEquals("prefix\\\\:value", StringUtils.substringAfter(parameters.getAppendedOptions()[0], ":"));
+        // Checking 'exclude' params
+        Assert.assertEquals("some*", parameters.getExcludedOptions()[0]);
+        Assert.assertEquals("*ing",  parameters.getExcludedOptions()[1]);
         // Checking transform params
         Assert.assertEquals(StringTransformation.UPPERCASE, parameters.getPathParameters().get(0).getTextTransform());
         Assert.assertEquals(StringTransformation.LOWERCASE, parameters.getPathParameters().get(1).getValueTransform());
@@ -93,7 +97,7 @@ public class OptionProviderTest {
     @Test
     public void shouldMergePathsAndCreateDataSource() {
         String queryString = "path2=/content/optionsPathHolder@moreOptionsPath"  // this way we merge options from more than one source
-                + "&textMember2=text";                                       // and implement path-by-reference facility
+                + "&textMember2=text&exclude=Excluded*,*6";                                       // and implement path-by-reference facility
         context.request().setQueryString(queryString);
 
         List<Resource> options = optionProvider.getOptions(context.request());
