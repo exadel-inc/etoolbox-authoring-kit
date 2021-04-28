@@ -20,6 +20,8 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
+import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
@@ -179,6 +181,7 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_6;
     @Tab(title = LABEL_TAB_5),
     @Tab(title = LABEL_TAB_6)
 })
+@Accordion(@AccordionPanel(title = "Panel 1")) // Will be ignored because tab layout is detected
 @SuppressWarnings("unused")
 public class ComplexComponent1 extends ComplexComponent1Parent {
     private static final String PREFIX_FIRST_PRIMARY_DIALOG = "primary1";
