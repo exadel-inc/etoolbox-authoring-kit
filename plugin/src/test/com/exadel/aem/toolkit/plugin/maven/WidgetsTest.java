@@ -31,6 +31,7 @@ import com.exadel.aem.toolkit.test.widget.HeadingWidget;
 import com.exadel.aem.toolkit.test.widget.HiddenWidget;
 import com.exadel.aem.toolkit.test.widget.HyperlinkWidget;
 import com.exadel.aem.toolkit.test.widget.ImageUploadWidget;
+import com.exadel.aem.toolkit.test.widget.IncludeWidget;
 import com.exadel.aem.toolkit.test.widget.MultiFieldWidget;
 import com.exadel.aem.toolkit.test.widget.MultipleAnnotatedWidget;
 import com.exadel.aem.toolkit.test.widget.NestedCheckboxListWidget;
@@ -121,6 +122,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testImageUpload() {
         test(ImageUploadWidget.class);
+    }
+
+    @Test
+    public void testInclude() {
+        test(IncludeWidget.class);
     }
 
     @Test
