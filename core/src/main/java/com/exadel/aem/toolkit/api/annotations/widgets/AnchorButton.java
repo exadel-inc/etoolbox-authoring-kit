@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
  * AnchorButton</a> component in Granite UI.
  * AnchorButton represents a standard HTML hyperlink ({@code <a>}) that is styled like a button
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.ANCHOR_BUTTON)
 @AnnotationRendering(properties = "all")
