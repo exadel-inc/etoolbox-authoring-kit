@@ -28,8 +28,7 @@ See the code snippet below, which displays all currently supported `@AemComponen
 )
 public class ComplexComponentHolder {/* ... */}
 ```
-
-Pay attention to the `path` property. This can be set in two ways. First is the "relative" path that will be resolved starting from the point specified by the plugin's `componentsPathBase` configuration setting. This is the common way. Otherwise, you can store an "absolute" path that will be resolved from the root of the package. The absolute path sn start with `jcr_root` folder or any folder that goes immediately under jcr_root. Usually it would be something like `/apps/vendor/components/myComponent`.
+Pay attention to the path property. This can be set in two ways. First is the "relative" path that will be resolved from the point specified by the plugin's componentsPathBase setting. This is a common way. Otherwise, you can store an "absolute" path that will be resolved from the root of the package. The absolute path starts with jcr_root folder or any folder that goes immediately under jcr_root. Usually, it would be something like /apps/vendor/components/myComponent.
 
 ### @Dialog
 

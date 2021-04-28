@@ -77,13 +77,13 @@ public class PackageWriter implements AutoCloseable {
        Class fields and constructors
        ----------------------------- */
 
-    private final String componentsBasePath;
+    private final String componentsPathBase;
     private final FileSystem fileSystem;
     private final List<PackageEntryWriter> writers;
 
-    private PackageWriter(FileSystem fileSystem, String componentsBasePath, List<PackageEntryWriter> writers) {
+    private PackageWriter(FileSystem fileSystem, String componentsPathBase, List<PackageEntryWriter> writers) {
         this.fileSystem = fileSystem;
-        this.componentsBasePath = componentsBasePath;
+        this.componentsPathBase = componentsPathBase;
         this.writers = writers;
     }
 
@@ -158,7 +158,7 @@ public class PackageWriter implements AutoCloseable {
         } else if (providedComponentPath.startsWith(CoreConstants.SEPARATOR_SLASH)) {
             fullComponentPath = fileSystem.getPath(PACKAGE_ROOT_DIRECTORY + providedComponentPath);
         } else {
-            fullComponentPath = fileSystem.getPath(componentsBasePath, providedComponentPath);
+            fullComponentPath = fileSystem.getPath(componentsPathBase, providedComponentPath);
         }
         if (!Files.isWritable(fullComponentPath)) {
             PluginRuntime.context().getExceptionHandler().handle(new UnknownComponentException(fullComponentPath));
@@ -259,11 +259,11 @@ public class PackageWriter implements AutoCloseable {
      * Initializes an instance of {@link PackageWriter} profiled for the current {@link MavenProject} and the tree of
      * folders storing AEM components' data
      * @param project            {@code MavenProject instance}
-     * @param componentsBasePath Path to the sub-folder within package under which AEM component folders are situated
+     * @param componentsPathBase Path to the sub-folder within package under which AEM component folders are situated
      * @return {@code PackageWriter} instance
      */
-    public static PackageWriter forMavenProject(MavenProject project, String componentsBasePath) {
-        if (StringUtils.isBlank(componentsBasePath)) {
+    public static PackageWriter forMavenProject(MavenProject project, String componentsPathBase) {
+        if (StringUtils.isBlank(componentsPathBase)) {
             throw new PluginException(COMPONENT_PATH_MISSING_EXCEPTION_MESSAGE + project.getBuild().getFinalName());
         }
         if (project == null) {
@@ -275,7 +275,7 @@ public class PackageWriter implements AutoCloseable {
         URI uri = URI.create(FILESYSTEM_PREFIX + path.toUri());
         try {
             FileSystem fs = FileSystems.newFileSystem(uri, FILESYSTEM_OPTIONS);
-            return forFileSystem(fs, project.getBuild().getFinalName(), componentsBasePath);
+            return forFileSystem(fs, project.getBuild().getFinalName(), componentsPathBase);
         } catch (IOException e) {
             // Exceptions caught here are critical for the execution, so no further handling
             throw new PluginException(CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE + project.getBuild().getFinalName(), e);
@@ -287,10 +287,10 @@ public class PackageWriter implements AutoCloseable {
      * the structure of the package
      * @param fileSystem         Current {@link FileSystem} instance
      * @param projectName        Name of the project this file system contains information for
-     * @param componentsBasePath Path to the sub-folder within package under which AEM component folders are situated
+     * @param componentsPathBase Path to the sub-folder within package under which AEM component folders are situated
      * @return {@code PackageWriter} instance
      */
-    static PackageWriter forFileSystem(FileSystem fileSystem, String projectName, String componentsBasePath) {
+    static PackageWriter forFileSystem(FileSystem fileSystem, String projectName, String componentsPathBase) {
         List<PackageEntryWriter> writers;
         try {
             Transformer transformer = XmlFactory.newDocumentTransformer();
@@ -306,6 +306,6 @@ public class PackageWriter implements AutoCloseable {
             // Exceptions caught here are due to possible XXE security vulnerabilities, so no further handling
             throw new PluginException(CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE + projectName, e);
         }
-        return new PackageWriter(fileSystem, componentsBasePath, writers);
+        return new PackageWriter(fileSystem, componentsPathBase, writers);
     }
 }

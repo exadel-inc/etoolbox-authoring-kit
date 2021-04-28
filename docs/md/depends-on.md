@@ -28,10 +28,11 @@ The **Query** always goes with the **Action** and defines an expression that sho
 
 **QueryObserver** holds and processes **Query** and initiates **Action** on **ObservedReferences** changes.
 
-**ObservedReferences** are external elements or groups of elements whose values can be used inside of a **Query**.
+**ObservedReferences** are external elements or groups of elements whose values can be used inside the **Query**.
 
 More details on the structure of DependsOn are presented below:
-![DependsOn Structure](./docs/structure.jpg)
+
+![DependsOn Structure](../img/dependson-structure.jpg)
 
 #### Introduction
 
