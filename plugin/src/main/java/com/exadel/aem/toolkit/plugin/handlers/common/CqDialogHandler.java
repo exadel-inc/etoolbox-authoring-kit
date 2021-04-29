@@ -74,7 +74,7 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Called by {@link CqDialogHandler#accept(Source, Target)} to settle the dialog {@code title} issue.
+     * Called by {@link CqDialogHandler#accept(Source, Target)} to fulfill the dialog {@code title} source disambiguation.
      * If {@code title} is set at {@code AemComponent} level, one does not need to specify it separately for a {@code Dialog}
      * or {@code DesignDialog}. However, if {@code AemComponent} is missing, {@code title} must be set to a non-blank value
      * in the dialog annotation

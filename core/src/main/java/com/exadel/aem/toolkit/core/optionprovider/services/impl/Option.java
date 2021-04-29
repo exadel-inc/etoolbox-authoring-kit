@@ -127,7 +127,7 @@ class Option {
     }
 
     /**
-     * Turns on "selected" flag for this option
+     * Turns on {@code selected} flag for this option
      */
     void select() {
         selected = true;
@@ -192,7 +192,7 @@ class Option {
     }
 
     /**
-     * Returns resource ID as requested by the user setting. For an ordinary resource node (such as a ACS List -like
+     * Returns resource ID as requested by the user setting. For an ordinary resource node (such as an ACS List -like
      * option) this resolves to merely node name, but for a Tag, the namespace-qualified tag identifier is returned
      * @return String value
      */

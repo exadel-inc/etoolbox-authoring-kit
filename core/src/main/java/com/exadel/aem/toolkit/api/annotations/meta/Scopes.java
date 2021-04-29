@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.meta;
 
 /**
- * Enumerates the standard scopes that the Authoring Kit entities can belong to. Technically, each standard scope
+ * Enumerates the standard scopes that the ToolKit entities can belong to. Technically, each standard scope
  * represents a node in a component's node tree in JCR
  */
 public class Scopes {

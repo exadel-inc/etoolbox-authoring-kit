@@ -78,8 +78,8 @@ class SelectiveExceptionHandler extends PermissiveExceptionHandler {
      * @param exceptionType  {@code Class<?>} reference pointing to the particular Exception
      * @param exceptionToken String representing the particular exception token
      * @param inverse        Boolean value saying whether the inversion sign is present in the match
-     * @return {@code Optional} value saying the exception does match the token, if non-empty. Then, the internal boolean
-     * value represents the verdict
+     * @return {@code Optional} value saying the exception does match the token, if non-empty. In such case, the wrapped
+     * boolean value represents the verdict
      */
     private Optional<Boolean> isMatch(Class<? extends Exception> exceptionType, String exceptionToken, boolean inverse) {
         if (StringUtils.equalsAnyIgnoreCase(exceptionToken, DialogConstants.VALUE_ALL, DialogConstants.WILDCARD)) {

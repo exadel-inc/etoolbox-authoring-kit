@@ -25,8 +25,8 @@ public class NotBlankOrEmptyValidator implements Validator {
     private static final String MSG_STRING_EXPECTED = "non-blank string expected unless left default";
 
     /**
-     * Tests that the provided string is not blank unless empty. This validator can be assigned to optional
-     * annotation methods which have their default value
+     * Tests that the provided string is not blank unless empty. This validator can be assigned to an optional
+     * annotation method that has its default value
      * @param value Raw string value
      * @return True or false
      */

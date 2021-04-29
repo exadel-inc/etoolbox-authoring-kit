@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
  * <p>This annotation is useful for "altering" a member from a superclass, e.g. when we have
  * a {@code @DialogField @TextField private String text;} field in a superclass and need to have the virtually same field
  * in a descendant class, but a property of {@code @DialogField} or {@code @TextField} should be changed.</p>
- * <p>The replacing member will occupy the same place in widgets stack as the member being replaced unless it specifies
+ * <p>The replacing member will occupy the same place in the widgets stack as the member being replaced unless it specifies
  * another particular position (by e.g. {@code ranking} property)</p>
  */
 @Target({ElementType.FIELD, ElementType.METHOD})

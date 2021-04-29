@@ -63,13 +63,13 @@ public @interface PropertyRendering {
 
     /**
      * When set to true, indicates that a user-defined value will be necessarily rendered into an attribute
-     * even if it maps to an empty, or a blank strong
+     * even if it maps to an empty or a blank string
      * @return True or false
      */
     boolean allowBlank() default false;
 
     /**
-     * Defines whether the string value is stored as is, or else is rendered in uppercase, lowercase or came-lase. Most
+     * Defines whether the string value is stored as-is, or else is rendered in uppercase, lowercase, or came-lase. Most
      * of the time this setting is used for transforming {@code Enum} values
      * @return One of {@link StringTransformation} variants
      */
@@ -80,7 +80,7 @@ public @interface PropertyRendering {
      * types, such as {@code String}, {@code long}, {@code double}, etc. This value is used to modify a default type hint
      * or remove a type hint for the "XML-stringified" representation of a value, e.g. when a boolean value must be
      * rendered as {@code "true"} and not as {@code "{Boolean}true"} which is by default
-     * @return {@code Class} reference. One of JCR-compliant classes must be used
+     * @return {@code Class} reference. One of the JCR-compliant classes must be used
      */
     Class<?> valueType() default _Default.class;
 }

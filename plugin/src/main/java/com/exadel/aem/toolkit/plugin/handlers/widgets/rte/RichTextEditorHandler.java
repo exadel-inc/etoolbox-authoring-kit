@@ -87,20 +87,20 @@ public class RichTextEditorHandler implements Handler {
         this.rteAnnotation = rteAnnotation;
         // create the four basic builders: for ./uiSettings/cui/inline, ./uiSettings/cui/dialogFullScreen,
         // ./uiSettings/cui/tableEditOptions, and ./rtePlugins
-        XmlNodeWithListBuilder inlineBuilder = new XmlNodeWithListBuilder(DialogConstants.NN_INLINE, DialogConstants.PN_TOOLBAR);
-        XmlNodeWithListBuilder fullScreenBuilder = new XmlNodeWithListBuilder(DialogConstants.NN_FULLSCREEN, DialogConstants.PN_TOOLBAR);
+        RteNodeWithListBuilder inlineBuilder = new RteNodeWithListBuilder(DialogConstants.NN_INLINE, DialogConstants.PN_TOOLBAR);
+        RteNodeWithListBuilder fullScreenBuilder = new RteNodeWithListBuilder(DialogConstants.NN_FULLSCREEN, DialogConstants.PN_TOOLBAR);
 
-        XmlTreeWithListsBuilder popoversBuilder = new XmlTreeWithListsBuilder(DialogConstants.NN_POPOVERS, DialogConstants.NN_ITEMS, true);
+        RteTreeWithListsBuilder popoversBuilder = new RteTreeWithListsBuilder(DialogConstants.NN_POPOVERS, DialogConstants.NN_ITEMS, true);
         popoversBuilder.setPostprocessing(popoverNode -> popoverNode.attribute(DialogConstants.PN_REF, popoverNode.getName()));
 
         inlineBuilder.setChildBuilder(popoversBuilder);
-        fullScreenBuilder.setChildBuilder(new XmlTreeWithListsBuilder(popoversBuilder)); // 'cloned' popovers builder
+        fullScreenBuilder.setChildBuilder(new RteTreeWithListsBuilder(popoversBuilder)); // 'cloned' popovers builder
 
-        XmlNodeWithListBuilder tableEditBuilder = new XmlNodeWithListBuilder(DialogConstants.NN_TABLE_EDIT_OPTIONS,DialogConstants.PN_TOOLBAR);
+        RteNodeWithListBuilder tableEditBuilder = new RteNodeWithListBuilder(DialogConstants.NN_TABLE_EDIT_OPTIONS,DialogConstants.PN_TOOLBAR);
         tableEditBuilder.setFilter((pluginId, feature) -> DialogConstants.NN_TABLE.equals(pluginId) && !RteFeatures.TABLE_TABLE.equals(feature));
         // we do not feed non-'table#...' features to ./uiSettings/cui/tableEditOptions
 
-        XmlTreeWithListsBuilder pluginsBuilder = new XmlTreeWithListsBuilder(DialogConstants.NN_RTE_PLUGINS, DialogConstants.PN_FEATURES);
+        RteTreeWithListsBuilder pluginsBuilder = new RteTreeWithListsBuilder(DialogConstants.NN_RTE_PLUGINS, DialogConstants.PN_FEATURES);
         pluginsBuilder.setFilter((pluginId, feature) -> !DialogConstants.NN_TABLE.equals(pluginId) || FEATURE_ALL.equals(feature));
         // we do not feed table features to ./rtePlugins, except for 'table#*'
 
@@ -176,11 +176,11 @@ public class RichTextEditorHandler implements Handler {
      * @param pluginsBuilder   Additional {@code XmlNodeBuilder} for the plugins node
      */
     private static void processFeatureItem(
-            ImmutablePair<XmlNodeWithListBuilder,String> featureItem,
-            XmlNodeWithListBuilder tableEditBuilder,
-            XmlTreeWithListsBuilder pluginsBuilder
+            ImmutablePair<RteNodeWithListBuilder,String> featureItem,
+            RteNodeWithListBuilder tableEditBuilder,
+            RteTreeWithListsBuilder pluginsBuilder
     ) {
-        XmlNodeWithListBuilder nodeBuilder = featureItem.left;
+        RteNodeWithListBuilder nodeBuilder = featureItem.left;
         String feature = featureItem.right;
         if (FEATURE_TOKEN_PATTERN.matcher(feature).matches()) {
             // single#feature

@@ -48,15 +48,18 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 public @interface AemComponent {
 
     /**
-     * The path to the folder of the current component in an AEM package,
-     * relative to path specified in {@code componentsPathBase} configuration setting<br><br>
-     * This property has precedence over the {@code name} property of a {@code Dialog} specified for the same component
+     * The path to the folder of the current AEM component in a package, either relative to the path specified in
+     * {@code componentsPathBase} configuration setting, or absolute (that is, starting with {@code /}).
+     * <br>If an absolute path is specified, it is considered starting from the folder situated under {@code jcr_root}
+     * (such as {@code /apps/path/to/my/component}).
+     * <br><br>This property has precedence over the {@code name} property of a {@code Dialog} specified for the same
+     * component
      * @return String value, non-blank
      */
     String path();
 
     /**
-     * The set of views this {@code @Component} comprises. Each view represents a class which will be scanned for the
+     * The set of views this {@code @Component} comprises. Each view represents a class that will be scanned for the
      * ToolKit annotations. The current class is assumed by default, whether added to the set or not.
      * @return Array {@code Class<?>} references, or an empty array
      */
@@ -116,7 +119,7 @@ public @interface AemComponent {
     String templatePath() default "";
 
     /**
-     * When set to true, renders as the `disableTargeting` attribute of the component root node with `true` value
+     * When set to true, renders as the {@code disableTargeting} attribute of the component root node with `true` value
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

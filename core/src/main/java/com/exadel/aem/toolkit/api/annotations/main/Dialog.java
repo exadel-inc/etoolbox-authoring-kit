@@ -140,7 +140,7 @@ public @interface Dialog {
     String helpPath() default "";
 
     /**
-     * Renders as the `height` attribute of component's {@code cq:dialog} node. If no value provided,
+     * Renders as the {@code height} attribute of component's {@code cq:dialog} node. If no value provided,
      * default {@code 480} is used
      * @return Double-typed number
      */
@@ -149,7 +149,7 @@ public @interface Dialog {
     double height() default 480;
 
     /**
-     * Renders as the `width` attribute of component's {@code cq:dialog} node. If no value provided,
+     * Renders as the {@code width} attribute of component's {@code cq:dialog} node. If no value provided,
      * default {@code 560} is used
      * @return Double-typed number
      */
@@ -186,7 +186,7 @@ public @interface Dialog {
 
     /**
      * Used to set path to the node of component for which to create Granite UI entities, such as the {@code cq:dialog}
-     * node. The path is relative to the {@code componentsPathBase} config setting in package's POM file
+     * node. The path is relative to the {@code componentsPathBase} config setting
      * @return String value
      * @deprecated Use {@link AemComponent#path()} to set this value
      */

@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 /**
- * Represents basic EToolbox List item which consists of "jct:title" and "value" fields
+ * Represents basic EToolbox List item which consists of {@code jcr:title} and {@code value} fields
  */
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 @AemComponent(

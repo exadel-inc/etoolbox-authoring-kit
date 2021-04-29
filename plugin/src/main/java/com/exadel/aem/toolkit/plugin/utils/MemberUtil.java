@@ -25,7 +25,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 
 /**
- * Contains utility methods for retrieving info on Java class members
+ * Contains utility methods for retrieving info about Java class members
  */
 public class MemberUtil {
 

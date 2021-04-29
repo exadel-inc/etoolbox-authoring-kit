@@ -41,7 +41,7 @@ public class PluginInfo {
     }
 
     /**
-     * Default constructor. Creates a {@code PluginInfo} instance with name, version and build timestamp specified
+     * Default constructor. Creates a {@code PluginInfo} instance with name, version, and build timestamp specified
      * @param name      Name of the artifact
      * @param version   Version of the artifact
      * @param timestamp Build timestamp as assigned within the Maven build workflow

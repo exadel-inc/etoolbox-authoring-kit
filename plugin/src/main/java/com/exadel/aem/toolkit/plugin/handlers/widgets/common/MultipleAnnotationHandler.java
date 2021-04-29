@@ -198,7 +198,8 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * and the nested node level while converting a singular element to a multifield
      * @param source {@code Source} instance referring to the class member being processed
      * @return Map containing attribute/child names, either plain or wild-carded, and the action appropriate, whether
-     * to copy element, move, or leave intact. Wildcard symbol ({@code *}) is to specify common policy for multiple elements
+     * to copy element, move, or leave intact. The wildcard symbol ({@code *}) is to specify a common policy for multiple
+     * elements
      */
     private static Map<String, PropertyTransferPolicy> getTransferPolicies(Source source) {
         Map<String, PropertyTransferPolicy> transferPolicies = new LinkedHashMap<>();
@@ -236,8 +237,8 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * @param from     Element to serve as the source of migration
      * @param to       Element to serve as the target of migration
      * @param policies Map containing attribute names (must start with {@code @}), child node names (must start with
-     *                 {@code ./}) and the appropriate action, whether to copy element, move, or leave intact. Wildcard
-     *                 symbol ({@code *}) is to specify common policy for multiple elements
+     *                 {@code ./}) and the appropriate action, whether to copy element, move, or leave intact. The wildcard
+     *                 symbol ({@code *}) is to specify a common policy for multiple elements
      */
     private static void transferProperties(Target from, Target to, Map<String, PropertyTransferPolicy> policies) {
         // Process attributes

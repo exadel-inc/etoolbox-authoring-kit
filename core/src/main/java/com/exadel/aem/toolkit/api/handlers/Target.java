@@ -220,7 +220,7 @@ public interface Target {
     /**
      * Retrieves an attribute of the current instance specified by name
      * @param name         Name of the attribute, non-null string
-     * @param defaultValue The value to return if attribute with such a name is not found
+     * @param defaultValue The value to return if an attribute with such a name is not found
      * @return Nullable string value
      */
     default String getAttribute(String name, String defaultValue) {
@@ -236,7 +236,7 @@ public interface Target {
     Target attribute(String name, String value);
 
     /**
-     * Sets an attribute of the current instance being an array of strings. Call to this method can be trailed by other
+     * Sets an attribute of the current instance as an array of strings. Call to this method can be trailed by other
      * method calls
      * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
@@ -253,7 +253,7 @@ public interface Target {
     Target attribute(String name, boolean value);
 
     /**
-     * Sets an attribute of the current instance being an array of boolean values. Call to this method can be trailed by
+     * Sets an attribute of the current instance as an array of boolean values. Call to this method can be trailed by
      * other method calls
      * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
@@ -262,7 +262,7 @@ public interface Target {
     Target attribute(String name, boolean[] value);
 
     /**
-     * Sets an attribute of the current instance being a long-typed number. Call to this method can be trailed by other
+     * Sets an attribute of the current instance as a long-typed number. Call to this method can be trailed by other
      * method calls
      * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
@@ -271,7 +271,7 @@ public interface Target {
     Target attribute(String name, long value);
 
     /**
-     * Sets an attribute of the current instance being an array of long-typed numbers. Call to this method can be trailed
+     * Sets an attribute of the current instance as an array of long-typed numbers. Call to this method can be trailed
      * by other method calls
      * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
@@ -280,7 +280,7 @@ public interface Target {
     Target attribute(String name, long[] value);
 
     /**
-     * Sets an attribute of the current instance being a double-typed number. Call to this method can be trailed by other
+     * Sets an attribute of the current instance as a double-typed number. Call to this method can be trailed by other
      * method calls
      * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
@@ -289,7 +289,7 @@ public interface Target {
     Target attribute(String name, double value);
 
     /**
-     * Sets an attribute of the current instance being an array of double-typed numbers. Call to this method can be trailed
+     * Sets an attribute of the current instance as an array of double-typed numbers. Call to this method can be trailed
      * by other method calls
      * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
@@ -298,7 +298,7 @@ public interface Target {
     Target attribute(String name, double[] value);
 
     /**
-     * Sets an attribute of the current instance being a {@code Date} object. Call to this method can be trailed by other
+     * Sets an attribute of the current instance as a {@code Date} object. Call to this method can be trailed by other
      * method calls
      * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute
@@ -307,7 +307,7 @@ public interface Target {
     Target attribute(String name, Date value);
 
     /**
-     * Sets an attribute of the current instance being an array of {@code Date} objects. Call to this method can be trailed
+     * Sets an attribute of the current instance as an array of {@code Date} objects. Call to this method can be trailed
      * by other method calls
      * @param name  Name of the attribute, non-null string
      * @param value Value of the attribute

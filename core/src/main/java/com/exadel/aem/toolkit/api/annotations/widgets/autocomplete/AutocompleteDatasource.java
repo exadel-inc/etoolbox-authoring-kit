@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 public @interface AutocompleteDatasource {
 
     /**
-     * Allows to specify one or more namespaces this datasource manages
+     * Allows specifying one or more namespaces this datasource manages
      * @return Optional namespace string, or an array of strings
      */
     String[] namespaces() default "";

@@ -37,22 +37,22 @@ public @interface NumberField {
 
     /**
      * When set to a non-blank string, maps to the {@code value} attribute of this Granite UI component's node.
-     * Used to define default value for a NumberField
-     * @return String value, castable to number
+     * Used to define a default value for a NumberField
+     * @return String value, castable to a number
      */
     @ValueRestriction(ValueRestrictions.NUMBER)
     String value() default "0";
 
     /**
      * Maps to the {@code min} attribute of this Granite UI component's node.
-     * Used to define minimal number that may be stored in a NumberField
+     * Used to define a minimal number that can be stored in a NumberField
      * @return Double value
      */
     double min() default -Double.MAX_VALUE;
 
     /**
      * Maps to the {@code max} attribute of this Granite UI component's node.
-     * Used to define maximal number that may be stored in a NumberField
+     * Used to define a maximal number that can be stored in a NumberField
      * @return Double value
      */
     double max() default Double.MAX_VALUE;

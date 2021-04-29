@@ -39,7 +39,7 @@ public @interface DialogField {
     String label() default "";
 
     /**
-     * When set to a non-blank string, maps to the 'fieldDescription' attribute of this dialog component's node.
+     * When set to a non-blank string, maps to the {@code fieldDescription} attribute of this dialog component's node.
      * Used to define helper text for this dialog component
      * @return String value (optional)
      */
@@ -50,7 +50,7 @@ public @interface DialogField {
      * Maps to the {@code renderHidden} attribute of this dialog component's node.
      * If set to true, the {@code hidden} attribute is added to the HTML element that wraps up the current component,
      * so that the component is hidden together with its label and description. Has no effect if a wrapper element is not
-     * rendered (e.g. when neither label nor description are specified)
+     * rendered (e.g. when neither label nor description is specified)
      * @return True or false
      */
     boolean renderHidden() default false;

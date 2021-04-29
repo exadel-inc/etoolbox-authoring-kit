@@ -15,7 +15,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 /**
  * Contains common string constants used for size setup
- * @deprecated These constants are deprecated in favour of {@link Size} enum and will be removed in a version after 2.0.2
+ * @deprecated These constants are deprecated in favor of {@link Size} enum and will be removed in a version after 2.0.2
  */
 @SuppressWarnings({"unused", "squid:S1133"})
 @Deprecated

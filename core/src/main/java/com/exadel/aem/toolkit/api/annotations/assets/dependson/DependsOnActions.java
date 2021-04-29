@@ -36,12 +36,12 @@ public class DependsOnActions {
     public static final String VALIDATE = "validate";
 
     /**
-     * Sets the 'required' marker of the field based on the query result
+     * Sets the {@code required} marker of the field based on the query result
      */
     public static final String REQUIRED = "required";
 
     /**
-     * Sets the 'readonly' marker of the field based on the query result
+     * Sets the {@code readonly} marker of the field based on the query result
      */
     public static final String READONLY = "readonly";
 
@@ -66,7 +66,7 @@ public class DependsOnActions {
     public static final String FETCH = "fetch";
 
     /**
-     * Refreshes the option set of a Coral3 Select widget with an OptionProvider
+     * Refreshes the options set of a Coral3 Select widget with an OptionProvider
      */
     public static final String UPDATE_OPTIONS = "update-options";
 
