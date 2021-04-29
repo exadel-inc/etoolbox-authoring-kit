@@ -48,7 +48,7 @@ public class PlaceSetting {
 
     /**
      * Retrieves the actual placement data
-     * @return String value, defaults to the empty string
+     * @return String value; defaults to the empty string
      */
     public String getValue() {
         if (wrappedPlace != null) {

@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
  * An abstraction of class encapsulating routines for XML generation and handling
- * @deprecated Since v. 2.0.2 users are encouraged to use new custom handlers API that is based
+ * @deprecated Since v. 2.0.2 users are encouraged to use the new custom handlers API that is based
  * on {@link Source} and {@link Target} objects handling. Legacy API will be removed in the versions to come
  */
 @Deprecated
@@ -204,7 +204,7 @@ public interface XmlUtility {
      * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
      * The appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
      * or a child node
-     * If child node with same name already exists, it is updated with attribute values of the newcoming node
+     * If a child node with the same name already exists, it is updated with attribute values of the newly arrived node
      * @param parent Routine than provides Element to serve as parent
      * @param child  Element to serve as child
      * @return Appended child
@@ -213,9 +213,9 @@ public interface XmlUtility {
 
     /**
      * Retrieves child {@code Element} node of the specified node by its name / relative path. Same as {@link XmlUtility#getOrAddChildElement(Element, String)},
-     * but if the parent's child (or any of the specified grandchildren) do not exist, null value is returned
+     * but if the parent's child (or any of the specified grandchildren) do not exist, a null value is returned
      * @param parent Element to analyze
-     * @param child  Name of child to look for, can be a simple name or a relative path e.g. {@code child/otherChild/yetAnotherChild}
+     * @param child  Name of a child to look for, can be a simple name or a relative path e.g. {@code child/otherChild/yetAnotherChild}
      * @return Element instance if path traversing was successful, null otherwise
      */
     Element getChildElement(Element parent, String child);
@@ -225,22 +225,22 @@ public interface XmlUtility {
      * but as soon as the parent's child (or any of the specified grandchildren) not found, an empty node of {@code jcr:primaryType="nt:unstructured"}
      * is created
      * @param parent Element to analyze
-     * @param child  Name of child to look for, can be a simple name or a relative path e.g. {@code child/otherChild/yetAnotherChild}
+     * @param child  Name of a child to look for, can be a simple name or a relative path e.g. {@code child/otherChild/yetAnotherChild}
      * @return Element instance
      */
     Element getOrAddChildElement(Element parent, String child);
 
     /**
      * Generates compliant XML tag or attribute name (optionally prepended by an XML namespace) from an arbitrary string
-     * @param name Raw (unchecked) string for a tag / attribute name
-     * @return Valid tag / attribute name
+     * @param name Raw (unchecked) string for a tag/attribute name
+     * @return Valid tag/attribute name
      */
     String getValidName(String name);
 
     /**
      * Generates compliant XML tag or attribute name without a namespace part from an arbitrary string
-     * @param name Raw (unchecked) string for a tag / attribute name
-     * @return Valid tag / attribute name
+     * @param name Raw (unchecked) string for a tag/attribute name
+     * @return Valid tag/attribute name
      */
     String getValidSimpleName(String name);
 

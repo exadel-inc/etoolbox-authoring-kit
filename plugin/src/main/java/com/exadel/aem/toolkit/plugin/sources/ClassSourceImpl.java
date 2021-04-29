@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
- * Implements {@link Source} to expose metadata specific for the underlying Java class
+ * Implements {@link Source} to expose the metadata that is specific for the underlying Java class
  */
 public class ClassSourceImpl extends SourceImpl {
 

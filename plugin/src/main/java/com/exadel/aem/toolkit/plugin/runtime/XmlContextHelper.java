@@ -51,14 +51,15 @@ import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 import com.exadel.aem.toolkit.plugin.validators.Validation;
 
 /**
- * Processes, verifies and stores Granite UI-related data to XML markup
+ * Processes, verifies, and stores Granite UI-related data to XML markup
  */
 @SuppressWarnings("deprecation") // XmlUtility is retained for compatibility reasons (used in legacy custom handlers)
 // This will be retired in a version after 2.0.2
 public class XmlContextHelper implements XmlUtility {
 
     /**
-     * Default routine to manage merging two values of an XML attribute by suppressing existing value with a non-empty new one
+     * Default routine to manage the merging of two values of an XML attribute by suppressing existing value
+     * in favor of a non-empty new one
      */
     private static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
@@ -143,7 +144,7 @@ public class XmlContextHelper implements XmlUtility {
     }
 
     /**
-     * Creates named XML {2code Element} node from specified {@code Annotation} using specified name provider
+     * Creates a named XML {@code Element} node from the specified {@code Annotation} using the specified name provider
      * @param nameProvider Function that processes {@code Annotation} instance to produce valid node name
      * @param source       Annotation to be rendered to XML
      * @return {@code Element} instance
@@ -247,8 +248,8 @@ public class XmlContextHelper implements XmlUtility {
     /**
      * Stores property value of a specific {@code Annotation} as an XML attribute
      * @param elementSupplier Routine that generates and/or returns an {@code Element} node
-     * @param name            Attribute name, same as annotation property name
-     * @param source          Annotation to look fo a value in
+     * @param name            Attribute name, same as the annotation property name
+     * @param source          Annotation to look for a value in
      */
     public void setAttribute(Supplier<Element> elementSupplier, String name, Annotation source) {
         setAttribute(elementSupplier, name, source, DEFAULT_ATTRIBUTE_MERGER);
@@ -257,10 +258,10 @@ public class XmlContextHelper implements XmlUtility {
     /**
      * Stores property value of a specific {@code Annotation} as an XML attribute
      * @param elementSupplier Routine that generates and/or returns an {@code Element} node
-     * @param name            Attribute name, same as annotation property name
+     * @param name            Attribute name, same as the annotation property name
      * @param source          Annotation to look for a value in
      * @param attributeMerger Function that manages an existing attribute value and a new one
-     *                        in case when a new value is set to an existing {@code Element}
+     *                        in the case when a new value is set to an existing {@code Element}
      */
     private static void setAttribute(Supplier<Element> elementSupplier,
                                      String name,
@@ -406,11 +407,11 @@ public class XmlContextHelper implements XmlUtility {
      * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
      * The appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
      * or a child node
-     * If child node with same name already exists, it is updated with attribute values of the arriving node
+     * If a child node with the same name already exists, it is updated with attribute values of the arriving node
      * @param parent          Element to serve as parent
      * @param child           Element to serve as child
      * @param attributeMerger Function that manages an existing attribute value and a new one
-     *                        in case when a new value is set to an existing {@code Element}
+     *                        in the case when a new value is set to an existing {@code Element}
      * @return Appended child
      */
     public Element appendNonemptyChildElement(Element parent, Element child, BinaryOperator<String> attributeMerger) {
@@ -431,7 +432,7 @@ public class XmlContextHelper implements XmlUtility {
 
     /**
      * Merges attributes of two {@code Element} nodes, e.g. when a child node is appended to a parent node that already
-     * has another child with same name, the existing child is updated with values from the newcomer. Way of merging
+     * has another child with the same name, the existing child is updated with values from the newcomer. Way of merging
      * is defined by {@param attributeMerger} routine
      * @param first           First (e.g. existing) Element node
      * @param second          Second (e.g. rendered anew) Element node
@@ -451,10 +452,10 @@ public class XmlContextHelper implements XmlUtility {
     }
 
     /**
-     * Merges string attributes of two {@code Element} nodes, e.g. when a child node is appended to a parent node that already
-     * has another child with same name, the existing child is updated with values from the newcomer.
-     * Default way of merging is to replace first string with non-blank second string if they do not look like JCR lists,
-     * or merge lists otherwise
+     * Merges string attributes of two {@code Element} nodes, e.g. when a child node is appended to a parent node that
+     * already has another child with the same name, the existing child is updated with values from the newcomer.
+     * The default way of merging is to replace the first string with a non-blank second string if they do not look
+     * like JCR lists, or merge lists otherwise
      * @param first  First (e.g. existing) Element node
      * @param second Second (e.g. rendered anew) Element node
      * @return {@code Element} node with merged attribute values
@@ -483,7 +484,7 @@ public class XmlContextHelper implements XmlUtility {
     /**
      * Retrieve child {@code Element} node of the specified node by name
      * @param parent           Element to analyze
-     * @param childName        Name of child to look for
+     * @param childName        Name of the child to look for
      * @param fallbackSupplier Routine that returns a fallback Element instance if parent node does not exist or child not found
      * @return Element instance
      */

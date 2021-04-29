@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 /**
  * The {@link PackageEntryWriter} implementation for storing decoration tag properties,
  * such as class and tagName. Writes data to the {@code _cq_htmlTag.xml} file within the
- * current component folder before package is uploaded
+ * current component folder before the package is uploaded
  */
 class CqHtmlTagWriter extends PackageEntryWriter {
 
@@ -34,7 +34,7 @@ class CqHtmlTagWriter extends PackageEntryWriter {
     }
 
     /**
-     * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
+     * Gets {@code Scope} value of the current {@code PackageEntryWriter} implementation
      * @return String value representing a valid scope
      */
     @Override
@@ -43,9 +43,9 @@ class CqHtmlTagWriter extends PackageEntryWriter {
     }
 
     /**
-     * Gets whether current {@code Class} is eligible for populating {@code _cq_htmlTag.xml} structure
+     * Gets whether the current {@code Class} is eligible for populating a {@code _cq_htmlTag.xml} structure
      * @param componentClass The {@code Class} under consideration
-     * @return True if current {@code Class} is annotated with {@link HtmlTag}; otherwise, false
+     * @return True if the current {@code Class} is annotated with {@link HtmlTag}; otherwise, false
      */
     @Override
     boolean canProcess(Class<?> componentClass) {

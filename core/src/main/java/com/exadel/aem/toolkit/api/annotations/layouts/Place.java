@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 
 /**
- * Used to specify the placement of a Granite UI component. The placement can be set in relation to the sibling components
+ * Used to specify the placement of a Granite UI component. The placement can be defined relative to a sibling component
  * (see {@link Place#before()} and {@link Place#after}). In a multi-tab or multi-panel Granite UI dialog, one can
  * specify in which section (such as a tab or accordion panel) this component is placed
  */

@@ -48,7 +48,7 @@ import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 
 /**
  * Implements {@link Target} to manage a tree-like data structure that is further rendered in a Granite UI component
- * or a component configurations
+ * or component configurations
  */
 public class TargetImpl extends AdaptationBase<Target> implements Target {
 
@@ -183,7 +183,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
     /**
-     * Assigns scope value to the current instance
+     * Assigns a scope value to the current instance
      * @param scope String value
      */
     void setScope(String scope) {
@@ -565,7 +565,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
     /**
-     * Assigns attributes the the current instance based on the provided DOM {@code Element} object
+     * Assigns attributes to the current instance based on the provided DOM {@code Element} object
      * @param value {@code Element} object used as the source of attribute names and values
      * @return Current instance
      */
@@ -660,7 +660,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
             }
         }
 
-        // Adjust target if the property name contains a relative path
+        // Adjust the target if the property name contains a relative path
         Target effectiveTarget = target;
         if (propertyName.contains(CoreConstants.SEPARATOR_SLASH)) {
             effectiveTarget = target.getOrCreateTarget(StringUtils.substringBeforeLast(propertyName, CoreConstants.SEPARATOR_SLASH));

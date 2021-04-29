@@ -55,12 +55,11 @@ public class PluginMojo extends AbstractMojo {
     /**
      * Executes the ToolKit Maven plugin. This is done by initializing {@link PluginRuntime} and then
      * enumerating classpath entries present in the Maven reactor. Relevant AEM component classes (POJOs or Sling models)
-     * are extracted and processed with {@link PackageWriter} instance created for particular Maven project; the result
-     * is written down to the AEM package zip file. The method is run once for each package module that has AEM Authoring
-     * Toolkit plugin included in the POM file
-     * @throws MojoExecutionException in case package processing cannot proceed (due to e.g. file system failure
-     * or improper initialization) or in case an internal exception is thrown that corresponds to the {@code terminateOn}
-     * setting
+     * are extracted and processed with {@link PackageWriter} instance created for a particular Maven project; the result
+     * is written down to the AEM package zip file. The method is run once for each package module that has the ToolKit
+     * plugin included in the POM file
+     * @throws MojoExecutionException if work on a package cannot proceed (due to e.g. file system failure or improper
+     * initialization) or in case an internal exception is thrown that corresponds to the {@code terminateOn} setting
      */
     public void execute() throws MojoExecutionException {
         List<String> classpathElements;

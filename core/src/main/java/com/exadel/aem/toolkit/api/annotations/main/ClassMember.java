@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
- * Used to refer a particular member (field or method) of a class defined by the class reference, and the name
+ * Used to refer a particular member (field or method) of a class defined by the class reference and name
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -37,8 +37,8 @@ public @interface ClassMember {
     Class<?> source() default _Default.class;
 
     /**
-     * When set to a non-blank String, defines the name of the member, must refer to an actual field or method name. Otherwise.
-     * name of the current field will be used
+     * When set to a non-blank String, defines the name of the member, must refer to an actual field or method name.
+     * Otherwise, name of the current field will be used
      * @return String value
      */
     @ValueRestriction(ValueRestrictions.NOT_BLANK)

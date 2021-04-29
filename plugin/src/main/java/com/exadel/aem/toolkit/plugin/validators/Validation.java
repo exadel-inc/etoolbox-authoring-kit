@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 
 /**
- * Performs validation of annotations properties' values with use of specific {@link Validator}s
+ * Performs validation of annotations properties' values using a specific {@link Validator}s
  */
 public class Validation {
     private static final String LOG_PLAIN_VALUE_PATTERN = "Property '%s' of @%s is set to a wrong value: '%s' provided, %s";
@@ -40,7 +40,7 @@ public class Validation {
     private final Validator testRoutine;
 
     /**
-     * Default constructor
+     * Initializes a class instance
      * @param testRoutine {@link Validator} instance to be used for testing
      */
     private Validation(Validator testRoutine) {
@@ -48,7 +48,7 @@ public class Validation {
     }
 
     /**
-     * Gets whether specific value is validated
+     * Gets whether the specified value is validated
      * @param value Raw value
      * @return True or false
      */
@@ -64,7 +64,7 @@ public class Validation {
     }
 
     /**
-     * Retrieves appropriate {@code Validation} for specific annotation property
+     * Retrieves an appropriate {@code Validation} for the specified annotation property
      * @param type       Annotation type
      * @param methodName Annotation's property name
      * @return {@code Validation} instance
@@ -78,7 +78,7 @@ public class Validation {
     }
 
     /**
-     * Retrieves appropriate {@code Validation} for specific annotation property
+     * Retrieves an appropriate {@code Validation} for the specified annotation property
      * @param method {@code Method} instance representing the annotation property
      * @return {@code Validation} instance
      */
@@ -96,7 +96,7 @@ public class Validation {
     }
 
     /**
-     * Retrieves appropriate {@code Validation} for specific annotation type
+     * Retrieves an appropriate {@code Validation} for the specified annotation type
      * @param type Annotation type
      * @return {@code Validation} instance
      */
@@ -108,7 +108,7 @@ public class Validation {
     }
 
     /**
-     * Returns default (fully permissive) {@code Validation}
+     * Returns the default (fully permissive) {@code Validation}
      * @return Default {@code Validation}
      */
     public static Validation defaultChecker() {

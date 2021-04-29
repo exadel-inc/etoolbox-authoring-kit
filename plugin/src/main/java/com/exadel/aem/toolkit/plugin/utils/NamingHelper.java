@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 /**
- * Helper class for creating standard compliant names for XML entities designed to work together
+ * Helper class for creating standard-compliant names for XML entities designed to work together
  * with {@link NamingUtil}
  */
 class NamingHelper {
@@ -57,9 +57,9 @@ class NamingHelper {
        ----------------- */
 
     /**
-     * Checks whether the given string argument is compliant to XML entity naming rules and either returns it as is or
+     * Checks whether the given string argument is compliant with XML entity naming rules and either returns it as is or
      * transforms to become compliant. Provided default is used to substitute a non-alphanumeric string or prepend a
-     * string that not starts with a letter
+     * string that does not start with a letter
      * @param source       String value to test and optionally transform
      * @param defaultValue String value to be used as a default or a valid prefix
      * @return String value

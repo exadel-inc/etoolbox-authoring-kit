@@ -107,8 +107,8 @@ public class ScopeUtil {
      * Picks up an appropriate scope value judging by the annotation types provided. If one of the annotation types is that
      * of an entry-point annotation, such as {@link AemComponent}, {@link Dialog}, {@link EditConfig}, etc., the corresponding
      * scope is returned (first choice). Otherwise, if the annotation types provided all have {@link AnnotationRendering meta-annotation}
-     * and share same {@code scope} value, the scope which is common for all of them is returned (second choice).
-     * Else, default scope is returned
+     * and share the same {@code scope} value, the scope which is common for all of them is returned (second choice).
+     * Else, the default scope is returned
      * @param annotationTypes Non-null array of {@code Class} references representing annotation types
      * @return Array of strings representing valid scopes. Default is the array containing the single "default scope" entry
      */

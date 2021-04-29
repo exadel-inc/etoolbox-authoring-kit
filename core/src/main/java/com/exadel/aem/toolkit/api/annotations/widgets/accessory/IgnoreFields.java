@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 /**
  * Used to specify fields that are ignored (skipped) when preparing data for Granite component rendering.
  * Used for the case when the current dialog class or fieldset extends another class and would expose
- * one or more {@code DialogField}s from superclass that are not actually needed
+ * one or more {@code DialogField}s from a superclass that is not actually needed
  * @see ClassField
  * @deprecated This is deprecated and will be removed in a version after 2.0.2. Please use {@link Ignore} instead
  */

@@ -112,7 +112,7 @@ public @interface Select {
 
     /**
      * Used to set "ignore freshness" flag for this Granite UI component. This property is useful when there is
-     * a newly introduced field in the form, and there is need to specifically set the default selected item
+     * a newly introduced field in the form, and there is a need to specifically set the default selected item
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

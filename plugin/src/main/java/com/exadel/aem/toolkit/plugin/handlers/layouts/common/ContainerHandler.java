@@ -312,7 +312,7 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Produces an InvalidContainerException for every class member where a non-existent tab or accordion panel
+     * Produces an InvalidContainerException for every class member for which a non-existent tab or accordion panel
      * was specified
      * @param members {@code List} of class members for which a non-existent tab or accordion panel was specified
      */

@@ -105,7 +105,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
 
         /**
          * Assigns the package base to this instance. Accepts a string representing package prefix of processable
-         * AEM backend components, like {@code com.acme.aem.components.*}. If not specified, all available components
+         * AEM backend components like {@code com.acme.aem.components.*}. If not specified, all available components
          * will be processed
          * @param value String representing package base as described above
          * @return This Builder instance

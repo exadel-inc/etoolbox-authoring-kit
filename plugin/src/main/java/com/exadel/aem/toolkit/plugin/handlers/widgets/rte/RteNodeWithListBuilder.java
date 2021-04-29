@@ -23,22 +23,39 @@ import com.exadel.aem.toolkit.api.handlers.Target;
  * {@code features} or {@code table} node
  */
 class RteNodeWithListBuilder extends RteNodeBuilderBase {
+
     private final List<String> argumentList;
     private RteTreeWithListsBuilder childBuilder;
 
+    /**
+     * Initializes a class instance
+     * @param tagName String representing the name of the node being built
+     * @param featureAttributeName String representing the name of feature
+     */
+    RteNodeWithListBuilder(String tagName, String featureAttributeName) {
+        super(tagName, featureAttributeName);
+        argumentList = new LinkedList<>();
+    }
+
+    /**
+     * Retrieves the child {@link RteNodeWithListBuilder} object associated with this instance
+     * @return {@code RteNodeWithListBuilder} instance
+     */
     RteTreeWithListsBuilder getChildBuilder() {
         return childBuilder;
     }
 
+    /**
+     * Assigns the child {@link RteNodeWithListBuilder} object
+     * @param childBuilder {@code RteNodeWithListBuilder} instance
+     */
     void setChildBuilder(RteTreeWithListsBuilder childBuilder) {
         this.childBuilder = childBuilder;
     }
 
-    RteNodeWithListBuilder(String elementName, String featureAttributeName) {
-        super(elementName, featureAttributeName);
-        argumentList = new LinkedList<>();
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void store(String pluginId, String feature) {
         if (getFilter() != null && !getFilter().test(pluginId, feature)) {
@@ -47,11 +64,17 @@ class RteNodeWithListBuilder extends RteNodeBuilderBase {
         argumentList.add(feature);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     boolean isEmpty() {
         return argumentList.isEmpty();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     Target build(Target parent) {
         if (!isEmpty()) {

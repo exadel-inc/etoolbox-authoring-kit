@@ -48,7 +48,7 @@ public @interface Button {
 
     /**
      * When set to true, maps to the {@code disabled} attribute of this Granite UI component's node.
-     * Defines that the current option is shown in disabled state
+     * Defines that the current option is shown in the disabled state
      * @return True or false
      */
     boolean disabled() default false;
@@ -143,14 +143,14 @@ public @interface Button {
 
     /**
      *  When set to a non-blank string, maps to the {@code actionConfigName} attribute of this Granite UI dialog component's node.
-     *  Used to define standard definitions of command, icon and text
+     *  Used to define standard definitions of command, icon, and text
      *  @return String value, non-blank
      */
     String actionConfigName() default "";
 
     /**
      *  When set to a non-blank string, maps to the {@code trackingFeature} attribute of this Granite UI dialog component's node.
-     *  Used to define name of the feature that the interaction takes place
+     *  Used to define the name of the feature that the interaction takes place
      *  @return String value, non-blank
      *  @see <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">foundation-tracking</a>
      */
@@ -158,7 +158,7 @@ public @interface Button {
 
     /**
      *  When set to a non-blank string, maps to the {@code trackingElement} attribute of this Granite UI component's node.
-     *  Used to determine element this component represents for the purpose of tracking
+     *  Used to determine the element this component represents for the purpose of tracking
      *  @return String value, non-blank
      *  @see <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">foundation-tracking</a>
      */

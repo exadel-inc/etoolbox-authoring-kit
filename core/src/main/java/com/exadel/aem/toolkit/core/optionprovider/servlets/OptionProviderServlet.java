@@ -44,7 +44,7 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
 /**
  * Allows setting custom data source for a widget that is supporting Granite datasources, such as a {@link RadioGroup}
  * or a {@link Select}. Supports a number of settings that are either stored as attributes of the {@code datasource} node
- * in Granite UI setup, or passed in HTTP request as query arguments. Datasource options are rendered from either
+ * in Granite UI setup or passed in an HTTP request as query arguments. Datasource options are rendered from either
  * a node tree, an EToolbox List / ACS List -like node structure ({@code [...]/node/jcr:content/list/[items]}),
  * or a tag folder
  */
@@ -114,7 +114,7 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Generates the JSON representation of the options list as requested by user
+     * Generates the JSON representation of the options list as requested by the user
      * @param entries List of datasource options
      * @return JSON string
      */

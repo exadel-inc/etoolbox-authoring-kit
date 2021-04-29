@@ -56,7 +56,7 @@ public @interface Heading {
 
     /**
      *  When set to a non-blank string, maps to the {@code text} attribute of this Granite UI component's node.
-     *  Used to define the text within header tag.
+     *  Used to define the text within the header tag.
      *  @return String value, non-blank
      */
     @ValueRestriction(value = ValueRestrictions.NOT_BLANK_OR_DEFAULT)

@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 
 /**
- * Implements {@link Source} to expose metadata specific for the underlying annotation
+ * Implements {@link Source} to expose the metadata that is specific for the underlying annotation
  */
 public class AnnotationSourceImpl extends AdaptationBase<Source> implements Source {
     private final Annotation value;

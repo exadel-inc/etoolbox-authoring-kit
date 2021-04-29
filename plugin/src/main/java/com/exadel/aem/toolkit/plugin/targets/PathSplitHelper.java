@@ -51,7 +51,7 @@ class PathSplitHelper {
     }
 
     /**
-     * Gets whether the path associated with instance can be split in chunks
+     * Gets whether the path associated with this instance can be split into chunks
      * @return True or false
      */
     boolean isSplittable() {

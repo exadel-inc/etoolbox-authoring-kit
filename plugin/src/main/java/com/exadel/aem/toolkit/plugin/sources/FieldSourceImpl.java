@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 
 /**
- * Implements {@link Source} to expose metadata specific for the underlying class field
+ * Implements {@link Source} to expose the metadata that is specific for the underlying class field
  */
 public class FieldSourceImpl extends MemberSourceImpl {
 

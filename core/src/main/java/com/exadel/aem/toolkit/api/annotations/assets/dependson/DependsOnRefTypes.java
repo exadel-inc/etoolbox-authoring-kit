@@ -17,8 +17,9 @@ package com.exadel.aem.toolkit.api.annotations.assets.dependson;
  * Presents the set of possible {@code dependsOnRef} values to be used with {@link DependsOnRef} annotation
  */
 public enum DependsOnRefTypes {
+
     /**
-     * Type will be chosen automatically based on element widget type
+     * Type will be chosen automatically based on an element's widget type
      */
     AUTO {
         @Override
@@ -27,7 +28,7 @@ public enum DependsOnRefTypes {
         }
     },
     /**
-     * No type cast is performed
+     * No type casting is performed
      */
     ANY,
     /**
