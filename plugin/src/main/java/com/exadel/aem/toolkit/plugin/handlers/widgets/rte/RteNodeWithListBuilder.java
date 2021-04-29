@@ -22,19 +22,19 @@ import com.exadel.aem.toolkit.api.handlers.Target;
  * Used to build XML nodes for flat-string array feature representations within RichTextEditor config, such as
  * {@code features} or {@code table} node
  */
-class XmlNodeWithListBuilder extends XmlNodeBuilderBase {
+class RteNodeWithListBuilder extends RteNodeBuilderBase {
     private final List<String> argumentList;
-    private XmlTreeWithListsBuilder childBuilder;
+    private RteTreeWithListsBuilder childBuilder;
 
-    XmlTreeWithListsBuilder getChildBuilder() {
+    RteTreeWithListsBuilder getChildBuilder() {
         return childBuilder;
     }
 
-    void setChildBuilder(XmlTreeWithListsBuilder childBuilder) {
+    void setChildBuilder(RteTreeWithListsBuilder childBuilder) {
         this.childBuilder = childBuilder;
     }
 
-    XmlNodeWithListBuilder(String elementName, String featureAttributeName) {
+    RteNodeWithListBuilder(String elementName, String featureAttributeName) {
         super(elementName, featureAttributeName);
         argumentList = new LinkedList<>();
     }

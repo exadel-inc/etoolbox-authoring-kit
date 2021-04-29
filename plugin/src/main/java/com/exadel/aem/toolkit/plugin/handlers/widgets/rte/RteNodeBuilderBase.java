@@ -24,13 +24,13 @@ import com.exadel.aem.toolkit.api.handlers.Target;
  * Represents a generic builder for a {@code RichTextEditor} configuration markup.
  * Required by {@link RichTextEditorHandler#accept(Source, Target)}
  */
-abstract class XmlNodeBuilderBase {
+abstract class RteNodeBuilderBase {
     private String name;
     private final String attributeName;
     private BiPredicate<String, String> filter;
     private Consumer<Target> postprocessing;
 
-    XmlNodeBuilderBase(String tagName, String attributeName) {
+    RteNodeBuilderBase(String tagName, String attributeName) {
         this.name = tagName;
         this.attributeName = attributeName;
     }

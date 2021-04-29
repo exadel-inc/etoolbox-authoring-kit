@@ -28,13 +28,13 @@ import com.exadel.aem.toolkit.api.handlers.Target;
  * Used to build nodes for feature representations with nested XML nodes within RichTextEditor config XML, such as
  * {@code plugins} node
  */
-class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
+class RteTreeWithListsBuilder extends RteNodeBuilderBase {
     private static final String FEATURE_SEPARATOR = ":";
 
     private final Map<String, Set<String>> argumentTree;
     private final boolean addPluginIdsToFeatures;
 
-    XmlTreeWithListsBuilder(
+    RteTreeWithListsBuilder(
             String tagName,
             String attributeName,
             boolean addPluginIdsToFeatures
@@ -43,14 +43,14 @@ class XmlTreeWithListsBuilder extends XmlNodeBuilderBase {
         this.argumentTree = new HashMap<>();
         this.addPluginIdsToFeatures = addPluginIdsToFeatures;
     }
-    XmlTreeWithListsBuilder(
+    RteTreeWithListsBuilder(
             String tagName,
             String attributeName
     ) {
         this(tagName, attributeName, false);
     }
 
-    XmlTreeWithListsBuilder(XmlTreeWithListsBuilder sample) {
+    RteTreeWithListsBuilder(RteTreeWithListsBuilder sample) {
         super(sample.getName(), sample.getAttributeName());
         this.addPluginIdsToFeatures = sample.addPluginIdsToFeatures;
         this.setPostprocessing(sample.getPostprocessing());
