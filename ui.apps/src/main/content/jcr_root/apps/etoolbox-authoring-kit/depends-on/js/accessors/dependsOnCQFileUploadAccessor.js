@@ -15,7 +15,7 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
  *
- * CQ Coral3 based FileUpload accessor
+ * CQ Coral3-based FileUpload accessor
  * */
 (function ($, ns) {
     const SELECTOR = '.cq-FileUpload, .coral3-FileUpload';

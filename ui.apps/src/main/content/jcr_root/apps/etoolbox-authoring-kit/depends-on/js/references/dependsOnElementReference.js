@@ -15,8 +15,9 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
  *
- * DependsOn plugin Elements Reference Registry
- * Store and manage known elements references
+ * DependsOn Elements Reference Registry.
+ *
+ * Stores and manages known elements references
  * */
 (function (document, $, ns) {
     'use strict';
@@ -24,9 +25,9 @@
     const ELEMENT_REF_SQ = ns.createSequence();
     class ElementReference extends ns.ObservedReference {
         /**
-         * Initialize element observable adapter
-         * Only one instance per element can be initialized
-         * Returns existing adapter if instance already created
+         * Initialize the observable element's adapter.
+         * Only one instance per element can be initialized.
+         * Return the existing adapter if the instance has already been created
          * */
         constructor($el) {
             const instance = $el.data('dependsonsubject');
@@ -37,7 +38,7 @@
             this.name = this.$el.attr('data-dependsonref');
 
             if (this.name === 'this') {
-                console.error('[DependsOn]: "this" reference name is not allowed, it can not be reached by queries');
+                console.error('[DependsOn]: "this" reference name is not allowed, it cannot be reached by queries');
             }
 
             // Initialize data-dependsonref attribute for @this reference to listen change action
@@ -49,7 +50,7 @@
         }
 
         /**
-         * Get current element value
+         * Get the current element's value
          * */
         getReferenceValue() {
             let type = (this.$el.attr('data-dependsonreftype') || '').trim();
@@ -60,7 +61,7 @@
         }
 
         /**
-         * Check is the Element Reference accepts passed referenced definition
+         * Check if the element reference matches the provided definition
          * @param {string} name
          * @param {jQuery | HTMLElement | string} [$context]
          * @returns {boolean}
@@ -72,7 +73,7 @@
         }
 
         /**
-         * Check if reference detached from actual tree
+         * Check if the element reference is detached from the actual tree
          * @return {boolean}
          * */
         isOutdated() {
@@ -83,7 +84,7 @@
     const refs = [];
     class ElementReferenceRegistry {
         /**
-         * Register {ElementReference} by name and context
+         * Register {ElementReference} by the name and context
          * @param {string} name
          * @param {JQuery | HTMLElement} $context
          * @returns {ElementReference} (returns the existing one if it is already registered)
@@ -104,7 +105,7 @@
         }
 
         /**
-         * Handle events from referenced target
+         * Handle events from the referenced target
          * @param {Event} event
          */
         static handleChange(event) {
@@ -115,13 +116,13 @@
         }
 
         /**
-         * Returns all known Element References.
+         * Return all known Element References
          * @returns {Array<ElementReference>}
          * */
         static get refs() { return refs; }
 
         /**
-         * Get Reference instance by element
+         * Get a Reference instance by element
          * @param {string} refName
          * @param {JQuery | HTMLElement | string} $context
          * @returns {Array<ElementReference>}
@@ -131,7 +132,7 @@
         }
 
         /**
-         * Remove references that are detached
+         * Remove the references that are detached
          * */
         static actualize() {
             for (let i = 0; i < refs.length; ++i) {

@@ -15,9 +15,9 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
  *
- * DependsOn plugin entry point
+ * DependsOn plugin entry point.
  *
- * Initialize QueryObserver and ElementReferences
+ * Initializes QueryObserver and ElementReferences
  * */
 (function ($, ns) {
     'use strict';
@@ -29,7 +29,7 @@
     ns.version = '2.5.0';
 
     /**
-     * Depends On entry point
+     * DependsOn entry point
      * Initialize DependsOn for container
      * @param {HTMLElement} container
      * @param {function} [callback]

@@ -15,8 +15,9 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
  *
- * DependsOn Actions Registry
- * Action defines steps to process query result
+ * DependsOn Actions Registry.
+ *
+ * Manages actions that define steps to process query results
  * */
 (function ($, ns) {
     'use strict';
@@ -49,13 +50,14 @@
         }
 
         /**
+         * Retrieve an action by its name
          * @param {string} name - action name
          * @returns {function} action callback
          * */
         static getAction(name) {
             const sanitizedName = ActionRegistry.sanitizeName(name);
             if (name !== sanitizedName) {
-                console.warn(`[DependsOn]: Action "${sanitizedName}" accessed via incorrect name "${name}" (allowed symbols: a-z, 0-9, -)`);
+                console.warn(`[DependsOn]: Action "${sanitizedName}" accessed via the incorrect name "${name}" (allowed symbols: a-z, 0-9, -)`);
             }
             const action = actionRegistryMap[sanitizedName];
             if (typeof action !== 'function') {
@@ -66,15 +68,16 @@
         }
 
         /**
-         * @param {string} name - is action name
+         * Register the provided action
+         * @param {string} name - action name
          * @param {function} actionFn - function to set state (queryResult: any) => void
-         * @returns {function} actual actionCb after register
+         * @returns {function} actual action callback after registration
          * */
         static register(name, actionFn) {
             name = name.trim();
             const sanitizedName = ActionRegistry.sanitizeName(name);
             if (name !== sanitizedName) {
-                console.warn(`[DependsOn]: Action's name "${name}" was sanitized to "${sanitizedName}" (allowed symbols: a-z, 0-9, -)`);
+                console.warn(`[DependsOn]: Action name "${name}" was sanitized to "${sanitizedName}" (allowed symbols: a-z, 0-9, -)`);
             }
             if (typeof actionFn !== 'function') {
                 throw new Error(`[DependsOn]: Action ${actionFn} is not a valid action definition`);
