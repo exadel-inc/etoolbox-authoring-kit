@@ -35,7 +35,7 @@
         }
 
         /**
-         * Destroy the references
+         * Destroy the reference
          * */
         remove() {
             super.remove();
