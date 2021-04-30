@@ -15,9 +15,11 @@
 /**
  * @author Stepan Miakchilo
  *
- * Action to refresh the option set of a Coral3 Select widget with an OptionProvider.
- * Used in cases when path to options node is authored via another widget. Change of this widget's value triggers s
- * new query for options
+ * DependsOn Update Options Action.
+ *
+ * An action to refresh the option set of a Coral3 Select widget with an OptionProvider.
+ * Used in cases when the path to the options node is authored via another widget. Change of this widget's value triggers
+ * a new query for options
  */
 (function (Granite, $, DependsOn) {
     'use strict';
@@ -34,11 +36,12 @@
     const ALLOWED_TAG = 'CORAL-SELECT';
 
     /**
-     * Retrieves a valid HTTP endpoint address and a valid property name from the provided address string, which is typically
-     * the value of a form's 'action' property, and the provided name parameter that can have a relative path prefix
+     * Retrieve a valid HTTP endpoint address and a valid property name from the provided address string, which is
+     * usually the value of a form's "action" property, and the provided name parameter that can have a relative path
+     * prefix
      *
-     * @param address Raw address value
-     * @param name    Raw property name parameter
+     * @param address - raw address value
+     * @param name - raw property name parameter
      */
     function extractRequestRequisites(address, name) {
         let resourceAddress = address || '';
@@ -52,9 +55,9 @@
     }
 
     /**
-     * Constructs a request address string with the query options provided
+     * Construct a request address string with the provided query options
      *
-     * @param options Collection of options authored via DependsOn
+     * @param options - collection of options authored via DependsOn
      */
     function createDataSourceRequestAddress(options) {
         const datasourceEndpoint = Granite.HTTP.externalize(OPTION_PROVIDER_ENDPOINT);
@@ -66,13 +69,13 @@
     }
 
     /**
-     * Checks the new options retrieved via an HTTP request and assigns them to the Granite Select component provided,
+     * Check the new options retrieved via an HTTP request and assigns them to the provided Granite Select component,
      * optionally restores the selected value
      *
-     * @param $select       Select widget to set options for
-     * @param options       New option set, represented by "raw" (non-Granite) entities
-     * @param resourceAddr  Path to the JCR resource where the currently authored value resides
-     * @param valueMember   Property of the JCR resource containing the authored value
+     * @param $select - Select widget to set options for
+     * @param options - new option set, represented by "raw" (non-Granite) entities
+     * @param resourceAddr - path to the JCR resource where the currently authored value resides
+     * @param valueMember - property of the JCR resource containing the authored value
      */
     function processNewOptions($select, options, resourceAddr, valueMember) {
         // Receive new options from the datasource; check if they are the same as options already present,
@@ -88,7 +91,7 @@
         }
 
         // If option set needs to be changed, cache the currently selected value for this widget from the underlying
-        // resource (so that a new option may be be assigned the "selected" state if its value matches),
+        // resource (so that a new option can be assigned the "selected" state if its value matches),
         // and then replace the option set in DOM
         if ($select.attr(STORED_VALUE_ATTRIBUTE)) {
             setOptions($select, options, $select.attr(STORED_VALUE_ATTRIBUTE));
@@ -98,11 +101,11 @@
     }
 
     /**
-     * Sets a new option set to the Granite Select component
+     * Set a new option set to the Granite Select component
      *
-     * @param $select       Select widget to set options for
-     * @param options       New option set, represented by "raw" (non-Granite) entities
-     * @param selectedValue The value to mark as selected in the option set
+     * @param $select - Select widget to set options for
+     * @param options - new option set, represented by "raw" (non-Granite) entities
+     * @param selectedValue - the value to mark as selected in the option set
      */
     function setOptions($select, options, selectedValue) {
         const itemCollection = $select.get(0).items;
@@ -111,12 +114,12 @@
     }
 
     /**
-     * Queries for a stored JCR resource to find the currently selected value and assigns to the Granite select if found
+     * Query for a stored JCR resource to find the currently selected value and assign to the Select widget if found
      *
-     * @param $select       Select widget to set options for
-     * @param options       New option set, represented by "raw" (non-Granite) entities
-     * @param resourceAddr  Path to the JCR resource where the currently authored value resides
-     * @param valueMember   Property of the JCR resource containing the authored value
+     * @param $select - Select widget to set options for
+     * @param options - new option set, represented by "raw" (non-Granite) entities
+     * @param resourceAddr - path to the JCR resource where the currently authored value resides
+     * @param valueMember - property of the JCR resource containing the authored value
      */
     function setOptionsAndRestoreSelected($select, options, resourceAddr, valueMember) {
         $.get(resourceAddr)
@@ -131,10 +134,10 @@
     }
 
     /**
-     * Creates a new Granite option
+     * Create a new Granite option
      *
-     * @param src           An object having a {@code text} and a {@code value} attribute
-     * @param selectedValue The match value to trigger 'selected' state of the option
+     * @param src - an object having a {@code text} and a {@code value} attribute
+     * @param selectedValue - the match value to trigger 'selected' state of the option
      */
     function createOption(src, selectedValue) {
         return {
@@ -147,12 +150,12 @@
     }
 
     /**
-     * Registers {@code update-options} action in DependsOn registry.
+     * Register {@code update-options} action in DependsOn registry.
      * This action performs updating of the option set of the current Select widget
 
-     * @param path      Path value as set in the foreign widget (a path picker) this widget depends on
-     * @param options   Options to be passed with an async HTTP request to the custom datasource (same as described
-     *                  in the {@code CustomDataSourceServlet} javadoc
+     * @param path - path value as set in the foreign widget (a path picker) this widget depends on
+     * @param options - options to be passed with an async HTTP request to the option provider (same as described
+     *                  in the {@code OptionProviderServlet} javadoc
      */
     DependsOn.ActionRegistry.register(ACTION_NAME, function (path, options) {
         // Initialize and check whether critical requisites are accessible; early return if not
@@ -169,7 +172,7 @@
             return;
         }
 
-        // Collect options to be passed to the custom datasource endpoint (path to the JCR node to get items from, etc.)
+        // Collect options to be passed to the option provider endpoint (path to the JCR node to get items from, etc.)
         // and compose a HTTP query string
         options.path = path;
         options.output = 'json';

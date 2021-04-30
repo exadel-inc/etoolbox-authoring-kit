@@ -29,7 +29,7 @@
         preferableType: 'string',
         findTarget: function ($el) {
             if ($el.length > 1) {
-                console.warn('[DependsOn]: requested reference with multiple targets, the first target is used.', $el);
+                console.warn('[DependsOn]: requested a reference with multiple targets, the first target is used.', $el);
             }
             return $el.first();
         },
@@ -86,10 +86,10 @@
 
     function validate(accessorDescriptor) {
         if (!accessorDescriptor) {
-            throw new Error('[DependsOn] Can not register ElementAccessor. No accessor descriptor specified');
+            throw new Error('[DependsOn] Cannot register ElementAccessor. No accessor descriptor was specified');
         }
         if (typeof accessorDescriptor.selector !== 'string') {
-            throw new Error('[DependsOn] Can not register ElementAccessor. Descriptor.selector should exist and be type of string');
+            throw new Error('[DependsOn] Cannot register ElementAccessor. Descriptor.selector should exist and be type of string');
         }
     }
 
@@ -109,7 +109,7 @@
         }
 
         /**
-         * Get preferable type to cast for $el
+         * Get the preferable type for $el to be cast to
          * @param {JQuery} $el - target element
          * @returns {string}
          * */
@@ -128,7 +128,7 @@
         }
 
         /**
-         * Set required state of the $el
+         * Set the required state of $el
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
          * */
@@ -137,7 +137,7 @@
         }
 
         /**
-         * Set required state of the $el
+         * Set visibility of $el
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
          * */
@@ -146,7 +146,7 @@
         }
 
         /**
-         * Set disabled state of the $el
+         * Set the disabled state of $el
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
          * */
@@ -173,7 +173,7 @@
         }
 
         /**
-         * Register accessor.
+         * Register an accessor.
          * Accessor descriptor should contain selector property - css selector to determine target element types.
          * @param {object} accessorDescriptor
          * */
@@ -183,9 +183,9 @@
         }
 
         /**
-         * Update validity
+         * Triggers validating for the elements that support "foundation-validation"
          * @param {JQuery} $el - target element
-         * @param {boolean} [lazy] - true to skip initial validation
+         * @param {boolean} [lazy] - true to skip validation at the init stage
          * */
         static updateValidity($el, lazy) {
             const api = $el.adaptTo('foundation-validation');
@@ -205,7 +205,7 @@
 
         /**
          * Clear validity
-         * Exclude all child submittables from validation cache.
+         * Exclude all child submittables from validation cache
          * @param {JQuery} $el - target element
          * */
         static clearValidity($el) {
@@ -213,7 +213,7 @@
         }
 
         /**
-         * Set label asterisk according to state
+         * Add the "required" symbol (the asterisk) to an element's label as required by its state
          * @param {JQuery} $el - target element
          * @param {boolean} required - required state
          * */

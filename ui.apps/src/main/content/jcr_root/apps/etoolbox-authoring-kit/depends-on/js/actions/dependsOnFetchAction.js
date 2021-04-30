@@ -13,18 +13,20 @@
  */
 
 /**
- * @author Alexey Stsefanovich (ala'n), Liubou Masiuk (liubou-masiuk), Yana Bernatskaya (YanaBr)
+ * @author Alexey Stsefanovich (ala'n), Liubou Masiuk, Yana Bernatskaya (YanaBr)
  *
- * Action to set the result of fetching an arbitrary resource.
- * Uses query as a target path to node or property.
- * Path should end with the property name or '/' to retrieve the whole node.
- * Path can be relative (e.g. 'node/property' or '../../property') or absolute ('whole/path/to/the/node/property').
+ * DependsOn Fetch Action.
  *
- * {string} query - property path
+ * An action to set the result of fetching an arbitrary resource.
+ * Uses a query as the target path to a node or property.
+ * The path should end with the property name or '/' to retrieve the whole node.
+ * The path can be relative (e.g. 'node/property' or '../../property') or absolute
+ * ('whole/path/to/the/node/property')
  *
- * {string} config.map - function to process fetched value before setting the result
- * {string} config.err - function to process error before setting the result
- * {string} config.postfix - string to append to the path if it is not presented already
+ * {string} query - the property path
+ * {string} config.map - the function to process the fetched value before setting the result
+ * {string} config.err - the function to process an error before setting the result
+ * {string} config.postfix - string to append to the path if it is not already present
  * */
 
 (function (Granite, $, DependsOn) {
@@ -42,7 +44,7 @@
         return val;
     };
     const DEFAULT_FALLBACK = (e, name, path) => {
-        console.warn(`[Depends On]: "fetch" can not get ${name ? `property ${name}` : 'resource'} from "${path}": `, e);
+        console.warn(`[Depends On]: "fetch" cannot get ${name ? `property ${name}` : 'resource'} from "${path}": `, e);
         return '';
     };
 
@@ -59,7 +61,7 @@
     function fetchAction(query, config) {
         // If not a string -> incorrect input
         if (typeof query !== 'string') {
-            query && console.warn('[DependsOn]: can not execute "fetch", query should be a string');
+            query && console.warn('[DependsOn]: cannot execute "fetch", query should be a string');
             return;
         }
         const $el = this.$el;
@@ -92,7 +94,7 @@
     DependsOn.ActionRegistry.register('fetch', fetchAction);
 
     /**
-     * Split path coming from query into separate path and property name parts
+     * Split the path coming from a query into separate "path" and "property name" parts
      * @param {string} path
      * @return {FetchPathParams}
      *
@@ -110,7 +112,7 @@
     }
 
     /**
-     * Resolve path
+     * Resolve the path
      * @param {string} path
      * @param {string} [basePath]
      * @param {string} [postfix]
@@ -127,7 +129,7 @@
     }
 
     /**
-     * Resolve ../ and remove ./ path parts.
+     * Resolve "../" and remove "./" parts from the path
      * @param {string} path
      * @return {string}
      */

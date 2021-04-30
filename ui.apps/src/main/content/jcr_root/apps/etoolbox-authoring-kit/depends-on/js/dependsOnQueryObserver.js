@@ -15,17 +15,17 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
  *
- * QueryObserver compile query using QueryProcessor and apply defined acton to the target.
- * Target supports multiple actions and queries separated by ';'
+ * QueryObserver compiles a query using the QueryProcessor and applies the defined action to the target.
+ * The target supports multiple actions and queries separated with ';'.
  *
  * Attributes:
- * data-dependson - condition queries separated by ';'
- * data-dependsonaction - action types separated by ';'
- * data-dependsonskipinitial - marker to skip initial update
+ * data-dependson - condition queries separated with ';'
+ * data-dependsonaction - action types separated with ';'
+ * data-dependsonskipinitial - the marker to skip the initial update.
  *
  * NOTE:
- * condition query is a plane JS expression with special syntax for references
- * single condition query should not contain ';' move complex logic to separate functions / hidden fields
+ * Condition query is a plain JS expression with special syntax for references.
+ * Single condition query should not contain ';'. You need to move complex logic to separate functions / hidden fields
  * */
 (function ($, ns) {
     'use strict';
@@ -33,9 +33,9 @@
     const OBSERVERS_SQ = ns.createSequence();
 
     /**
-     * DependsOn Observer (Target) instance
-     * Attached to dependent element
-     * Initiate references registration
+     * DependsOn Observer (Target) instance.
+     * Attached to a dependent element.
+     * Initiates references registration
      * */
     class QueryObserver {
         static get DATA_STORE() { return 'dependsonobserver'; }
@@ -52,7 +52,7 @@
             const queries = ns.splitAndTrim($el.attr('data-dependson') || '');
             const actions = ns.splitAndTrim($el.attr('data-dependsonaction') || ns.ActionRegistry.DEFAULT);
             if (actions.length !== queries.length) {
-                throw new Error('[DependsOn]: The number of actions and queries does not match');
+                throw new Error('[DependsOn]: The numbers of actions and queries do not match');
             }
 
             // Initialize observers
@@ -105,11 +105,10 @@
         }
 
         /**
-         * @constructor
-         * @param {JQuery} $el
-         * @param {string} query
-         * @param {string} action
-         * @param {object} [data]
+         * @property {JQuery} $el
+         * @property {string} query
+         * @property {string} action
+         * @property {object} [data]
          * */
         constructor($el, query, action, data = {}) {
             this.id = OBSERVERS_SQ.next();
@@ -123,7 +122,7 @@
         }
 
         /**
-         * Request evaluation of query and execute action.
+         * Request evaluation of the query and execute the action
          * */
         update() {
             if (!this.$el || this.$el.closest('html').length === 0) {

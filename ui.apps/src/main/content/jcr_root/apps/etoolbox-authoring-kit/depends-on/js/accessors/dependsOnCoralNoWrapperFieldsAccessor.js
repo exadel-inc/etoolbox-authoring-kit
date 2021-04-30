@@ -15,7 +15,7 @@
 /**
  * @author Liubou Masiuk
  *
- * Accessor for widgets that do not have a surrounding wrapper element
+ * Accessor for widgets that do not have a wrapper element
  * */
 (function ($, ns) {
     const NO_WRAPPER_FIELDS_SELECTOR =

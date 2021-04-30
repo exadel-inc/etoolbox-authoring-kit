@@ -15,8 +15,9 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
  *
- * DependsOn plugin Group Reference Registry
- * Store and manage known group references
+ * DependsOn Group Reference Registry.
+ *
+ * Stores and manages known group references
  * */
 (function (document, $, ns) {
     'use strict';
@@ -34,7 +35,7 @@
         }
 
         /**
-         * Destroy reference
+         * Destroy the references
          * */
         remove() {
             super.remove();
@@ -43,14 +44,14 @@
         }
 
         /**
-         * Get current element value
+         * Get the current element's value
          * */
         getReferenceValue() {
             return (this.refs || []).map((ref) => ref.value);
         }
 
         /**
-         * Update child references list
+         * Update the child references list
          * */
         updateRefList() {
             this.refs.forEach((ref) => ref.unsubscribe(this.onChange));
@@ -59,7 +60,7 @@
         }
 
         /**
-         * Check if the reference accepts passed definition
+         * Check if the group reference matches the provided definition
          * @param {string} name
          * @param {jQuery | HTMLElement | string} [$context]
          * @returns {boolean}
@@ -69,7 +70,7 @@
         }
 
         /**
-         * Check if group reference have listeners and actual context
+         * Check if the group reference has listeners and an actual context
          * @returns {boolean}
          * */
         isOutdated() {
@@ -80,8 +81,8 @@
     let refs = [];
     class GroupReferenceRegistry {
         /**
-         * Register {GroupReference}
-         * Returns existing if it is already registered
+         * Register {GroupReference}.
+         * Return the existing one if it is already registered
          * */
         static register(name, $context) {
             for (const ref of refs) {
@@ -93,13 +94,13 @@
         }
 
         /**
-         * Returns all known Group References.
+         * Return all known group references.
          * @returns {Array<GroupReference>}
          * */
         static get refs() { return refs; }
 
         /**
-         * Remove outdated references and update actual ones
+         * Remove the outdated references and update the actual ones
          * */
         static actualize() {
             refs = refs.filter((ref) => {
