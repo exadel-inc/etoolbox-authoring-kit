@@ -50,6 +50,7 @@
         }
 
         /**
+         * Retrieve an action by its name
          * @param {string} name - action name
          * @returns {function} action callback
          * */
@@ -67,6 +68,7 @@
         }
 
         /**
+         * Register the provided action
          * @param {string} name - action name
          * @param {function} actionFn - function to set state (queryResult: any) => void
          * @returns {function} actual action callback after registration
