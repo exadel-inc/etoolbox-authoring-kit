@@ -11,7 +11,7 @@
     <artifactId>etoolbox-authoring-kit-all</artifactId>
 
     <name>${project.prettyName} - Cumulative Package</name>
-    <description>All-in-one content package for the ui.apps and ui.content modules</description>
+    <description>All-in-one content package for the ui.apps and ui.content modules of Exadel Toolbox Authoring Kit</description>
 
     <packaging>content-package</packaging>
 

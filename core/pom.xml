@@ -11,7 +11,7 @@
     <artifactId>etoolbox-authoring-kit-core</artifactId>
 
     <name>${project.prettyName} - Core</name>
-    <description>Contains API and core functionality</description>
+    <description>API and core functionality module of Exadel Toolbox Authoring Kit</description>
 
     <packaging>jar</packaging>
 

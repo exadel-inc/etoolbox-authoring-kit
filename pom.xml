@@ -7,7 +7,7 @@
     <version>2.0.3</version>
 
     <name>${project.prettyName}</name>
-    <description>Automates generating and managing rich and responsive authoring interfaces for Adobe Experience Manager (TM)</description>
+    <description>Automates generating and managing rich and responsive authoring interfaces for Adobe Experience Manager</description>
     <url>https://github.com/exadel-inc/etoolbox-authoring-kit</url>
 
     <organization>
