@@ -25,13 +25,13 @@ import java.lang.annotation.RetentionPolicy;
 public @interface HtmlLinkRules {
 
     /**
-     * If set to non-blank string, represents the CSS style for links to internal resources
+     * If set to a non-blank string, represents the CSS style for links to internal resources
      * @return String value
      */
     String cssInternal() default "";
 
     /**
-     * If set to non-blank string, represents the CSS style for links to external resources
+     * If set to a non-blank string, represents the CSS style for links to external resources
      * @return String value
      */
     String cssExternal() default "";

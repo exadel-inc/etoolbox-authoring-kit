@@ -34,7 +34,7 @@ class ContentXmlWriter extends PackageEntryWriter {
     }
 
     /**
-     * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
+     * Gets {@code Scope} value of current {@code PackageEntryWriter} implementation
      * @return String value representing a valid scope
      */
     @Override
@@ -43,9 +43,9 @@ class ContentXmlWriter extends PackageEntryWriter {
     }
 
     /**
-     * Gets whether current {@code Class} is eligible for populating {@code .content.xml} structure
+     * Gets whether current {@code Class} is eligible for populating a {@code .content.xml} structure
      * @param componentClass The {@code Class} under consideration
-     * @return True if current {@code Class} is annotated with {@link Dialog} or {@link AemComponent}; otherwise, false
+     * @return True if the current {@code Class} is annotated with {@link Dialog} or {@link AemComponent}; otherwise, false
      */
     @Override
     boolean canProcess(Class<?> componentClass) {

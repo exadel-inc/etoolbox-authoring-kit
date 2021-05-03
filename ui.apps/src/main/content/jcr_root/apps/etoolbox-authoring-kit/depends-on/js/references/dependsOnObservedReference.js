@@ -15,18 +15,18 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
  *
- * DependsOn plugin Observed Reference
- * ObservedReference is a base class for references
- *  - stores cached value
- *  - implements ObservedSubject pattern
+ * DependsOn Observed Reference.
+ *
+ * ObservedReference is a base class for references:
+ *  - stores cached values;
+ *  - implements the ObservedSubject pattern
  * */
 (function ($, ns) {
     'use strict';
 
     class ObservedReference {
         /**
-         * @constructor
-         * @param {string} id alias to access reference in parsed query
+         * @property {string} id alias to access a reference in parsed query
          * */
         constructor(id) {
             this.id = id;
@@ -34,14 +34,14 @@
         }
 
         /**
-         * Destroy reference
+         * Destroy the reference
          * */
         remove() {
             this._listenersSet.clear();
         }
 
         /**
-         * Add observer
+         * Add an observer
          * */
         subscribe(listener) {
             if (typeof listener !== 'function') return;
@@ -49,7 +49,7 @@
         }
 
         /**
-         * Remove observer
+         * Remove an observer
          * */
         unsubscribe(listener) {
             if (typeof listener !== 'function') return;
@@ -69,7 +69,7 @@
 
         // noinspection JSMethodCanBeStatic
         /**
-         * Get element value
+         * Get the element's value
          * @abstract
          * */
         getReferenceValue() {
@@ -77,8 +77,8 @@
         }
 
         /**
-         * Triggers value update.
-         * Fetch current value, update cached, notify subscribers if value changed.
+         * Trigger the value update.
+         * Fetch the current value, update the cached ones, notify subscribers if the value has changed
          * @param {boolean} [force] - force update
          * */
         update(force) {
@@ -90,7 +90,7 @@
         }
 
         /**
-         * Returns actual listeners count
+         * Return the number of actual listeners
          * @returns {number}
          * */
         get listenersCount() {
@@ -98,7 +98,7 @@
         }
 
         /**
-         * Accessor to the cached value of element
+         * Retrieve the cached value of the element
          * @returns cached value
          * */
         get value() {

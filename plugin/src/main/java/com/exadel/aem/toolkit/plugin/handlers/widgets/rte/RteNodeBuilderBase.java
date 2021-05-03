@@ -24,19 +24,19 @@ import com.exadel.aem.toolkit.api.handlers.Target;
  * Represents a generic builder for a {@code RichTextEditor} configuration markup.
  * Required by {@link RichTextEditorHandler#accept(Source, Target)}
  */
-abstract class XmlNodeBuilderBase {
+abstract class RteNodeBuilderBase {
     private String name;
     private final String attributeName;
     private BiPredicate<String, String> filter;
     private Consumer<Target> postprocessing;
 
-    XmlNodeBuilderBase(String tagName, String attributeName) {
+    RteNodeBuilderBase(String tagName, String attributeName) {
         this.name = tagName;
         this.attributeName = attributeName;
     }
 
     /**
-     * Gets the node name for the XML element this {@code Builder} will create
+     * Gets the node name for the node this {@code Builder} will create
      * @return String value, non-blank
      */
     String getName() {
@@ -44,14 +44,14 @@ abstract class XmlNodeBuilderBase {
     }
 
     /**
-     * Sets the node name for the XML element this {@code Builder} will create
+     * Sets the node name for the node this {@code Builder} will create
      */
     public void setName(String name) {
         this.name = name;
     }
 
     /**
-     * Gets the name of the key attribute of the XML element this {@code Builder} will create
+     * Gets the name of the key attribute of the node this {@code Builder} will create
      * @return String value, non-blank
      */
     String getAttributeName() {
@@ -89,7 +89,7 @@ abstract class XmlNodeBuilderBase {
     }
 
     /**
-     * Stores RichTextEditor feature to configuration XML markup
+     * Stores RichTextEditor feature to configuration node
      * @param pluginId RTE Plugin name
      * @param feature  Feature identifier
      */
@@ -105,7 +105,7 @@ abstract class XmlNodeBuilderBase {
     }
 
     /**
-     * Creates and returns the configuration XML node
+     * Creates and returns the configuration node
      * @return {@code Element} instance representing the config node
      */
     abstract Target build(Target parent);

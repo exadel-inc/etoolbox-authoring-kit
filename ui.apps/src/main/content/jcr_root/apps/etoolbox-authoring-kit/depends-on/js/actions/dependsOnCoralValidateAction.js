@@ -15,23 +15,26 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
  *
- * DependsOn Coral 3 Validate Actions
- * Additional action which sets query result as validation state
+ * DependsOn Coral 3 Validate Action.
+ *
+ * An additional action that sets the query result as the validation state.
  *
  * If the query result is a string then
- *     blank string - indicates valid state
- *     not blank string - indicates invalid state and used as validation massage
- * If the query result is boolean then
- *     true - indicates valid state
- *     false - indicates invalid state (data-dependson-validate-msg attribute is used as validation message)
- * Otherwise the result is cast to boolean.
+ *     a blank string - indicates the valid state;
+ *     non-blank string - indicates the invalid state and is used as the validation message.
+ *
+ * If the query result is a boolean value then
+ *     true - indicates the valid state;
+ *     false - indicates the invalid state (data-dependson-validate-msg attribute is used as the validation message).
+ * Otherwise the result is cast to a boolean.
  *
  * Options:
- * data-dependson-validate-msg - message of invalid state if query result is boolean
- * data-dependson-validate-cls - invalid class, default 'dependson-validate-invalid'
- * data-dependson-validate-strict - force to setup validity state after initial update
+ * data-dependson-validate-msg - the invalid state message if query result is boolean;
+ * data-dependson-validate-cls - the invalid state class, default is 'dependson-validate-invalid';
+ * data-dependson-validate-strict - force to set up the validity state after the initial update.
  *
- * NOTE: common data-dependson-validate marker just indicates that field will be processed by dependson validator
+ * NOTE: common data-dependson-validate marker just indicates that the field will be processed
+ * by the DependsOn validator
  * */
 (function ($, ns) {
     'use strict';
@@ -61,7 +64,7 @@
     }
 
     let dependsOnValidatorRegistered = false;
-    // Register validator in registry only if acton is used
+    // Register validator in registry only if the action is used
     function register() {
         const foundationRegistry = $(window).adaptTo('foundation-registry');
         // Make target 'validatable'

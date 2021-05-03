@@ -15,7 +15,7 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
  *
- * Cached resource request utility.
+ * Cached resource request utility
  * */
 (function (Granite, $, DependsOn) {
     'use strict';
@@ -46,7 +46,7 @@
         }
 
         /**
-         * Requesting resource by url
+         * Request a resource by url
          * @param {string} url
          * @return {Promise}
          */

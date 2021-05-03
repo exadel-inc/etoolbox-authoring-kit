@@ -70,7 +70,7 @@ public class StringUtil {
      * @param value     The value to convert
      * @param valueType {@code Class<?>} reference representing the type of the value
      * @param <T>       Type of the value
-     * @return String representing the value. If {@code null} reference was passed, empty string is returned
+     * @return String representing the value. If {@code null} reference was passed, an empty string is returned
      */
     public static <T> String format(T value, Class<?> valueType) {
         if (value == null) {
@@ -94,7 +94,7 @@ public class StringUtil {
      * @param value     The array to convert
      * @param valueType {@code Class<?>} reference representing the type of the array
      * @param <T>       Type of the value
-     * @return String representing the value. If {@code null} reference was passed, empty string is returned
+     * @return String representing the value. If {@code null} reference was passed, an empty string is returned
      */
     public static <T> String format(T[] value, Class<?> valueType) {
         if (value == null || value.length == 0) {
@@ -108,7 +108,7 @@ public class StringUtil {
      * @param value     The array to convert
      * @param valueType {@code Class<?>} reference representing the underlying collection type
      * @param <T>       Type of the value
-     * @return String representing the value. If {@code null} reference was passed, empty string is returned
+     * @return String representing the value. If {@code null} reference was passed, an empty string is returned
      */
     public static <T> String format(Collection<T> value, Class<?> valueType) {
         Function<Object, String> conversion = CONVERSIONS.getOrDefault(valueType, DEFAULT_CONVERSION);

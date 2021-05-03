@@ -20,8 +20,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing author UI aspects for child components that do not define
- * their own cq:editConfig. Writes data to the {@code _cq_childEditConfig.xml} file within the
- * current component folder before package is uploaded
+ * their own {@code cq:editConfig}. Writes data to the {@code _cq_childEditConfig.xml} file within the
+ * current component folder before the package is uploaded
  */
 class CqChildEditConfigWriter extends PackageEntryWriter {
     /**
@@ -33,7 +33,7 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
     }
 
     /**
-     * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
+     * Gets {@code Scope} value of current {@code PackageEntryWriter} implementation
      * @return String value representing a valid scope
      */
     @Override
@@ -42,9 +42,9 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
     }
 
     /**
-     * Gets whether current {@code Class} is eligible for populating {@code _cq_ChildEditConfig.xml} structure
+     * Gets whether current {@code Class} is eligible for populating a {@code _cq_ChildEditConfig.xml} structure
      * @param componentClass The {@code Class} under consideration
-     * @return True if current {@code Class} is annotated with {@link ChildEditConfig}; otherwise, false
+     * @return True if the current {@code Class} is annotated with {@link ChildEditConfig}; otherwise, false
      */
     @Override
     boolean canProcess(Class<?> componentClass) {

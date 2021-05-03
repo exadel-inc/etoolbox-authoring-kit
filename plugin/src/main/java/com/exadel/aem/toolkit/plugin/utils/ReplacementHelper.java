@@ -35,8 +35,8 @@ import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
- * Helper class used in {@code Source} processing stream for managing source replacements as set by user. Designed to
- * work with {@link ClassUtil}
+ * Helper class used in {@code Source} processing stream for managing source replacements as set by the user. Designed
+ * to work with {@link ClassUtil}
  */
 class ReplacementHelper {
     private static final SourceReplacingCollector SOURCE_REPLACING = new SourceReplacingCollector();
@@ -54,7 +54,7 @@ class ReplacementHelper {
      * Grooms the provided list of {@link Source}s.
      * As long as any of the fields within the provided collection is marked with {@link Replace},
      * the routine searches for the other referenced fields within the same collection, swaps the current field
-     * with the first one of the found, and removes the rest of the found
+     * with the first one of the found items, and removes the rest of the found items
      * @return Modified {@code List<Source>} collection
      */
     private List<Source> processInternal() {

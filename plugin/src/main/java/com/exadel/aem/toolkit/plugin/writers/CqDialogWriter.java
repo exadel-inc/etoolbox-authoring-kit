@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing Granite UI dialog definition (writes data to the
- * {@code _cq_dialog.xml} file within the current component folder before package is uploaded)
+ * {@code _cq_dialog.xml} file within the current component folder before the package is uploaded)
  */
 class CqDialogWriter extends PackageEntryWriter {
 
@@ -38,7 +38,7 @@ class CqDialogWriter extends PackageEntryWriter {
     }
 
     /**
-     * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
+     * Gets {@code Scope} value of the current {@code PackageEntryWriter} implementation
      * @return String value representing a valid scope
      */
     @Override
@@ -47,9 +47,9 @@ class CqDialogWriter extends PackageEntryWriter {
     }
 
     /**
-     * Gets whether current {@code Class} is eligible for populating {@code _cq_dialog.xml} structure
+     * Gets whether the current {@code Class} is eligible for populating a {@code _cq_dialog.xml} structure
      * @param componentClass The {@code Class} under consideration
-     * @return True if current {@code Class} is annotated with {@link Dialog} or {@link DesignDialog}; otherwise, false
+     * @return True if the current {@code Class} is annotated with {@link Dialog} or {@link DesignDialog}; otherwise, false
      */
     @Override
     boolean canProcess(Class<?> componentClass) {

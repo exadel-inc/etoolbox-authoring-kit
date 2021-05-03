@@ -33,20 +33,20 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
  * AnchorButton</a> component in Granite UI.
  * AnchorButton represents a standard HTML hyperlink ({@code <a>}) that is styled like a button
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.ANCHOR_BUTTON)
 @AnnotationRendering(properties = "all")
 public @interface AnchorButton {
 
     /**
-     * Maps to the href attribute of this Granite UI component's node
+     * Maps to the {@code href} attribute of this Granite UI component's node
      * @return String value
      */
     String href();
 
     /**
-     * Maps to the href attribute of this Granite UI component's node.
+     * Maps to the {@code href} attribute of this Granite UI component's node.
      * This is usually used to produce different value based on locale
      * @return String value
      */
@@ -66,7 +66,7 @@ public @interface AnchorButton {
 
     /**
      * When set to true, visually hides the text. It is recommended that every button has a text for a11y purpose.
-     * This property is used to make it not visible on screen, while being still available for a11y
+     * This property is used to make it not visible on the screen while being still available for a11y
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

@@ -35,7 +35,7 @@ public @interface Extends {
     Class<?> value() default _Default.class;
 
     /**
-     * Field name (if not specified, the field with name identical to the current field's name is assumed)
+     * Field name (if not specified, the field with the name identical to the current field's name is assumed)
      * @return Optional String value
      */
     String field() default "";

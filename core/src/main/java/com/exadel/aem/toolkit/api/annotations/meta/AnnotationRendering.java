@@ -19,7 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines settings for rendering data declared by an annotation int a Granite UI entity. They extend to all the properties
+ * Defines settings for rendering data declared by an annotation in a Granite UI entity. They extend to all the properties
  * of the underlying annotation unless a narrower list is specified via {@link AnnotationRendering#properties()}.
  * <p>In addition, this annotation can be used to specify the scope the properties are rendered within.
  * E.g. {@link Scopes#COMPONENT} certifies that the properties are valid for {@code .content.xml} and not for a
@@ -31,8 +31,8 @@ import java.lang.annotation.Target;
 public @interface AnnotationRendering {
 
     /**
-     * Defines the rules for the automapping of the current annotation's properties (methods). Default rule is that all
-     * the property values of an appropriate type (string, number, enum) are mapped. The more specific rules are:
+     * Defines the rules for the automapping of the current annotation's properties (methods). The default rule is that
+     * all the property values of an appropriate type (string, number, enum) are mapped. The more specific rules are:
      * <p>1) If "{@code *}" or "{@code all}" are specified, all the appropriate properties are mapped.</p>
      * <p>2) If one or more property names are specified "as they are", and the properties list does not end with "{@code *}"
      * or "{@code all}", only the directly named properties are mapped.</p>
@@ -47,8 +47,8 @@ public @interface AnnotationRendering {
     /**
      * When set, specifies one or more scopes this annotation can be mapped to,
      * i.e. whether this is rendered to {@code cq:Component} (component root), {@code cq:dialog}, {@code cq:editorConfig},
-     * or any other appropriate JCR node. Default value is equal to "all applicable scopes".
-     * <p>Note: this value has no effect for the properties that are rendered by a specific built-in or custom handler.
+     * or any other appropriate JCR node. The default value is equal to "all applicable scopes".
+     * <p>Note: this value has no effect for the properties that are rendered by a specific handler.
      * Also, it can be overridden by a {@link PropertyRendering#scope()} setting if specified at the property level</p>
      * @return One or more {@code Scope} values
      * @see Scopes
@@ -56,7 +56,8 @@ public @interface AnnotationRendering {
     String[] scope() default Scopes.DEFAULT;
 
     /**
-     * When initialized to a non-blank value, allows setting name prefix for all the relevant fields of current annotation
+     * When initialized to a non-blank value, allows setting name prefix for all the relevant fields of the current
+     * annotation
      * @return String value
      */
     String prefix() default "";

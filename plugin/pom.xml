@@ -7,13 +7,13 @@
     <parent>
         <groupId>com.exadel.etoolbox</groupId>
         <artifactId>etoolbox-authoring-kit</artifactId>
-        <version>2.0.2</version>
+        <version>2.0.3</version>
     </parent>
 
     <artifactId>etoolbox-authoring-kit-plugin</artifactId>
 
     <name>${project.prettyName} - Maven Plugin</name>
-    <description>Presents Maven plugin for creating Granite UI markup for AEM from Java source code</description>
+    <description>Maven plugin for storing AEM (Granite UI) markup created with Exadel Toolbox Authoring Kit</description>
 
     <packaging>maven-plugin</packaging>
 

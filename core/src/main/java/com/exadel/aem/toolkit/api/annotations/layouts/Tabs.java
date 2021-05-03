@@ -73,7 +73,7 @@ public @interface Tabs {
     boolean maximized() default false;
 
     /**
-     * Determines the name of the feature responsible for interaction. See
+     * Determines the name of the feature responsible for the interaction. See
      * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">
      * Foundation tracking</a> for details.
      * <p>Note that the property is effective for <i>Tabs widget</i> and not the tabbed layout</p>
@@ -82,7 +82,7 @@ public @interface Tabs {
     String trackingFeature() default "";
 
     /**
-     * Determines the name of the widget responsible for interaction. See
+     * Determines the name of the widget responsible for the interaction. See
      * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/clientlibs/foundation/js/tracking/index.html">
      * Foundation tracking</a> for details.
      * <p>Note that the property is effective for <i>Tabs widget</i> and not the tabbed layout</p>

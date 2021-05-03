@@ -22,23 +22,40 @@ import com.exadel.aem.toolkit.api.handlers.Target;
  * Used to build XML nodes for flat-string array feature representations within RichTextEditor config, such as
  * {@code features} or {@code table} node
  */
-class XmlNodeWithListBuilder extends XmlNodeBuilderBase {
+class RteNodeWithListBuilder extends RteNodeBuilderBase {
+
     private final List<String> argumentList;
-    private XmlTreeWithListsBuilder childBuilder;
+    private RteTreeWithListsBuilder childBuilder;
 
-    XmlTreeWithListsBuilder getChildBuilder() {
-        return childBuilder;
-    }
-
-    void setChildBuilder(XmlTreeWithListsBuilder childBuilder) {
-        this.childBuilder = childBuilder;
-    }
-
-    XmlNodeWithListBuilder(String elementName, String featureAttributeName) {
-        super(elementName, featureAttributeName);
+    /**
+     * Initializes a class instance
+     * @param tagName String representing the name of the node being built
+     * @param featureAttributeName String representing the name of feature
+     */
+    RteNodeWithListBuilder(String tagName, String featureAttributeName) {
+        super(tagName, featureAttributeName);
         argumentList = new LinkedList<>();
     }
 
+    /**
+     * Retrieves the child {@link RteNodeWithListBuilder} object associated with this instance
+     * @return {@code RteNodeWithListBuilder} instance
+     */
+    RteTreeWithListsBuilder getChildBuilder() {
+        return childBuilder;
+    }
+
+    /**
+     * Assigns the child {@link RteNodeWithListBuilder} object
+     * @param childBuilder {@code RteNodeWithListBuilder} instance
+     */
+    void setChildBuilder(RteTreeWithListsBuilder childBuilder) {
+        this.childBuilder = childBuilder;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void store(String pluginId, String feature) {
         if (getFilter() != null && !getFilter().test(pluginId, feature)) {
@@ -47,11 +64,17 @@ class XmlNodeWithListBuilder extends XmlNodeBuilderBase {
         argumentList.add(feature);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     boolean isEmpty() {
         return argumentList.isEmpty();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     Target build(Target parent) {
         if (!isEmpty()) {

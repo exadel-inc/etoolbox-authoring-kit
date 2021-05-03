@@ -59,7 +59,7 @@ public @interface Checkbox {
 
     /**
      * Maps to the {@code autosubmit} attribute of this Granite UI component's node.
-     * When set to true, commands to automatically submit the form when state of the Checkbox changes
+     * When set to true, commands to automatically submit the form when the state of the Checkbox changes
      * @return True or false
      */
     boolean autosubmit() default false;
@@ -80,7 +80,7 @@ public @interface Checkbox {
     boolean checked() default false;
 
     /**
-     * When set, allows to define a sublist of checkboxes. Its visibility will depend on the current checkbox state
+     * When set, allows defining a sublist of checkboxes. Its visibility will depend on the current checkbox state
      * @return Reference to a class describing the sublist
      */
     Class<?>[] sublist() default {};

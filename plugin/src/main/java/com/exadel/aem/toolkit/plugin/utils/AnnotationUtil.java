@@ -84,7 +84,7 @@ public class AnnotationUtil {
     }
 
     /**
-     * Gets whether any of the {@code Annotation}'s properties has a value which is not default
+     * Gets whether any of the {@code Annotation}'s properties have a value that is not default
      * @param annotation The annotation to analyze
      * @return True or false
      */
@@ -94,7 +94,7 @@ public class AnnotationUtil {
     }
 
     /**
-     * Gets whether an {@code Annotation} property has a value which is not default
+     * Gets whether an {@code Annotation} property has a value that is not default
      * @param annotation The annotation to analyze
      * @param method     The method representing the property
      * @return True or false
@@ -119,7 +119,7 @@ public class AnnotationUtil {
     }
 
     /**
-     * Retrieves list of properties of an {@code Annotation} object to which non-default values have been set
+     * Retrieves a list of properties of an {@code Annotation} object to which non-default values have been set
      * as a key-value map. The keys are the method names this annotation possesses, and the values are the results
      * of methods' invocation
      * @param annotation The annotation instance to analyze
@@ -130,7 +130,7 @@ public class AnnotationUtil {
     }
 
     /**
-     * Retrieves list of properties of an {@code Annotation} object as a key-value map. The keys are the method names
+     * Retrieves a list of properties of an {@code Annotation} object as a key-value map. The keys are the method names
      * this annotation possesses, and the values are the results of methods' invocation
      * @param annotation The annotation instance to analyze
      * @param filter     {@code Predicate<Method>} do decide whether the current method is eligible for collection
@@ -274,7 +274,7 @@ public class AnnotationUtil {
 
 
     /**
-     * Wraps up extracting method from an {@code Annotation} signature by name, with {@link NoSuchMethodException} handled
+     * Wraps up a method from an {@code Annotation} signature by name, with {@link NoSuchMethodException} handled
      * @param annotationType Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
      * @param name           Method name, non-blank String expected
      * @return The {@link Method} instance, or null
@@ -324,7 +324,7 @@ public class AnnotationUtil {
         private final Map<String, BiFunction<T, Object[], R>> extensionMethods;
 
         /**
-         * Class constructor
+         * Initializes a class instance
          * @param source           The object to extend
          * @param extensionMethods {@code Map} composed of extension method names, String-typed,
          *                         and the extension routines, each a function accepting a source object, and

@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.api.handlers;
 import java.util.Optional;
 
 /**
- * Presents an abstraction of data source for rendering Granite UI entities. A common variant of data source is a Java
+ * Presents an abstraction of data source for rendering Granite UI entities. A common variant of a data source is a Java
  * class, a class member, a particular annotation, or a specific data storage
  */
 public interface Source {

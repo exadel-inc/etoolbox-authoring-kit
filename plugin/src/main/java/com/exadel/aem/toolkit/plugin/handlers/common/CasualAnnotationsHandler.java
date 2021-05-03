@@ -143,7 +143,7 @@ public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Gets whether the given handler is a legacy handler, that is, implements an {@code accept} method that takes the
+     * Gets whether the given handler is a legacy handler, that is, implements the {@code accept} method that takes the
      * {@link Element}-typed and {@link Field}-typed argument
      * @param handler The {@code Handler} to analyze
      * @return True or false
@@ -151,7 +151,7 @@ public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
     private static boolean isLegacyHandler(Handler handler) {
         try {
             Method legacyAcceptMethod = handler.getClass().getMethod("accept", Element.class, Field.class);
-            return !legacyAcceptMethod.isDefault(); // if it's not default, it has been overridden which is true for actual handlers
+            return !legacyAcceptMethod.isDefault(); // If it's not default, it has been overridden which is true for actual handlers
         } catch (NoSuchMethodException | SecurityException e) {
             // This is a valid situation, no particular processing needed
             return false;

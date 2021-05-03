@@ -15,8 +15,7 @@ package com.exadel.aem.toolkit.plugin.exceptions;
 
 /**
  * Represents the plugin-specific exception thrown when there is no possibility to operate a particular container section
- * (the container sections, such as a Tab or an AccordionPanel, with such a name does not exist, or there are no tabs
- * in the current setup)
+ * (such as a Tab or an AccordionPanel)
  */
 public class InvalidContainerException extends RuntimeException {
     private static final String SECTIONS_NOT_DEFINED_MESSAGE = "No container sections defined for the dialog";

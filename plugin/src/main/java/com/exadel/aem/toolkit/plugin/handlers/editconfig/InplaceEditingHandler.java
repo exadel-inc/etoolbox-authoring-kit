@@ -184,7 +184,7 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Gets non-blank string that would stand for the name of the current config
+     * Gets a non-blank string that would stand for the name of the current config
      * @param config {@link InplaceEditingConfig} annotation instance
      * @return String value
      */

@@ -44,6 +44,14 @@
         "option4": {
           "text": "Option 4",
           "value": "value4"
+        },
+        "option5": {
+          "text": "Excluded option",
+          "value": "value5"
+        },
+        "option6": {
+          "text": "another excluded option",
+          "value": "value6"
         }
       }
     }

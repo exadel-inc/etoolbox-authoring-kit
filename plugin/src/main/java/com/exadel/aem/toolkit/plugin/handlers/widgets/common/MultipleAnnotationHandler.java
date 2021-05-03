@@ -47,7 +47,6 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
  */
 
 public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
-    private static final String PREFIX_GRANITE = "granite:*";
     private static final String POSTFIX_NESTED = "_nested";
 
     /**
@@ -107,7 +106,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
 
     /**
      * Gets whether the currently rendered XML element is a Granite {@code Multifield} element (judged by the fact
-     * it has an appropriate resource type and a nonempty subnode named "items")
+     * it has an appropriate resource type and a non-empty subnode named "items")
      * @param target {@code Target} instance
      * @return True or false
      */
@@ -161,7 +160,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         transferProperties(
                 target,
                 fieldSubresource,
-                ImmutableMap.of(CoreConstants.SEPARATOR_AT + DialogConstants.PN_NAME, PropertyTransferPolicy.MOVE));
+                ImmutableMap.of(CoreConstants.SEPARATOR_AT + DialogConstants.PN_NAME, PropertyTransferPolicy.MOVE_TO_NESTED_NODE));
     }
 
     /**
@@ -170,7 +169,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * @param target Previously created {@code Target} being converted to a synthetic multifield
      */
     private void wrapNestedMultifield(Source source, Target target) {
-        // We will create new "field" subresource but we need it "detached" not to mingle with existing "field" subresource
+        // We will create new "field" subresource, but we need it "detached" not to mingle with existing "field" subresource
         Target fieldSubresource = Targets.newInstance(DialogConstants.NN_FIELD, target);
         Target itemsSubresource = fieldSubresource.createTarget(DialogConstants.NN_ITEMS);
         Target nestedMultifield = itemsSubresource.createTarget(source.getName() + POSTFIX_NESTED);
@@ -178,10 +177,10 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         // Move existing multifield attributes to the nested multifield
         Map<String, PropertyTransferPolicy> standardPolicies = getTransferPolicies(source);
         Map<String, PropertyTransferPolicy> multifieldPolicies = new LinkedHashMap<>();
-        multifieldPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_COMPOSITE, PropertyTransferPolicy.COPY);
-        multifieldPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.NN_FIELD, PropertyTransferPolicy.MOVE);
+        multifieldPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_COMPOSITE, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
+        multifieldPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.NN_FIELD, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
         standardPolicies.forEach(multifieldPolicies::put);
-        multifieldPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_SLING_RESOURCE_TYPE, PropertyTransferPolicy.COPY);
+        multifieldPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_SLING_RESOURCE_TYPE, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
         transferProperties(target, nestedMultifield, multifieldPolicies);
 
         // Set the "name" attribute of the "source" node of the current multifield
@@ -196,10 +195,11 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
 
     /**
      * Generates set of node transfer policies to properly distribute XML element requisites between the wrapper level
-     * and the nested element level while converting a singular element to a multifield
+     * and the nested node level while converting a singular element to a multifield
      * @param source {@code Source} instance referring to the class member being processed
      * @return Map containing attribute/child names, either plain or wild-carded, and the action appropriate, whether
-     * to copy element, move, or leave intact. Wildcard symbol ({@code *}) is to specify common policy for multiple elements
+     * to copy element, move, or leave intact. The wildcard symbol ({@code *}) is to specify a common policy for multiple
+     * elements
      */
     private static Map<String, PropertyTransferPolicy> getTransferPolicies(Source source) {
         Map<String, PropertyTransferPolicy> transferPolicies = new LinkedHashMap<>();
@@ -211,24 +211,22 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
                     String propertyName = method.getAnnotation(PropertyRendering.class) != null
                             ? StringUtils.defaultIfEmpty(method.getAnnotation(PropertyRendering.class).name(), method.getName())
                             : method.getName();
-                    transferPolicies.put(CoreConstants.SEPARATOR_AT + propertyName, PropertyTransferPolicy.SKIP);
+                    transferPolicies.put(CoreConstants.SEPARATOR_AT + propertyName, PropertyTransferPolicy.LEAVE_IN_MULTIFIELD);
                 });
         // Also, all the values set via @Property will belong to the Multifield node
         Arrays.stream(source.adaptTo(Property[].class))
-            .forEach(property -> transferPolicies.put(CoreConstants.SEPARATOR_AT + property.name(), PropertyTransferPolicy.SKIP));
+            .forEach(property -> transferPolicies.put(CoreConstants.SEPARATOR_AT + property.name(), PropertyTransferPolicy.LEAVE_IN_MULTIFIELD));
         // Need to override policy for "name" as has been stored in a loop above
-        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_NAME, PropertyTransferPolicy.MOVE);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_NAME, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
         // Some attribute values are expected to be moved or copied though have set to "skipped" above
-        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_PRIMARY_TYPE, PropertyTransferPolicy.COPY);
-        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_DISABLED, PropertyTransferPolicy.COPY);
-        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_RENDER_HIDDEN, PropertyTransferPolicy.COPY);
-        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_REQUIRED, PropertyTransferPolicy.MOVE);
-        // Need to leave "granite:"-prefixed props (as they are probably set via @Attribute) at the multifield level
-        transferPolicies.put(CoreConstants.SEPARATOR_AT + PREFIX_GRANITE, PropertyTransferPolicy.MOVE);
-        // Rest of element attributes will move to the inner source
-        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.WILDCARD, PropertyTransferPolicy.MOVE);
-        // While all child nodes will stay as the property of multifield
-        transferPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.WILDCARD, PropertyTransferPolicy.SKIP);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_PRIMARY_TYPE, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_DISABLED, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_RENDER_HIDDEN, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_REQUIRED, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
+        // Rest of element attributes will move to the inner node
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.WILDCARD, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
+        // While all child nodes will stay as the properties of multifield
+        transferPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.WILDCARD, PropertyTransferPolicy.LEAVE_IN_MULTIFIELD);
 
         return transferPolicies;
     }
@@ -239,8 +237,8 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * @param from     Element to serve as the source of migration
      * @param to       Element to serve as the target of migration
      * @param policies Map containing attribute names (must start with {@code @}), child node names (must start with
-     *                 {@code ./}) and the action appropriate, whether to copy element, move, or leave intact. Wildcard
-     *                 symbol ({@code *}) is to specify common policy for multiple elements
+     *                 {@code ./}) and the appropriate action, whether to copy element, move, or leave intact. The wildcard
+     *                 symbol ({@code *}) is to specify a common policy for multiple elements
      */
     private static void transferProperties(Target from, Target to, Map<String, PropertyTransferPolicy> policies) {
         // Process attributes
@@ -249,10 +247,10 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
             PropertyTransferPolicy policy = getPolicyForProperty(
                 policies,
                 CoreConstants.SEPARATOR_AT + attribute);
-            if (policy != PropertyTransferPolicy.SKIP) {
+            if (policy != PropertyTransferPolicy.LEAVE_IN_MULTIFIELD) {
                 to.attribute(attribute, from.getAttributes().get(attribute));
             }
-            if (policy == PropertyTransferPolicy.MOVE) {
+            if (policy == PropertyTransferPolicy.MOVE_TO_NESTED_NODE) {
                 removableAttributes.add(attribute);
             }
         }
@@ -263,11 +261,11 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
             PropertyTransferPolicy policy = getPolicyForProperty(
                 policies,
                 DialogConstants.RELATIVE_PATH_PREFIX + child.getName());
-            if (policy == PropertyTransferPolicy.SKIP) {
+            if (policy == PropertyTransferPolicy.LEAVE_IN_MULTIFIELD) {
                 continue;
             }
             to.getChildren().add(child);
-            if (policy == PropertyTransferPolicy.MOVE) {
+            if (policy == PropertyTransferPolicy.MOVE_TO_NESTED_NODE) {
                 removableChildren.add(child);
             }
         }
@@ -277,7 +275,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     /**
      * Called to pick up an appropriate {@link PropertyTransferPolicy}
      * from the set of provided policies
-     * @param policies {@code Map<String, XmlTransferPolicy>} describing available policies
+     * @param policies {@code Map} describing available policies
      * @param propertyToken String representing the name of the current attribute or child node
      * @return The selected policy, or the default policy if no appropriate option found
      */
@@ -290,13 +288,15 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
                 : propertyToken.equals(entry.getKey()))
             .map(Map.Entry::getValue)
             .findFirst()
-            .orElse(PropertyTransferPolicy.SKIP);
+            .orElse(PropertyTransferPolicy.LEAVE_IN_MULTIFIELD);
     }
 
-
+    /**
+     * Enumerates available property transfer policies
+     */
     private enum PropertyTransferPolicy {
-        SKIP,
-        COPY,
-        MOVE
+        LEAVE_IN_MULTIFIELD,
+        COPY_TO_NESTED_NODE,
+        MOVE_TO_NESTED_NODE
     }
 }

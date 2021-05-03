@@ -15,29 +15,30 @@
 /**
  * @author Yana Bernatskaya (YanaBr), Alexey Stsefanovich (ala'n)
  *
- * DependsOn Coral 3 Tabs Actions
- * Additional action which sets visibility of tab-panel and related tab-control
+ * DependsOn Coral 3 Tab Visibility Action.
+ *
+ * An additional action that sets the visibility of a tab-panel and the related tab-control
  */
 
 (function ($, ns) {
     'use strict';
 
     /**
-     * Find related tab panelё
+     * Find the related tab panel
      * */
     function getTabPanel($element) {
         return $element.closest('coral-panelstack > coral-panel');
     }
 
     /**
-     * Find related tab control
+     * Find the related tab control
      * */
     function getTabControl($tabPanel) {
         return $tabPanel.closest('coral-tabview').find('coral-tablist > coral-tab').eq($tabPanel.index());
     }
 
     /**
-     * Toggle visibility of every field on the tab
+     * Toggle the visibility of every field on the tab
      */
     function tabChildrenVisibility($tabPanel, state) {
         $tabPanel.find('.coral-Form-field').each((index, el) => {
@@ -51,7 +52,7 @@
     }
 
     /**
-     * Change visibility of tab-panel and related tab-control
+     * Change the visibility of the tab-panel and the related tab-control
      * query type: boolean
      * */
     ns.ActionRegistry.register('tab-visibility', function setTabVisibility(state) {

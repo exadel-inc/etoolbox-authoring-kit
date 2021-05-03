@@ -15,8 +15,9 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
  *
- * DependsOn Query Processor
- * parse & compile DependsOn queries
+ * DependsOn Query Processor.
+ *
+ * Parses and compiles DependsOn queries
  * */
 (function (document, $, ns) {
     'use strict';
@@ -30,7 +31,7 @@
         static get REFERENCE_REGEXP() { return REFERENCE_REGEXP; }
 
         /**
-         * Evaluate parsed query
+         * Evaluate the parsed query
          * @param {string} query - parsed query
          * @param {object} context - context to execute
          * */
@@ -46,7 +47,7 @@
         }
 
         /**
-         * Parse query to evaluable one, replace references definitions by reference instances aliases
+         * Parse the query to an evaluable one, replace reference definitions with reference instances aliases
          * @param {string} query
          * @param {JQuery} $root
          * @param {function} [changeHandlerCB]
@@ -56,7 +57,7 @@
                 const $context = ns.findScope($root, sel);
 
                 if (name === 'this' && (isGroup || sel)) {
-                    console.warn(`[DependsOn]: ${q} is always referencing current element, could be replaced by simple @this`);
+                    console.warn(`[DependsOn]: ${q} is always referencing the current element, could be replaced with simple @this`);
                 }
 
                 const reference = name === 'this' ?
