@@ -26,7 +26,8 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
- * Presents an abstract implementation of {@link Source} that exposes metadata specific for the underlying class member
+ * Presents an abstract implementation of {@link Source} that exposes the metadata that is specific for the underlying
+ * class member
  */
 public abstract class MemberSourceImpl extends SourceImpl implements MemberSource {
 

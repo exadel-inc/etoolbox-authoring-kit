@@ -102,8 +102,8 @@ public class ReflectionContextHelper {
        ------------------- */
 
     /**
-     * Retrieves list of {@link Handler} instances that match the provided annotations and scope. The collection returned
-     * is ordered to honor the relations set by {@code before} and {@code after} anchors
+     * Retrieves a list of {@link Handler} instances that match the provided annotations and scope. The list is ordered
+     * in such a way as to honor the relations set by {@code before} and {@code after} anchors
      * @param scope       Non-null string representing the scope that the handlers must match
      * @param annotations Non-null array of {@code Annotation} objects, usually representing annotations of a method
      *                    or a class
@@ -117,8 +117,8 @@ public class ReflectionContextHelper {
     }
 
     /**
-     * Retrieves list of {@link Handler} instances that match the provided annotation types and scope. The collection
-     * returned is ordered to honor the relations set by {@code before} and {@code after} anchors
+     * Retrieves a list of {@link Handler} instances that match the provided annotation types and scope. The list
+     * is ordered in such a way as to honor the relations set by {@code before} and {@code after} anchors
      * @param scope           Non-null string representing the scope that the handlers must match
      * @param annotationTypes Non-null array of {@code Class} objects
      * @return {@code List} of handler instances, ordered
@@ -221,7 +221,7 @@ public class ReflectionContextHelper {
     /**
      * Used to set a reference to {@link PluginRuntimeContext} to the handler instance
      * @param handler Handler instance
-     * @param field   The field of handler to populate
+     * @param field   The field of the handler to populate
      */
     @SuppressWarnings("squid:S3011")
     // Access elevation is preserved for compatibility until context injection is retired
@@ -284,11 +284,11 @@ public class ReflectionContextHelper {
        --------------- */
 
     /**
-     * Used to initialize {@code PluginReflectionUtility} instance based on list of available classpath entries in the
-     * scope of this Maven plugin
+     * Used to initialize a {@code PluginReflectionUtility} instance based on the list of available classpath entries
+     * in the scope of this Maven plugin
      * @param elements    List of classpath elements to be used in reflection routines
-     * @param packageBase String representing package prefix of processable AEM backend components, like {@code com.acme.aem.components.*}.
-     *                    If not specified, all available components will be processed
+     * @param packageBase String representing package prefix of processable AEM backend components
+     *                    like {@code com.acme.aem.components.*}. If not specified, all available components will be processed
      * @return {@link ReflectionContextHelper} instance
      */
     public static ReflectionContextHelper fromCodeScope(List<String> elements, String packageBase) {

@@ -66,6 +66,9 @@ public class ListItemModel {
 
     private Map<String, Object> properties;
 
+    /**
+     * Initializes this model per Sling Model standard
+     */
     @PostConstruct
     private void init() {
         properties = currentResource.getValueMap()
@@ -80,14 +83,26 @@ public class ListItemModel {
         }
     }
 
+    /**
+     * Retrieves the resource type  that defines the view and behavior of EToolbox List this item belongs to
+     * @return String value, nullable
+     */
     public String getItemResType() {
         return itemResType;
     }
 
+    /**
+     * Retrieves the collection of properties of the current list item
+     * @return {@code Map} object, non-null
+     */
     public Map<String, Object> getProperties() {
         return properties;
     }
 
+    /**
+     * Retrieves the {@code Resource} object characterizing the {@code Page} this item belongs to
+     * @return {@code Page} instance, nullable
+     */
     private Resource getPageResource() {
         return Optional.of(currentResource)
             .map(Resource::getParent)

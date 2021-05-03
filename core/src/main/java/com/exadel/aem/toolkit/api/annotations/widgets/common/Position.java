@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 /**
- * Contains possible values describing position of a component
+ * Contains possible values describing the position of a component
  */
 public enum Position {
     LEFT,

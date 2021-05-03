@@ -52,7 +52,7 @@ public class ListHelper {
        -------------- */
 
     /**
-     * Retrieves collection of Sling {@link Resource}s representing list entries stored under given {@code path}
+     * Retrieves a collection of Sling {@link Resource}s representing list entries stored under given {@code path}
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @return List of resources. If the path provided is invalid or cannot be resolved, an empty list
@@ -63,7 +63,7 @@ public class ListHelper {
     }
 
     /**
-     * Retrieves collection of {@link SimpleListItem} values representing list entries stored under given {@code path}
+     * Retrieves a collection of {@link SimpleListItem} values representing list entries stored under given {@code path}
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @return List of {@link SimpleListItem}s. If the path provided is invalid or cannot be resolved, an empty list
@@ -74,7 +74,7 @@ public class ListHelper {
     }
 
     /**
-     * Retrieves collection of items representing list entries stored under given {@code path} adapted to the provided
+     * Retrieves a collection of items representing list entries stored under given {@code path} adapted to the provided
      * {@code itemType}
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
@@ -91,7 +91,7 @@ public class ListHelper {
     }
 
     /**
-     * Retrieves collection of list entries stored under given {@code path} that is transformed into a key-value map.
+     * Retrieves a collection of list entries stored under given {@code path} that is transformed into a key-value map.
      * The keys represent {@code jcr:title} property of the underlying resource while the values are the underlying
      * resources themselves. If several items have the same {@code jcr:title}, the last one is effective
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
@@ -104,7 +104,7 @@ public class ListHelper {
     }
 
     /**
-     * Retrieves collection of list entries stored under given {@code path} that is transformed into a key-value map.
+     * Retrieves a collection of list entries stored under given {@code path} that is transformed into a key-value map.
      * The keys represent the attribute of the underlying resources specified by the given {@code keyName} while the
      * values are the underlying resources themselves. If several items have the same {@code jcr:title}, the last one
      * is effective
@@ -119,7 +119,7 @@ public class ListHelper {
     }
 
     /**
-     * Retrieves collection of list entries stored under given {@code path} that is transformed into a key-value map.
+     * Retrieves a collection of list entries stored under given {@code path} that is transformed into a key-value map.
      * The keys represent {@code jcr:title} property of the underlying resource while the value represents {@code value}
      * property. If several items have the same {@code jcr:title}, the last one is effective
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
@@ -136,7 +136,7 @@ public class ListHelper {
     }
 
     /**
-     * Retrieves collection of list entries stored under given {@code path} that is transformed into a key-value map.
+     * Retrieves a collection of list entries stored under given {@code path} that is transformed into a key-value map.
      * Keys represent the attribute of the underlying resources specified by the given {@code keyName}. Values are the
      * underlying resources themselves as adapted to the provided {@code itemType} model. If several items have the same
      * key, the last one is effective
@@ -144,7 +144,7 @@ public class ListHelper {
      * @param path             JCR path of the items list
      * @param keyName          Item resource property that holds the key of the resulting map
      * @param itemType         {@code Class} reference representing type of map values required
-     * @param <T>              Type of map values, must be one adaptable from a Sling {@code Resource}
+     * @param <T>              Type of map values; must be one adaptable from a Sling {@code Resource}
      * @return Map containing {@code <T>}-typed instances. If the path provided is invalid or cannot be resolved,
      * or else a non-adaptable model {@code itemType} is given, an empty map is returned
      */

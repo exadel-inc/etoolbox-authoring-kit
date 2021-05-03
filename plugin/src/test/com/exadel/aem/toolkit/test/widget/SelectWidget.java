@@ -50,7 +50,7 @@ public class SelectWidget {
             @Option(text = "3 stars", value = "3"),
             @Option(text = "4 stars", value = "4", disabled = true),
             @Option(text = "5 stars", value = "5", disabled = true)
-    },
+            },
             emptyText = "Select rating",
             multiple = true,
             variant = SelectVariant.QUICK,

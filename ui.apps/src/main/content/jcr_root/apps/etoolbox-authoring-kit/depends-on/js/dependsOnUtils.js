@@ -21,7 +21,7 @@
     'use strict';
 
     /**
-     * Create sequence generator
+     * Create a sequence generator
      * */
     ns.createSequence = function () {
         let index = 1;
@@ -29,7 +29,7 @@
     };
 
     /**
-     * Split string
+     * Split the provided string
      * @param {string} value
      * @returns {string[]}
      * */
@@ -60,7 +60,7 @@
     };
 
     /**
-     * Cast field value to passed type
+     * Cast the field value to the provided type
      * @param value
      * @param {'boolean'|'boolstring'|'number'|'string'|'json'|'any'} type
      * */
@@ -82,12 +82,13 @@
     };
 
     /**
-     * Find 'scope' element by provided selector. Use back-forward search:
-     * First part of the selector will be used to find the closest element (base)
+     * Find the 'scope' element by the provided selector. Use back-forward search:
+     * The first part of the selector will be used to find the closest element (base).
      * If the second part after '|>' is provided,
-     * function will search element by the second part of the selector inside the base element.
+     * the function will search for an element using the second part of the selector inside
+     * the base element.
      * If 'this' is passed as the first part of the selector, $root will be returned.
-     * If the selector is not provided then the result will be $(document).
+     * If the selector is not provided then the result will be $(document)
      *
      * @param {JQuery} $root
      * @param {string} selector
@@ -100,10 +101,10 @@
     };
 
     /**
-     * Parse action data params into object
+     * Parse the action data params into an object
      * @param {HTMLElement} el - target element
      * @param {string} actionName
-     * @param {number} [index] - action order if multiple actions of the same type attached
+     * @param {number} [index] - action order if multiple actions of the same type are attached
      * @returns {object}
      * */
     ns.parseActionData = function (el, actionName = '', index = 0) {
@@ -133,8 +134,8 @@
     };
 
     /**
-     * Get current component path
-     * @param {JQuery} item - dialog form element, could be just "this" in dependsOn (query)
+     * Get the current component's path
+     * @param {JQuery} item - dialog form element, can be just "this" in dependsOn (query)
      * @returns string
      * */
     ns.getDialogPath = function (item) {
@@ -151,7 +152,7 @@
     };
 
     /**
-     * Attempts to parse a string value into JSON object
+     * Attempts to parse the string value into a JSON object
      * @param {string} value to parse
      * @return {Object} parsed value or an empty object in case of any exceptions
      */
@@ -164,7 +165,7 @@
     };
 
     /**
-     * Parse function string to a real function.
+     * Parse the function string into a real function
      * @param {string|function} exp
      * @param {function} defaultFn
      */
@@ -175,10 +176,10 @@
         try {
             fn = (new Function(`return ${exp}`))(); // NOSONAR: not a javascript:S3523 case, real evaluation should be done
         } catch (e) {
-            console.error(`[DependsOn]: can not process function '${exp}': `, e);
+            console.error(`[DependsOn]: cannot process function '${exp}': `, e);
         }
         if (typeof fn !== 'function') {
-            console.error(`[DependsOn]: evaluation '${exp}' result is not a function`);
+            console.error(`[DependsOn]: '${exp}' is not a function`);
             return defaultFn;
         }
         return fn;

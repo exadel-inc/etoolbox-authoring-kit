@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 /**
- * Contains possible values defining size of a Granite component
+ * Contains possible values defining the size of a Granite component
  */
 public enum Size {
     EXTRA_SMALL("XS"),

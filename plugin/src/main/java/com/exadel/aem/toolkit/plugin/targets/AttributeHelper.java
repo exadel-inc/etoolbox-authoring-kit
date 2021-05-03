@@ -85,7 +85,7 @@ public class AttributeHelper<T, V> {
     }
 
     /**
-     * Sets merger of current instance. Suitable for chained initialization of XmlAttributeSettingHelper
+     * Sets a merger for the current instance. Suitable for chained initialization of XmlAttributeSettingHelper
      * @param merger Function that manages an existing attribute value, and a new one (whether to keep only one of them
      *               or combine/merge)
      * @return Current {@code XmlAttributeSettingHelper} instance
@@ -368,7 +368,7 @@ public class AttributeHelper<T, V> {
         }
 
         /**
-         * Retrieves an eligible object type for a method ({@code Enum}s being casted to Strings)
+         * Retrieves an eligible object type for a method ({@code Enum}s being cast to {@code String}s)
          * @param method {@code Method} instance representing an annotation property
          * @return Object type
          */
@@ -381,7 +381,7 @@ public class AttributeHelper<T, V> {
         }
 
         /**
-         * Gets whether a value of specific type can be rendered to XML
+         * Gets whether a value of specific type can be rendered to a Granite-compliant entity
          * @param valueType Annotation's property {@code Class}
          * @return True or false
          */

@@ -17,11 +17,13 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.testing.mock.sling.servlet.MockRequestPathInfo;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
@@ -40,6 +42,7 @@ public class OptionProviderTest {
         context.load().json("/com/exadel/aem/toolkit/core/optionprovider/content.json", "/content");
         context.request().setResource(context.resourceResolver().getResource("/content"));
         optionProvider = context.registerInjectActivateService(new OptionProviderServiceImpl());
+        ((MockRequestPathInfo) context.request().getRequestPathInfo()).setResourcePath("/apps/" + ResourceTypes.OPTION_PROVIDER);
     }
 
     @Test
@@ -61,9 +64,10 @@ public class OptionProviderTest {
             + "&valueTransform1=lowercase"
             + "&prepend=None:none"
             + "&append=More:prefix\\\\:value"
+            + "&exclude=some*,*ing"
             + "&attributes=a:value,b:value";
 
-        context.request().setQueryString(queryString);  // hence we merge parameters from the query string to those from
+        context.request().setQueryString(queryString);  // This way we merge parameters from the query string to those from
                                                         // the underlying resource
         OptionSourceParameters parameters = OptionSourceParameters.forRequest(context.request());
         // Checking paths
@@ -77,8 +81,11 @@ public class OptionProviderTest {
         Assert.assertEquals(textMember2, parameters.getPathParameters().get(2).getTextMember());
         Assert.assertEquals(valueMember2, parameters.getPathParameters().get(2).getValueMember());
         // Checking 'append' and 'prepend' params
-        Assert.assertEquals("none", StringUtils.substringAfter(parameters.getPrependOptions()[0], ":"));
-        Assert.assertEquals("prefix\\\\:value", StringUtils.substringAfter(parameters.getAppendOptions()[0], ":"));
+        Assert.assertEquals("none", StringUtils.substringAfter(parameters.getPrependedOptions()[0], ":"));
+        Assert.assertEquals("prefix\\\\:value", StringUtils.substringAfter(parameters.getAppendedOptions()[0], ":"));
+        // Checking 'exclude' params
+        Assert.assertEquals("some*", parameters.getExcludedOptions()[0]);
+        Assert.assertEquals("*ing",  parameters.getExcludedOptions()[1]);
         // Checking transform params
         Assert.assertEquals(StringTransformation.UPPERCASE, parameters.getPathParameters().get(0).getTextTransform());
         Assert.assertEquals(StringTransformation.LOWERCASE, parameters.getPathParameters().get(1).getValueTransform());
@@ -90,7 +97,7 @@ public class OptionProviderTest {
     @Test
     public void shouldMergePathsAndCreateDataSource() {
         String queryString = "path2=/content/optionsPathHolder@moreOptionsPath"  // this way we merge options from more than one source
-                + "&textMember2=text";                                       // and implement path-by-reference facility
+                + "&textMember2=text&exclude=Excluded*,*6";                                       // and implement path-by-reference facility
         context.request().setQueryString(queryString);
 
         List<Resource> options = optionProvider.getOptions(context.request());

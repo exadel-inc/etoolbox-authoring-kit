@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 /**
  * The {@link PackageEntryWriter} implementation for storing subsidiary authoring process parameters for an AEM component,
  * such as dropdown behavior, in-place editing, etc. Writes data to the {@code _cq_editConfig.xml} file within the
- * current component folder before package is uploaded
+ * current component folder before the package is uploaded
  */
 class CqEditConfigWriter extends PackageEntryWriter {
 
@@ -34,7 +34,7 @@ class CqEditConfigWriter extends PackageEntryWriter {
     }
 
     /**
-     * Gets {@code XmlScope} value of current {@code PackageEntryWriter} implementation
+     * Gets {@code Scope} value of the current {@code PackageEntryWriter} implementation
      * @return String value representing a valid scope
      */
     @Override
@@ -43,9 +43,9 @@ class CqEditConfigWriter extends PackageEntryWriter {
     }
 
     /**
-     * Gets whether current {@code Class} is eligible for populating {@code _cq_editConfig.xml} structure
+     * Gets whether the current {@code Class} is eligible for populating a {@code _cq_editConfig.xml} structure
      * @param componentClass The {@code Class} under consideration
-     * @return True if current {@code Class} is annotated with {@link EditConfig}; otherwise, false
+     * @return True if the current {@code Class} is annotated with {@link EditConfig}; otherwise, false
      */
     @Override
     boolean canProcess(Class<?> componentClass) {

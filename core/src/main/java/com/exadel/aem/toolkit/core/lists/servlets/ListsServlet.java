@@ -73,7 +73,7 @@ public class ListsServlet extends SlingSafeMethodsServlet {
      * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest}
      * a {@code DataSource} object filled with all child pages under the current root path, which are either
      * lists themselves, or folders that may contain lists inside.
-     * The result is then limited by 'offset' and {@code limit} parameter values.
+     * The result is then limited by {@code offset} and {@code limit} parameter values.
      * @param request  {@code SlingHttpServletRequest} instance
      * @param response {@code SlingHttpServletResponse} instance
      */
@@ -102,11 +102,11 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Retrieves the list of item resources, which are either lists themselves or folders
-     * that may contain lists inside, excludes service and content nodes
-     * @param resolver An instance of ResourceResolver
+     * Retrieves the collection of resources which are either EToolbox Lists or folders that can contain lists.
+     * Service and content nodes are excluded from the output
+     * @param resolver {@code ResourceResolver} object
      * @param parent   {@code Resource} instance used as the source of markup
-     * @return A list of {@link Resource}s
+     * @return List of {@code Resource} objects
      */
     private List<Resource> getValidChildren(ResourceResolver resolver, Resource parent) {
         return getChildrenStream(parent)
@@ -115,9 +115,9 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Checks whether the resource is a list page
-     * @param resolver An instance of ResourceResolver
-     * @param resource {@code Resource} instance used as the source of markup
+     * Checks whether the resource is a EToolbox List page
+     * @param resolver {@code ResourceResolver} object
+     * @param resource {@code Resource} instance
      * @return True or false
      */
     private static boolean isList(ResourceResolver resolver, Resource resource) {
@@ -131,7 +131,7 @@ public class ListsServlet extends SlingSafeMethodsServlet {
 
     /**
      * Checks whether the resource is a folder
-     * @param resource {@code Resource} instance used as the source of markup
+     * @param resource {@code Resource} instance
      * @return True or false
      */
     private static boolean isFolder(Resource resource) {
@@ -141,8 +141,9 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Checks whether the resource contains resources, which are either pages, or folders that may contain lists inside
-     * @param resource {@code Resource} instance used as the source of markup
+     * Checks whether the resource contains child resources which are either pages, or folders that can contain EToolbox
+     * Lists
+     * @param resource {@code Resource} instance
      * @return True or false
      */
     private static boolean containsResource(Resource resource) {
@@ -154,7 +155,7 @@ public class ListsServlet extends SlingSafeMethodsServlet {
 
     /**
      * Checks whether the resource is a service/content node
-     * @param resource {@code Resource} instance used as the source of markup
+     * @param resource {@code Resource} instance
      * @return True or false
      */
     private static boolean isServiceNode(Resource resource) {
@@ -166,9 +167,9 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Gets {@code request} sling script helper
+     * Gets {@link SlingScriptHelper} object associated with the current request
      * @param request {@code ServletRequest} instance
-     * @return {@code SlingScriptHelper} instance
+     * @return {@code SlingScriptHelper} object
      */
     private static SlingScriptHelper getScriptHelper(ServletRequest request) {
         SlingBindings bindings = (SlingBindings) request.getAttribute(SlingBindings.class.getName());

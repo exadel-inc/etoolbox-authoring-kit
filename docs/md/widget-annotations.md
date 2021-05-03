@@ -315,32 +315,6 @@ public class FileUploadDialog {
     String currentDate;
 }
 ```
-
-### ImageUpload
-
-* `@ImageUpload`
-* Resource type: cq/gui/components/authoring/dialog/fileupload
-
-Designed as a companion to @FileUpload, it mimics the features of the FileUpload component that was there [before Coral 3 was introduced](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/form/fileupload/index.html) and the built-in upload component situated at _cq/gui/components/authoring/dialog/fileupload_ in your AEM installation. Technically, this is just another rendition of the FileUpload logic aimed at mainly uploading images via drag-and-drop. Use it like you’ll see in the following code snippet:
-
-```java
-public class ImageFieldDialog {
-    @DialogField
-    @ImageUpload(
-        mimeTypes = {
-            ImageUploadConstants.MIME_TYPE_PNG,
-            ImageUploadConstants.MIME_TYPE_JPG
-        },
-        sizeLimit = 100000,
-        fileNameParameter = "./image/fileName",
-        fileReferenceParameter = "image/fileRef",
-        allowUpload = true,
-        icon = "search"
-    )
-    String file;
-}
-```
-
 ### Heading
 
 * `@Heading`
@@ -393,6 +367,52 @@ public class DialogWithHyperlink {
         text = "Link Text",
         hideText = true,
         linkChecker = LinkCheckerVariant.SKIP
+    )
+    String field;
+}
+```
+*Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
+
+
+### ImageUpload
+
+* `@ImageUpload`
+* Resource type: cq/gui/components/authoring/dialog/fileupload
+
+Designed as a companion to @FileUpload, it mimics the features of the FileUpload component that was there [before Coral 3 was introduced](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/form/fileupload/index.html) and the built-in upload component situated at _cq/gui/components/authoring/dialog/fileupload_ in your AEM installation. Technically, this is just another rendition of the FileUpload logic aimed at mainly uploading images via drag-and-drop. Use it like you’ll see in the following code snippet:
+
+```java
+public class ImageFieldDialog {
+    @DialogField
+    @ImageUpload(
+        mimeTypes = {
+            ImageUploadConstants.MIME_TYPE_PNG,
+            ImageUploadConstants.MIME_TYPE_JPG
+        },
+        sizeLimit = 100000,
+        fileNameParameter = "./image/fileName",
+        fileReferenceParameter = "image/fileRef",
+        allowUpload = true,
+        icon = "search"
+    )
+    String file;
+}
+```
+
+### Include
+
+* `@Include`
+* Resource type: /libs/granite/ui/components/coral/foundation/include
+* See spec: [Include](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/include/index.html)
+
+Used to set up embedded resources in Touch UI dialogs. An inclusion can be any resource resolvable by a Sling `ResourceResolver`.
+See the usage sample below:
+
+```java
+public class DialogWithInclude {
+    @Include(
+        path = "/content/path/to/resource",
+        resourceType = "component/resource/type"
     )
     String field;
 }

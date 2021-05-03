@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html">
  * Hyperlink</a> component in Granite UI. It represents an HTML hyperlink ({@code <a>}) in the user interface
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.HYPERLINK)
 @AnnotationRendering(properties = "all")
@@ -71,7 +71,7 @@ public @interface Hyperlink {
 
     /**
      * When set to true, visually hides the text. It is recommended that every button has a text for a11y purpose.
-     * This property is used to make it not visible on screen, while being still available for a11y
+     * This property is used to make it not visible on the screen while being still available for a11y
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

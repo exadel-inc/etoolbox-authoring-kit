@@ -15,21 +15,21 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
  *
- * DependsOn Coral 3 Basic Actions
+ * DependsOn Coral 3 Basic Actions.
  *
  * Defined actions:
- * - visibility - set field visibility (also hide form field wrapper)
- * - required - set the require marker of the field
- * - readonly - set readonly state of field
- * - disabled - set disabled state of field
- * - set - set field value from query result
- * - set-if-blank - set field value from query result if field value is blank
+ * - visibility - set the field visibility (and also hide the form field wrapper);
+ * - required - set the required state of the field;
+ * - readonly - set the readonly state of the field;
+ * - disabled - set the disabled state of the field;
+ * - set - set the field value from the query result;
+ * - set-if-blank - set the field value from the query result only if the field value is blank
  * */
 (function ($, ns) {
     'use strict';
 
     /**
-     * Change visibility of field and form field wrapper
+     * Change the visibility of the field and the form field wrapper
      * query type: boolean
      * */
     ns.ActionRegistry.register('visibility', function setVisibility(state) {
@@ -37,7 +37,7 @@
     });
 
     /**
-     * Change require marker of the field
+     * Change the required state of the field
      * query type: boolean
      * */
     ns.ActionRegistry.register('required', function setRequired(state) {
@@ -47,7 +47,7 @@
     });
 
     /**
-     * Change readonly marker of the field
+     * Change the readonly state of the field
      * query type: boolean
      * */
     ns.ActionRegistry.register('readonly', function setReadonly(state) {
@@ -55,7 +55,7 @@
     });
 
     /**
-     * Change disable marker of the field
+     * Change the disabled state of the field
      * query type: boolean
      * */
     ns.ActionRegistry.register('disabled', function setDisabled(state) {
@@ -63,7 +63,7 @@
     });
 
     /**
-     * Set field value from query result, skips undefined query result
+     * Set the field value from the query result, skip undefined query results
      * query type: string
      * */
     ns.ActionRegistry.register('set', function setValue(value) {
@@ -73,7 +73,8 @@
     });
 
     /**
-     * Set field value from query result if field value is blank, skips undefined query result
+     * Set the field value from the query result only if the field value is blank,
+     * skip undefined query results
      * query type: string
      * */
     ns.ActionRegistry.register('set-if-blank', function setValueIfBlank(value) {

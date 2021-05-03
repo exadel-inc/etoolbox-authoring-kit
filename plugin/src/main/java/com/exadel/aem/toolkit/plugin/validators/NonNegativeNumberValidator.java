@@ -25,7 +25,7 @@ public class NonNegativeNumberValidator extends NumberValidator {
 
     /**
      * Tests that the provided number is non-negative
-     * @param value Generic representation of number
+     * @param value Generic representation of a number
      * @return True or false
      */
     @Override

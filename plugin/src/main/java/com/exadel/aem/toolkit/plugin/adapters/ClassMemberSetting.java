@@ -72,7 +72,7 @@ public class ClassMemberSetting {
     /**
      * Retrieves the {@code name} value associated with this instance. Exposes the class member name if the instance is
      * properly initialized
-     * @return String value, defaults to the empty string
+     * @return String value; defaults to the empty string
      */
     public String getName() {
         if (StringUtils.isNotBlank(overridingName)) {
@@ -114,7 +114,7 @@ public class ClassMemberSetting {
     }
 
     /**
-     * Gets whether the current instance corresponds to the given source because exposing same class reference
+     * Gets whether the current instance corresponds to the given source because exposing the same class reference
      * and member name
      * @param source Non-null {@code Source} reference
      * @return True or false

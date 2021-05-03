@@ -102,13 +102,13 @@ public @interface DatePicker {
     TypeHint typeHint() default TypeHint.NONE;
 
     /**
-     * when set to a non-blank string, maps to the {@code beforeSelector} attribute of this Granite UI component's node
+     * When set to a non-blank string, maps to the {@code beforeSelector} attribute of this Granite UI component's node
      * @return String value
      */
     String beforeSelector() default "";
 
     /**
-     * when set to a non-blank string, maps to the {@code afterSelector} attribute of this Granite UI component's node
+     * When set to a non-blank string, maps to the {@code afterSelector} attribute of this Granite UI component's node
      * @return String value
      */
     String afterSelector() default "";

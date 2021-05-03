@@ -44,7 +44,7 @@ public @interface RichTextEditor {
     boolean useFixedInlineToolbar() default true;
 
     /**
-     * Represents the set of "features" (i.e. plugins, corresponding toolbar icons and relevant logic) for this RichTextEditor
+     * Represents the set of "features" (i.e. plugins, corresponding toolbar icons, and relevant logic) for this RichTextEditor
      * when in "windowed" (non-fullscreen) mode.
      * Most common values are exposed by {@link RteFeatures}
      * @return String value, or an array of strings.
@@ -52,8 +52,8 @@ public @interface RichTextEditor {
     String[] features() default {};
 
     /**
-     * Represents the set of "features" (i.e. plugins, corresponding toolbar icons and relevant logic) for this RichTextEditor
-     * when in fullscreen mode. If this value is not specified, same set of features is used for either mode.
+     * Represents the set of "features" (i.e. plugins, corresponding toolbar icons, and relevant logic) for this RichTextEditor
+     * when in fullscreen mode. If this value is not specified, the same set of features is used for either mode.
      * Most common values are exposed by {@link RteFeatures}
      * @return String value, or an array of strings.
      */
@@ -116,7 +116,7 @@ public @interface RichTextEditor {
     Style[] styles() default {};
 
     /**
-     * Defines a maximal amount of operations managed by "undo" plugin (max clicks of "undo" button) in this RichTextEditor
+     * Defines a maximal amount of operations managed by the "undo" plugin (max clicks of "undo" button) in this RichTextEditor
      * @return Long value, non-negative
      */
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)

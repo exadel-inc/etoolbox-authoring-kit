@@ -14,15 +14,18 @@
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -42,6 +45,11 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
  */
 @Component(service = OptionProviderService.class)
 public class OptionProviderServiceImpl implements OptionProviderService {
+
+    private static final String FULL_STRING_MATCH_TEMPLATE = "^%s$";
+    private static final String USER_WILDCARD_PATTERN = "(?<![\\\\'])\\*";
+    private static final String REGEXP_WILDCARD_PATTERN = ".*";
+
 
     /**
     * {@inheritDoc}
@@ -72,11 +80,14 @@ public class OptionProviderServiceImpl implements OptionProviderService {
         // Extract "prepended" and "appended" options from the user-provided params; preserve only those of them
         // that do not have values already present in the "original" list
         result.addAll(0, getExtraOptions(request.getResource().getResourceResolver(),
-                parameters.getPrependOptions(),
+                parameters.getPrependedOptions(),
                 options));
         result.addAll(getExtraOptions(request.getResource().getResourceResolver(),
-                parameters.getAppendOptions(),
+                parameters.getAppendedOptions(),
                 options));
+
+        // Remove options that are specified in "exclude" parameter
+        removeExcludedOptions(result, parameters.getExcludedOptions());
 
         // Set "selected" flag to appropriate option(s) if "selected value" parameter is specified
         if (StringUtils.isNotBlank(parameters.getSelectedValue())) {
@@ -146,5 +157,29 @@ public class OptionProviderServiceImpl implements OptionProviderService {
                         .value(partsPair.getRight())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Browses through the provided list of options and removes the items that match the user-provided {@code exclude}
+     * setting
+     * @param options Collection of {@code Option} objects to test
+     * @param excludeStrings Value of the user-specified {@code exclude} setting
+     */
+    private static void removeExcludedOptions(List<Option> options, String[] excludeStrings) {
+        if (CollectionUtils.isEmpty(options) || ArrayUtils.isEmpty(excludeStrings)) {
+            return;
+        }
+        List<Pattern> patterns = Arrays.stream(excludeStrings)
+            .filter(StringUtils::isNotBlank)
+            .map(str -> String.format(FULL_STRING_MATCH_TEMPLATE, str.replaceAll(USER_WILDCARD_PATTERN, REGEXP_WILDCARD_PATTERN)))
+            .map(str -> Pattern.compile(str, Pattern.CASE_INSENSITIVE))
+            .collect(Collectors.toList());
+
+        List<Option> excludedOptions = options
+            .stream()
+            .filter(option -> patterns.stream().anyMatch(pattern -> pattern.matcher(option.getValue()).matches()
+                || pattern.matcher(option.getText()).matches()))
+            .collect(Collectors.toList());
+        options.removeAll(excludedOptions);
     }
 }

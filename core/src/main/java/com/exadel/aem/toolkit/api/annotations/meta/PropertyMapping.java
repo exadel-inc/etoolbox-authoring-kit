@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 public @interface PropertyMapping {
     /**
      * When initialized to a non-blank value, allows setting name prefix for a current field or all the relevant fields
-     * of current annotation
+     * of the current annotation
      * @return String value
      */
     String prefix() default "";

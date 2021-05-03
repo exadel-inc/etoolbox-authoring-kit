@@ -47,7 +47,7 @@ public @interface RadioButton {
 
     /**
      * When set to true, maps to the {@code disabled} attribute of this Granite UI component's node.
-     * Defines that the current option is shown in disabled state
+     * Defines that the current option is shown in the disabled state
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")
