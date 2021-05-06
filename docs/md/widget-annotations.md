@@ -10,7 +10,7 @@ The ToolKit makes use of `@DialogField` annotation and the set of specific annot
 
 ### DialogField
 
-* `@DialogField`
+* [@DialogField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/DialogField.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/field
 * See spec: [Field](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html)
 
@@ -49,7 +49,7 @@ There are specific recommendations concerning fields' and methods' ordering. See
 
 ### Accordion
 
-* `@Accordion`
+* [@Accordion](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/layouts/Accordion.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/accordion
 * See spec: [Accordion](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html)
 
@@ -91,7 +91,7 @@ Apart from this usage, `@Accordion` can be specified at class level as the layou
 
 ### Alert
 
-* `@Alert`
+* [@Alert](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Alert.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/alert
 * See spec: [Alert](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html?highlight=alert)
 
@@ -113,7 +113,7 @@ public class DialogWithAlert{
 
 ### AnchorButton
 
-* `@AnchorButton`
+* [@AnchorButton](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/AnchorButton.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/anchorbutton
 * See spec: [AnchorButton](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html)
 
@@ -137,7 +137,7 @@ public class DialogWithAnchorButton {
 
 ### Autocomplete
 
-* `@Autocomplete`
+* [@Autocomplete](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/autocomplete/Autocomplete.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/autocomplete
 * See spec: [Autocomplete](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/autocomplete/index.html)
 
@@ -156,7 +156,7 @@ public class AutocompleteDialog {
 
 ### Button
 
-* `@Button`
+* [@Button](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/button/Button.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/button
 * See spec: [Button](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/button/index.html)
 
@@ -179,7 +179,7 @@ public class DialogWithButton {
 
 ### Checkbox
 
-* `@Checkbox`
+* [@Checkbox](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Checkbox.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/checkbox
 * See spec: [Checkbox](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/checkbox/index.html)
 
@@ -235,7 +235,7 @@ public class NestedCheckboxListDialog {
 
 ### ColorField
 
-* `@ColorField`
+* [@ColorField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/color/ColorField.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/colorfield
 * See spec: [ColorField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/colorfield/index.html)
 
@@ -259,7 +259,7 @@ public class DialogWithColorField {
 
 ### DatePicker
 
-* `@DatePicker`
+* [@DatePicker](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/datepicker/DatePicker.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/datepicker
 * See spec: [DatePicker](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/datepicker/index.html)
 
@@ -282,7 +282,7 @@ public class DatePickerDialog {
 
 ### FieldSet
 
-* `@FieldSet`
+* [@FieldSet](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/FieldSet.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/fieldset
 * See spec: [FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html)
 
@@ -290,7 +290,7 @@ Creates a fieldset (a group of fields that can be managed as one) in a Touch UI 
 
 ### FileUpload
 
-* `@FileUpload`
+* [@FileUpload](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/FileUpload.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/fileupload
 * See spec: [FileUpload](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fileupload/index.html)
 
@@ -317,7 +317,7 @@ public class FileUploadDialog {
 ```
 ### Heading
 
-* `@Heading`
+* [@Heading](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Heading.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/heading
 * See spec: [Heading](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/heading/index.html)
 
@@ -333,7 +333,7 @@ public class DialogWithHeading {
 
 ### Hidden
 
-* `@Hidden`
+* [@Hidden](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Hidden.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/hidden
 * See spec: [Hidden](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/hidden/index.html)
 
@@ -353,7 +353,7 @@ public class DialogWithHiddenFields {
 
 ### Hyperlink
 
-* `@Hyperlink`
+* [@Hyperlink](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Hyperlink.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/hyperlink
 * See spec: [Hyperlink](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html)
 
@@ -376,7 +376,7 @@ public class DialogWithHyperlink {
 
 ### ImageUpload
 
-* `@ImageUpload`
+* [@ImageUpload](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/imageupload/ImageUpload.html)
 * Resource type: cq/gui/components/authoring/dialog/fileupload
 
 Designed as a companion to @FileUpload, it mimics the features of the FileUpload component that was there [before Coral 3 was introduced](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/form/fileupload/index.html) and the built-in upload component situated at _cq/gui/components/authoring/dialog/fileupload_ in your AEM installation. Technically, this is just another rendition of the FileUpload logic aimed at mainly uploading images via drag-and-drop. Use it like you’ll see in the following code snippet:
@@ -401,7 +401,7 @@ public class ImageFieldDialog {
 
 ### Include
 
-* `@Include`
+* [@Include](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Include.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/include
 * See spec: [Include](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/include/index.html)
 
@@ -421,7 +421,7 @@ public class DialogWithInclude {
 
 ### MultiField
 
-* `@MultiField`
+* [@MultiField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/MultiField.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/multifield
 * See spec: [Multifield](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html)
 
@@ -429,7 +429,7 @@ Creates a multifield (a group of one or more fields that be reproduced multiple 
 
 ### NumberField
 
-* `@NumberField`
+* [@NumberField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/NumberField.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/numberfield
 * See spec: [NumberField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/numberfield/index.html)
 
@@ -450,7 +450,7 @@ public class DialogWithNumberField {
 
 ### Password
 
-* `@Password`
+* [@Password](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Password.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/password
 * See spec: [Password](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/password/index.html)
 
@@ -470,7 +470,7 @@ public class DialogWithPasswordField {
 
 ### PathField
 
-* `@PathField`
+* [@PathField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/PathField.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/pathfield
 * See spec: [PathField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/pathfield/index.html)
 
@@ -489,7 +489,7 @@ public class DialogWithPathField {
 
 ### RadioGroup
 
-* `@RadioGroup`
+* [@RadioGroup](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/radio/RadioGroup.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/radiogroup
 * See spec: [RadioGroup](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/radiogroup/index.html)
 
@@ -522,7 +522,7 @@ Just as for a `@RadioGroup`, you can define an *optionProvider* that will produc
 
 ### RichTextEditor
 
-* `@RichTextEditor`
+* [@RichTextEditor](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/rte/RichTextEditor.html)
 * Resource type: /libs/cq/gui/components/authoring/dialog/richtext
 * See spec: [RichTextEditor](https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/rich-text-editor.html)
 
@@ -530,7 +530,7 @@ Renders a full-featured editor for rich text. See the [dedicated section on the 
 
 ### Select
 
-* `@Select`
+* [@Select](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/select/Select.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/select
 * See spec: [Select](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/select/index.html)
 
@@ -586,7 +586,7 @@ Just as for a `@RadioGroup`, you can define an *optionProvider* that will produc
 
 ### Switch
 
-* `@Switch`
+* [@Switch](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Switch.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/switch
 * See spec: [Switch](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/switch/index.html)
 
@@ -608,7 +608,7 @@ public class DialogWithSwitch {
 
 ### Tabs
 
-* `@Tabs`
+* [@Tabs](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/layouts/Tabs.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/tabs
 * See spec: [Tabs](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/tabs/index.html)
 
@@ -654,7 +654,7 @@ Apart from this usage, `@Tabs` can be specified at class level as the layout hin
 
 ### Text
 
-* `@Text`
+* [@Text](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Text.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/text
 * See spec: [Text](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html)
 
@@ -670,7 +670,7 @@ public class DialogWithText {
 
 ### TextArea
 
-* `@TextArea`
+* [@TextArea](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/textarea/TextArea.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/textarea
 * See spec: [Textarea](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textarea/index.html)
 
@@ -693,7 +693,7 @@ public class DialogWithTextArea {
 
 ### TextField
 
-* `@TextField`
+* [@TextField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/TextField.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/textfield
 * See spec: [TextField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textfield/index.html)
 

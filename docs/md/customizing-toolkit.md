@@ -136,7 +136,7 @@ There is no restriction regarding what annotations can be handled; built-in ones
 
 #### Source object
 
-The first argument of a handler's `accept` method is the `Source` - a generic data provider that matches the entity (a Java class or a class member) the handler is called for. If the current handler is invoked due to an annotation attached to a class, the *Source* represents, roughly speaking, the class itself. But if the annotation was a method's or a field's annotation, the *Source* stands for the underlying member.
+The first argument of a handler's `accept` method is the [Source](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/handlers/Source.html) - a generic data provider that matches the entity (a Java class or a class member) the handler is called for. If the current handler is invoked due to an annotation attached to a class, the *Source* represents, roughly speaking, the class itself. But if the annotation was a method's or a field's annotation, the *Source* stands for the underlying member.
 
 The *Source* is further specified by calling the `adaptTo()` method which accepts the only argument - the adapter type. You can, for example, call `source.adaptTo(Annotation[].class)` to get the array of annotations attached to the source-reflected class or class member. Also, you can specify a particular annotation like `source.adaptTo(DialogField.class)`. If the referred annotation is not actually present, `null` is returned. To mitigate null pointer management you can call the `tryAdaptTo()` method that will return an `Optional` object.
 
@@ -252,7 +252,7 @@ And the next snippet shows how to retrieve an ancestor with a particular name:
 Target root = currentTarget.findParent(t -> t.getName().equals("jcr:root"))
 ```
 
-There are many more possibilities. For greater detail, see the inline documentation on [Target](../../core/src/main/java/com/exadel/aem/toolkit/api/handlers/Target.java).
+There are many more possibilities. For greater detail, see the inline documentation on [Target](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/handlers/Target.html).
 
 Just like *Source*, *Target* is an adaptable entity. By default, *Target* adapts to `DomAdapter` with the possibility of being serialized to an XML DOM document. You can also apply any custom adapters in the way described in the "Source object" division.
 
