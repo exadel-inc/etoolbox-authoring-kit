@@ -25,13 +25,6 @@
 
     const OVERRIDES = [
         {
-            condition: (selector) => selector.submittable,
-            rewrite: (selector) => (selector.candidate = selector.candidate
-                .split(',')
-                .map((candidate) => candidate.trim() + ':not([hidden])')
-                .join(','))
-        },
-        {
             condition: (selector) => selector.submittable === '.coral-RadioGroup',
             rewrite: (selector) => (selector.candidate = '.coral-RadioGroup:not([disabled])')
         },
@@ -46,12 +39,21 @@
         {
             condition: (selector) => selector.submittable === '.coral-Autocomplete:not(coral-autocomplete)',
             rewrite: (selector) => (selector.candidate = '.coral-Autocomplete:not(coral-autocomplete):not([disabled])')
+        },
+        {
+            condition: (selector) => selector.submittable,
+            rewrite: (selector) => (selector.candidate = selector.candidate
+                .split(',')
+                .map((candidate) => candidate.trim() + ':not([hidden])')
+                .join(','))
         }
     ];
 
-    selectors.forEach((selector) => {
-        OVERRIDES
-            .filter((rule) => rule.condition(selector))
-            .forEach((rule) => rule.rewrite(selector));
+    $(document).one("foundation-contentloaded", function() {
+        selectors.forEach((selector) => {
+            OVERRIDES
+                .filter((rule) => rule.condition(selector))
+                .forEach((rule) => rule.rewrite(selector));
+        });
     });
 })();
