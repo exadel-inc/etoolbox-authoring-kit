@@ -2,7 +2,7 @@
 
 ## Grouping fields with FieldSet
 
-* @FieldSet
+* [@FieldSet](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/FieldSet.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/fieldset
 * See spec: [FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html)
 

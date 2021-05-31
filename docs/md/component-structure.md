@@ -2,7 +2,7 @@
 
 ## @AemComponent
 
-`@AemComponent` is your entry point to creating component authoring interfaces, such as a *Dialog*, a _Design dialog_, or an _In-place editing config_. When added to a Java class, this annotation must contain generic properties of the component such as *title*, *description*, etc.
+[@AemComponent](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/main/AemComponent.html) is your entry point to creating component authoring interfaces, such as a *Dialog*, a _Design dialog_, or an _In-place editing config_. When added to a Java class, this annotation must contain generic properties of the component such as *title*, *description*, etc.
 
 Additionally, `@AemComponent` can contain references to other Java classes that can be referred to as “views”. If, for instance, you need *editConfig*, you can add the `@EditConfig` to the Java class where the `@AemComponent` annotation is already present. You can also add `@EditConfig` to another Java class and put a reference to that class in the *views* collection of `@AemComponent`.
 
@@ -73,7 +73,7 @@ Otherwise, a dialog can be rendered in one or more tabs, or be organized as an *
 
 If you wish to engage Touch UI dialog features like listeners or in-place editing (those living in *\<cq:editConfig>* node and, accordingly, *_cq_editConfig.xml* file), add an `@EditConfig` annotation to your Java class (same as above, you can as well add the annotation to a separate class and then put the reference to this class into @AemComponent's *views* property).
 
-`@EditConfig` facilitates setting of the following properties and features:
+[@EditConfig](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/editconfig/EditConfig.html) facilitates setting of the following properties and features:
 
 - Actions
 - Empty text

@@ -57,7 +57,7 @@ public @interface Autocomplete {
 
     /**
      * When set, the {@code datasource} node is appended to the JCR buildup of this component
-     * and populated with values of provided {@link AutocompleteDatasource} annotation
+     * and populated with values of the provided {@link AutocompleteDatasource} annotation
      * @return {@code @AutocompleteDatasource} instance
      */
     AutocompleteDatasource datasource() default @AutocompleteDatasource();
@@ -71,7 +71,7 @@ public @interface Autocomplete {
 
     /**
      * When set, the {@code options} node is appended to the JCR representation of this component
-     * and populated with the values of provided {@link AutocompleteList} annotation
+     * and populated with the values of the provided {@link AutocompleteList} annotation
      * @return {@code @AutocompleteList} instance
      */
     AutocompleteList options() default @AutocompleteList();

@@ -6,6 +6,7 @@
 ![License](https://img.shields.io/github/license/exadel-inc/etoolbox-authoring-kit)
 ![Latest release](https://img.shields.io/github/v/release/exadel-inc/etoolbox-authoring-kit?color=%23ed8756)
 ![Maven Central version](https://img.shields.io/maven-central/v/com.exadel.etoolbox/etoolbox-authoring-kit)
+[![javadoc](https://javadoc.io/badge2/com.exadel.etoolbox/etoolbox-authoring-kit-core/javadoc.svg)](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core)
 ![GitHub repo stats](https://img.shields.io/github/stars/exadel-inc/etoolbox-authoring-kit?style=flat&color=%23FFD700)
 
 Exadel Authoring Kit for AEM (part of Exadel Toolbox), or simply the **ToolKit**, is a set of tools for creating robust Granite/Touch UI dialogs and other authoring interfaces for Adobe Experience Manager&trade; with Java and Maven.
@@ -17,7 +18,7 @@ The ToolKit has many options to make authoring interfaces rich, flexible, and re
 The ToolKit is compliant with the newest facilities of AEM 6.4/6.5, Granite UI, and Coral v.3+, and has support for Coral v.2.
 
 ***
-> Learn and practice using the ToolKit with our sandbox project under [_samples_](/samples/README.md)
+> Learn and practice using the ToolKit with our **sandbox project** under [_samples_](/samples/README.md)
 >
 ***
 
@@ -359,9 +360,15 @@ Many more code snippets are available in the [Component management](#component-m
 - [Managing structured data with EToolbox Lists](docs/md/etoolbox-lists.md)
 - [Feeding data to selection widgets with OptionProvider](docs/md/option-provider.md)
 
+#### Need more documentation?
+
+See the complete API and core module documentation (Javadoc) [here](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/index.html).
+
 ## Working with sample code
 
 Examples of how to use the ToolKit and the DependsOn client library are presented in the [Samples](samples) module.
 
 Run `mvn clean install -P install-samples` from the root folder of [Samples](samples) to install the sample project.
+
+
 
