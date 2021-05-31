@@ -49,7 +49,7 @@
         }
     ];
 
-    $(document).one("foundation-contentloaded", function() {
+    $(document).one('foundation-contentloaded', function () {
         selectors.forEach((selector) => {
             OVERRIDES
                 .filter((rule) => rule.condition(selector))
