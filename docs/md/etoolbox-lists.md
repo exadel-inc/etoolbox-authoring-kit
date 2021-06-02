@@ -31,6 +31,7 @@ There's no limitation to the complexity of List Item. Here is how an item for st
 ```java
 @AemComponent(
     path = "listItems/statusCode",
+    writeMode = WriteMode.CREATE, // might not be needed: see note below
     title = "Status Code List Item"
 )
 @Dialog
@@ -50,6 +51,8 @@ public class StatusCodeListItem {
 }
 ```
 The List Items have a default view which enumerates all the available properties. However, this can be customized. You can add an Item preview section to a List Item. To do this, create a new `itemPreview.html` file in your Item's folder (in our case, `/apps/listItems/statusCode`). This preview will be displayed next to the properties.
+
+Note: if you create you List Item anew, and do not have special requirements regarding how it is rendered (i.e. your List Item is not a reusable component for ordinary pages), you don't need to manually create the component folder. Just add `writeMode = WriteMode.CREATE` to the `@AemComponent`. Ignore this if you are actually reusing a pre-existing component.
 
 ### Editing a List
 
