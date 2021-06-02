@@ -44,7 +44,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@AnnotationRendering(properties = "!path")
+@AnnotationRendering(properties = "!path, !writeMode")
 public @interface AemComponent {
 
     /**
@@ -57,6 +57,17 @@ public @interface AemComponent {
      * @return String value, non-blank
      */
     String path();
+
+    /**
+     * Specifies whether the data for this component will be stored only to an existing package folder, or else a new
+     * folder will be created if needed.<br>
+     * Default is {@code WriteMode.OPEN} which means that the existing component node (folder) will be searched for. If
+     * missing, an exception will be issued. This helps to prevent bogus component folders due to typos or
+     * misconfiguration. If set to {@code WriteMode.CREATE}, a new node (folder) is created at the path specified. This
+     * helps to automatically create structures with no pre-defined content
+     * @return One of the {@link WriteMode} options
+     */
+    WriteMode writeMode() default WriteMode.OPEN;
 
     /**
      * The set of views this {@code @Component} comprises. Each view represents a class that will be scanned for the
