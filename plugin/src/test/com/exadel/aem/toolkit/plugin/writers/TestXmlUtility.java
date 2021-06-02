@@ -38,22 +38,28 @@ public class TestXmlUtility {
     private TestXmlUtility() {
     }
 
+    public static boolean doTest(FileSystem fileSystem, String className, Path sampleFilesPath) throws ClassNotFoundException, IOException {
+        return doTest(fileSystem, className, null, sampleFilesPath);
+    }
 
-    public static boolean doTest(FileSystem fileSystem, String className, Path pathToExpectedFiles) throws ClassNotFoundException, IOException {
+    public static boolean doTest(FileSystem fileSystem, String className, Path createdFilesPath, Path sampleFilesPath) throws ClassNotFoundException, IOException {
 
         Class<?> testable = Class.forName(className);
+        Path effectiveCreatedFilesPath = createdFilesPath == null
+            ? fileSystem.getPath(TestConstants.DEFAULT_COMPONENT_NAME)
+            : createdFilesPath;
 
         PackageWriter.forFileSystem(fileSystem, PROJECT_NAME, StringUtils.EMPTY).write(testable);
 
-        Map<String, String> actualFiles = getFiles(fileSystem.getPath(TestConstants.DEFAULT_COMPONENT_NAME));
-        Map<String, String> expectedFiles = getFiles(pathToExpectedFiles);
+        Map<String, String> actualFiles = getFiles(effectiveCreatedFilesPath);
+        Map<String, String> expectedFiles = getFiles(sampleFilesPath);
 
         for (String fileName : actualFiles.keySet()) {
-            Path filePath = fileSystem.getPath(TestConstants.DEFAULT_COMPONENT_NAME, fileName);
+            Path filePath = effectiveCreatedFilesPath.resolve(fileName);
             Files.delete(filePath);
         }
 
-        return compare(actualFiles, expectedFiles, pathToExpectedFiles.toString());
+        return compare(actualFiles, expectedFiles, sampleFilesPath.toString());
     }
 
     private static Map<String, String> getFiles(Path componentPath) {

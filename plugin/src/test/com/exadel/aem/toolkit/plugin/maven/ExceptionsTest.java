@@ -26,10 +26,12 @@ import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
+import com.exadel.aem.toolkit.plugin.exceptions.UnknownComponentException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
 import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
 import com.exadel.aem.toolkit.test.component.InheritanceExceptionTestCases;
+import com.exadel.aem.toolkit.test.component.WriteModeTestCases;
 
 public class ExceptionsTest extends ExceptionsTestBase {
     private static final String NOT_AN_EXCEPTION_MESSAGE = "NOT AN EXCEPTION: testing terminateOn logic";
@@ -37,6 +39,13 @@ public class ExceptionsTest extends ExceptionsTestBase {
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
+
+    @Test
+    public void testComponentWithMissingPath() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(UnknownComponentException.class));
+        exceptionRule.expectMessage("not present in the package");
+        test(WriteModeTestCases.FolderMissingComponent.class);
+    }
 
     @Test
     public void testComponentWithNonexistentTab() {
