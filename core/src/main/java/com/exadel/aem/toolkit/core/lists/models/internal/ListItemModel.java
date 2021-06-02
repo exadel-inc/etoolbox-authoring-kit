@@ -93,7 +93,7 @@ public class ListItemModel {
     }
 
     /**
-     * Retrieves the path to a custom renderer for the 'preview' section of the List item.
+     * Retrieves the path to a custom renderer for the {@code preview} section of the List item.
      * @return String value, non-null
      */
     public String getPreviewRendererPath() {
@@ -101,7 +101,7 @@ public class ListItemModel {
     }
 
     /**
-     * Retrieves the path to a custom renderer for the 'info' section of the List item.
+     * Retrieves the path to a custom renderer for the {@code info} section of the List item.
      * @return String value, non-null
      */
     public String getInfoRendererPath() {
@@ -111,7 +111,7 @@ public class ListItemModel {
     /**
      * Retrieves the path to a custom renderer specified by {@code rendererPath} parameter
      * If the renderer does not exist, returns an empty string
-     * @param rendererPath relative path to the renderer
+     * @param rendererPath Relative path to the renderer
      * @return String value, non-null
      */
     private String getRendererPath(String rendererPath) {
