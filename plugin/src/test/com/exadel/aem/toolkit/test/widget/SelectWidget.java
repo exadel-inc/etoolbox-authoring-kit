@@ -84,6 +84,17 @@ public class SelectWidget {
     )
     String optionList;
 
+    @DialogField(label = "Provided options list with only static options")
+    @Select(
+        optionProvider = @OptionProvider(
+            prepend = {"None:none", "Null:null"},
+            append = " All:all, Any:any",
+            selectedValue = "none",
+            sorted = true
+        )
+    )
+    String staticOptionList;
+
     @DialogField(label="ACS options list")
     @Select(
             datasource = @DataSource(
