@@ -45,12 +45,10 @@ public class OptionSourceParameters {
     static final String KEV_VALUE_SEPARATOR_PATTERN = "(?<!\\\\):";
     static final String INLINE_COLON_PATTERN = "\\\\?:";
 
-    private static final String QUERY_KEY_APPEND_OPTIONS = "append";
     private static final String QUERY_KEY_ATTRIBUTE_MEMBERS = "attributeMembers";
     private static final String QUERY_KEY_ATTRIBUTES = "attributes";
     private static final String QUERY_KEY_EXCLUDE_OPTIONS = "exclude";
     private static final String QUERY_KEY_FALLBACK_PATH = "fallbackPath";
-    private static final String QUERY_KEY_PREPEND_OPTIONS = "prepend";
     private static final String QUERY_KEY_PATH = "path";
     private static final String QUERY_KEY_SORTED = "sorted";
     private static final String QUERY_KEY_TEXT_MEMBER = "textMember";
@@ -171,8 +169,8 @@ public class OptionSourceParameters {
             );
         }
 
-        result.appendOptions = repository.get(QUERY_KEY_APPEND_OPTIONS, String[].class);
-        result.prependOptions = repository.get(QUERY_KEY_PREPEND_OPTIONS, String[].class);
+        result.appendOptions = repository.get(CoreConstants.PN_APPEND, String[].class);
+        result.prependOptions = repository.get(CoreConstants.PN_PREPEND, String[].class);
         result.excludeOptions = repository.get(QUERY_KEY_EXCLUDE_OPTIONS, String[].class);
 
         result.selectedValue = repository.get(CoreConstants.PN_SELECTED, String.class);

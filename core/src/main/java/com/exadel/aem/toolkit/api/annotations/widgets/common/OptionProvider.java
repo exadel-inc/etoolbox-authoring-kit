@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
  * attributes can be set
  */
 @Retention(RetentionPolicy.RUNTIME)
-@AnnotationRendering(properties = "all")
+@AnnotationRendering(properties = "!prepend,!append")
 public @interface OptionProvider {
 
     /**
