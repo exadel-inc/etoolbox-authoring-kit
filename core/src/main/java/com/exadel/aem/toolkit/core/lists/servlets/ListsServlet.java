@@ -51,8 +51,8 @@ import com.adobe.granite.ui.components.ds.EmptyDataSource;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
- * Provides the collection of AEM resources that either represent EToolbox Lists or serve as folders for EToolbox Lists
- * to be displayed in the EToolbox Lists console
+ * Provides the collection of AEM resources that either represent Exadel Toolbox Lists or serve as folders for Exadel Toolbox Lists
+ * to be displayed in the Exadel Toolbox Lists console
  */
 @Component(
     service = Servlet.class,
@@ -102,7 +102,7 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Retrieves the collection of resources which are either EToolbox Lists or folders that can contain lists.
+     * Retrieves the collection of resources which are either Exadel Toolbox Lists or folders that can contain lists.
      * Service and content nodes are excluded from the output
      * @param resolver {@code ResourceResolver} object
      * @param parent   {@code Resource} instance used as the source of markup
@@ -115,7 +115,7 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Checks whether the resource is a EToolbox List page
+     * Checks whether the resource is a Exadel Toolbox List page
      * @param resolver {@code ResourceResolver} object
      * @param resource {@code Resource} instance
      * @return True or false

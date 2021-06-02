@@ -43,7 +43,7 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
- * Provides the collection of AEM resources that will represent EToolbox Lists items. This collection will be displayed
+ * Provides the collection of AEM resources that will represent Exadel Toolbox Lists items. This collection will be displayed
  * in a Granite UI {@code Select} widget
  */
 @Component(

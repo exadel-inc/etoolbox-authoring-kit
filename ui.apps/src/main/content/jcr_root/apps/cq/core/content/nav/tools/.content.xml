@@ -4,7 +4,7 @@
     <etoolbox jcr:primaryType="nt:unstructured"
                       jcr:title="EToolbox">
         <lists jcr:primaryType="nt:unstructured"
-                  jcr:title="EToolbox Lists"
+                  jcr:title="Lists"
                   jcr:description="Allows to manage lists of structured data"
                   order="2000"
                   href="/etoolbox-lists.html"
