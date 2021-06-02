@@ -13,10 +13,9 @@
  */
 package com.exadel.aem.toolkit.core.lists.models.internal;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
@@ -26,8 +25,7 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
-import com.day.cq.commons.jcr.JcrConstants;
-import com.day.cq.wcm.api.NameConstants;
+import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
@@ -47,20 +45,15 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 )
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class ListItemModel {
-    private static final List<String> SYSTEM_PROPERTIES = Arrays.asList(
-        JcrConstants.JCR_CREATED,
-        JcrConstants.JCR_CREATED_BY,
-        JcrConstants.JCR_LASTMODIFIED,
-        JcrConstants.JCR_LAST_MODIFIED_BY,
-        JcrConstants.JCR_PRIMARYTYPE,
-        NameConstants.PN_PAGE_LAST_REPLICATED,
-        NameConstants.PN_PAGE_LAST_REPLICATED_BY,
-        NameConstants.PN_PAGE_LAST_REPLICATION_ACTION,
-        ResourceResolver.PROPERTY_RESOURCE_TYPE
-    );
+    private static final Pattern SYSTEM_PROPERTIES = Pattern.compile("^(sling:|cq:|jcr:(?!title)).*");
+    private static final String PREVIEW_RENDERER_PATH = "itemPreview.html";
+    private static final String INFO_RENDERER_PATH = "itemInfo.html";
 
     @Self
     private Resource currentResource;
+
+    @SlingObject
+    private ResourceResolver resourceResolver;
 
     private String itemResType;
 
@@ -74,7 +67,7 @@ public class ListItemModel {
         properties = currentResource.getValueMap()
             .entrySet()
             .stream()
-            .filter(entry -> !SYSTEM_PROPERTIES.contains(entry.getKey()))
+            .filter(entry -> !SYSTEM_PROPERTIES.matcher(entry.getKey()).matches())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         Resource pageRes = getPageResource();
@@ -84,7 +77,7 @@ public class ListItemModel {
     }
 
     /**
-     * Retrieves the resource type  that defines the view and behavior of EToolbox List this item belongs to
+     * Retrieves the resource type that defines the view and behavior of EToolbox List this item belongs to
      * @return String value, nullable
      */
     public String getItemResType() {
@@ -97,6 +90,36 @@ public class ListItemModel {
      */
     public Map<String, Object> getProperties() {
         return properties;
+    }
+
+    /**
+     * Retrieves the path to a custom renderer for the 'preview' section of the List item.
+     * @return String value, non-null
+     */
+    public String getPreviewRendererPath() {
+        return getRendererPath(PREVIEW_RENDERER_PATH);
+    }
+
+    /**
+     * Retrieves the path to a custom renderer for the 'info' section of the List item.
+     * @return String value, non-null
+     */
+    public String getInfoRendererPath() {
+        return getRendererPath(INFO_RENDERER_PATH);
+    }
+
+    /**
+     * Retrieves the path to a custom renderer specified by {@code rendererPath} parameter
+     * If the renderer does not exist, returns an empty string
+     * @param rendererPath relative path to the renderer
+     * @return String value, non-null
+     */
+    private String getRendererPath(String rendererPath) {
+        String path = StringUtils.joinWith(CoreConstants.SEPARATOR_SLASH, itemResType, rendererPath);
+        if (resourceResolver.getResource(path) != null) {
+            return path;
+        }
+        return StringUtils.EMPTY;
     }
 
     /**

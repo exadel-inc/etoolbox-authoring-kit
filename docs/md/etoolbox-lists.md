@@ -49,7 +49,9 @@ public class StatusCodeListItem {
     private String icon;
 }
 ```
-The List Items have a default view which enumerates all the available properties. However, this can be customized. You can add an Item preview section to a List Item. To do this, create a new `itemPreview.html` file in your Item's folder (in our case, `/apps/listItems/statusCode`). This preview will be displayed next to the properties.
+The List Items have a default view which enumerates all non-system properties. However, this view can be customized in several ways:
+1) You can add an Item preview section to a List Item. To do this, create a new `itemPreview.html` file in your Item's folder (in our case, `/apps/listItems/statusCode`). This preview will be displayed next to the info section.
+2) You can also customize the info section itself. To do this, create a new `itemInfo.html` file in your Item's folder. This view will be displayed instead of the default info section.
 
 ### Editing a List
 
