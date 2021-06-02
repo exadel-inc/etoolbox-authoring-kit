@@ -26,7 +26,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,7 +35,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
-import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
@@ -209,6 +207,7 @@ public class AnnotationUtil {
             .map(Annotation::annotationType)
             .map(annotationType -> annotationType.getAnnotation(AnnotationRendering.class))
             .map(AnnotationRendering::properties)
+            .map(ArrayUtil::flatten)
             .map(Arrays::stream)
             .orElse(Stream.empty());
 
@@ -216,6 +215,7 @@ public class AnnotationUtil {
             .map(Annotation::annotationType)
             .map(annotationType -> annotationType.getAnnotation(PropertyMapping.class))
             .map(PropertyMapping::mappings)
+            .map(ArrayUtil::flatten)
             .map(Arrays::stream)
             .orElse(Stream.empty());
 
@@ -223,12 +223,6 @@ public class AnnotationUtil {
             .filter(StringUtils::isNotBlank)
             .collect(Collectors.toList());
 
-        if (cumulativeMappings.size() == 1 && cumulativeMappings.get(0).contains(CoreConstants.SEPARATOR_COMMA)) {
-            cumulativeMappings = Pattern.compile(CoreConstants.SEPARATOR_COMMA)
-                .splitAsStream(cumulativeMappings.get(0))
-                .map(String::trim)
-                .collect(Collectors.toList());
-        }
         if (cumulativeMappings.stream().allMatch(mapping -> mapping.startsWith(DialogConstants.NEGATION))) {
             cumulativeMappings.add(DialogConstants.WILDCARD);
         }

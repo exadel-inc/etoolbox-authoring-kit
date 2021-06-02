@@ -46,6 +46,7 @@ public class IgnoreTestCases {
         members ={
             @ClassMember(source = SelectWidget.class, value = "timezone"),
             @ClassMember(source = SelectWidget.class, value = "optionList"),
+            @ClassMember(source = SelectWidget.class, value = "staticOptionList"),
             @ClassMember(source = SelectWidget.class, value = "rating")
         })
     public static class IgnoreMembersFixedColumnsLayout extends SelectWidget {}
