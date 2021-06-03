@@ -32,7 +32,7 @@ public class TestConstants {
     public static final String API_MODULE_TARGET = PLUGIN_MODULE_TARGET.replace(PLUGIN_MODULE_NAME, API_MODULE_NAME);
 
     public static final String DEFAULT_COMPONENT_NAME = "test-component";
-    public static final String NONEXISTENT_COMPONENT_NAME = "nonexistent-component";
+    public static final String NONEXISTENT_COMPONENT_NAME = "nonexistent/component";
     public static final String DEFAULT_COMPONENT_TITLE = "Test Component";
     public static final String DEFAULT_COMPONENT_DESCRIPTION = "Test component description";
     public static final String DEFAULT_COMPONENT_GROUP = "Test Component Group";

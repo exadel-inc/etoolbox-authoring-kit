@@ -45,8 +45,8 @@ import com.exadel.aem.toolkit.api.annotations.main.WriteMode;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.plugin.exceptions.MissingResourceException;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
-import com.exadel.aem.toolkit.plugin.exceptions.UnknownComponentException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginInfo;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -164,14 +164,14 @@ public class PackageWriter implements AutoCloseable {
 
         if (!Files.exists(fullComponentPath) && isAllowedToCreateFolder(componentClass)) {
             try {
-                Files.createDirectory(fullComponentPath);
+                Files.createDirectories(fullComponentPath);
             } catch (IOException ex) {
                 PluginRuntime.context().getExceptionHandler().handle(ex);
                 return;
             }
         }
         if (!Files.isWritable(fullComponentPath)) {
-            PluginRuntime.context().getExceptionHandler().handle(new UnknownComponentException(fullComponentPath));
+            PluginRuntime.context().getExceptionHandler().handle(new MissingResourceException(fullComponentPath));
             return;
         }
 

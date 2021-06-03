@@ -26,7 +26,7 @@ import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
-import com.exadel.aem.toolkit.plugin.exceptions.UnknownComponentException;
+import com.exadel.aem.toolkit.plugin.exceptions.MissingResourceException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
 import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
@@ -42,8 +42,8 @@ public class ExceptionsTest extends ExceptionsTestBase {
 
     @Test
     public void testComponentWithMissingPath() {
-        exceptionRule.expectCause(IsInstanceOf.instanceOf(UnknownComponentException.class));
-        exceptionRule.expectMessage("not present in the package");
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(MissingResourceException.class));
+        exceptionRule.expectMessage("not present in the package or cannot be written to");
         test(WriteModeTestCases.FolderMissingComponent.class);
     }
 
