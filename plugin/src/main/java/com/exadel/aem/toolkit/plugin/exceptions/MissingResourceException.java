@@ -19,13 +19,14 @@ import java.nio.file.Path;
  * Represents the plugin-specific exception thrown when a processable Java component does not match a component folder
  * in the package
  */
-public class UnknownComponentException extends RuntimeException {
+public class MissingResourceException extends RuntimeException {
 
     /**
      * Initializes a class instance with the component's path specified
      * @param value Non-null {@code Path} object
      */
-   public UnknownComponentException(Path value) {
-        super(String.format("Component at %s not present in the package", value));
+   public MissingResourceException(Path value) {
+        super(String.format("Path %s is not present in the package or cannot be written to. " +
+            "If you need this path created, use WriteMode.CREATE", value));
     }
 }

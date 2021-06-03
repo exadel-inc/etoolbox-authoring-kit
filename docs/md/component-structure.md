@@ -28,7 +28,11 @@ See the code snippet below, which displays all currently supported `@AemComponen
 )
 public class ComplexComponentHolder {/* ... */}
 ```
-Pay attention to the path property. This can be set in two ways. First is the "relative" path that will be resolved from the point specified by the plugin's componentsPathBase setting. This is a common way. Otherwise, you can store an "absolute" path that will be resolved from the root of the package. The absolute path starts with jcr_root folder or any folder that goes immediately under jcr_root. Usually, it would be something like /apps/vendor/components/myComponent.
+Pay attention to the *path* property. This can be set in two ways. First is the "relative" path that will be resolved from the point specified by the plugin's componentsPathBase setting. This is a common way. Otherwise, you can store an "absolute" path that will be resolved from the root of the package. The absolute path starts with jcr_root folder or any folder that goes immediately under jcr_root. Usually, it would be something like /apps/vendor/components/myComponent.
+
+By default, the plugin searches for the directory specified in *path* and triggers an exception if unable to find one. This is justified because a non-existing folder usually means an invalid component path (a typo in *path*, or some misconfiguration).
+
+However, there is a way to make the plugin create a folder in the package when missing. This can be useful for single-use components (such as Exadel Toolbox Lists' items), or components that do not need a specific HTML or JSP file. In such a case add `writeMode = WriteMode.CREATE` to your `@AemComponent`.
 
 ### @Dialog
 

@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.lists.ListItem;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.WriteMode;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
@@ -35,6 +36,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 @AemComponent(
     path = "content/simpleListItem",
+    writeMode = WriteMode.CREATE,
     title = "Simple List Item"
 )
 @Dialog
