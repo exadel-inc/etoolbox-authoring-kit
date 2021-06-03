@@ -74,6 +74,20 @@
                                     selected="none"
                                     sorted="{Boolean}true"/>
                     </optionList>
+                    <staticOptionList jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                                name="./staticOptionList"
+                                fieldLabel="Provided options list with only static options"
+                                disabled="{Boolean}false"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false">
+                        <datasource jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="/apps/etoolbox-authoring-kit/datasources/option-provider"
+                                    prepend="[None:none,Null:null]"
+                                    append="[All:all,Any:any]"
+                                    selected="none"
+                                    sorted="{Boolean}true"/>
+                    </staticOptionList>
                     <acsListOptions jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/select"
                                     name="./acsListOptions"

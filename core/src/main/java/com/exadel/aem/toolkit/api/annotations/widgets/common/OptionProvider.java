@@ -22,13 +22,13 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 /**
  * Represents a provider of options for option-selecting Granite UI components, such as {@link com.exadel.aem.toolkit.api.annotations.widgets.select.Select}
  * or {@link com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup}. An OptionProvider manages one or more
- * sources, such as EToolbox Lists, ACS Commons lists, tag folders, arbitrary JCR nodes with their children, etc., and
+ * sources, such as Exadel Toolbox Lists, ACS Commons lists, tag folders, arbitrary JCR nodes with their children, etc., and
  * renders the cumulative set of options. Above all, options can be set or appended to the list indicatively, i.e.
  * via a string array, without the need to query for JCR values. For each of the options, specific title, value, and HTML
  * attributes can be set
  */
 @Retention(RetentionPolicy.RUNTIME)
-@AnnotationRendering(properties = "all")
+@AnnotationRendering(properties = "!prepend,!append")
 public @interface OptionProvider {
 
     /**

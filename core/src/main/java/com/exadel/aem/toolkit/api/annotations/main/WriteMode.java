@@ -11,20 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.exadel.aem.toolkit.api.annotations.main;
 
 /**
- * @author Liubou Masiuk
- *
- * Accessor for widgets that do not have a wrapper element
- * */
-(function ($, ns) {
-    const NO_WRAPPER_FIELDS_SELECTOR =
-        '.coral-Form-fieldset, input[type=hidden], .coral-Heading, .coral3-Alert, .coral3-Button, a.coral-Link, span:not(.coral-Form-field)';
-
-    ns.ElementAccessors.registerAccessor({
-        selector: NO_WRAPPER_FIELDS_SELECTOR,
-        findWrapper: function () {
-            return $([]);
-        }
-    });
-})(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
+ * Enumerates possible operating modes for the routines that interact with package data
+ * @see AemComponent#writeMode()
+ */
+public enum WriteMode {
+    OPEN,
+    CREATE
+}

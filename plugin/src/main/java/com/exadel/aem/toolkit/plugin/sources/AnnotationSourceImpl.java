@@ -28,6 +28,7 @@ public class AnnotationSourceImpl extends AdaptationBase<Source> implements Sour
 
     /**
      * Initializes a class instance storing a reference to the {@code Annotation} object that serves as the metadata source
+     * @param value The referenced {@code Annotation} object
      */
     public AnnotationSourceImpl(Annotation value) {
         super(Source.class);

@@ -2,7 +2,7 @@
 
 ## @AemComponent
 
-`@AemComponent` is your entry point to creating component authoring interfaces, such as a *Dialog*, a _Design dialog_, or an _In-place editing config_. When added to a Java class, this annotation must contain generic properties of the component such as *title*, *description*, etc.
+[@AemComponent](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/main/AemComponent.html) is your entry point to creating component authoring interfaces, such as a *Dialog*, a _Design dialog_, or an _In-place editing config_. When added to a Java class, this annotation must contain generic properties of the component such as *title*, *description*, etc.
 
 Additionally, `@AemComponent` can contain references to other Java classes that can be referred to as “views”. If, for instance, you need *editConfig*, you can add the `@EditConfig` to the Java class where the `@AemComponent` annotation is already present. You can also add `@EditConfig` to another Java class and put a reference to that class in the *views* collection of `@AemComponent`.
 
@@ -28,7 +28,11 @@ See the code snippet below, which displays all currently supported `@AemComponen
 )
 public class ComplexComponentHolder {/* ... */}
 ```
-Pay attention to the path property. This can be set in two ways. First is the "relative" path that will be resolved from the point specified by the plugin's componentsPathBase setting. This is a common way. Otherwise, you can store an "absolute" path that will be resolved from the root of the package. The absolute path starts with jcr_root folder or any folder that goes immediately under jcr_root. Usually, it would be something like /apps/vendor/components/myComponent.
+Pay attention to the *path* property. This can be set in two ways. First is the "relative" path that will be resolved from the point specified by the plugin's componentsPathBase setting. This is a common way. Otherwise, you can store an "absolute" path that will be resolved from the root of the package. The absolute path starts with jcr_root folder or any folder that goes immediately under jcr_root. Usually, it would be something like /apps/vendor/components/myComponent.
+
+By default, the plugin searches for the directory specified in *path* and triggers an exception if unable to find one. This is justified because a non-existing folder usually means an invalid component path (a typo in *path*, or some misconfiguration).
+
+However, there is a way to make the plugin create a folder in the package when missing. This can be useful for single-use components (such as Exadel Toolbox Lists' items), or components that do not need a specific HTML or JSP file. In such a case add `writeMode = WriteMode.CREATE` to your `@AemComponent`.
 
 ### @Dialog
 
@@ -73,7 +77,7 @@ Otherwise, a dialog can be rendered in one or more tabs, or be organized as an *
 
 If you wish to engage Touch UI dialog features like listeners or in-place editing (those living in *\<cq:editConfig>* node and, accordingly, *_cq_editConfig.xml* file), add an `@EditConfig` annotation to your Java class (same as above, you can as well add the annotation to a separate class and then put the reference to this class into @AemComponent's *views* property).
 
-`@EditConfig` facilitates setting of the following properties and features:
+[@EditConfig](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/editconfig/EditConfig.html) facilitates setting of the following properties and features:
 
 - Actions
 - Empty text

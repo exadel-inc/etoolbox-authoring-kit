@@ -28,6 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.utils.ArrayUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 
@@ -45,8 +46,13 @@ abstract class OptionProviderHandler {
      * @return True or false
      */
     boolean hasProvidedOptions(OptionProvider optionProvider) {
-        return ArrayUtils.isNotEmpty(optionProvider.value())
+        boolean hasExternalOptions = ArrayUtils.isNotEmpty(optionProvider.value())
             && Arrays.stream(optionProvider.value()).anyMatch(source -> StringUtils.isNotBlank(source.value()));
+        boolean hasPrependedOptions = ArrayUtils.isNotEmpty(optionProvider.prepend())
+            && Arrays.stream(optionProvider.prepend()).anyMatch(StringUtils::isNotEmpty);
+        boolean hasAppendedOptions = ArrayUtils.isNotEmpty(optionProvider.append())
+            && Arrays.stream(optionProvider.append()).anyMatch(StringUtils::isNotEmpty);
+        return hasExternalOptions || hasPrependedOptions || hasAppendedOptions;
     }
 
     /**
@@ -77,6 +83,12 @@ abstract class OptionProviderHandler {
             .getOrCreateTarget(DialogConstants.NN_DATASOURCE)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, RESOURCE_TYPE_PREFIX + ResourceTypes.OPTION_PROVIDER)
             .attributes(optionProvider, AnnotationUtil.getPropertyMappingFilter(optionProvider));
+        if (ArrayUtils.isNotEmpty(optionProvider.prepend())) {
+            datasourceElement.attribute(CoreConstants.PN_PREPEND, ArrayUtil.flatten(optionProvider.prepend()));
+        }
+        if (ArrayUtils.isNotEmpty(optionProvider.append())) {
+            datasourceElement.attribute(CoreConstants.PN_APPEND, ArrayUtil.flatten(optionProvider.append()));
+        }
 
         int pathItemOrdinal = 1;
         for (OptionSource item : optionProvider.value()) {

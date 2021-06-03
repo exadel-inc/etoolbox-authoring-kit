@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 /**
  * Allows to define a {@code datasource} node for a {@link com.exadel.aem.toolkit.api.annotations.widgets.select.Select}
  * or a {@link com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup} annotation
- * Use this to specify either an EToolbox List / ACS Commons list source or a custom datasource for selection
+ * Use this to specify either an Exadel Toolbox List / ACS Commons list source or a custom datasource for selection
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

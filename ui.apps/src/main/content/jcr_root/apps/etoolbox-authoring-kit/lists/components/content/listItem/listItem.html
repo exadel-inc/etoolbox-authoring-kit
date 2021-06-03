@@ -23,10 +23,13 @@
         Please configure List Item properties
     </div>
 
-    <div class="item-preview" data-sly-test="${listItem.itemResType}"
-         data-sly-include="${'itemPreview.html' @ prependPath=listItem.itemResType, wcmmode='disabled'}"></div>
+    <div class="item-preview" data-sly-test="${listItem.previewRendererPath}"
+         data-sly-include="${@ file=listItem.previewRendererPath, wcmmode='disabled'}"></div>
 
-    <div class="item-properties" data-sly-list="${listItem.properties}">
+    <sly data-sly-test="${listItem.infoRendererPath}"
+         data-sly-include="${@ file=listItem.infoRendererPath, wcmmode='disabled'}"></sly>
+
+    <div class="item-properties" data-sly-test="${!listItem.infoRendererPath}" data-sly-list="${listItem.properties}">
         <div class="item-property">
             <strong>${item}</strong>: ${listItem.properties[item]}
         </div>

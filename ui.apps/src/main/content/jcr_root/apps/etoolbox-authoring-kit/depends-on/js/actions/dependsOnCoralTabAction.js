@@ -23,6 +23,8 @@
 (function ($, ns) {
     'use strict';
 
+    const FIELD_SELECTOR = '.coral-Form-field';
+
     /**
      * Find the related tab panel
      * */
@@ -41,10 +43,14 @@
      * Toggle the visibility of every field on the tab
      */
     function tabChildrenVisibility($tabPanel, state) {
-        $tabPanel.find('.coral-Form-field').each((index, el) => {
+        $tabPanel.find(FIELD_SELECTOR).each((index, el) => {
             const $el = $(el);
-            ns.ElementAccessors.setVisibility($el, state);
 
+            // To check it's not an inner auxiliary element
+            const isInnerEl = !!$el.parent().closest(FIELD_SELECTOR, ns.ElementAccessors.findWrapper($el)).length;
+            if (!$el.is('[data-dependson]') && isInnerEl) return;
+
+            ns.ElementAccessors.setVisibility($el, state);
             if (state) {
                 ns.QueryObserver.updateObservers($el, ['visibility']);
             }

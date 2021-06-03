@@ -8,7 +8,7 @@
             <components jcr:primaryType="nt:unstructured">
                 <responsivegrid jcr:primaryType="nt:unstructured">
                     <list
-                            jcr:description="Policy for EToolbox Lists"
+                            jcr:description="Policy for Exadel Toolbox Lists"
                             jcr:primaryType="nt:unstructured"
                             jcr:title="List"
                             sling:resourceType="wcm/core/components/policy/policy"
