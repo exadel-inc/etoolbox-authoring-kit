@@ -433,7 +433,7 @@ public class XmlContextHelper implements XmlUtility {
     /**
      * Merges attributes of two {@code Element} nodes, e.g. when a child node is appended to a parent node that already
      * has another child with the same name, the existing child is updated with values from the newcomer. Way of merging
-     * is defined by {@param attributeMerger} routine
+     * is defined by the {@code attributeMerger} routine
      * @param first           First (e.g. existing) Element node
      * @param second          Second (e.g. rendered anew) Element node
      * @param attributeMerger Function that manages an existing attribute value and a new one

@@ -115,12 +115,13 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Builds {@code DependsOnParam} parameters for the passed {@code DependsOn} annotation
-     * Parameters pattern is:<br>
+     * Builds a dictionary of parameters for the passed {@code DependsOn} annotation
+     * Parameters format is:<br>
      * - for the first action (index = 0): {@code dependson-{action}-{param}}<br>
      * - otherwise: {@code dependson-{action}-{param}-{index}}
      * @param dependsOn Current {@link DependsOn} value
      * @param index     Action index
+     * @return {@code Map} representing settings for the {@code DependsOn} instance
      */
     private static Map<String, String> buildParamsMap(DependsOn dependsOn, int index){
         Map<String, String> valueMap = new HashMap<>();
