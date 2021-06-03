@@ -89,15 +89,29 @@ public abstract class DefaultTestBase {
     }
 
     void test(Class<?> testable, String... pathElements) {
-        test(testable, Paths.get(TestConstants.CONTENT_ROOT_PATH, pathElements).toAbsolutePath(), null);
+        test(testable, null, Paths.get(TestConstants.CONTENT_ROOT_PATH, pathElements).toAbsolutePath(), null);
     }
 
-    void test(Class<?> testable, Path path, Consumer<FileSystem> preparation) {
+    @SuppressWarnings("SameParameterValue")
+    void test(Class<?> testable, String createdFilesPath, Path sampleFilesPath) {
+        test(testable, createdFilesPath, sampleFilesPath, null);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    void test(Class<?> testable, Path sampleFilesPath, Consumer<FileSystem> preparation) {
+        test(testable, null, sampleFilesPath, preparation);
+    }
+
+    private void test(Class<?> testable, String createdFilesPath, Path sampleFilesPath, Consumer<FileSystem> preparation) {
         if (preparation != null) {
             preparation.accept(fileSystemHelper.getFileSystem());
         }
         try {
-            boolean result = TestXmlUtility.doTest(fileSystemHelper.getFileSystem(), testable.getName(), path);
+            boolean result = TestXmlUtility.doTest(
+                fileSystemHelper.getFileSystem(),
+                testable.getName(),
+                createdFilesPath != null ? fileSystemHelper.getFileSystem().getPath(createdFilesPath) : null,
+                sampleFilesPath);
             Assert.assertTrue(result);
         } catch (ClassNotFoundException cnfEx) {
             LOG.error(INSTANTIATION_EXCEPTION_MESSAGE + testable.getName(), cnfEx);

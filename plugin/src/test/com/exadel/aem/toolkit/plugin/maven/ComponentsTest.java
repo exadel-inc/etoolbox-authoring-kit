@@ -35,6 +35,7 @@ import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalCla
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
 import com.exadel.aem.toolkit.test.component.InheritanceTestCases;
+import com.exadel.aem.toolkit.test.component.WriteModeTestCases;
 import com.exadel.aem.toolkit.test.component.viewPattern.component1.ComplexComponentHolder;
 
 public class ComponentsTest extends DefaultTestBase {
@@ -78,6 +79,14 @@ public class ComponentsTest extends DefaultTestBase {
     @Test
     public void testChildEditConfig() {
         test(ChildEditConfigAnnotation.class);
+    }
+
+    @Test
+    public void testComponentCreatingFolder() {
+        test(
+            WriteModeTestCases.FolderCreatingComponent.class,
+            TestConstants.NONEXISTENT_COMPONENT_NAME,
+            Paths.get(TestConstants.CONTENT_ROOT_PATH, "component", "createdFolder").toAbsolutePath());
     }
 
     @Test

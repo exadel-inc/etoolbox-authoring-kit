@@ -26,7 +26,7 @@ import com.google.common.jimfs.Jimfs;
 public class FileSystemHelper implements Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemHelper.class);
 
-    private static final String EXCEPTION_MESSAGE = "Could not property initialize testing file system";
+    private static final String EXCEPTION_MESSAGE = "Could not initialize testing file system";
 
     private FileSystem fileSystem;
 

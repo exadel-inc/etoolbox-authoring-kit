@@ -41,11 +41,12 @@ import com.google.common.collect.Streams;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.WriteMode;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
+import com.exadel.aem.toolkit.plugin.exceptions.MissingResourceException;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
-import com.exadel.aem.toolkit.plugin.exceptions.UnknownComponentException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginInfo;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -160,8 +161,17 @@ public class PackageWriter implements AutoCloseable {
         } else {
             fullComponentPath = fileSystem.getPath(componentsPathBase, providedComponentPath);
         }
+
+        if (!Files.exists(fullComponentPath) && isAllowedToCreateFolder(componentClass)) {
+            try {
+                Files.createDirectories(fullComponentPath);
+            } catch (IOException ex) {
+                PluginRuntime.context().getExceptionHandler().handle(ex);
+                return;
+            }
+        }
         if (!Files.isWritable(fullComponentPath)) {
-            PluginRuntime.context().getExceptionHandler().handle(new UnknownComponentException(fullComponentPath));
+            PluginRuntime.context().getExceptionHandler().handle(new MissingResourceException(fullComponentPath));
             return;
         }
 
@@ -235,7 +245,7 @@ public class PackageWriter implements AutoCloseable {
        --------------- */
 
     /**
-     * Retrieves the path specified for the current component class in either {@link AemComponent} or {@link Dialog} annotation
+     * Retrieves the path specified for the current component in either {@link AemComponent} or {@link Dialog} annotation
      * @param componentClass The {@code Class<?>} to get the path for
      * @return String value
      */
@@ -248,6 +258,17 @@ public class PackageWriter implements AutoCloseable {
             .map(Dialog::name)
             .orElse(null);
         return StringUtils.firstNonBlank(pathByComponent, pathByDialog);
+    }
+
+    /**
+     * Gets whether a new folder can be created for the component which is reflected by the current class
+     * @param componentClass The component-backing {@code Class<?>}; is expected to carry the {@link AemComponent}
+     *                       annotation
+     * @return True or false
+     */
+    private static boolean isAllowedToCreateFolder(Class<?> componentClass) {
+        return componentClass.isAnnotationPresent(AemComponent.class)
+            && componentClass.getAnnotation(AemComponent.class).writeMode().equals(WriteMode.CREATE);
     }
 
 
