@@ -9,7 +9,7 @@ The ToolKit is bundled with the *OptionProvider* subsystem that aims at streamli
 The *OptionProvider* is capable of  delivering options in two modes; for a static Granite component it serves as a conventional *datasource* and above it has a JSON-supplying servlet that allows for retrieving and updating options dynamically even after a Granite UI has already been rendered.
 
 The options managed by *OptionProvider* can originate from:
-- a dedicated structured data page, such as an EToolbox List or an ACS Commons List;
+- a dedicated structured data page, such as an Exadel Toolbox List or an ACS Commons List;
 - an arbitrary JCR node with children (each option will then be represented by a single child node);
 - a tag folder;
 - a static list of values (in a string array that can be made constant and shared across the project).
@@ -105,7 +105,7 @@ Every `@OptionSource` object can be specified with the following properties:
 
 Because an `@OptionProvider` supports *path references* apart from regular paths, the setting that says "where to look for the path" can be stored in a dialog field other than the one that actually deals with paths.
 
-Therefore, it ought to be possible to dynamically respond to a *path reference* change. In the real world, it may look like the following. Imagine there is a dialog field (say, a path picker) that allows you to select a data source (say, a EToolbox List). Below is a select dropdown with options coming from the EToolbox List selected in the above path picker.
+Therefore, it ought to be possible to dynamically respond to a *path reference* change. In the real world, it may look like the following. Imagine there is a dialog field (say, a path picker) that allows you to select a data source (say, a Exadel Toolbox List). Below is a select dropdown with options coming from the Exadel Toolbox List selected in the above path picker.
 
 Here's how it may look in Java code:
 

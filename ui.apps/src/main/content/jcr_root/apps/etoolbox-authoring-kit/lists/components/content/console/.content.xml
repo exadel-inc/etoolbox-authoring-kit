@@ -19,7 +19,7 @@
     <jcr:content
             jcr:mixinTypes="[sling:VanityPath]"
             jcr:primaryType="nt:unstructured"
-            jcr:title="EToolbox Lists"
+            jcr:title="Exadel Toolbox Lists"
             sling:resourceType="granite/ui/components/shell/collectionpage"
             sling:vanityOrder="{Long}301"
             sling:vanityPath="/etoolbox-lists"

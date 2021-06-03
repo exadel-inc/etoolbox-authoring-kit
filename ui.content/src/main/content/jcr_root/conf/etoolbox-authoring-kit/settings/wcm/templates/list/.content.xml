@@ -4,6 +4,6 @@
     <jcr:content
         cq:templateType="/conf/etoolbox-authoring-kit/settings/wcm/template-types/list"
         jcr:primaryType="cq:PageContent"
-        jcr:title="EToolbox List page"
+        jcr:title="Exadel Toolbox List page"
         status="enabled"/>
 </jcr:root>

@@ -38,7 +38,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 @AemComponent(
     path = "content/listItem",
     title = "List Item",
-    componentGroup = "EToolbox Lists"
+    componentGroup = "Exadel Toolbox Lists"
 )
 @EditConfig(
     actions = {ActionConstants.INSERT, ActionConstants.COPYMOVE, ActionConstants.DELETE}
@@ -77,7 +77,7 @@ public class ListItemModel {
     }
 
     /**
-     * Retrieves the resource type that defines the view and behavior of EToolbox List this item belongs to
+     * Retrieves the resource type  that defines the view and behavior of the Exadel Toolbox List this item belongs to
      * @return String value, nullable
      */
     public String getItemResType() {

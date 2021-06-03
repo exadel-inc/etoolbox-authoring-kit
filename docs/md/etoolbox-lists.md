@@ -1,8 +1,8 @@
 [Main page](../../README.md)
 
-## Managing structured data with EToolbox Lists
+## Managing structured data with Exadel Toolbox Lists
 
-EToolbox Lists, or simply *Lists*, is an accessory of the ToolKit that represents a contribution to the Exadel Toolbox package
+Exadel Toolbox Lists, or simply *Lists*, is an accessory of the ToolKit that represents a contribution to the Exadel Toolbox package
 
 The Lists provide a flexible way to create, store and retrieve lists of structured items, e.g. a list of HTTP status codes and their descriptions:
 ```
@@ -20,7 +20,7 @@ Each list is an AEM page, which means that it can be placed anywhere in the cont
 
 ### Creating a new List
 
-Lists can be created and managed either from the common Sites Console, or from the dedicated Lists Console (Tools -> EToolbox -> EToolbox Lists). Click Create -> List and specify the list's *Title*, *Name* and *Item Component*.
+Lists can be created and managed either from the common Sites Console, or from the dedicated Lists Console (Tools -> EToolbox -> Lists). Click Create -> List and specify the list's *Title*, *Name* and *Item Component*.
 
 For a new installation, there will be the only Item Component in stock. It is the *Simple List Item* - the one that consists of *jcr:title* and *value* fields to cover the most basic use cases.
 
@@ -70,7 +70,7 @@ The Lists can be edited similarly to any other page. You can change the type of 
 You can find more examples in [ListHelperTest](../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
 
 #### Populating dropdown widgets from a datasource.
-EToolbox Lists can be used as a data source for any widget consuming Granite datasources like in the following example:
+Exadel Toolbox Lists can be used as a data source for any widget consuming Granite datasources like in the following example:
 
 ```java
 @AemComponent(

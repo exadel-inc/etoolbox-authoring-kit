@@ -297,7 +297,7 @@ public class MultifieldsSample {
 }
 ```
 
-#### 5. Touch UI dialog with dynamically displayed content (this is also a custom item for an EToolbox List)
+#### 5. Touch UI dialog with dynamically displayed content (this is also a custom item for an Exadel Toolbox List)
 
 - <u>In the package module</u>: you only need the _component.html_ file in your _/apps/.../path/to/list/item_ folder
 - <u>In the bundle module</u>:
@@ -306,10 +306,10 @@ public class MultifieldsSample {
 @Model(adaptables = Resource.class)
 @AemComponent(
     path = "path/to/list/item",
-    title = "EToolbox List Item"
+    title = "Exadel Toolbox List Item"
 )
 @Dialog
-@ListItem // With this annotation attached, the component will become available for selection when creating an EToolbox List
+@ListItem // With this annotation attached, the component will become available for selection when creating an Exadel Toolbox List
 public class ListItemSample {
     @ValueMapValue // Required by Sling models
     @DialogField(label = "Text")
@@ -357,7 +357,7 @@ Many more code snippets are available in the [Component management](#component-m
 #### Enhanced authoring experience
 
 - [Programming dynamic dialog behavior: DependsOn plugin client library](docs/md/depends-on.md)
-- [Managing structured data with EToolbox Lists](docs/md/etoolbox-lists.md)
+- [Managing structured data with Exadel Toolbox Lists](docs/md/etoolbox-lists.md)
 - [Feeding data to selection widgets with OptionProvider](docs/md/option-provider.md)
 
 #### Need more documentation?
