@@ -343,10 +343,11 @@ public class AttributeHelper<T, V> {
         }
 
         /**
-         * Retrieves an AttributeSettingHelper instance for a specified attribute name and value type
+         * Retrieves an {@code AttributeHelper} instance for a specified attribute name and value type
          * @param name      Target attribute name
          * @param valueType Target value type
-         * @return New {@code AttributeSettingHelper} instance
+         * @param <V>       Type of the value this {@code AttributeHelper} produces
+         * @return New {@code AttributeHelper} instance
          */
         public <V> AttributeHelper<T, V> forNamedValue(String name, Class<V> valueType) {
             AttributeHelper<T,V> attributeSetter = new AttributeHelper<>(holderType, valueType);

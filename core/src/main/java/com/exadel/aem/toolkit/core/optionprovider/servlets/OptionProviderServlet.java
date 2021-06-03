@@ -117,6 +117,8 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
      * Generates the JSON representation of the options list as requested by the user
      * @param entries List of datasource options
      * @return JSON string
+     * @throws JSONException in case of a JSON format violation
+     * @throws IOException in case a writing operation fails
      */
     private static String getJsonOutput(List<Resource> entries) throws IOException, JSONException {
         try (StringWriter stringWriter = new StringWriter()) {
@@ -137,6 +139,7 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
      * a single datasource option
      * @param writer {@code JSONWriter} instance
      * @param entry  {@code Resource} to take data from
+     * @throws JSONException in case of a JSON format violation
      */
     private static void writeResourceAttributes(JSONWriter writer, Resource entry) throws JSONException {
         writer.key(ATTRIBUTE_TEXT).value(entry.getValueMap().get(ATTRIBUTE_TEXT, String.class));

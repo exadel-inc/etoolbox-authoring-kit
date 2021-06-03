@@ -213,7 +213,8 @@ public class RichTextEditorHandler implements Handler {
 
     /**
      * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create if necessary and then retrieve
-     * the {@code icons} node for the RichTextEditor XML markup
+     * the {@code icons} node for the RichTextEditor markup
+     * @param parent {@code Target} instance representing the Granite node that stores the RTE config
      */
     private void getIconsNode(Target parent) {
         Target icons = parent.getOrCreateTarget(DialogConstants.NN_ICONS);
@@ -226,6 +227,7 @@ public class RichTextEditorHandler implements Handler {
     /**
      * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create if necessary and then retrieve
      * the {@code formats} node for the RichTextEditor XML markup
+     * @param parent {@code Target} instance representing the Granite node that stores the RTE config
      */
     private void getFormatNode(Target parent) {
         Target formats = parent.getOrCreateTarget(DialogConstants.NN_FORMATS).attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_WIDGET_COLLECTION);
@@ -244,6 +246,7 @@ public class RichTextEditorHandler implements Handler {
     /**
      * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create if necessary and then retrieve
      * the {@code specialCharsConfig} node for the RichTextEditor XML markup
+     * @param parent {@code Target} instance representing the Granite node that stores the RTE config
      */
     private void getSpecialCharactersNode(Target parent) {
         Target charsConfigNode = parent.getOrCreateTarget(DialogConstants.NN_SPECIAL_CHARS_CONFIG).getOrCreateTarget(DialogConstants.NN_CHARS);
@@ -278,7 +281,7 @@ public class RichTextEditorHandler implements Handler {
 
     /**
      * Populates with attributes the {@code htmlPasteRules} node
-     * @param parent The routine to generate {@code htmlPasteRules} node and append it to the overall RTE markup
+     * @param parent {@code Target} instance representing the Granite node that stores the RTE config
      */
     private void populatePasteRulesNode(Target parent){
         HtmlPasteRules rules = this.rteAnnotation.htmlPasteRules();
@@ -313,7 +316,7 @@ public class RichTextEditorHandler implements Handler {
     /**
      * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create and append a node representing
      * {@code htmlRules} to the RichTextEditor XML markup
-     * @param parent {@code Target} instance representing the RichTextEditor node
+     * @param parent {@code Target} instance representing the Granite node that stores the RTE config
      */
     private void populateHtmlLinkRules(Target parent) {
         HtmlLinkRules rulesAnnotation = this.rteAnnotation.htmlLinkRules();

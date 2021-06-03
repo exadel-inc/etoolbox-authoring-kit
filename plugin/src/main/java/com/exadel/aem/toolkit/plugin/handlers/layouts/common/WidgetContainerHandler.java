@@ -144,6 +144,7 @@ public abstract class WidgetContainerHandler {
      * Retrieves container sections declared by the current source
      * @param source Current {@link Source} instance
      * @param annotationClass Container annotation to look for, such as a {@link Tabs} or {@link Accordion}
+     * @return Collection of {@code SectionFacade} objects
      */
     private static List<SectionFacade> getContainerSections(Source source, Class<? extends Annotation> annotationClass) {
         List<SectionFacade> result = new ArrayList<>();
