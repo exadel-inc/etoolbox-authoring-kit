@@ -13,16 +13,17 @@
  */
 
 (function ($document, author, ns) {
+    const ACTION_NAME = 'LIST_ITEM_CONFIGURE';
     const CONFIG_SELECTOR = '.item-config';
     const DIALOG_PATH_ATTR = 'data-dialog-path';
 
-    const actionConfig = {
+    const LIST_ITEM_CONFIGURE = {
         icon: 'coral-Icon--wrench',
         text: ns.I18n.get('Open Dialog'),
         order: 'before COPY',
         isNonMulti: true,
         condition: function (editable) {
-            return editable.type === ns.EToolboxLists.WRAPPER_RES_TYPE;
+            return editable && editable.type === ns.EToolboxLists.WRAPPER_RES_TYPE;
         },
         handler: function (editable) {
             const config = editable.dom.find(CONFIG_SELECTOR);
@@ -31,9 +32,19 @@
         }
     };
 
-    $document.on('cq-layer-activated', function (ev) {
-        if (ev.layer === 'Edit') {
-            author.EditorFrame.editableToolbar.registerAction('OPEN_ITEM_DIALOG', actionConfig);
+    $document.off('cq-layer-activated.etoolbox-lists').on('cq-layer-activated.etoolbox-lists', function (event) {
+        if (event.layer === 'Edit') {
+            author.EditorFrame.editableToolbar.registerAction(ACTION_NAME, LIST_ITEM_CONFIGURE);
+        }
+    });
+
+    $document.off('cq-interaction-fastdblclick.etoolbox-lists').on('cq-interaction-fastdblclick.etoolbox-lists', function (event) {
+        if (LIST_ITEM_CONFIGURE.condition(event.editable)) {
+            LIST_ITEM_CONFIGURE.handler(event.editable);
+
+            // prevent default event handler
+            event.stopImmediatePropagation();
+            event.preventDefault();
         }
     });
 })($(document), Granite.author, Granite);
