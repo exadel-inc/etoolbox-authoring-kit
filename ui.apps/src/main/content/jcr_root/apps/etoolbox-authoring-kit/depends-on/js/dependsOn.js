@@ -51,13 +51,13 @@
 
     /** Log debug information to console */
     ns.debug = function () {
-      console.log(`--- DependsOn v${ns.version} ---`);
-      console.log('Group References:');
-      ns.GroupReferenceRegistry.refs.forEach((ref) => console.log(ref));
-      console.log('Element References:');
-      ns.ElementReferenceRegistry.refs.forEach((ref) => console.log(ref));
-      console.log('Registered actions: ', ns.ActionRegistry.registeredActionNames);
-      console.log(`--- DEBUG INFORMATION END ---`);
+        console.log(`--- DependsOn v${ns.version} ---`);
+        console.log('Group References:');
+        ns.GroupReferenceRegistry.refs.forEach((ref) => console.log(ref));
+        console.log('Element References:');
+        ns.ElementReferenceRegistry.refs.forEach((ref) => console.log(ref));
+        console.log('Registered actions: ', ns.ActionRegistry.registeredActionNames);
+        console.log('--- DEBUG INFORMATION END ---');
     };
 
     // Track new component initialization
