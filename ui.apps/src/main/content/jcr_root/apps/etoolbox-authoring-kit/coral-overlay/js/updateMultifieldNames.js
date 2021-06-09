@@ -14,16 +14,23 @@
 
 /**
  * @author Liubou Masiuk, Alexey Stsefanovich (ala'n)
- * @version 1.0.0
+ * @version 1.1.0
  *
  * When a multifield is updated, actualizes its field names to their current state.
- * Handles all fields that can be adapted to 'foundation-field' and are not related to other fields (the related fields will be updated automatically)
+ * Handles all fields that can be adapted to 'foundation-field' and will not be processed by OOTB multifield name updating mechanism
  * */
 (function (window, $) {
     'use strict';
 
     const MULTIFIELD_SEL = 'coral-multifield';
     const COMPOSITE_MULTIFIELD_SEL = MULTIFIELD_SEL + '[data-granite-coral-multifield-composite]';
+
+    /**
+     * Fields that are ignored by OOTB multifield name updating mechanism:
+     * - `.foundation-field-related` is updated automatically
+     * - `.coral-PathBrowser` is not a `:-foundation-submittable`
+     */
+    const IGNORED_FOUNDATION_FIELDS = ['.foundation-field-related', '.coral-PathBrowser'];
 
     const isComposite = ($field) => $field.is(COMPOSITE_MULTIFIELD_SEL);
 
@@ -51,7 +58,7 @@
         $root.children().each(function () {
             const $field = $(this);
             const fieldApi = $field.adaptTo('foundation-field');
-            if (fieldApi && !$field.is('.foundation-field-related')) {
+            if (fieldApi && !$field.is(IGNORED_FOUNDATION_FIELDS.join(','))) {
                 process($field, fieldApi);
             } else {
                 traverse($field, process);
