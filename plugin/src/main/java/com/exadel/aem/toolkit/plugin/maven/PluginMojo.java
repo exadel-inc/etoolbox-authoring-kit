@@ -24,8 +24,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.writers.PackageWriter;
 
 /**
@@ -34,8 +37,12 @@ import com.exadel.aem.toolkit.plugin.writers.PackageWriter;
 @Mojo(name = "aem-authoring", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyCollection = ResolutionScope.COMPILE)
 @SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
 public class PluginMojo extends AbstractMojo {
+    private static final Logger LOG = LoggerFactory.getLogger(DialogConstants.ARTIFACT_NAME);
+
     private static final String DEPENDENCY_RESOLUTION_EXCEPTION_MESSAGE = "Could not resolve dependencies of project %s: %s";
     private static final String PLUGIN_EXECUTION_EXCEPTION_MESSAGE = "%s in module %s: %s";
+    private static final String PLUGIN_COMPLETION_MESSAGE = "Execution completed.";
+    private static final String PLUGIN_COMPLETION_STATISTICS_MESSAGE = PLUGIN_COMPLETION_MESSAGE + " {} component(-s) processed.";
 
     @Parameter(readonly = true, defaultValue = "${project}")
     private MavenProject project;
@@ -78,8 +85,12 @@ public class PluginMojo extends AbstractMojo {
             .terminateOn(terminateOn)
             .build();
 
+        int processedCount = 0;
         try (PackageWriter packageWriter = PackageWriter.forMavenProject(project, componentsPathBase)) {
             packageWriter.writeInfo(PluginInfo.getInstance());
+            for (Class<?> componentClass : PluginRuntime.context().getReflection().getComponentClasses()) {
+                processedCount += packageWriter.write(componentClass) ? 1 : 0;
+            }
             PluginRuntime.context().getReflection().getComponentClasses().forEach(packageWriter::write);
         } catch (PluginException e) {
             throw new MojoExecutionException(String.format(PLUGIN_EXECUTION_EXCEPTION_MESSAGE,
@@ -89,5 +100,11 @@ public class PluginMojo extends AbstractMojo {
         }
 
         PluginRuntime.close();
+
+        if (processedCount > 0) {
+            LOG.info(PLUGIN_COMPLETION_STATISTICS_MESSAGE, processedCount);
+        } else {
+            LOG.info(PLUGIN_COMPLETION_MESSAGE);
+        }
     }
 }
