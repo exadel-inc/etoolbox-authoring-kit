@@ -81,11 +81,13 @@ public class PackageWriter implements AutoCloseable {
     private final String componentsPathBase;
     private final FileSystem fileSystem;
     private final List<PackageEntryWriter> writers;
+    private final EmptyCqEditConfigWriter emptyEditConfigWriter;
 
     private PackageWriter(FileSystem fileSystem, String componentsPathBase, List<PackageEntryWriter> writers) {
         this.fileSystem = fileSystem;
         this.componentsPathBase = componentsPathBase;
         this.writers = writers;
+        this.emptyEditConfigWriter = new EmptyCqEditConfigWriter(writers.get(0).getTransformer());
     }
 
 
@@ -177,10 +179,19 @@ public class PackageWriter implements AutoCloseable {
 
         Map<PackageEntryWriter, Class<?>> viewsByWriter = getComponentViews(componentClass);
 
+        // Raise an exception in case there's no data to write to .content.xml file/node
         if (viewsByWriter.keySet().stream().noneMatch(writer -> Scopes.COMPONENT.equals(writer.getScope()))) {
             InvalidSettingException e = new InvalidSettingException(
                 COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE + componentClass.getName());
             PluginRuntime.context().getExceptionHandler().handle(e);
+        }
+
+        // If there are neither cq:dialog nor cq:editConfig nodes specified, the component will not be listed for adding
+        // via "Insert new component" popup or component rail; nor it will be support the in-place popup. To mitigate
+        // this, we need to create a minimal cq:editConfig node
+        if (viewsByWriter.keySet().stream().noneMatch(writer ->
+            StringUtils.equalsAny(writer.getScope(), Scopes.CQ_DIALOG, Scopes.CQ_EDIT_CONFIG, Scopes.CQ_DESIGN_DIALOG, Scopes.CQ_CHILD_EDIT_CONFIG))) {
+            viewsByWriter.put(emptyEditConfigWriter, componentClass);
         }
 
         viewsByWriter.forEach((writer, view) -> {
@@ -238,7 +249,6 @@ public class PackageWriter implements AutoCloseable {
         }
         return result;
     }
-
 
     /* ---------------
        Utility methods
