@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Implements the "permissive" kind of {@link com.exadel.aem.toolkit.api.runtime.ExceptionHandler}, that is, the one
@@ -25,7 +26,7 @@ import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
  * a Maven workflow
  */
 class PermissiveExceptionHandler implements ExceptionHandler {
-    static final Logger LOG = LoggerFactory.getLogger("EToolbox Authoring Kit");
+    static final Logger LOG = LoggerFactory.getLogger(DialogConstants.ARTIFACT_NAME);
 
     /**
      * Logs the handled exception. Checked exceptions are logged as error messages, and unchecked exceptions are logged

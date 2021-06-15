@@ -144,13 +144,14 @@ public class PackageWriter implements AutoCloseable {
      * e.g. for populating {@code .content.xml}, {@code _cq_dialog.xml}, {@code _cq_editConfig.xml}, etc.
      * are called in sequence. If the component is split into several "modules" (views), each is processed separately
      * @param componentClass Current {@code Class} instance
+     * @return True if at least one file/node was stored into the component's folder; otherwise, false
      */
-    public void write(Class<?> componentClass) {
+    public boolean write(Class<?> componentClass) {
         String providedComponentPath = getComponentPath(componentClass);
         if (StringUtils.isBlank(providedComponentPath)) {
             ValidationException validationException = new ValidationException(COMPONENT_NAME_MISSING_EXCEPTION_MESSAGE + componentClass.getSimpleName());
             PluginRuntime.context().getExceptionHandler().handle(validationException);
-            return;
+            return false;
         }
 
         Path fullComponentPath;
@@ -169,12 +170,12 @@ public class PackageWriter implements AutoCloseable {
                 Files.createDirectories(fullComponentPath);
             } catch (IOException ex) {
                 PluginRuntime.context().getExceptionHandler().handle(ex);
-                return;
+                return false;
             }
         }
         if (!Files.isWritable(fullComponentPath)) {
             PluginRuntime.context().getExceptionHandler().handle(new MissingResourceException(fullComponentPath));
-            return;
+            return false;
         }
 
         Map<PackageEntryWriter, Class<?>> viewsByWriter = getComponentViews(componentClass);
@@ -198,6 +199,8 @@ public class PackageWriter implements AutoCloseable {
             writer.cleanUp(fullComponentPath);
             writer.writeXml(view, fullComponentPath);
         });
+
+        return true;
     }
 
     /**
