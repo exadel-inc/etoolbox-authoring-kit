@@ -186,9 +186,9 @@ public class PackageWriter implements AutoCloseable {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
 
-        // If there are neither cq:dialog nor cq:editConfig nodes specified, the component will not be listed for adding
-        // via "Insert new component" popup or component rail; nor it will be support the in-place popup. To mitigate
-        // this, we need to create a minimal cq:editConfig node
+        // If there are not any dialog-specifying nodes present, the component will not be listed for adding
+        // via "Insert new component" popup or component rail; also the in-place editing popup won't be displayed.
+        // To mitigate this, we need to create a minimal cq:editConfig node
         if (viewsByWriter.keySet().stream().noneMatch(writer ->
             StringUtils.equalsAny(writer.getScope(), Scopes.CQ_DIALOG, Scopes.CQ_EDIT_CONFIG, Scopes.CQ_DESIGN_DIALOG, Scopes.CQ_CHILD_EDIT_CONFIG))) {
             viewsByWriter.put(emptyEditConfigWriter, componentClass);
