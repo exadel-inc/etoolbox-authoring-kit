@@ -34,6 +34,7 @@ import com.exadel.aem.toolkit.test.component.ComponentWithPanelsAsNestedClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
+import com.exadel.aem.toolkit.test.component.ComponentWithoutDialog;
 import com.exadel.aem.toolkit.test.component.InheritanceTestCases;
 import com.exadel.aem.toolkit.test.component.WriteModeTestCases;
 import com.exadel.aem.toolkit.test.component.viewPattern.component1.ComplexComponentHolder;
@@ -79,6 +80,11 @@ public class ComponentsTest extends DefaultTestBase {
     @Test
     public void testChildEditConfig() {
         test(ChildEditConfigAnnotation.class);
+    }
+
+    @Test
+    public void testComponentWithoutDialog() {
+        test(ComponentWithoutDialog.class);
     }
 
     @Test
