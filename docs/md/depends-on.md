@@ -4,7 +4,7 @@
 
 Authors: _Alexey Stsefanovich (ala'n)_, _Yana Bernatskaya (YanaBr)_, _Stepan Miakchilo_, _Liubou Masiuk_
 
-Version _2.5.0_
+Version _2.6.0_
 
 The DependsOn Plug-in is a clientlib that executes defined actions on dependent fields.
 
@@ -153,7 +153,7 @@ Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
 ##### Query Syntax
 
 A Query is a plain JavaScript condition or expression.
-Any global and native JavaScript object can be used inside of a Query.
+Any global and native JavaScript object can be used inside a Query.
 You can also use dynamic references to access other fields' values.
 In order to define a reference, the referenced field's name should be specified in a `dependsOnRef` attribute.
 Then the reference will be accessible in the Query using the `@` or `@@` symbol and reference name.
@@ -170,9 +170,9 @@ class MyComponent {
     private String field1;
 }
 ```
-But if you write directly to XML or HTML, you should escape them by hand:
+But, if you write directly to XML or HTML, you should escape them by hand:
 ```xml
-<granite:data dependson="@field === '\\;'"></granite:data>
+<granite:data dependson="@field === '\\;'"/>
 ```
 
 If you need to actually execute several JavaScript statements within a DependsOn,
@@ -252,13 +252,10 @@ DependsOn produces three types of debug notifications:
 
 - Critical errors: DependsOn will throw an Error on a configuration mismatch (like unknown action name, illegal custom accessor registration, etc.)
 - Error messages: not blocking runtime messages (Query evaluation errors, unreachable references, etc.)
-- Warn messages: potentially unexpected results warning or deprecared functionality
+- Warn messages: potentially unexpected results warning or deprecated functionality
 
-A couple of useful APIs can be used in runtime to check the current DependsOnState. The following expressions can be evaluated in the browser console:
-
-- `Granite.DependsOnPlugin.ActionRegistry.registeredActionNames` - to get the list of known action names
-- `Granite.DependsOnPlugin.ElementReferenceRegistry.refs` - to get the list of registered element references
-- `Granite.DependsOnPlugin.GroupReferenceRegistry.refs` - to get the list of group references
+The following expression can be evaluated in the browser console to see
+current DependsOn debug information (references, actions): `Granite.DependsOnPlugin.debug()`
 
 ### Examples
 
@@ -508,7 +505,7 @@ public class Component {
 (function (Granite, $, DependsOn) {
     'use strict';
     Granite.DependsOnPlugin.ActionRegistry.register('customAsyncAction', function () {
-        setTimeout(() => DependsOn.ElementAccessors.setValue(this.$el, 'async value’));
+        setTimeout(() => DependsOn.ElementAccessors.setValue(this.$el, 'async value'));
     });
 })(Granite, Granite.$, Granite.DependsOnPlugin);
 ```

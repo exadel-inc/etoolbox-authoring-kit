@@ -51,7 +51,7 @@
      * query type: boolean
      * */
     ns.ActionRegistry.register('readonly', function setReadonly(state) {
-        this.$el.attr('readonly', state ? 'true' : null);
+        ns.ElementAccessors.setReadonly(this.$el, state);
     });
 
     /**

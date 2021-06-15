@@ -81,11 +81,13 @@ public class PackageWriter implements AutoCloseable {
     private final String componentsPathBase;
     private final FileSystem fileSystem;
     private final List<PackageEntryWriter> writers;
+    private final EmptyCqEditConfigWriter emptyEditConfigWriter;
 
     private PackageWriter(FileSystem fileSystem, String componentsPathBase, List<PackageEntryWriter> writers) {
         this.fileSystem = fileSystem;
         this.componentsPathBase = componentsPathBase;
         this.writers = writers;
+        this.emptyEditConfigWriter = new EmptyCqEditConfigWriter(writers.get(0).getTransformer());
     }
 
 
@@ -142,13 +144,14 @@ public class PackageWriter implements AutoCloseable {
      * e.g. for populating {@code .content.xml}, {@code _cq_dialog.xml}, {@code _cq_editConfig.xml}, etc.
      * are called in sequence. If the component is split into several "modules" (views), each is processed separately
      * @param componentClass Current {@code Class} instance
+     * @return True if at least one file/node was stored into the component's folder; otherwise, false
      */
-    public void write(Class<?> componentClass) {
+    public boolean write(Class<?> componentClass) {
         String providedComponentPath = getComponentPath(componentClass);
         if (StringUtils.isBlank(providedComponentPath)) {
             ValidationException validationException = new ValidationException(COMPONENT_NAME_MISSING_EXCEPTION_MESSAGE + componentClass.getSimpleName());
             PluginRuntime.context().getExceptionHandler().handle(validationException);
-            return;
+            return false;
         }
 
         Path fullComponentPath;
@@ -167,26 +170,37 @@ public class PackageWriter implements AutoCloseable {
                 Files.createDirectories(fullComponentPath);
             } catch (IOException ex) {
                 PluginRuntime.context().getExceptionHandler().handle(ex);
-                return;
+                return false;
             }
         }
         if (!Files.isWritable(fullComponentPath)) {
             PluginRuntime.context().getExceptionHandler().handle(new MissingResourceException(fullComponentPath));
-            return;
+            return false;
         }
 
         Map<PackageEntryWriter, Class<?>> viewsByWriter = getComponentViews(componentClass);
 
+        // Raise an exception in case there's no data to write to .content.xml file/node
         if (viewsByWriter.keySet().stream().noneMatch(writer -> Scopes.COMPONENT.equals(writer.getScope()))) {
             InvalidSettingException e = new InvalidSettingException(
                 COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE + componentClass.getName());
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
 
+        // If there are not any dialog-specifying nodes present, the component will not be listed for adding
+        // via "Insert new component" popup or component rail; also the in-place editing popup won't be displayed.
+        // To mitigate this, we need to create a minimal cq:editConfig node
+        if (viewsByWriter.keySet().stream().noneMatch(writer ->
+            StringUtils.equalsAny(writer.getScope(), Scopes.CQ_DIALOG, Scopes.CQ_EDIT_CONFIG, Scopes.CQ_DESIGN_DIALOG, Scopes.CQ_CHILD_EDIT_CONFIG))) {
+            viewsByWriter.put(emptyEditConfigWriter, componentClass);
+        }
+
         viewsByWriter.forEach((writer, view) -> {
             writer.cleanUp(fullComponentPath);
             writer.writeXml(view, fullComponentPath);
         });
+
+        return true;
     }
 
     /**
@@ -238,7 +252,6 @@ public class PackageWriter implements AutoCloseable {
         }
         return result;
     }
-
 
     /* ---------------
        Utility methods

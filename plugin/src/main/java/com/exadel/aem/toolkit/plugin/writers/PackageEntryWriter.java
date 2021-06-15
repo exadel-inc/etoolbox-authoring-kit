@@ -18,6 +18,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.function.BiConsumer;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
@@ -76,6 +77,23 @@ abstract class PackageEntryWriter {
      */
     abstract boolean canProcess(Class<?> componentClass);
 
+    /**
+     * Retrieves the {@link com.exadel.aem.toolkit.api.handlers.Handler} or handler chain associated with the current
+     * instance. The returned value is used for populating the {@code Target} artifact created by this package entry
+     * writer with data
+     * @return {@code BiConsumer} object representing the handler or handler chain
+     */
+    BiConsumer<Source, Target> getHandler() {
+        return HandlerChains.forScope(getScope());
+    }
+
+    /**
+     * Retrieves the {@link Transformer} associated with this instance
+     * @return {@code Transformer} object
+     */
+    Transformer getTransformer() {
+        return transformer;
+    }
 
     /* ----------------------------
        File system writing routines
@@ -142,7 +160,7 @@ abstract class PackageEntryWriter {
     private Document createDocument(Class<?> componentClass) {
         Source source = Sources.fromClass(componentClass);
         Target target = Targets.newInstance(DialogConstants.NN_ROOT, getScope());
-        HandlerChains.forScope(getScope()).accept(source, target);
+        getHandler().accept(source, target);
 
         Document result = target
             .adaptTo(DomAdapter.class)

@@ -46,6 +46,9 @@
             $el.val(value);
             notify && $el.trigger('change');
         },
+        readonly: function ($el, state) {
+            $el.attr('readonly', state ? 'true' : null);
+        },
         required: function ($el, val) {
             const fieldApi = $el.adaptTo('foundation-field');
             if (fieldApi && typeof fieldApi.setRequired === 'function') {
@@ -134,6 +137,15 @@
          * */
         static setRequired($el, value) {
             ElementAccessors._findAccessorHandler($el, 'required')($el, value);
+        }
+
+        /**
+         * Set the readonly state of $el
+         * @param {JQuery} $el - target element
+         * @param {boolean} value - state to set
+         * */
+        static setReadonly($el, value) {
+            ElementAccessors._findAccessorHandler($el, 'readonly')($el, value);
         }
 
         /**
@@ -237,7 +249,6 @@
             return (typeof accessor[type] === 'function') ? accessor[type].bind(accessor) : accessor[type];
         }
     }
-    ElementAccessors.noop = function () {};
 
     ns.ElementAccessors = ElementAccessors;
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

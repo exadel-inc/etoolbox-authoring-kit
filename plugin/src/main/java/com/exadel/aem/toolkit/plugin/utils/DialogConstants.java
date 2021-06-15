@@ -20,6 +20,8 @@ package com.exadel.aem.toolkit.plugin.utils;
  * @see <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/user-guide.html?topic=/experience-manager/6-5/sites/developing/morehelp/components.ug.js">Adobe documentation</a>
  */
 public class DialogConstants {
+    public static final String ARTIFACT_NAME = "Exadel Toolbox Authoring Kit";
+
     public static final String DOUBLE_QUOTE = "\"";
     public static final String NEGATION = "!";
     public static final String WILDCARD = "*";
