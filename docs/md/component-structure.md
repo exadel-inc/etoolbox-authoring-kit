@@ -246,6 +246,31 @@ To create a specific [decoration tag](https://docs.adobe.com/content/help/en/exp
 )
 public class MyComponentDialog {/* ... */}
 ```
+## Page properties dialogs
+
+You can use an approach similar to the one described above for creating a page properties dialog.
+
+Specify an absolute path to the JCR node that refers to the page in your `@AemComponent` like `@AemComponent(path = "/apps/my/components/pages/page"}`, or else provide a relative path. Even if your *componentsPathBase* points to an AEM components' root, you can traverse up and to the "pages" sibling node like this: `@AemComponent(path = "../pages/page"}`.
+
+Page properties dialogs are most often composed of tabs. It is a common practice for page properties dialogs to include an existing tab resource instead of enumerating components one by one. This is because tabs are often reused and overlayed across the page hierarchy. You can include an existing tab as follows:
+
+```java
+@AemComponent(
+        path = "../pages/my-page",
+        resourceSuperType = "my/components/pages/page",
+        title = "Page properties"
+)
+@Dialog
+@Tabs(@Tab(title = "Basic"))
+public class DummyComponent {
+
+    @Include(path = "my/components/pages/my-page/tabs/tabMetadata")
+    @Place("Basic")
+    private String basicTabHolder;
+}
+```
+Else, you can add components to the tab as usual. Note that an additional nested container may be needed to provide the layout similar to that of the pre-existing tabs.
+
 
 ***
 ####See also
