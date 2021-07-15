@@ -62,10 +62,10 @@ The Lists can be edited similarly to any other page. You can change the type of 
 
 ### Retrieving Lists' content programmatically
 
-[ListHelper]() is a helper class that provides the ability to retrieve contents of any list by its path. See examples below:
+[ListHelper](../../core/src/main/java/com/exadel/aem/toolkit/core/lists/utils/ListHelper.java) is a helper class that provides the ability to retrieve contents of any list by its path. See examples below:
 ```
-   List<ItemModel> models = CustomListsHelper.getList(resolver, "/content/myList", ItemModel.class);
-   Map<String, String> mapping = CustomListsHelper.getMap(resolver, "/content/myList");
+   List<ItemModel> models = ListHelper.getList(resolver, "/content/myList", ItemModel.class);
+   Map<String, String> mapping = ListHelper.getMap(resolver, "/content/myList");
 ```
 You can find more examples in [ListHelperTest](../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
 
