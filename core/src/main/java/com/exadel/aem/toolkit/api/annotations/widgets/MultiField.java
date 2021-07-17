@@ -18,6 +18,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.markers._Default;
@@ -30,6 +32,7 @@ import com.exadel.aem.toolkit.api.markers._Default;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.MULTIFIELD)
+@AnnotationRendering(properties = {"deleteHint", "typeHint"})
 public @interface MultiField {
 
     /**
@@ -46,4 +49,21 @@ public @interface MultiField {
      * @return Reference to a class
      */
     Class<?> value() default _Default.class;
+
+    /**
+     * Maps to the {@code deleteHint} attribute of this Granite UI component's node.
+     * If set to true, generate the <a href="https://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#delete">
+     * {@code @Delete}</a> attribute for the http request
+     * @return True or false
+     */
+    @PropertyRendering(ignoreValues = "false")
+    boolean deleteHint() default false;
+
+    /**
+     * Maps to the {@code typeHint} attribute of this Granite UI component's node.
+     * Used to specify value of <a href="https://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#typehint">
+     * SlingPostServlet @TypeHint.</a>
+     * @return String value
+     */
+    String typeHint() default "";
 }
