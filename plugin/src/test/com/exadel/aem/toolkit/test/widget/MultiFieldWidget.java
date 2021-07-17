@@ -35,14 +35,14 @@ public class MultiFieldWidget {
             label="Multifield 1",
             description = "Multifield definition with source class specified"
     )
-    @MultiField(MultiFieldContainer.class)
+    @MultiField(value = MultiFieldContainer.class, deleteHint = true, typeHint = "typeHint")
     String multiField1;
 
     @DialogField(
         label="Multifield 2",
         description = "Multifield definition with implicit source class"
     )
-    @MultiField
+    @MultiField(deleteHint = true)
     MultiFieldContainer multiField2;
 
     @DialogField(

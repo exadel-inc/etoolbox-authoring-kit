@@ -91,6 +91,8 @@
                                                          sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
                                                          composite="{Boolean}true"
                                                          disabled="{Boolean}false"
+                                                         deleteHint="{Boolean}true"
+                                                         typeHint="typeHint"
                                                          renderHidden="{Boolean}false"
                                                          required="{Boolean}false"
                                                          multifieldSpecial="This is added to Multifields">
