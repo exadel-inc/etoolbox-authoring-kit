@@ -13,7 +13,6 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -36,7 +35,6 @@ import com.exadel.aem.toolkit.plugin.adapters.ResourceTypeSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.sources.Sources;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
@@ -107,10 +105,7 @@ public class PlacementHelper {
         while (sectionIterator.hasNext()) {
             final boolean isFirstSection = iterationStep++ == 0;
             SectionFacade currentSection = sectionIterator.next();
-            List<Source> sectionMembers = new ArrayList<>();
-            for (Member member : currentSection.getMembers()) {
-                sectionMembers.add(Sources.fromMember(member, member.getDeclaringClass()));
-            }
+            List<Source> sectionMembers = new ArrayList<>(currentSection.getSources());
             List<Source> assignableSectionMembers = members.stream()
                 .filter(member -> isMemberForSection(member, currentSection.getTitle(), isFirstSection))
                 .collect(Collectors.toList());

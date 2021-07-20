@@ -14,12 +14,12 @@
 package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 /**
@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
  */
 abstract class SectionFacade {
 
-    private final List<Member> members;
+    private final List<Source> sources;
     private final boolean isLayout;
 
     /**
@@ -38,7 +38,7 @@ abstract class SectionFacade {
      */
     SectionFacade(boolean isLayout) {
         this.isLayout = isLayout;
-        this.members = new ArrayList<>();
+        this.sources = new ArrayList<>();
     }
 
     /**
@@ -56,11 +56,11 @@ abstract class SectionFacade {
     }
 
     /**
-     * Gets the collection of members associated with the current container
-     * @return {@code List<Member>} instance, non-null
+     * Gets the collection of {@code Source}s associated with the current container
+     * @return {@code List<Source>} instance, non-null
      */
-    List<Member> getMembers() {
-        return members;
+    List<Source> getSources() {
+        return sources;
     }
 
     /**
@@ -76,7 +76,7 @@ abstract class SectionFacade {
      * @param other Foreign {@code ContainerInfo} object
      */
     void merge(SectionFacade other) {
-        this.members.addAll(other.getMembers());
+        this.sources.addAll(other.getSources());
     }
 
     /**

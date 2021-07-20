@@ -18,6 +18,7 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
@@ -48,6 +49,8 @@ public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedC
 
     @com.exadel.aem.toolkit.api.annotations.container.Tab(title = LABEL_TAB_1) // legacy Tab is to test compatibility features
     private static class Tab1 {
+        private static final int SHOULD_NOT_RENDER = 42;
+
         @DialogField(
                 label = "Field 1",
                 description = "This is the first field."
@@ -58,6 +61,8 @@ public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedC
 
     @Tab(title = LABEL_TAB_2)
     private static class Tab2 {
+        private String shouldNotRender2;
+
         @DialogField(label="Field 2")
         @PathField(rootPath = "/content")
         @Place("Second tab")
@@ -65,6 +70,7 @@ public class ComponentWithTabsAsNestedClasses extends ComponentWithTabsAsNestedC
     }
 
     @Tab(title = LABEL_TAB_3)
+    @Ignore(members = @ClassMember(source = Tab1.class, value = "field1"))
     private static class Tab3 extends Tab1 {
         @DialogField(
                 label="Field 3",
