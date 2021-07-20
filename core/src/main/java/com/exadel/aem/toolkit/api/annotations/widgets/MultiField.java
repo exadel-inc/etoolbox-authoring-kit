@@ -52,7 +52,7 @@ public @interface MultiField {
 
     /**
      * Maps to the {@code deleteHint} attribute of this Granite UI component's node.
-     * If set to true, generate the <a href="https://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#delete">
+     * If set to true, generates the <a href="https://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#delete">
      * {@code @Delete}</a> attribute for the http request
      * @return True or false
      */
@@ -61,8 +61,8 @@ public @interface MultiField {
 
     /**
      * Maps to the {@code typeHint} attribute of this Granite UI component's node.
-     * Used to specify value of <a href="https://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#typehint">
-     * SlingPostServlet @TypeHint.</a>
+     * Used to specify the value of <a href="https://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#typehint">
+     * SlingPostServlet {@code @TypeHint}</a>.
      * @return String value
      */
     String typeHint() default "";
