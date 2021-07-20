@@ -22,8 +22,8 @@ See below how it works for a single field repetition and for a subset of fields 
 public class SimpleMultiFieldDialog {
     @DialogField(label = "Multi")
     @MultiField(
-        deleteHint = true, // Optional. Use this if you want the corresponding value(-s) deleted
-        typeHint = "String[]" // Optional. If specified, it will become the Sling @TypeHint parameter
+        deleteHint = false, // Optional. Use if you don't want the value(-s) deleted in on the server when not set in dialog
+        typeHint = "String[]" // Optional. If specified, will become the Sling @TypeHint parameter
     )
     List<MultiFieldContainer> containers;
 

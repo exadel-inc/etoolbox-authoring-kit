@@ -56,8 +56,8 @@ public @interface MultiField {
      * {@code @Delete}</a> attribute for the http request
      * @return True or false
      */
-    @PropertyRendering(ignoreValues = "false")
-    boolean deleteHint() default false;
+    @PropertyRendering(ignoreValues = "true")
+    boolean deleteHint() default true;
 
     /**
      * Maps to the {@code typeHint} attribute of this Granite UI component's node.
