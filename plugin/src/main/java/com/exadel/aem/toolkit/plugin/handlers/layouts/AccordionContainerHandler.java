@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.plugin.handlers.layouts.common.ContainerHandler;
 /**
  * The {@link ContainerHandler} variant for an accordion-shaped Granite UI dialog
  */
-public class AccordionContainerHandler extends ContainerHandler {
+class AccordionContainerHandler extends ContainerHandler {
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
