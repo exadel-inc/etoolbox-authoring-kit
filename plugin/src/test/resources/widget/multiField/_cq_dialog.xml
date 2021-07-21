@@ -22,7 +22,7 @@
                                 disabled="{Boolean}false"
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}false"
-                                deleteHint="{Boolean}true"
+                                deleteHint="{Boolean}false"
                                 typeHint="typeHint"
                                 multifieldSpecial="This is added to Multifields">
                         <field jcr:primaryType="nt:unstructured"
@@ -38,7 +38,6 @@
                                  fieldDescription="Multifield definition with implicit source class"
                                  disabled="{Boolean}false"
                                  renderHidden="{Boolean}false"
-                                 deleteHint="{Boolean}true"
                                  required="{Boolean}false"
                                  multifieldSpecial="This is added to Multifields">
                         <field jcr:primaryType="nt:unstructured"

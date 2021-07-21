@@ -73,7 +73,7 @@ public class MultipleAnnotatedWidget {
     @DialogField(
             label = "Nested Multifield"
     )
-    @MultiField(deleteHint = true, typeHint = "typeHint")
+    @MultiField(deleteHint = false, typeHint = "typeHint")
     @Multiple
     @DependsOnRef
     @Property(name="customProperty", value = "custom value")
