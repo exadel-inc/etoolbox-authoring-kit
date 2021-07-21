@@ -207,7 +207,7 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
             if (sectionHelper == null) {
                 continue;
             }
-            Arrays.stream(nestedClass.getDeclaredFields()).forEach(field -> sectionHelper.getMembers().add(field));
+            sectionHelper.getSources().addAll(ClassUtil.getSources(nestedClass));
             accumulator.add(sectionHelper);
         }
     }
