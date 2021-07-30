@@ -28,6 +28,7 @@
                                 jcr:primaryType="nt:unstructured"
                                 key="value"
                                 dependsOnRef="text1"/>
+                        <customElement customField="Non-overridden value" jcr:primaryType="nt:unstructured"/>
                         <field jcr:primaryType="nt:unstructured"
                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                name="./overriddenName"
@@ -37,7 +38,11 @@
                                emptyText="empty text"
                                renderHidden="{Boolean}false"
                                required="{Boolean}true"
-                               value="default value"/>
+                               value="default value"
+                               wrapperClass="some-class"
+                               customWidgetHandler2="customWidgetHandler2"
+                               customWidgetHandler3="customWidgetHandler3">
+                        </field>
                     </text1>
 
                     <nestedFieldSet jcr:primaryType="nt:unstructured"
@@ -91,6 +96,8 @@
                                                          sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
                                                          composite="{Boolean}true"
                                                          disabled="{Boolean}false"
+                                                         deleteHint="{Boolean}false"
+                                                         typeHint="typeHint"
                                                          renderHidden="{Boolean}false"
                                                          required="{Boolean}false"
                                                          multifieldSpecial="This is added to Multifields">

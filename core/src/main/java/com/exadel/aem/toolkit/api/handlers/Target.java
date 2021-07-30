@@ -346,7 +346,9 @@ public interface Target {
      * Removes an attribute of the current instance specified by name
      * @param name Name of the attribute, non-null string
      */
-    void removeAttribute(String name);
+    default void removeAttribute(String name) {
+        getAttributes().remove(name);
+    }
 
     /**
      * Adapts the current {@code Target} instance to the provided type

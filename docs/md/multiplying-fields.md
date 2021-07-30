@@ -8,7 +8,11 @@
 * Resource type: /libs/granite/ui/components/coral/foundation/form/multifield
 * See spec: [Multifield](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html)
 
-Multifields are used to facilitate multiple (repeating) instances of same fields or groups of fields. The logic of this component relies on the presence of a nested class encapsulating one or more fields to be repeated. Reference to that class is passed to `@MultiField`'s *value* property. Just as for `@FieldSet`, if you omit this value, it is guessed from the underlying field type, be it a *SomePlainType* or a *Collection\<WithTypeParameter>*.
+Multifields are used to facilitate multiple (repeating) instances of same fields or groups of fields. The logic of this component relies on the presence of a nested class encapsulating one or more fields to be repeated.
+
+Reference to that class is passed to `@MultiField`'s *value* property. Just as for `@FieldSet`, if you omit this value, it is guessed from the underlying field type, be it a *SomePlainType* or a *Collection\<WithTypeParameter>*.
+
+Multifields allow you to specify the `deleteHint` (true/false) or `typeHint` values that will produce HTTP request parameters in line with Apache Sling specification for [@Delete](https://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#delete) and [@TypeHint](https://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#typehint).
 
 See below how it works for a single field repetition and for a subset of fields multiplied.
 
@@ -17,7 +21,10 @@ See below how it works for a single field repetition and for a subset of fields 
 ```java
 public class SimpleMultiFieldDialog {
     @DialogField(label = "Multi")
-    @MultiField
+    @MultiField(
+        deleteHint = false, // Optional. Use if you don't want the value(-s) deleted in on the server when not set in dialog
+        typeHint = "String[]" // Optional. If specified, will become the Sling @TypeHint parameter
+    )
     List<MultiFieldContainer> containers;
 
     static class MultiFieldContainer {

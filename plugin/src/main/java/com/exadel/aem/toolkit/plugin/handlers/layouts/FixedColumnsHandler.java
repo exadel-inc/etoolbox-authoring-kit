@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 /**
  * Presents the layout handler implementation for a fixed-columns Granite UI dialog
  */
-public class FixedColumnsHandler implements BiConsumer<Source, Target> {
+class FixedColumnsHandler implements BiConsumer<Source, Target> {
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}

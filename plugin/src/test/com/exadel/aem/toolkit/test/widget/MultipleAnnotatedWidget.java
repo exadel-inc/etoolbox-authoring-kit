@@ -27,6 +27,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomLegacyDialogAnnotation;
+import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
@@ -42,7 +43,8 @@ public class MultipleAnnotatedWidget {
     @DialogField(
             label = "Multiple TextFields",
             name = "overriddenName",
-            required = true
+            required = true,
+            wrapperClass = "some-class"
     )
     @TextField(
             emptyText = "empty text",
@@ -52,6 +54,7 @@ public class MultipleAnnotatedWidget {
             id = "text1",
             data = @Data(name = "key", value = "value")
     )
+    @CustomWidgetAnnotation
     @Multiple
     @DependsOnRef
     @Property(name="customProperty1", value = "custom value 1")
@@ -70,7 +73,7 @@ public class MultipleAnnotatedWidget {
     @DialogField(
             label = "Nested Multifield"
     )
-    @MultiField
+    @MultiField(deleteHint = false, typeHint = "typeHint")
     @Multiple
     @DependsOnRef
     @Property(name="customProperty", value = "custom value")

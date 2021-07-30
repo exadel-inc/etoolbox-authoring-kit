@@ -577,14 +577,6 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void removeAttribute(String name) {
-        attributes.remove(name);
-    }
-
-    /**
      * Called by {@link TargetImpl#attributes(Element)} in order to store element attributes to the current instance
      * @param value {@code Element} object used as the source of attribute names and values
      */

@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 /**
  * The {@link ContainerHandler} variant for a tabbed Granite UI dialog
  */
-public class TabsContainerHandler extends ContainerHandler {
+class TabsContainerHandler extends ContainerHandler {
     private static final Predicate<Method> LAYOUT_PROPERTIES_FILTER = method ->
         StringUtils.equalsAny(
             method.getName(),
