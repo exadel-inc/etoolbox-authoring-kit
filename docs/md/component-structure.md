@@ -94,12 +94,12 @@ Here is a basic sample of an `@EditConfig` with several of the parameters specif
         emptyText = "Input here",
         listeners = {
             @Listener(
-                event = ListenerConstants.EVENT*AFTER*INSERT,
-                action = ListenerConstants.ACTION*REFRESH*PAGE
+                event = ListenerConstants.EVENT_AFTER_INSERT,
+                action = ListenerConstants.ACTION_REFRESH_PAGE
             ),
             @Listener(
-                event = ListenerConstants.EVENT*AFTER*DELETE,
-                action = ListenerConstants.ACTION*REFRESH*PAGE
+                event = ListenerConstants.EVENT_AFTER_DELETE,
+                action = ListenerConstants.ACTION_REFRESH_PAGE
             )
         },
         dropTargets = {
@@ -273,7 +273,7 @@ Else, you can add components to the tab as usual. Note that an additional nested
 
 
 ***
-####See also
+#### See also
 
 - [Laying out your dialog](dialog-layout.md)
 - [Configuring RichTextEditor](configuring-rte.md)
