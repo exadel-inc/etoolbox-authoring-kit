@@ -188,8 +188,8 @@ Here is a very basic example of a *richTextConfig* for an in-place editor
         htmlPasteRules = @HtmlPasteRules(
             allowBold = false,
             allowImages = false,
-            allowLists = AllowElement.REPLACE*WITH*PARAGRAPHS,
-            allowTables = AllowElement.REPLACE*WITH*PARAGRAPHS
+            allowLists = AllowElement.REPLACE_WITH_PARAGRAPHS,
+            allowTables = AllowElement.REPLACE_WITH_PARAGRAPHS
         )
     )
 )
