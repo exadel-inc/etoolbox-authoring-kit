@@ -127,7 +127,7 @@ public class MyComponent {
     @Select(optionProvider = @OptionProvider(@OptionSource(PATH_REFERENCE))) // @path refers to the attribute named "path" in the same JCR node
     @DependsOn(
         query = PATH_REFERENCE,
-        action = "update-datasource",
+        action = "update-options",
         params = {
             @DependsOnParam(name = "sorted", value = "true"),
             @DependsOnParam(name = "append", value = "None:none")
