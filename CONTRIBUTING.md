@@ -12,7 +12,7 @@ We use Github to host code, to track issues and feature requests, as well as acc
 ## We use Github Flow
 All code changes happen through Pull Requests.
 
-Pull requests are the best way to propose changes to the codebase (please follow this guid [Github Flow](https://guides.github.com/introduction/flow/index.html)).
+Pull requests are the best way to propose changes to the codebase (please follow this guide [Github Flow](https://guides.github.com/introduction/flow/index.html)).
 
 We actively welcome your pull requests:
 1. Fork the repo and create your branch from `master`.
@@ -41,7 +41,7 @@ Any contributions you make are understood to be under the  [Apache License, Vers
 After creating your first pull request, you will be asked to sign our Contributor License Agreement by commenting your PR with a special message.
 
 ## Bug reporting
-We use Github's [issues](https://github.com/{{{project}}}/issues) to track public bugs.
+We use Github's [issues](https://github.com/exadel-inc/etoolbox-authoring-kit/issues) to track public bugs.
 Report a bug by opening a new issue.
 
 #### Write bug reports with detail
@@ -54,13 +54,12 @@ Report a bug by opening a new issue.
 * We stick to the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) in essential parts.
 * We use 4 spaces for indentation rather than tabs.
 * Every import is a separate line.
-* Sequence of imports is: `java.*`, `javax.*`, empty line, `org.*`, `com.*` (non-Exadel imports), empty line, com.exadel.*.
-* Avoid static imports (lke constants, etc.) unless absolutely must.
+* Avoid static imports (like constants, etc.) unless absolutely must.
 * Give meaningful names to classes, methods and variables.
 * Split lengthy methods in smaller parts.
 * Observe length of lines, and split lengthy lines where appropriate (between method arguments, before ternary operators, etc.).
 * Avoid introducing multi-line lambdas.
-* Observe succession of methods: public, then package-private, then private; publish static, then package-private static, etc. May place a private method immediately after the preceding public if called from exactly this public as a secondary routine.
+* Observe succession of methods: public, then package-private, then private; publish static, then package-private static, etc. You may place a private method immediately after the preceding public if called from this public as a secondary routine.
 * Add `try-catch` blocks to reduce the risk of code termination. Never ignore caught exceptions.
 * When unsure, follow the style of the existing code files.
 
