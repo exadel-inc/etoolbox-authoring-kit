@@ -15,7 +15,7 @@ All code changes happen through Pull Requests.
 Pull requests are the best way to propose changes to the codebase (please follow this guide [Github Flow](https://guides.github.com/introduction/flow/index.html)).
 
 We actively welcome your pull requests:
-1. Fork the repo and create your branch from `master`.
+1. Fork the repo and create your branch from `develop`.
 2. Do code changes.
    Whenever you create new files, add "Licenced under the Apache Licence..." header (use any of the existing files to copy the full header). Whenever you create new methods, add Javadoc / JSDoc. Alter existing Javadoc / JSDoc if you change a method's signature.
 3. If you've added code that should be tested, add tests. Make sure that the tests pass.
