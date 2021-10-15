@@ -32,6 +32,7 @@ import com.exadel.aem.toolkit.api.markers._Default;
 public abstract class MemberSourceImpl extends SourceImpl implements MemberSource {
 
     private final Class<?> reportingClass;
+    private Class<?> overridingDeclaringClass;
 
     /**
      * Initializes a class instance storing a reference to the {@code Class} the current member is reported by
@@ -47,6 +48,19 @@ public abstract class MemberSourceImpl extends SourceImpl implements MemberSourc
     @Override
     public Class<?> getReportingClass() {
         return this.reportingClass;
+    }
+
+    @Override
+    public Class<?> getDeclaringClass() {
+        return this.overridingDeclaringClass != null
+            ? this.overridingDeclaringClass
+            : getInternalDeclaringClass();
+    }
+
+    abstract Class<?> getInternalDeclaringClass();
+
+    public void setOverridingDeclaringClass(Class<?> value) {
+        this.overridingDeclaringClass = value;
     }
 
     /**

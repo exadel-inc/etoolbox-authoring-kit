@@ -53,7 +53,7 @@ public class MethodSourceImpl extends MemberSourceImpl {
      * {@inheritDoc}
      */
     @Override
-    public Class<?> getDeclaringClass() {
+    public Class<?> getInternalDeclaringClass() {
         return method != null ? method.getDeclaringClass() : null;
     }
 
