@@ -32,6 +32,7 @@ import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
+import com.exadel.aem.toolkit.plugin.sources.MemberSourceImpl;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
@@ -94,6 +95,8 @@ class ReplacementHelper {
             // Purge the former entry
             result.remove(formerEntry);
             replacingEntries.remove(formerEntry); // because a replaceable member can also be declared as "replacing"
+            replacingEntry.adaptTo(MemberSourceImpl.class)
+                .setOverridingDeclaringClass(formerEntry.adaptTo(MemberSource.class).getDeclaringClass());
         }
         return result;
     }
