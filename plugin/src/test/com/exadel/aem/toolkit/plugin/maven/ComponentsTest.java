@@ -36,6 +36,7 @@ import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithoutDialog;
 import com.exadel.aem.toolkit.test.component.InheritanceTestCases;
+import com.exadel.aem.toolkit.test.component.ReplaceTestCase;
 import com.exadel.aem.toolkit.test.component.WriteModeTestCases;
 import com.exadel.aem.toolkit.test.component.viewPattern.component1.ComplexComponentHolder;
 
@@ -98,6 +99,11 @@ public class ComponentsTest extends DefaultTestBase {
     @Test
     public void testInheritanceOverride() {
         test(InheritanceTestCases.Child.class, "component/inheritanceOverride");
+    }
+
+    @Test
+    public void testReplaceCase() {
+        test(ReplaceTestCase.Child.class, "component/replaceTest");
     }
 
     @Test
