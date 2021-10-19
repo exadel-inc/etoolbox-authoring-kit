@@ -55,6 +55,14 @@
       "created_at": "2021-10-05T17:17:49Z",
       "repoId": 206580735,
       "pullRequestNo": 224
+    },
+    {
+      "name": "kovalenko-s",
+      "id": 92717680,
+      "comment_id": 946644429,
+      "created_at": "2021-10-19T11:50:43Z",
+      "repoId": 206580735,
+      "pullRequestNo": 229
     }
   ]
 }
