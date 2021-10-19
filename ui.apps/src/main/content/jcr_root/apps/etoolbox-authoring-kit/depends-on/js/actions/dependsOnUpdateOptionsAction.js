@@ -145,7 +145,7 @@
             content: {
                 textContent: src.text
             },
-            selected: (!selectedValue && !src.value) || selectedValue === src.value
+            selected: (!selectedValue && !src.value) || selectedValue === src.value || (Array.isArray(selectedValue) && selectedValue.includes(src.value))
         };
     }
 
