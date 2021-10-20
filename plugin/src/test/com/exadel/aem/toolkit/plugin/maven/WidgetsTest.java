@@ -162,7 +162,12 @@ public class WidgetsTest extends DefaultTestBase {
 
     @Test
     public void testPlacement3() {
-        test(TestReplaceMultipleTimes.class, "widget/place3");
+        test(TestReplaceMultipleTimes.FirstCase.class, "widget/place3");
+    }
+
+    @Test
+    public void testPlacement4() {
+        test(TestReplaceMultipleTimes.SecondCase.class, "widget/place3");
     }
 
     @Test
