@@ -105,5 +105,13 @@
             <artifactId>etoolbox-authoring-kit-all</artifactId>
             <type>zip</type>
         </dependency>
+
+
+        <dependency>
+            <groupId>com.adobe.aem</groupId>
+            <artifactId>uber-jar</artifactId>
+            <classifier>apis</classifier>
+        </dependency>
     </dependencies>
+
 </project>

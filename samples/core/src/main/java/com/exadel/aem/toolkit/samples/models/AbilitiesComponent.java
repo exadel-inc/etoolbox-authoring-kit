@@ -37,6 +37,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.api.annotations.injectors.Children;
 import com.exadel.aem.toolkit.samples.constants.GroupConstants;
 import com.exadel.aem.toolkit.samples.constants.PathConstants;
 
@@ -120,6 +121,10 @@ public class AbilitiesComponent {
     )
     @ValueMapValue
     private int abilityLevel;
+
+    @ValueMapValue
+    @Children(value = "test")
+    private List<Resource> compons;
 
     public String getAbility() {
         return ability;

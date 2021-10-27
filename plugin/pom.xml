@@ -18,6 +18,9 @@
     <packaging>maven-plugin</packaging>
 
     <properties>
+        <aem.host>localhost</aem.host>
+        <aem.port>4502</aem.port>
+
         <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml,target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
