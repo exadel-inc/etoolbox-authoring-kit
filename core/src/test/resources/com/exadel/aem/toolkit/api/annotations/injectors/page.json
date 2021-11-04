@@ -1,0 +1,22 @@
+{
+  "test": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:title": "testPage",
+    "cq:template": "/conf/site/settings/wcm/templates/test-template",
+    "sling:resourceType": "site/components/pages/test-page",
+    "suffix": "testSuffix",
+    "suffixResource": "testSuffixResource",
+    "selector": "testSelector",
+    "foo": "testFoo",
+    "bar": "testBar",
+    "emptyFoo": "",
+    "emptyBar": "",
+    "fooIntValue": "1"
+  },
+  "foo": {
+    "jcr:primaryType": "nt:unstructured",
+    "jcr:createdBy": "admin",
+    "text": "This is a test",
+    "sling:resourceType": "site/components/text"
+  }
+}
