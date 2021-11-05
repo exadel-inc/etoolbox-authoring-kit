@@ -11,20 +11,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.injectors;
+package com.exadel.aem.toolkit.core.injectors;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.api.annotations.injectors.models.TestModelSuffix;
+import com.exadel.aem.toolkit.core.injectors.models.TestModelSuffix;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class RequestSuffixInjectorIntegrationTest {
+public class RequestSuffixInjectorTest {
 
     @Rule
     public final AemContext context = new AemContext();
@@ -34,13 +34,13 @@ public class RequestSuffixInjectorIntegrationTest {
     @Before
     public void beforeTest() {
         context.addModelsForClasses(TestModelSuffix.class);
-        context.load().json("/com/exadel/aem/toolkit/api/annotations/injectors/page.json", "/content");
+        context.load().json("/com/exadel/aem/toolkit/core/injectors/page.json", "/content");
         context.registerInjectActivateService(new RequestSuffixInjector());
         context.currentResource("/content/test");
     }
 
     @Test
-    public void shouldReturnSuffix() {
+    public void getSuffix_shouldReturnSuffixString() {
         context.requestPathInfo().setSuffix("/qwerty");
         testModel = context.request().adaptTo(TestModelSuffix.class);
 
@@ -49,17 +49,16 @@ public class RequestSuffixInjectorIntegrationTest {
     }
 
     @Test
-    public void shouldReturnResourceFromSuffix() {
+    public void getSuffixResource_shouldReturnResourceFromSuffix() {
         context.requestPathInfo().setSuffix("/content/foo");
         testModel = context.request().adaptTo(TestModelSuffix.class);
 
         assertNotNull(testModel);
         assertNotNull(testModel.getSuffixResource());
-        assertNotNull(testModel.getAbstractResource());
     }
 
     @Test
-    public void shouldReturnNullIfSuffixIsNull() {
+    public void getSuffix_shouldReturnNullIfSuffixIsNull() {
         testModel = context.request().adaptTo(TestModelSuffix.class);
 
         assertNotNull(testModel);
@@ -67,7 +66,7 @@ public class RequestSuffixInjectorIntegrationTest {
     }
 
     @Test
-    public void shouldReturnNullIfResourceNotExists() {
+    public void getSuffixResource_shouldReturnNullIfResourceNotExists() {
         context.requestPathInfo().setSuffix("/not-exists");
         testModel = context.request().adaptTo(TestModelSuffix.class);
 
@@ -86,5 +85,14 @@ public class RequestSuffixInjectorIntegrationTest {
         assertNull(testModel.getSuffixList());
         assertEquals(0, testModel.getSuffixInt());
         assertEquals(0.0, testModel.getSuffixDouble(), 0.01);
+    }
+
+    @Test
+    public void getSuffixFromParameter_shouldReturnStringSuffix() {
+        context.requestPathInfo().setSuffix("suffixTest");
+        testModel = context.request().adaptTo(TestModelSuffix.class);
+
+        assertNotNull(testModel);
+        assertEquals("suffixTest", testModel.getSuffixFromParameter());
     }
 }

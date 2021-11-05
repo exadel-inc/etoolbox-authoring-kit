@@ -11,19 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.injectors.models;
+package com.exadel.aem.toolkit.core.injectors.models;
 
-import com.exadel.aem.toolkit.api.annotations.injectors.RequestSuffix;
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.resource.AbstractResource;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 
-import java.util.List;
+import com.exadel.aem.toolkit.core.injectors.annotations.RequestSuffix;
 
-@Model(adaptables = {SlingHttpServletRequest.class},
-        defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
+@Model(adaptables = SlingHttpServletRequest.class,
+    defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
 public class TestModelSuffix {
 
@@ -32,9 +34,6 @@ public class TestModelSuffix {
 
     @RequestSuffix
     private Resource suffixResource;
-
-    @RequestSuffix
-    private AbstractResource abstractResource;
 
     @RequestSuffix
     private int suffixInt;
@@ -50,6 +49,17 @@ public class TestModelSuffix {
 
     @RequestSuffix
     private TestModelSuffix suffixTestModel;
+
+    private final String suffixFromParameter;
+
+    @Inject
+    public TestModelSuffix(@RequestSuffix @Named("suffixParam") String suffix) {
+        this.suffixFromParameter = suffix;
+    }
+
+    public String getSuffixFromParameter() {
+        return suffixFromParameter;
+    }
 
     public double getSuffixDouble() {
         return suffixDouble;
@@ -77,9 +87,5 @@ public class TestModelSuffix {
 
     public Resource getSuffixResource() {
         return suffixResource;
-    }
-
-    public AbstractResource getAbstractResource() {
-        return abstractResource;
     }
 }
