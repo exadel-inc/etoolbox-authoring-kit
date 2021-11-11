@@ -17,7 +17,11 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.WriteMode;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.markers._Super;
+import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
 @SuppressWarnings("unused")
 public class PlacementTestCases {
@@ -136,5 +140,31 @@ public class PlacementTestCases {
         default String getField9() {
             return null;
         }
+    }
+
+    public static class Parent {
+
+        @TextField
+        private int title;
+
+        @TextField
+        private int anotherField;
+
+    }
+
+    @AemComponent(
+        path = "test-component",
+        writeMode = WriteMode.CREATE,
+        title = TestConstants.DEFAULT_COMPONENT_TITLE
+    )
+    @Dialog
+    public static class Child extends Parent{
+
+        @TextField
+        @Place(
+            before = @ClassMember(source = _Super.class, value = "anotherField"),
+            after = @ClassMember(source = _Super.class, value = "title")
+        )
+        private int childTitle;
     }
 }

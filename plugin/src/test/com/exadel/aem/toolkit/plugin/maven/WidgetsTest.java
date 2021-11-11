@@ -160,6 +160,11 @@ public class WidgetsTest extends DefaultTestBase {
     }
 
     @Test
+    public void testPlacement3() {
+        test(PlacementTestCases.Child.class, "widget/place3");
+    }
+
+    @Test
     public void testRadioGroup() {
         test(RadioGroupWidget.class);
     }
