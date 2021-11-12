@@ -11,19 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.injectors.models;
+package com.exadel.aem.toolkit.core.injectors.models;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 
-import com.exadel.aem.toolkit.api.annotations.injectors.RequestSelectors;
+import com.exadel.aem.toolkit.core.injectors.annotations.RequestSelectors;
 
-@Model(adaptables = {SlingHttpServletRequest.class},
+@Model(adaptables = SlingHttpServletRequest.class,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
 public class TestModelSelectors {
@@ -57,6 +59,17 @@ public class TestModelSelectors {
 
     @RequestSelectors
     private TestModelSelectors selectorsTestModel;
+
+    private String selectorsFromParameter;
+
+    @Inject
+    public TestModelSelectors(@RequestSelectors @Named("selectorsParam") String selectorsString) {
+        this.selectorsFromParameter = selectorsString;
+    }
+
+    public String getSelectorsFromParameter() {
+        return selectorsFromParameter;
+    }
 
     public Collection<String> getSelectorsCollection() {
         return selectorsCollection;

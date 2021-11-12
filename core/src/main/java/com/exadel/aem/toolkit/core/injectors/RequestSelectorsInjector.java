@@ -11,15 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.injectors;
+package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
@@ -28,22 +29,28 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(service = {Injector.class},
-    property = {Constants.SERVICE_RANKING + ":Integer=" + Integer.MIN_VALUE}
+import com.exadel.aem.toolkit.core.injectors.annotations.RequestSelectors;
+
+@Component(service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + Integer.MIN_VALUE
 )
 public class RequestSelectorsInjector implements Injector {
 
-    public static final String NAME = "request-selectors-injector";
     private static final Logger LOG = LoggerFactory.getLogger(RequestSelectorsInjector.class);
+    public static final String NAME = "request-selectors-injector";
 
     @Override
+    @Nonnull
     public String getName() {
         return NAME;
     }
 
     @Override
-    public Object getValue(final Object adaptable, final String name, final Type type,
-                           final AnnotatedElement element, final DisposalCallbackRegistry callbackRegistry) {
+    public Object getValue(final @Nonnull Object adaptable,
+                           final String name,
+                           final @Nonnull Type type,
+                           final AnnotatedElement element,
+                           final @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
         final RequestSelectors annotation = element.getAnnotation(RequestSelectors.class);
 
@@ -58,19 +65,17 @@ public class RequestSelectorsInjector implements Injector {
 
         if (type instanceof ParameterizedType) {
             Class<?> collectionType = (Class<?>) ((ParameterizedType) type).getRawType();
-            if (!(collectionType.equals(Collection.class) || collectionType.equals(List.class))) {
+            if (!(ClassUtils.isAssignable(collectionType, Collection.class))) {
                 LOG.debug("RequestSelectorsInjector doesn't support Collection Type {}", type);
                 return null;
-            } else {
-                return Arrays.asList(request.getRequestPathInfo().getSelectors());
             }
-        } else if (((Class<?>) type).isArray() && type.equals(String[].class)) {
+            return Arrays.asList(request.getRequestPathInfo().getSelectors());
+        } else if (((Class<?>) type).isArray() && ((Class<?>) type).getComponentType().equals(String.class)) {
             return request.getRequestPathInfo().getSelectors();
         } else if (type.equals(String.class)) {
             return request.getRequestPathInfo().getSelectorString();
-        } else {
-            LOG.debug("RequestSelectorsInjector doesn't support Type {}", type);
-            return null;
         }
+        LOG.debug("RequestSelectorsInjector doesn't support Type {}", type);
+        return null;
     }
 }

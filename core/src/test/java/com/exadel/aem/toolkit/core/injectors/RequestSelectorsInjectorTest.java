@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.injectors;
+package com.exadel.aem.toolkit.core.injectors;
 
 import java.util.Arrays;
 
@@ -19,7 +19,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.api.annotations.injectors.models.TestModelSelectors;
+import com.exadel.aem.toolkit.core.injectors.models.TestModelSelectors;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertArrayEquals;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class RequestSelectorsInjectorIntegrationTest {
+public class RequestSelectorsInjectorTest {
 
     @Rule
     public final AemContext context = new AemContext();
@@ -37,13 +37,13 @@ public class RequestSelectorsInjectorIntegrationTest {
     @Before
     public void beforeTest() {
         context.addModelsForClasses(TestModelSelectors.class);
-        context.load().json("/com/exadel/aem/toolkit/api/annotations/injectors/page.json", "/content");
+        context.load().json("/com/exadel/aem/toolkit/core/injectors/page.json", "/content");
         context.registerInjectActivateService(new RequestSelectorsInjector());
         context.currentResource("/content/test");
     }
 
     @Test
-    public void shouldReturnSelectorsString() {
+    public void getSelectorsString_shouldReturnSelectorsString() {
         context.requestPathInfo().setSelectorString("selector1");
         testModel = context.request().adaptTo(TestModelSelectors.class);
 
@@ -52,7 +52,7 @@ public class RequestSelectorsInjectorIntegrationTest {
     }
 
     @Test
-    public void shouldReturnSelectorsStringFromCollection() {
+    public void getSelectorsCollection_shouldReturnSelectorsStringFromCollection() {
         context.requestPathInfo().setSelectorString("selector1.selector2");
         testModel = context.request().adaptTo(TestModelSelectors.class);
 
@@ -61,7 +61,7 @@ public class RequestSelectorsInjectorIntegrationTest {
     }
 
     @Test
-    public void shouldReturnSelectorsStringFromList() {
+    public void getSelectorsList_shouldReturnSelectorsStringFromList() {
         context.requestPathInfo().setSelectorString("selector1.selector2");
         testModel = context.request().adaptTo(TestModelSelectors.class);
 
@@ -70,7 +70,7 @@ public class RequestSelectorsInjectorIntegrationTest {
     }
 
     @Test
-    public void shouldReturnSelectorsStringArray() {
+    public void getSelectorsArrayString_shouldReturnSelectorsStringArray() {
         context.requestPathInfo().setSelectorString("selector1.selector2");
         testModel = context.request().adaptTo(TestModelSelectors.class);
 
@@ -79,7 +79,7 @@ public class RequestSelectorsInjectorIntegrationTest {
     }
 
     @Test
-    public void shouldReturnNullIfSelectorsIsEmpty() {
+    public void getSelectorsString_shouldReturnNullIfSelectorsIsEmpty() {
         testModel = context.request().adaptTo(TestModelSelectors.class);
 
         assertNotNull(testModel);
@@ -98,5 +98,14 @@ public class RequestSelectorsInjectorIntegrationTest {
         assertNull(testModel.getSelectorsSet());
         assertNull(testModel.getSelectorsTestModel());
         assertEquals(0, testModel.getSelectorsInt());
+    }
+
+    @Test
+    public void getSelectorsFromParameter_shouldReturnSelectorsString() {
+        context.requestPathInfo().setSelectorString("selector1");
+        testModel = context.request().adaptTo(TestModelSelectors.class);
+
+        assertNotNull(testModel);
+        assertEquals("selector1", testModel.getSelectorsFromParameter());
     }
 }
