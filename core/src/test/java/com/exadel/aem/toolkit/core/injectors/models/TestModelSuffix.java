@@ -50,6 +50,9 @@ public class TestModelSuffix {
     @RequestSuffix
     private TestModelSuffix suffixTestModel;
 
+    @RequestSuffix
+    private Object suffixObject;
+
     private final String suffixFromParameter;
 
     @Inject
@@ -87,5 +90,9 @@ public class TestModelSuffix {
 
     public Resource getSuffixResource() {
         return suffixResource;
+    }
+
+    public Object getSuffixObject() {
+        return suffixObject;
     }
 }

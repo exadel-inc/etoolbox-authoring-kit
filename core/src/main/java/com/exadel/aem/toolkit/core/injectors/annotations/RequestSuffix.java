@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.core.injectors.RequestSuffixInjector;
 
 /**
  * Annotation can be used on either methods, fields or parameters to let Sling Models inject a request
- * suffix from the RequestPathInfo into fields of type String or Resource.
+ * suffix from the RequestPathInfo into fields of type String, Resource or Object, if type is not supported returns null.
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)

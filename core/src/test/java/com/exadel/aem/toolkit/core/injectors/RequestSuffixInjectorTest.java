@@ -95,4 +95,13 @@ public class RequestSuffixInjectorTest {
         assertNotNull(testModel);
         assertEquals("suffixTest", testModel.getSuffixFromParameter());
     }
+
+    @Test
+    public void getSuffixObject_shouldReturnSuffixObject() {
+        context.requestPathInfo().setSuffix("/suffixTest");
+        testModel = context.request().adaptTo(TestModelSuffix.class);
+
+        assertNotNull(testModel);
+        assertEquals("/suffixTest", testModel.getSuffixObject());
+    }
 }

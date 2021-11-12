@@ -64,6 +64,8 @@ public class RequestSuffixInjector implements Injector {
             return request.getRequestPathInfo().getSuffix();
         } else if (type.equals(Resource.class)) {
             return request.getRequestPathInfo().getSuffixResource();
+        } else if (type.equals(Object.class)) {
+            return request.getRequestPathInfo().getSuffix();
         }
         LOG.debug("RequestSuffixInjector doesn't support type {}", type);
         return null;
