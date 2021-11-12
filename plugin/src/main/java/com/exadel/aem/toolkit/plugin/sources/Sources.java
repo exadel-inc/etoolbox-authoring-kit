@@ -49,9 +49,11 @@ public class Sources {
      * @return {@code Source} instance
      */
     public static Source fromMember(Member value, Class<?> reportingClass) {
-        return value instanceof Field
-            ? new FieldSourceImpl((Field) value, reportingClass)
-            : new MethodSourceImpl((Method) value, reportingClass);
+        ModifiableMemberSource result = value instanceof Field
+            ? new FieldSourceImpl((Field) value)
+            : new MethodSourceImpl((Method) value);
+        result.setReportingClass(reportingClass);
+        return result;
     }
 
     /**

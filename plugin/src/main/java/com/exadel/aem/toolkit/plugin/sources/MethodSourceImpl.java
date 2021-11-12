@@ -29,15 +29,13 @@ import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 public class MethodSourceImpl extends MemberSourceImpl {
 
     private final Method method;
+    private Class<?> declaringClass;
 
     /**
-     * Initializes a class instance with references to the managed method and the {@code Class} the current method is
-     * reported by
+     * Initializes a class instance with the reference to the managed method
      * @param method         {@code Method} object
-     * @param reportingClass {@code Class} reference
      */
-    MethodSourceImpl(Method method, Class<?> reportingClass) {
-        super(reportingClass);
+    MethodSourceImpl(Method method) {
         this.method = method;
     }
 
@@ -53,8 +51,16 @@ public class MethodSourceImpl extends MemberSourceImpl {
      * {@inheritDoc}
      */
     @Override
-    public Class<?> getInternalDeclaringClass() {
+    public Class<?> getDeclaringClass() {
+        if (declaringClass != null) {
+            return declaringClass;
+        }
         return method != null ? method.getDeclaringClass() : null;
+    }
+
+    @Override
+    public void setDeclaringClass(Class<?> value) {
+        this.declaringClass = value;
     }
 
     /**

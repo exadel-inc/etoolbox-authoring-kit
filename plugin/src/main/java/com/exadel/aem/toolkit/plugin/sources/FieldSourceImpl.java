@@ -29,15 +29,13 @@ import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 public class FieldSourceImpl extends MemberSourceImpl {
 
     private final Field field;
+    private Class<?> declaringClass;
 
     /**
-     * Initializes a class instance with references to the managed field and the {@code Class} the current field is
-     * reported by
+     * Initializes a class instance with a references to the managed field
      * @param field          {@code Field} object
-     * @param reportingClass {@code Class} reference
      */
-    public FieldSourceImpl(Field field, Class<?> reportingClass) {
-        super(reportingClass);
+    public FieldSourceImpl(Field field) {
         this.field = field;
     }
 
@@ -53,8 +51,19 @@ public class FieldSourceImpl extends MemberSourceImpl {
      * {@inheritDoc}
      */
     @Override
-    public Class<?> getInternalDeclaringClass() {
+    public Class<?> getDeclaringClass() {
+        if (this.declaringClass != null) {
+            return this.declaringClass;
+        }
         return field != null ? field.getDeclaringClass() : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setDeclaringClass(Class<?> value) {
+        this.declaringClass = value;
     }
 
     /**
