@@ -60,6 +60,9 @@ public class TestModelSelectors {
     @RequestSelectors
     private TestModelSelectors selectorsTestModel;
 
+    @RequestSelectors
+    private Object selectorsObject;
+
     private String selectorsFromParameter;
 
     @Inject
@@ -109,5 +112,9 @@ public class TestModelSelectors {
 
     public TestModelSelectors getSelectorsTestModel() {
         return selectorsTestModel;
+    }
+
+    public Object getSelectorsObject() {
+        return selectorsObject;
     }
 }

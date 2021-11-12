@@ -13,19 +13,19 @@
  */
 package com.exadel.aem.toolkit.core.injectors.annotations;
 
-import com.exadel.aem.toolkit.core.injectors.RequestSelectorsInjector;
-
-import org.apache.sling.models.annotations.Source;
-import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.sling.models.annotations.Source;
+import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
+
+import com.exadel.aem.toolkit.core.injectors.RequestSelectorsInjector;
+
 /**
  * Annotation can be used on either methods, fields or parameters to let Sling Models inject request
- * selectors from the RequestPathInfo into fields of type String, List<String>, Collection<String> or String[]
+ * selectors from the RequestPathInfo into fields of type String, Object, List<String>, Collection<String> or String[]
  * or null if type is wrong.
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})

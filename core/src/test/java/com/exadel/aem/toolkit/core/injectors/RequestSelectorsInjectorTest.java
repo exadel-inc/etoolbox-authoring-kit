@@ -108,4 +108,13 @@ public class RequestSelectorsInjectorTest {
         assertNotNull(testModel);
         assertEquals("selector1", testModel.getSelectorsFromParameter());
     }
+
+    @Test
+    public void getSelectorsObject_shouldReturnSelectorsObject() {
+        context.requestPathInfo().setSelectorString("selectorsTest");
+        testModel = context.request().adaptTo(TestModelSelectors.class);
+
+        assertNotNull(testModel);
+        assertEquals("selectorsTest", testModel.getSelectorsObject());
+    }
 }
