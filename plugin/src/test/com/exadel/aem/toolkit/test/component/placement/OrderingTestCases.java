@@ -11,22 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component;
+package com.exadel.aem.toolkit.test.component.placement;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.WriteMode;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.markers._Super;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
 @SuppressWarnings("unused")
-public class PlacementTestCases {
+public class OrderingTestCases {
 
-    private PlacementTestCases() {
+    private OrderingTestCases() {
     }
 
     @AemComponent(

@@ -1,4 +1,17 @@
-package com.exadel.aem.toolkit.test.component;
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.exadel.aem.toolkit.test.component.placement;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
@@ -10,16 +23,10 @@ import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Replace;
 import com.exadel.aem.toolkit.api.markers._Super;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
+@SuppressWarnings("unused")
+public class ReplaceTestCases {
 
-public class TestReplaceMultipleTimes {
-
-    @AemComponent(
-        path = TestConstants.DEFAULT_COMPONENT_NAME,
-        writeMode = WriteMode.CREATE,
-        title = TestConstants.DEFAULT_COMPONENT_TITLE
-    )
-    @Dialog
-    public static class FirstCase {
+    public static class Parent {
 
         @DialogField(
             label = "Title"
@@ -28,18 +35,17 @@ public class TestReplaceMultipleTimes {
         private int title;
 
         @DialogField(
-            label = "Title Replace First"
+            label = "Another Field"
         )
         @TextField
-        @Replace(@ClassMember(value = "title"))
-        private int replacementTitle;
+        private int anotherField;
+
 
         @DialogField(
-            label = "Title Replace Second"
+            label = "Untouched Field"
         )
         @TextField
-        @Replace(@ClassMember(value = "title"))
-        private int anotherReplacementTitle;
+        private int untouchedField;
     }
 
     @AemComponent(
@@ -48,30 +54,21 @@ public class TestReplaceMultipleTimes {
         title = TestConstants.DEFAULT_COMPONENT_TITLE
     )
     @Dialog
-    public static class SecondCase extends Parent {
+    public static class Child extends Parent {
 
         @DialogField(
-            label = "Title Replace Second"
-        )
-        @TextField
-        @Replace(@ClassMember(source = GrandParent.class, value = "title"))
-        private int anotherReplacementTitle;
-    }
-
-    static class Parent extends GrandParent {
-        @DialogField(
-            label = "Title Replace First"
+            label = "Title Child"
         )
         @TextField
         @Replace(@ClassMember(source = _Super.class, value = "title"))
-        private int replacementTitle;
-    }
+        private int childTitle;
 
-    static class GrandParent {
+
         @DialogField(
-            label = "Title"
+            label = "Another Field Child"
         )
         @TextField
-        private int title;
+        @Replace(@ClassMember(source = Parent.class, value = "anotherField"))
+        private int anotherFieldChild;
     }
 }
