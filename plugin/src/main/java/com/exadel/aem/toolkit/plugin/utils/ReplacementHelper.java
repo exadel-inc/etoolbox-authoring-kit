@@ -27,9 +27,12 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Replace;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.markers._Default;
+import com.exadel.aem.toolkit.api.markers._Super;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
 import com.exadel.aem.toolkit.plugin.sources.ModifiableMemberSource;
@@ -61,7 +64,7 @@ class ReplacementHelper {
     private List<Source> processInternal() {
         List<Source> result = new ArrayList<>(internal);
         Queue<Source> replacingEntries = result.stream()
-            .filter(entry -> entry.adaptTo(Replace.class) != null)
+            .filter(entry -> entry.tryAdaptTo(Replace.class).isPresent())
             .sorted(OrderingUtil::compareByOrigin)
             .collect(Collectors.toCollection(LinkedList::new));
 
@@ -84,6 +87,14 @@ class ReplacementHelper {
             // Move the replacing member to the position of the member being replaced
             result.remove(replacingEntry);
             int insertPosition = result.indexOf(formerEntry);
+            if (insertPosition == -1) {
+                Source sourceReplacedFormerEntry = result.stream()
+                    .filter(source -> findReplaced(source, replacingEntry))
+                    .findFirst()
+                    .orElse(null);
+                insertPosition = result.indexOf(sourceReplacedFormerEntry);
+                result.remove(sourceReplacedFormerEntry);
+            }
             result.add(insertPosition, replacingEntry);
 
             // If the replacing entry has no particular ranking value, assign to it the ranking of the former entry
@@ -112,6 +123,30 @@ class ReplacementHelper {
      */
     public static Collector<Source, ReplacementHelper, List<Source>> processSourceReplace() {
         return SOURCE_REPLACING;
+    }
+
+    private static boolean findReplaced(Source sourceReplacedFormerEntry, Source replacingEntry) {
+        if (!sourceReplacedFormerEntry.tryAdaptTo(Replace.class).isPresent()) {
+            return false;
+        }
+        ClassMember replacedFormerClsMember = sourceReplacedFormerEntry.adaptTo(Replace.class).value();
+        ClassMember replacingClsMember = replacingEntry.adaptTo(Replace.class).value();
+        if (!replacedFormerClsMember.value().equals(replacingClsMember.value())) {
+            return false;
+        }
+        return sourceReplacedFormerEntry.adaptTo(MemberSource.class).getDeclaringClass()
+            .equals(getClassFromReplace(replacingEntry));
+    }
+
+    private static Class<?> getClassFromReplace(Source source) {
+        Class<?> cls = source.adaptTo(Replace.class).value().source();
+        if (_Default.class.equals(cls)) {
+            return source.adaptTo(MemberSource.class).getDeclaringClass();
+        }
+        if (_Super.class.equals(cls)) {
+            return source.adaptTo(MemberSource.class).getDeclaringClass().getSuperclass();
+        }
+        return cls;
     }
 
     /**
