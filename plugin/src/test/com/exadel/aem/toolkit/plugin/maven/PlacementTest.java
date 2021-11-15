@@ -29,8 +29,8 @@ public class PlacementTest extends DefaultTestBase {
 
     @Test
     public void testMultipleReplace() {
-        test(MultipleReplaceTestCases.FirstCase.class, "placement/multipleReplace");
-        test(MultipleReplaceTestCases.SecondCase.class, "placement/multipleReplace");
+        test(MultipleReplaceTestCases.SameClassReplacement.class, "placement/multipleReplace");
+        test(MultipleReplaceTestCases.HierarchyReplacement.class, "placement/multipleReplace");
     }
 
     @Test

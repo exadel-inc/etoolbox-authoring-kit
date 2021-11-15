@@ -32,7 +32,7 @@ public class MultipleReplaceTestCases {
         title = TestConstants.DEFAULT_COMPONENT_TITLE
     )
     @Dialog
-    public static class FirstCase {
+    public static class SameClassReplacement {
 
         @DialogField(
             label = "Title"
@@ -55,20 +55,12 @@ public class MultipleReplaceTestCases {
         private int anotherReplacementTitle;
     }
 
-    @AemComponent(
-        path = TestConstants.DEFAULT_COMPONENT_NAME,
-        writeMode = WriteMode.CREATE,
-        title = TestConstants.DEFAULT_COMPONENT_TITLE
-    )
-    @Dialog
-    public static class SecondCase extends Parent {
-
+    static class GrandParent {
         @DialogField(
-            label = "Title Replace Second"
+            label = "Title"
         )
         @TextField
-        @Replace(@ClassMember(source = GrandParent.class, value = "title"))
-        private int anotherReplacementTitle;
+        private int title;
     }
 
     static class Parent extends GrandParent {
@@ -80,11 +72,19 @@ public class MultipleReplaceTestCases {
         private int replacementTitle;
     }
 
-    static class GrandParent {
+    @AemComponent(
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
+        writeMode = WriteMode.CREATE,
+        title = TestConstants.DEFAULT_COMPONENT_TITLE
+    )
+    @Dialog
+    public static class HierarchyReplacement extends Parent {
+
         @DialogField(
-            label = "Title"
+            label = "Title Replace Second"
         )
         @TextField
-        private int title;
+        @Replace(@ClassMember(source = GrandParent.class, value = "title"))
+        private int anotherReplacementTitle;
     }
 }
