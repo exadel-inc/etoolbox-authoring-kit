@@ -30,6 +30,7 @@ import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
+import com.exadel.aem.toolkit.api.markers._Super;
 import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -170,6 +171,9 @@ public class OrderingUtil {
     private static String createId(ClassMember classMember, Class<?> defaultClass) {
         if (_Default.class.equals(classMember.source())) {
             return createId(defaultClass, classMember.value());
+        }
+        if (_Super.class.equals(classMember.source())) {
+            return createId(defaultClass.getSuperclass(), classMember.value());
         }
         return createId(classMember.source(), classMember.value());
     }
