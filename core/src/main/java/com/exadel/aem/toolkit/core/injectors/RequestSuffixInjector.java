@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import com.exadel.aem.toolkit.core.injectors.annotations.RequestSuffix;
 
 @Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + Integer.MIN_VALUE
+    property = Constants.SERVICE_RANKING + ":Integer=" + Integer.MAX_VALUE
 )
 public class RequestSuffixInjector implements Injector {
 

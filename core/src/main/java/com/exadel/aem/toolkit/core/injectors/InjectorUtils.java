@@ -22,12 +22,15 @@ import org.apache.sling.api.resource.ValueMap;
  */
 public class InjectorUtils {
 
+    /**
+     * Default (instantiation-restricting) constructor.
+     */
     private InjectorUtils() {
     }
 
     /**
      * Retrieves the {@code SlingHttpServletRequest}.
-     * @param adaptable the object which Sling tries to adapt from.
+     * @param adaptable The object which Sling tries to adapt from.
      * @return {@code SlingHttpServletRequest} if adaptable is an instance of {@code SlingHttpServletRequest} or null if not.
      */
     public static SlingHttpServletRequest getSlingHttpServletRequest(Object adaptable) {
@@ -39,7 +42,7 @@ public class InjectorUtils {
 
     /**
      * Retrieves the {@code Resource} if adaptable is an instance of {@code SlingHttpServletRequest} or {@code Resource}.
-     * @param adaptable the object which Sling tries to adapt from.
+     * @param adaptable The object which Sling tries to adapt from.
      * @return {@code Resource} or null if no instance could be found.
      */
     public static Resource getResource(Object adaptable) {
@@ -54,7 +57,7 @@ public class InjectorUtils {
 
     /**
      * Retrieves the {@code ValueMap} if adaptable is an instance of {@code SlingHttpServletRequest} or {@code Resource} or {@code ValueMap}.
-     * @param adaptable the object which Sling tries to adapt from.
+     * @param adaptable The object which Sling tries to adapt from.
      * @return {@code ValueMap} or empty ValueMap if no instance could be found.
      */
     public static ValueMap getValueMap(Object adaptable) {

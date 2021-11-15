@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.core.injectors.models.ITestModelSuffix;
 import com.exadel.aem.toolkit.core.injectors.models.TestModelSuffix;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
@@ -103,5 +104,16 @@ public class RequestSuffixInjectorTest {
 
         assertNotNull(testModel);
         assertEquals("/suffixTest", testModel.getSuffixObject());
+    }
+
+    @Test
+    public void getSuffixFromMethod_shouldReturnSuffix() {
+        context.requestPathInfo().setSuffix("/suffixTest");
+        ITestModelSuffix testModel = context.request().adaptTo(ITestModelSuffix.class);
+        assertNotNull(testModel);
+
+        String expectedSuffix = context.requestPathInfo().getSuffix();
+        String actualSuffix = testModel.getSuffixFromMethod();
+        assertEquals(expectedSuffix, actualSuffix);
     }
 }
