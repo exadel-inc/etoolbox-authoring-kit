@@ -53,7 +53,7 @@ public class FieldSourceImpl extends MemberSourceImpl {
      * {@inheritDoc}
      */
     @Override
-    public Class<?> getDeclaringClass() {
+    public Class<?> getInternalDeclaringClass() {
         return field != null ? field.getDeclaringClass() : null;
     }
 
