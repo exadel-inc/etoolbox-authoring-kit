@@ -197,4 +197,27 @@ class ReplacementHelper {
             return Sets.immutableEnumSet(Characteristics.UNORDERED);
         }
     }
+
+    private static boolean findReplaced(Source sourceReplacedFormerEntry, Source replacingEntry) {
+        if (!sourceReplacedFormerEntry.tryAdaptTo(Replace.class).isPresent()) {
+            return false;
+        }
+        ClassMember replacedFormerClsMember = sourceReplacedFormerEntry.adaptTo(Replace.class).value();
+        ClassMember replacingClsMember = replacingEntry.adaptTo(Replace.class).value();
+        if (!replacedFormerClsMember.value().equals(replacingClsMember.value())) {
+            return false;
+        }
+        return getClassFromReplace(sourceReplacedFormerEntry).equals(getClassFromReplace(replacingEntry));
+    }
+
+    private static Class<?> getClassFromReplace(Source source) {
+        Class<?> cls = source.adaptTo(Replace.class).value().source();
+        if (_Default.class.equals(cls)) {
+            return source.adaptTo(MemberSource.class).getDeclaringClass();
+        }
+        if (_Super.class.equals(cls)) {
+            return source.adaptTo(MemberSource.class).getDeclaringClass().getSuperclass();
+        }
+        return cls;
+    }
 }
