@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import com.exadel.aem.toolkit.core.injectors.annotations.RequestSelectors;
 
 @Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + Integer.MIN_VALUE
+    property = Constants.SERVICE_RANKING + ":Integer=" + Integer.MAX_VALUE
 )
 public class RequestSelectorsInjector implements Injector {
 

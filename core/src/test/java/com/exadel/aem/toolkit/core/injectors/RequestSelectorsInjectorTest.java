@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.core.injectors.models.ITestModel;
 import com.exadel.aem.toolkit.core.injectors.models.TestModelSelectors;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
@@ -116,5 +117,16 @@ public class RequestSelectorsInjectorTest {
 
         assertNotNull(testModel);
         assertEquals("selectorsTest", testModel.getSelectorsObject());
+    }
+
+    @Test
+    public void getSelectorsFromMethod_shouldReturnSelectorsString() {
+        context.requestPathInfo().setSuffix("selectorsTest");
+        ITestModel testModel = context.request().adaptTo(ITestModel.class);
+        assertNotNull(testModel);
+
+        String expectedSelectors = context.requestPathInfo().getSelectorString();
+        String actualSelectors = testModel.getSelectorsFromMethod();
+        assertEquals(expectedSelectors, actualSelectors);
     }
 }
