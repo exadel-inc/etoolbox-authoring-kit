@@ -21,7 +21,6 @@ import org.codehaus.plexus.util.StringUtils;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
-import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 
@@ -29,18 +28,9 @@ import com.exadel.aem.toolkit.api.markers._Default;
  * Presents an abstract implementation of {@link Source} that exposes the metadata that is specific for the underlying
  * class member
  */
-public abstract class MemberSourceImpl extends SourceImpl implements MemberSource {
+abstract class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
 
-    private final Class<?> reportingClass;
-    private Class<?> overridingDeclaringClass;
-
-    /**
-     * Initializes a class instance storing a reference to the {@code Class} the current member is reported by
-     * @param reportingClass {@code Class} reference
-     */
-    MemberSourceImpl(Class<?> reportingClass) {
-        this.reportingClass = reportingClass;
-    }
+    private Class<?> reportingClass;
 
     /**
      * {@inheritDoc}
@@ -50,17 +40,12 @@ public abstract class MemberSourceImpl extends SourceImpl implements MemberSourc
         return this.reportingClass;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Class<?> getDeclaringClass() {
-        return this.overridingDeclaringClass != null
-            ? this.overridingDeclaringClass
-            : getInternalDeclaringClass();
-    }
-
-    abstract Class<?> getInternalDeclaringClass();
-
-    public void setOverridingDeclaringClass(Class<?> value) {
-        this.overridingDeclaringClass = value;
+    public void setReportingClass(Class<?> value) {
+        this.reportingClass = value;
     }
 
     /**

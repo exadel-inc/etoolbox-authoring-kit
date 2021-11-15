@@ -13,7 +13,6 @@
  */
 package com.exadel.aem.toolkit.plugin.utils.ordering;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -246,8 +245,8 @@ public class OrderingUtil {
             return 0;
         }
 
-        Class<?> f1Class = f1.adaptTo(Member.class).getDeclaringClass();
-        Class<?> f2Class = f2.adaptTo(Member.class).getDeclaringClass();
+        Class<?> f1Class = f1.adaptTo(MemberSource.class).getDeclaringClass();
+        Class<?> f2Class = f2.adaptTo(MemberSource.class).getDeclaringClass();
         if (f1Class != f2Class) {
             if (ClassUtils.isAssignable(f1Class, f2Class)) {
                 return 1;
