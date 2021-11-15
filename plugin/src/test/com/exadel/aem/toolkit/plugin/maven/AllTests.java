@@ -28,6 +28,7 @@ import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingTest;
     OrderingTest.class,
     ComponentsTest.class,
     WidgetsTest.class,
+    PlacementTest.class,
     ValidationsTest.class,
     IgnoreTest.class,
     ExceptionsTest.class,

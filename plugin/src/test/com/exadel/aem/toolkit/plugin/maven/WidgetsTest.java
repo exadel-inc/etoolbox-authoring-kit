@@ -17,8 +17,6 @@ import org.junit.Test;
 
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
 import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
-import com.exadel.aem.toolkit.test.component.PlacementTestCases;
-import com.exadel.aem.toolkit.test.component.TestReplaceMultipleTimes;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
 import com.exadel.aem.toolkit.test.widget.AccordionWidget;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
@@ -148,26 +146,6 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testPassword() {
         test(PasswordWidget.class);
-    }
-
-    @Test
-    public void testPlacement1() {
-        test(PlacementTestCases.Test1.class, "widget/place1");
-    }
-
-    @Test
-    public void testPlacement2() {
-        test(PlacementTestCases.Test2.class, "widget/place2");
-    }
-
-    @Test
-    public void testPlacement3() {
-        test(TestReplaceMultipleTimes.FirstCase.class, "widget/place3");
-    }
-
-    @Test
-    public void testPlacement4() {
-        test(TestReplaceMultipleTimes.SecondCase.class, "widget/place3");
     }
 
     @Test
