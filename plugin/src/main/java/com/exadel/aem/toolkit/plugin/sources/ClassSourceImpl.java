@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 /**
  * Implements {@link Source} to expose the metadata that is specific for the underlying Java class
  */
-public class ClassSourceImpl extends SourceImpl {
+class ClassSourceImpl extends SourceImpl {
 
     private final Class<?> value;
 

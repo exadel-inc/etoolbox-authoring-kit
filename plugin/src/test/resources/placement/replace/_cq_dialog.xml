@@ -23,14 +23,20 @@
                                 disabled="{Boolean}false"
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}false"/>
-                    <anotherField jcr:primaryType="nt:unstructured"
-                                  sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                                  name="./anotherField"
-                                  fieldLabel="Another field"
-                                  disabled="{Boolean}false"
-                                  renderHidden="{Boolean}false"
-                                  required="{Boolean}false"/>
-
+                    <anotherFieldChild jcr:primaryType="nt:unstructured"
+                                       sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                       name="./anotherFieldChild"
+                                       fieldLabel="Another Field Child"
+                                       disabled="{Boolean}false"
+                                       renderHidden="{Boolean}false"
+                                       required="{Boolean}false"/>
+                    <untouchedField jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./untouchedField"
+                                    fieldLabel="Untouched Field"
+                                    disabled="{Boolean}false"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"/>
                 </items>
             </column>
         </items>
