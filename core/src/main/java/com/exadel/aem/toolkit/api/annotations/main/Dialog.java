@@ -37,7 +37,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @AnnotationRendering(
-    properties = {"!name", "!layout"}
+    properties = {"!name", "!layout", "!forceIgnoreFreshness"}
 )
 @SuppressWarnings("squid:S1133")
 public @interface Dialog {
@@ -221,4 +221,12 @@ public @interface Dialog {
      */
     @Deprecated
     Tab[] tabs() default {};
+
+    /**
+     * When set to true, forces the entire dialog to ignore freshness of the Granite UI form beside the dialog. This will
+     * allow any component residing within the dialog to display its default value (if specified) regardless of whether
+     * the underlying resource is being created (a "fresh" one) or just being edited
+     * @return True or false
+     */
+    boolean forceIgnoreFreshness() default false;
 }
