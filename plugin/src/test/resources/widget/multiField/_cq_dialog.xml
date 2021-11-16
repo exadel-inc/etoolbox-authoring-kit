@@ -16,15 +16,15 @@
                     sling:resourceType="granite/ui/components/coral/foundation/container">
                 <items jcr:primaryType="nt:unstructured">
                     <multiField1 jcr:primaryType="nt:unstructured"
-                                sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
-                                fieldLabel="Multifield 1"
-                                fieldDescription="Multifield definition with source class specified"
-                                disabled="{Boolean}false"
-                                renderHidden="{Boolean}false"
-                                required="{Boolean}false"
-                                deleteHint="{Boolean}false"
-                                typeHint="typeHint"
-                                multifieldSpecial="This is added to Multifields">
+                                 sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                 fieldLabel="Multifield 1"
+                                 fieldDescription="Multifield definition with source class specified"
+                                 disabled="{Boolean}false"
+                                 renderHidden="{Boolean}false"
+                                 required="{Boolean}false"
+                                 deleteHint="{Boolean}false"
+                                 typeHint="typeHint"
+                                 multifieldSpecial="This is added to Multifields">
                         <field jcr:primaryType="nt:unstructured"
                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                name="./dialogItem"
@@ -84,6 +84,65 @@
                             </items>
                         </field>
                     </multiField3>
+                    <multiField4 jcr:primaryType="nt:unstructured"
+                                 sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                 fieldLabel="Multifield 4"
+                                 fieldDescription="Multifield definition with one source in multiple-source mode"
+                                 composite="{Boolean}true"
+                                 disabled="{Boolean}false"
+                                 renderHidden="{Boolean}false"
+                                 required="{Boolean}false"
+                                 multifieldSpecial="This is added to Multifields">
+                        <field jcr:primaryType="nt:unstructured"
+                               sling:resourceType="granite/ui/components/coral/foundation/container"
+                               name="./multiField4">
+                            <items jcr:primaryType="nt:unstructured">
+                                <dialogItem jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                            name="dialogItem"
+                                            disabled="{Boolean}false"
+                                            renderHidden="{Boolean}false"
+                                            required="{Boolean}false"/>
+                            </items>
+                        </field>
+                    </multiField4>
+                    <multiField5 jcr:primaryType="nt:unstructured"
+                                 sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                 fieldLabel="Multifield 5"
+                                 fieldDescription="Multifield definition with collection-typed source"
+                                 composite="{Boolean}true"
+                                 disabled="{Boolean}false"
+                                 renderHidden="{Boolean}false"
+                                 required="{Boolean}false"
+                                 multifieldSpecial="This is added to Multifields">
+                        <field jcr:primaryType="nt:unstructured"
+                               sling:resourceType="granite/ui/components/coral/foundation/container"
+                               name="./multiField5">
+                            <items jcr:primaryType="nt:unstructured">
+                                <dialogItem jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                            name="dialogItem"
+                                            disabled="{Boolean}false"
+                                            renderHidden="{Boolean}false"
+                                            required="{Boolean}false"/>
+                                <nestedFieldSet jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
+                                                name="nestedFieldSet"
+                                                disabled="{Boolean}false"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}false">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <nestedItem jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                    name="nestedItem"
+                                                    disabled="{Boolean}false"
+                                                    renderHidden="{Boolean}false"
+                                                    required="{Boolean}false"/>
+                                    </items>
+                                </nestedFieldSet>
+                            </items>
+                        </field>
+                    </multiField5>
                 </items>
             </column>
         </items>
