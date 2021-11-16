@@ -16,9 +16,15 @@ package com.exadel.aem.toolkit.api.handlers;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterators;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Presents an abstraction of target entity for rendering AEM components and their configuration. Technically each
@@ -32,6 +38,25 @@ public interface Target {
      * @return String value
      */
     String getName();
+
+    /**
+     * Retrieves the path of the current {@code Target} instance. The path is the sequence of names of all the ancestor
+     * {@code Target}s of the current one, from the farthest ancestor to the nearest one, starting with and separated by
+     * the {@code /} symbol. The path is therefore in virtually the same format as a path of an XML node.
+     * If the current {@code Target} hasn't got a parent, its path is {@code /<target_name>}
+     * @return String value
+     */
+    default String getPath() {
+        LinkedList<String> pathChunks = new LinkedList<>();
+        Target current = this;
+        while (current != null) {
+            pathChunks.add(current.getName());
+            current = current.getParent();
+        }
+        return CoreConstants.SEPARATOR_SLASH +
+            StreamSupport.stream(Spliterators.spliteratorUnknownSize(pathChunks.descendingIterator(), 0), false)
+                .collect(Collectors.joining(CoreConstants.SEPARATOR_SLASH));
+    }
 
     /**
      * Retrieves the name prefix associated with the current instance
