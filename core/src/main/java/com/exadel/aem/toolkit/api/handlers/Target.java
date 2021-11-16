@@ -16,13 +16,11 @@ package com.exadel.aem.toolkit.api.handlers;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Spliterators;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 
@@ -47,15 +45,9 @@ public interface Target {
      * @return String value
      */
     default String getPath() {
-        LinkedList<String> pathChunks = new LinkedList<>();
-        Target current = this;
-        while (current != null) {
-            pathChunks.add(current.getName());
-            current = current.getParent();
-        }
-        return CoreConstants.SEPARATOR_SLASH +
-            StreamSupport.stream(Spliterators.spliteratorUnknownSize(pathChunks.descendingIterator(), 0), false)
-                .collect(Collectors.joining(CoreConstants.SEPARATOR_SLASH));
+        return (this.getParent() != null ? this.getParent().getPath() : StringUtils.EMPTY) +
+            CoreConstants.SEPARATOR_SLASH +
+            this.getName();
     }
 
     /**
