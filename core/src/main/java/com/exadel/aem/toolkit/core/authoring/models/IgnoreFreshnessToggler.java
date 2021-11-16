@@ -46,14 +46,16 @@ public class IgnoreFreshnessToggler {
     @PostConstruct
     private void init() {
         if (isIgnoreFreshnessTurnedOn()) {
-            FormData.push(request, resource.getValueMap(), FormData.NameNotFoundMode.IGNORE_FRESHNESS);
-        } else {
             FormData.push(request, resource.getValueMap(), FormData.NameNotFoundMode.CHECK_FRESHNESS);
+            request.setAttribute(ATTRIBUTE_IGNORE_FRESHNESS, Boolean.FALSE.toString());
+        } else {
+            FormData.push(request, resource.getValueMap(), FormData.NameNotFoundMode.IGNORE_FRESHNESS);
+            request.setAttribute(ATTRIBUTE_IGNORE_FRESHNESS, Boolean.TRUE.toString());
         }
     }
 
     /**
-     * Retrieves whether the {@code forceIgnoreFreshness} flag has been set for te current Sling HTTP request
+     * Retrieves whether the {@code forceIgnoreFreshness} flag has been set for the current Sling HTTP request
      * @return True or false
      */
     private boolean isIgnoreFreshnessTurnedOn() {
