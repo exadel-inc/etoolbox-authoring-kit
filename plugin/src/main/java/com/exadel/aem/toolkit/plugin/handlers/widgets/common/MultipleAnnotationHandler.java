@@ -275,57 +275,71 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Called to pick up an appropriate {@link PropertyTransferPolicy} for an attribute from the set of provided policies
-     * @param policies  {@code Map} describing available policies
-     * @param value     String that represents the name of the current attribute
+     * Picks up an appropriate {@link PropertyTransferPolicy} for an attribute from the set of provided policies
+     * @param policies {@code Map} describing available policies
+     * @param name     Name of the current attribute
      * @return The selected policy, or the default policy if no appropriate option found
      */
     private static PropertyTransferPolicy getPolicyForAttribute(
         Map<String, PropertyTransferPolicy> policies,
-        String value) {
+        String name) {
         return policies.entrySet().stream()
             .filter(entry -> entry.getKey().startsWith(CoreConstants.SEPARATOR_AT))
-            .filter(entry -> {
-                String key = StringUtils.stripStart(entry.getKey(), CoreConstants.SEPARATOR_AT);
-                return key.endsWith(DialogConstants.WILDCARD)
-                    ? value.startsWith(StringUtils.stripEnd(key, DialogConstants.WILDCARD))
-                    : value.equals(key);
-            })
+            .filter(entry -> isAttributePolicyMatch(name, entry))
             .map(Map.Entry::getValue)
             .findFirst()
             .orElse(PropertyTransferPolicy.LEAVE_IN_MULTIFIELD);
     }
 
     /**
-     * Called to pick up an appropriate {@link PropertyTransferPolicy} for a child node from the set of provided policies
-     * @param policies  {@code Map} describing available policies
-     * @param value     {@code Target} object that represents the subnode
+     * Called from {@link MultipleAnnotationHandler#getPolicyForAttribute(Map, String)} as a predicate function for
+     * selecting a property transfer policy for the given attribute
+     * @param name          Name of the current attribute
+     * @param policyEntry   {@code Map.Entry} that represents a single property transfer policy
+     * @return True or false
+     */
+    private static boolean isAttributePolicyMatch(String name, Map.Entry<String, PropertyTransferPolicy> policyEntry) {
+        String key = StringUtils.stripStart(policyEntry.getKey(), CoreConstants.SEPARATOR_AT);
+        return key.endsWith(DialogConstants.WILDCARD)
+            ? name.startsWith(StringUtils.stripEnd(key, DialogConstants.WILDCARD))
+            : name.equals(key);
+    }
+
+    /**
+     * Picks up an appropriate {@link PropertyTransferPolicy} for a child node from the set of provided policies
+     * @param policies {@code Map} describing available policies
+     * @param child    {@code Target} object that represents the subnode
      * @return The selected policy, or the default policy if no appropriate option found
      */
     private static PropertyTransferPolicy getPolicyForChildNode(
         Map<String, PropertyTransferPolicy> policies,
-        Target value) {
-        PropertyTransferPolicy result = Stream.concat(
-            // We put absolute paths before the relative ones so that they are considered in the first turn
-            // even if added late
+        Target child) {
+        return Stream.concat(
+            // We split policies in two streams to put absolute paths before the relative ones so that they are
+            // considered in the first turn even if added late
             policies.entrySet().stream().filter(entry -> entry.getKey().startsWith(CoreConstants.SEPARATOR_SLASH)),
             policies.entrySet().stream().filter(entry -> entry.getKey().startsWith(DialogConstants.RELATIVE_PATH_PREFIX))
         )
-            .filter(entry -> {
-                boolean isAbsolutePath = entry.getKey().startsWith(CoreConstants.SEPARATOR_SLASH);
-                String key = isAbsolutePath ? entry.getKey() : StringUtils.substring(entry.getKey(), DialogConstants.RELATIVE_PATH_PREFIX.length());
-                String checkedValue = isAbsolutePath ? value.getPath() : value.getName();
-                return key.endsWith(DialogConstants.WILDCARD)
-                    ? StringUtils.startsWith(checkedValue, StringUtils.stripEnd(key, DialogConstants.WILDCARD))
-                    : StringUtils.equals(checkedValue, key);
-            })
+            .filter(entry -> isChildNodePolicyMatch(child, entry))
             .map(Map.Entry::getValue)
             .findFirst()
-            .orElse(null);
-        if (result == null) {
-            result = PropertyTransferPolicy.LEAVE_IN_MULTIFIELD;
-        }
-        return result;
+            .orElse(PropertyTransferPolicy.LEAVE_IN_MULTIFIELD);
+    }
+
+    /**
+     * Called from {@link MultipleAnnotationHandler#getPolicyForChildNode(Map, Target)} as a predicate function for
+     * selecting a property transfer policy for the given node
+     * @param child         {@code Target} object that represents the subnode
+     * @param policyEntry   {@code Map.Entry} that represents a single property transfer policy
+     * @return True or false
+     */
+    private static boolean isChildNodePolicyMatch(Target child, Map.Entry<String, PropertyTransferPolicy> policyEntry) {
+        boolean isAbsolutePath = policyEntry.getKey().startsWith(CoreConstants.SEPARATOR_SLASH);
+        String key = isAbsolutePath ? policyEntry.getKey() : StringUtils.substring(policyEntry.getKey(), DialogConstants.RELATIVE_PATH_PREFIX.length());
+        String checkedValue = isAbsolutePath ? child.getPath() : child.getName();
+        return key.endsWith(DialogConstants.WILDCARD)
+            ? StringUtils.startsWith(checkedValue, StringUtils.stripEnd(key, DialogConstants.WILDCARD))
+            : StringUtils.equals(checkedValue, key);
     }
 
     /**
