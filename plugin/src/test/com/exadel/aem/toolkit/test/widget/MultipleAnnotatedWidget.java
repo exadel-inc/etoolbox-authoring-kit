@@ -102,7 +102,7 @@ public class MultipleAnnotatedWidget {
     String multipleRadioGroup;
 
     @DialogField(label = "Multiple AutoCompletes")
-    @Autocomplete(datasource = @AutocompleteDatasource(namespaces = "fruit"))
+    @Autocomplete(datasource = @AutocompleteDatasource(namespaces = "ns"))
     @Multiple
     String multipleAutoCompletes;
 
@@ -131,6 +131,11 @@ public class MultipleAnnotatedWidget {
     @Property(name = "customProperty", value = "custom value")
     private NestedFieldSet nestedMultifield;
 
+    @DialogField
+    @CustomWidgetAnnotationAuto(customField = "Custom!")
+    @Multiple
+    String customAnnotation;
+
     private static class NestedFieldSet {
         @DialogField(label = "Nested Text 1")
         @TextField
@@ -140,10 +145,4 @@ public class MultipleAnnotatedWidget {
         @TextField
         private String nestedText2;
     }
-
-    @DialogField
-    @CustomWidgetAnnotationAuto(customField = "Custom!")
-    @Multiple
-    String customAnnotation;
-
 }
