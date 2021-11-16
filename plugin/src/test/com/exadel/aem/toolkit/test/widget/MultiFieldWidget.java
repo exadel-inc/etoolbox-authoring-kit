@@ -52,6 +52,21 @@ public class MultiFieldWidget {
     @MultiField
     List<ExtendedMultiFieldContainer> multiField3;
 
+    @DialogField(
+        label="Multifield 4",
+        description = "Multifield definition with one source in multiple-source mode"
+    )
+    @MultiField(composite = true)
+    List<MultiFieldContainer> multiField4;
+
+    // should stay the same as Multifield 3
+    @DialogField(
+        label="Multifield 5",
+        description = "Multifield definition with collection-typed source"
+    )
+    @MultiField
+    List<ExtendedMultiFieldContainer> multiField5;
+
     private static class MultiFieldContainer {
         @DialogField
         @TextField
