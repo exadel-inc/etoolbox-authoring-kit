@@ -13,6 +13,9 @@
                 padding="{Boolean}false"
                 type="large"/>
         <items jcr:primaryType="nt:unstructured">
+            <forceIgnoreFreshnessOpen
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="etoolbox-authoring-kit/components/authoring/ignoreFreshnessToggler"/>
             <tabs jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/tabs">
                 <items jcr:primaryType="nt:unstructured">
                     <firstTab jcr:primaryType="nt:unstructured"
@@ -141,6 +144,9 @@
                     </thirdTab>
                 </items>
             </tabs>
+            <forceIgnoreFreshnessClose
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="etoolbox-authoring-kit/components/authoring/ignoreFreshnessToggler"/>
         </items>
     </content>
 </jcr:root>
