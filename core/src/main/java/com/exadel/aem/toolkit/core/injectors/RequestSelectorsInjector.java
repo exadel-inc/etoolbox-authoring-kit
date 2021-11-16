@@ -72,11 +72,9 @@ public class RequestSelectorsInjector implements Injector {
             return Arrays.asList(request.getRequestPathInfo().getSelectors());
         } else if (((Class<?>) type).isArray() && ((Class<?>) type).getComponentType().equals(String.class)) {
             return request.getRequestPathInfo().getSelectors();
-        } else if (type.equals(String.class)) {
+        } else if (type.equals(String.class) || type.equals(Object.class)) {
             return request.getRequestPathInfo().getSelectorString();
-        } else if (type.equals(Object.class)) {
-            return request.getRequestPathInfo().getSelectorString();
-        }
+        } 
         LOG.debug("RequestSelectorsInjector doesn't support Type {}", type);
         return null;
     }
