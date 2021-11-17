@@ -45,9 +45,8 @@ public interface Target {
      * @return String value
      */
     default String getPath() {
-        return (this.getParent() != null ? this.getParent().getPath() : StringUtils.EMPTY) +
-            CoreConstants.SEPARATOR_SLASH +
-            this.getName();
+        String parentPath = getParent() != null ? getParent().getPath() : StringUtils.EMPTY;
+        return parentPath + CoreConstants.SEPARATOR_SLASH + getName();
     }
 
     /**
