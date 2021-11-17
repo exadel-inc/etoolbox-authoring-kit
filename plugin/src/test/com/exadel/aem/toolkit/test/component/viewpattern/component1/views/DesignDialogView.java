@@ -40,7 +40,8 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_2;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_3;
 
 @DesignDialog(
-    title = TestConstants.DEFAULT_COMPONENT_TITLE
+    title = TestConstants.DEFAULT_COMPONENT_TITLE,
+    forceIgnoreFreshness = true
 )
 @Tabs(
     value = {

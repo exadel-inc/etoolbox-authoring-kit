@@ -35,11 +35,14 @@ import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalCla
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithoutDialog;
+import com.exadel.aem.toolkit.test.component.ForceIgnoreFreshnessTestCases;
 import com.exadel.aem.toolkit.test.component.WriteModeTestCases;
 import com.exadel.aem.toolkit.test.component.viewpattern.component1.ComplexComponentHolder;
 
 public class ComponentsTest extends DefaultTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(ComponentsTest.class);
+
+    private static final String IGNORE_FRESHNESS_TESTCASE_FOLDER = "forceIgnoreFreshness";
 
     @Test
     public void testComponentWithRichTextAndExternalClasses() {
@@ -91,7 +94,7 @@ public class ComponentsTest extends DefaultTestBase {
         test(
             WriteModeTestCases.FolderCreatingComponent.class,
             TestConstants.NONEXISTENT_COMPONENT_NAME,
-            Paths.get(TestConstants.CONTENT_ROOT_PATH, "component", "createdFolder").toAbsolutePath());
+            Paths.get(TestConstants.CONTENT_ROOT_PATH, TestConstants.RESOURCE_FOLDER_COMPONENT, "createdFolder").toAbsolutePath());
     }
 
     @Test
@@ -103,6 +106,23 @@ public class ComponentsTest extends DefaultTestBase {
             targetPath,
             fileSystem -> writeFile(fileSystem.getPath(TestConstants.DEFAULT_COMPONENT_NAME, ".content.xml"), outdatedContentXml));
     }
+
+    @Test
+    public void testForceIgnoreFreshness() {
+        test(ForceIgnoreFreshnessTestCases.SimpleDialog.class,
+            TestConstants.RESOURCE_FOLDER_COMPONENT,
+            IGNORE_FRESHNESS_TESTCASE_FOLDER,
+            "simple");
+        test(ForceIgnoreFreshnessTestCases.TabbedDialog.class,
+            TestConstants.RESOURCE_FOLDER_COMPONENT,
+            IGNORE_FRESHNESS_TESTCASE_FOLDER,
+            "tabbed");
+        test(ForceIgnoreFreshnessTestCases.AccordionDialog.class,
+            TestConstants.RESOURCE_FOLDER_COMPONENT,
+            IGNORE_FRESHNESS_TESTCASE_FOLDER,
+            "accordion");
+    }
+
 
     private static String readFile(Path path) {
         try {

@@ -59,12 +59,13 @@ public class MultiFieldWidget {
     @MultiField(composite = true)
     List<MultiFieldContainer> multiField4;
 
-    // should stay the same as Multifield 3
+    // Should render the same as Multifield 3 because when there are several rendered fields within a multifield item,
+    // the multifield is always "composite", whether we specify this or not
     @DialogField(
         label="Multifield 5",
         description = "Multifield definition with collection-typed source"
     )
-    @MultiField
+    @MultiField(composite = true)
     List<ExtendedMultiFieldContainer> multiField5;
 
     private static class MultiFieldContainer {

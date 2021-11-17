@@ -44,11 +44,17 @@ However, there is a way to make the plugin create a folder in the package when m
     helpPath = "https://www.google.com/search?q=my+aem+component",
     width = 800,
     height = 600,
-    extraClientlibs = "cq.common.wcm"
+    extraClientlibs = "cq.common.wcm",
+    forceIgnoreFreshness = true
 )
 public class MyComponentDialog {/* ... */}
 ```
 If you specify *title* in `@Dialog`, it will override the title specified in @AemComponent. Skip this if you need to have the same title rendered for the component itself and for the dialog.
+
+Pay attention to the *forceIgnoreFreshness* option. When set to true, it forces the entire dialog to ignore freshness of the Granite UI form beside the dialog. This will allow any component that resides within the dialog to display its default value (if specified) regardless of whether the underlying resource is being created anew (a "fresh" one) or just being edited.
+
+Most Granite UI components don't manage default values when editing a "non-fresh" resource. Some offer their own implementation of *forceIgnoreFreshness* (most notably, the Select component). However, specifying *forceIgnoreFreshness* at the `@Dialog` level makes the rest behave in the way the Select does.
+
 
 ### @DesignDialog
 
