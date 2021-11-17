@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.lists.utils;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,19 +26,25 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceUtil;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
+import com.day.cq.wcm.api.WCMException;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 /**
- * Contains methods for retrieving Exadel Toolbox Lists values
+ * Contains methods for manipulations with Exadel Toolbox Lists
  */
 public class ListHelper {
 
@@ -88,6 +95,69 @@ public class ListHelper {
             .map(getMapperFunction(itemType))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Creates a list of entries under given {@code path} based on list of {@link SimpleListItem}
+     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
+     * @param path             JCR path of the items list
+     * @param listItems        List of {@link SimpleListItem}
+     * @return Created page containing list of entries or ${@code null} if page cannot be created
+     * @throws WCMException         if a page cannot be created
+     * @throws PersistenceException if a page cannot be deleted or list item cannot be created
+     */
+    public static Page createList(ResourceResolver resourceResolver, String path, List<SimpleListItem> listItems)
+        throws WCMException, PersistenceException {
+        List<Resource> resources = ListResourceUtils.mapToValueMapResources(resourceResolver, listItems);
+        return createList(resourceResolver, path, resources);
+    }
+
+    /**
+     * Creates a list of entries under given {@code path} based on key-value map. Each entry is a separate list item.
+     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
+     * @param path             JCR path of the items list
+     * @param values           key-value map
+     * @return Created page containing list of entries or ${@code null} if page cannot be created
+     * @throws WCMException         if a page cannot be created
+     * @throws PersistenceException if a page cannot be deleted or list item cannot be created
+     */
+    public static Page createList(ResourceResolver resourceResolver, String path, Map<String, Object> values)
+        throws WCMException, PersistenceException {
+        List<Resource> listItemsProperties = ListResourceUtils.mapToValueMapResources(resourceResolver, values);
+        return createList(resourceResolver, path, listItemsProperties);
+    }
+
+    /**
+     * Creates a list of entries under given {@code path} based on list of {@link Resource}
+     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
+     * @param path             JCR path of the items list
+     * @param resources        List of {@link Resource}
+     * @return Created page containing list of entries or ${@code null} if page cannot be created
+     * @throws WCMException         if a page cannot be created
+     * @throws PersistenceException if a page cannot be deleted or list item cannot be created
+     */
+    public static Page createList(ResourceResolver resourceResolver, String path, Collection<Resource> resources)
+        throws WCMException, PersistenceException {
+        if (resourceResolver == null || StringUtils.isBlank(path) || CollectionUtils.isEmpty(resources)) {
+            return null;
+        }
+
+        Resource pageResource = resourceResolver.getResource(path);
+        if (pageResource != null) {
+            resourceResolver.delete(pageResource);
+        }
+
+        Page listPage = ListPageUtils.createListPage(resourceResolver, path);
+        Resource list = ListResourceUtils.createListResource(resourceResolver, listPage);
+        if (list == null) {
+            return null;
+        }
+
+        for (Resource resource : resources) {
+            createListItem(resourceResolver, list, resource.getValueMap());
+        }
+
+        return listPage;
     }
 
     /**
@@ -215,10 +285,9 @@ public class ListHelper {
             .map(resolver -> resolver.adaptTo(PageManager.class))
             .map(pageManager -> pageManager.getPage(path))
             .map(Page::getContentResource)
-            .map(contentRes -> contentRes.getChild("list"))
+            .map(contentRes -> contentRes.getChild(ListConstants.NN_LIST))
             .orElse(null);
     }
-
 
     /**
      * Retrieves a {@code Function} used to convert a {@code Resource} object into the required value type
@@ -231,5 +300,19 @@ public class ListHelper {
             return itemType::cast;
         }
         return resource -> resource.adaptTo(itemType);
+    }
+
+    /**
+     * Create {@link com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel} resource under {@code parent}
+     * container with given properties.
+     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
+     * @param parent           Container for {@code listItem}'s.
+     * @param properties       {@code listItem} properties
+     * @throws PersistenceException if {@code listItem} cannot be created
+     */
+    private static void createListItem(ResourceResolver resourceResolver, Resource parent, Map<String, Object> properties) throws PersistenceException {
+        Map<String, Object> withoutSystemProperties = ListResourceUtils.getWithoutSystemProperties(properties);
+        withoutSystemProperties.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ListConstants.LIST_ITEM_RESOURCE_TYPE);
+        resourceResolver.create(parent, ResourceUtil.createUniqueChildName(parent, CoreConstants.PN_LIST_ITEM), withoutSystemProperties);
     }
 }
