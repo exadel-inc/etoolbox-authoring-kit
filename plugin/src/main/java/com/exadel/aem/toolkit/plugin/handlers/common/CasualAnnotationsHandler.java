@@ -101,7 +101,7 @@ public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
     @SuppressWarnings("deprecation") // DialogWidgetHandler processing is retained for compatibility and will be removed
                                      // in a version after 2.0.2
     private List<Handler> getEffectiveHandlers(Source source, String scope) {
-        if (predefinedHandlers != null && !predefinedHandlers.isEmpty()) {
+        if (predefinedHandlers != null) {
             return predefinedHandlers;
         }
 
@@ -137,7 +137,7 @@ public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
             .getReflection()
             .getHandlers()
             .stream()
-            .filter(handler -> handler instanceof DialogWidgetHandler)
+            .filter(DialogWidgetHandler.class::isInstance)
             .filter(handler -> StringUtils.equals(source, ((DialogWidgetHandler) handler).getName()))
             .map(DialogWidgetHandler.class::cast);
     }

@@ -132,7 +132,7 @@
                             required="{Boolean}false">
                             <datasource
                                 jcr:primaryType="nt:unstructured"
-                                namespaces="[fruit]"
+                                namespaces="[ns]"
                                 sling:resourceType="cq/gui/components/common/datasources/tags"/>
                             <options
                                 jcr:primaryType="nt:unstructured"
