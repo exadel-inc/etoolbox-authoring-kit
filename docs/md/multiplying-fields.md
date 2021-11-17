@@ -14,9 +14,9 @@ Reference to that class is passed to `@MultiField`'s *value* property. Just as f
 
 Multifields allow you to specify the `deleteHint` (true/false) or `typeHint` values that will produce HTTP request parameters in line with Apache Sling specification for [@Delete](https://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#delete) and [@TypeHint](https://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#typehint).
 
-in AEM multifields exist in two flavors. *Simple* multifields usually contain only one authorable field per item. If a user creates many items, the values are stored as an array. *Composite* multifields store their values in subnodes of the current resource's node. This is mainly useful when there are several authorable fields per item.
+AEM multifields exist in two flavors. *Simple* multifields usually contain only one authorable field per item. If a user creates many items, the values are stored as an array. *Composite* multifields store their values in subnodes of the current resource's node. This is mainly useful when there are several authorable fields per item.
 
-The ToolKit by default renders a simple multifield when there is only one authorable field to manage in the reflected class, and creates a composite multifield if there are more. However, you can create a composite multifield for a class with only one authorable field by specifying `forceComposite = true`.
+By default the ToolKit renders a simple multifield when there is only one authorable field to manage in the reflected class, and creates a composite multifield if there are more. However, you can create a composite multifield for a class with only one authorable field by specifying `forceComposite = true`.
 
 #### Simple multifield
 
