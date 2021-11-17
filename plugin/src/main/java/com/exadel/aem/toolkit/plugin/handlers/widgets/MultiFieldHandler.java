@@ -58,7 +58,7 @@ public class MultiFieldHandler extends WidgetContainerHandler implements Handler
         }
 
         // Process separately the multiple-source and the single-source modes of multifield
-        if (sources.size() > 1 || source.adaptTo(MultiField.class).composite()) {
+        if (sources.size() > 1 || source.adaptTo(MultiField.class).forceComposite()) {
             placeMultiple(sources, target, name);
         } else {
             placeOne(sources.get(0), target);
