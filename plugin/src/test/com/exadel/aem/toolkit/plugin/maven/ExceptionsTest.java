@@ -32,6 +32,8 @@ import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
 import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
 import com.exadel.aem.toolkit.test.component.InheritanceExceptionTestCases;
 import com.exadel.aem.toolkit.test.component.WriteModeTestCases;
+import com.exadel.aem.toolkit.test.component.placement.coincidences.ClassInterfaceCoincidenceTestCases;
+import com.exadel.aem.toolkit.test.component.placement.coincidences.ClassParentInterfaceCoincidenceTestCases;
 
 public class ExceptionsTest extends ExceptionsTestBase {
     private static final String NOT_AN_EXCEPTION_MESSAGE = "NOT AN EXCEPTION: testing terminateOn logic";
@@ -73,6 +75,20 @@ public class ExceptionsTest extends ExceptionsTestBase {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
         exceptionRule.expectMessage("Field named \"text1\" in class \"Child2\"");
         test(InheritanceExceptionTestCases.Child2.class);
+    }
+
+    @Test
+    public void testNameCoincidenceWithShadowingResourceType1() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
+        exceptionRule.expectMessage("Method named \"getTitle\" in class \"CoincidenceException\" collides with the method named \"getTitle\" in class \"ClassInterface\"");
+        test(ClassInterfaceCoincidenceTestCases.CoincidenceException.class);
+    }
+
+    @Test
+    public void testNameCoincidenceWithShadowingResourceType2() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
+        exceptionRule.expectMessage("Method named \"getTitle\" in class \"CoincidenceException\" collides with the method named \"getTitle\" in class \"ParentException\"");
+        test(ClassParentInterfaceCoincidenceTestCases.CoincidenceException.class);
     }
 
     @Test
