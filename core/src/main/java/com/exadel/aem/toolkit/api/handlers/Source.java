@@ -15,6 +15,8 @@ package com.exadel.aem.toolkit.api.handlers;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Presents an abstraction of data source for rendering Granite UI entities. A common variant of a data source is a Java
  * class, a class member, a particular annotation, or a specific data storage
@@ -28,8 +30,16 @@ public interface Source {
     String getName();
 
     /**
+     * Retrieves a string token representing the type of the source. Defaults to an empty string
+     * @return String value
+     */
+    default String getType() {
+        return StringUtils.EMPTY;
+    }
+
+    /**
      * Indicates whether this source is valid for rendering
-     * @return Non-blank string value
+     * @return True or false
      */
     boolean isValid();
 
