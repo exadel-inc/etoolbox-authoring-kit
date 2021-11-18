@@ -18,6 +18,7 @@ import java.lang.annotation.Annotation;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Implements {@link Source} to expose the metadata that is specific for the underlying Java class
@@ -39,6 +40,14 @@ class ClassSourceImpl extends SourceImpl {
     @Override
     public String getName() {
         return isValid() ? value.getName() : StringUtils.EMPTY;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getType() {
+        return DialogConstants.TYPE_CLASS;
     }
 
     /**

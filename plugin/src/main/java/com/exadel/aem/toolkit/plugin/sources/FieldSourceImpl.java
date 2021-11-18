@@ -21,6 +21,7 @@ import java.lang.reflect.Modifier;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 
 /**
@@ -29,6 +30,7 @@ import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 class FieldSourceImpl extends MemberSourceImpl {
 
     private final Field field;
+    private String name;
     private Class<?> declaringClass;
 
     /**
@@ -44,6 +46,9 @@ class FieldSourceImpl extends MemberSourceImpl {
      */
     @Override
     public String getName() {
+        if (StringUtils.isNotBlank(name)) {
+            return name;
+        }
         return field != null ? field.getName() : StringUtils.EMPTY;
     }
 
@@ -51,9 +56,25 @@ class FieldSourceImpl extends MemberSourceImpl {
      * {@inheritDoc}
      */
     @Override
+    public void setName(String value) {
+        name = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getType() {
+        return DialogConstants.TYPE_FIELD;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Class<?> getDeclaringClass() {
-        if (this.declaringClass != null) {
-            return this.declaringClass;
+        if (declaringClass != null) {
+            return declaringClass;
         }
         return field != null ? field.getDeclaringClass() : null;
     }
@@ -63,7 +84,7 @@ class FieldSourceImpl extends MemberSourceImpl {
      */
     @Override
     public void setDeclaringClass(Class<?> value) {
-        this.declaringClass = value;
+        declaringClass = value;
     }
 
     /**
