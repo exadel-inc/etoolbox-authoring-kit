@@ -27,6 +27,7 @@ public class RequestParamInjector implements Injector {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestParamInjector.class);
     public static final String NAME = "eak-request-parameter-injector";
+    private static final String REQUEST_PARAM_ERROR_MESSAGE = "RequestParameterInjector doesn't support type {}";
 
     @Nonnull
     @Override
@@ -43,7 +44,7 @@ public class RequestParamInjector implements Injector {
                            final @Nonnull AnnotatedElement element,
                            final @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
-        final RequestParam annotation = element.getAnnotation(RequestParam.class);
+        RequestParam annotation = element.getDeclaredAnnotation(RequestParam.class);
 
         if (annotation == null) {
             return null;
@@ -59,7 +60,7 @@ public class RequestParamInjector implements Injector {
         if (type instanceof ParameterizedType) {
             Class<?> collectionType = (Class<?>) ((ParameterizedType) type).getRawType();
             if (!(ClassUtils.isAssignable(collectionType, Collection.class))) {
-                LOG.debug("RequestParameterInjector doesn't support Collection Type {}", type);
+                LOG.debug(REQUEST_PARAM_ERROR_MESSAGE, type);
                 return null;
             }
             return request.getRequestParameterList();
@@ -72,7 +73,7 @@ public class RequestParamInjector implements Injector {
         } else if (type.equals(RequestParameter.class)) {
             return request.getRequestParameter(paramName);
         }
-        LOG.debug("RequestParameterInjector doesn't support type {}", type);
+        LOG.debug(REQUEST_PARAM_ERROR_MESSAGE, type);
         return null;
     }
 }
