@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -34,7 +35,7 @@ import com.exadel.aem.toolkit.core.injectors.annotations.RequestSuffix;
 public class RequestSuffixInjector implements Injector {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestSuffixInjector.class);
-    public static final String NAME = "request-suffix-injector";
+    public static final String NAME = "eak-request-suffix-injector";
 
     @Override
     @Nonnull
@@ -42,6 +43,7 @@ public class RequestSuffixInjector implements Injector {
         return NAME;
     }
 
+    @CheckForNull
     @Override
     public Object getValue(final @Nonnull Object adaptable,
                            final String name,
@@ -49,7 +51,7 @@ public class RequestSuffixInjector implements Injector {
                            final AnnotatedElement element,
                            final @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
-        final RequestSuffix annotation = element.getAnnotation(RequestSuffix.class);
+        RequestSuffix annotation = element.getDeclaredAnnotation(RequestSuffix.class);
 
         if (annotation == null) {
             return null;

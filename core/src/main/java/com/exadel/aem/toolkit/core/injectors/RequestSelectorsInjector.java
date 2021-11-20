@@ -18,6 +18,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.ClassUtils;
@@ -37,7 +38,8 @@ import com.exadel.aem.toolkit.core.injectors.annotations.RequestSelectors;
 public class RequestSelectorsInjector implements Injector {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestSelectorsInjector.class);
-    public static final String NAME = "request-selectors-injector";
+    public static final String NAME = "eak-request-selectors-injector";
+    private static final String REQUEST_SELECTORS_ERROR_MESSAGE = "RequestSelectorsInjector doesn't support type {}";
 
     @Override
     @Nonnull
@@ -45,6 +47,7 @@ public class RequestSelectorsInjector implements Injector {
         return NAME;
     }
 
+    @CheckForNull
     @Override
     public Object getValue(final @Nonnull Object adaptable,
                            final String name,
@@ -52,7 +55,7 @@ public class RequestSelectorsInjector implements Injector {
                            final AnnotatedElement element,
                            final @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
-        final RequestSelectors annotation = element.getAnnotation(RequestSelectors.class);
+        RequestSelectors annotation = element.getDeclaredAnnotation(RequestSelectors.class);
 
         if (annotation == null) {
             return null;
@@ -66,7 +69,7 @@ public class RequestSelectorsInjector implements Injector {
         if (type instanceof ParameterizedType) {
             Class<?> collectionType = (Class<?>) ((ParameterizedType) type).getRawType();
             if (!(ClassUtils.isAssignable(collectionType, Collection.class))) {
-                LOG.debug("RequestSelectorsInjector doesn't support Collection Type {}", type);
+                LOG.debug(REQUEST_SELECTORS_ERROR_MESSAGE, type);
                 return null;
             }
             return Arrays.asList(request.getRequestPathInfo().getSelectors());
@@ -74,8 +77,8 @@ public class RequestSelectorsInjector implements Injector {
             return request.getRequestPathInfo().getSelectors();
         } else if (type.equals(String.class) || type.equals(Object.class)) {
             return request.getRequestPathInfo().getSelectorString();
-        } 
-        LOG.debug("RequestSelectorsInjector doesn't support Type {}", type);
+        }
+        LOG.debug(REQUEST_SELECTORS_ERROR_MESSAGE, type);
         return null;
     }
 }
