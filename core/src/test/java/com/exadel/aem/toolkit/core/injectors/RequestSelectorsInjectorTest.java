@@ -29,104 +29,101 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class RequestSelectorsInjectorTest {
+    private static final String SELECTOR_1 = "selector1";
+    private static final String SELECTOR_2 = "selector2";
+    private static final String SELECTORS_1_2 = SELECTOR_1 + "." + SELECTOR_2;
 
     @Rule
     public final AemContext context = new AemContext();
 
-    private TestModelSelectors testModel;
-
     @Before
     public void beforeTest() {
         context.addModelsForClasses(TestModelSelectors.class);
-        context.load().json("/com/exadel/aem/toolkit/core/injectors/page.json", "/content");
         context.registerInjectActivateService(new RequestSelectorsInjector());
-        context.currentResource("/content/test");
     }
 
     @Test
-    public void getSelectorsString_shouldReturnSelectorsString() {
-        context.requestPathInfo().setSelectorString("selector1");
-        testModel = context.request().adaptTo(TestModelSelectors.class);
+    public void shouldInjectSelector() {
+        context.requestPathInfo().setSelectorString(SELECTOR_1);
+        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
 
         assertNotNull(testModel);
         assertEquals("selector1", testModel.getSelectorsString());
     }
 
     @Test
-    public void getSelectorsCollection_shouldReturnSelectorsStringFromCollection() {
-        context.requestPathInfo().setSelectorString("selector1.selector2");
-        testModel = context.request().adaptTo(TestModelSelectors.class);
+    public void shouldInjectSelectorObject() {
+        context.requestPathInfo().setSelectorString(SELECTOR_2);
+        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
 
         assertNotNull(testModel);
-        assertEquals(Arrays.asList("selector1", "selector2"), testModel.getSelectorsCollection());
+        assertEquals(SELECTOR_2, testModel.getSelectorsObject());
     }
 
     @Test
-    public void getSelectorsList_shouldReturnSelectorsStringFromList() {
-        context.requestPathInfo().setSelectorString("selector1.selector2");
-        testModel = context.request().adaptTo(TestModelSelectors.class);
+    public void shouldInjectSelectorCollection() {
+        context.requestPathInfo().setSelectorString(SELECTORS_1_2);
+        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
 
         assertNotNull(testModel);
-        assertEquals(Arrays.asList("selector1", "selector2"), testModel.getSelectorsList());
+        assertEquals(Arrays.asList(SELECTOR_1, SELECTOR_2), testModel.getSelectorsCollection());
     }
 
     @Test
-    public void getSelectorsArrayString_shouldReturnSelectorsStringArray() {
-        context.requestPathInfo().setSelectorString("selector1.selector2");
-        testModel = context.request().adaptTo(TestModelSelectors.class);
+    public void shouldInjectSelectorList() {
+        context.requestPathInfo().setSelectorString(SELECTORS_1_2);
+        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
 
         assertNotNull(testModel);
-        assertArrayEquals(new String[]{"selector1", "selector2"}, testModel.getSelectorsArrayString());
+        assertEquals(Arrays.asList(SELECTOR_1, SELECTOR_2), testModel.getSelectorsList());
     }
 
     @Test
-    public void getSelectorsString_shouldReturnNullIfSelectorsIsEmpty() {
-        testModel = context.request().adaptTo(TestModelSelectors.class);
+    public void shouldInjectSelectorArray() {
+        context.requestPathInfo().setSelectorString(SELECTORS_1_2);
+        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
 
         assertNotNull(testModel);
-        assertNull(testModel.getSelectorsString());
+        assertArrayEquals(new String[]{SELECTOR_1, SELECTOR_2}, testModel.getSelectorsArray());
     }
 
     @Test
-    public void shouldReturnNullIfWrongType() {
-        context.requestPathInfo().setSelectorString("selector1");
-        testModel = context.request().adaptTo(TestModelSelectors.class);
+    public void shouldInjectIntoMethodParameter() {
+        context.requestPathInfo().setSelectorString(SELECTOR_1);
+        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
 
         assertNotNull(testModel);
-        assertNull(testModel.getSelectorsArrayInt());
-        assertNull(testModel.getSelectorsListInt());
-        assertNull(testModel.getSelectorsListModel());
-        assertNull(testModel.getSelectorsSet());
-        assertNull(testModel.getSelectorsTestModel());
-        assertEquals(0, testModel.getSelectorsInt());
+        assertEquals(SELECTOR_1, testModel.getSelectorsFromParameter());
     }
 
     @Test
-    public void getSelectorsFromParameter_shouldReturnSelectorsString() {
-        context.requestPathInfo().setSelectorString("selector1");
-        testModel = context.request().adaptTo(TestModelSelectors.class);
-
-        assertNotNull(testModel);
-        assertEquals("selector1", testModel.getSelectorsFromParameter());
-    }
-
-    @Test
-    public void getSelectorsObject_shouldReturnSelectorsObject() {
-        context.requestPathInfo().setSelectorString("selectorsTest");
-        testModel = context.request().adaptTo(TestModelSelectors.class);
-
-        assertNotNull(testModel);
-        assertEquals("selectorsTest", testModel.getSelectorsObject());
-    }
-
-    @Test
-    public void getSelectorsFromMethod_shouldReturnSelectorsString() {
-        context.requestPathInfo().setSuffix("selectorsTest");
+    public void shouldInjectIntoMethod() {
+        context.requestPathInfo().setSuffix(SELECTOR_2);
         ITestModelSelectors testModel = context.request().adaptTo(ITestModelSelectors.class);
         assertNotNull(testModel);
 
         String expectedSelectors = context.requestPathInfo().getSelectorString();
         String actualSelectors = testModel.getSelectorsFromMethod();
         assertEquals(expectedSelectors, actualSelectors);
+    }
+
+    @Test
+    public void shouldNotInjectIfSelectorsMissing() {
+        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
+
+        assertNotNull(testModel);
+        assertNull(testModel.getSelectorsString());
+    }
+
+    @Test
+    public void shouldNotInjectIfWrongType() {
+        context.requestPathInfo().setSelectorString(SELECTOR_1);
+        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
+
+        assertNotNull(testModel);
+        assertNull(testModel.getSelectorsArrayInt());
+        assertNull(testModel.getSelectorsListInt());
+        assertNull(testModel.getSelectorsSet());
+        assertEquals(0, testModel.getSelectorsInt());
     }
 }

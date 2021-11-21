@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.injectors.annotations;
+package com.exadel.aem.toolkit.api.annotations.injectors;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,9 +24,10 @@ import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
 import com.exadel.aem.toolkit.core.injectors.RequestParamInjector;
 
 /**
- * Annotation can be used on either methods, fields or parameters to let Sling Models inject request
- * parameter into fields of type String, Object, RequestParameter, RequestParameter[], RequestParameterMap,
- * List<RequestParameter> if type is not supported it returns null.
+ * Retrieves the name of the parameter to inject in is differs from the name of the underlying Java class member.
+ * If the underlying member is of type {@code List<RequestParameter>} or{@code RequestParameterMap}, this value
+ * is ignored
+ * @return Optional non-blank string
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)

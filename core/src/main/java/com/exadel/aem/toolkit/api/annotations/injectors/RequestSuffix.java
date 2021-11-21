@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.injectors.annotations;
+package com.exadel.aem.toolkit.api.annotations.injectors;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,13 +24,14 @@ import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
 import com.exadel.aem.toolkit.core.injectors.RequestSuffixInjector;
 
 /**
- * Annotation can be used on either methods, fields or parameters to let Sling Models inject a request
- * suffix from the RequestPathInfo into fields of type String, Resource or Object, if type is not supported returns null.
+ * Used on either a field, a method, or a method parameter of a Sling model to inject a Sling request suffix.
+ * <p>If the annotated member is of type {@code String} or {@code Object}, the string value of suffix is injected.
+ * If the annotated member is of type {@code Resource}, there will be an attempt to inject the corresponding JCR
+ * resource. Nothing is injected into members of other types</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @InjectAnnotation
 @Source(RequestSuffixInjector.NAME)
 public @interface RequestSuffix {
-
 }

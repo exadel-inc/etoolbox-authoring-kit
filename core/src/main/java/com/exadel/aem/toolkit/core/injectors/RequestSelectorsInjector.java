@@ -14,15 +14,12 @@
 package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Collection;
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
@@ -30,55 +27,74 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exadel.aem.toolkit.core.injectors.annotations.RequestSelectors;
+import com.exadel.aem.toolkit.api.annotations.injectors.RequestSelectors;
 
+/**
+ * Injects into a Sling model the value of the {@code selectors} property of the {@link SlingHttpServletRequest}
+ * obtained via {@link org.apache.sling.api.request.RequestPathInfo}
+ * @see RequestSelectors
+ * @see Injector
+ */
 @Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + Integer.MAX_VALUE
+    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
 public class RequestSelectorsInjector implements Injector {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestSelectorsInjector.class);
-    public static final String NAME = "eak-request-selectors-injector";
-    private static final String REQUEST_SELECTORS_ERROR_MESSAGE = "RequestSelectorsInjector doesn't support type {}";
 
+    public static final String NAME = "eak-request-selectors-injector";
+
+    /**
+     * Retrieves the name of the current instance
+     * @return String value
+     * @see Injector
+     */
     @Override
     @Nonnull
     public String getName() {
         return NAME;
     }
 
-    @CheckForNull
+    /**
+     * Attempts to inject a value into the given adaptable
+     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
+     * @param name             Name of the Java class member to inject the value into
+     * @param type             Type of receiving Java class member
+     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
+     *                         annotation objects
+     * @param callbackRegistry {@link DisposalCallbackRegistry} object
+     * @return The value to inject, or null in case injection is not possible
+     * @see Injector
+     */
     @Override
-    public Object getValue(final @Nonnull Object adaptable,
-                           final String name,
-                           final @Nonnull Type type,
-                           final AnnotatedElement element,
-                           final @Nonnull DisposalCallbackRegistry callbackRegistry) {
+    public Object getValue(
+        @Nonnull Object adaptable,
+        String name,
+        @Nonnull Type type,
+        AnnotatedElement element,
+        @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
         RequestSelectors annotation = element.getDeclaredAnnotation(RequestSelectors.class);
-
         if (annotation == null) {
             return null;
         }
 
-        SlingHttpServletRequest request = InjectorUtils.getSlingHttpServletRequest(adaptable);
+        SlingHttpServletRequest request = InjectorUtils.getRequest(adaptable);
         if (request == null) {
             return null;
         }
 
-        if (type instanceof ParameterizedType) {
-            Class<?> collectionType = (Class<?>) ((ParameterizedType) type).getRawType();
-            if (!(ClassUtils.isAssignable(collectionType, Collection.class))) {
-                LOG.debug(REQUEST_SELECTORS_ERROR_MESSAGE, type);
-                return null;
-            }
+        if (InjectorUtils.isValidCollection(type, String.class)) {
             return Arrays.asList(request.getRequestPathInfo().getSelectors());
-        } else if (((Class<?>) type).isArray() && ((Class<?>) type).getComponentType().equals(String.class)) {
+        }
+        if (InjectorUtils.isValidArray(type, String.class)) {
             return request.getRequestPathInfo().getSelectors();
-        } else if (type.equals(String.class) || type.equals(Object.class)) {
+        }
+        if (InjectorUtils.isValidObjectType(type, String.class)) {
             return request.getRequestPathInfo().getSelectorString();
         }
-        LOG.debug(REQUEST_SELECTORS_ERROR_MESSAGE, type);
+
+        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
         return null;
     }
 }

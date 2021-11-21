@@ -22,51 +22,61 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 
-import com.exadel.aem.toolkit.core.injectors.annotations.RequestSuffix;
+import com.exadel.aem.toolkit.api.annotations.injectors.RequestSuffix;
 
 @Model(adaptables = SlingHttpServletRequest.class,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
+@SuppressWarnings("unused")
 public class TestModelSuffix {
+
+    // Valid cases
 
     @RequestSuffix
     private String suffix;
 
     @RequestSuffix
+    private Object suffixObject;
+
+    @RequestSuffix
     private Resource suffixResource;
+
+    private final String suffixFromParameter;
+
+    // Invalid cases
 
     @RequestSuffix
     private int suffixInt;
 
     @RequestSuffix
-    private double suffixDouble;
-
-    @RequestSuffix
     private List<String> suffixList;
 
-    @RequestSuffix
-    private String[] suffixArray;
-
-    @RequestSuffix
-    private TestModelSuffix suffixTestModel;
-
-    @RequestSuffix
-    private Object suffixObject;
-
-    private final String suffixFromParameter;
+    // Constructor
 
     @Inject
     public TestModelSuffix(@RequestSuffix @Named("suffixParam") String suffix) {
         this.suffixFromParameter = suffix;
     }
 
+    // Accessors - Valid cases
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public Object getSuffixObject() {
+        return suffixObject;
+    }
+
+    public Resource getSuffixResource() {
+        return suffixResource;
+    }
+
     public String getSuffixFromParameter() {
         return suffixFromParameter;
     }
 
-    public double getSuffixDouble() {
-        return suffixDouble;
-    }
+    // Accessors - Invalid cases
 
     public int getSuffixInt() {
         return suffixInt;
@@ -74,25 +84,5 @@ public class TestModelSuffix {
 
     public List<String> getSuffixList() {
         return suffixList;
-    }
-
-    public String[] getSuffixArray() {
-        return suffixArray;
-    }
-
-    public TestModelSuffix getSuffixTestModel() {
-        return suffixTestModel;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public Resource getSuffixResource() {
-        return suffixResource;
-    }
-
-    public Object getSuffixObject() {
-        return suffixObject;
     }
 }

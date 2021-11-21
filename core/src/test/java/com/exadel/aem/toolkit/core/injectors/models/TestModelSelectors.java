@@ -23,98 +23,95 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 
-import com.exadel.aem.toolkit.core.injectors.annotations.RequestSelectors;
+import com.exadel.aem.toolkit.api.annotations.injectors.RequestSelectors;
 
 @Model(adaptables = SlingHttpServletRequest.class,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
+@SuppressWarnings("unused")
 public class TestModelSelectors {
 
-    @RequestSelectors
-    private List<String> selectorsList;
-
-    @RequestSelectors
-    private Collection<String> selectorsCollection;
-
-    @RequestSelectors
-    private Set<String> selectorsSet;
-
-    @RequestSelectors
-    private List<Integer> selectorsListInt;
-
-    @RequestSelectors
-    private List<TestModelSelectors> selectorsListModel;
-
-    @RequestSelectors
-    private String[] selectorsArrayString;
-
-    @RequestSelectors
-    private int[] selectorsArrayInt;
+    // Valid cases
 
     @RequestSelectors
     private String selectorsString;
 
     @RequestSelectors
+    private Object selectorsObject;
+
+    @RequestSelectors
+    private Collection<String> selectorsCollection;
+
+    @RequestSelectors
+    private List<String> selectorsList;
+
+    @RequestSelectors
+    private String[] selectorsArray;
+
+    private final String selectorsFromParameter;
+
+    // Invalid cases
+
+    @RequestSelectors
     private int selectorsInt;
 
     @RequestSelectors
-    private TestModelSelectors selectorsTestModel;
+    private int[] selectorsArrayInt;
 
     @RequestSelectors
-    private Object selectorsObject;
+    private List<Integer> selectorsListInt;
 
-    private String selectorsFromParameter;
+    @RequestSelectors
+    private Set<String> selectorsSet;
+
+    // Constructor
 
     @Inject
     public TestModelSelectors(@RequestSelectors @Named("selectorsParam") String selectorsString) {
         this.selectorsFromParameter = selectorsString;
     }
 
-    public String getSelectorsFromParameter() {
-        return selectorsFromParameter;
+    // Accessors - Valid cases
+
+    public String getSelectorsString() {
+        return selectorsString;
+    }
+
+    public Object getSelectorsObject() {
+        return selectorsObject;
     }
 
     public Collection<String> getSelectorsCollection() {
         return selectorsCollection;
     }
 
-    public List<Integer> getSelectorsListInt() {
-        return selectorsListInt;
+    public List<String> getSelectorsList() {
+        return selectorsList;
     }
 
-    public List<TestModelSelectors> getSelectorsListModel() {
-        return selectorsListModel;
+    public String[] getSelectorsArray() {
+        return selectorsArray;
+    }
+
+    public String getSelectorsFromParameter() {
+        return selectorsFromParameter;
+    }
+
+    // Accessors - Invalid cases
+
+    public int getSelectorsInt() {
+        return selectorsInt;
+    }
+
+    public List<Integer> getSelectorsListInt() {
+        return selectorsListInt;
     }
 
     public int[] getSelectorsArrayInt() {
         return selectorsArrayInt;
     }
 
-    public List<String> getSelectorsList() {
-        return selectorsList;
-    }
-
     public Set<String> getSelectorsSet() {
         return selectorsSet;
-    }
-
-    public String[] getSelectorsArrayString() {
-        return selectorsArrayString;
-    }
-
-    public String getSelectorsString() {
-        return selectorsString;
-    }
-
-    public int getSelectorsInt() {
-        return selectorsInt;
-    }
-
-    public TestModelSelectors getSelectorsTestModel() {
-        return selectorsTestModel;
-    }
-
-    public Object getSelectorsObject() {
-        return selectorsObject;
     }
 }

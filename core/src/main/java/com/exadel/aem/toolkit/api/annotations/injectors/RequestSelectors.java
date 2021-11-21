@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.injectors.annotations;
+package com.exadel.aem.toolkit.api.annotations.injectors;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,14 +24,14 @@ import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
 import com.exadel.aem.toolkit.core.injectors.RequestSelectorsInjector;
 
 /**
- * Annotation can be used on either methods, fields or parameters to let Sling Models inject request
- * selectors from the RequestPathInfo into fields of type String, Object, List<String>, Collection<String> or String[]
- * or null if type is wrong.
+ * Used on either a field, a method, or a method parameter of a Sling model to inject Sling request selectors.
+ * <p>If the annotated member is of type {@code String} or {@code Object}, the selector string is injected.
+ * If the annotated member represents an array or a collection of strings or objects, selectors are injected array-like.
+ * Otherwise. nothing is injected</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @InjectAnnotation
 @Source(RequestSelectorsInjector.NAME)
 public @interface RequestSelectors {
-
 }

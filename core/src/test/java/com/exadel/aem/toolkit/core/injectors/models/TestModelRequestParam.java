@@ -11,91 +11,102 @@ import org.apache.sling.api.request.RequestParameterMap;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 
-import com.exadel.aem.toolkit.core.injectors.annotations.RequestParam;
+import com.exadel.aem.toolkit.api.annotations.injectors.RequestParam;
 
 @Model(adaptables = SlingHttpServletRequest.class,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
+@SuppressWarnings("unused")
 public class TestModelRequestParam {
 
+    // Valid cases
+
     @RequestParam
-    private String paramName;
+    private String param;
 
     @RequestParam(name = "also")
-    private String paramNameFromAnnotationName;
+    private String namedParam;
 
     @RequestParam(name = "also")
     private Object paramObjectType;
 
-    @RequestParam(name = "also")
-    private RequestParameter paramRequestParamType;
+    @RequestParam(name = "param")
+    private RequestParameter requestParameter;
 
     @RequestParam(name = "also")
-    private RequestParameter[] paramRequestParamArray;
+    private RequestParameter[] requestParameterArray;
 
     @RequestParam
-    private RequestParameterMap paramRequestParameterMapType;
+    private List<RequestParameter> requestParameterList;
 
     @RequestParam
-    private List<RequestParameter> paramList;
+    private RequestParameterMap requestParameterMap;
+
+    private final String paramRequestFromMethodParameter;
+
+    // Invalid cases
 
     @RequestParam
-    private List<String> paramListString;
+    private String paramStringWrongName;
 
     @RequestParam
     private Set<RequestParameter> paramSet;
 
-    @RequestParam(name = "also")
-    private String[] paramRequestParamArrayString;
+    @RequestParam(name = "param")
+    private List<Integer> paramListWrongType;
 
-    private final String paramRequestFromMethodParameter;
+    // Constructor
 
     @Inject
-    public TestModelRequestParam(@RequestParam @Named("also") String paramName) {
-        this.paramRequestFromMethodParameter = paramName;
+    public TestModelRequestParam(@RequestParam @Named("also") String param) {
+        this.paramRequestFromMethodParameter = param;
     }
 
-    public String getParamRequestFromMethodParameter() {
-        return paramRequestFromMethodParameter;
+    // Accessors - Valid cases
+
+    public String getParam() {
+        return param;
     }
 
-    public List<String> getParamListString() {
-        return paramListString;
-    }
-
-    public Set<RequestParameter> getParamSet() {
-        return paramSet;
-    }
-
-    public String[] getParamRequestParamArrayString() {
-        return paramRequestParamArrayString;
-    }
-
-    public String getParamName() {
-        return paramName;
-    }
-
-    public String getParamNameFromAnnotationName() {
-        return paramNameFromAnnotationName;
-    }
-
-    public RequestParameter getParamRequestParamType() {
-        return paramRequestParamType;
+    public String getNamedParam() {
+        return namedParam;
     }
 
     public Object getParamObjectType() {
         return paramObjectType;
     }
 
-    public RequestParameterMap getParamRequestParameterMapType() {
-        return paramRequestParameterMapType;
+    public RequestParameter getRequestParameter() {
+        return requestParameter;
     }
 
-    public RequestParameter[] getParamRequestParamArray() {
-        return paramRequestParamArray;
+    public RequestParameter[] getRequestParameterArray() {
+        return requestParameterArray;
     }
 
-    public List<RequestParameter> getParamList() {
-        return paramList;
+    public List<RequestParameter> getRequestParameterList() {
+        return requestParameterList;
+    }
+
+    public RequestParameterMap getRequestParameterMap() {
+        return requestParameterMap;
+    }
+
+    public String getParamRequestFromMethodParameter() {
+        return paramRequestFromMethodParameter;
+    }
+
+    // Accessors - Invalid cases
+
+    public String getParamStringWrongName() {
+        return paramStringWrongName;
+    }
+
+    public Set<RequestParameter> getParamSet() {
+        return paramSet;
+    }
+
+    public List<Integer> getParamListWrongType() {
+        return paramListWrongType;
     }
 }

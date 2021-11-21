@@ -13,37 +13,45 @@
  */
 package com.exadel.aem.toolkit.core.injectors;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 
 /**
- * Common methods for the injectors.
+ * Contains common methods for use with the bundled {@code Injector} components
  */
-public class InjectorUtils {
+class InjectorUtils {
 
     /**
-     * Default (instantiation-restricting) constructor.
+     * Default (instantiation-restricting) constructor
      */
     private InjectorUtils() {
     }
 
     /**
-     * Retrieves the {@code SlingHttpServletRequest}.
-     * @param adaptable The object which Sling tries to adapt from.
-     * @return {@code SlingHttpServletRequest} if adaptable is an instance of {@code SlingHttpServletRequest} or null if not.
+     * Retrieves a {@link SlingHttpServletRequest} instance from the provided adaptable object
+     * @param adaptable The object which Sling tries to adapt from
+     * @return {@code SlingHttpServletRequest} object if adaptable is of an appropriate type, or null
      */
-    public static SlingHttpServletRequest getSlingHttpServletRequest(Object adaptable) {
+    public static SlingHttpServletRequest getRequest(Object adaptable) {
         if (adaptable instanceof SlingHttpServletRequest) {
-            return ((SlingHttpServletRequest) adaptable);
+            return (SlingHttpServletRequest) adaptable;
         }
         return null;
     }
 
     /**
-     * Retrieves the {@code Resource} if adaptable is an instance of {@code SlingHttpServletRequest} or {@code Resource}.
-     * @param adaptable The object which Sling tries to adapt from.
-     * @return {@code Resource} or null if no instance could be found.
+     * Retrieves a {@link Resource} instance from the provided adaptable object if it is assignable from
+     * {@code SlingHttpServletRequest} or {@code Resource}
+     * @param adaptable The object which Sling tries to adapt from
+     * @return {@code Resource} object if adaptable is of an appropriate type, or null
      */
     public static Resource getResource(Object adaptable) {
         if (adaptable instanceof SlingHttpServletRequest) {
@@ -56,18 +64,80 @@ public class InjectorUtils {
     }
 
     /**
-     * Retrieves the {@code ValueMap} if adaptable is an instance of {@code SlingHttpServletRequest} or {@code Resource} or {@code ValueMap}.
-     * @param adaptable The object which Sling tries to adapt from.
-     * @return {@code ValueMap} or empty ValueMap if no instance could be found.
+     * Retrieves the {@code ValueMap} instance from the provided adaptable if it is of type {@code SlingHttpServletRequest},
+     * or {@code Resource}, or else {@code ValueMap}
+     * @param adaptable The object which Sling tries to adapt from
+     * @return Data-filled {@code ValueMap} if adaptation was successful. Otherwise, an empty {@code ValueMap} is returned
      */
     public static ValueMap getValueMap(Object adaptable) {
+        ValueMap result = null;
         if (adaptable instanceof SlingHttpServletRequest) {
-            return ((SlingHttpServletRequest) adaptable).getResource().adaptTo(ValueMap.class);
+            result = ((SlingHttpServletRequest) adaptable).getResource().getValueMap();
         } else if (adaptable instanceof Resource) {
-            return ((Resource) adaptable).adaptTo(ValueMap.class);
+            result = ((Resource) adaptable).getValueMap();
         } else if (adaptable instanceof ValueMap) {
-            return ((ValueMap) adaptable);
+            result = (ValueMap) adaptable;
+        }
+        if (result != null) {
+            return result;
         }
         return ValueMap.EMPTY;
+    }
+
+    /**
+     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized collection type and its
+     * parameter type matches the list of allowed value types
+     * @param value              {@code Type} object
+     * @param allowedMemberTypes {@code Class} objects representing allowed value types
+     * @return True or false
+     */
+    public static boolean isValidCollection(Type value, Class<?>... allowedMemberTypes) {
+        if (!(value instanceof ParameterizedType)
+            || !ClassUtils.isAssignable((Class<?>) ((ParameterizedType) value).getRawType(), Collection.class)) {
+            return false;
+        }
+        Class<?> componentType = (Class<?>) ((ParameterizedType) value).getActualTypeArguments()[0];
+        return isValidObjectType(componentType, allowedMemberTypes);
+    }
+
+    /**
+     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized collection type and its
+     * parameter type matches the list of allowed value types
+     * @param value              {@code Type} object
+     * @param allowedMemberTypes {@code Class} objects representing allowed value types
+     * @return True or false
+     */
+    public static boolean isValidArray(Type value, Class<?>... allowedMemberTypes) {
+        if (!(value instanceof Class<?>) || !((Class<?>) value).isArray()) {
+            return false;
+        }
+        Class<?> componentType = ((Class<?>) value).getComponentType();
+        return isValidObjectType(componentType, allowedMemberTypes);
+    }
+
+    /**
+     * Retrieves whether the provided {@code Type} of a Java class member is eligible for injection
+     * @param value        {@code Type} object
+     * @param allowedTypes {@code Class} objects representing allowed value types
+     * @return True or false
+     */
+    public static boolean isValidObjectType(Type value, Class<?>... allowedTypes) {
+        if (!(value instanceof Class<?>)) {
+            return false;
+        }
+        return isValidObjectType((Class<?>) value, allowedTypes);
+    }
+
+    /**
+     * Retrieves whether the provided {@code Class} representing the type of a Java class member is eligible for injection
+     * @param value        {@code Class} object
+     * @param allowedTypes {@code Class} objects representing allowed value types
+     * @return True or false
+     */
+    private static boolean isValidObjectType(Class<?> value, Class<?>... allowedTypes) {
+        if (ArrayUtils.isEmpty(allowedTypes)) {
+            return true;
+        }
+        return Arrays.asList(allowedTypes).contains(value) || value.equals(Object.class);
     }
 }

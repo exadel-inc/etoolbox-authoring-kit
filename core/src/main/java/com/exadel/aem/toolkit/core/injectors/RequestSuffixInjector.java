@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -27,47 +26,71 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exadel.aem.toolkit.core.injectors.annotations.RequestSuffix;
+import com.exadel.aem.toolkit.api.annotations.injectors.RequestSuffix;
 
+/**
+ * Injects into a Sling model the value of the {@code suffix} or {@code suffixResource} properties
+ * of the {@link SlingHttpServletRequest} obtained via {@link org.apache.sling.api.request.RequestPathInfo}
+ * @see RequestSuffix
+ * @see Injector
+ */
 @Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + Integer.MAX_VALUE
+    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
 public class RequestSuffixInjector implements Injector {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestSuffixInjector.class);
+
     public static final String NAME = "eak-request-suffix-injector";
 
+    /**
+     * Retrieves the name of the current instance
+     * @return String value
+     * @see Injector
+     */
     @Override
     @Nonnull
     public String getName() {
         return NAME;
     }
 
-    @CheckForNull
+    /**
+     * Attempts to inject a value into the given adaptable
+     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
+     * @param name             Name of the Java class member to inject the value into
+     * @param type             Type of receiving Java class member
+     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
+     *                         annotation objects
+     * @param callbackRegistry {@link DisposalCallbackRegistry} object
+     * @return The value to inject, or null in case injection is not possible
+     * @see Injector
+     */
     @Override
-    public Object getValue(final @Nonnull Object adaptable,
-                           final String name,
-                           final @Nonnull Type type,
-                           final AnnotatedElement element,
-                           final @Nonnull DisposalCallbackRegistry callbackRegistry) {
+    public Object getValue(
+        @Nonnull Object adaptable,
+        String name,
+        @Nonnull Type type,
+        AnnotatedElement element,
+        @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
         RequestSuffix annotation = element.getDeclaredAnnotation(RequestSuffix.class);
-
         if (annotation == null) {
             return null;
         }
 
-        SlingHttpServletRequest request = InjectorUtils.getSlingHttpServletRequest(adaptable);
+        SlingHttpServletRequest request = InjectorUtils.getRequest(adaptable);
         if (request == null) {
             return null;
         }
 
-        if (type.equals(String.class) || type.equals(Object.class)) {
+        if (InjectorUtils.isValidObjectType(type, String.class)) {
             return request.getRequestPathInfo().getSuffix();
+
         } else if (type.equals(Resource.class)) {
             return request.getRequestPathInfo().getSuffixResource();
         }
-        LOG.debug("RequestSuffixInjector doesn't support type {}", type);
+
+        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
         return null;
     }
 }
