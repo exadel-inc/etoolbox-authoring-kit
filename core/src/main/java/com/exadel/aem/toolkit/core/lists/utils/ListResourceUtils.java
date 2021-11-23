@@ -13,6 +13,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import com.day.cq.commons.jcr.JcrConstants;
@@ -52,42 +53,53 @@ class ListResourceUtils {
     }
 
     /**
-     * Converts collection of {@link SimpleListItem} to list of {@link ValueMapResource}
+     * Create {@link com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel} resource under {@code parent}
+     * container with given properties.
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
-     * @param values           collection of {@link SimpleListItem} that will be converted to {@link ValueMapResource}
+     * @param parent           Container for {@code listItem}'s.
+     * @param properties       {@code listItem} properties
+     * @throws PersistenceException if {@code listItem} cannot be created
+     */
+    static void createListItem(ResourceResolver resourceResolver, Resource parent, Map<String, Object> properties) throws PersistenceException {
+        Map<String, Object> withoutSystemProperties = getWithoutSystemProperties(properties);
+        withoutSystemProperties.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ListConstants.LIST_ITEM_RESOURCE_TYPE);
+        resourceResolver.create(parent, ResourceUtil.createUniqueChildName(parent, CoreConstants.PN_LIST_ITEM), withoutSystemProperties);
+    }
+
+    /**
+     * Converts collection of {@link SimpleListItem} to list of {@link ValueMapResource}
+     * @param values collection of {@link SimpleListItem} that will be converted to {@link ValueMapResource}
      * @return list of {@link ValueMapResource}
      */
-    static List<Resource> mapToValueMapResources(ResourceResolver resourceResolver, Collection<SimpleListItem> values) {
+    static List<Resource> mapToValueMapResources(Collection<SimpleListItem> values) {
         return CollectionUtils.emptyIfNull(values).stream()
-            .map(entry -> ListResourceUtils.createValueMapResource(resourceResolver, entry.getTitle(), entry.getValue()))
+            .map(entry -> ListResourceUtils.createValueMapResource(entry.getTitle(), entry.getValue()))
             .collect(Collectors.toList());
     }
 
     /**
      * Converts key-value map to list of {@link ValueMapResource}
-     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
-     * @param values           key-value map that will be converted to {@link ValueMapResource}
+     * @param values key-value map that will be converted to {@link ValueMapResource}
      * @return list of {@link ValueMapResource}
      */
-    static List<Resource> mapToValueMapResources(ResourceResolver resourceResolver, Map<String, Object> values) {
+    static List<Resource> mapToValueMapResources(Map<String, Object> values) {
         return MapUtils.emptyIfNull(values).entrySet().stream()
-            .map(entry -> ListResourceUtils.createValueMapResource(resourceResolver, entry.getKey(), entry.getValue()))
+            .map(entry -> ListResourceUtils.createValueMapResource(entry.getKey(), entry.getValue()))
             .collect(Collectors.toList());
     }
 
     /**
      * Creates {@link ValueMapResource} representation of {@code listItem} entry using title as a {@code jcr:title}
      * and {@code value} as a value
-     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
-     * @param title            {@code jcr:title} of {@code listItem}
-     * @param value            {@code value} of {@code listItem}
+     * @param title {@code jcr:title} of {@code listItem}
+     * @param value {@code value} of {@code listItem}
      * @return {@link ValueMapResource} representation of {@code listItem}
      */
-    static Resource createValueMapResource(ResourceResolver resourceResolver, String title, Object value) {
+    static Resource createValueMapResource(String title, Object value) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(JcrConstants.JCR_TITLE, title);
         properties.put(CoreConstants.PN_VALUE, value);
-        return new ValueMapResource(resourceResolver, "", JcrConstants.NT_UNSTRUCTURED, new ValueMapDecorator(properties));
+        return new ValueMapResource(null, "", JcrConstants.NT_UNSTRUCTURED, new ValueMapDecorator(properties));
     }
 
     /**
@@ -95,8 +107,8 @@ class ListResourceUtils {
      * @param properties initial map of properties
      * @return filtered map of properties
      */
-    static Map<String, Object> getWithoutSystemProperties(Map<String, Object> properties) {
-        return properties.entrySet().stream()
+    private static Map<String, Object> getWithoutSystemProperties(Map<String, Object> properties) {
+        return MapUtils.emptyIfNull(properties).entrySet().stream()
             .filter(entry -> !PROPERTIES_TO_IGNORE.contains(entry.getKey()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }

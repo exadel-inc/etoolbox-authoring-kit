@@ -108,7 +108,7 @@ public class ListHelper {
      */
     public static Page createList(ResourceResolver resourceResolver, String path, List<SimpleListItem> listItems)
         throws WCMException, PersistenceException {
-        List<Resource> resources = ListResourceUtils.mapToValueMapResources(resourceResolver, listItems);
+        List<Resource> resources = ListResourceUtils.mapToValueMapResources(listItems);
         return createList(resourceResolver, path, resources);
     }
 
@@ -123,7 +123,7 @@ public class ListHelper {
      */
     public static Page createList(ResourceResolver resourceResolver, String path, Map<String, Object> values)
         throws WCMException, PersistenceException {
-        List<Resource> listItemsProperties = ListResourceUtils.mapToValueMapResources(resourceResolver, values);
+        List<Resource> listItemsProperties = ListResourceUtils.mapToValueMapResources(values);
         return createList(resourceResolver, path, listItemsProperties);
     }
 
@@ -154,7 +154,7 @@ public class ListHelper {
         }
 
         for (Resource resource : resources) {
-            createListItem(resourceResolver, list, resource.getValueMap());
+            ListResourceUtils.createListItem(resourceResolver, list, resource.getValueMap());
         }
 
         return listPage;
@@ -300,19 +300,5 @@ public class ListHelper {
             return itemType::cast;
         }
         return resource -> resource.adaptTo(itemType);
-    }
-
-    /**
-     * Create {@link com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel} resource under {@code parent}
-     * container with given properties.
-     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
-     * @param parent           Container for {@code listItem}'s.
-     * @param properties       {@code listItem} properties
-     * @throws PersistenceException if {@code listItem} cannot be created
-     */
-    private static void createListItem(ResourceResolver resourceResolver, Resource parent, Map<String, Object> properties) throws PersistenceException {
-        Map<String, Object> withoutSystemProperties = ListResourceUtils.getWithoutSystemProperties(properties);
-        withoutSystemProperties.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ListConstants.LIST_ITEM_RESOURCE_TYPE);
-        resourceResolver.create(parent, ResourceUtil.createUniqueChildName(parent, CoreConstants.PN_LIST_ITEM), withoutSystemProperties);
     }
 }
