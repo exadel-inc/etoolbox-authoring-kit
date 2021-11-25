@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.exadel.aem.toolkit.core.injectors.EToolboxListInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestParamInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestSelectorsInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestSuffixInjectorTest;
@@ -38,7 +39,8 @@ import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderTe
     OptionProviderTest.class,
     RequestParamInjectorTest.class,
     RequestSelectorsInjectorTest.class,
-    RequestSuffixInjectorTest.class
+    RequestSuffixInjectorTest.class,
+    EToolboxListInjectorTest.class
 })
 public class AllTests {
 }

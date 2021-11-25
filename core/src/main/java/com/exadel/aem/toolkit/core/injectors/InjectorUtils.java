@@ -17,11 +17,13 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 
 /**
@@ -64,6 +66,22 @@ class InjectorUtils {
     }
 
     /**
+     * Retrieves a {@link ResourceResolver} instance from the provided adaptable object if it is assignable from
+     * {@code Resource} or {@code SlingHttpServletRequest}
+     * @param adaptable The object which Sling tries to adapt from
+     * @return {@code ResourceResolver} object if adaptable is of an appropriate type, or null
+     */
+    public static ResourceResolver getResourceResolver(Object adaptable) {
+        ResourceResolver resolver = null;
+        if (adaptable instanceof Resource) {
+            resolver = ((Resource) adaptable).getResourceResolver();
+        } else if (adaptable instanceof SlingHttpServletRequest) {
+            resolver = ((SlingHttpServletRequest) adaptable).getResourceResolver();
+        }
+        return resolver;
+    }
+
+    /**
      * Retrieves the {@code ValueMap} instance from the provided adaptable if it is of type {@code SlingHttpServletRequest},
      * or {@code Resource}, or else {@code ValueMap}
      * @param adaptable The object which Sling tries to adapt from
@@ -85,7 +103,7 @@ class InjectorUtils {
     }
 
     /**
-     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized collection type and its
+     * Retrieves whether the provided {@code Type} of a Java class member is a parameterized collection type and its
      * parameter type matches the list of allowed value types
      * @param value              {@code Type} object
      * @param allowedMemberTypes {@code Class} objects representing allowed value types
@@ -101,7 +119,39 @@ class InjectorUtils {
     }
 
     /**
-     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized collection type and its
+     * Retrieves whether the provided {@code Type} of a Java class member is a parameterized collection type and checks
+     * if its raw type matches the list of allowed value types
+     * @param type         {@code Type} object
+     * @param allowedTypes {@code Class} objects representing allowed value types
+     * @return True or false
+     */
+    public static boolean isValidCollectionRawType(Type type, Class<?>... allowedTypes) {
+        if (!(type instanceof ParameterizedType)
+            || !ClassUtils.isAssignable((Class<?>) ((ParameterizedType) type).getRawType(), Collection.class)) {
+            return false;
+        }
+        Class<?> collectionType = (Class<?>) ((ParameterizedType) type).getRawType();
+        return isValidObjectType(collectionType, allowedTypes);
+    }
+
+    /**
+     * Retrieves whether the provided {@code Type} of a Java class member is a parameterized collection type
+     * and checks if its raw type equals Map and the parameter type matches the list of allowed value types
+     * @param type               {@code Type} object
+     * @param allowedTypesOfKeys {@code Class} objects representing allowed value types
+     * @return True or false
+     */
+    public static boolean isValidMapKeyType(Type type, Class<?>... allowedTypesOfKeys) {
+        if (!(type instanceof ParameterizedType)) {
+            return false;
+        }
+        Class<?> actualMapKey = (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0];
+        return ((ParameterizedType) type).getRawType().equals(Map.class)
+            && isValidObjectType(actualMapKey, allowedTypesOfKeys);
+    }
+
+    /**
+     * Retrieves whether the provided {@code Type} of a Java class member is a parameterized collection type and its
      * parameter type matches the list of allowed value types
      * @param value              {@code Type} object
      * @param allowedMemberTypes {@code Class} objects representing allowed value types
