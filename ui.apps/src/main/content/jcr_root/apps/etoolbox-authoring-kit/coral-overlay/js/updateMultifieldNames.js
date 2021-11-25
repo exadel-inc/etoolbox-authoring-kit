@@ -14,7 +14,7 @@
 
 /**
  * @author Liubou Masiuk, Alexey Stsefanovich (ala'n)
- * @version 1.1.0
+ * @version 1.2.0
  *
  * When a multifield is updated, actualizes its field names to their current state.
  * Handles all fields that can be adapted to 'foundation-field' and will not be processed by OOTB multifield name updating mechanism
