@@ -32,7 +32,7 @@
      */
     const IGNORED_FOUNDATION_FIELDS = ['.foundation-field-related', '.coral-PathBrowser'];
 
-    /** @returns {boolean} - is the passed multifield use composite(complex) items */
+    /** @returns {boolean} - if the passed multifield uses composite(complex) items */
     const isComposite = ($field) => $field.is(COMPOSITE_MULTIFIELD_SEL);
 
     /**
@@ -56,8 +56,8 @@
 
     /**
      * Traverses all fields and applies processor function for all primary (i.e. not related) foundation fields
-     * @param {JQuery<HTMLElement>} $root
-     * @param {function} process
+     * @param {JQuery<HTMLElement>} $root Traversing root
+     * @param {function} process Processing function that will be applied to primary fields
      */
     function traverse($root, process) {
         $root.children().each(function () {
@@ -116,7 +116,7 @@
         }, 100);
     }
 
-    // Subscribe on Multifield collection changes
+    // Subscribe to Multifield collection changes
     $(document)
         .off('coral-collection:add.eakfix coral-collection:remove.eakfix coral-multifield:itemorder.eakfix')
         .on('coral-collection:add.eakfix coral-collection:remove.eakfix coral-multifield:itemorder.eakfix',
