@@ -68,10 +68,12 @@ public @interface MultiField {
     String typeHint() default "";
 
     /**
-     * Maps to the {@code composite} attribute of this Granite UI component's node.
      * If set to true, forces multiple-source mode for multifield despite of actual amount of fields
      * @return True or false
      */
-    @PropertyRendering(ignoreValues = "false")
-    boolean composite() default false;
+    @PropertyRendering(
+        name = "composite",
+        ignoreValues = "false"
+    )
+    boolean forceComposite() default false;
 }

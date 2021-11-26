@@ -121,7 +121,8 @@ public class PlacementHelper {
      * Matches a class member against a particular section, such as a {@code Tab} or an {@code AccordionPanel}
      * @param member           Class member (a field, or a method) to analyze
      * @param sectionTitle     String representing the title of a container section
-     * @param isDefaultSection True if the current container item accepts fields for which no container item was specified; otherwise, false
+     * @param isDefaultSection True if the current container item accepts "orphaned" fields (those for which no container
+     *                         specified); otherwise false
      * @return True or false
      */
     private static boolean isMemberForSection(Source member, String sectionTitle, boolean isDefaultSection) {

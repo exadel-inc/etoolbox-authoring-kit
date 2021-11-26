@@ -167,10 +167,11 @@ class PlacementCollisionSolver {
        ------------------------------ */
 
     /**
-     * Checks for cases when sources intended to be placed in the same contender differ in {@code type} (e.g., one is a
+     * Checks for cases when sources intended to be placed in the same container differ in {@code type} (e.g., one is a
      * Java method, another is field) but share the same name. If same-named sources have different resource types,
-     * the tag names of field-bound sources are left the same, but the names of method-bound sources are changed to avoid
-     * merging essentially different data in the same node
+     * the tag names of field-bound sources are left the same. This is the special case which allows the user to place
+     * a "service" annotation such as {@code Heading} on the class or interface method while placing a "traditional"
+     * annotation such as {@code TextField} at the field
      * @param sources   List of sources, such as members of a Java class
      */
     public static void resolveFieldMethodNameCoincidences(List<Source> sources) {
