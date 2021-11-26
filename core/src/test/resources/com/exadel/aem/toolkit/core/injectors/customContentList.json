@@ -1,0 +1,35 @@
+{
+  "jcr:primaryType": "cq:Page",
+  "jcr:content": {
+    "jcr:primaryType": "cq:PageContent",
+    "jcr:title": "Custom List Page",
+    "cq:template": "/conf/etoolbox-authoring-kit/settings/wcm/templates/list",
+    "itemResourceType": "/apps/etoolbox-authoring-kit/lists/components/content/customItem",
+    "sling:resourceType": "etoolbox-authoring-kit/lists/components/structure/page-list",
+    "list": {
+      "jcr:primaryType": "nt:unstructured",
+      "sling:resourceType": "wcm/foundation/components/responsivegrid",
+      "list_item_1006003058": {
+        "jcr:primaryType": "nt:unstructured",
+        "textValue": "value1",
+        "booleanValue": true,
+        "intValue": 1,
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
+      },
+      "list_item_938979398": {
+        "jcr:primaryType": "nt:unstructured",
+        "textValue": "value2",
+        "booleanValue": false,
+        "intValue": 2,
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
+      },
+      "list_item_589659391": {
+        "jcr:primaryType": "nt:unstructured",
+        "textValue": "value3",
+        "booleanValue": true,
+        "intValue": 3,
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
+      }
+    }
+  }
+}
