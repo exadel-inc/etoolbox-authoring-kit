@@ -29,7 +29,7 @@ public interface Source {
 
     /**
      * Indicates whether this source is valid for rendering
-     * @return Non-blank string value
+     * @return True or false
      */
     boolean isValid();
 

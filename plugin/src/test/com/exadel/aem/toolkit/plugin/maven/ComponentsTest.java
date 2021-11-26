@@ -42,7 +42,7 @@ import com.exadel.aem.toolkit.test.component.viewpattern.component1.ComplexCompo
 public class ComponentsTest extends DefaultTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(ComponentsTest.class);
 
-    private static final String IGNORE_FRESHNESS_TESTCASE_FOLDER = "forceIgnoreFreshness";
+    private static final String FOLDER_IGNORE_FRESHNESS = "forceIgnoreFreshness";
 
     @Test
     public void testComponentWithRichTextAndExternalClasses() {
@@ -111,15 +111,15 @@ public class ComponentsTest extends DefaultTestBase {
     public void testForceIgnoreFreshness() {
         test(ForceIgnoreFreshnessTestCases.SimpleDialog.class,
             TestConstants.RESOURCE_FOLDER_COMPONENT,
-            IGNORE_FRESHNESS_TESTCASE_FOLDER,
+            FOLDER_IGNORE_FRESHNESS,
             "simple");
         test(ForceIgnoreFreshnessTestCases.TabbedDialog.class,
             TestConstants.RESOURCE_FOLDER_COMPONENT,
-            IGNORE_FRESHNESS_TESTCASE_FOLDER,
+            FOLDER_IGNORE_FRESHNESS,
             "tabbed");
         test(ForceIgnoreFreshnessTestCases.AccordionDialog.class,
             TestConstants.RESOURCE_FOLDER_COMPONENT,
-            IGNORE_FRESHNESS_TESTCASE_FOLDER,
+            FOLDER_IGNORE_FRESHNESS,
             "accordion");
     }
 
