@@ -21,7 +21,6 @@ import java.lang.reflect.Modifier;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 
 /**
@@ -58,14 +57,6 @@ class MethodSourceImpl extends MemberSourceImpl {
     @Override
     public void setName(String value) {
         name = value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getType() {
-        return DialogConstants.TYPE_METHOD;
     }
 
     /**
