@@ -14,7 +14,7 @@
 
 /**
  * @author Liubou Masiuk, Alexey Stsefanovich (ala'n)
- * @version 1.1.0
+ * @version 1.2.0
  *
  * When a multifield is updated, actualizes its field names to their current state.
  * Handles all fields that can be adapted to 'foundation-field' and will not be processed by OOTB multifield name updating mechanism
@@ -32,12 +32,13 @@
      */
     const IGNORED_FOUNDATION_FIELDS = ['.foundation-field-related', '.coral-PathBrowser'];
 
+    /** @returns {boolean} - if the passed multifield uses composite(complex) items */
     const isComposite = ($field) => $field.is(COMPOSITE_MULTIFIELD_SEL);
 
     /**
      * Actualizes the names of all fields with the current name prefix and item number: {multifieldName}/item{itemNumber}/{fieldName}.
      * E.g. a field called 'url' is positioned in the second item of './links' field. The actual name is ./links/item2/url
-     * @param {JQuery} $multifield Multifield JQuery element
+     * @param {JQuery<HTMLElement>} $multifield Multifield JQuery element
      * @param {String} prefix Current field prefix
      */
     function actualizeNames($multifield, prefix) {
@@ -53,7 +54,11 @@
         });
     }
 
-    /** Traverses all fields and applies processor function for all primary (i.e. not related) foundation fields */
+    /**
+     * Traverses all fields and applies processor function for all primary (i.e. not related) foundation fields
+     * @param {JQuery<HTMLElement>} $root Traversing root
+     * @param {function} process Processing function that will be applied to primary fields
+     */
     function traverse($root, process) {
         $root.children().each(function () {
             const $field = $(this);
@@ -69,7 +74,7 @@
     /**
      * Creates a processor function for a single field.
      * The processor function prepends the prefix to the current field name and call the the actualizer recursively for nested multiifields
-     * @param prefix Item prefix that follows '{multifieldName}/item{itemNumber}/' pattern
+     * @param {string} prefix Item prefix that follows '{multifieldName}/item{itemNumber}/' pattern
      */
     function getFieldProcessor(prefix) {
         return ($field, fieldApi) => {
@@ -93,14 +98,36 @@
         return name;
     }
 
-    function actualizeOnReady() {
-        Coral.commons.ready(this, (el) => actualizeNames($(el), ''));
+    /** @type number */
+    let batchUpdateTimeout = 0;
+    /** @type Set<HTMLElement> */
+    const batchUpdateQuery = new Set();
+
+    /**
+     * Request Multifield update
+     * @param {HTMLElement} field - multifield
+     */
+    function actualizeBatched(field) {
+        batchUpdateQuery.add(field);
+        if (batchUpdateTimeout) window.clearTimeout(batchUpdateTimeout);
+        batchUpdateTimeout = window.setTimeout(() => {
+            batchUpdateQuery.forEach((el) => actualizeNames($(el), ''));
+            batchUpdateQuery.clear();
+        }, 100);
     }
 
-    $(document).on('coral-collection:add coral-collection:remove coral-multifield:itemorder',
-        COMPOSITE_MULTIFIELD_SEL, actualizeOnReady);
+    // Subscribe to Multifield collection changes
+    $(document)
+        .off('coral-collection:add.eakfix coral-collection:remove.eakfix coral-multifield:itemorder.eakfix')
+        .on('coral-collection:add.eakfix coral-collection:remove.eakfix coral-multifield:itemorder.eakfix',
+            COMPOSITE_MULTIFIELD_SEL, function () {
+                actualizeBatched(this);
+            });
 
-    $(document).on('foundation-contentloaded', function (e) {
-        $(COMPOSITE_MULTIFIELD_SEL, e.target).each(actualizeOnReady);
-    });
+    // Process Multifields on start
+    $(document)
+        .off('foundation-contentloaded.eakfix')
+        .on('foundation-contentloaded.eakfix', (e) => $(COMPOSITE_MULTIFIELD_SEL, e.target).each(function () {
+            Coral.commons.ready(this, actualizeBatched);
+        }));
 })(window, Granite.$);
