@@ -17,6 +17,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.exadel.aem.toolkit.core.injectors.RequestParamInjectorTest;
+import com.exadel.aem.toolkit.core.injectors.RequestSelectorsInjectorTest;
+import com.exadel.aem.toolkit.core.injectors.RequestSuffixInjectorTest;
 import com.exadel.aem.toolkit.core.lists.models.ListItemTest;
 import com.exadel.aem.toolkit.core.lists.servlets.ItemComponentsServletTest;
 import com.exadel.aem.toolkit.core.lists.servlets.ListsServletTest;
@@ -32,7 +35,10 @@ import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderTe
     ListHelperTest.class,
     ItemComponentsServletTest.class,
     ListsServletTest.class,
-    OptionProviderTest.class
+    OptionProviderTest.class,
+    RequestParamInjectorTest.class,
+    RequestSelectorsInjectorTest.class,
+    RequestSuffixInjectorTest.class
 })
 public class AllTests {
 }

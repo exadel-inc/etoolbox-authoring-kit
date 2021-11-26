@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.injectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,94 +27,91 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class RequestSuffixInjectorTest {
+    private static final String SUFFIX_1 = "/suffix1";
+    private static final String SUFFIX_2 = "/suffix2";
 
     @Rule
     public final AemContext context = new AemContext();
 
-    private TestModelSuffix testModel;
 
     @Before
     public void beforeTest() {
         context.addModelsForClasses(TestModelSuffix.class);
-        context.load().json("/com/exadel/aem/toolkit/core/injectors/page.json", "/content");
         context.registerInjectActivateService(new RequestSuffixInjector());
-        context.currentResource("/content/test");
+        context.load().json("/com/exadel/aem/toolkit/core/injectors/content.json", "/content");
     }
 
     @Test
-    public void getSuffix_shouldReturnSuffixString() {
-        context.requestPathInfo().setSuffix("/qwerty");
-        testModel = context.request().adaptTo(TestModelSuffix.class);
+    public void shouldInjectSuffix() {
+        context.requestPathInfo().setSuffix(SUFFIX_1);
+        TestModelSuffix testModel = context.request().adaptTo(TestModelSuffix.class);
 
         assertNotNull(testModel);
-        assertEquals("/qwerty", testModel.getSuffix());
+        assertEquals(SUFFIX_1, testModel.getSuffix());
     }
 
     @Test
-    public void getSuffixResource_shouldReturnResourceFromSuffix() {
-        context.requestPathInfo().setSuffix("/content/foo");
-        testModel = context.request().adaptTo(TestModelSuffix.class);
+    public void shouldInjectSuffixObject() {
+        context.requestPathInfo().setSuffix(SUFFIX_2);
+        TestModelSuffix testModel = context.request().adaptTo(TestModelSuffix.class);
+
+        assertNotNull(testModel);
+        assertEquals(SUFFIX_2, testModel.getSuffixObject());
+    }
+
+    @Test
+    public void shouldInjectSuffixResource() {
+        context.requestPathInfo().setSuffix("/content/test/jcr:content/foo");
+        TestModelSuffix testModel = context.request().adaptTo(TestModelSuffix.class);
 
         assertNotNull(testModel);
         assertNotNull(testModel.getSuffixResource());
+        assertEquals("This is a test", testModel.getSuffixResource().getValueMap().get("text", StringUtils.EMPTY));
     }
 
     @Test
-    public void getSuffix_shouldReturnNullIfSuffixIsNull() {
-        testModel = context.request().adaptTo(TestModelSuffix.class);
+    public void shouldInjectIntoMethodParameter() {
+        context.requestPathInfo().setSuffix(SUFFIX_2);
+        TestModelSuffix testModel = context.request().adaptTo(TestModelSuffix.class);
+
+        assertNotNull(testModel);
+        assertEquals(SUFFIX_2, testModel.getSuffixFromParameter());
+    }
+
+    @Test
+    public void shouldInjectIntoMethod() {
+        context.requestPathInfo().setSuffix(SUFFIX_1);
+        ITestModelSuffix testModel = context.request().adaptTo(ITestModelSuffix.class);
+        assertNotNull(testModel);
+
+        String actualSuffix = testModel.getSuffixFromMethod();
+        assertEquals(SUFFIX_1, actualSuffix);
+    }
+
+    @Test
+    public void shouldNotInjectIfSuffixMissing() {
+        TestModelSuffix testModel = context.request().adaptTo(TestModelSuffix.class);
 
         assertNotNull(testModel);
         assertNull(testModel.getSuffix());
     }
 
     @Test
-    public void getSuffixResource_shouldReturnNullIfResourceNotExists() {
-        context.requestPathInfo().setSuffix("/not-exists");
-        testModel = context.request().adaptTo(TestModelSuffix.class);
+    public void shouldNotInjectIfResourceMissing() {
+        context.requestPathInfo().setSuffix("/nonexistent");
+        TestModelSuffix testModel = context.request().adaptTo(TestModelSuffix.class);
 
         assertNotNull(testModel);
         assertNull(testModel.getSuffixResource());
     }
 
     @Test
-    public void shouldReturnNullIfTypeIsNotSupported() {
+    public void shouldNotInjectIfWrongType() {
         context.requestPathInfo().setSuffix("/type");
-        testModel = context.request().adaptTo(TestModelSuffix.class);
+        TestModelSuffix testModel = context.request().adaptTo(TestModelSuffix.class);
 
         assertNotNull(testModel);
-        assertNull(testModel.getSuffixTestModel());
-        assertNull(testModel.getSuffixArray());
         assertNull(testModel.getSuffixList());
         assertEquals(0, testModel.getSuffixInt());
-        assertEquals(0.0, testModel.getSuffixDouble(), 0.01);
-    }
-
-    @Test
-    public void getSuffixFromParameter_shouldReturnStringSuffix() {
-        context.requestPathInfo().setSuffix("suffixTest");
-        testModel = context.request().adaptTo(TestModelSuffix.class);
-
-        assertNotNull(testModel);
-        assertEquals("suffixTest", testModel.getSuffixFromParameter());
-    }
-
-    @Test
-    public void getSuffixObject_shouldReturnSuffixObject() {
-        context.requestPathInfo().setSuffix("/suffixTest");
-        testModel = context.request().adaptTo(TestModelSuffix.class);
-
-        assertNotNull(testModel);
-        assertEquals("/suffixTest", testModel.getSuffixObject());
-    }
-
-    @Test
-    public void getSuffixFromMethod_shouldReturnSuffix() {
-        context.requestPathInfo().setSuffix("/suffixTest");
-        ITestModelSuffix testModel = context.request().adaptTo(ITestModelSuffix.class);
-        assertNotNull(testModel);
-
-        String expectedSuffix = context.requestPathInfo().getSuffix();
-        String actualSuffix = testModel.getSuffixFromMethod();
-        assertEquals(expectedSuffix, actualSuffix);
     }
 }
