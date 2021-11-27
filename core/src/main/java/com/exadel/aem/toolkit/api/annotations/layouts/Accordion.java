@@ -27,6 +27,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
  * Used to define the accordion-shaped layout for a Granite UI dialog and/or to set up
  * an <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html">
  * Accordion</a> widget
+ * @see AccordionPanel
  */
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

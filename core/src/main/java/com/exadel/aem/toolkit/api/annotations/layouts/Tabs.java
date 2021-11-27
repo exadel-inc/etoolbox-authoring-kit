@@ -29,6 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
  * Used to define the tabbed layout for a Granite UI dialog and/or to set up
  * a <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/tabs/index.html">
  * Tabs</a> widget
+ * @see Tab
  */
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
