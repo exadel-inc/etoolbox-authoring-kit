@@ -34,9 +34,9 @@ import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
+import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
-import com.exadel.aem.toolkit.plugin.handlers.layouts.LayoutHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
@@ -55,14 +55,14 @@ public abstract class ContainerHandler {
 
     /**
      * Retrieves the list of sources that match the current container. This is performed by calling {@code
-     * ClassUtil#getSources()} with the additional predicate that allows to filter out sources that are set to be
+     * ClassUtil.getSources()} with the additional predicate that allows to filter out sources that are set to be
      * ignored at either the "member itself" level, or the "declaring class" level
      * @param container         Current {@link Source} instance
      * @param useReportingClass True to use {@link MemberSource#getReportingClass()} to look for the ignored members
      *                          (this is the case for the MultiField and FieldSet handlers, because ignored members are
      *                          commonly specified outside the fieldset content). False to use the same {@link
      *                          MemberSource#getValueType()} for wither placeable and ignored members
-     * @return {@code List<Source>} containing placeable members, or an empty collection
+     * @return {@code List} containing {@code Source}-typed placeable members, or an empty list
      */
     @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
                                      // in a version after 2.0.2
@@ -75,12 +75,9 @@ public abstract class ContainerHandler {
         // Neither the valueTypeClass, nor the reportingClass can be equal to, or a descendant of the class that
         // is currently being processed, or we will face the "render MyFieldset inside MyFieldset" situation and get a
         // stack overflow
-        if (ClassUtils.isAssignable(valueTypeClass, declaringClass)
-            || ClassUtils.isAssignable(reportingClass, declaringClass)) {
-
-            Class<?> offender = ClassUtils.isAssignable(valueTypeClass, declaringClass) ? valueTypeClass : reportingClass;
+        if (ClassUtils.isAssignable(valueTypeClass, declaringClass)) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
-                String.format(RECURSION_MESSAGE_TEMPLATE, offender.getName(), declaringClass.getName())));
+                String.format(RECURSION_MESSAGE_TEMPLATE, valueTypeClass.getName(), declaringClass.getName())));
             return Collections.emptyList();
         }
 
@@ -150,7 +147,7 @@ public abstract class ContainerHandler {
     protected void populateMultiSectionContainer(Source member, Target target, Class<? extends Annotation> annotationClass) {
         target.createTarget(DialogConstants.NN_ITEMS);
 
-        List<SectionFacade> containerSections = getSections(member, annotationClass);
+        List<Section> containerSections = getSections(member, annotationClass);
         List<Source> placeableMembers = getMembersForContainer(member, false);
 
         if (containerSections.isEmpty() && !placeableMembers.isEmpty()) {
@@ -168,7 +165,10 @@ public abstract class ContainerHandler {
         placeableMembers.removeAll(placementHelper.getProcessedMembers());
 
         if (!placeableMembers.isEmpty()) {
-            LayoutHandler.handleInvalidContainerException(placeableMembers);
+            placeableMembers
+                .stream()
+                .map(m -> new InvalidContainerException(m.adaptTo(PlaceSetting.class).getValue()))
+                .forEach(ex -> PluginRuntime.context().getExceptionHandler().handle(ex));
         }
     }
 
@@ -182,8 +182,8 @@ public abstract class ContainerHandler {
      * @param annotationClass Container annotation to look for, such as a {@link Tabs} or {@link Accordion}
      * @return Collection of {@code SectionFacade} objects
      */
-    private static List<SectionFacade> getSections(Source source, Class<? extends Annotation> annotationClass) {
-        List<SectionFacade> result = new ArrayList<>();
+    private static List<Section> getSections(Source source, Class<? extends Annotation> annotationClass) {
+        List<Section> result = new ArrayList<>();
         if (source.adaptTo(annotationClass) == null) {
             return result;
         }
