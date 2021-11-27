@@ -27,7 +27,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
  * that contains a list of members designed to be rendered within this container element.
  * Used to compose an ordered "container element registry" for a component class
  */
-abstract class SectionFacade {
+public abstract class Section {
 
     private final List<Source> sources;
     private final boolean isLayout;
@@ -36,7 +36,7 @@ abstract class SectionFacade {
      * Creates a new {@code SectionHelper} with an empty list of associated members
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */
-    SectionFacade(boolean isLayout) {
+    Section(boolean isLayout) {
         this.isLayout = isLayout;
         this.sources = new ArrayList<>();
     }
@@ -45,7 +45,7 @@ abstract class SectionFacade {
      * Retrieves the {@code title} value of the annotation this section is bound to
      * @return String value
      */
-    abstract String getTitle();
+    public abstract String getTitle();
 
     /**
      * Returns true if the current section is a dialog layout section; false if it is a dialog widget section
@@ -59,8 +59,17 @@ abstract class SectionFacade {
      * Gets the collection of {@code Source}s associated with the current container
      * @return {@code List<Source>} instance, non-null
      */
-    List<Source> getSources() {
+    public List<Source> getSources() {
         return sources;
+    }
+
+    /**
+     * Merges a foreign {@code ContainerInfo} to the current instance, basically by adding other instance's fields
+     * while preserving the same  reference
+     * @param other Foreign {@code ContainerInfo} object
+     */
+    public void merge(Section other) {
+        this.sources.addAll(other.getSources());
     }
 
     /**
@@ -71,22 +80,13 @@ abstract class SectionFacade {
     abstract Target createItemsContainer(Target container);
 
     /**
-     * Merges a foreign {@code ContainerInfo} to the current instance, basically by adding other instance's fields
-     * while preserving the same  reference
-     * @param other Foreign {@code ContainerInfo} object
-     */
-    void merge(SectionFacade other) {
-        this.sources.addAll(other.getSources());
-    }
-
-    /**
-     * Creates a new {@link SectionFacade} instance for the {@code Annotation} given considering its type
+     * Creates a new {@link Section} instance for the {@code Annotation} given considering its type
      * @param annotation The {@code Annotation} object to wrap
      * @return {@code SectionHelper} instance, or null in case of an invalid {@code annotation} argument
      */
     @SuppressWarnings("deprecation") // Processing of container.Tab is retained for compatibility and will be removed
                                      // in a version after 2.0.2
-    static SectionFacade from(Annotation annotation) {
+    public static Section from(Annotation annotation) {
         if (annotation == null) {
             return null;
         }

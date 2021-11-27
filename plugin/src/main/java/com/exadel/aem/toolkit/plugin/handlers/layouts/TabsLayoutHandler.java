@@ -23,14 +23,13 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.layouts.common.ContainerHandler;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * The {@link ContainerHandler} variant for a tabbed Granite UI dialog
+ * The {@link LayoutHandler} variant for a tabbed Granite UI dialog
  */
-class TabsContainerHandler extends ContainerHandler {
+class TabsLayoutHandler extends LayoutHandler {
     private static final Predicate<Method> LAYOUT_PROPERTIES_FILTER = method ->
         StringUtils.equalsAny(
             method.getName(),
@@ -46,7 +45,7 @@ class TabsContainerHandler extends ContainerHandler {
                                      // in a version after 2.0.2
     @Override
     public void accept(Source source, Target target) {
-        populateContainer(
+        doLayout(
             source.adaptTo(Class.class),
             target,
             Arrays.asList(Tab.class,

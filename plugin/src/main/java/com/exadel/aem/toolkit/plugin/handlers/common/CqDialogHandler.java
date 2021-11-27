@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
-import com.exadel.aem.toolkit.plugin.handlers.layouts.ContainerHandlers;
+import com.exadel.aem.toolkit.plugin.handlers.layouts.LayoutHandlers;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
@@ -75,7 +75,7 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
         populateTitleProperty(source, target);
 
         DialogLayout dialogLayout = getLayout(source, target.getScope());
-        ContainerHandlers.forLayout(dialogLayout).accept(source, target);
+        LayoutHandlers.forLayout(dialogLayout).accept(source, target);
 
         renderIgnoreFreshness(source, target);
     }

@@ -19,14 +19,14 @@ import java.util.function.BiConsumer;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.layouts.common.PlacementHelper;
+import com.exadel.aem.toolkit.plugin.handlers.containers.PlacementHelper;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Presents the layout handler implementation for a fixed-columns Granite UI dialog
  */
-class FixedColumnsHandler implements BiConsumer<Source, Target> {
+class FixedColumnsLayoutHandler implements BiConsumer<Source, Target> {
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}

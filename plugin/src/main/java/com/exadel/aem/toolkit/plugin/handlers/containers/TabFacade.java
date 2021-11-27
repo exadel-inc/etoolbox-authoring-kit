@@ -26,9 +26,9 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
 /**
- * Presents a {@link SectionFacade} variant for handling the {@code Tab} layout
+ * Presents a {@link Section} variant for handling the {@code Tab} layout
  */
-class TabFacade extends SectionFacade {
+class TabFacade extends Section {
     private static final Predicate<Method> MAIN_NODE_MEMBERS = method -> StringUtils.equalsAny(
         method.getName(),
         DialogConstants.PN_TITLE,
@@ -37,7 +37,7 @@ class TabFacade extends SectionFacade {
     private final Tab tab;
 
     /**
-     * Creates a new {@link SectionFacade} wrapped around the specified {@link Tab} object
+     * Creates a new {@link Section} wrapped around the specified {@link Tab} object
      * @param tab      {@code Tab} object this helper wraps
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */
@@ -50,7 +50,7 @@ class TabFacade extends SectionFacade {
      * {@inheritDoc}
      */
     @Override
-    String getTitle() {
+    public String getTitle() {
         if (tab == null) {
             return StringUtils.EMPTY;
         }

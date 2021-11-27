@@ -13,28 +13,30 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widgets;
 
-import java.util.List;
+import java.lang.reflect.Method;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
-import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.handlers.containers.ContainerHandler;
-import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
- * object that define the Granite UI {@code FieldSet} widget look and behavior
+ * object that define the Granite UI {@code Tabs} dialog widget look and behavior
  */
-@Handles(FieldSet.class)
-public class FieldSetHandler extends ContainerHandler implements Handler {
-
-    private static final String EMPTY_FIELDSET_EXCEPTION_MESSAGE = "No valid fields found in fieldset class ";
+@Handles(Tabs.class)
+public class TabsHandler extends ContainerHandler implements Handler {
+    private static final Predicate<Method> WIDGET_PROPERTIES_FILTER = method ->
+        !StringUtils.equalsAny(
+            method.getName(),
+            DialogConstants.PN_TYPE,
+            DialogConstants.PN_PADDING);
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
@@ -43,24 +45,12 @@ public class FieldSetHandler extends ContainerHandler implements Handler {
      */
     @Override
     public void accept(Source source, Target target) {
-        FieldSet fieldSet = source.adaptTo(FieldSet.class);
-        Class<?> fieldSetType = source.adaptTo(MemberSource.class).getValueType();
-
-        List<Source> fieldSetEntries = getMembersForContainer(source, true);
-
-        if (fieldSetEntries.isEmpty()) {
-            PluginRuntime.context().getExceptionHandler().handle(
-                new InvalidLayoutException(EMPTY_FIELDSET_EXCEPTION_MESSAGE + fieldSetType.getName())
-            );
+        if (source.adaptTo(Class.class) != null) {
+            // This handler is not used with class-based source objects
             return;
         }
-
-        if (StringUtils.isNotBlank(fieldSet.namePrefix())) {
-            target.namePrefix(fieldSet.namePrefix());
-        }
-        if (StringUtils.isNotBlank(fieldSet.namePostfix())) {
-            target.namePostfix(fieldSet.namePostfix());
-        }
-        populatePlainContainer(fieldSetEntries, target);
+        target.attributes(source.adaptTo(Tabs.class), WIDGET_PROPERTIES_FILTER); // We do not use the auto-mapping facility
+        // because @Tabs can be used class-level and should not mess with "true" auto-mapped class annotations
+        populateMultiSectionContainer(source, target, Tabs.class);
     }
 }

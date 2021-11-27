@@ -16,12 +16,11 @@ package com.exadel.aem.toolkit.plugin.handlers.layouts;
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.layouts.common.ContainerHandler;
 
 /**
- * The {@link ContainerHandler} variant for an accordion-shaped Granite UI dialog
+ * The {@link LayoutHandler} variant for an accordion-shaped Granite UI dialog
  */
-class AccordionContainerHandler extends ContainerHandler {
+class AccordionLayoutHandler extends LayoutHandler {
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
@@ -30,6 +29,6 @@ class AccordionContainerHandler extends ContainerHandler {
      */
     @Override
     public void accept(Source source, Target target) {
-        populateContainer(source.adaptTo(Class.class), target, AccordionPanel.class);
+        doLayout(source.adaptTo(Class.class), target, AccordionPanel.class);
     }
 }

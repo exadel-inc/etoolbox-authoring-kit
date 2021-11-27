@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
-import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
+import com.exadel.aem.toolkit.plugin.handlers.containers.ContainerHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
  * object that define the Granite UI {@code MultiField} widget look and behavior
  */
 @Handles(MultiField.class)
-public class MultiFieldHandler extends WidgetContainerHandler implements Handler {
+public class MultiFieldHandler extends ContainerHandler implements Handler {
 
     private static final String EMPTY_MULTIFIELD_EXCEPTION_MESSAGE = "No valid fields found in multifield class ";
 
@@ -49,7 +49,7 @@ public class MultiFieldHandler extends WidgetContainerHandler implements Handler
         target.getAttributes().remove(DialogConstants.PN_NAME);
 
         // Get the filtered members' collection for the current container; early return if collection is empty
-        List<Source> sources = getEntriesForContainer(source, true);
+        List<Source> sources = getMembersForContainer(source, true);
         if (sources.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.adaptTo(MemberSource.class).getValueType().getName()
@@ -76,7 +76,7 @@ public class MultiFieldHandler extends WidgetContainerHandler implements Handler
         Target multifieldContainerElement = target.getOrCreateTarget(DialogConstants.NN_FIELD)
                 .attribute(DialogConstants.PN_NAME, name)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
-        populateContainer(sources, multifieldContainerElement);
+        populatePlainContainer(sources, multifieldContainerElement);
     }
 
     /**

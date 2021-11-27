@@ -13,30 +13,19 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widgets;
 
-import java.lang.reflect.Method;
-import java.util.function.Predicate;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.layouts.common.WidgetContainerHandler;
-import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
+import com.exadel.aem.toolkit.plugin.handlers.containers.ContainerHandler;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
- * object that define the Granite UI {@code Tabs} dialog widget look and behavior
+ * object that define the Granite UI {@code Accordion} dialog widget look and behavior
  */
-@Handles(Tabs.class)
-public class TabsWidgetHandler extends WidgetContainerHandler implements Handler {
-    private static final Predicate<Method> WIDGET_PROPERTIES_FILTER = method ->
-        !StringUtils.equalsAny(
-            method.getName(),
-            DialogConstants.PN_TYPE,
-            DialogConstants.PN_PADDING);
+@Handles(Accordion.class)
+public class AccordionHandler extends ContainerHandler implements Handler {
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
@@ -49,8 +38,8 @@ public class TabsWidgetHandler extends WidgetContainerHandler implements Handler
             // This handler is not used with class-based source objects
             return;
         }
-        target.attributes(source.adaptTo(Tabs.class), WIDGET_PROPERTIES_FILTER); // We do not use the auto-mapping facility
-        // because @Tabs can be used class-level and should not mess with "true" auto-mapped class annotations
-        populateNestedContainer(source, target, Tabs.class);
+        target.attributes(source.adaptTo(Accordion.class)); // We do not use the auto-mapping facility here because
+        // @Accordion can be used class-level and should not mess with "true" auto-mapped class annotations
+        populateMultiSectionContainer(source, target, Accordion.class);
     }
 }

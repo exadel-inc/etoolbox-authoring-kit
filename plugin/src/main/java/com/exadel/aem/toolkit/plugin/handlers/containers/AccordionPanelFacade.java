@@ -23,13 +23,13 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
 /**
- * Presents a {@link SectionFacade} variant for handling the {@code Accordion} layout
+ * Presents a {@link Section} variant for handling the {@code Accordion} layout
  */
-class AccordionPanelFacade extends SectionFacade {
+class AccordionPanelFacade extends Section {
     private final AccordionPanel panel;
 
     /**
-     * Creates a new {@link SectionFacade} wrapped around the specified {@link AccordionPanel} object
+     * Creates a new {@link Section} wrapped around the specified {@link AccordionPanel} object
      * @param panel    {@code AccordionPanel} object
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */
@@ -42,7 +42,7 @@ class AccordionPanelFacade extends SectionFacade {
      * {@inheritDoc}
      */
     @Override
-    String getTitle() {
+    public String getTitle() {
         if (panel == null) {
             return StringUtils.EMPTY;
         }

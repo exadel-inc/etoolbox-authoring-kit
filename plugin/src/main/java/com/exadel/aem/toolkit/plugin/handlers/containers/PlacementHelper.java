@@ -41,7 +41,7 @@ public class PlacementHelper {
        ------------------------------- */
 
     private Target container;
-    private List<SectionFacade> sections;
+    private List<Section> sections;
     private String[] ignoredSections;
     private List<Source> members;
     private final List<Source> processedMembers;
@@ -79,11 +79,11 @@ public class PlacementHelper {
      * Called by {@link PlacementHelper#doPlacement()} to process multi-section installations
      */
     private void doMultiSectionPlacement() {
-        Iterator<SectionFacade> sectionIterator = sections.iterator();
+        Iterator<Section> sectionIterator = sections.iterator();
         int iterationStep = 0;
         while (sectionIterator.hasNext()) {
             final boolean isFirstSection = iterationStep++ == 0;
-            SectionFacade currentSection = sectionIterator.next();
+            Section currentSection = sectionIterator.next();
             List<Source> existingSectionMembers = new ArrayList<>(currentSection.getSources());
             List<Source> assignableSectionMembers = members.stream()
                 .filter(member -> isMemberForSection(member, currentSection.getTitle(), isFirstSection))
@@ -150,7 +150,7 @@ public class PlacementHelper {
      */
     public static class Builder {
         private Target container;
-        private List<SectionFacade> sectionHelpers;
+        private List<Section> sectionHelpers;
         private String[] ignoredSections;
         private List<Source> members;
 
@@ -170,10 +170,10 @@ public class PlacementHelper {
 
         /**
          * Assigns the collection of sections members can be distributed into
-         * @param value  Collection of {@link SectionFacade} object containing data for rendering container sections
+         * @param value  Collection of {@link Section} object containing data for rendering container sections
          * @return This instance
          */
-        Builder sections(List<SectionFacade> value) {
+        public Builder sections(List<Section> value) {
             this.sectionHelpers = value;
             return this;
         }
@@ -183,7 +183,7 @@ public class PlacementHelper {
          * @param value Array of ignored tabs or accordion panels (identified by their titles) for the current class
          * @return This instance
          */
-        Builder ignoredSections(String[] value) {
+        public Builder ignoredSections(String[] value) {
             this.ignoredSections = value;
             return this;
         }

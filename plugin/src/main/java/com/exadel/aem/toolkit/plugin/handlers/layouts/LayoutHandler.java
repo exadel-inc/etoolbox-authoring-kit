@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
+package com.exadel.aem.toolkit.plugin.handlers.layouts;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -37,37 +37,40 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
+import com.exadel.aem.toolkit.plugin.handlers.containers.PlacementHelper;
+import com.exadel.aem.toolkit.plugin.handlers.containers.Section;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * Presents a common base for handlers processing layout logic for Granite UI containers, such as the accordion container,
- * tab container, etc.
+ * Presents a common base for handlers processing layout logic for Granite UI containers, such as the accordion
+ * container, tab container, etc.
  */
-public abstract class ContainerHandler implements BiConsumer<Source, Target> {
+abstract class LayoutHandler implements BiConsumer<Source, Target> {
 
     /**
      * Processes container-backing Java class and appends the results to the root {@link Target} object
-     * @param componentClass    {@code Class<?>} instance used as the source of markup
-     * @param target            The root of rendering for the current component
-     * @param annotationClass   {@code Class<?>} object representing types of container sections to process
+     * @param componentClass  {@code Class<?>} instance used as the source of markup
+     * @param target          The root of rendering for the current component
+     * @param annotationClass {@code Class<?>} object representing types of container sections to process
      */
     @SuppressWarnings("SameParameterValue") // annotationClass is used as a parameter in view of code scalability
-    protected void populateContainer(
+    void doLayout(
         Class<?> componentClass,
         Target target,
         Class<? extends Annotation> annotationClass) {
-        populateContainer(componentClass, target, Collections.singletonList(annotationClass));
+        doLayout(componentClass, target, Collections.singletonList(annotationClass));
     }
 
     /**
      * Processes container-backing Java class and appends the results to the root {@link Target} object
      * @param componentClass    {@code Class<?>} instance used as the source of markup
      * @param target            The root of rendering for the current component
-     * @param annotationClasses Collection of {@code Class<?>} objects representing types of container sections to process
+     * @param annotationClasses Collection of {@code Class<?>} objects representing types of container sections to
+     *                          process
      */
-    protected void populateContainer(
+    void doLayout(
         Class<?> componentClass,
         Target target,
         List<Class<? extends Annotation>> annotationClasses) {
@@ -93,7 +96,7 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
             .createTarget(DialogConstants.NN_ITEMS);
 
         // Compose the registry of tabs or accordion panels
-        List<SectionFacade> allContainerSections = getSections(componentClass, target.getScope(), annotationClasses);
+        List<Section> allContainerSections = getSections(componentClass, target.getScope(), annotationClasses);
 
         // Initialize ignored sections array for the current class.
         // Note that "ignored sections" setting is not inherited and is for current class only, unlike the collection
@@ -123,7 +126,10 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
         // for which a non-existent tab or accordion panel was specified. Handle an InvalidContainerItemException
         // for each of them
         if (!allMembers.isEmpty()) {
-            handleInvalidContainerException(allMembers);
+            allMembers
+                .stream()
+                .map(member -> new InvalidContainerException(member.adaptTo(PlaceSetting.class).getValue()))
+                .forEach(ex -> PluginRuntime.context().getExceptionHandler().handle(ex));
         }
     }
 
@@ -132,10 +138,11 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
      * @param componentClass    {@code Class<?>} instance used as the source of markup
      * @param scope             String value defining whether to handle the current Java class as a {@code Dialog}
      *                          source, or a {@code DesignDialog} source
-     * @param annotationClasses One or more {@code Class<?>} objects representing types of container sections to process
+     * @param annotationClasses One or more {@code Class<?>} objects representing types of container sections to
+     *                          process
      * @return Ordered list of container sections
      */
-    private List<SectionFacade> getSections(
+    private List<Section> getSections(
         Class<?> componentClass,
         String scope,
         List<Class<? extends Annotation>> annotationClasses) {
@@ -143,13 +150,13 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
         // Retrieve superclasses of the current class, from top of the hierarchy to the most immediate ancestor,
         // populate container section registry and store members that are within @Tab or @AccordionPanel-marked classes
         // (because we will not have access to them later)
-        List<SectionFacade> containerSectionsFromSuperClasses = getSections(
+        List<Section> containerSectionsFromSuperClasses = getSections(
             ClassUtil.getInheritanceTree(componentClass, false),
             scope,
             annotationClasses);
 
         // Retrieve tabs or accordion panels of the current class same way
-        List<SectionFacade> containerSectionsFromCurrentClass = getSections(
+        List<Section> containerSectionsFromCurrentClass = getSections(
             Collections.singletonList(componentClass),
             scope,
             annotationClasses);
@@ -164,31 +171,33 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
      * @param hierarchy         The {@code Class<?>}-es to search for defined container items
      * @param scope             String value defining whether to handle the current Java class as a {@code Dialog}
      *                          source, or a {@code DesignDialog} source
-     * @param annotationClasses One or more {@code Class<?>} objects representing types of container sections to process
+     * @param annotationClasses One or more {@code Class<?>} objects representing types of container sections to
+     *                          process
      * @return Ordered list of container sections
      */
-    private List<SectionFacade> getSections(
+    private List<Section> getSections(
         List<Class<?>> hierarchy,
         String scope,
         List<Class<? extends Annotation>> annotationClasses) {
 
-        List<SectionFacade> result = new ArrayList<>();
+        List<Section> result = new ArrayList<>();
         for (Class<?> classEntry : hierarchy) {
-            appendSectionsFromNestedLevel(result, classEntry, annotationClasses);
+            appendSectionsFromNestedClassLevel(result, classEntry, annotationClasses);
             appendSectionsFromClassLevel(result, classEntry, scope);
         }
         return result;
     }
 
     /**
-     * Puts all sections, such as tabs or accordion panels, from the nested classes of the current Java class
-     * that represents a Granite UI dialog into the accumulating collection
+     * Puts all sections, such as tabs or accordion panels, from the nested classes of the current Java class that
+     * represents a Granite UI dialog into the accumulating collection
      * @param accumulator       The collection of container sections
      * @param componentClass    {@code Class<?>} instance used as the source of markup
-     * @param annotationClasses One or more {@code Class<?>} objects representing types of container sections to process
+     * @param annotationClasses One or more {@code Class<?>} objects representing types of container sections to
+     *                          process
      */
-    private void appendSectionsFromNestedLevel(
-        List<SectionFacade> accumulator,
+    private void appendSectionsFromNestedClassLevel(
+        List<Section> accumulator,
         Class<?> componentClass,
         List<Class<? extends Annotation>> annotationClasses) {
 
@@ -203,26 +212,26 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
                 .findFirst()
                 .map(nestedClass::getDeclaredAnnotation)
                 .orElse(null);
-            SectionFacade sectionHelper = SectionFacade.from(matchedAnnotation);
-            if (sectionHelper == null) {
+            Section section = Section.from(matchedAnnotation);
+            if (section == null) {
                 continue;
             }
-            sectionHelper.getSources().addAll(ClassUtil.getSources(nestedClass));
-            accumulator.add(sectionHelper);
+            section.getSources().addAll(ClassUtil.getSources(nestedClass));
+            accumulator.add(section);
         }
     }
 
     /**
-     * Puts all sections, such as tabs or accordion panels, from the current Java class that represents a Granite UI dialog
-     * into the accumulating collection
+     * Puts all sections, such as tabs or accordion panels, from the current Java class that represents a Granite UI
+     * dialog into the accumulating collection
      * @param accumulator    The collection of container sections
      * @param componentClass {@code Class<?>} instance used as the source of markup
-     * @param scope          String value defining whether to handle the current Java class as a {@code Dialog}
-     *                       source, or a {@code DesignDialog} source
+     * @param scope          String value defining whether to handle the current Java class as a {@code Dialog} source,
+     *                       or a {@code DesignDialog} source
      */
     @SuppressWarnings("deprecation") // Processing of container.Tab class and Dialog#tabs() method is retained for
-                                     // compatibility and will be removed in a version after 2.0.2
-    private void appendSectionsFromClassLevel(List<SectionFacade> accumulator, Class<?> componentClass, String scope) {
+    // compatibility and will be removed in a version after 2.0.2
+    private void appendSectionsFromClassLevel(List<Section> accumulator, Class<?> componentClass, String scope) {
         com.exadel.aem.toolkit.api.annotations.container.Tab[] legacyTabs = null;
         Tab[] tabs = null;
         AccordionPanel[] panels = null;
@@ -241,7 +250,7 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
             ArrayUtils.nullToEmpty(tabs),
             ArrayUtils.nullToEmpty(panels))
             .flatMap(Arrays::stream)
-            .forEach(section -> accumulator.add(SectionFacade.from((Annotation) section)));
+            .forEach(section -> accumulator.add(Section.from((Annotation) section)));
     }
 
     /**
@@ -251,9 +260,9 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
      * @param sectionsFromSuperClasses Collection of sections defined in the hierarchy of superclasses
      * @return Resulting ordered list of sections
      */
-    private static List<SectionFacade> mergeSectionsFromCurrentClassAndSuperclasses(
-        List<SectionFacade> sectionsFromCurrentClass,
-        List<SectionFacade> sectionsFromSuperClasses) {
+    private static List<Section> mergeSectionsFromCurrentClassAndSuperclasses(
+        List<Section> sectionsFromCurrentClass,
+        List<Section> sectionsFromSuperClasses) {
         // Whether the current class has any sections that match sections from superclasses,
         // we consider that the "right" order of container items is defined herewith, and place container items
         // from the current class first, then rest of the container items.
@@ -269,16 +278,16 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Called by {@link ContainerHandler#mergeSectionsFromCurrentClassAndSuperclasses(List, List)} to compose a synthetic
+     * Called by {@link LayoutHandler#mergeSectionsFromCurrentClassAndSuperclasses(List, List)} to compose a synthetic
      * collection with priority defined
      * @param primary   List of {@code SectionHelper} instances the order of which will be preserved
      * @param secondary List of {@code SectionHelper} instances that will supplement the primary list
      * @return Resulting ordered list of sections
      */
-    private static List<SectionFacade> mergeSections(List<SectionFacade> primary, List<SectionFacade> secondary) {
-        List<SectionFacade> result = new ArrayList<>(primary);
-        for (SectionFacade other : secondary) {
-            SectionFacade matchingFromCurrentClass = result
+    private static List<Section> mergeSections(List<Section> primary, List<Section> secondary) {
+        List<Section> result = new ArrayList<>(primary);
+        for (Section other : secondary) {
+            Section matchingFromCurrentClass = result
                 .stream()
                 .filter(section -> section.getTitle().equals(other.getTitle()))
                 .findFirst()
@@ -298,7 +307,7 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
      * @return Array of strings, non-null
      */
     @SuppressWarnings("deprecation") // Processing of IgnoreTabs annotation is retained for
-                                     // compatibility and will be removed in a version after 2.0.2
+    // compatibility and will be removed in a version after 2.0.2
     private static String[] getIgnoredSectionTitles(Class<?> componentClass) {
         String[] result = ArrayUtils.EMPTY_STRING_ARRAY;
         if (componentClass.isAnnotationPresent(IgnoreTabs.class)) {
@@ -309,17 +318,5 @@ public abstract class ContainerHandler implements BiConsumer<Source, Target> {
             result = ArrayUtils.addAll(result, componentClass.getAnnotation(Ignore.class).sections());
         }
         return result;
-    }
-
-    /**
-     * Produces an InvalidContainerException for every class member for which a non-existent tab or accordion panel
-     * was specified
-     * @param members {@code List} of class members for which a non-existent tab or accordion panel was specified
-     */
-    static void handleInvalidContainerException(List<Source> members) {
-        for (Source source : members) {
-            InvalidContainerException ex = new InvalidContainerException(source.adaptTo(PlaceSetting.class).getValue());
-            PluginRuntime.context().getExceptionHandler().handle(ex);
-        }
     }
 }

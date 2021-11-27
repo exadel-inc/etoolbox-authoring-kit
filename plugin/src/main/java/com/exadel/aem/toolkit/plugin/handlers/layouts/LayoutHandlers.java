@@ -25,17 +25,17 @@ import com.exadel.aem.toolkit.plugin.writers.DialogLayout;
 /**
  * Presents factory logic for building either a fixed-columns or nested-container Granite UI dialog
  */
-public class ContainerHandlers {
+public class LayoutHandlers {
     private static final Map<DialogLayout, BiConsumer<Source, Target>> HANDLERS = ImmutableMap.of(
-        DialogLayout.FIXED_COLUMNS, new FixedColumnsHandler(),
-        DialogLayout.ACCORDION, new AccordionContainerHandler(),
-        DialogLayout.TABS, new TabsContainerHandler()
+        DialogLayout.FIXED_COLUMNS, new FixedColumnsLayoutHandler(),
+        DialogLayout.ACCORDION, new AccordionLayoutHandler(),
+        DialogLayout.TABS, new TabsLayoutHandler()
     );
 
     /**
      * Default (instantiation-preventing) constructor
      */
-    private ContainerHandlers() {
+    private LayoutHandlers() {
     }
 
     /**
