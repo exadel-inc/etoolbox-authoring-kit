@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
 import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
 import com.exadel.aem.toolkit.test.widget.FieldSetWidget;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
+import com.exadel.aem.toolkit.test.widget.FixedColumnsWidget;
 import com.exadel.aem.toolkit.test.widget.HeadingWidget;
 import com.exadel.aem.toolkit.test.widget.HiddenWidget;
 import com.exadel.aem.toolkit.test.widget.HyperlinkWidget;
@@ -101,6 +102,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testFileUpload() {
         test(FileUploadWidget.class);
+    }
+
+    @Test
+    public void testFixedColumns() {
+        test(FixedColumnsWidget.class);
     }
 
     @Test

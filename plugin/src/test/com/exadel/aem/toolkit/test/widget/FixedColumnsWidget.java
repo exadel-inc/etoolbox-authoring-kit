@@ -13,48 +13,57 @@
  */
 package com.exadel.aem.toolkit.test.widget;
 
-import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
-import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
-import com.exadel.aem.toolkit.api.annotations.layouts.AccordionVariant;
+import com.exadel.aem.toolkit.api.annotations.layouts.Column;
+import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @AemComponent(
     path = DEFAULT_COMPONENT_NAME,
-    title = "Accordion Test Dialog"
+    title = "Fixed Columns Widget Dialog"
 )
 @Dialog
-@Accordion(
-    value = {
-        @AccordionPanel(title = "Basic", disabled = true),
-        @AccordionPanel(title = "Basic2", active = true)
-    }
-)
-@SuppressWarnings("unused")
-public class AccordionWidget {
+public class FixedColumnsWidget {
 
-    @DialogField(label = "Field 1")
-    @TextField
-    @Place("Basic")
-    private String field1;
+    @FixedColumns({
+        @Column(title = "First"),
+        @Column(title = "Second")
+    })
+    private FixedColumnsFieldset fixedColumns;
 
-    @Accordion(
-        value = @AccordionPanel(title = "Accordion Widget Panel 1", disabled = true),
-        variant = AccordionVariant.LARGE,
-        margin = true
+/*    @DialogField(
+        label = "Text"
     )
-    @Place("Basic2")
-    AccordionFieldSet accordion;
+    @TextField
+    @Place("First")
+    private String text;
 
-    private static class AccordionFieldSet {
-        @DialogField
+    @DialogField(
+        label = "Description"
+    )
+    @TextArea
+    @Place("Second")
+    private String description;*/
+
+    private static class FixedColumnsFieldset {
+        @DialogField(
+            label = "Nested text"
+        )
         @TextField
-        @Place("Accordion Widget Panel 1")
-        String field6;
+        @Place("First")
+        private String text;
+
+        @DialogField(
+            label = "Nested description"
+        )
+        @TextArea
+        @Place("Second")
+        private String description;
     }
 }

@@ -17,6 +17,7 @@ import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
@@ -25,7 +26,11 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_0;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_1;
 
 @SuppressWarnings("unused")
-public class ExceptionsTestCases {
+public class LayoutExceptionTestCases {
+
+    /* ---------------
+       Nonexistent tab
+       --------------- */
 
     @AemComponent(
         path = DEFAULT_COMPONENT_NAME,
@@ -50,4 +55,58 @@ public class ExceptionsTestCases {
     @DependsOnTab(tabTitle = LABEL_TAB_1, query = "true")
     @DependsOnTab(tabTitle = LABEL_TAB_0, query = "true")
     public static class ComponentWithNonexistentDependsOnTab extends ComplexComponent1 {}
+
+    /* ---------
+       Recursion
+       --------- */
+
+    private static class RecursionParent {
+
+        @MultiField
+        private ComponentWithRecursiveMember1 member;
+    }
+
+    @AemComponent(
+        path = DEFAULT_COMPONENT_NAME,
+        title = DEFAULT_COMPONENT_TITLE
+    )
+    @Dialog
+    public static class ComponentWithRecursiveMember1 extends RecursionParent {
+    }
+
+
+    private interface RecursionInterface {
+
+        @MultiField(ComponentWithRecursiveMember2.class)
+        String getMember();
+    }
+
+    @AemComponent(
+        path = DEFAULT_COMPONENT_NAME,
+        title = DEFAULT_COMPONENT_TITLE
+    )
+    @Dialog
+    public static class ComponentWithRecursiveMember2 implements RecursionInterface {
+
+        @Override
+        public String getMember() {
+            return null;
+        }
+    }
+
+
+    @AemComponent(
+        path = DEFAULT_COMPONENT_NAME,
+        title = DEFAULT_COMPONENT_TITLE
+    )
+    @Dialog
+    public static class ComponentWithRecursiveMember3  {
+
+        @MultiField
+        private RecursionChild child;
+    }
+
+    private static class RecursionChild extends ComponentWithRecursiveMember3 {
+    }
+
 }
