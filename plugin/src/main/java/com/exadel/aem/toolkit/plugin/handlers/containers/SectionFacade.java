@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
+package com.exadel.aem.toolkit.plugin.handlers.containers;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ abstract class SectionFacade {
     }
 
     /**
-     * Produces for further rendering the data structure representing a container section with required attributes populated
+     * Produces for further rendering the data structure that represents a container section with required attributes set
      * @param container {@code Target} that will represent the section parent
      * @return {code Target} element being a child of the given target, or the provided target itself
      */

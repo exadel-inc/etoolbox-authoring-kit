@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
+package com.exadel.aem.toolkit.plugin.handlers.containers;
 
 import java.lang.reflect.Method;
 import java.util.function.Predicate;
@@ -37,7 +37,7 @@ class TabFacade extends SectionFacade {
     private final Tab tab;
 
     /**
-     * Creates a new {@code SectionHelper} wrapped around the specified {@link Tab} object
+     * Creates a new {@link SectionFacade} wrapped around the specified {@link Tab} object
      * @param tab      {@code Tab} object this helper wraps
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */

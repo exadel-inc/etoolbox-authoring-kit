@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
+package com.exadel.aem.toolkit.plugin.handlers.containers;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,7 +41,7 @@ public class PlacementHelper {
        ------------------------------- */
 
     private Target container;
-    private List<SectionFacade> sectionHelpers;
+    private List<SectionFacade> sections;
     private String[] ignoredSections;
     private List<Source> members;
     private final List<Source> processedMembers;
@@ -68,7 +68,7 @@ public class PlacementHelper {
      * were placed are stored in a separate collection and can be retrieved via {@link PlacementHelper#getProcessedMembers()}
      */
     public void doPlacement() {
-        if (sectionHelpers != null && !sectionHelpers.isEmpty()) {
+        if (sections != null && !sections.isEmpty()) {
             doMultiSectionPlacement();
         } else {
             appendToContainer(container, members);
@@ -79,7 +79,7 @@ public class PlacementHelper {
      * Called by {@link PlacementHelper#doPlacement()} to process multi-section installations
      */
     private void doMultiSectionPlacement() {
-        Iterator<SectionFacade> sectionIterator = sectionHelpers.iterator();
+        Iterator<SectionFacade> sectionIterator = sections.iterator();
         int iterationStep = 0;
         while (sectionIterator.hasNext()) {
             final boolean isFirstSection = iterationStep++ == 0;
@@ -205,7 +205,7 @@ public class PlacementHelper {
         public PlacementHelper build() {
             PlacementHelper result = new PlacementHelper();
             result.container = container;
-            result.sectionHelpers = sectionHelpers;
+            result.sections = sectionHelpers;
             result.ignoredSections = ignoredSections;
             result.members = members;
             return result;

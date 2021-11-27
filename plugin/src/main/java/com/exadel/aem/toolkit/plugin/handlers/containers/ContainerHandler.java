@@ -11,19 +11,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.layouts.common;
+package com.exadel.aem.toolkit.plugin.handlers.containers;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ClassUtils;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
+import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
@@ -32,6 +35,8 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
+import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
+import com.exadel.aem.toolkit.plugin.handlers.layouts.LayoutHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
@@ -39,23 +44,46 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 /**
  * Presents a common base for handler classes responsible for laying out child components within Granite UI
  */
-public abstract class WidgetContainerHandler {
+public abstract class ContainerHandler {
+
+    private static final String RECURSION_MESSAGE_TEMPLATE = "Recursive rendering prohibited: a member of type \"%s\" " +
+        "was set to be rendered within a container of type \"%s\"";
+
+    /* ----------------------------------
+       Retrieving members for a container
+       ---------------------------------- */
 
     /**
-     * Retrieves the list of sources that match the current container. This is performed by calling {@code ClassUtil#getSources()}
-     * with the additional predicate that allows to filter out sources that are set to be ignored at either
-     * the "member itself" level, or the "declaring class" level
+     * Retrieves the list of sources that match the current container. This is performed by calling {@code
+     * ClassUtil#getSources()} with the additional predicate that allows to filter out sources that are set to be
+     * ignored at either the "member itself" level, or the "declaring class" level
      * @param container         Current {@link Source} instance
-     * @param useReportingClass True to use {@link MemberSource#getReportingClass()} to look for ignored members (this is
-     *                          the case for {@code Multifield} or {@code FieldSet}-bound members);
-     *                          False to use same {@link MemberSource#getValueType()} as for the rest of method logic
+     * @param useReportingClass True to use {@link MemberSource#getReportingClass()} to look for the ignored members
+     *                          (this is the case for the MultiField and FieldSet handlers, because ignored members are
+     *                          commonly specified outside the fieldset content). False to use the same {@link
+     *                          MemberSource#getValueType()} for wither placeable and ignored members
      * @return {@code List<Source>} containing placeable members, or an empty collection
      */
     @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
                                      // in a version after 2.0.2
-    protected List<Source> getEntriesForContainer(Source container, boolean useReportingClass) {
-        Class<?> valueTypeClass = container.adaptTo(MemberSource.class).getValueType();
-        Class<?> reportingClass = useReportingClass ? container.adaptTo(MemberSource.class).getReportingClass() : valueTypeClass;
+    protected List<Source> getMembersForContainer(Source container, boolean useReportingClass) {
+        MemberSource memberSource = container.adaptTo(MemberSource.class);
+        Class<?> declaringClass = memberSource.getDeclaringClass();
+        Class<?> valueTypeClass = memberSource.getValueType();
+        Class<?> reportingClass = useReportingClass ? memberSource.getReportingClass() : valueTypeClass;
+
+        // Neither the valueTypeClass, nor the reportingClass can be equal to, or a descendant of the class that
+        // is currently being processed, or we will face the "render MyFieldset inside MyFieldset" situation and get a
+        // stack overflow
+        if (ClassUtils.isAssignable(valueTypeClass, declaringClass)
+            || ClassUtils.isAssignable(reportingClass, declaringClass)) {
+
+            Class<?> offender = ClassUtils.isAssignable(valueTypeClass, declaringClass) ? valueTypeClass : reportingClass;
+            PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
+                String.format(RECURSION_MESSAGE_TEMPLATE, offender.getName(), declaringClass.getName())));
+            return Collections.emptyList();
+        }
+
         // Build the collection of ignored members at nesting class level
         // (apart from those defined for the container class itself)
         Stream<ClassMemberSetting> classLevelIgnoredMembers = Stream.empty();
@@ -94,12 +122,16 @@ public abstract class WidgetContainerHandler {
         return ClassUtil.getSources(valueTypeClass, nonIgnoredMembers);
     }
 
+    /* ----------------------
+       Populating a container
+       ---------------------- */
+
     /**
      * Used to fill in plain (single-section) containers
      * @param members Collection of widget-holding class members that relate to the current container
      * @param target  {@code Target} to place widgets in
      */
-    protected void populateContainer(List<Source> members, Target target) {
+    protected void populatePlainContainer(List<Source> members, Target target) {
         PlacementHelper.builder()
             .container(target)
             .members(members)
@@ -115,13 +147,13 @@ public abstract class WidgetContainerHandler {
      * @param target          {@code Target} to place widgets in
      * @param annotationClass Class of nested container, such as {@code Tabs} or {@code Accordion}
      */
-    protected void populateNestedContainer(Source member, Target target, Class<? extends Annotation> annotationClass) {
+    protected void populateMultiSectionContainer(Source member, Target target, Class<? extends Annotation> annotationClass) {
         target.createTarget(DialogConstants.NN_ITEMS);
 
-        List<SectionFacade> containerSections = getContainerSections(member, annotationClass);
-        List<Source> placeableSources = getEntriesForContainer(member, false);
+        List<SectionFacade> containerSections = getSections(member, annotationClass);
+        List<Source> placeableMembers = getMembersForContainer(member, false);
 
-        if (containerSections.isEmpty() && !placeableSources.isEmpty()) {
+        if (containerSections.isEmpty() && !placeableMembers.isEmpty()) {
             InvalidContainerException ex = new InvalidContainerException();
             PluginRuntime.context().getExceptionHandler().handle(ex);
         }
@@ -130,15 +162,19 @@ public abstract class WidgetContainerHandler {
             .container(target.getTarget(DialogConstants.NN_ITEMS))
             .sections(containerSections)
             .ignoredSections(ArrayUtils.EMPTY_STRING_ARRAY)
-            .members(placeableSources)
+            .members(placeableMembers)
             .build();
         placementHelper.doPlacement();
-        placeableSources.removeAll(placementHelper.getProcessedMembers());
+        placeableMembers.removeAll(placementHelper.getProcessedMembers());
 
-        if (!placeableSources.isEmpty()) {
-            ContainerHandler.handleInvalidContainerException(placeableSources);
+        if (!placeableMembers.isEmpty()) {
+            LayoutHandler.handleInvalidContainerException(placeableMembers);
         }
     }
+
+    /* ---------------
+       Utility methods
+       --------------- */
 
     /**
      * Retrieves container sections declared by the current source
@@ -146,7 +182,7 @@ public abstract class WidgetContainerHandler {
      * @param annotationClass Container annotation to look for, such as a {@link Tabs} or {@link Accordion}
      * @return Collection of {@code SectionFacade} objects
      */
-    private static List<SectionFacade> getContainerSections(Source source, Class<? extends Annotation> annotationClass) {
+    private static List<SectionFacade> getSections(Source source, Class<? extends Annotation> annotationClass) {
         List<SectionFacade> result = new ArrayList<>();
         if (source.adaptTo(annotationClass) == null) {
             return result;
@@ -157,6 +193,9 @@ public abstract class WidgetContainerHandler {
         } else if (annotationClass.equals(Accordion.class)) {
             Arrays.stream(source.adaptTo(Accordion.class).value())
                 .forEach(accordionPanel -> result.add(new AccordionPanelFacade(accordionPanel, false)));
+        } else if (annotationClass.equals(FixedColumns.class)) {
+            Arrays.stream(source.adaptTo(FixedColumns.class).value())
+                .forEach(column -> result.add(new ColumnFacade(column)));
         }
         return result;
     }
