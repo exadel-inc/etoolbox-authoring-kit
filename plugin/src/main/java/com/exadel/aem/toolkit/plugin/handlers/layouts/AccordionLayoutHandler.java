@@ -29,6 +29,6 @@ class AccordionLayoutHandler extends LayoutHandler {
      */
     @Override
     public void accept(Source source, Target target) {
-        doLayout(source.adaptTo(Class.class), target, AccordionPanel.class);
+        doLayout(source, target, AccordionPanel.class);
     }
 }

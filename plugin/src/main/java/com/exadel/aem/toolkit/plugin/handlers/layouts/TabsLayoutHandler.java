@@ -45,12 +45,7 @@ class TabsLayoutHandler extends LayoutHandler {
                                      // in a version after 2.0.2
     @Override
     public void accept(Source source, Target target) {
-        doLayout(
-            source.adaptTo(Class.class),
-            target,
-            Arrays.asList(Tab.class,
-                com.exadel.aem.toolkit.api.annotations.container.Tab.class)
-        );
+        doLayout(source, target, Arrays.asList(Tab.class, com.exadel.aem.toolkit.api.annotations.container.Tab.class));
         Tabs tabsAnnotation = source.adaptTo(Tabs.class);
         Target layoutContainer = null;
         if (tabsAnnotation != null) {
