@@ -24,14 +24,15 @@ import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 /**
  * Presents a {@link Section} variant for handling the {@code Accordion} layout
  */
-public class ColumnFacade extends Section {
+class ColumnFacade extends Section {
     private final Column column;
 
     /**
      * Creates a new {@link Section} wrapped around the specified {@link Column} object
+     * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      * @param column {@code Column} object
      */
-    public ColumnFacade(Column column) {
+    public ColumnFacade(Column column, boolean isLayout) {
         super(false);
         this.column = column;
     }

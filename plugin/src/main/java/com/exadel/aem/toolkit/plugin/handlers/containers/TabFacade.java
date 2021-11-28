@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 /**
  * Presents a {@link Section} variant for handling the {@code Tab} layout
  */
-public class TabFacade extends Section {
+class TabFacade extends Section {
     private static final Predicate<Method> MAIN_NODE_MEMBERS = method -> StringUtils.equalsAny(
         method.getName(),
         DialogConstants.PN_TITLE,

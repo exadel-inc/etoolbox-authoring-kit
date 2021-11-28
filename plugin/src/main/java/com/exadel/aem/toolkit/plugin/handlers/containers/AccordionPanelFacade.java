@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 /**
  * Presents a {@link Section} variant for handling the {@code Accordion} layout
  */
-public class AccordionPanelFacade extends Section {
+class AccordionPanelFacade extends Section {
     private final AccordionPanel panel;
 
     /**
