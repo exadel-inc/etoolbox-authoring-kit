@@ -13,9 +13,13 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widgets;
 
+import java.util.List;
+import java.util.function.Function;
+
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.containers.ContainerHandler;
@@ -40,6 +44,14 @@ public class AccordionHandler extends ContainerHandler implements Handler {
         }
         target.attributes(source.adaptTo(Accordion.class)); // We do not use the auto-mapping facility here because
         // @Accordion can be used class-level and should not mess with "true" auto-mapped class annotations
-        populateMultiSectionContainer(source, target, Accordion.class);
+        populateMultiSectionContainer(source, target);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Function<MemberSource, List<Class<?>>> getRenderedClassesProvider() {
+        return ANNOTATED_MEMBER_TYPE_AND_REPORTING_CLASS;
     }
 }

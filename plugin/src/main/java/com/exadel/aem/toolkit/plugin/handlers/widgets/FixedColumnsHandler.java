@@ -13,9 +13,13 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widgets;
 
+import java.util.List;
+import java.util.function.Function;
+
 import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.containers.ContainerHandler;
@@ -38,6 +42,14 @@ public class FixedColumnsHandler extends ContainerHandler implements Handler {
             // This handler is not used with class-based source objects
             return;
         }
-        populateMultiSectionContainer(source, target, FixedColumns.class);
+        populateMultiSectionContainer(source, target);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Function<MemberSource, List<Class<?>>> getRenderedClassesProvider() {
+        return ANNOTATED_MEMBER_TYPE_AND_REPORTING_CLASS;
     }
 }

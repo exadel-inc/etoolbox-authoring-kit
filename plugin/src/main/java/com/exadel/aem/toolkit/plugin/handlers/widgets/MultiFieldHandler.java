@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.plugin.handlers.widgets;
 
 import java.util.List;
+import java.util.function.Function;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
@@ -49,7 +50,7 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
         target.getAttributes().remove(DialogConstants.PN_NAME);
 
         // Get the filtered members' collection for the current container; early return if collection is empty
-        List<Source> sources = getMembersForContainer(source, true);
+        List<Source> sources = getMembersForContainer(source);
         if (sources.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.adaptTo(MemberSource.class).getValueType().getName()
@@ -76,7 +77,7 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
         Target multifieldContainerElement = target.getOrCreateTarget(DialogConstants.NN_FIELD)
                 .attribute(DialogConstants.PN_NAME, name)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
-        populatePlainContainer(sources, multifieldContainerElement);
+        populateSingleSectionContainer(sources, multifieldContainerElement);
     }
 
     /**
@@ -86,5 +87,13 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
      */
     private void placeOne(Source source, Target target) {
         HandlerChains.forMember().accept(source, target.getOrCreateTarget(DialogConstants.NN_FIELD));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Function<MemberSource, List<Class<?>>> getRenderedClassesProvider() {
+        return ANNOTATED_MEMBER_TYPE;
     }
 }

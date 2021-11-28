@@ -13,38 +13,48 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.containers;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
-import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
-import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
-import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
+import com.exadel.aem.toolkit.plugin.adapters.ContainerWidgetSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
  * Presents a common base for handler classes responsible for laying out child components within Granite UI
  */
 public abstract class ContainerHandler {
+
+    protected static final Function<MemberSource, List<Class<?>>> ANNOTATED_MEMBER_TYPE =
+        memberSource -> Collections.singletonList(memberSource.getValueType());
+    protected static final Function<MemberSource, List<Class<?>>> ANNOTATED_MEMBER_TYPE_AND_REPORTING_CLASS =
+        memberSource -> Arrays.asList(memberSource.getValueType(), memberSource.getReportingClass());
+
+    private static final Predicate<Target> CONTAINER_PREDICATE = node -> ResourceTypes.CONTAINER.equals(node.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE));
+    private static final Predicate<Target> WIDGET_NODE_PREDICATE = node -> !node.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, StringUtils.EMPTY).isEmpty();
 
     private static final String RECURSION_MESSAGE_TEMPLATE = "Recursive rendering prohibited: a member of type \"%s\" " +
         "was set to be rendered within a container created with member of type \"%s\"";
@@ -57,66 +67,109 @@ public abstract class ContainerHandler {
      * Retrieves the list of sources that match the current container. This is performed by calling {@code
      * ClassUtil.getSources()} with the additional predicate that allows to filter out sources that are set to be
      * ignored at either the "member itself" level, or the "declaring class" level
-     * @param container         Current {@link Source} instance
-     * @param useReportingClass True to use {@link MemberSource#getReportingClass()} to look for the ignored members
-     *                          (this is the case for the MultiField and FieldSet handlers, because ignored members are
-     *                          commonly specified outside the fieldset content). False to use the same {@link
-     *                          MemberSource#getValueType()} for wither placeable and ignored members
+     * @param container Current {@link Source} instance
      * @return {@code List} containing {@code Source}-typed placeable members, or an empty list
      */
-    @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
-                                     // in a version after 2.0.2
-    protected List<Source> getMembersForContainer(Source container, boolean useReportingClass) {
+    protected List<Source> getMembersForContainer(Source container) {
+        return getMembersForContainer(container, null);
+    }
+
+    /**
+     * Retrieves the list of sources that match the current container
+     * @param container Current {@link Source} instance
+     * @param filter    An additional filter applied to all the sources that can be retrieved from a host class. Can be
+     *                  used, for instance, to specify a particular container title
+     * @return {@code List} containing {@code Source}-typed placeable members, or an empty list
+     * @see ContainerHandler#getMembersForContainer(Source)
+     */
+    private List<Source> getMembersForContainer(Source container, Predicate<Source> filter) {
+        List<Source> result = new ArrayList<>();
+
+        // Extract data from the source object
         MemberSource memberSource = container.adaptTo(MemberSource.class);
         Class<?> declaringClass = memberSource.getDeclaringClass();
         Class<?> valueTypeClass = memberSource.getValueType();
-        Class<?> reportingClass = useReportingClass ? memberSource.getReportingClass() : valueTypeClass;
 
         // Neither the valueTypeClass, nor the reportingClass can be equal to, or a descendant of the class that
-        // is currently being processed, or we will face the "render MyFieldset inside MyFieldset" situation and get a
-        // stack overflow
+        // is currently being processed. Otherwise, we will face the "render MyFieldset inside MyFieldset" situation
+        // and get a stack overflow
         if (ClassUtils.isAssignable(valueTypeClass, declaringClass)) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
                 String.format(RECURSION_MESSAGE_TEMPLATE, valueTypeClass.getName(), declaringClass.getName())));
             return Collections.emptyList();
         }
 
+        // There can be one or more sources of members for this container.
+        // 1) For e.g. a FieldSet, the only source is the class represented by the return type of the @FieldSet-annotated
+        // field or method, or else the class specified in @FieldSet(value=...). The same applies to a MultiField
+        // 2) However, for e.g. an Accordion widget, there are two possible sources: same as (1), and the "surrounding"
+        // class
+        List<Class<?>> hostsOfRenderableMembers = getRenderedClassesProvider().apply(memberSource);
+        for (Class<?> hostClass : hostsOfRenderableMembers) {
+            boolean excludeCurrentSource = hostClass.equals(declaringClass);
+
+            // Create the filter to sort out ignored fields (apart from those defined for the container class), exclude
+            // the current source (if needed), banish non-widget fields, and do custom filtering (if needed)
+            List<ClassMemberSetting> ignoredMembers = getIgnoredMembers(memberSource, hostClass);
+            Predicate<Source> nonIgnoredMembers = source -> ignoredMembers.stream().noneMatch(ignored -> ignored.matches(source));
+            if (filter != null) {
+                nonIgnoredMembers = nonIgnoredMembers.and(filter);
+            }
+            if (excludeCurrentSource) {
+                nonIgnoredMembers = nonIgnoredMembers.and(source -> !isSameClassMember(source, container));
+            }
+
+            // Then, retrieve members for the current class, filter applied, without ordering
+            result.addAll(ClassUtil.getSources(hostClass, nonIgnoredMembers, false));
+        }
+
+        // Finally, order the whole of the members collection
+        return OrderingUtil.sortMembers(result);
+    }
+
+    protected abstract Function<MemberSource, List<Class<?>>> getRenderedClassesProvider();
+
+    @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
+    // in a version after 2.0.2
+    private List<ClassMemberSetting> getIgnoredMembers(MemberSource container, Class<?> membersHost) {
         // Build the collection of ignored members at nesting class level
         // (apart from those defined for the container class itself)
+        Class<?> ignoredMembersHost = container.getReportingClass();
+
         Stream<ClassMemberSetting> classLevelIgnoredMembers = Stream.empty();
-        if (reportingClass.isAnnotationPresent(Ignore.class)) {
-            classLevelIgnoredMembers = Arrays.stream(reportingClass.getAnnotation(Ignore.class).members())
-                .map(memberPtr -> new ClassMemberSetting(memberPtr).populateDefaults(reportingClass));
-        } else if (reportingClass.isAnnotationPresent(IgnoreFields.class)) {
-            classLevelIgnoredMembers = Arrays.stream(reportingClass.getAnnotation(IgnoreFields.class).value())
-                .map(memberPtr -> new ClassMemberSetting(memberPtr).populateDefaults(reportingClass));
+        if (ignoredMembersHost.isAnnotationPresent(Ignore.class)) {
+            classLevelIgnoredMembers = Arrays
+                .stream(ignoredMembersHost.getAnnotation(Ignore.class).members())
+                .map(memberPtr -> new ClassMemberSetting(memberPtr).populateDefaults(ignoredMembersHost));
+        } else if (ignoredMembersHost.isAnnotationPresent(IgnoreFields.class)) {
+            classLevelIgnoredMembers = Arrays
+                .stream(ignoredMembersHost.getAnnotation(IgnoreFields.class).value())
+                .map(memberPtr -> new ClassMemberSetting(memberPtr).populateDefaults(ignoredMembersHost));
+
         }
+
         // Now build collection of ignored members at member level
-        Stream<ClassMemberSetting> fieldLevelIgnoredMembers = Stream.empty();
+        Stream<ClassMemberSetting> memberLevelIgnoredMembers = Stream.empty();
         if (container.adaptTo(Ignore.class) != null) {
-            fieldLevelIgnoredMembers = Arrays.stream(container.adaptTo(Ignore.class).members())
-                .map(memberPtr -> new ClassMemberSetting(memberPtr).populateDefaults(valueTypeClass));
+            memberLevelIgnoredMembers = Arrays
+                .stream(container.adaptTo(Ignore.class).members())
+                .map(member -> new ClassMemberSetting(member).populateDefaults(membersHost));
         } else if (container.adaptTo(IgnoreFields.class) != null) {
-            fieldLevelIgnoredMembers = Arrays.stream(container.adaptTo(IgnoreFields.class).value())
-                .map(memberPtr -> new ClassMemberSetting(memberPtr).populateDefaults(valueTypeClass));
+            memberLevelIgnoredMembers = Arrays
+                .stream(container.adaptTo(IgnoreFields.class).value())
+                .map(member -> new ClassMemberSetting(member).populateDefaults(membersHost));
         }
 
         // Join the collections and make sure that only members from any of the superclasses of the current source's class
         // are present
-        List<ClassMemberSetting> allIgnoredFields = Stream
-            .concat(classLevelIgnoredMembers, fieldLevelIgnoredMembers)
+        return Stream
+            .concat(classLevelIgnoredMembers, memberLevelIgnoredMembers)
             .filter(memberSettings ->
-                ClassUtil.getInheritanceTree(valueTypeClass)
+                ClassUtil.getInheritanceTree(membersHost)
                     .stream()
                     .anyMatch(superclass -> superclass.equals(memberSettings.getSource()))
             )
             .collect(Collectors.toList());
-
-        // Create filters to sort out ignored fields (apart from those defined for the container class)
-        // and to banish non-widget fields
-        // Return the filtered field list
-        Predicate<Source> nonIgnoredMembers = source -> allIgnoredFields.stream().noneMatch(ignored -> ignored.matches(source));
-        return ClassUtil.getSources(valueTypeClass, nonIgnoredMembers);
     }
 
     /* ----------------------
@@ -128,7 +181,7 @@ public abstract class ContainerHandler {
      * @param members Collection of widget-holding class members that relate to the current container
      * @param target  {@code Target} to place widgets in
      */
-    protected void populatePlainContainer(List<Source> members, Target target) {
+    protected void populateSingleSectionContainer(List<Source> members, Target target) {
         PlacementHelper.builder()
             .container(target)
             .members(members)
@@ -137,23 +190,37 @@ public abstract class ContainerHandler {
     }
 
     /**
-     * Used to fill in multi-section containers nested within a Granite UI dialog. This method extracts container sections,
-     * such as {@code Tab}s or {@code AccordionPanel}s, from the current {@code Source} and fills in the {@code Target}
-     * with them
-     * @param member          Class member holding a multi-section container
-     * @param target          {@code Target} to place widgets in
-     * @param annotationClass Class of nested container, such as {@code Tabs} or {@code Accordion}
+     * Used to fill in multi-section containers nested within a Granite UI dialog. This method extracts container
+     * sections, such as {@code Tab}s or {@code AccordionPanel}s, from the current {@code Source} and fills the {@code
+     * Target}
+     * @param container Class member holding a multi-section container
+     * @param target    {@code Target} to place widgets in
      */
-    protected void populateMultiSectionContainer(Source member, Target target, Class<? extends Annotation> annotationClass) {
+    protected void populateMultiSectionContainer(Source container, Target target) {
         target.createTarget(DialogConstants.NN_ITEMS);
 
-        List<Section> containerSections = getSections(member, annotationClass);
-        List<Source> placeableMembers = getMembersForContainer(member, false);
-
-        if (containerSections.isEmpty() && !placeableMembers.isEmpty()) {
+        List<Section> containerSections = container.adaptTo(ContainerWidgetSetting.class).getSections();
+        if (containerSections.isEmpty()) {
             InvalidContainerException ex = new InvalidContainerException();
             PluginRuntime.context().getExceptionHandler().handle(ex);
         }
+
+        // Unlike in LayoutHandler, we are only interested in members that have the section name matching one of the
+        // existing sections by either simple or full ("hierarchical") title
+        List<String> sectionNames = containerSections.stream().map(Section::getTitle).collect(Collectors.toList());
+        String upperTitleHierarchy = getTitleHierarchy(target);
+        List<String> hierarchicalSectionNames = sectionNames
+            .stream()
+            .map(name -> upperTitleHierarchy + CoreConstants.SEPARATOR_SLASH + name)
+            .collect(Collectors.toList());
+
+        List<Source> placeableMembers = getMembersForContainer(
+            container,
+            member -> member
+                .tryAdaptTo(Place.class)
+                .map(Place::value)
+                .map(placeValue -> sectionNames.stream().anyMatch(placeValue::equals)  || hierarchicalSectionNames.stream().anyMatch(placeValue::equals))
+                .orElse(false));
 
         PlacementHelper placementHelper = PlacementHelper.builder()
             .container(target.getTarget(DialogConstants.NN_ITEMS))
@@ -163,40 +230,37 @@ public abstract class ContainerHandler {
             .build();
         placementHelper.doPlacement();
         placeableMembers.removeAll(placementHelper.getProcessedMembers());
-
-        if (!placeableMembers.isEmpty()) {
-            placeableMembers
-                .stream()
-                .map(m -> new InvalidContainerException(m.adaptTo(PlaceSetting.class).getValue()))
-                .forEach(ex -> PluginRuntime.context().getExceptionHandler().handle(ex));
-        }
     }
 
     /* ---------------
        Utility methods
        --------------- */
 
-    /**
-     * Retrieves container sections declared by the current source
-     * @param source Current {@link Source} instance
-     * @param annotationClass Container annotation to look for, such as a {@link Tabs} or {@link Accordion}
-     * @return Collection of {@code SectionFacade} objects
-     */
-    private static List<Section> getSections(Source source, Class<? extends Annotation> annotationClass) {
-        List<Section> result = new ArrayList<>();
-        if (source.adaptTo(annotationClass) == null) {
-            return result;
+    private static boolean isSameClassMember(Source first, Source second) {
+        return (first instanceof MemberSource)
+            && (second instanceof MemberSource)
+            && ((MemberSource) first).getDeclaringClass().equals(((MemberSource) second).getDeclaringClass())
+            && StringUtils.equals(first.getName(), second.getName());
+    }
+
+    private static String getTitleHierarchy(Target value) {
+        List<String> result = new ArrayList<>();
+        Target closestContainer = value.findParent(CONTAINER_PREDICATE);
+        while (closestContainer != null) {
+            Target closestWidgetNode = closestContainer.findParent(WIDGET_NODE_PREDICATE);
+            boolean isContainerWidget =
+                closestWidgetNode != null
+                && StringUtils.equalsAny(
+                    closestWidgetNode.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE),
+                    ResourceTypes.ACCORDION,
+                    ResourceTypes.TABS,
+                    ResourceTypes.FIXED_COLUMNS);
+            if (!isContainerWidget) {
+                break;
+            }
+            result.add(0, closestContainer.getAttribute(DialogConstants.PN_JCR_TITLE, StringUtils.EMPTY));
+            closestContainer = closestWidgetNode.findParent(CONTAINER_PREDICATE);
         }
-        if (annotationClass.equals(Tabs.class)) {
-            Arrays.stream(source.adaptTo(Tabs.class).value())
-                .forEach(tab -> result.add(new TabFacade(tab, false)));
-        } else if (annotationClass.equals(Accordion.class)) {
-            Arrays.stream(source.adaptTo(Accordion.class).value())
-                .forEach(accordionPanel -> result.add(new AccordionPanelFacade(accordionPanel, false)));
-        } else if (annotationClass.equals(FixedColumns.class)) {
-            Arrays.stream(source.adaptTo(FixedColumns.class).value())
-                .forEach(column -> result.add(new ColumnFacade(column)));
-        }
-        return result;
+        return String.join(CoreConstants.SEPARATOR_SLASH, result);
     }
 }

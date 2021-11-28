@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.plugin.handlers.widgets;
 
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -46,7 +47,7 @@ public class FieldSetHandler extends ContainerHandler implements Handler {
         FieldSet fieldSet = source.adaptTo(FieldSet.class);
         Class<?> fieldSetType = source.adaptTo(MemberSource.class).getValueType();
 
-        List<Source> fieldSetEntries = getMembersForContainer(source, true);
+        List<Source> fieldSetEntries = getMembersForContainer(source);
 
         if (fieldSetEntries.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(
@@ -61,6 +62,14 @@ public class FieldSetHandler extends ContainerHandler implements Handler {
         if (StringUtils.isNotBlank(fieldSet.namePostfix())) {
             target.namePostfix(fieldSet.namePostfix());
         }
-        populatePlainContainer(fieldSetEntries, target);
+        populateSingleSectionContainer(fieldSetEntries, target);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Function<MemberSource, List<Class<?>>> getRenderedClassesProvider() {
+        return ANNOTATED_MEMBER_TYPE;
     }
 }

@@ -14,6 +14,8 @@
 package com.exadel.aem.toolkit.plugin.handlers.widgets;
 
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.containers.ContainerHandler;
@@ -51,6 +54,14 @@ public class TabsHandler extends ContainerHandler implements Handler {
         }
         target.attributes(source.adaptTo(Tabs.class), WIDGET_PROPERTIES_FILTER); // We do not use the auto-mapping facility
         // because @Tabs can be used class-level and should not mess with "true" auto-mapped class annotations
-        populateMultiSectionContainer(source, target, Tabs.class);
+        populateMultiSectionContainer(source, target);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Function<MemberSource, List<Class<?>>> getRenderedClassesProvider() {
+        return ANNOTATED_MEMBER_TYPE_AND_REPORTING_CLASS;
     }
 }
