@@ -18,7 +18,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 
@@ -31,15 +31,15 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.CONTAINER)
-@AnnotationRendering(properties = "none")
 public @interface Column {
 
     /**
      * Defines the title of the column.
-     * <p>Note that the property is not rendered into a dialog markup. It is used only for referencing the column
+     * <p>Note that the property will not be visible in the UI. It is used only for referencing the column
      * in e.g. {@link Place} annotation</p>
      * @return String value (required)
      */
+    @PropertyRendering(name = "jcr:title")
     String title();
 
 }
