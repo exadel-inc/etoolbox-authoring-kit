@@ -18,12 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
 import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
@@ -42,7 +38,7 @@ public class PlacementHelper {
 
     private Target container;
     private List<Section> sections;
-    private String[] ignoredSections;
+    private List<String> ignoredSections;
     private List<Source> members;
     private final List<Source> processedMembers;
 
@@ -86,7 +82,7 @@ public class PlacementHelper {
             Section currentSection = sectionIterator.next();
             List<Source> existingSectionMembers = new ArrayList<>(currentSection.getSources());
             List<Source> assignableSectionMembers = members.stream()
-                .filter(member -> isMemberForSection(member, currentSection.getTitle(), isFirstSection))
+                .filter(member -> currentSection.canContain(member, isFirstSection))
                 .collect(Collectors.toList());
             boolean needToSortAgain = !existingSectionMembers.isEmpty() && !assignableSectionMembers.isEmpty();
             existingSectionMembers.addAll(assignableSectionMembers);
@@ -94,7 +90,7 @@ public class PlacementHelper {
                 existingSectionMembers = OrderingUtil.sortMembers(existingSectionMembers);
             }
             processedMembers.addAll(assignableSectionMembers);
-            if (!ArrayUtils.contains(ignoredSections, currentSection.getTitle())) {
+            if (!ignoredSections.contains(currentSection.getTitle())) {
                 Target itemsContainer = currentSection.createItemsContainer(container);
                 appendToContainer(itemsContainer, existingSectionMembers);
             }
@@ -117,21 +113,6 @@ public class PlacementHelper {
         }
     }
 
-    /**
-     * Matches a class member against a particular section, such as a {@code Tab} or an {@code AccordionPanel}
-     * @param member           Class member (a field, or a method) to analyze
-     * @param sectionTitle     String representing the title of a container section
-     * @param isDefaultSection True if the current container item accepts "orphaned" fields (those for which no container
-     *                         specified); otherwise false
-     * @return True or false
-     */
-    private static boolean isMemberForSection(Source member, String sectionTitle, boolean isDefaultSection) {
-        if (StringUtils.isBlank(member.adaptTo(PlaceSetting.class).getValue())) {
-            return isDefaultSection;
-        }
-        return sectionTitle.equalsIgnoreCase(member.adaptTo(PlaceSetting.class).getValue());
-    }
-
 
     /* ----------------
        Instance builder
@@ -150,8 +131,8 @@ public class PlacementHelper {
      */
     public static class Builder {
         private Target container;
-        private List<Section> sectionHelpers;
-        private String[] ignoredSections;
+        private List<Section> sections;
+        private List<String> ignoredSections;
         private List<Source> members;
 
         private Builder() {
@@ -174,7 +155,7 @@ public class PlacementHelper {
          * @return This instance
          */
         public Builder sections(List<Section> value) {
-            this.sectionHelpers = value;
+            this.sections = value;
             return this;
         }
 
@@ -183,7 +164,7 @@ public class PlacementHelper {
          * @param value Array of ignored tabs or accordion panels (identified by their titles) for the current class
          * @return This instance
          */
-        public Builder ignoredSections(String[] value) {
+        public Builder ignoredSections(List<String> value) {
             this.ignoredSections = value;
             return this;
         }
@@ -205,7 +186,7 @@ public class PlacementHelper {
         public PlacementHelper build() {
             PlacementHelper result = new PlacementHelper();
             result.container = container;
-            result.sections = sectionHelpers;
+            result.sections = sections;
             result.ignoredSections = ignoredSections;
             result.members = members;
             return result;

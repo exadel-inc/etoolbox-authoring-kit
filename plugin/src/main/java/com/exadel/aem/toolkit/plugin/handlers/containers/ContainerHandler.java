@@ -22,20 +22,17 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
-import com.exadel.aem.toolkit.plugin.adapters.ContainerWidgetSetting;
+import com.exadel.aem.toolkit.plugin.adapters.WidgetContainerSetup;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -52,9 +49,6 @@ public abstract class ContainerHandler {
         memberSource -> Collections.singletonList(memberSource.getValueType());
     protected static final Function<MemberSource, List<Class<?>>> ANNOTATED_MEMBER_TYPE_AND_REPORTING_CLASS =
         memberSource -> Arrays.asList(memberSource.getValueType(), memberSource.getReportingClass());
-
-    private static final Predicate<Target> CONTAINER_PREDICATE = node -> ResourceTypes.CONTAINER.equals(node.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE));
-    private static final Predicate<Target> WIDGET_NODE_PREDICATE = node -> !node.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, StringUtils.EMPTY).isEmpty();
 
     private static final String RECURSION_MESSAGE_TEMPLATE = "Recursive rendering prohibited: a member of type \"%s\" " +
         "was set to be rendered within a container created with member of type \"%s\"";
@@ -127,6 +121,15 @@ public abstract class ContainerHandler {
         return OrderingUtil.sortMembers(result);
     }
 
+    /**
+     * When overridden in a derived class, returns a {@code Function} used to extract one or more {@code Class} objects
+     * from the given {@code Source}. This is required to compose a collection of class members eligible for the current
+     * container.
+     * <p>Normally we expect a single class - the return type of the annotated member, or else two classes - the
+     * class represented by the return type, and the class in which the annotated member is declared</p>
+     * @return {@code Function} reference that accepts one argument of type {@code MemberSource} and returns a non-null
+     * list of {@code Class} objects
+     */
     protected abstract Function<MemberSource, List<Class<?>>> getRenderedClassesProvider();
 
     @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
@@ -199,7 +202,11 @@ public abstract class ContainerHandler {
     protected void populateMultiSectionContainer(Source container, Target target) {
         target.createTarget(DialogConstants.NN_ITEMS);
 
-        List<Section> containerSections = container.adaptTo(ContainerWidgetSetting.class).getSections();
+        List<Section> containerSections = container
+            .adaptTo(WidgetContainerSetup.class)
+            .useHierarchyFrom(target)
+            .getSections();
+
         if (containerSections.isEmpty()) {
             InvalidContainerException ex = new InvalidContainerException();
             PluginRuntime.context().getExceptionHandler().handle(ex);
@@ -207,25 +214,18 @@ public abstract class ContainerHandler {
 
         // Unlike in LayoutHandler, we are only interested in members that have the section name matching one of the
         // existing sections by either simple or full ("hierarchical") title
-        List<String> sectionNames = containerSections.stream().map(Section::getTitle).collect(Collectors.toList());
-        String upperTitleHierarchy = getTitleHierarchy(target);
-        List<String> hierarchicalSectionNames = sectionNames
-            .stream()
-            .map(name -> upperTitleHierarchy + CoreConstants.SEPARATOR_SLASH + name)
-            .collect(Collectors.toList());
-
         List<Source> placeableMembers = getMembersForContainer(
             container,
             member -> member
                 .tryAdaptTo(Place.class)
                 .map(Place::value)
-                .map(placeValue -> sectionNames.stream().anyMatch(placeValue::equals)  || hierarchicalSectionNames.stream().anyMatch(placeValue::equals))
+                .map(placeValue -> containerSections.stream().anyMatch(section -> section.canContain(member)))
                 .orElse(false));
 
         PlacementHelper placementHelper = PlacementHelper.builder()
             .container(target.getTarget(DialogConstants.NN_ITEMS))
             .sections(containerSections)
-            .ignoredSections(ArrayUtils.EMPTY_STRING_ARRAY)
+            .ignoredSections(Collections.emptyList())
             .members(placeableMembers)
             .build();
         placementHelper.doPlacement();
@@ -236,31 +236,16 @@ public abstract class ContainerHandler {
        Utility methods
        --------------- */
 
+    /**
+     * Gets whether the two {@code Source} objects represent the same class member
+     * @param first  {@code Source} instance, non-null
+     * @param second {@code Source} instance, non-null
+     * @return True or false
+     */
     private static boolean isSameClassMember(Source first, Source second) {
         return (first instanceof MemberSource)
             && (second instanceof MemberSource)
             && ((MemberSource) first).getDeclaringClass().equals(((MemberSource) second).getDeclaringClass())
             && StringUtils.equals(first.getName(), second.getName());
-    }
-
-    private static String getTitleHierarchy(Target value) {
-        List<String> result = new ArrayList<>();
-        Target closestContainer = value.findParent(CONTAINER_PREDICATE);
-        while (closestContainer != null) {
-            Target closestWidgetNode = closestContainer.findParent(WIDGET_NODE_PREDICATE);
-            boolean isContainerWidget =
-                closestWidgetNode != null
-                && StringUtils.equalsAny(
-                    closestWidgetNode.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE),
-                    ResourceTypes.ACCORDION,
-                    ResourceTypes.TABS,
-                    ResourceTypes.FIXED_COLUMNS);
-            if (!isContainerWidget) {
-                break;
-            }
-            result.add(0, closestContainer.getAttribute(DialogConstants.PN_JCR_TITLE, StringUtils.EMPTY));
-            closestContainer = closestWidgetNode.findParent(CONTAINER_PREDICATE);
-        }
-        return String.join(CoreConstants.SEPARATOR_SLASH, result);
     }
 }
