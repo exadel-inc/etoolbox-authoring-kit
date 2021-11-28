@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 /**
  * Presents a {@link Section} variant for handling the {@code Tab} layout
  */
-class TabFacade extends Section {
+public class TabFacade extends Section {
     private static final Predicate<Method> MAIN_NODE_MEMBERS = method -> StringUtils.equalsAny(
         method.getName(),
         DialogConstants.PN_TITLE,
@@ -41,7 +41,7 @@ class TabFacade extends Section {
      * @param tab      {@code Tab} object this helper wraps
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */
-    TabFacade(Tab tab, boolean isLayout) {
+    public TabFacade(Tab tab, boolean isLayout) {
         super(isLayout);
         this.tab = tab;
     }

@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 /**
  * Presents a {@link Section} variant for handling the {@code Accordion} layout
  */
-class AccordionPanelFacade extends Section {
+public class AccordionPanelFacade extends Section {
     private final AccordionPanel panel;
 
     /**
@@ -33,7 +33,7 @@ class AccordionPanelFacade extends Section {
      * @param panel    {@code AccordionPanel} object
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */
-    AccordionPanelFacade(AccordionPanel panel, boolean isLayout) {
+    public AccordionPanelFacade(AccordionPanel panel, boolean isLayout) {
         super(isLayout);
         this.panel = panel;
     }

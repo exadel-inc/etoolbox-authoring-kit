@@ -24,14 +24,14 @@ import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 /**
  * Presents a {@link Section} variant for handling the {@code Accordion} layout
  */
-class ColumnFacade extends Section {
+public class ColumnFacade extends Section {
     private final Column column;
 
     /**
      * Creates a new {@link Section} wrapped around the specified {@link Column} object
      * @param column {@code Column} object
      */
-    ColumnFacade(Column column) {
+    public ColumnFacade(Column column) {
         super(false);
         this.column = column;
     }
