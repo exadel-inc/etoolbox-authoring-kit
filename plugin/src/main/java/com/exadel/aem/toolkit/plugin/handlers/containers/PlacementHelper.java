@@ -88,10 +88,10 @@ public class PlacementHelper {
             List<Source> assignableSectionMembers = members.stream()
                 .filter(member -> isMemberForSection(member, currentSection.getTitle(), isFirstSection))
                 .collect(Collectors.toList());
-            boolean needResort = !existingSectionMembers.isEmpty() && !assignableSectionMembers.isEmpty();
+            boolean needToSortAgain = !existingSectionMembers.isEmpty() && !assignableSectionMembers.isEmpty();
             existingSectionMembers.addAll(assignableSectionMembers);
-            if (needResort) {
-                existingSectionMembers.sort(OrderingUtil::compareByRank);
+            if (needToSortAgain) {
+                existingSectionMembers = OrderingUtil.sortMembers(existingSectionMembers);
             }
             processedMembers.addAll(assignableSectionMembers);
             if (!ArrayUtils.contains(ignoredSections, currentSection.getTitle())) {

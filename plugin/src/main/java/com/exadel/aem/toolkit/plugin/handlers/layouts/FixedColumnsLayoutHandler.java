@@ -19,12 +19,13 @@ import java.util.function.BiConsumer;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
 import com.exadel.aem.toolkit.plugin.handlers.containers.PlacementHelper;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * Presents the layout handler implementation for a fixed-columns Granite UI dialog
+ * Presents the implementation of layout handler for a fixed-columns Granite UI dialog
  */
 class FixedColumnsLayoutHandler implements BiConsumer<Source, Target> {
 
@@ -44,7 +45,9 @@ class FixedColumnsLayoutHandler implements BiConsumer<Source, Target> {
                 .getOrCreateTarget(DialogConstants.NN_COLUMN)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 
-        List<Source> members = ClassUtil.getSources(source.adaptTo(Class.class));
+        List<Source> members = ClassUtil.getSources(
+            source.adaptTo(Class.class),
+            member -> member.adaptTo(PlaceSetting.class).getValue().isEmpty());
         PlacementHelper.builder()
             .container(contentItemsColumn)
             .members(members)

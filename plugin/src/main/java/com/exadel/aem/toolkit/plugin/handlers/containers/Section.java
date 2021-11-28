@@ -80,7 +80,7 @@ public abstract class Section {
     abstract Target createItemsContainer(Target container);
 
     /**
-     * Creates a new {@link Section} instance for the {@code Annotation} given considering its type
+     * Creates a new {@link Section} instance for the given {@code Annotation} taking into account its type
      * @param annotation The {@code Annotation} object to wrap
      * @return {@code SectionHelper} instance, or null in case of an invalid {@code annotation} argument
      */
