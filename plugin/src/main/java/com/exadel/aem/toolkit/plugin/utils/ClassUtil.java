@@ -124,17 +124,17 @@ public class ClassUtil {
     }
 
     /**
-     * Retrieves a list of ancestors of a specific {@code Class} starting from the "top" of the inheritance
-     * tree. {@code Object} class is not added to the hierarchy
-     * @param targetClass   The class to analyze
-     * @param includeTarget Whether to include the {@code targetClass} itself to the hierarchy
+     * Retrieves a list of ancestors of a specific {@code Class} starting from the "top" of the inheritance tree. {@code
+     * Object} class is not added to the hierarchy
+     * @param targetClass    The class to analyze
+     * @param includeCurrent Whether to include the {@code targetClass} itself to the hierarchy
      * @return List of {@code Class} objects
      */
-    public static List<Class<?>> getInheritanceTree(Class<?> targetClass, boolean includeTarget) {
+    public static List<Class<?>> getInheritanceTree(Class<?> targetClass, boolean includeCurrent) {
         List<Class<?>> result = new LinkedList<>();
         Class<?> current = targetClass;
         while (current != null && !current.equals(Object.class)) {
-            if (!current.equals(targetClass) || includeTarget) {
+            if (!current.equals(targetClass) || includeCurrent) {
                 result.add(current);
                 result.addAll(Arrays.asList(current.getInterfaces()));
             }
