@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
@@ -35,6 +36,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.plugin.adapters.ContainerWidgetSetting;
 import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.handlers.containers.PlacementHelper;
@@ -48,6 +51,10 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
  * container, tab container, etc.
  */
 abstract class LayoutHandler implements BiConsumer<Source, Target> {
+
+    /* ---------------
+       Layout routines
+       --------------- */
 
     /**
      * Processes container-backing Java class and appends the results to the root {@link Target} object
@@ -122,16 +129,32 @@ abstract class LayoutHandler implements BiConsumer<Source, Target> {
         placementHelper.doPlacement();
         allMembers.removeAll(placementHelper.getProcessedMembers());
 
-        // Afterwards there still can be "orphaned" sources in the "all sources" collection. They are probably members
-        // for which a non-existent tab or accordion panel was specified. Handle an InvalidContainerItemException
-        // for each of them
-        if (!allMembers.isEmpty()) {
-            allMembers
-                .stream()
-                .map(member -> new InvalidContainerException(member.adaptTo(PlaceSetting.class).getValue()))
-                .forEach(ex -> PluginRuntime.context().getExceptionHandler().handle(ex));
+        // Afterwards there still can be "orphaned" sources in the "all sources" collection. They are either designed
+        // to be rendered within a container widget, such as Accordion or Tabs, or are members for which a non-existent
+        // container was specified.
+        // We filter out members belonging to widget containers, and handle an InvalidContainerItemException for the rest
+        if (allMembers.isEmpty()) {
+            return;
+        }
+        List<String> widgetSectionsTitles = getWidgetSectionTitles(componentClass);
+        for (Source unplaced : allMembers) {
+            String placeValue = unplaced.adaptTo(PlaceSetting.class).getValue();
+            String lastChunk = placeValue.contains(CoreConstants.SEPARATOR_SLASH)
+                ? StringUtils.substringAfterLast(placeValue, CoreConstants.SEPARATOR_SLASH)
+                : placeValue;
+            boolean isValidPlaceValue = widgetSectionsTitles.contains(lastChunk);
+            if (isValidPlaceValue) {
+                continue;
+            }
+            InvalidContainerException ex = new InvalidContainerException(placeValue);
+            PluginRuntime.context().getExceptionHandler().handle(ex);
         }
     }
+
+
+    /* ---------------
+       Dialog sections
+       --------------- */
 
     /**
      * Retrieves a collection of container sections derived from the specified hierarchical collection of classes
@@ -142,7 +165,7 @@ abstract class LayoutHandler implements BiConsumer<Source, Target> {
      *                          process
      * @return Ordered list of container sections
      */
-    private List<Section> getSections(
+    private static List<Section> getSections(
         Class<?> componentClass,
         String scope,
         List<Class<? extends Annotation>> annotationClasses) {
@@ -175,15 +198,15 @@ abstract class LayoutHandler implements BiConsumer<Source, Target> {
      *                          process
      * @return Ordered list of container sections
      */
-    private List<Section> getSections(
+    private static List<Section> getSections(
         List<Class<?>> hierarchy,
         String scope,
         List<Class<? extends Annotation>> annotationClasses) {
 
         List<Section> result = new ArrayList<>();
         for (Class<?> classEntry : hierarchy) {
-            appendSectionsFromNestedClassLevel(result, classEntry, annotationClasses);
-            appendSectionsFromClassLevel(result, classEntry, scope);
+            appendSectionsFromNestedClasses(result, classEntry, annotationClasses);
+            appendSectionsFromCurrentClass(result, classEntry, scope);
         }
         return result;
     }
@@ -196,7 +219,7 @@ abstract class LayoutHandler implements BiConsumer<Source, Target> {
      * @param annotationClasses One or more {@code Class<?>} objects representing types of container sections to
      *                          process
      */
-    private void appendSectionsFromNestedClassLevel(
+    private static void appendSectionsFromNestedClasses(
         List<Section> accumulator,
         Class<?> componentClass,
         List<Class<? extends Annotation>> annotationClasses) {
@@ -231,7 +254,7 @@ abstract class LayoutHandler implements BiConsumer<Source, Target> {
      */
     @SuppressWarnings("deprecation") // Processing of container.Tab class and Dialog#tabs() method is retained for
     // compatibility and will be removed in a version after 2.0.2
-    private void appendSectionsFromClassLevel(List<Section> accumulator, Class<?> componentClass, String scope) {
+    private static void appendSectionsFromCurrentClass(List<Section> accumulator, Class<?> componentClass, String scope) {
         com.exadel.aem.toolkit.api.annotations.container.Tab[] legacyTabs = null;
         Tab[] tabs = null;
         AccordionPanel[] panels = null;
@@ -318,5 +341,18 @@ abstract class LayoutHandler implements BiConsumer<Source, Target> {
             result = ArrayUtils.addAll(result, componentClass.getAnnotation(Ignore.class).sections());
         }
         return result;
+    }
+
+    /* --------------------------------
+       Container-like widgets' sections
+       -------------------------------- */
+
+    private static List<String> getWidgetSectionTitles(Class<?> componentClass) {
+        List<Source> containerSources = ClassUtil.getSources(componentClass, source -> source.adaptTo(ContainerWidgetSetting.class).isPresent());
+        return containerSources
+            .stream()
+            .flatMap(source -> source.adaptTo(ContainerWidgetSetting.class).getSections().stream())
+            .map(Section::getTitle)
+            .collect(Collectors.toList());
     }
 }
