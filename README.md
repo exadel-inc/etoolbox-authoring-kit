@@ -35,7 +35,7 @@ It is an open and growing project. The authors sincerely welcome creative input 
 <dependency>
    <groupId>com.exadel.etoolbox</groupId>
    <artifactId>etoolbox-authoring-kit-core</artifactId>
-   <version>2.0.3</version> <!-- prefer latest stable version whenever possible -->
+   <version>2.0.7</version> <!-- prefer latest stable version whenever possible -->
     <scope>provided</scope> <!-- do not use compile or runtime scope!-->
 </dependency>
 ```
@@ -45,7 +45,7 @@ It is an open and growing project. The authors sincerely welcome creative input 
 <plugin>
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit-plugin</artifactId>
-    <version>2.0.3</version>
+    <version>2.0.7</version>
     <executions>
         <execution>
             <goals>
@@ -77,7 +77,7 @@ You need to do two steps.
 <dependency>
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit-all</artifactId>
-    <version>2.0.3</version>
+    <version>2.0.7</version>
     <type>content-package</type>
 </dependency>
 ```
