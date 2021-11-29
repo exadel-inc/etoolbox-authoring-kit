@@ -14,14 +14,13 @@
 package com.exadel.aem.toolkit.core.lists.utils;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
@@ -41,6 +40,13 @@ import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
  * Contains methods for manipulation with List Resource
  */
 class ListResourceUtils {
+
+    static final Function<SimpleListItem, Map<String, Object>> SIMPLE_LIST_ITEM_TO_PROPERTIES = simpleListItem -> {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(JcrConstants.JCR_TITLE, simpleListItem.getTitle());
+        properties.put(CoreConstants.PN_VALUE, simpleListItem.getValue());
+        return properties;
+    };
 
     private static final Map<String, Object> LIST_PROPERTIES
         = Collections.singletonMap(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, "wcm/foundation/components/responsivegrid");
@@ -80,17 +86,6 @@ class ListResourceUtils {
     }
 
     /**
-     * Converts collection of {@link SimpleListItem} to list of {@link ValueMapResource}
-     * @param values collection of {@link SimpleListItem} that will be converted to {@link ValueMapResource}
-     * @return list of {@link ValueMapResource}
-     */
-    static List<Resource> mapToValueMapResources(Collection<SimpleListItem> values) {
-        return CollectionUtils.emptyIfNull(values).stream()
-            .map(entry -> ListResourceUtils.createValueMapResource(entry.getTitle(), entry.getValue()))
-            .collect(Collectors.toList());
-    }
-
-    /**
      * Converts key-value map to list of {@link ValueMapResource}
      * @param values key-value map that will be converted to {@link ValueMapResource}
      * @return list of {@link ValueMapResource}
@@ -112,6 +107,15 @@ class ListResourceUtils {
         Map<String, Object> properties = new HashMap<>();
         properties.put(JcrConstants.JCR_TITLE, title);
         properties.put(CoreConstants.PN_VALUE, value);
+        return createValueMapResource(properties);
+    }
+
+    /**
+     * Creates {@link ValueMapResource} with given properties
+     * @param properties resource properties
+     * @return {@link ValueMapResource}
+     */
+    static Resource createValueMapResource(Map<String, Object> properties) {
         return new ValueMapResource(null, "", JcrConstants.NT_UNSTRUCTURED, new ValueMapDecorator(properties));
     }
 

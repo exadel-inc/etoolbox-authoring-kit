@@ -168,7 +168,7 @@ public class ListHelperTest {
 
     @Test
     public void shouldNotCreateListIfPassedResourceCollectionIsEmpty() throws PersistenceException, WCMException {
-        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.<Resource>emptyList());
+        Page listPage = ListHelper.createResourceList(context.resourceResolver(), "/content/test", Collections.emptyList());
 
         assertNull(listPage);
     }
@@ -181,7 +181,7 @@ public class ListHelperTest {
         Resource resource = context.create().resource("/testpath", properties);
 
         context.create().resource("/content/test");
-        Page list = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singleton(resource));
+        Page list = ListHelper.createResourceList(context.resourceResolver(), "/content/test", Collections.singleton(resource));
 
         Resource listItem = list.getContentResource("list/listItem");
         assertEquals("first", listItem.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
@@ -196,7 +196,7 @@ public class ListHelperTest {
         Resource resource = context.create().resource("/testpath", properties);
         SimpleListItem simpleListItem = resource.adaptTo(SimpleListItem.class);
 
-        Page list = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(simpleListItem));
+        Page list = ListHelper.createSimpleList(context.resourceResolver(), "/content/test", Collections.singletonList(simpleListItem));
 
         Resource listItem = list.getContentResource("list/listItem");
         assertEquals(simpleListItem.getTitle(), listItem.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));

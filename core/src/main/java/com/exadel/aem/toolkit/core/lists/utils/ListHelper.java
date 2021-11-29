@@ -32,8 +32,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ResourceUtil;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
@@ -43,10 +41,16 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Contains methods for manipulations with Exadel Toolbox Lists
  */
 public class ListHelper {
+
+    private static final TypeReference<Map<String, Object>> MAP_TYPE_REFERENCE = new TypeReference<Map<String, Object>>() {
+    };
 
     /**
      * Default (instantiation-restricting) constructor
@@ -108,8 +112,33 @@ public class ListHelper {
      */
     public static Page createList(ResourceResolver resourceResolver, String path, List<SimpleListItem> listItems)
         throws WCMException, PersistenceException {
-        List<Resource> resources = ListResourceUtils.mapToValueMapResources(listItems);
-        return createList(resourceResolver, path, resources);
+        return createList(resourceResolver, path, listItems, ListResourceUtils.SIMPLE_LIST_ITEM_TO_PROPERTIES);
+    }
+
+    /**
+     * Creates a list entries under given {@code path} based on list of models using {@code modelMapper} function to convert model to properties map.
+     * If {@code modelMapper} is not specified - default will be used
+     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
+     * @param path             JCR path of the items list
+     * @param values           List of models
+     * @param modelMapper      function that converts model to properties map.
+     *                         If {@code modelMapper} is not specified - default will be used
+     * @param <T>              model type
+     * @return Created page containing list of entries or ${@code null} if page cannot be created
+     * @throws PersistenceException if a page cannot be created
+     * @throws WCMException         if a page cannot be deleted or list item cannot be created
+     */
+    public static <T> Page createList(ResourceResolver resourceResolver, String path, List<T> values, Function<T, Map<String, Object>> modelMapper)
+        throws PersistenceException, WCMException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        List<Resource> resources = values.stream()
+            .map(value -> convertModelToProperties(value, modelMapper, objectMapper))
+            .filter(Objects::nonNull)
+            .map(ListResourceUtils::createValueMapResource)
+            .collect(Collectors.toList());
+
+        return createResourceList(resourceResolver, path, resources);
     }
 
     /**
@@ -124,7 +153,7 @@ public class ListHelper {
     public static Page createList(ResourceResolver resourceResolver, String path, Map<String, Object> values)
         throws WCMException, PersistenceException {
         List<Resource> listItemsProperties = ListResourceUtils.mapToValueMapResources(values);
-        return createList(resourceResolver, path, listItemsProperties);
+        return createResourceList(resourceResolver, path, listItemsProperties);
     }
 
     /**
@@ -136,7 +165,7 @@ public class ListHelper {
      * @throws WCMException         if a page cannot be created
      * @throws PersistenceException if a page cannot be deleted or list item cannot be created
      */
-    public static Page createList(ResourceResolver resourceResolver, String path, Collection<Resource> resources)
+    public static Page createResourceList(ResourceResolver resourceResolver, String path, Collection<Resource> resources)
         throws WCMException, PersistenceException {
         if (resourceResolver == null || StringUtils.isBlank(path) || CollectionUtils.isEmpty(resources)) {
             return null;
@@ -300,5 +329,18 @@ public class ListHelper {
             return itemType::cast;
         }
         return resource -> resource.adaptTo(itemType);
+    }
+
+    /**
+     * Converts model object into properties map using {@code modelMapper} function
+     * or Jackson {@link ObjectMapper} if {@code modelMapper} is {@code null}
+     * @param model        model instance
+     * @param modelMapper  function that maps model to properties map
+     * @param objectMapper default Jackson {@link ObjectMapper}
+     * @param <T>          model class type
+     * @return mapped properties map
+     */
+    private static <T> Map<String, Object> convertModelToProperties(T model, Function<T, Map<String, Object>> modelMapper, ObjectMapper objectMapper) {
+        return modelMapper != null ? modelMapper.apply(model) : objectMapper.convertValue(model, MAP_TYPE_REFERENCE);
     }
 }

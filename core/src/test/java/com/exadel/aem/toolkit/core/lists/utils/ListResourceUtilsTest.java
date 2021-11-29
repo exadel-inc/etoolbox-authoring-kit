@@ -71,25 +71,6 @@ public class ListResourceUtilsTest {
     }
 
     @Test
-    public void shouldReturnEmptyListIfSimpleListItemCollectionIsEmpty() {
-        List<Resource> resources = ListResourceUtils.mapToValueMapResources(Collections.emptyList());
-
-        assertEquals(Collections.emptyList(), resources);
-    }
-
-    @Test
-    public void shouldTransformSimpleListItemCollectionToResource() {
-        SimpleListItemImpl simpleListItem = new SimpleListItemImpl("first", "firstValue");
-
-        List<Resource> resources = ListResourceUtils.mapToValueMapResources(Collections.singleton(simpleListItem));
-
-        Resource resource = resources.get(0);
-        assertNotNull(resource);
-        assertEquals("first", resource.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
-        assertEquals("firstValue", resource.getValueMap().get(CoreConstants.PN_VALUE, StringUtils.EMPTY));
-    }
-
-    @Test
     public void shouldTransformKeyValuePairMapToResource() {
         Map<String, Object> properties = Collections.singletonMap("first", "firstValue");
 
