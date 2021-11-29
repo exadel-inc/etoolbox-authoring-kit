@@ -39,7 +39,7 @@ public interface ModifiableMemberSource extends MemberSource {
 
     /**
      * Assigns the {@code Class} that the underlying Java field or method will be considered "reported by". This is
-     * basically used for placing ToolKit widgets to proper containers
+     * basically used for placing ToolKit widgets in proper containers
      * @param value {@code Class} reference
      */
     void setReportingClass(Class<?> value);

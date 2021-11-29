@@ -172,8 +172,8 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
 
 
     /**
-     * Called by {@link CqDialogHandler#accept(Source, Target)} to add to the dialog's markup nodes for the component
-     * responsible for adding {@code forceIgnoreFreshness} value to the current Sling HTTP request
+     * Called by {@link CqDialogHandler#accept(Source, Target)} to add to the dialog's markup the component
+     * responsible for inserting {@code forceIgnoreFreshness} value into the current Sling HTTP request
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */

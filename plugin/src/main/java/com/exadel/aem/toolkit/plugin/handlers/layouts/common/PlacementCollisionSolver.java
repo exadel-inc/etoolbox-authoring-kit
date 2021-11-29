@@ -39,9 +39,9 @@ import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
- * Contains helper methods for the {@link PlacementHelper} that help to resolve collisions either between same-named Java
- * class members of a parent and a child class or between a field and a method sharing the same name.
- * These methods are aimed at avoiding ambiguities in naming and/or reporting to the user of potential rendering problems
+ * Contains helper methods for the {@link PlacementHelper} that resolve collisions either between same-named Java class
+ * members of a parent and a child class or between a field and a method sharing the same name. These methods are aimed
+ * at avoiding ambiguities in naming and/or reporting to the user of potential rendering problems
  */
 class PlacementCollisionSolver {
 
@@ -61,12 +61,11 @@ class PlacementCollisionSolver {
        Collisions management
        ---------------------*/
     /**
-     * Tests the provided collection of members for possible collisions (Java class members that produce the same tag name),
-     * and throws an exception if: <br>
-     *     - a member from a superclass is positioned after the same-named member from a subclass, therefore, will "shadow"
-     *     it and produce unexpected UI display; <br>
-     *         - a member from a class has a resource type other than of a same-named member from a superclass or interface,
-     *     therefore, is at risk of producing a "mixed" markup
+     * Tests the provided collection of members for possible collisions (Java class members that produce the same tag
+     * name), and throws an exception if: <br> - a member from a superclass is positioned after the same-named member
+     * from a subclass, therefore, will "shadow" it and produce unexpected UI display; <br> - a member from a class has
+     * a resource type other than of a same-named member from a superclass or interface, therefore, is at risk of
+     * producing a "mixed" markup
      * @param sources {@code List} of sources available for rendering
      */
     public static void checkForCollisions(List<Source> sources) {
@@ -168,11 +167,11 @@ class PlacementCollisionSolver {
 
     /**
      * Checks for cases when sources intended to be placed in the same container differ in {@code type} (e.g., one is a
-     * Java method, another is field) but share the same name. If same-named sources have different resource types,
-     * the tag names of field-bound sources are left the same. This is the special case which allows the user to place
-     * a "service" annotation such as {@code Heading} on the class or interface method while placing a "traditional"
-     * annotation such as {@code TextField} at the field
-     * @param sources   List of sources, such as members of a Java class
+     * Java method, another is field) but share the same name. If same-named sources have different resource types, the
+     * tag names of field-bound sources are left the same while the methods' names are changed. <p>This is the special
+     * case which allows the user to place a "service" annotation such as {@code @Heading} on the class or interface
+     * method while placing a "traditional" annotation such as {@code @TextField} on the field</p>
+     * @param sources List of sources, such as members of a Java class
      */
     public static void resolveFieldMethodNameCoincidences(List<Source> sources) {
         List<Source> fields = sources
@@ -235,7 +234,7 @@ class PlacementCollisionSolver {
 
     /**
      * Retrieves the list of {@code Source} objects matching the provided name. Names of fields and methods are coerced,
-     * e,g, both {@code private String text;} and {@code public String getText() {...}} are considered sharing the same
+     * e.g., both {@code private String text;} and {@code public String getText() {...}} are considered sharing the same
      * name
      * @param sources {@code List} of sources available for rendering
      * @param name    String representing the common name of sources to select
@@ -247,7 +246,7 @@ class PlacementCollisionSolver {
 
     /**
      * Retrieves the list of {@code Source} objects matching the provided name. Names of fields and methods are coerced,
-     * e,g, both {@code private String text;} and {@code public String getText() {...}} are considered sharing the same
+     * e.g., both {@code private String text;} and {@code public String getText() {...}} are considered sharing the same
      * name
      * @param sources {@code List} of sources available for rendering
      * @param name    String representing the common name of sources to select

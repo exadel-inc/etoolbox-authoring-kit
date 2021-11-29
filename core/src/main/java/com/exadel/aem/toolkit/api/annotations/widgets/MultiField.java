@@ -68,7 +68,7 @@ public @interface MultiField {
     String typeHint() default "";
 
     /**
-     * If set to true, forces multiple-source mode for multifield despite of actual amount of fields
+     * If set to true, forces multiple-source mode for this MultiField despite the amount of contained fields
      * @return True or false
      */
     @PropertyRendering(
