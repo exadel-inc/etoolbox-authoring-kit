@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component.viewPattern.component1.views;
+package com.exadel.aem.toolkit.test.component.viewpattern.component1.views;
 
 import javax.annotation.Nullable;
 
@@ -40,7 +40,8 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_2;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_3;
 
 @DesignDialog(
-    title = TestConstants.DEFAULT_COMPONENT_TITLE
+    title = TestConstants.DEFAULT_COMPONENT_TITLE,
+    forceIgnoreFreshness = true
 )
 @Tabs(
     value = {

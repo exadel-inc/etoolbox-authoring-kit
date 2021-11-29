@@ -13,7 +13,6 @@
  */
 package com.exadel.aem.toolkit.plugin.utils.ordering;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +30,7 @@ import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
+import com.exadel.aem.toolkit.api.markers._Super;
 import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -172,6 +172,9 @@ public class OrderingUtil {
         if (_Default.class.equals(classMember.source())) {
             return createId(defaultClass, classMember.value());
         }
+        if (_Super.class.equals(classMember.source())) {
+            return createId(defaultClass.getSuperclass(), classMember.value());
+        }
         return createId(classMember.source(), classMember.value());
     }
 
@@ -242,8 +245,8 @@ public class OrderingUtil {
             return 0;
         }
 
-        Class<?> f1Class = f1.adaptTo(Member.class).getDeclaringClass();
-        Class<?> f2Class = f2.adaptTo(Member.class).getDeclaringClass();
+        Class<?> f1Class = f1.adaptTo(MemberSource.class).getDeclaringClass();
+        Class<?> f2Class = f2.adaptTo(MemberSource.class).getDeclaringClass();
         if (f1Class != f2Class) {
             if (ClassUtils.isAssignable(f1Class, f2Class)) {
                 return 1;

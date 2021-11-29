@@ -30,7 +30,10 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@AnnotationRendering(scope = Scopes.CQ_DESIGN_DIALOG)
+@AnnotationRendering(
+    scope = Scopes.CQ_DESIGN_DIALOG,
+    properties ="!forceIgnoreFreshness"
+)
 public @interface DesignDialog {
 
     /**
@@ -56,4 +59,12 @@ public @interface DesignDialog {
      */
     @ValueRestriction(ValueRestrictions.POSITIVE)
     double width() default 560;
+
+    /**
+     * When set to true, forces the entire dialog to ignore freshness of the Granite UI form beside the dialog. This will
+     * allow any component residing within the dialog to display its default value (if specified) regardless of whether
+     * the underlying resource is being created (a "fresh" one) or just being edited
+     * @return True or false
+     */
+    boolean forceIgnoreFreshness() default false;
 }

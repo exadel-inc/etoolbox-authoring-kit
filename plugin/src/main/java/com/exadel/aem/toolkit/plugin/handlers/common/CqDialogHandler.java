@@ -35,6 +35,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.handlers.layouts.ContainerHandlers;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
@@ -46,6 +47,10 @@ import com.exadel.aem.toolkit.plugin.writers.DialogLayout;
  * {@link Source} object that define the {@code cq:dialog} and {@code cq:design_dialog} settings nodes of an AEM component
  */
 public class CqDialogHandler implements BiConsumer<Source, Target> {
+
+    private static final String OPENING_FORCE_IGNORE_FRESHNESS_TAG = "forceIgnoreFreshnessOpen";
+    private static final String CLOSING_FORCE_IGNORE_FRESHNESS_TAG = "forceIgnoreFreshnessClose";
+    private static final String ITEMS_ROOT_PATH = "content/items";
 
     private static final String TITLE_MISSING_EXCEPTION_MESSAGE = "Title property is missing for dialog in class ";
 
@@ -71,6 +76,8 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
 
         DialogLayout dialogLayout = getLayout(source, target.getScope());
         ContainerHandlers.forLayout(dialogLayout).accept(source, target);
+
+        renderIgnoreFreshness(source, target);
     }
 
     /**
@@ -161,5 +168,31 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
             }
         }
         return DialogLayout.FIXED_COLUMNS;
+    }
+
+
+    /**
+     * Called by {@link CqDialogHandler#accept(Source, Target)} to add to the dialog's markup the component
+     * responsible for inserting {@code forceIgnoreFreshness} value into the current Sling HTTP request
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
+     */
+    private static void renderIgnoreFreshness(Source source, Target target) {
+        boolean forceIgnoreFreshness = source.adaptTo(Dialog.class) != null
+            ? source.adaptTo(Dialog.class).forceIgnoreFreshness()
+            : source.adaptTo(DesignDialog.class).forceIgnoreFreshness();
+        if (!forceIgnoreFreshness) {
+            return;
+        }
+        Target itemsRoot = target.getTarget(ITEMS_ROOT_PATH);
+        if (itemsRoot == null || itemsRoot.getChildren().isEmpty()) {
+            return;
+        }
+        Target forceIgnoreFreshnessOpen = Targets.newInstance(OPENING_FORCE_IGNORE_FRESHNESS_TAG)
+            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.Service.IGNORE_FRESHNESS_TOGGLER);
+        Target forceIgnoreFreshnessClose = Targets.newInstance(CLOSING_FORCE_IGNORE_FRESHNESS_TAG)
+            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.Service.IGNORE_FRESHNESS_TOGGLER);
+        itemsRoot.addTarget(forceIgnoreFreshnessOpen, 0);
+        itemsRoot.addTarget(forceIgnoreFreshnessClose, itemsRoot.getChildren().size());
     }
 }

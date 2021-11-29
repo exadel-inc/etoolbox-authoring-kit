@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.exadel.aem.toolkit.core.CoreConstants;
+
 /**
  * Presents an abstraction of target entity for rendering AEM components and their configuration. Technically each
  * {@code Target} instance represents a future Granite UI entity, or a corresponding XML node. The {@code Target} can have
@@ -32,6 +36,18 @@ public interface Target {
      * @return String value
      */
     String getName();
+
+    /**
+     * Retrieves the path of the current {@code Target} instance. The path is the sequence of names of all the ancestor
+     * {@code Target}s of the current one, from the farthest ancestor to the nearest one, starting with and separated by
+     * the {@code /} symbol. The path is therefore in virtually the same format as a path of an XML node.
+     * If the current {@code Target} hasn't got a parent, its path is {@code /<target_name>}
+     * @return String value
+     */
+    default String getPath() {
+        String parentPath = getParent() != null ? getParent().getPath() : StringUtils.EMPTY;
+        return parentPath + CoreConstants.SEPARATOR_SLASH + getName();
+    }
 
     /**
      * Retrieves the name prefix associated with the current instance

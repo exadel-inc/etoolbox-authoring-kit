@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component.viewPattern.component1.views;
+package com.exadel.aem.toolkit.test.component.viewpattern.component1.views;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;

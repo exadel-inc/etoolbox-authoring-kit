@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.meta;
 
 /**
- * Contains JCR paths of standard Granite UI components
+ * Contains JCR paths of AEM / Granite UI components managed by the ToolKit
  * @see ResourceType
  */
 @SuppressWarnings("unused")
@@ -56,6 +56,14 @@ public class ResourceTypes {
     public static final String TEXT = "granite/ui/components/coral/foundation/text";
     public static final String TEXTAREA = "granite/ui/components/coral/foundation/form/textarea";
     public static final String TEXTFIELD = "granite/ui/components/coral/foundation/form/textfield";
+
+    public static class Service {
+
+        public static final String IGNORE_FRESHNESS_TOGGLER = "etoolbox-authoring-kit/components/authoring/ignoreFreshnessToggler";
+
+        private Service() {
+        }
+    }
 
     private ResourceTypes() {
     }

@@ -16,6 +16,13 @@
             <column jcr:primaryType="nt:unstructured"
                 sling:resourceType="granite/ui/components/coral/foundation/container">
                 <items jcr:primaryType="nt:unstructured">
+                    <text2 jcr:primaryType="nt:unstructured"
+                           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                           name="./text2"
+                           fieldLabel="Grandparent"
+                           disabled="{Boolean}false"
+                           renderHidden="{Boolean}false"
+                           required="{Boolean}false"/>
                     <fieldsetChild
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
@@ -71,13 +78,6 @@
                           disabled="{Boolean}false"
                           renderHidden="{Boolean}false"
                           required="{Boolean}true"/>
-                    <text2 jcr:primaryType="nt:unstructured"
-                           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                           name="./text2"
-                           fieldLabel="Parent"
-                           disabled="{Boolean}false"
-                           renderHidden="{Boolean}false"
-                           required="{Boolean}true"/>
                     <text4 jcr:primaryType="nt:unstructured"
                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                            name="./text4"

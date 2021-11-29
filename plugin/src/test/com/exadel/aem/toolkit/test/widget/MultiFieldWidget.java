@@ -52,6 +52,22 @@ public class MultiFieldWidget {
     @MultiField
     List<ExtendedMultiFieldContainer> multiField3;
 
+    @DialogField(
+        label="Multifield 4",
+        description = "Multifield definition with one source in multiple-source mode"
+    )
+    @MultiField(forceComposite = true)
+    List<MultiFieldContainer> multiField4;
+
+    // Should render the same as Multifield 3 because when there are several rendered fields within a multifield item,
+    // the multifield is always "composite", whether we force this property or not
+    @DialogField(
+        label="Multifield 5",
+        description = "Multifield definition with collection-typed source"
+    )
+    @MultiField(forceComposite = true)
+    List<ExtendedMultiFieldContainer> multiField5;
+
     private static class MultiFieldContainer {
         @DialogField
         @TextField
