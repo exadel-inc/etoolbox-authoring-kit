@@ -22,8 +22,6 @@ public class InjectorConstants {
 
     public static final String EXCEPTION_UNSUPPORTED_TYPE = "Injector doesn't support type {}";
 
-    public static final String EXCEPTION_EMPTY_ANNOTATION_VALUE = "Annotation value must not be empty";
-
     /**
      * Default (instantiation-restricting) constructor.
      */

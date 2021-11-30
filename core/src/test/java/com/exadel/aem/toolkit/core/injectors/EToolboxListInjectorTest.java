@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.sling.api.resource.Resource;
@@ -65,7 +66,7 @@ public class EToolboxListInjectorTest {
         List<Resource> actual = testModel.getItemsListResource();
 
         assertNotNull(testModel);
-        assertEquals(5, testModel.getItemsListResource().size());
+        assertEquals(expected.size(), testModel.getItemsListResource().size());
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i).getValueMap(), actual.get(i).getValueMap());
         }
@@ -74,19 +75,15 @@ public class EToolboxListInjectorTest {
     @Test
     public void shouldInjectSimpleListItemIntoCollection() {
         testModel = context.request().adaptTo(TestModelEToolboxList.class);
-        Collection<SimpleListItem> expected = ListHelper.getList(context.resourceResolver(), SIMPLE_LIST_PATH);
-        Collection<SimpleListItem> actual = testModel.getItemsCollectionSimpleList();
+        Collection<Resource> expected = ListHelper.getResourceList(context.resourceResolver(), SIMPLE_LIST_PATH);
+        Collection<Resource> actual = testModel.getItemsCollectionResource();
 
         assertNotNull(testModel);
-        assertEquals(5, testModel.getItemsCollectionSimpleList().size());
+        assertEquals(expected.size(), testModel.getItemsCollectionResource().size());
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(
-                IteratorUtils.get(expected.iterator(), i).getTitle(),
-                IteratorUtils.get(actual.iterator(), i).getTitle()
-            );
-            assertEquals(
-                IteratorUtils.get(expected.iterator(), i).getValue(),
-                IteratorUtils.get(actual.iterator(), i).getValue()
+                IteratorUtils.get(expected.iterator(), i).getValueMap(),
+                IteratorUtils.get(actual.iterator(), i).getValueMap()
             );
         }
     }
@@ -98,7 +95,7 @@ public class EToolboxListInjectorTest {
         List<SimpleListItem> actual = testModel.getItemsListSimpleList();
 
         assertNotNull(testModel);
-        assertEquals(5, testModel.getItemsListSimpleList().size());
+        assertEquals(expected.size(), testModel.getItemsListSimpleList().size());
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i).getTitle(), actual.get(i).getTitle());
             assertEquals(expected.get(i).getValue(), actual.get(i).getValue());
@@ -113,7 +110,7 @@ public class EToolboxListInjectorTest {
         List<ListItemModel> actual = testModel.getItemsListTestModel();
 
         assertNotNull(testModel);
-        assertEquals(3, testModel.getItemsListTestModel().size());
+        assertEquals(expected.size(), testModel.getItemsListTestModel().size());
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i), actual.get(i));
         }
@@ -127,7 +124,7 @@ public class EToolboxListInjectorTest {
         Map<String, Resource> actual = testModel.getItemsMapResource();
 
         assertNotNull(testModel);
-        assertEquals(5, testModel.getItemsMapResource().size());
+        assertEquals(expected.size(), testModel.getItemsMapResource().size());
         assertEquals(expected.keySet(), actual.keySet());
         assertTrue(expected.entrySet().stream()
             .allMatch(e -> e.getValue().getValueMap().equals(actual.get(e.getKey()).getValueMap())));
@@ -140,7 +137,7 @@ public class EToolboxListInjectorTest {
         Map<String, String> actual = testModel.getItemsMapString();
 
         assertNotNull(testModel);
-        assertEquals(5, testModel.getItemsMapString().size());
+        assertEquals(expected.size(), testModel.getItemsMapString().size());
         assertEquals(expected, actual);
     }
 
@@ -152,9 +149,20 @@ public class EToolboxListInjectorTest {
         Map<String, ListItemModel> actual = testModel.getItemsMapTestModel();
 
         assertNotNull(testModel);
-        assertEquals(3, testModel.getItemsMapTestModel().size());
+        assertEquals(expected.size(), testModel.getItemsMapTestModel().size());
         assertEquals(expected.keySet(), actual.keySet());
         assertTrue(expected.entrySet().stream().allMatch(e -> e.getValue().equals(actual.get(e.getKey()))));
+    }
+
+    @Test
+    public void shouldInjectObjectTypeIntoMap() {
+        testModel = context.request().adaptTo(TestModelEToolboxList.class);
+        Map<String, String> expected = ListHelper.getMap(context.resourceResolver(), SIMPLE_LIST_PATH);
+        Map<Object, Object> actual = testModel.getItemsMapObjects();
+
+        assertNotNull(testModel);
+        assertEquals(expected.size(), testModel.getItemsMapObjects().size());
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -164,7 +172,7 @@ public class EToolboxListInjectorTest {
         List<Resource> actual = testModel.getItemsListResourceFromMethodParameter();
 
         assertNotNull(testModel);
-        assertEquals(5, testModel.getItemsListResourceFromMethodParameter().size());
+        assertEquals(expected.size(), testModel.getItemsListResourceFromMethodParameter().size());
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i).getValueMap(), actual.get(i).getValueMap());
         }
@@ -173,11 +181,13 @@ public class EToolboxListInjectorTest {
     @Test
     public void shouldInjectIntoMethod() {
         ITestModelEToolboxList testInterface = context.request().adaptTo(ITestModelEToolboxList.class);
-        Map<String, String> expected = ListHelper.getMap(context.resourceResolver(), SIMPLE_LIST_PATH);
-
         assertNotNull(testInterface);
-        assertEquals(5, testInterface.getItemsMapStringFromMethod().size());
-        assertEquals(expected, testInterface.getItemsMapStringFromMethod());
+
+        Map<String, String> expected = ListHelper.getMap(context.resourceResolver(), SIMPLE_LIST_PATH);
+        Map<String, String> actual = testInterface.getItemsMapStringFromMethod();
+
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -186,10 +196,7 @@ public class EToolboxListInjectorTest {
 
         assertNotNull(testModel);
         assertNull(testModel.getItemsWithWrongCollectionType());
-        assertNull(testModel.getItemsWithWrongMapKey());
         assertNull(testModel.getItemsWithWrongFieldType());
-        assertNull(testModel.getItemsListWithKeyValue());
-        assertNull(testModel.getItemsWithoutAnnotationValue());
     }
 
     @Test
@@ -200,21 +207,14 @@ public class EToolboxListInjectorTest {
         ListItemModel[] actual = testModel.getItemsArrayModel();
 
         assertNotNull(testModel);
-        assertEquals(3, testModel.getItemsArrayModel().length);
+        assertEquals(expected.length, testModel.getItemsArrayModel().length);
         assertArrayEquals(expected, actual);
-    }
-
-    @Test
-    public void shouldInjectEmptyList() {
-        testModel = context.request().adaptTo(TestModelEToolboxList.class);
-
-        assertNotNull(testModel);
-        assertEquals(0, testModel.getItemsNonModel().size());
     }
 
     @Model(adaptables = Resource.class,
         defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
     )
+    @SuppressWarnings("unused")
     public static class ListItemModel {
 
         @ValueMapValue
@@ -238,8 +238,5 @@ public class EToolboxListInjectorTest {
         public int hashCode() {
             return Objects.hash(textValue, booleanValue, intValue);
         }
-    }
-
-    public static class NonModel {
     }
 }

@@ -41,7 +41,7 @@ public class TestModelEToolboxList {
     private List<Resource> itemsListResource;
 
     @EToolboxList("/content/etoolbox-lists/contentList")
-    private Collection<SimpleListItem> itemsCollectionSimpleList;
+    private Collection<Resource> itemsCollectionResource;
 
     @EToolboxList("/content/etoolbox-lists/contentList")
     private List<SimpleListItem> itemsListSimpleList;
@@ -61,6 +61,12 @@ public class TestModelEToolboxList {
     @EToolboxList("/content/etoolbox-lists/customContentList")
     private EToolboxListInjectorTest.ListItemModel[] itemsArrayModel;
 
+    @EToolboxList("/content/etoolbox-lists/contentList")
+    private List<Object> itemsListObject;
+
+    @EToolboxList("/content/etoolbox-lists/contentList")
+    private Map<Object, Object> itemsMapObjects;
+
     private final List<Resource> itemsListResourceFromMethodParameter;
 
     // Constructor
@@ -76,19 +82,7 @@ public class TestModelEToolboxList {
     private Queue<Resource> itemsWithWrongCollectionType;
 
     @EToolboxList("/content/etoolbox-lists/contentList")
-    private Map<Integer, Resource> itemsWithWrongMapKey;
-
-    @EToolboxList("/content/etoolbox-lists/contentList")
     private String itemsWithWrongFieldType;
-
-    @EToolboxList(value = "/content/etoolbox-lists/contentList", keyProperty = "value")
-    private List<Resource> itemsListWithKeyValue;
-
-    @EToolboxList
-    private List<SimpleListItem> itemsWithoutAnnotationValue;
-
-    @EToolboxList("/content/etoolbox-lists/contentList")
-    private List<EToolboxListInjectorTest.NonModel> itemsNonModel;
 
     // Accessors - Valid cases
 
@@ -96,8 +90,8 @@ public class TestModelEToolboxList {
         return itemsListResource;
     }
 
-    public Collection<SimpleListItem> getItemsCollectionSimpleList() {
-        return itemsCollectionSimpleList;
+    public Collection<Resource> getItemsCollectionResource() {
+        return itemsCollectionResource;
     }
 
     public List<SimpleListItem> getItemsListSimpleList() {
@@ -128,29 +122,21 @@ public class TestModelEToolboxList {
         return itemsArrayModel;
     }
 
+    public List<Object> getItemsListObject() {
+        return itemsListObject;
+    }
+
+    public Map<Object, Object> getItemsMapObjects() {
+        return itemsMapObjects;
+    }
+
     // Accessors - Invalid cases
 
     public Queue<Resource> getItemsWithWrongCollectionType() {
         return itemsWithWrongCollectionType;
     }
 
-    public Map<Integer, Resource> getItemsWithWrongMapKey() {
-        return itemsWithWrongMapKey;
-    }
-
     public String getItemsWithWrongFieldType() {
         return itemsWithWrongFieldType;
-    }
-
-    public List<Resource> getItemsListWithKeyValue() {
-        return itemsListWithKeyValue;
-    }
-
-    public List<SimpleListItem> getItemsWithoutAnnotationValue() {
-        return itemsWithoutAnnotationValue;
-    }
-
-    public List<EToolboxListInjectorTest.NonModel> getItemsNonModel() {
-        return itemsNonModel;
     }
 }

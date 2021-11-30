@@ -19,7 +19,14 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
 
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -32,6 +39,8 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.PageManager;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.EToolboxList;
 import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
@@ -48,7 +57,7 @@ public class EToolboxListInjector implements Injector {
 
     private static final Logger LOG = LoggerFactory.getLogger(EToolboxListInjector.class);
 
-    public static final String NAME = "eak-toolbox-list-injector";
+    public static final String NAME = "eak-etoolbox-list-injector";
 
     /**
      * Retrieves the name of the current instance
@@ -91,31 +100,52 @@ public class EToolboxListInjector implements Injector {
             return null;
         }
 
-        if (annotation.value().isEmpty()) {
-            LOG.debug(InjectorConstants.EXCEPTION_EMPTY_ANNOTATION_VALUE);
-            return null;
-        }
+        if (InjectorUtils.isValidRawType(type, Collection.class)) {
 
-        if (!annotation.keyProperty().isEmpty()) {
-            return InjectorUtils.isValidMapKeyType(type, String.class)
-                ? ListHelper.getMap(resourceResolver, annotation.value(), annotation.keyProperty(), getTypeArgument(type, 1))
-                : null;
+            return getTypeArgument(type, 0).equals(Object.class)
+                ? getObjectList(resourceResolver, annotation.value())
+                : ListHelper.getList(resourceResolver, annotation.value(), getTypeArgument(type, 0));
 
-        } else if (InjectorUtils.isValidCollectionRawType(type, Collection.class, List.class)) {
-            return ListHelper.getList(resourceResolver, annotation.value(), getTypeArgument(type, 0));
+        } else if (InjectorUtils.isValidRawType(type, Map.class)) {
 
-        } else if (InjectorUtils.isValidMapKeyType(type, String.class)) {
-            return getTypeArgument(type, 1).equals(String.class)
-                ? ListHelper.getMap(resourceResolver, annotation.value())
-                : ListHelper.getMap(resourceResolver, annotation.value(), JcrConstants.JCR_TITLE, getTypeArgument(type, 1));
+            if (!annotation.keyProperty().isEmpty()) {
+                return ListHelper.getMap(resourceResolver, annotation.value(), annotation.keyProperty(), getTypeArgument(type, 1));
+
+            } else if (getTypeArgument(type, 1).equals(String.class) || getTypeArgument(type, 1).equals(Object.class)) {
+                return ListHelper.getMap(resourceResolver, annotation.value());
+            }
+
+            return ListHelper.getMap(resourceResolver, annotation.value(), JcrConstants.JCR_TITLE, getTypeArgument(type, 1));
 
         } else if (!(type instanceof ParameterizedType) && ((Class<?>) type).isArray()) {
-            List<?> list = ListHelper.getList(resourceResolver, annotation.value(), ((Class<?>) type).getComponentType());
-            return toArray(list, ((Class<?>) type).getComponentType());
+            List<?> modelList = ListHelper.getList(resourceResolver, annotation.value(), ((Class<?>) type).getComponentType());
+            List<Object> objectList = getObjectList(resourceResolver, annotation.value());
+
+            return ((Class<?>) type).getComponentType().equals(Object.class)
+                ? toArray(objectList, ((Class<?>) type).getComponentType())
+                : toArray(modelList, ((Class<?>) type).getComponentType());
         }
 
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
         return null;
+    }
+
+    /**
+     * Retrieves a {@code List<Object>} collected from list entries under the provided path
+     * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
+     * @param path             The path to a list of items
+     * @return List of {@code Object}
+     */
+    private List<Object> getObjectList(ResourceResolver resourceResolver, String path) {
+
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
+            Objects.requireNonNull(Optional.of(resourceResolver)
+                    .map(resolver -> resolver.adaptTo(PageManager.class))
+                    .map(pageManager -> pageManager.getPage(path))
+                    .map(Page::getContentResource)
+                    .map(contentRes -> contentRes.getChild("list"))
+                    .orElse(null))
+                .listChildren(), Spliterator.ORDERED), false).collect(Collectors.toList());
     }
 
     /**
@@ -130,7 +160,7 @@ public class EToolboxListInjector implements Injector {
 
     /**
      * Converts the List of unknown to an array and casts it to the specified type
-     * @param list List of unknown that contains list entries
+     * @param list A generic {@code List} that contains list entries
      * @param type Type of receiving Java class member
      * @param <T>  The class of the objects in the array
      * @return An array containing all the elements from provided List

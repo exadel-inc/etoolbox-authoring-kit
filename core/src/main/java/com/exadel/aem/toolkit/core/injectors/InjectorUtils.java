@@ -17,7 +17,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -119,35 +118,17 @@ class InjectorUtils {
     }
 
     /**
-     * Retrieves whether the provided {@code Type} of a Java class member is a parameterized collection type and checks
-     * if its raw type matches the list of allowed value types
-     * @param type         {@code Type} object
-     * @param allowedTypes {@code Class} objects representing allowed value types
+     * Retrieves whether the provided {@code Type} of a Java class member is a parameterized type and checks
+     * if the specified raw type is compatible with the allowed type
+     * @param value       {@code Type} object
+     * @param allowedType {@code Class} objects representing allowed type
      * @return True or false
      */
-    public static boolean isValidCollectionRawType(Type type, Class<?>... allowedTypes) {
-        if (!(type instanceof ParameterizedType)
-            || !ClassUtils.isAssignable((Class<?>) ((ParameterizedType) type).getRawType(), Collection.class)) {
+    public static boolean isValidRawType(Type value, Class<?> allowedType) {
+        if (!(value instanceof ParameterizedType)) {
             return false;
         }
-        Class<?> collectionType = (Class<?>) ((ParameterizedType) type).getRawType();
-        return isValidObjectType(collectionType, allowedTypes);
-    }
-
-    /**
-     * Retrieves whether the provided {@code Type} of a Java class member is a parameterized collection type
-     * and checks if its raw type equals Map and the parameter type matches the list of allowed value types
-     * @param type               {@code Type} object
-     * @param allowedTypesOfKeys {@code Class} objects representing allowed value types
-     * @return True or false
-     */
-    public static boolean isValidMapKeyType(Type type, Class<?>... allowedTypesOfKeys) {
-        if (!(type instanceof ParameterizedType)) {
-            return false;
-        }
-        Class<?> actualMapKey = (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0];
-        return ((ParameterizedType) type).getRawType().equals(Map.class)
-            && isValidObjectType(actualMapKey, allowedTypesOfKeys);
+        return ClassUtils.isAssignable((Class<?>) ((ParameterizedType) value).getRawType(), allowedType);
     }
 
     /**
