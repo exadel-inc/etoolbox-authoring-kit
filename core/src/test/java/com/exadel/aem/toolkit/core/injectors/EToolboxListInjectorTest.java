@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.sling.api.resource.Resource;
@@ -66,7 +65,7 @@ public class EToolboxListInjectorTest {
         List<Resource> actual = testModel.getItemsListResource();
 
         assertNotNull(testModel);
-        assertEquals(expected.size(), testModel.getItemsListResource().size());
+        assertEquals(expected.size(), actual.size());
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i).getValueMap(), actual.get(i).getValueMap());
         }
@@ -79,7 +78,7 @@ public class EToolboxListInjectorTest {
         Collection<Resource> actual = testModel.getItemsCollectionResource();
 
         assertNotNull(testModel);
-        assertEquals(expected.size(), testModel.getItemsCollectionResource().size());
+        assertEquals(expected.size(), actual.size());
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(
                 IteratorUtils.get(expected.iterator(), i).getValueMap(),
@@ -95,7 +94,7 @@ public class EToolboxListInjectorTest {
         List<SimpleListItem> actual = testModel.getItemsListSimpleList();
 
         assertNotNull(testModel);
-        assertEquals(expected.size(), testModel.getItemsListSimpleList().size());
+        assertEquals(expected.size(), actual.size());
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i).getTitle(), actual.get(i).getTitle());
             assertEquals(expected.get(i).getValue(), actual.get(i).getValue());
@@ -110,7 +109,7 @@ public class EToolboxListInjectorTest {
         List<ListItemModel> actual = testModel.getItemsListTestModel();
 
         assertNotNull(testModel);
-        assertEquals(expected.size(), testModel.getItemsListTestModel().size());
+        assertEquals(expected.size(), actual.size());
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i), actual.get(i));
         }
@@ -124,7 +123,7 @@ public class EToolboxListInjectorTest {
         Map<String, Resource> actual = testModel.getItemsMapResource();
 
         assertNotNull(testModel);
-        assertEquals(expected.size(), testModel.getItemsMapResource().size());
+        assertEquals(expected.size(), actual.size());
         assertEquals(expected.keySet(), actual.keySet());
         assertTrue(expected.entrySet().stream()
             .allMatch(e -> e.getValue().getValueMap().equals(actual.get(e.getKey()).getValueMap())));
@@ -137,7 +136,7 @@ public class EToolboxListInjectorTest {
         Map<String, String> actual = testModel.getItemsMapString();
 
         assertNotNull(testModel);
-        assertEquals(expected.size(), testModel.getItemsMapString().size());
+        assertEquals(expected.size(), actual.size());
         assertEquals(expected, actual);
     }
 
@@ -149,7 +148,7 @@ public class EToolboxListInjectorTest {
         Map<String, ListItemModel> actual = testModel.getItemsMapTestModel();
 
         assertNotNull(testModel);
-        assertEquals(expected.size(), testModel.getItemsMapTestModel().size());
+        assertEquals(expected.size(), actual.size());
         assertEquals(expected.keySet(), actual.keySet());
         assertTrue(expected.entrySet().stream().allMatch(e -> e.getValue().equals(actual.get(e.getKey()))));
     }
@@ -161,7 +160,7 @@ public class EToolboxListInjectorTest {
         Map<Object, Object> actual = testModel.getItemsMapObjects();
 
         assertNotNull(testModel);
-        assertEquals(expected.size(), testModel.getItemsMapObjects().size());
+        assertEquals(expected.size(), actual.size());
         assertEquals(expected, actual);
     }
 
@@ -172,7 +171,7 @@ public class EToolboxListInjectorTest {
         List<Resource> actual = testModel.getItemsListResourceFromMethodParameter();
 
         assertNotNull(testModel);
-        assertEquals(expected.size(), testModel.getItemsListResourceFromMethodParameter().size());
+        assertEquals(expected.size(), actual.size());
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i).getValueMap(), actual.get(i).getValueMap());
         }

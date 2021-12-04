@@ -27,12 +27,12 @@ import com.exadel.aem.toolkit.core.injectors.EToolboxListInjector;
  * Used on either a field, a method, or a method parameter of a Sling model to inject EToolbox Lists
  * obtained via {@code ResourceResolver} instance. <p>Injects list values of the same type that the ListHelper retrieves.
  * The annotation contains elements: {@code value()} and {@code keyProperty()}.
- * <p> The {@code value()} annotation element sets the JCR path of the items list. It is required field.
+ * <p> The {@code value()} annotation element sets the JCR path of the items list. It is a required field.
  * <p> The {@code keyProperty()} annotation element sets the item resource property that holds the key of the resulting map.
- * If the annotated member is of type is not {@code Map<String, T>}  it tries to inject List or array without {@code keyProperty()}
+ * If the annotated member is not a {@code Map<String, T>}, the {@code keyProperty()} is ignored.
  * <p>If the annotated member is of type {@code Collection<T>}, {@code List<T>}, {@code Map<String, T>},
  * {@code T[]} <p> the collection or array of list entries stored in the specified {@code JCR path}
- * will be injected. <p> If {@code value()} is empty or type is wrong nothing will be injected.
+ * will be injected. <p> If {@code value()} is empty or the type is wrong nothing will be injected.
  * Supports only models that are adaptable from request and resource.
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
@@ -43,13 +43,13 @@ public @interface EToolboxList {
 
     /**
      * Specifies the path to a list of items
-     * @return Optional non-blank string
+     * @return Required non-blank string
      */
     String value();
 
     /**
      * Specifies the key attribute in a resource that represents an item in the list
-     * <p>Can be used only with the Map
+     * Is applicable only for {@code Map<String, T>} injected type
      * @return Optional non-blank string
      */
     String keyProperty() default "";

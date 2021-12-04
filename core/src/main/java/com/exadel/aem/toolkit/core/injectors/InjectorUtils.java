@@ -17,6 +17,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -114,6 +115,22 @@ class InjectorUtils {
             return false;
         }
         Class<?> componentType = (Class<?>) ((ParameterizedType) value).getActualTypeArguments()[0];
+        return isValidObjectType(componentType, allowedMemberTypes);
+    }
+
+    /**
+     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized Map type and its
+     * parameter type matches the list of allowed value types
+     * @param value              {@code Type} object
+     * @param allowedMemberTypes {@code Class} objects representing allowed value types
+     * @return True or false
+     */
+    public static boolean isValidMap(Type value, Class<?>... allowedMemberTypes) {
+        if (!(value instanceof ParameterizedType)
+            || !ClassUtils.isAssignable((Class<?>) ((ParameterizedType) value).getRawType(), Map.class)) {
+            return false;
+        }
+        Class<?> componentType = (Class<?>) ((ParameterizedType) value).getActualTypeArguments()[1];
         return isValidObjectType(componentType, allowedMemberTypes);
     }
 
