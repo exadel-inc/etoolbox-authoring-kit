@@ -11,59 +11,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.widget;
+package com.exadel.aem.toolkit.test.component.layout;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Column;
 import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
-
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
+import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
 @AemComponent(
-    path = DEFAULT_COMPONENT_NAME,
-    title = "Fixed Columns Widget Dialog"
+    path = TestConstants.DEFAULT_COMPONENT_NAME,
+    title = "Multi-Column Dialog Component"
 )
 @Dialog
-public class FixedColumnsWidget {
+@FixedColumns(
+    value = {
+        @Column(title = "First column"),
+        @Column(title = "Second column")
+    },
+    margin = true, // These two properties will not be rendered because apply only to widgets
+    maximized = true
+)
+@Ignore(sections = "Default")
+@SuppressWarnings("unused")
+public class MultiColumnDialog extends MultiColumnDialogBase {
 
-    @FixedColumns({
-        @Column(title = "First"),
-        @Column(title = "Second")
-    })
-    private FixedColumnsFieldset fixedColumns;
-
-    @DialogField(
-        label = "Text"
-    )
+    @DialogField(label = "Text")
     @TextField
-    @Place("First")
+    @Place("First column")
     private String text;
 
-    @DialogField(
-        label = "Description"
-    )
+    @DialogField(label = "Description")
     @TextArea
-    @Place("Second")
+    @Place("Second column")
     private String description;
 
-    private static class FixedColumnsFieldset {
-        @DialogField(
-            label = "Nested text"
-        )
-        @TextField
-        @Place("First")
-        private String nestedText;
-
-        @DialogField(
-            label = "Nested description"
-        )
-        @TextArea
-        @Place("Second")
-        private String nestedDescription;
-    }
+    @DialogField(label = "Number")
+    @NumberField(min = -10, max = 10)
+    @Place(value = "First column", before = @ClassMember("text"))
+    private String number;
 }

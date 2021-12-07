@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0" componentGroup="Toolkit Samples"
+          jcr:description="Choose a dungeon for your warrior" jcr:primaryType="cq:Component"
+          jcr:title="Dungeons Component"
+          sling:resourceSuperType="etoolbox-authoring-kit/samples/components/content/parent-select-component"/>

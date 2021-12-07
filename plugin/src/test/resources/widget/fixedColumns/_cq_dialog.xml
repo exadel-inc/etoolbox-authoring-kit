@@ -22,12 +22,20 @@
                             <first jcr:primaryType="nt:unstructured"
                                    sling:resourceType="granite/ui/components/coral/foundation/container">
                                 <items jcr:primaryType="nt:unstructured">
+                                    <nestedText
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        name="./nestedText"
+                                        disabled="{Boolean}false"
+                                        fieldLabel="Nested text"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"/>
                                     <text
                                         jcr:primaryType="nt:unstructured"
                                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                         name="./text"
                                         disabled="{Boolean}false"
-                                        fieldLabel="Nested text"
+                                        fieldLabel="Text"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"/>
                                 </items>
@@ -35,13 +43,24 @@
                             <second jcr:primaryType="nt:unstructured"
                                    sling:resourceType="granite/ui/components/coral/foundation/container">
                                 <items jcr:primaryType="nt:unstructured">
+                                    <nestedDescription
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
+                                        name="./nestedDescription"
+                                        autofocus="{Boolean}false"
+                                        disabled="{Boolean}false"
+                                        fieldLabel="Nested description"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"
+                                        resize="none"
+                                        rows="{Long}5"/>
                                     <description
                                         jcr:primaryType="nt:unstructured"
                                         sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
                                         name="./description"
                                         autofocus="{Boolean}false"
                                         disabled="{Boolean}false"
-                                        fieldLabel="Nested description"
+                                        fieldLabel="Description"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"
                                         resize="none"
