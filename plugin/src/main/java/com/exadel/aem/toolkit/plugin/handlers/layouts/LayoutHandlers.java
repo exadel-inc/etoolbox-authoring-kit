@@ -27,7 +27,8 @@ import com.exadel.aem.toolkit.plugin.writers.DialogLayout;
  */
 public class LayoutHandlers {
     private static final Map<DialogLayout, BiConsumer<Source, Target>> HANDLERS = ImmutableMap.of(
-        DialogLayout.FIXED_COLUMNS, new FixedColumnsLayoutHandler(),
+        DialogLayout.DEFAULT_COLUMN, new DefaultColumnLayoutHandler(),
+        DialogLayout.COLUMNS, new ColumnsLayoutHandler(),
         DialogLayout.ACCORDION, new AccordionLayoutHandler(),
         DialogLayout.TABS, new TabsLayoutHandler()
     );
@@ -44,6 +45,6 @@ public class LayoutHandlers {
      * @return Container handler for either fixed-columns, tabbed, accordion-shaped, etc. layout
      */
     public static BiConsumer<Source, Target> forLayout(DialogLayout layout) {
-        return HANDLERS.getOrDefault(layout, HANDLERS.get(DialogLayout.FIXED_COLUMNS));
+        return HANDLERS.getOrDefault(layout, HANDLERS.get(DialogLayout.DEFAULT_COLUMN));
     }
 }

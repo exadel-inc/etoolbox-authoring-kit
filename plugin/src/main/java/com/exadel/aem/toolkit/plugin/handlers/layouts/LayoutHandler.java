@@ -22,11 +22,12 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.layouts.Column;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.plugin.adapters.DialogContainerSetup;
+import com.exadel.aem.toolkit.plugin.adapters.DialogLayoutSetup;
 import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
 import com.exadel.aem.toolkit.plugin.adapters.WidgetContainerSetup;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
@@ -72,7 +73,10 @@ abstract class LayoutHandler implements BiConsumer<Source, Target> {
         // Initialize basic variables
         String containerTag;
         String resourceType;
-        if (annotationTypes.contains(AccordionPanel.class)) {
+        if (annotationTypes.contains(Column.class)) {
+            containerTag = DialogConstants.NN_FIXED_COLUMNS;
+            resourceType = ResourceTypes.FIXED_COLUMNS;
+        } else if (annotationTypes.contains(AccordionPanel.class)) {
             containerTag = DialogConstants.NN_ACCORDION;
             resourceType = ResourceTypes.ACCORDION;
         } else {
@@ -89,9 +93,9 @@ abstract class LayoutHandler implements BiConsumer<Source, Target> {
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, resourceType)
             .createTarget(DialogConstants.NN_ITEMS);
 
-        // Compose the registry of tabs or accordion panels
+        // Compose the registry of sections, such as tabs, columns, or accordion panels
         List<Section> allContainerSections = source
-            .adaptTo(DialogContainerSetup.class)
+            .adaptTo(DialogLayoutSetup.class)
             .useScope(target.getScope())
             .useInClassAnnotations(annotationTypes)
             .getSections();
@@ -99,7 +103,7 @@ abstract class LayoutHandler implements BiConsumer<Source, Target> {
         // Initialize ignored sections array for the current class.
         // Note that "ignored sections" setting is not inherited and is for current class only, unlike the collection
         // of tabs or panels itself
-        List<String> ignoredSections = source.adaptTo(DialogContainerSetup.class).getIgnoredSections();
+        List<String> ignoredSections = source.adaptTo(DialogLayoutSetup.class).getIgnoredSections();
 
         // Get all *non-nested* sources from the superclasses, and from the current class
         List<Source> allMembers = ClassUtil.getSources(source.adaptTo(Class.class));

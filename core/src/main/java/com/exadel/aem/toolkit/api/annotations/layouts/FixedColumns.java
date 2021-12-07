@@ -22,12 +22,11 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 
 /**
- * Used to set up
- * a <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/tabs/index.html">
+ * Used to set up a <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/tabs/index.html">
  * Fixed Columns</a> container within a Granite UI dialog or a console page
- * <p>Note that the annotation is acceptable but not necessary to set the layout of a Granite UI dialog (i.e. when put
- * on a dialog class) because the "Fixed Columns" layout is applied by default when neither {@link Tabs} nor {@link Accordion}
- * is present</p>
+ * <p>Note that the annotation is not necessary to set the layout of an "ordinary" single-column Granite UI dialog
+ * unless you wish to have more than one column. Usually the "Fixed Columns" layout is applied by default when neither
+ * {@link Tabs} nor {@link Accordion} is present</p>
  * @see Column
  */
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
