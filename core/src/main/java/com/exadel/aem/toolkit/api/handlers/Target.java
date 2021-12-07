@@ -77,9 +77,22 @@ public interface Target {
 
     /**
      * Retrieves the parent of the current {@code Target} instance
-     * @return Another {@code Target} instance, or null if the current target has no parents (is at the top of targets tree)
+     * @return Another {@code Target} instance, or null if the current target has no parents (is at the top of targets
+     * tree)
      */
     Target getParent();
+
+    /**
+     * Retrieves the root node of the tree to which the current {@code Target} belongs
+     * @return Another {@code Target} instance, or this instance if the current target has no parents (is at the top of
+     * targets tree)
+     */
+    default Target getRoot() {
+        if (getParent() == null) {
+            return this;
+        }
+        return getParent().getParent();
+    }
 
     /**
      * Retrieves the collection of {@code Target} instances attached to the current instance. Each one of the children

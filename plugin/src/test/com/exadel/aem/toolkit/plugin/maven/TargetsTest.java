@@ -68,12 +68,14 @@ public class TargetsTest {
     @Test
     public void testGenericProperties() {
         Assert.assertEquals("root", testable.getName());
+        Assert.assertEquals("root", testable.getRoot().getName());
         Assert.assertEquals(Scopes.COMPONENT, testable.getScope());
         Assert.assertEquals(TIER_1_CHILD_COUNT, testable.getChildren().size());
         Assert.assertEquals(testable, testable.getChildren().get(0).getParent());
         Assert.assertEquals(testable, testable.getChildren().get(0).getChildren().get(0).getParent().getParent());
         Assert.assertEquals("{Long}1", testable.getChildren().get(1).getAttribute(PN_ORDINAL));
         Assert.assertEquals("/root/item2/subitem2", testable.getChildren().get(2).getChildren().get(0).getPath());
+        Assert.assertEquals("root", testable.getChildren().get(2).getChildren().get(0).getRoot().getName());
     }
 
     @Test
