@@ -54,8 +54,8 @@ class ListResourceUtils {
      * Creates a list resource under given parent
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param parent           List Page that holds list resource
-     * @return list Resource or {@code null} if {@link ResourceResolver} or {@code parent} is null
-     * @throws PersistenceException if list resource cannot be created
+     * @return List Resource or {@code null} if {@link ResourceResolver} or {@code parent} is null
+     * @throws PersistenceException If list resource cannot be created
      */
     static Resource createListResource(ResourceResolver resourceResolver, Page parent) throws PersistenceException {
         if (resourceResolver == null || parent == null) {
@@ -71,18 +71,18 @@ class ListResourceUtils {
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param parent           Container for {@code listItem}'s.
      * @param properties       {@code listItem} properties
-     * @throws PersistenceException if {@code listItem} cannot be created
+     * @throws PersistenceException If {@code listItem} cannot be created
      */
     static void createListItem(ResourceResolver resourceResolver, Resource parent, Map<String, Object> properties) throws PersistenceException {
-        Map<String, Object> withoutSystemProperties = getWithoutSystemProperties(properties);
+        Map<String, Object> withoutSystemProperties = getMapWithoutSystemProperties(properties);
         withoutSystemProperties.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ListConstants.LIST_ITEM_RESOURCE_TYPE);
         resourceResolver.create(parent, ResourceUtil.createUniqueChildName(parent, CoreConstants.PN_LIST_ITEM), withoutSystemProperties);
     }
 
     /**
      * Converts collection of {@link SimpleListItem} to list of {@link ValueMapResource}
-     * @param values collection of {@link SimpleListItem} that will be converted to {@link ValueMapResource}
-     * @return list of {@link ValueMapResource}
+     * @param values Collection of {@link SimpleListItem} that will be converted to {@link ValueMapResource}
+     * @return List of {@link ValueMapResource}
      */
     static List<Resource> mapToValueMapResources(Collection<SimpleListItem> values) {
         return CollectionUtils.emptyIfNull(values).stream()
@@ -92,8 +92,8 @@ class ListResourceUtils {
 
     /**
      * Converts key-value map to list of {@link ValueMapResource}
-     * @param values key-value map that will be converted to {@link ValueMapResource}
-     * @return list of {@link ValueMapResource}
+     * @param values Key-value map that will be converted to {@link ValueMapResource}
+     * @return List of {@link ValueMapResource}
      */
     static List<Resource> mapToValueMapResources(Map<String, Object> values) {
         return MapUtils.emptyIfNull(values).entrySet().stream()
@@ -117,10 +117,10 @@ class ListResourceUtils {
 
     /**
      * Returns a map without ignored properties
-     * @param properties initial map of properties
-     * @return filtered map of properties
+     * @param properties Initial map of properties
+     * @return Filtered map of properties
      */
-    private static Map<String, Object> getWithoutSystemProperties(Map<String, Object> properties) {
+    private static Map<String, Object> getMapWithoutSystemProperties(Map<String, Object> properties) {
         return MapUtils.emptyIfNull(properties).entrySet().stream()
             .filter(entry -> !PROPERTIES_TO_IGNORE.contains(entry.getKey()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

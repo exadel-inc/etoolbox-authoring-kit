@@ -33,9 +33,9 @@ class ListPageUtils {
      * Creates a list page under given path
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param path             JCR path of the items list page.
-     * @return Created page containing list of entries or ${@code null} if {@link PageManager} cannot be instantiated
+     * @return Created page containing list of entries or {@code null} if {@link PageManager} cannot be instantiated
      * or {@code path} is blank
-     * @throws WCMException if a page cannot be created
+     * @throws WCMException If a page cannot be created
      */
     static Page createListPage(ResourceResolver resourceResolver, String path) throws WCMException {
         PageManager pageManager = resourceResolver.adaptTo(PageManager.class);

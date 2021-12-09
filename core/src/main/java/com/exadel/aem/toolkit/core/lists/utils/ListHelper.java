@@ -102,9 +102,9 @@ public class ListHelper {
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param path             JCR path of the items list
      * @param listItems        List of {@link SimpleListItem}
-     * @return Created page containing list of entries or ${@code null} if page cannot be created
-     * @throws WCMException         if a page cannot be created
-     * @throws PersistenceException if a page cannot be deleted or list item cannot be created
+     * @return Created page containing list of entries or {@code null} if page cannot be created
+     * @throws WCMException         If a page cannot be created
+     * @throws PersistenceException If a page cannot be deleted or list item cannot be created
      */
     public static Page createList(ResourceResolver resourceResolver, String path, List<SimpleListItem> listItems)
         throws WCMException, PersistenceException {
@@ -116,10 +116,10 @@ public class ListHelper {
      * Creates a list of entries under given {@code path} based on key-value map. Each entry is a separate list item.
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param path             JCR path of the items list
-     * @param values           key-value map
-     * @return Created page containing list of entries or ${@code null} if page cannot be created
-     * @throws WCMException         if a page cannot be created
-     * @throws PersistenceException if a page cannot be deleted or list item cannot be created
+     * @param values           Key-value map
+     * @return Created page containing list of entries or {@code null} if page cannot be created
+     * @throws WCMException         If a page cannot be created
+     * @throws PersistenceException If a page cannot be deleted or list item cannot be created
      */
     public static Page createList(ResourceResolver resourceResolver, String path, Map<String, Object> values)
         throws WCMException, PersistenceException {
@@ -132,9 +132,9 @@ public class ListHelper {
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param path             JCR path of the items list
      * @param resources        List of {@link Resource}
-     * @return Created page containing list of entries or ${@code null} if page cannot be created
-     * @throws WCMException         if a page cannot be created
-     * @throws PersistenceException if a page cannot be deleted or list item cannot be created
+     * @return Created page containing list of entries or {@code null} if page cannot be created
+     * @throws WCMException         If a page cannot be created
+     * @throws PersistenceException If a page cannot be deleted or list item cannot be created
      */
     public static Page createList(ResourceResolver resourceResolver, String path, Collection<Resource> resources)
         throws WCMException, PersistenceException {
