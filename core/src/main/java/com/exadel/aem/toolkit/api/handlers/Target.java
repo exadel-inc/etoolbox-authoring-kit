@@ -91,7 +91,7 @@ public interface Target {
         if (getParent() == null) {
             return this;
         }
-        return getParent().getParent();
+        return getParent().getRoot();
     }
 
     /**
