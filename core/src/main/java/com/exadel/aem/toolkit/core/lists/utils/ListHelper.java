@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,16 +42,12 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Contains methods for manipulations with Exadel Toolbox Lists
  */
 public class ListHelper {
-
-    private static final TypeReference<Map<String, Object>> MAP_TYPE_REFERENCE = new TypeReference<Map<String, Object>>() {
-    };
 
     /**
      * Default (instantiation-restricting) constructor
@@ -112,28 +109,26 @@ public class ListHelper {
      */
     public static Page createList(ResourceResolver resourceResolver, String path, List<SimpleListItem> listItems)
         throws WCMException, PersistenceException {
-        return createList(resourceResolver, path, listItems, ListResourceUtils.SIMPLE_LIST_ITEM_TO_PROPERTIES);
+        return createList(resourceResolver, path, listItems, SimpleListItem.class);
     }
 
     /**
-     * Creates a list entries under given {@code path} based on list of models using {@code modelMapper} function to convert model to properties map.
-     * If {@code modelMapper} is not specified - default will be used
+     * Creates a list of entries under given {@code path} based on list of models.
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param path             JCR path of the items list
      * @param values           List of models
-     * @param modelMapper      function that converts model to properties map.
-     *                         If {@code modelMapper} is not specified - default will be used
-     * @param <T>              model type
+     * @param <T>              Model type
      * @return Created page containing list of entries or ${@code null} if page cannot be created
-     * @throws PersistenceException if a page cannot be created
-     * @throws WCMException         if a page cannot be deleted or list item cannot be created
+     * @throws PersistenceException If a page cannot be created
+     * @throws WCMException         If a page cannot be deleted or list item cannot be created
      */
-    public static <T> Page createList(ResourceResolver resourceResolver, String path, List<T> values, Function<T, Map<String, Object>> modelMapper)
+    public static <T> Page createList(ResourceResolver resourceResolver, String path, List<T> values, Class<T> itemType)
         throws PersistenceException, WCMException {
+        BiFunction<Object, ObjectMapper, Map<String, Object>> mapper = ListResourceUtils.getMapper(itemType);
         ObjectMapper objectMapper = new ObjectMapper();
 
         List<Resource> resources = values.stream()
-            .map(value -> convertModelToProperties(value, modelMapper, objectMapper))
+            .map(value -> mapper.apply(value, objectMapper))
             .filter(Objects::nonNull)
             .map(ListResourceUtils::createValueMapResource)
             .collect(Collectors.toList());
@@ -329,18 +324,5 @@ public class ListHelper {
             return itemType::cast;
         }
         return resource -> resource.adaptTo(itemType);
-    }
-
-    /**
-     * Converts model object into properties map using {@code modelMapper} function
-     * or Jackson {@link ObjectMapper} if {@code modelMapper} is {@code null}
-     * @param model        model instance
-     * @param modelMapper  function that maps model to properties map
-     * @param objectMapper default Jackson {@link ObjectMapper}
-     * @param <T>          model class type
-     * @return mapped properties map
-     */
-    private static <T> Map<String, Object> convertModelToProperties(T model, Function<T, Map<String, Object>> modelMapper, ObjectMapper objectMapper) {
-        return modelMapper != null ? modelMapper.apply(model) : objectMapper.convertValue(model, MAP_TYPE_REFERENCE);
     }
 }

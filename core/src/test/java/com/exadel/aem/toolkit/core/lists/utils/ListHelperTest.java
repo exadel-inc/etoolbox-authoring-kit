@@ -41,7 +41,6 @@ import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class ListHelperTest {
 
@@ -194,11 +193,7 @@ public class ListHelperTest {
 
     @Test
     public void shouldCreateListBasedOnListOfSimpleListItems() throws PersistenceException, WCMException {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(JcrConstants.JCR_TITLE, "first");
-        properties.put(CoreConstants.PN_VALUE, "firstValue");
-        Resource resource = context.create().resource("/testpath", properties);
-        SimpleListItem simpleListItem = resource.adaptTo(SimpleListItem.class);
+        SimpleListItem simpleListItem = new SimpleListItemImpl("first", "firstValue");
 
         Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(simpleListItem));
 
@@ -206,19 +201,6 @@ public class ListHelperTest {
         Resource listItem = listPage.getContentResource("list/listItem");
         assertEquals(simpleListItem.getTitle(), listItem.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
         assertEquals(simpleListItem.getValue(), listItem.getValueMap().get(CoreConstants.PN_VALUE, StringUtils.EMPTY));
-    }
-
-    @Test
-    public void shouldCreateListBasedOnModelUsingCustomMapperFunction() throws PersistenceException, WCMException {
-        ItemModel itemModel = new ItemModel("someValue", false);
-
-        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(itemModel),
-            model -> Collections.singletonMap(model.textValue, model.booleanValue));
-
-        assertNotNull(listPage);
-        Resource listItem = listPage.getContentResource("list/listItem");
-        assertTrue(listItem.getValueMap().containsKey(itemModel.textValue));
-        assertEquals(itemModel.booleanValue, listItem.getValueMap().get(itemModel.textValue, Boolean.class));
     }
 
     @Test
@@ -274,6 +256,28 @@ public class ListHelperTest {
         @Override
         public int hashCode() {
             return Objects.hash(textValue, booleanValue);
+        }
+    }
+
+    @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+    private static class SimpleListItemImpl implements SimpleListItem {
+
+        private final String title;
+        private final String value;
+
+        public SimpleListItemImpl(String title, String value) {
+            this.title = title;
+            this.value = value;
+        }
+
+        @Override
+        public String getTitle() {
+            return title;
+        }
+
+        @Override
+        public String getValue() {
+            return value;
         }
     }
 

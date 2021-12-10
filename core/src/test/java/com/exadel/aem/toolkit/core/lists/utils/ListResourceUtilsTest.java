@@ -103,24 +103,4 @@ public class ListResourceUtilsTest {
         assertEquals(expectedProperties, listItem.getValueMap());
     }
 
-    private static class SimpleListItemImpl implements SimpleListItem {
-
-        private final String title;
-        private final String value;
-
-        public SimpleListItemImpl(String title, String value) {
-            this.title = title;
-            this.value = value;
-        }
-
-        @Override
-        public String getTitle() {
-            return title;
-        }
-
-        @Override
-        public String getValue() {
-            return value;
-        }
-    }
 }

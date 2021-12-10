@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.MapUtils;
@@ -36,17 +36,13 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Contains methods for manipulation with List Resource
  */
 class ListResourceUtils {
-
-    static final Function<SimpleListItem, Map<String, Object>> SIMPLE_LIST_ITEM_TO_PROPERTIES = simpleListItem -> {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(JcrConstants.JCR_TITLE, simpleListItem.getTitle());
-        properties.put(CoreConstants.PN_VALUE, simpleListItem.getValue());
-        return properties;
-    };
 
     private static final Map<String, Object> LIST_PROPERTIES
         = Collections.singletonMap(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, "wcm/foundation/components/responsivegrid");
@@ -117,6 +113,26 @@ class ListResourceUtils {
      */
     static Resource createValueMapResource(Map<String, Object> properties) {
         return new ValueMapResource(null, "", JcrConstants.NT_UNSTRUCTURED, new ValueMapDecorator(properties));
+    }
+
+    /**
+     * Returns BiFunction mapper that converts model into properties.
+     * @param modelType Model type
+     * @return Mapper that converts model into properties.
+     */
+    static BiFunction<Object, ObjectMapper, Map<String, Object>> getMapper(Class<?> modelType) {
+        if (SimpleListItem.class.equals(modelType)) {
+            return (model, objectMapper) -> {
+                SimpleListItem simpleListItem = (SimpleListItem) model;
+                Map<String, Object> properties = new HashMap<>();
+                properties.put(JcrConstants.JCR_TITLE, simpleListItem.getTitle());
+                properties.put(CoreConstants.PN_VALUE, simpleListItem.getValue());
+                return properties;
+            };
+        }
+
+        return (model, objectMapper) -> objectMapper.convertValue(model, new TypeReference<Map<String, Object>>() {
+        });
     }
 
     /**
