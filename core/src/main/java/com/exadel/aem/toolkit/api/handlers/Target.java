@@ -25,9 +25,9 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
- * Presents an abstraction of target entity for rendering AEM components and their configuration. Technically each
- * {@code Target} instance represents a future Granite UI entity, or a corresponding XML node. The {@code Target} can have
- * its attributes, a parent target and children in the same way as Granite/XML nodes do
+ * Presents an abstraction of target entity for rendering AEM components and their configurations. Technically each
+ * {@code Target} instance represents a future Granite UI entity, or a corresponding XML node. The {@code Target} can
+ * have its attributes, its parent target and its children in the same way as XML nodes do
  */
 public interface Target {
 

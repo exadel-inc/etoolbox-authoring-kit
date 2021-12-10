@@ -50,7 +50,7 @@ import com.exadel.aem.toolkit.plugin.utils.StringUtil;
  * Implements {@link Target} to manage a tree-like data structure that is further rendered in a Granite UI component
  * or component configurations
  */
-public class TargetImpl extends AdaptationBase<Target> implements Target {
+class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandlerAcceptor {
 
     private static final String PARENT_PATH = "..";
     private static final String SELF_PATH = ".";
@@ -82,7 +82,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         this.parent = parent;
         this.attributes = new HashMap<>();
         this.children = new LinkedList<>();
-        this.scope = parent != null ? parent.getScope() : Scopes.CQ_DIALOG;
+        this.scope = parent != null ? parent.getScope() : Scopes.COMPONENT;
         this.attributes.put(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
     }
 
@@ -565,10 +565,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
     /**
-     * Assigns attributes to the current instance based on the provided DOM {@code Element} object
-     * @param value {@code Element} object used as the source of attribute names and values
-     * @return Current instance
+     * {@inheritDoc}
      */
+    @Override
     public Target attributes(Element value) {
         if (value != null) {
             populateElementProperties(value);
