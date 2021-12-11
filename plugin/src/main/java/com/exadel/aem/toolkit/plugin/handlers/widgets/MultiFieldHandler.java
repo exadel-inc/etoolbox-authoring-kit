@@ -50,7 +50,7 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
         target.getAttributes().remove(DialogConstants.PN_NAME);
 
         // Get the filtered members' collection for the current container; early return if collection is empty
-        List<Source> sources = getMembersForContainer(source);
+        List<Source> sources = getMembersForContainer(source, target);
         if (sources.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.adaptTo(MemberSource.class).getValueType().getName()

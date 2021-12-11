@@ -61,7 +61,7 @@ class AccordionPanelFacade extends Section {
         Target itemsContainer = container.createTarget(nodeName);
         itemsContainer.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
             .attribute(DialogConstants.PN_JCR_TITLE, getTitle());
-        Target configContainer = Targets.newInstance(DialogConstants.NN_PARENT_CONFIG);
+        Target configContainer = Targets.newTarget(DialogConstants.NN_PARENT_CONFIG);
         configContainer.attributes(panel, method -> !method.getName().equals(DialogConstants.PN_TITLE));
         if (!configContainer.isEmpty()) {
             itemsContainer.addTarget(configContainer);

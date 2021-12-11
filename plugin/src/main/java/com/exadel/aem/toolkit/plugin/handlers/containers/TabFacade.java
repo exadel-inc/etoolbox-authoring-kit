@@ -73,7 +73,7 @@ class TabFacade extends Section {
             ? DialogConstants.NN_LAYOUT_CONFIG
             : DialogConstants.NN_PARENT_CONFIG;
         Target configContainer = Targets
-            .newInstance(configContainerTag)
+            .newTarget(configContainerTag)
             .attributes(tab, MAIN_NODE_MEMBERS.negate());
         if (!configContainer.isEmpty()) {
             itemsContainer.addTarget(configContainer);

@@ -47,7 +47,7 @@ public class FieldSetHandler extends ContainerHandler implements Handler {
         FieldSet fieldSet = source.adaptTo(FieldSet.class);
         Class<?> fieldSetType = source.adaptTo(MemberSource.class).getValueType();
 
-        List<Source> fieldSetEntries = getMembersForContainer(source);
+        List<Source> fieldSetEntries = getMembersForContainer(source, target);
 
         if (fieldSetEntries.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(

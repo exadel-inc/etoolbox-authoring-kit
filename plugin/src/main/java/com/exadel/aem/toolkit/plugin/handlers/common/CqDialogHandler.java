@@ -193,9 +193,9 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
         if (itemsRoot == null || itemsRoot.getChildren().isEmpty()) {
             return;
         }
-        Target forceIgnoreFreshnessOpen = Targets.newInstance(OPENING_FORCE_IGNORE_FRESHNESS_TAG)
+        Target forceIgnoreFreshnessOpen = Targets.newTarget(OPENING_FORCE_IGNORE_FRESHNESS_TAG)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.Service.IGNORE_FRESHNESS_TOGGLER);
-        Target forceIgnoreFreshnessClose = Targets.newInstance(CLOSING_FORCE_IGNORE_FRESHNESS_TAG)
+        Target forceIgnoreFreshnessClose = Targets.newTarget(CLOSING_FORCE_IGNORE_FRESHNESS_TAG)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.Service.IGNORE_FRESHNESS_TOGGLER);
         itemsRoot.addTarget(forceIgnoreFreshnessOpen, 0);
         itemsRoot.addTarget(forceIgnoreFreshnessClose, itemsRoot.getChildren().size());

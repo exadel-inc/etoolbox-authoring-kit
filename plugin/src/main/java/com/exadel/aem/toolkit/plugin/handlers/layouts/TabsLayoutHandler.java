@@ -27,9 +27,9 @@ import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
- * The {@link LayoutHandler} variant for a tabbed Granite UI dialog
+ * The {@link ComplexLayoutHandler} variant for a tabbed Granite UI dialog
  */
-class TabsLayoutHandler extends LayoutHandler {
+class TabsLayoutHandler implements ComplexLayoutHandler {
     private static final Predicate<Method> LAYOUT_PROPERTIES_FILTER = method ->
         StringUtils.equalsAny(
             method.getName(),
@@ -49,7 +49,7 @@ class TabsLayoutHandler extends LayoutHandler {
         Tabs tabsAnnotation = source.adaptTo(Tabs.class);
         Target layoutContainer = null;
         if (tabsAnnotation != null) {
-            layoutContainer = Targets.newInstance(DialogConstants.NN_LAYOUT)
+            layoutContainer = Targets.newTarget(DialogConstants.NN_LAYOUT)
                 .attributes(tabsAnnotation, LAYOUT_PROPERTIES_FILTER);
         }
         if (layoutContainer != null && !layoutContainer.isEmpty() && target.exists(DialogConstants.NN_CONTENT)) {

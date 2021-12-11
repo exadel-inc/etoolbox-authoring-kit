@@ -172,7 +172,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      */
     private void wrapNestedMultifield(Source source, Target target) {
         // We will create new "field" subresource, but we need it "detached" not to mingle with existing "field" subresource
-        Target fieldSubresource = Targets.newInstance(DialogConstants.NN_FIELD, target);
+        Target fieldSubresource = Targets.newTarget(DialogConstants.NN_FIELD, target);
         Target itemsSubresource = fieldSubresource.createTarget(DialogConstants.NN_ITEMS);
         Target nestedMultifield = itemsSubresource.createTarget(source.getName() + POSTFIX_NESTED);
 
