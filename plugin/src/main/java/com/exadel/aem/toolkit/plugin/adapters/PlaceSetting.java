@@ -19,6 +19,8 @@ import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.handlers.Adapts;
 import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.handlers.containers.PlacementHelper;
 
 /**
  * Adapts a {@link Source} object to manage the associated placement data derived from source annotations
@@ -31,6 +33,7 @@ public class PlaceSetting {
     @SuppressWarnings("deprecation") // PlaceOnTab support is retained for compatibility and will be removed
                                      // in a version after 2.0.2
     private PlaceOnTab wrappedPlaceOnTab;
+    private Target matchingTarget;
 
     /**
      * Instance constructor per the {@link Adapts} contract
@@ -47,7 +50,7 @@ public class PlaceSetting {
     }
 
     /**
-     * Retrieves the actual placement data
+     * Retrieves the effective placement reference (the value of {@code @Place} or a similar directive)
      * @return String value; defaults to the empty string
      */
     public String getValue() {
@@ -57,5 +60,25 @@ public class PlaceSetting {
             return wrappedPlaceOnTab.value();
         }
         return StringUtils.EMPTY;
+    }
+
+    /**
+     * Retrieves the {@code Target} object associated with this instance. A target is set if the placed member is
+     * supposed to be moved to another container as thw rendering flow proceeds. Then the value is used to move the
+     * render outside the former container and into a new one
+     * @return {@code Target} instance
+     * @see PlacementHelper
+     */
+    public Target getMatchingTarget() {
+        return matchingTarget;
+    }
+
+    /**
+     * Assigns a {@code Target} to the current instance. The target is usually a node into which the adapted
+     * {@code Source} is rendered. It then may be used for moving the render to another container
+     * @param value {@code Target} object; non-null value expected
+     */
+    public void setMatchingTarget(Target value) {
+        this.matchingTarget = value;
     }
 }
