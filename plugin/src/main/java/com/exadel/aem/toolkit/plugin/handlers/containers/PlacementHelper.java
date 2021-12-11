@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
+import com.exadel.aem.toolkit.plugin.handlers.placement.MembersRegistry;
+import com.exadel.aem.toolkit.plugin.handlers.placement.SectionsRegistry;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
@@ -31,43 +33,29 @@ import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
  */
 public class PlacementHelper {
 
-
-    /* -------------------------------
-       Private fields and constructors
-       ------------------------------- */
-
     private Target container;
-    private List<Section> sections;
-    private List<String> ignoredSections;
-    private List<Source> members;
-    private final List<Source> processedMembers;
+
+    private SectionsRegistry sections;
+    private MembersRegistry members;
 
     /**
      * Default (instantiation-preventing) constructor
      */
     private PlacementHelper() {
-        processedMembers = new ArrayList<>();
     }
 
+    /* ----------------------
+       Public placement logic
+       ---------------------- */
 
     /**
-     * Retrieves the list of sources that were successfully placed with this {@code PlacementHelper}
-     * @return List of {@code Source} instances. Empty list is returned if placement was not successful. {@code Null} is
-     * returned if placement never occurred ({@link PlacementHelper#doPlacement()} was not called)
-     */
-    public List<Source> getProcessedMembers() {
-        return processedMembers;
-    }
-
-    /**
-     * Attempts to place as many as possible available members to the sections of the container provided. The members that
-     * were placed are stored in a separate collection and can be retrieved via {@link PlacementHelper#getProcessedMembers()}
+     * Attempts to place as many as possible available members to the sections of the container provided
      */
     public void doPlacement() {
-        if (sections != null && !sections.isEmpty()) {
+        if (sections != null && !sections.getAvailable().isEmpty()) {
             doMultiSectionPlacement();
         } else {
-            appendToContainer(container, members);
+            doSimplePlacement();
         }
     }
 
@@ -75,24 +63,25 @@ public class PlacementHelper {
      * Called by {@link PlacementHelper#doPlacement()} to process multi-section installations
      */
     private void doMultiSectionPlacement() {
-        Iterator<Section> sectionIterator = sections.iterator();
+        Iterator<Section> sectionIterator = sections.getAvailable().iterator();
         int iterationStep = 0;
         while (sectionIterator.hasNext()) {
             final boolean isFirstSection = iterationStep++ == 0;
             Section currentSection = sectionIterator.next();
-            List<Source> existingSectionMembers = new ArrayList<>(currentSection.getSources());
-            List<Source> assignableSectionMembers = members.stream()
+            List<Source> currentSectionMembers = new ArrayList<>(currentSection.getSources());
+            List<Source> assignableSectionMembers = members.getAvailable().stream()
                 .filter(member -> currentSection.canContain(member, isFirstSection))
                 .collect(Collectors.toList());
-            boolean needToSortAgain = !existingSectionMembers.isEmpty() && !assignableSectionMembers.isEmpty();
-            existingSectionMembers.addAll(assignableSectionMembers);
+            boolean needToSortAgain = !currentSectionMembers.isEmpty() && !assignableSectionMembers.isEmpty();
+            currentSectionMembers.addAll(assignableSectionMembers);
             if (needToSortAgain) {
-                existingSectionMembers = OrderingUtil.sortMembers(existingSectionMembers);
+                currentSectionMembers = OrderingUtil.sortMembers(currentSectionMembers);
             }
-            processedMembers.addAll(assignableSectionMembers);
-            if (!ignoredSections.contains(currentSection.getTitle())) {
+            if (!sections.getIgnored().contains(currentSection.getTitle())) {
                 Target itemsContainer = currentSection.createItemsContainer(container);
-                appendToContainer(itemsContainer, existingSectionMembers);
+                doSimplePlacement(itemsContainer, currentSectionMembers);
+            } else {
+                currentSectionMembers.forEach(item -> members.checkIn(item));
             }
         }
     }
@@ -102,7 +91,7 @@ public class PlacementHelper {
      * @param container {@link Target} manifesting a pre-defined widget container
      * @param sources   List of sources, such as members of a Java class
      */
-    private static void appendToContainer(Target container, List<Source> sources) {
+    private void doSimplePlacement(Target container, List<Source> sources) {
         PlacementCollisionSolver.checkForCollisions(sources);
         PlacementCollisionSolver.resolveFieldMethodNameCoincidences(sources);
         Target itemsElement = container.getOrCreateTarget(DialogConstants.NN_ITEMS);
@@ -110,9 +99,22 @@ public class PlacementHelper {
         for (Source source : sources) {
             Target newElement = itemsElement.getOrCreateTarget(NamingUtil.stripGetterPrefix(source.getName()));
             HandlerChains.forMember().accept(source, newElement);
+            members.checkIn(source);
         }
     }
 
+    private void doSimplePlacement() {
+        PlacementCollisionSolver.checkForCollisions(members.getAvailable());
+        PlacementCollisionSolver.resolveFieldMethodNameCoincidences(members.getAvailable());
+        Target itemsElement = container.getOrCreateTarget(DialogConstants.NN_ITEMS);
+
+        while (!members.getAvailable().isEmpty()) {
+            Source source = members.getAvailable().get(0);
+            Target newElement = itemsElement.getOrCreateTarget(NamingUtil.stripGetterPrefix(source.getName()));
+            HandlerChains.forMember().accept(source, newElement);
+            members.checkIn(source);
+        }
+    }
 
     /* ----------------
        Instance builder
@@ -131,9 +133,9 @@ public class PlacementHelper {
      */
     public static class Builder {
         private Target container;
-        private List<Section> sections;
-        private List<String> ignoredSections;
-        private List<Source> members;
+
+        private SectionsRegistry sections;
+        private MembersRegistry members;
 
         private Builder() {
         }
@@ -150,31 +152,22 @@ public class PlacementHelper {
         }
 
         /**
-         * Assigns the collection of sections members can be distributed into
-         * @param value  Collection of {@link Section} object containing data for rendering container sections
+         * Assigns the {@link SectionsRegistry} object containing of sections that the dialog members can be distributed
+         * into
+         * @param value Collection of {@link Section} objects that preserve data for rendering container sections
          * @return This instance
          */
-        public Builder sections(List<Section> value) {
+        public Builder sections(SectionsRegistry value) {
             this.sections = value;
             return this;
         }
 
         /**
-         * Assigns the collection of ignored sections' titles
-         * @param value Array of ignored tabs or accordion panels (identified by their titles) for the current class
+         * Assigns the {@link MembersRegistry} object containing placeable members
+         * @param value Registry of {@link Source} objects that represent placeable class members
          * @return This instance
          */
-        public Builder ignoredSections(List<String> value) {
-            this.ignoredSections = value;
-            return this;
-        }
-
-        /**
-         * Assigns the collection placeable members
-         * @param value All <i>non-nested</i> class members from superclasses and the current class
-         * @return This instance
-         */
-        public Builder members(List<Source> value) {
+        public Builder members(MembersRegistry value) {
             this.members = value;
             return this;
         }
@@ -187,7 +180,6 @@ public class PlacementHelper {
             PlacementHelper result = new PlacementHelper();
             result.container = container;
             result.sections = sections;
-            result.ignoredSections = ignoredSections;
             result.members = members;
             return result;
         }
