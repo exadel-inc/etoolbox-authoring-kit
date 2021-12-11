@@ -56,18 +56,8 @@ public class ClassUtil {
     }
 
     /**
-     * Retrieves a sequential list of {@link Source} objects representing manageable members that belong to
-     * a certain {@code Class} and its superclasses  and match the criteria represented by a {@code Predicate}
-     * @param targetClass The class to extract sources from
-     * @return List of {@code Source} objects
-     */
-    public static List<Source> getSources(Class<?> targetClass, Predicate<Source> condition) {
-        return getSources(targetClass, condition, true);
-    }
-
-    /**
-     * Retrieves a sequential list of {@link Source} objects representing manageable members that belong to a certain
-     * {@code Class} (and its superclasses) and match the criteria represented by a {@code Predicate}
+     * Retrieves a list of {@link Source} objects representing manageable members that belong to a certain {@code Class}
+     * (and its superclasses) and match the criteria represented by a {@code Predicate}
      * @param targetClass The class to extract sources from
      * @param condition   Nullable {@code Predicate<Member>} instance that helps to pick up appropriate fields and
      *                    methods
