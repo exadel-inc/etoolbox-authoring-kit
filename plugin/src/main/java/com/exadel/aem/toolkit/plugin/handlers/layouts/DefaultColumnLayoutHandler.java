@@ -13,14 +13,14 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.layouts;
 
-import java.util.List;
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.containers.PlacementHelper;
-import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
+import com.exadel.aem.toolkit.plugin.handlers.placement.MembersRegistry;
+import com.exadel.aem.toolkit.plugin.targets.RootTarget;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
@@ -44,10 +44,12 @@ class DefaultColumnLayoutHandler implements BiConsumer<Source, Target> {
                 .getOrCreateTarget(DialogConstants.NN_COLUMN)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 
-        List<Source> members = ClassUtil.getSources(source.adaptTo(Class.class));
+        MembersRegistry membersRegistry = new MembersRegistry(source);
+        target.getRoot().adaptTo(RootTarget.class).setMembers(membersRegistry);
+
         PlacementHelper.builder()
             .container(contentItemsColumn)
-            .members(members)
+            .members(membersRegistry)
             .build()
             .doPlacement();
     }

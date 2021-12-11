@@ -25,17 +25,18 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
-import com.exadel.aem.toolkit.plugin.adapters.WidgetContainerSetup;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
+import com.exadel.aem.toolkit.plugin.handlers.placement.MembersRegistry;
+import com.exadel.aem.toolkit.plugin.handlers.placement.SectionsRegistry;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.targets.RootTarget;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
@@ -58,25 +59,16 @@ public abstract class ContainerHandler {
        ---------------------------------- */
 
     /**
-     * Retrieves the list of sources that match the current container. This is performed by calling {@code
-     * ClassUtil.getSources()} with the additional predicate that allows to filter out sources that are set to be
-     * ignored at either the "member itself" level, or the "declaring class" level
-     * @param container Current {@link Source} instance
+     * Retrieves the list of sources that match the current container. Where to retrieve sources from, depends on the
+     * nature of a current container handler. <p>E.g., for a {@code @FieldSet} or {@code @MultiField}-annotated entry,
+     * members of the underlying class can be retrieved. But for an entry that does not necessarily refer to a container
+     * class, such as in-dialog {@code @Tabs}, we need to take into account the members of the "surrounding" class in
+     * which the current entry is declared</p>
+     * @param container Class member holding a multi-section container
+     * @param target    Current {@link Target instance}
      * @return {@code List} containing {@code Source}-typed placeable members, or an empty list
      */
-    protected List<Source> getMembersForContainer(Source container) {
-        return getMembersForContainer(container, null);
-    }
-
-    /**
-     * Retrieves the list of sources that match the current container
-     * @param container Current {@link Source} instance
-     * @param filter    An additional filter applied to all the sources that can be retrieved from a host class. Can be
-     *                  used, for instance, to specify a particular container title
-     * @return {@code List} containing {@code Source}-typed placeable members, or an empty list
-     * @see ContainerHandler#getMembersForContainer(Source)
-     */
-    private List<Source> getMembersForContainer(Source container, Predicate<Source> filter) {
+    protected List<Source> getMembersForContainer(Source container, Target target) {
         List<Source> result = new ArrayList<>();
 
         // Extract data from the source object
@@ -96,25 +88,28 @@ public abstract class ContainerHandler {
         // There can be one or more sources of members for this container.
         // 1) For e.g. a FieldSet, the only source is the class represented by the return type of the @FieldSet-annotated
         // field or method, or else the class specified in @FieldSet(value=...). The same applies to a MultiField
-        // 2) However, for e.g. an Accordion widget, there are two possible sources: same as (1), and the "surrounding"
+        // 2) However for e.g. an Accordion widget, there are two possible sources: same as (1), and the "surrounding"
         // class
-        List<Class<?>> hostsOfRenderableMembers = getRenderedClassesProvider().apply(memberSource);
-        for (Class<?> hostClass : hostsOfRenderableMembers) {
-            boolean excludeCurrentSource = hostClass.equals(declaringClass);
+        List<Class<?>> hostsOfRenderedMembers = getRenderedClassesProvider().apply(memberSource);
+        for (Class<?> hostClass : hostsOfRenderedMembers) {
+            boolean isDeclaringClass = hostClass.equals(declaringClass);
 
             // Create the filter to sort out ignored fields (apart from those defined for the container class), exclude
             // the current source (if needed), banish non-widget fields, and do custom filtering (if needed)
             List<ClassMemberSetting> ignoredMembers = getIgnoredMembers(memberSource, hostClass);
-            Predicate<Source> nonIgnoredMembers = source -> ignoredMembers.stream().noneMatch(ignored -> ignored.matches(source));
-            if (filter != null) {
-                nonIgnoredMembers = nonIgnoredMembers.and(filter);
-            }
-            if (excludeCurrentSource) {
-                nonIgnoredMembers = nonIgnoredMembers.and(source -> !isSameClassMember(source, container));
+            Predicate<Source> nonIgnoredMembersFilter = source -> ignoredMembers.stream().noneMatch(ignored -> ignored.matches(source));
+            if (isDeclaringClass) {
+                nonIgnoredMembersFilter = nonIgnoredMembersFilter.and(source -> !isSameClassMember(source, container));
             }
 
-            // Then, retrieve members for the current class, filter applied, without ordering
-            result.addAll(ClassUtil.getSources(hostClass, nonIgnoredMembers, false));
+            // Then, retrieve members for the current class, filter applied without ordering.
+            // If this class is not an underlying class of e.g. a FieldSet or MultiField-annotated member, but the
+            // "surrounding" class within which the current member is declared -- then we must use the set of members
+            // that is already attached to the target, and not collect the available members once more
+            List<Source> renderedMembers = isDeclaringClass
+                ? target.getRoot().adaptTo(RootTarget.class).getMembers().getAvailable().stream().filter(nonIgnoredMembersFilter).collect(Collectors.toList())
+                : ClassUtil.getSources(hostClass, nonIgnoredMembersFilter, false);
+            result.addAll(renderedMembers);
         }
 
         // Finally, order the whole of the members collection
@@ -132,9 +127,22 @@ public abstract class ContainerHandler {
      */
     protected abstract Function<MemberSource, List<Class<?>>> getRenderedClassesProvider();
 
+    /**
+     * Called from {@link ContainerHandler#getMembersForContainer(Source, Target)} to find out which members are
+     * being ignored due to the {@code @Ignore} directives that are put either at class level or field/method level
+     * @param container   {@code Source} instance representing a field or a method marked with a "container"-type
+     *                    annotation
+     * @param membersHost {@code Class} reference that refers to one of the classes this member is associated with
+     *                    (either the value type of the corresponding field/method or the declaring class)
+     * @return List of {@link ClassMemberSetting} objects, or an empty list
+     */
     @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
     // in a version after 2.0.2
-    private List<ClassMemberSetting> getIgnoredMembers(MemberSource container, Class<?> membersHost) {
+    private static List<ClassMemberSetting> getIgnoredMembers(MemberSource container, Class<?> membersHost) {
+        // Note: This functionality is shared across single-section placement routines ({@code FieldSet}, {@code MultiField})
+        // and multi-section ones. First do not use MembersRegistry, while second do. That's why it is not encapsulated
+        // in MembersRegistry (unlike the "ignored sections" functionality)
+
         // Build the collection of ignored members at nesting class level
         // (apart from those defined for the container class itself)
         Class<?> ignoredMembersHost = container.getReportingClass();
@@ -180,20 +188,23 @@ public abstract class ContainerHandler {
        ---------------------- */
 
     /**
-     * Used to fill in plain (single-section) containers
+     * Used to fill plain (single-section) containers nested within a Granite UI dialog
      * @param members Collection of widget-holding class members that relate to the current container
      * @param target  {@code Target} to place widgets in
      */
     protected void populateSingleSectionContainer(List<Source> members, Target target) {
+        MembersRegistry membersRegistry = new MembersRegistry(
+            target.getRoot().adaptTo(RootTarget.class).getMembers(),
+            members);
         PlacementHelper.builder()
             .container(target)
-            .members(members)
+            .members(membersRegistry)
             .build()
             .doPlacement();
     }
 
     /**
-     * Used to fill in multi-section containers nested within a Granite UI dialog. This method extracts container
+     * Used to fill multi-section containers nested within a Granite UI dialog. This method extracts container
      * sections, such as {@code Tab}s or {@code AccordionPanel}s, from the current {@code Source} and fills the {@code
      * Target}
      * @param container Class member holding a multi-section container
@@ -202,34 +213,23 @@ public abstract class ContainerHandler {
     protected void populateMultiSectionContainer(Source container, Target target) {
         target.createTarget(DialogConstants.NN_ITEMS);
 
-        List<Section> containerSections = container
-            .adaptTo(WidgetContainerSetup.class)
-            .useHierarchyFrom(target)
-            .getSections();
-
-        if (containerSections.isEmpty()) {
+        SectionsRegistry sectionsRegistry = SectionsRegistry.from(container, target);
+        if (sectionsRegistry.getAvailable().isEmpty()) {
             InvalidContainerException ex = new InvalidContainerException();
             PluginRuntime.context().getExceptionHandler().handle(ex);
         }
 
-        // Unlike in LayoutHandler, we are only interested in members that have the section name matching one of the
-        // existing sections by either simple or full ("hierarchical") title
-        List<Source> placeableMembers = getMembersForContainer(
-            container,
-            member -> member
-                .tryAdaptTo(Place.class)
-                .map(Place::value)
-                .map(placeValue -> containerSections.stream().anyMatch(section -> section.canContain(member)))
-                .orElse(false));
+        List<Source> placeableMembers = getMembersForContainer(container, target);
+        MembersRegistry membersRegistry = new MembersRegistry(
+            target.getRoot().adaptTo(RootTarget.class).getMembers(),
+            placeableMembers);
 
-        PlacementHelper placementHelper = PlacementHelper.builder()
+        PlacementHelper.builder()
             .container(target.getTarget(DialogConstants.NN_ITEMS))
-            .sections(containerSections)
-            .ignoredSections(Collections.emptyList())
-            .members(placeableMembers)
-            .build();
-        placementHelper.doPlacement();
-        placeableMembers.removeAll(placementHelper.getProcessedMembers());
+            .sections(sectionsRegistry)
+            .members(membersRegistry)
+            .build()
+            .doPlacement();
     }
 
     /* ---------------

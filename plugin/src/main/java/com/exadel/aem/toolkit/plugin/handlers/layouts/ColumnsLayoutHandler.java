@@ -18,9 +18,9 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 /**
- * The {@link LayoutHandler} variant for a Granite UI dialog with one or more named {@code Column}s specified
+ * The {@link ComplexLayoutHandler} variant for a Granite UI dialog with one or more named {@code Column}s specified
  */
-class ColumnsLayoutHandler extends LayoutHandler {
+class ColumnsLayoutHandler implements ComplexLayoutHandler {
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}

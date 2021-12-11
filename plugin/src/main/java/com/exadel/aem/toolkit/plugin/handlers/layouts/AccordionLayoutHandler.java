@@ -18,9 +18,9 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 /**
- * The {@link LayoutHandler} variant for an accordion-shaped Granite UI dialog
+ * The {@link ComplexLayoutHandler} variant for an accordion-shaped Granite UI dialog
  */
-class AccordionLayoutHandler extends LayoutHandler {
+class AccordionLayoutHandler implements ComplexLayoutHandler {
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
