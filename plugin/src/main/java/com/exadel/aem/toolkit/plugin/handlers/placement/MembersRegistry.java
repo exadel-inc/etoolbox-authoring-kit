@@ -37,7 +37,7 @@ public class MembersRegistry {
     }
 
     /**
-     * Creates a new dependent registry instance. This one will respect a prent registry with members stored in it, and
+     * Creates a new dependent registry instance. This one will respect a parent registry with members stored in it, and
      * will take account of additional members (e.g. added to a container "from outside" in a later stage of rendering
      * (via {@code @Place} or a similar mechanism)
      * @param parent  {@link MembersRegistry} instance that stores the basic set of class members

@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 /**
  * Represents an abstraction of a container section such as {@code Tab} or {@code AccordionPanel}
  * that contains a list of members designed to be rendered within this container element.
- * Used to compose an ordered "container element registry" for a component class
+ * Used to compose an ordered "containers -> container members" build-up for a component class
  */
 public abstract class Section {
 
@@ -118,8 +118,8 @@ public abstract class Section {
        ----------------------- */
 
     /**
-     * Gets whether the provided member source objects fits into this section judging by its placement setting
-     * @param member          {@code Source} object representing a non-null member source
+     * Gets whether the provided member source object fits into this section judging by its placement setting
+     * @param member {@code Source} object representing a non-null member source
      * @return True or false
      */
     public boolean canContain(Source member) {
@@ -127,8 +127,8 @@ public abstract class Section {
     }
 
     /**
-     * Gets whether the provided member source objects fits into this section judging by its placement setting
-     * @param member          {@code Source} object representing a non-null member source
+     * Gets whether the provided member source object fits into this section judging by its placement setting
+     * @param member         {@code Source} object representing a non-null member source
      * @param allowUndefined True to accept members that do not have a placement setting (can be of use if this is the
      *                       first or "default" section in a section array)
      * @return True or false
