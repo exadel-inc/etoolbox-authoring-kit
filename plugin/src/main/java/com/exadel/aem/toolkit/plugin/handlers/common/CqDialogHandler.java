@@ -34,7 +34,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
-import com.exadel.aem.toolkit.plugin.handlers.layouts.LayoutHandlers;
+import com.exadel.aem.toolkit.plugin.handlers.placement.layouts.LayoutHandlers;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;

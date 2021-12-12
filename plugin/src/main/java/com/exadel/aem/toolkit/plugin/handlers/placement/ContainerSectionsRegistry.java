@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.plugin.handlers.containers.Section;
+import com.exadel.aem.toolkit.plugin.handlers.placement.containers.Section;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**

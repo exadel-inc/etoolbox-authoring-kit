@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.layouts;
+package com.exadel.aem.toolkit.plugin.handlers.placement.layouts;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Column;
 import com.exadel.aem.toolkit.api.handlers.Source;

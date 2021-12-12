@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
-import com.exadel.aem.toolkit.plugin.handlers.containers.ContainerHandler;
+import com.exadel.aem.toolkit.plugin.handlers.placement.containers.ContainerHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 

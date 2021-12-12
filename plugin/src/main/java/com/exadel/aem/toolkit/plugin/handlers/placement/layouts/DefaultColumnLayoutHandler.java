@@ -11,15 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.layouts;
+package com.exadel.aem.toolkit.plugin.handlers.placement.layouts;
 
 import java.util.function.BiConsumer;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.containers.PlacementHelper;
 import com.exadel.aem.toolkit.plugin.handlers.placement.MembersRegistry;
+import com.exadel.aem.toolkit.plugin.handlers.placement.containers.PlacementHelper;
 import com.exadel.aem.toolkit.plugin.targets.RootTarget;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;

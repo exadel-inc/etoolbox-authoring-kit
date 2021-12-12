@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.containers;
+package com.exadel.aem.toolkit.plugin.handlers.placement.containers;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
