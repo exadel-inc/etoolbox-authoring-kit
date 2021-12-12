@@ -18,8 +18,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
+import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
 import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
 import com.exadel.aem.toolkit.plugin.handlers.placement.MembersRegistry;
 import com.exadel.aem.toolkit.plugin.handlers.placement.SectionsRegistry;
@@ -69,7 +72,7 @@ public class PlacementHelper {
             final boolean isFirstSection = iterationStep++ == 0;
             Section currentSection = sectionIterator.next();
             List<Source> currentSectionMembers = new ArrayList<>(currentSection.getSources());
-            List<Source> assignableSectionMembers = members.getAvailable().stream()
+            List<Source> assignableSectionMembers = members.getAllAvailable().stream()
                 .filter(member -> currentSection.canContain(member, isFirstSection))
                 .collect(Collectors.toList());
             boolean needToSortAgain = !currentSectionMembers.isEmpty() && !assignableSectionMembers.isEmpty();
@@ -79,9 +82,9 @@ public class PlacementHelper {
             }
             if (!sections.getIgnored().contains(currentSection.getTitle())) {
                 Target itemsContainer = currentSection.createItemsContainer(container);
-                doSimplePlacement(itemsContainer, currentSectionMembers);
+                doSimplePlacement(currentSectionMembers, itemsContainer);
             } else {
-                currentSectionMembers.forEach(item -> members.checkIn(item));
+                currentSectionMembers.forEach(item -> members.checkOut(item));
             }
         }
     }
@@ -91,7 +94,7 @@ public class PlacementHelper {
      * @param container {@link Target} manifesting a pre-defined widget container
      * @param sources   List of sources, such as members of a Java class
      */
-    private void doSimplePlacement(Target container, List<Source> sources) {
+    private void doSimplePlacement(List<Source> sources, Target container) {
         PlacementCollisionSolver.checkForCollisions(sources);
         PlacementCollisionSolver.resolveFieldMethodNameCoincidences(sources);
         Target itemsElement = container.getOrCreateTarget(DialogConstants.NN_ITEMS);
@@ -99,10 +102,19 @@ public class PlacementHelper {
         for (Source source : sources) {
             Target newElement = itemsElement.getOrCreateTarget(NamingUtil.stripGetterPrefix(source.getName()));
             HandlerChains.forMember().accept(source, newElement);
-            members.checkIn(source);
+            members.checkOut(source);
+            if (((AdaptationBase<?>) source).hasAdaptation(PlaceSetting.class)
+                && source.adaptTo(PlaceSetting.class).getMatchingTarget() != null) {
+                Target formerTarget = source.adaptTo(PlaceSetting.class).getMatchingTarget();
+                formerTarget.getParent().removeTarget(formerTarget.getName());
+            }
         }
     }
 
+    /**
+     * Appends as many of the available member sources as possible to the container node specified for this helper
+     * instance. This is a rendition of placement suitable for a single-section setup
+     */
     private void doSimplePlacement() {
         PlacementCollisionSolver.checkForCollisions(members.getAvailable());
         PlacementCollisionSolver.resolveFieldMethodNameCoincidences(members.getAvailable());
@@ -112,7 +124,23 @@ public class PlacementHelper {
             Source source = members.getAvailable().get(0);
             Target newElement = itemsElement.getOrCreateTarget(NamingUtil.stripGetterPrefix(source.getName()));
             HandlerChains.forMember().accept(source, newElement);
-            members.checkIn(source);
+
+            // For historic reasons, we allow members annotated with @Place("...") in a single-column buildup without
+            // throwing a "section not found" exception. But we should not be done with any of these members before we make
+            // sure they won't fit in any of the nested containers. Therefore, when doing exactly single-column placement,
+            // we engage not a full-scale checkout of a @Place-annotated member, but rather a "soft checkout".
+            // Such member is placed "temporarily". It remains available for secondary PlacementHelpers, e.g. for a helper
+            // invoked from an in-dialog Tabs or Accordion container
+            if (!source.tryAdaptTo(Place.class).isPresent()) {
+                members.checkOut(source);
+            }
+            PlaceSetting placeSetting = source.adaptTo(PlaceSetting.class);
+            if (!placeSetting.getValue().isEmpty()) {
+                members.softCheckOut(source);
+                placeSetting.setMatchingTarget(newElement);
+            } else {
+                members.checkOut(source);
+            }
         }
     }
 
