@@ -13,7 +13,7 @@
  */
 package com.exadel.aem.toolkit.plugin.targets;
 
-import com.exadel.aem.toolkit.plugin.handlers.placement.MembersRegistry;
+import com.exadel.aem.toolkit.plugin.handlers.placement.registries.MembersRegistry;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**

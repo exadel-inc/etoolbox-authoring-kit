@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.placement;
+package com.exadel.aem.toolkit.plugin.handlers.placement.registries;
 
 import java.util.ArrayList;
 import java.util.Arrays;

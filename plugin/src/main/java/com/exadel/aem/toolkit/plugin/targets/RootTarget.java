@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.plugin.targets;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.placement.MembersRegistry;
+import com.exadel.aem.toolkit.plugin.handlers.placement.registries.MembersRegistry;
 
 /**
  * Presents an abstraction of a "root" target entity for rendering AEM components and their configurations. This can
