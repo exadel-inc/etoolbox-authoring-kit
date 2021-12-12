@@ -60,16 +60,20 @@ public abstract class ContainerHandler {
        ---------------------------------- */
 
     /**
-     * Retrieves the list of sources that match the current container. Where to retrieve sources from, depends on the
-     * nature of a current container handler. <p>E.g., for a {@code @FieldSet} or {@code @MultiField}-annotated entry,
-     * members of the underlying class can be retrieved. But for an entry that does not necessarily refer to a container
-     * class, such as in-dialog {@code @Tabs}, we need to take into account the members of the "surrounding" class in
-     * which the current entry is declared</p>
+     * Retrieves the list of sources that can be inserted in the current container. Where to retrieve sources from,
+     * depends on the nature of a current container handler.
+     * <p>E.g., for a {@code @FieldSet} or {@code @MultiField}-annotated entry, members of the underlying class can be
+     * retrieved. But for an entry that does not necessarily refer to a container class, such as in-dialog {@code @Tabs},
+     * we need to take into account the members of the "surrounding" class (the "host" class) in which the current entry
+     * is declared.</p>
+     * <p>Note that for a nested class the exact set of members is retrieved; while for a host class, the routine can
+     * return more members than the container actually needs. These members are then filtered with the use of the
+     * {@link PlacementHelper}</p>
      * @param container Class member holding a multi-section container
      * @param target    Current {@link Target instance}
      * @return {@code List} containing {@code Source}-typed placeable members, or an empty list
      */
-    protected List<Source> getMembersForContainer(Source container, Target target) {
+    protected List<Source> getAvailableForContainer(Source container, Target target) {
         List<Source> result = new ArrayList<>();
 
         // Extract data from the source object
@@ -129,7 +133,7 @@ public abstract class ContainerHandler {
     protected abstract Function<MemberSource, List<Class<?>>> getRenderedClassesProvider();
 
     /**
-     * Called from {@link ContainerHandler#getMembersForContainer(Source, Target)} to find out which members are
+     * Called from {@link ContainerHandler#getAvailableForContainer(Source, Target)} to find out which members are
      * being ignored due to the {@code @Ignore} directives that are put either at class level or field/method level
      * @param container   {@code Source} instance representing a field or a method marked with a "container"-type
      *                    annotation
@@ -193,11 +197,12 @@ public abstract class ContainerHandler {
      * @param members Collection of widget-holding class members that relate to the current container
      * @param target  {@code Target} to place widgets in
      */
-    protected void populateSingleSectionContainer(List<Source> members, Target target) {
+    protected void populateSingleSectionContainer(Source source, List<Source> members, Target target) {
         MembersRegistry membersRegistry = new MembersRegistry(
             target.getRoot().adaptTo(RootTarget.class).getMembers(),
             members);
         PlacementHelper.builder()
+            .source(source)
             .container(target)
             .members(membersRegistry)
             .build()
@@ -205,27 +210,27 @@ public abstract class ContainerHandler {
     }
 
     /**
-     * Used to fill multi-section containers nested within a Granite UI dialog. This method extracts container
-     * sections, such as {@code Tab}s or {@code AccordionPanel}s, from the current {@code Source} and fills the {@code
-     * Target}
-     * @param container Class member holding a multi-section container
-     * @param target    {@code Target} to place widgets in
+     * Used to fill multi-section containers nested within a Granite UI dialog. This method extracts container sections,
+     * such as {@code Tab}s or {@code AccordionPanel}s, from the current {@code Source} and fills the {@code Target}
+     * @param member Class member holding a multi-section container
+     * @param target {@code Target} to place widgets in
      */
-    protected void populateMultiSectionContainer(Source container, Target target) {
+    protected void populateMultiSectionContainer(Source member, Target target) {
         target.createTarget(DialogConstants.NN_ITEMS);
 
-        SectionsRegistry sectionsRegistry = SectionsRegistry.from(container, target);
+        SectionsRegistry sectionsRegistry = SectionsRegistry.from(member, target);
         if (sectionsRegistry.getAvailable().isEmpty()) {
             InvalidContainerException ex = new InvalidContainerException();
             PluginRuntime.context().getExceptionHandler().handle(ex);
         }
 
-        List<Source> placeableMembers = getMembersForContainer(container, target);
+        List<Source> placeableMembers = getAvailableForContainer(member, target);
         MembersRegistry membersRegistry = new MembersRegistry(
             target.getRoot().adaptTo(RootTarget.class).getMembers(),
             placeableMembers);
 
         PlacementHelper.builder()
+            .source(member)
             .container(target.getTarget(DialogConstants.NN_ITEMS))
             .sections(sectionsRegistry)
             .members(membersRegistry)

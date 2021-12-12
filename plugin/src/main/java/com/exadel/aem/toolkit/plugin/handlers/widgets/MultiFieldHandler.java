@@ -50,7 +50,7 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
         target.getAttributes().remove(DialogConstants.PN_NAME);
 
         // Get the filtered members' collection for the current container; early return if collection is empty
-        List<Source> members = getMembersForContainer(source, target);
+        List<Source> members = getAvailableForContainer(source, target);
         if (members.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.adaptTo(MemberSource.class).getValueType().getName()
@@ -60,7 +60,7 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
 
         // Process separately the multiple-source and the single-source modes of multifield
         if (members.size() > 1 || source.adaptTo(MultiField.class).forceComposite()) {
-            placeMultiple(members, target, name);
+            placeMultiple(source, members, target, name);
         } else {
             placeOne(members.get(0), target);
         }
@@ -68,16 +68,16 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
 
     /**
      * Places multiple widget sources to the container of the {@code Target} multifield
-     * @param sources The collection of {@link Source} instances to become multifield children
+     * @param multiFieldEntries The collection of {@link Source} instances to become multifield children
      * @param target  Current {@link Target} instance
      * @param name    The {@code name} attribute for the target multifield
      */
-    private void placeMultiple(List<Source> sources, Target target, String name) {
+    private void placeMultiple(Source source, List<Source> multiFieldEntries, Target target, String name) {
         target.attribute(DialogConstants.PN_COMPOSITE, true);
         Target multifieldContainerElement = target.getOrCreateTarget(DialogConstants.NN_FIELD)
                 .attribute(DialogConstants.PN_NAME, name)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
-        populateSingleSectionContainer(sources, multifieldContainerElement);
+        populateSingleSectionContainer(source, multiFieldEntries, multifieldContainerElement);
     }
 
     /**

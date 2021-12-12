@@ -37,6 +37,7 @@ import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
  */
 public class PlacementHelper {
 
+    private Source source;
     private Target container;
 
     private SectionsRegistry sections;
@@ -161,6 +162,7 @@ public class PlacementHelper {
      * Used for creating a {@link PlacementHelper} instance and populating it with data
      */
     public static class Builder {
+        private Source source;
         private Target container;
 
         private SectionsRegistry sections;
@@ -170,8 +172,18 @@ public class PlacementHelper {
         }
 
         /**
-         * Assigns the reference to a {@code Target} object
-         * @param value {@code Target} instance representing a Granite UI dialog, tab, or accordion panel. This one can
+         * Assigns the reference to the placement source
+         * @param value {@code Source} instance representing the source of building up a Granite UI container
+         * @return This instance
+         */
+        public Builder source(Source value) {
+            this.source = value;
+            return this;
+        }
+
+        /**
+         * Assigns the reference to a container object
+         * @param value {@code Target} instance representing a Granite UI container. This one can
          *              be modified during the execution by adding new child containers
          * @return This instance
          */
@@ -207,6 +219,7 @@ public class PlacementHelper {
          */
         public PlacementHelper build() {
             PlacementHelper result = new PlacementHelper();
+            result.source = source;
             result.container = container;
             result.sections = sections;
             result.members = members;

@@ -47,7 +47,7 @@ public class FieldSetHandler extends ContainerHandler implements Handler {
         FieldSet fieldSet = source.adaptTo(FieldSet.class);
         Class<?> fieldSetType = source.adaptTo(MemberSource.class).getValueType();
 
-        List<Source> fieldSetEntries = getMembersForContainer(source, target);
+        List<Source> fieldSetEntries = getAvailableForContainer(source, target);
 
         if (fieldSetEntries.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(
@@ -62,7 +62,7 @@ public class FieldSetHandler extends ContainerHandler implements Handler {
         if (StringUtils.isNotBlank(fieldSet.namePostfix())) {
             target.namePostfix(fieldSet.namePostfix());
         }
-        populateSingleSectionContainer(fieldSetEntries, target);
+        populateSingleSectionContainer(source, fieldSetEntries, target);
     }
 
     /**
