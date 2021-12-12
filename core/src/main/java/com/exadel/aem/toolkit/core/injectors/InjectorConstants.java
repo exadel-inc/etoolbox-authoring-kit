@@ -22,6 +22,12 @@ public class InjectorConstants {
 
     public static final String EXCEPTION_UNSUPPORTED_TYPE = "Injector doesn't support type {}";
 
+    public static final String CHILD_INJECTOR_PREFIX_EXPR = "^.*{searchName}.*";
+
+    public static final String CHILD_INJECTOR_POSTFIX_EXPR = "^.*{searchName}$";
+
+    public static final String CHILD_INJECTOR_REPLACE_NAME = "{searchName}";
+
     /**
      * Default (instantiation-restricting) constructor.
      */

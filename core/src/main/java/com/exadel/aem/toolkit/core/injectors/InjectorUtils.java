@@ -13,21 +13,30 @@
  */
 package com.exadel.aem.toolkit.core.injectors;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Contains common methods for use with the bundled {@code Injector} components
  */
 class InjectorUtils {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InjectorUtils.class);
 
     /**
      * Default (instantiation-restricting) constructor
@@ -139,5 +148,105 @@ class InjectorUtils {
             return true;
         }
         return Arrays.asList(allowedTypes).contains(value) || value.equals(Object.class);
+    }
+
+    /**
+     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized collection
+     * @param type {@code Type} object
+     * @return True of false
+     */
+    public static boolean isTypeCollection(Type type) {
+        return type instanceof ParameterizedType
+            && ClassUtils.isAssignable((Class<?>) ((ParameterizedType) type).getRawType(), Collection.class);
+    }
+
+    /**
+     * Retrieves actual type parameter from parameterized type
+     * @param parameterizedType {@code Class} object that represents a parameterized type
+     * @return {@code Class} object representing the actual type arguments to this type
+     */
+    public static Class<?> getActualType(ParameterizedType parameterizedType) {
+        return (Class<?>) parameterizedType.getActualTypeArguments()[0];
+    }
+
+    /**
+     * Creates and initializes a new instance of a class
+     * @param instanceClass {@code Class} represent a class to be initialized
+     * @param <T>           parameterized type
+     * @return <T> initialized object instance
+     */
+    public static <T> T getObjectInstance(Class<? extends T> instanceClass) {
+        try {
+            return instanceClass.getConstructor().newInstance();
+        } catch (InstantiationException
+            | IllegalAccessException
+            | InvocationTargetException
+            | NoSuchMethodException ex) {
+            LOG.error("Could not initialize object " + instanceClass.getName(), ex);
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves the last parent node at a relative path from the current node
+     * @param currentNode  {@code Resource} current Resource node
+     * @param relativePath {@code String} relative path
+     * @return {@code Resource} class that representing the last node in relative path if success. Otherwise, null is returned
+     */
+    public static Resource getLastNodeParentResource(Resource currentNode, String relativePath) {
+        if (!StringUtils.isNotBlank(relativePath)) {
+            return null;
+        }
+
+        Resource actualParent = currentNode;
+        relativePath = prepareRelativePath(relativePath);
+        String[] nodesNames = relativePath.split("/");
+        if (nodesNames.length > 1) {
+            actualParent = currentNode.getChild(Arrays.stream(nodesNames)
+                .limit((long) nodesNames.length - 1)
+                .collect(Collectors.joining("/")));
+        }
+
+        return actualParent;
+    }
+
+    /**
+     * Retrieves the prepared relative path
+     * @param path {@code String} current path
+     * @return {@code String} object that representing prepared path if success. Otherwise, an empty string is returned.
+     */
+    public static String prepareRelativePath(String path) {
+        if (StringUtils.isNotBlank(path)) {
+            if (path.startsWith("./")) {
+                return path.substring(2);
+            }
+            return path;
+        }
+        return StringUtils.EMPTY;
+    }
+
+    /**
+     * Retrieves the predicate function that attempts to match the entire region against the pattern.
+     * @param relativePath {@code String} relative path
+     * @param regex        {@code String} regular expression
+     * @return {@code Predicate<Resource>} object that representing predicate function
+     */
+    public static Predicate<Resource> getPatternPredicate(String relativePath, String regex) {
+        String lastNodeName = InjectorUtils.getLastNodeName(relativePath);
+        Pattern pattern = Pattern.compile(regex.replace(InjectorConstants.CHILD_INJECTOR_REPLACE_NAME, lastNodeName));
+        return resource -> pattern.matcher(resource.getPath()).matches();
+    }
+
+    /**
+     * Retrieves the last node name from a given relative path
+     * @param relativePath {@code String} relative path
+     * @return {@code String} object representing the last node name
+     */
+    public static String getLastNodeName(String relativePath) {
+        String lastNodeName = relativePath;
+        if (relativePath.endsWith("/")) {
+            lastNodeName = lastNodeName.substring(0, relativePath.length() - 1);
+        }
+        return lastNodeName.substring(relativePath.lastIndexOf("/") + 1);
     }
 }

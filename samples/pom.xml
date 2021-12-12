@@ -22,7 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <host>localhost</host>
+        <host>local.qa.ext.hpe.com</host>
         <port>4502</port>
         <serviceUrl>http://${host}:${port}/crx/packmgr/service.jsp</serviceUrl>
         <project.jcrAppFolder>etoolbox-authoring-kit/samples</project.jcrAppFolder>
