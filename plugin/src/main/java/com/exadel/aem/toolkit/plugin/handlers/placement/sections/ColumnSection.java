@@ -52,12 +52,12 @@ class ColumnSection extends Section {
      * {@inheritDoc}
      */
     @Override
-    public Target createItemsContainer(Target container) {
+    public Target createItemsContainer(Target host) {
         if (column == null) {
-            return container;
+            return host;
         }
-        String nodeName = NamingUtil.getUniqueName(getTitle(), DialogConstants.NN_COLUMN, container);
-        Target itemsContainer = container.createTarget(nodeName);
+        String nodeName = NamingUtil.getUniqueName(getTitle(), DialogConstants.NN_COLUMN, host);
+        Target itemsContainer = host.createTarget(nodeName);
         itemsContainer.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
         return itemsContainer;
     }

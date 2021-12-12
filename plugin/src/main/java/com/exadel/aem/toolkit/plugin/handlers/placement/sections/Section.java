@@ -130,7 +130,8 @@ public abstract class Section {
      * Gets whether the provided member source object fits into this section judging by its placement setting
      * @param member         {@code Source} object representing a non-null member source
      * @param allowUndefined True to accept members that do not have a placement setting (can be of use if this is the
-     *                       first or "default" section in a section array)
+     *                       first or "default" section in a section array). Note: this flag is only applicable to layout
+     *                       sections. In-dialog sections do not allow members with the undefined placement
      * @return True or false
      */
     public boolean canContain(Source member, boolean allowUndefined) {
@@ -138,13 +139,13 @@ public abstract class Section {
             return false;
         }
         if (!member.tryAdaptTo(Place.class).isPresent()) {
-            return allowUndefined;
+            return isLayout && allowUndefined;
         }
 
         String placeValue = StringUtils.strip(member.adaptTo(Place.class).value(), CoreConstants.SEPARATOR_SLASH);
         return StringUtils.equals(placeValue, getTitle())
-            || StringUtils.equals(placeValue, StringUtils.strip(getFullTitle(), CoreConstants.SEPARATOR_SLASH))
-            || (StringUtils.isBlank(placeValue) && allowUndefined);
+            || StringUtils.equals(placeValue, getFullTitle())
+            || (StringUtils.isBlank(placeValue) && isLayout && allowUndefined);
     }
 
     /* ---------------
@@ -153,10 +154,10 @@ public abstract class Section {
 
     /**
      * Produces for further rendering the data structure that represents a container section with required attributes set
-     * @param container {@code Target} that will represent the section parent
-     * @return {code Target} element being a child of the given target, or the provided target itself
+     * @param host {@code Target} object represents the container to append section nodes to
+     * @return {@code Target} element being a child of the given target, or the provided target itself
      */
-    public abstract Target createItemsContainer(Target container);
+    public abstract Target createItemsContainer(Target host);
 
 
     /* ---------------

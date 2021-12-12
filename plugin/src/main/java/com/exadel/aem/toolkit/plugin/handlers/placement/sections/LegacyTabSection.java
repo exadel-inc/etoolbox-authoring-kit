@@ -59,19 +59,19 @@ class LegacyTabSection extends Section {
      * {@inheritDoc}
      */
     @Override
-    public Target createItemsContainer(Target container) {
+    public Target createItemsContainer(Target host) {
         if (tab == null) {
-            return container;
+            return host;
         }
-        String nodeName = NamingUtil.getUniqueName(getTitle(), DialogConstants.NN_TAB, container);
-        Target itemsContainer = container.createTarget(nodeName);
+        String nodeName = NamingUtil.getUniqueName(getTitle(), DialogConstants.NN_TAB, host);
+        Target itemsContainer = host.createTarget(nodeName);
         itemsContainer
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
             .attribute(DialogConstants.PN_JCR_TITLE, getTitle());
         Attribute attributeAnnotation = tab.attribute();
         itemsContainer.attributes(attributeAnnotation, AnnotationUtil.getPropertyMappingFilter(attributeAnnotation));
         if (attributeAnnotation.data().length > 0) {
-            Target graniteDataElement = container.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA);
+            Target graniteDataElement = host.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA);
             Arrays.stream(attributeAnnotation.data())
                 .forEach(data -> graniteDataElement.attribute(data.name(), data.value()));
         }

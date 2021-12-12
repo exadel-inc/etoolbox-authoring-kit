@@ -53,12 +53,12 @@ class AccordionPanelSection extends Section {
      * {@inheritDoc}
      */
     @Override
-    public Target createItemsContainer(Target container) {
+    public Target createItemsContainer(Target host) {
         if (panel == null) {
-            return container;
+            return host;
         }
-        String nodeName = NamingUtil.getUniqueName(getTitle(), DialogConstants.NN_TAB, container);
-        Target itemsContainer = container.createTarget(nodeName);
+        String nodeName = NamingUtil.getUniqueName(getTitle(), DialogConstants.NN_TAB, host);
+        Target itemsContainer = host.createTarget(nodeName);
         itemsContainer.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
             .attribute(DialogConstants.PN_JCR_TITLE, getTitle());
         Target configContainer = Targets.newTarget(DialogConstants.NN_PARENT_CONFIG);
