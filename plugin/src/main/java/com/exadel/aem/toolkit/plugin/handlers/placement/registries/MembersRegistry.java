@@ -25,7 +25,6 @@ import com.exadel.aem.toolkit.api.handlers.Source;
  */
 public class MembersRegistry {
 
-    private final MembersRegistry upstream;
     private final List<Entry> entries;
 
     /**
@@ -47,10 +46,9 @@ public class MembersRegistry {
      * @param members  List of additional ("local") {@code Source} objects representing class members
      */
     public MembersRegistry(MembersRegistry upstream, List<Source> members) {
-        this.upstream = upstream;
         this.entries = members
             .stream()
-            .map(Entry::new)
+            .map(member -> findMatchOrCreate(upstream, member))
             .collect(Collectors.toList());
     }
 
@@ -86,9 +84,6 @@ public class MembersRegistry {
      * @param member {@code Source} object that represents a class member
      */
     public void checkOut(Source member) {
-        if (upstream != null) {
-            upstream.checkOut(member);
-        }
         entries
             .stream()
             .filter(entry -> entry.getMember().equals(member))
@@ -102,14 +97,35 @@ public class MembersRegistry {
      * @param member {@code Source} object that represents a class member
      */
     public void softCheckOut(Source member) {
-        if (upstream != null) {
-            upstream.softCheckOut(member);
-        }
         entries
             .stream()
             .filter(entry -> entry.getMember().equals(member))
             .findFirst()
             .ifPresent(entry -> entry.setState(EntryState.SOFT_CHECKED_OUT));
+    }
+
+    /* ---------------
+       Utility methods
+       --------------- */
+
+    /**
+     * Called from the instance constructor to find correspondences for the given class members in an upstream registry
+     * (see {@link MembersRegistry#MembersRegistry(MembersRegistry, List)}). If a particular member is already
+     * registered in the upstream, a reference to it is returned. Otherwise, a new member is created with the default
+     * state
+     * @param upstream {@link MembersRegistry} instance that stores the basic set of class members
+     * @param member   {@code Source} object representing a class member
+     * @return An new registry entry, or a reference to an entry that exists in the upstream registry
+     */
+    private static Entry findMatchOrCreate(MembersRegistry upstream, Source member) {
+        if (upstream == null) {
+            return new Entry(member);
+        }
+        Entry match = upstream.entries.stream().filter(entry -> entry.member.equals(member)).findFirst().orElse(null);
+        if (match != null) {
+            return match;
+        }
+        return new Entry(member);
     }
 
     /* ---------------
