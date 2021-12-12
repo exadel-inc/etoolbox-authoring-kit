@@ -295,11 +295,12 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
      */
     @Override
     public void addTarget(Target other, int position) {
-        if (other != null && other.getParent() != null) {
-            other.getParent().getChildren().remove(other);
-        }
-        if (other == null) {
+        // We cannot attach target B to target A if target A is a descendant of target A
+        if (other == null || other.findChild(child -> child.equals(this)) != null) {
             return;
+        }
+        if (other.getParent() != null) {
+            other.getParent().getChildren().remove(other);
         }
         if (other instanceof TargetImpl) {
             ((TargetImpl) other).parent = this;
