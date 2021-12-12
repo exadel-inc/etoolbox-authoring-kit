@@ -11,30 +11,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.placement.containers;
+package com.exadel.aem.toolkit.plugin.handlers.placement.sections;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.api.annotations.layouts.Column;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
 /**
  * Presents a {@link Section} variant for handling the {@code Accordion} layout
  */
-class ColumnFacade extends Section {
-    private final Column column;
+class AccordionPanelSection extends Section {
+    private final AccordionPanel panel;
 
     /**
-     * Creates a new {@link Section} wrapped around the specified {@link Column} object
+     * Creates a new {@link Section} wrapped around the specified {@link AccordionPanel} object
+     * @param panel    {@code AccordionPanel} object
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
-     * @param column {@code Column} object
      */
-    public ColumnFacade(Column column, boolean isLayout) {
-        super(false);
-        this.column = column;
+    public AccordionPanelSection(AccordionPanel panel, boolean isLayout) {
+        super(isLayout);
+        this.panel = panel;
     }
 
     /**
@@ -42,23 +43,29 @@ class ColumnFacade extends Section {
      */
     @Override
     public String getTitle() {
-        if (column == null) {
+        if (panel == null) {
             return StringUtils.EMPTY;
         }
-        return column.title();
+        return panel.title();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    Target createItemsContainer(Target container) {
-        if (column == null) {
+    public Target createItemsContainer(Target container) {
+        if (panel == null) {
             return container;
         }
-        String nodeName = NamingUtil.getUniqueName(getTitle(), DialogConstants.NN_COLUMN, container);
+        String nodeName = NamingUtil.getUniqueName(getTitle(), DialogConstants.NN_TAB, container);
         Target itemsContainer = container.createTarget(nodeName);
-        itemsContainer.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
+        itemsContainer.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
+            .attribute(DialogConstants.PN_JCR_TITLE, getTitle());
+        Target configContainer = Targets.newTarget(DialogConstants.NN_PARENT_CONFIG);
+        configContainer.attributes(panel, method -> !method.getName().equals(DialogConstants.PN_TITLE));
+        if (!configContainer.isEmpty()) {
+            itemsContainer.addTarget(configContainer);
+        }
         return itemsContainer;
     }
 }

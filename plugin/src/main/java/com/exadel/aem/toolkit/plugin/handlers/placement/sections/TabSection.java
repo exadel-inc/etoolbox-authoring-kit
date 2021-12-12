@@ -11,35 +11,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.placement.containers;
+package com.exadel.aem.toolkit.plugin.handlers.placement.sections;
 
-import java.util.Arrays;
+import java.lang.reflect.Method;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.exadel.aem.toolkit.api.annotations.container.Tab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
 /**
- * Presents a {@link Section} variant for handling the legacy flavor of {@code Tab} layout
+ * Presents a {@link Section} variant for handling the {@code Tab} layout
  */
-@SuppressWarnings("deprecation") // Processing of container.Tab is retained for compatibility and will be removed
-                                 // in a version after 2.0.2
-class LegacyTabFacade extends Section {
+class TabSection extends Section {
+    private static final Predicate<Method> MAIN_NODE_MEMBERS = method -> StringUtils.equalsAny(
+        method.getName(),
+        DialogConstants.PN_TITLE,
+        DialogConstants.PN_TRACKING_ELEMENT);
 
     private final Tab tab;
 
     /**
-     * Creates a new {@code SectionHelper} wrapped around the specified {@link Tab} object
-     * @param tab      {@code Tab} object
+     * Creates a new {@link Section} wrapped around the specified {@link Tab} object
+     * @param tab      {@code Tab} object this helper wraps
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */
-    public LegacyTabFacade(Tab tab, boolean isLayout) {
+    public TabSection(Tab tab, boolean isLayout) {
         super(isLayout);
         this.tab = tab;
     }
@@ -59,23 +61,23 @@ class LegacyTabFacade extends Section {
      * {@inheritDoc}
      */
     @Override
-    Target createItemsContainer(Target container) {
+    public Target createItemsContainer(Target container) {
         if (tab == null) {
             return container;
         }
         String nodeName = NamingUtil.getUniqueName(getTitle(), DialogConstants.NN_TAB, container);
         Target itemsContainer = container.createTarget(nodeName);
-        itemsContainer
-            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
-            .attribute(DialogConstants.PN_JCR_TITLE, getTitle());
-        Attribute attributeAnnotation = tab.attribute();
-        itemsContainer.attributes(attributeAnnotation, AnnotationUtil.getPropertyMappingFilter(attributeAnnotation));
-        if (attributeAnnotation.data().length > 0) {
-            Target graniteDataElement = container.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA);
-            Arrays.stream(attributeAnnotation.data())
-                .forEach(data -> graniteDataElement.attribute(data.name(), data.value()));
+        itemsContainer.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
+            .attributes(tab, MAIN_NODE_MEMBERS);
+        String configContainerTag = isLayoutSection()
+            ? DialogConstants.NN_LAYOUT_CONFIG
+            : DialogConstants.NN_PARENT_CONFIG;
+        Target configContainer = Targets
+            .newTarget(configContainerTag)
+            .attributes(tab, MAIN_NODE_MEMBERS.negate());
+        if (!configContainer.isEmpty()) {
+            itemsContainer.addTarget(configContainer);
         }
-
         return itemsContainer;
     }
 }

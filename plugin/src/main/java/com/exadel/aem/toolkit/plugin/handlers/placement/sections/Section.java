@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.placement.containers;
+package com.exadel.aem.toolkit.plugin.handlers.placement.sections;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -156,7 +156,7 @@ public abstract class Section {
      * @param container {@code Target} that will represent the section parent
      * @return {code Target} element being a child of the given target, or the provided target itself
      */
-    abstract Target createItemsContainer(Target container);
+    public abstract Target createItemsContainer(Target container);
 
 
     /* ---------------
@@ -200,7 +200,7 @@ public abstract class Section {
         if (value == null) {
             return null;
         }
-        return new TabFacade(value, isLayout);
+        return new TabSection(value, isLayout);
     }
 
     /**
@@ -215,7 +215,7 @@ public abstract class Section {
         if (value == null) {
             return null;
         }
-        return new LegacyTabFacade(value, isLayout);
+        return new LegacyTabSection(value, isLayout);
     }
 
     /**
@@ -228,7 +228,7 @@ public abstract class Section {
         if (value == null) {
             return null;
         }
-        return new AccordionPanelFacade(value, isLayout);
+        return new AccordionPanelSection(value, isLayout);
     }
 
     /**
@@ -241,6 +241,6 @@ public abstract class Section {
         if (value == null) {
             return null;
         }
-        return new ColumnFacade(value, isLayout);
+        return new ColumnSection(value, isLayout);
     }
 }

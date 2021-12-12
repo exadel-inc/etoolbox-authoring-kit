@@ -18,7 +18,7 @@ import java.util.List;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.placement.containers.Section;
+import com.exadel.aem.toolkit.plugin.handlers.placement.sections.Section;
 
 /**
  * Collects and manages information on the layout/container sections (such as dialog tabs, accordion panels, or else
