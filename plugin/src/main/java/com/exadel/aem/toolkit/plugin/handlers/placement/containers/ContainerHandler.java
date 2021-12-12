@@ -66,8 +66,9 @@ public abstract class ContainerHandler {
      * retrieved. But for an entry that does not necessarily refer to a container class, such as in-dialog {@code @Tabs},
      * we need to take into account the members of the "surrounding" class (the "host" class) in which the current entry
      * is declared.</p>
-     * <p>Note that for a nested class the exact set of members is retrieved; while for a host class, the routine can
-     * return more members than the container actually needs. These members are then filtered with the use of the
+     * <p>Note that for a nested class the exact set of members is retrieved; while dealing with a host class, the routine
+     * returns a greater number members that are expected to be filtered and distributed between sections of the current
+     * container with the use of {@link PlacementHelper}
      * {@link PlacementHelper}</p>
      * @param container Class member holding a multi-section container
      * @param target    Current {@link Target instance}
