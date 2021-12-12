@@ -21,6 +21,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.containers.PlacementHelper;
 import com.exadel.aem.toolkit.plugin.handlers.placement.MembersRegistry;
 import com.exadel.aem.toolkit.plugin.targets.RootTarget;
+import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
@@ -44,10 +45,10 @@ class DefaultColumnLayoutHandler implements BiConsumer<Source, Target> {
                 .getOrCreateTarget(DialogConstants.NN_COLUMN)
                 .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
 
-        MembersRegistry membersRegistry = new MembersRegistry(source);
+        MembersRegistry membersRegistry = new MembersRegistry(ClassUtil.getSources(source.adaptTo(Class.class)));
         target.getRoot().adaptTo(RootTarget.class).setMembers(membersRegistry);
 
-        PlacementHelper.builder()
+         PlacementHelper.builder()
             .container(contentItemsColumn)
             .members(membersRegistry)
             .build()

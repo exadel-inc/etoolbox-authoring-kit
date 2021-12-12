@@ -30,6 +30,7 @@ import com.exadel.aem.toolkit.plugin.handlers.placement.MembersRegistry;
 import com.exadel.aem.toolkit.plugin.handlers.placement.SectionsRegistry;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.targets.RootTarget;
+import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
@@ -68,7 +69,7 @@ interface ComplexLayoutHandler extends BiConsumer<Source, Target> {
         // We consider this target to be a dialog node. We initialize sections and members registries that will be used
         // by this handler and the nested containers' handlers
         SectionsRegistry sectionsRegistry = SectionsRegistry.from(source, target, annotationTypes);
-        MembersRegistry membersRegistry = new MembersRegistry(source);
+        MembersRegistry membersRegistry = new MembersRegistry(ClassUtil.getSources(source.adaptTo(Class.class)));
         target.adaptTo(RootTarget.class).setMembers(membersRegistry);
 
         // If tabs/accordion panels/columns collection is empty and yet there are sources to be placed, fire an exception

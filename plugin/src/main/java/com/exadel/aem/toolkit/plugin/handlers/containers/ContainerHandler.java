@@ -107,7 +107,7 @@ public abstract class ContainerHandler {
             // "surrounding" class within which the current member is declared -- then we must use the set of members
             // that is already attached to the target, and not collect the available members once more
             List<Source> renderedMembers = isDeclaringClass
-                ? target.getRoot().adaptTo(RootTarget.class).getMembers().getAvailable().stream().filter(nonIgnoredMembersFilter).collect(Collectors.toList())
+                ? target.getRoot().adaptTo(RootTarget.class).getMembers().getAllAvailable().stream().filter(nonIgnoredMembersFilter).collect(Collectors.toList())
                 : ClassUtil.getSources(hostClass, nonIgnoredMembersFilter, false);
             result.addAll(renderedMembers);
         }
