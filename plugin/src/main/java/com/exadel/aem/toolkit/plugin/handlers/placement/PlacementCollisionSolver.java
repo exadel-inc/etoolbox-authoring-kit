@@ -30,18 +30,20 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.ResourceTypeSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
+import com.exadel.aem.toolkit.plugin.handlers.placement.registries.SectionsRegistry;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.sources.ModifiableMemberSource;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
- * Contains helper methods for the {@link PlacementHelper} that resolve collisions either between same-named Java class
- * members of a parent and a child class or between a field and a method sharing the same name. These methods are aimed
- * at avoiding ambiguities in naming and/or reporting to the user of potential rendering problems
+ * Contains helper methods for the {@link PlacementHelper} that resolve collisions between Java class members that
+ * create Granite UI widgets or containers. These methods are aimed at avoiding ambiguities in naming and/or reporting
+ * to the user of potential rendering problems
  */
 class PlacementCollisionSolver {
 
@@ -54,6 +56,13 @@ class PlacementCollisionSolver {
     private static final String REASON_AMBIGUOUS_ORDER = "attributes of the parent class member will have precedence";
     private static final String REASON_DIFFERENT_RESTYPE = "different resource types provided";
 
+    private static final String CIRCULAR_PLACEMENT_MESSAGE_TEMPLATE = "%s named \"%s\" in class \"%s\" " +
+        "requests to be placed in container declared by %s named \"%s\" in class \"%s\" while the latter is already " +
+        "a child container of the first";
+
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private PlacementCollisionSolver() {
     }
 
@@ -226,6 +235,37 @@ class PlacementCollisionSolver {
      */
     private static boolean hasDifferentResourceType(Source first, Source second) {
         return !first.adaptTo(ResourceTypeSetting.class).getValue().equals(second.adaptTo(ResourceTypeSetting.class).getValue());
+    }
+
+    /* -----------------------------
+       Circular placement management
+       ----------------------------- */
+
+    /**
+     * Detects circular reference ambiguities in multi-section Granite UI buildups such as when member A requests (via,
+     * e.g., its {@code Place} directive) to be placed within a section declared by member B while member B is to be
+     * placed within a container created upon member A
+     * @param host      {@code Source} object that represents the current host (the element for which child nodes are
+     *                  being collected)
+     * @param candidate {@code Source} object representing a potential child node of the {@code host}
+     * @param container {@code Target} object referring to the node newly created for the {@code candidate}
+     */
+    public static void checkForCircularPlacement(Source host, Source candidate, Target container) {
+        if (SectionsRegistry.isAvailableFor(candidate)
+            && SectionsRegistry.from(candidate, container).getAvailable().stream().anyMatch(section -> section.canContain(host))) {
+
+            PluginRuntime
+                .context()
+                .getExceptionHandler()
+                .handle(new InvalidLayoutException(String.format(
+                    CIRCULAR_PLACEMENT_MESSAGE_TEMPLATE,
+                    isField(candidate) ? TYPE_FIELD : TYPE_METHOD,
+                    candidate.getName(),
+                    ((MemberSource) candidate).getDeclaringClass().getSimpleName(),
+                    isField(host) ? TYPE_FIELD.toLowerCase() : TYPE_METHOD.toLowerCase(),
+                    host.getName(),
+                    ((MemberSource) host).getDeclaringClass().getSimpleName())));
+        }
     }
 
     /* ----------------------

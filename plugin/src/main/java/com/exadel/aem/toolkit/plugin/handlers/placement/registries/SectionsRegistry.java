@@ -15,7 +15,12 @@ package com.exadel.aem.toolkit.plugin.handlers.placement.registries;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
+import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
+import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.placement.sections.Section;
@@ -53,6 +58,23 @@ public abstract class SectionsRegistry {
      */
     public List<String> getIgnored() {
         return ignoredSections;
+    }
+
+    /* ---------------
+       Utility methods
+       --------------- */
+
+    /**
+     * Gets whether the given {@code Source} object can be used as a section registry base, i.e. carries a
+     * section-initializing directive, such as a {@code Tabs} or {@code Accordion} annotation
+     * @param source {@code Source} instance used as the data supplier for the markup
+     * @return True or false
+     */
+    public static boolean isAvailableFor(Source source) {
+        if (!(source instanceof MemberSource)) {
+            return false;
+        }
+        return Stream.of(Tabs.class, Accordion.class, FixedColumns.class).anyMatch(sectionType -> source.tryAdaptTo(sectionType).isPresent());
     }
 
     /* ---------------
