@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -48,7 +49,7 @@ class ContainerSectionsRegistry extends SectionsRegistry {
      */
     public ContainerSectionsRegistry(Source source, Target target) {
         super(
-            collectSections(source, getTitleHierarchy(target)),
+            collectSections(source, getTitlePrefix(source, target)),
             Collections.emptyList());
     }
 
@@ -96,14 +97,24 @@ class ContainerSectionsRegistry extends SectionsRegistry {
     }
 
     /**
-     * Collects the section names from the upstream containers of the current section and retrieves them as a
-     * "hierarchy-style" string, e.g. {@code My Dialog Tab/My internal tab}
-     * @param value {@code Target} instance representing the current container
-     * @return String value; possibly an empty string
+     * Retrieves the prefix for the full "title-style" hierarchical address of the current container (e.g. {@code
+     * "My Tab/My Accordion Panel/My Inner Tab"}. If this container has its {@code @Place} directive, the title is
+     * according to the {@code @Place} value; otherwise it is defined by the titles of containers this one is
+     * currently nested in
+     * @param source {@code Source} instance matching the current container
+     * @param target {@code Target} instance that represents the render of the current source
+     * @return String value; an empty string is returned if parent containers have not been detected
      */
-    private static String getTitleHierarchy(Target value) {
-        List<String> result = new ArrayList<>();
-        Target closestContainer = value.findParent(CONTAINER_PREDICATE);
+    private static String getTitlePrefix(Source source, Target target) {
+        // First try to extract the "place" value from the given source
+        Place placeSetting = source.adaptTo(Place.class);
+        if (placeSetting != null && StringUtils.isNotBlank(placeSetting.value())) {
+            return placeSetting.value();
+        }
+        // If no such value, collect data on what way the current target is nested into other named targets, and produce
+        // a slash-delimited result
+        List<String> resultChunks = new ArrayList<>();
+        Target closestContainer = target.findParent(CONTAINER_PREDICATE);
         while (closestContainer != null) {
             Target closestWidgetNode = closestContainer.findParent(WIDGET_NODE_PREDICATE);
             boolean isContainerWidget =
@@ -116,9 +127,9 @@ class ContainerSectionsRegistry extends SectionsRegistry {
             if (!isContainerWidget) {
                 break;
             }
-            result.add(0, closestContainer.getAttribute(DialogConstants.PN_JCR_TITLE, StringUtils.EMPTY));
+            resultChunks.add(0, closestContainer.getAttribute(DialogConstants.PN_JCR_TITLE, StringUtils.EMPTY));
             closestContainer = closestWidgetNode.findParent(CONTAINER_PREDICATE);
         }
-        return String.join(CoreConstants.SEPARATOR_SLASH, result);
+        return String.join(CoreConstants.SEPARATOR_SLASH, resultChunks);
     }
 }
