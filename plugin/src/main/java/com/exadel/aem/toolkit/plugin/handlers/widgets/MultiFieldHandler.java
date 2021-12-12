@@ -50,8 +50,8 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
         target.getAttributes().remove(DialogConstants.PN_NAME);
 
         // Get the filtered members' collection for the current container; early return if collection is empty
-        List<Source> sources = getMembersForContainer(source, target);
-        if (sources.isEmpty()) {
+        List<Source> members = getMembersForContainer(source, target);
+        if (members.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
                     EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.adaptTo(MemberSource.class).getValueType().getName()
             ));
@@ -59,10 +59,10 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
         }
 
         // Process separately the multiple-source and the single-source modes of multifield
-        if (sources.size() > 1 || source.adaptTo(MultiField.class).forceComposite()) {
-            placeMultiple(sources, target, name);
+        if (members.size() > 1 || source.adaptTo(MultiField.class).forceComposite()) {
+            placeMultiple(members, target, name);
         } else {
-            placeOne(sources.get(0), target);
+            placeOne(members.get(0), target);
         }
     }
 
