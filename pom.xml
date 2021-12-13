@@ -80,7 +80,7 @@
         <sonar.projectKey>${project.artifactId}</sonar.projectKey>
         <sonar.java.binaries>target/classes</sonar.java.binaries>
 
-        <aem.host>local.qa.ext.hpe.com</aem.host>
+        <aem.host>localhost</aem.host>
         <aem.port>4502</aem.port>
     </properties>
 
