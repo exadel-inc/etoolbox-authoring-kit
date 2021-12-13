@@ -53,5 +53,7 @@ class DefaultColumnLayoutHandler implements BiConsumer<Source, Target> {
             .members(membersRegistry)
             .build()
             .doPlacement();
+         // For historic reasons, we allow "orphaned" members to be rendered via this layout handler, therefore,
+         // MembersRegistry is not reviewed in the end unlike in ComplexLayoutHandler
     }
 }

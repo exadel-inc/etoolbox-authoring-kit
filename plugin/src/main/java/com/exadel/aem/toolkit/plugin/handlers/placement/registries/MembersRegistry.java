@@ -46,7 +46,7 @@ public class MembersRegistry {
      * @param members  List of additional ("local") {@code Source} objects representing class members
      */
     public MembersRegistry(MembersRegistry upstream, List<Source> members) {
-        this.entries = members
+        entries = members
             .stream()
             .map(member -> findMatchOrCreate(upstream, member))
             .collect(Collectors.toList());
@@ -77,6 +77,20 @@ public class MembersRegistry {
             .filter(entry -> entry.getState() == EntryState.AVAILABLE || entry.getState() == EntryState.SOFT_CHECKED_OUT)
             .map(Entry::getMember)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Registers additional members for the current instance. Before adding the method checks for members already
+     * present in the registry
+     * @param members List of additional {@code Source} objects representing class members
+     */
+    public void add(List<Source> members) {
+        List<Entry> additionalEntries = members
+            .stream()
+            .filter(member -> entries.stream().noneMatch(entry -> entry.isSameMember(member)))
+            .map(Entry::new)
+            .collect(Collectors.toList());
+        entries.addAll(additionalEntries);
     }
 
     /**
@@ -171,6 +185,19 @@ public class MembersRegistry {
          */
         public void setState(EntryState state) {
             this.state = state;
+        }
+
+        /**
+         * Shortcuts {@link Source#isSame(Source)} for the wrapped class field or method to say whether the two {@code
+         * Source} objects represent the same class member
+         * @param other Nullable {@code Source} object
+         * @return True or false
+         */
+        public boolean isSameMember(Source other) {
+            if (getMember() == null) {
+                return false;
+            }
+            return getMember().isSame(other);
         }
     }
 

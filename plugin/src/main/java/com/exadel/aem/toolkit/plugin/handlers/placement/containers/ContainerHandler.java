@@ -210,7 +210,7 @@ abstract class ContainerHandler {
         // Report to the MembersRegistry of members still not used. Due to the nature of getAvailableForContainer() method
         // these can be sources other than those already registered, but we need them in the registry so that we can
         // alert on members not used at the end of the rendering
-        target.getRoot().adaptTo(RootTarget.class).getMembers().register(membersRegistry.getAvailable());
+        target.getRoot().adaptTo(RootTarget.class).getMembers().add(membersRegistry.getAvailable());
     }
 
     /**
@@ -241,6 +241,6 @@ abstract class ContainerHandler {
             .build()
             .doPlacement();
         // Report to the MembersRegistry of members still not used (explanation in the method above)
-        target.getRoot().adaptTo(RootTarget.class).getMembers().register(membersRegistry.getAvailable());
+        target.getRoot().adaptTo(RootTarget.class).getMembers().add(membersRegistry.getAvailable());
     }
 }
