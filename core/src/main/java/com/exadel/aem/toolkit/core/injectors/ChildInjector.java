@@ -80,12 +80,12 @@ public class ChildInjector implements Injector {
                 return null;
             }
 
-            Resource parent = InjectorUtils.getResource(adaptable);
-            if (parent == null) {
+            Resource currentNode = InjectorUtils.getResource(adaptable);
+            if (currentNode == null) {
                 return null;
             }
 
-            Resource childResource = getChildResource(parent, varName);
+            Resource childResource = getChildResource(currentNode, varName);
             if (childResource == null) {
                 return null;
             }
@@ -110,7 +110,7 @@ public class ChildInjector implements Injector {
      */
     private Resource getChildResource(Resource currentNode, String varName) {
         if (StringUtils.isNotBlank(annotation.name())) {
-            return currentNode.getChild(annotation.name());
+            return currentNode.getChild(InjectorUtils.prepareRelativePath(annotation.name()));
         } else if (StringUtils.isNotBlank(annotation.namePrefix())) {
             Resource actualParent = InjectorUtils.getLastNodeParentResource(currentNode, annotation.namePrefix());
             return getFilteredResource(actualParent, InjectorUtils.getPatternPredicate(annotation.namePrefix(), InjectorConstants.CHILD_INJECTOR_PREFIX_EXPR));

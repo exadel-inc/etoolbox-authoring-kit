@@ -220,6 +220,11 @@ class InjectorUtils {
             if (path.startsWith("./")) {
                 return path.substring(2);
             }
+
+            if (path.startsWith("/")) {
+                return path.substring(1);
+            }
+
             return path;
         }
         return StringUtils.EMPTY;

@@ -95,7 +95,12 @@ public class ChildrenInjector implements Injector {
                 return null;
             }
 
-            return getChildren(currentNode, type);
+            List<Object> childrenNodes = getChildren(currentNode, type);
+            if (childrenNodes == null || childrenNodes.isEmpty()) {
+                return null;
+            }
+
+            return childrenNodes;
         } catch (Exception ex) {
             LOG.error("Failed to inject Children ", ex);
         }
@@ -111,7 +116,7 @@ public class ChildrenInjector implements Injector {
      */
     private List<Object> getChildren(Resource currentNode, Type type) {
         if (StringUtils.isNotBlank(annotation.name())) {
-            Resource actualParent = currentNode.getChild(annotation.name());
+            Resource actualParent = currentNode.getChild(InjectorUtils.prepareRelativePath(annotation.name()));
             List<Predicate<Resource>> predicates = getAnnotationPredicates();
             return getFilteredList(actualParent, type, predicates);
         } else if (StringUtils.isNotBlank(annotation.namePrefix())) {

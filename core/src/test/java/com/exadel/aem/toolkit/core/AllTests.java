@@ -13,6 +13,10 @@
  */
 package com.exadel.aem.toolkit.core;
 
+import com.exadel.aem.toolkit.core.injectors.ChildInjectorTest;
+
+import com.exadel.aem.toolkit.core.injectors.ChildrenInjectorTest;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -38,7 +42,9 @@ import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderTe
     OptionProviderTest.class,
     RequestParamInjectorTest.class,
     RequestSelectorsInjectorTest.class,
-    RequestSuffixInjectorTest.class
+    RequestSuffixInjectorTest.class,
+    ChildInjectorTest.class,
+    ChildrenInjectorTest.class
 })
 public class AllTests {
 }
