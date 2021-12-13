@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
@@ -70,15 +69,15 @@ abstract class ContainerHandler {
      * returns a greater number members that are expected to be filtered and distributed between sections of the current
      * container with the use of {@link PlacementHelper}
      * {@link PlacementHelper}</p>
-     * @param container Class member holding a multi-section container
-     * @param target    Current {@link Target instance}
+     * @param host   {@code Source} object that represents the class member holding a multi-section container
+     * @param target Current {@link Target instance}
      * @return {@code List} containing {@code Source}-typed placeable members, or an empty list
      */
-    List<Source> getAvailableForContainer(Source container, Target target) {
+    List<Source> getAvailableForContainer(Source host, Target target) {
         List<Source> result = new ArrayList<>();
 
         // Extract data from the source object
-        MemberSource memberSource = container.adaptTo(MemberSource.class);
+        MemberSource memberSource = host.adaptTo(MemberSource.class);
         Class<?> declaringClass = memberSource.getDeclaringClass();
         Class<?> valueTypeClass = memberSource.getValueType();
 
@@ -105,7 +104,7 @@ abstract class ContainerHandler {
             List<ClassMemberSetting> ignoredMembers = getIgnoredMembers(memberSource, hostClass);
             Predicate<Source> nonIgnoredMembersFilter = source -> ignoredMembers.stream().noneMatch(ignored -> ignored.matches(source));
             if (isDeclaringClass) {
-                nonIgnoredMembersFilter = nonIgnoredMembersFilter.and(source -> !isSameClassMember(source, container));
+                nonIgnoredMembersFilter = nonIgnoredMembersFilter.and(source -> !source.isSame(host));
             }
 
             // Then, retrieve members for the current class, filter applied without ordering.
@@ -208,6 +207,10 @@ abstract class ContainerHandler {
             .members(membersRegistry)
             .build()
             .doPlacement();
+        // Report to the MembersRegistry of members still not used. Due to the nature of getAvailableForContainer() method
+        // these can be sources other than those already registered, but we need them in the registry so that we can
+        // alert on members not used at the end of the rendering
+        target.getRoot().adaptTo(RootTarget.class).getMembers().register(membersRegistry.getAvailable());
     }
 
     /**
@@ -237,22 +240,7 @@ abstract class ContainerHandler {
             .members(membersRegistry)
             .build()
             .doPlacement();
-    }
-
-    /* ---------------
-       Utility methods
-       --------------- */
-
-    /**
-     * Gets whether the two {@code Source} objects represent the same class member
-     * @param first  {@code Source} instance, non-null
-     * @param second {@code Source} instance, non-null
-     * @return True or false
-     */
-    private static boolean isSameClassMember(Source first, Source second) {
-        return (first instanceof MemberSource)
-            && (second instanceof MemberSource)
-            && ((MemberSource) first).getDeclaringClass().equals(((MemberSource) second).getDeclaringClass())
-            && StringUtils.equals(first.getName(), second.getName());
+        // Report to the MembersRegistry of members still not used (explanation in the method above)
+        target.getRoot().adaptTo(RootTarget.class).getMembers().register(membersRegistry.getAvailable());
     }
 }

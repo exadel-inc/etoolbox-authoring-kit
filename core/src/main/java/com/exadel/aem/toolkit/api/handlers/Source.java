@@ -51,4 +51,15 @@ public interface Source {
     default <T> Optional<T> tryAdaptTo(Class<T> adaptation) {
         return Optional.ofNullable(adaptTo(adaptation));
     }
+
+    /**
+     * Gets whether this {@code Source} instance is the same source as the provided {@code other}. This method defaults
+     * to the result of the common {@link Object#equals(Object)} method but can be overridden to provide a more specific
+     * result depending on the business logic
+     * @param other Nullable {@code Source} object
+     * @return True or false
+     */
+    default boolean isSame(Source other) {
+        return this.equals(other);
+    }
 }
