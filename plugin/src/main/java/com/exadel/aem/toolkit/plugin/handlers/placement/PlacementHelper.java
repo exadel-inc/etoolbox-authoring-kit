@@ -114,11 +114,11 @@ public class PlacementHelper {
                 // We do the check twice to also cover a more difficult case (member_A to member_B, member_B to member_C,
                 // member_C to member_A). As we swap members, we make sure it is not true that every member can be contained
                 // within another
-                PlacementCollisionSolver.checkForCircularPlacement(source, candidate, existingElement);
-                PlacementCollisionSolver.checkForCircularPlacement(candidate, source, container);
+                PlacementCollisionSolver.checkForCircularPlacement(source, container, candidate, existingElement);
                 itemsElement.addTarget(existingElement);
             } else {
                 Target newElement = itemsElement.getOrCreateTarget(NamingUtil.stripGetterPrefix(candidate.getName()));
+                PlacementCollisionSolver.checkForCircularPlacement(source, container, candidate, newElement);
                 HandlerChains.forMember().accept(candidate, newElement);
             }
         }

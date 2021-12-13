@@ -245,15 +245,19 @@ class PlacementCollisionSolver {
      * Detects circular reference ambiguities in multi-section Granite UI buildups such as when member A requests (via,
      * e.g., its {@code Place} directive) to be placed within a section declared by member B while member B is to be
      * placed within a container created upon member A
-     * @param host      {@code Source} object that represents the current host (the element for which child nodes are
-     *                  being collected)
-     * @param candidate {@code Source} object representing a potential child node of the {@code host}
-     * @param container {@code Target} object referring to the node that matches the {@code candidate}
+     * @param host               {@code Source} object that represents the current host (the element for which child
+     *                           nodes are being collected)
+     * @param hostContainer      {@code Target} object referring to the node that matches the {@code host}
+     * @param candidate          {@code Source} object representing a potential child {@code host}
+     * @param candidateContainer {@code Target} object referring to the node that matches the {@code candidate}
      */
-    public static void checkForCircularPlacement(Source host, Source candidate, Target container) {
-        if (SectionsRegistry.isAvailableFor(host)
-            && SectionsRegistry.isAvailableFor(candidate)
-            && SectionsRegistry.from(candidate, container).getAvailable().stream().anyMatch(section -> section.canContain(host))) {
+    public static void checkForCircularPlacement(
+        Source host,
+        Target hostContainer,
+        Source candidate,
+        Target candidateContainer) {
+        if (isProneToCircularPlacement(host, hostContainer, candidate, candidateContainer)
+            && isProneToCircularPlacement(candidate, candidateContainer, host, hostContainer)) {
 
             PluginRuntime
                 .context()
@@ -267,6 +271,31 @@ class PlacementCollisionSolver {
                     host.getName(),
                     ((MemberSource) host).getDeclaringClass().getSimpleName())));
         }
+    }
+
+    /**
+     * Called by {@link PlacementCollisionSolver#checkForCircularPlacement(Source, Target, Source, Target)} to perform
+     * an elementary check of the second member being able to be nested in the container built upon the first member. A
+     * full circular reference detection needs to run these checks in pair with arguments swapped
+     * @param first           {@code Source} object that represents the first member of the comparison
+     * @param firstContainer  {@code Target} object referring to the node that matches the {@code first}
+     * @param second          {@code Source} object that represents the second member of the comparison
+     * @param secondContainer {@code Target} object referring to the node that matches the {@code candidate}
+     * @return True if {@code second} can be placed into {@code first}; otherwise, false
+     */
+    private static boolean isProneToCircularPlacement(
+        Source first,
+        Target firstContainer,
+        Source second,
+        Target secondContainer) {
+
+        if (!SectionsRegistry.isAvailableFor(first) || !SectionsRegistry.isAvailableFor(second)) {
+            return false;
+        }
+        if (SectionsRegistry.from(second, secondContainer).getAvailable().stream().anyMatch(section -> section.canContain(first))) {
+            return true;
+        }
+        return secondContainer.findChild(child -> child.equals(firstContainer)) != null;
     }
 
     /* ----------------------
