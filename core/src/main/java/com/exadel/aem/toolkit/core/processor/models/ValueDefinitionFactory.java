@@ -64,7 +64,7 @@ public class ValueDefinitionFactory {
             return null;
         }
         return ((List<?>) value).stream()
-            .map(Object::toString)
+            .map(ValueDefinitionFactory::processSingle)
             .collect(Collectors.toCollection(LinkedList::new));
     }
 
@@ -73,6 +73,9 @@ public class ValueDefinitionFactory {
     private static Object processSingle(Object value) {
         if (value == null) {
             return null;
+        }
+        if (value instanceof AnnotationDefinition) {
+            return value;
         }
         return value.toString();
     }
