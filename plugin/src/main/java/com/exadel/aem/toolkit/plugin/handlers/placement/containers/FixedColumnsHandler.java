@@ -11,25 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.widgets;
+package com.exadel.aem.toolkit.plugin.handlers.placement.containers;
 
 import java.util.List;
 import java.util.function.Function;
 
-import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
+import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.placement.containers.ContainerHandler;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
  * object that define the Granite UI {@code Accordion} dialog widget look and behavior
  */
-@Handles(Accordion.class)
-public class AccordionHandler extends ContainerHandler implements Handler {
+@Handles(FixedColumns.class)
+public class FixedColumnsHandler extends ContainerHandler implements Handler {
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
@@ -42,8 +41,6 @@ public class AccordionHandler extends ContainerHandler implements Handler {
             // This handler is not used with class-based source objects
             return;
         }
-        target.attributes(source.adaptTo(Accordion.class)); // We do not use the auto-mapping facility here because
-        // @Accordion can be used class-level and should not mess with "true" auto-mapped class annotations
         populateMultiSectionContainer(source, target);
     }
 

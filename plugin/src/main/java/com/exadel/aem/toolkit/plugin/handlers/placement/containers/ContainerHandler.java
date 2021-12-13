@@ -45,11 +45,11 @@ import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 /**
  * Presents a common base for handler classes responsible for laying out child components within Granite UI
  */
-public abstract class ContainerHandler {
+abstract class ContainerHandler {
 
-    protected static final Function<MemberSource, List<Class<?>>> ANNOTATED_MEMBER_TYPE =
+    static final Function<MemberSource, List<Class<?>>> ANNOTATED_MEMBER_TYPE =
         memberSource -> Collections.singletonList(memberSource.getValueType());
-    protected static final Function<MemberSource, List<Class<?>>> ANNOTATED_MEMBER_TYPE_AND_REPORTING_CLASS =
+    static final Function<MemberSource, List<Class<?>>> ANNOTATED_MEMBER_TYPE_AND_REPORTING_CLASS =
         memberSource -> Arrays.asList(memberSource.getValueType(), memberSource.getReportingClass());
 
     private static final String RECURSION_MESSAGE_TEMPLATE = "Recursive rendering prohibited: a member of type \"%s\" " +
@@ -74,7 +74,7 @@ public abstract class ContainerHandler {
      * @param target    Current {@link Target instance}
      * @return {@code List} containing {@code Source}-typed placeable members, or an empty list
      */
-    protected List<Source> getAvailableForContainer(Source container, Target target) {
+    List<Source> getAvailableForContainer(Source container, Target target) {
         List<Source> result = new ArrayList<>();
 
         // Extract data from the source object
@@ -131,7 +131,7 @@ public abstract class ContainerHandler {
      * @return {@code Function} reference that accepts one argument of type {@code MemberSource} and returns a non-null
      * list of {@code Class} objects
      */
-    protected abstract Function<MemberSource, List<Class<?>>> getRenderedClassesProvider();
+    abstract Function<MemberSource, List<Class<?>>> getRenderedClassesProvider();
 
     /**
      * Called from {@link ContainerHandler#getAvailableForContainer(Source, Target)} to find out which members are
@@ -198,7 +198,7 @@ public abstract class ContainerHandler {
      * @param members Collection of widget-holding class members that relate to the current container
      * @param target  {@code Target} to place widgets in
      */
-    protected void populateSingleSectionContainer(Source source, List<Source> members, Target target) {
+    void populateSingleSectionContainer(Source source, List<Source> members, Target target) {
         MembersRegistry membersRegistry = new MembersRegistry(
             target.getRoot().adaptTo(RootTarget.class).getMembers(),
             members);
@@ -216,7 +216,7 @@ public abstract class ContainerHandler {
      * @param member Class member holding a multi-section container
      * @param target {@code Target} to place widgets in
      */
-    protected void populateMultiSectionContainer(Source member, Target target) {
+    void populateMultiSectionContainer(Source member, Target target) {
         target.createTarget(DialogConstants.NN_ITEMS);
 
         SectionsRegistry sectionsRegistry = SectionsRegistry.from(member, target);

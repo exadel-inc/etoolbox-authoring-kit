@@ -248,10 +248,11 @@ class PlacementCollisionSolver {
      * @param host      {@code Source} object that represents the current host (the element for which child nodes are
      *                  being collected)
      * @param candidate {@code Source} object representing a potential child node of the {@code host}
-     * @param container {@code Target} object referring to the node newly created for the {@code candidate}
+     * @param container {@code Target} object referring to the node that matches the {@code candidate}
      */
     public static void checkForCircularPlacement(Source host, Source candidate, Target container) {
-        if (SectionsRegistry.isAvailableFor(candidate)
+        if (SectionsRegistry.isAvailableFor(host)
+            && SectionsRegistry.isAvailableFor(candidate)
             && SectionsRegistry.from(candidate, container).getAvailable().stream().anyMatch(section -> section.canContain(host))) {
 
             PluginRuntime

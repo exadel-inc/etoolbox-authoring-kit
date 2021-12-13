@@ -108,13 +108,17 @@ public class PlacementHelper {
                 // The source could be "soft-checked out" before. Then it may have an attached target. We check if it has one,
                 // and if so, we just move the target to the new place. Otherwise, we create a new target
                 && candidate.adaptTo(PlaceSetting.class).getMatchingTarget() != null) {
-                Target existingTarget = candidate.adaptTo(PlaceSetting.class).getMatchingTarget();
-                itemsElement.addTarget(existingTarget);
+                Target existingElement = candidate.adaptTo(PlaceSetting.class).getMatchingTarget();
+                // Check for a "mutual-nested" defect, e.g. when member_A needs to be placed
+                // in a section of member_B, and member_B wants to be placed in a section of member_A
+                // We do the check twice to also cover a more difficult case (member_A to member_B, member_B to member_C,
+                // member_C to member_A). As we swap members, we make sure it is not true that every member can be contained
+                // within another
+                PlacementCollisionSolver.checkForCircularPlacement(source, candidate, existingElement);
+                PlacementCollisionSolver.checkForCircularPlacement(candidate, source, container);
+                itemsElement.addTarget(existingElement);
             } else {
-                // Else, we additionally check for a "mutual-nested" defect, e.g. when member A needs to be placed
-                // in a section of member B, and member B wants to be placed in a section of member A
                 Target newElement = itemsElement.getOrCreateTarget(NamingUtil.stripGetterPrefix(candidate.getName()));
-                PlacementCollisionSolver.checkForCircularPlacement(source, candidate, newElement);
                 HandlerChains.forMember().accept(candidate, newElement);
             }
         }
