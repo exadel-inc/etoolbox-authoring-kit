@@ -275,8 +275,36 @@ public class DummyComponent {
     private String basicTabHolder;
 }
 ```
-Else, you can add components to the tab as usual. Note that an additional nested container may be needed to provide the layout similar to that of the pre-existing tabs.
+Else, you can add components to the tab as usual. Note that usually in a Page properties dialog tab components are wrapped in an additional column so that they get centered on the screen and do not span the whole of the screen width. This can be achieved through a nested column.
 
+```java
+@AemComponent(
+        path = "../pages/my-page",
+        resourceSuperType = "my/components/pages/page",
+        title = "Page properties"
+)
+@Dialog
+@Tabs(@Tab(title = "Basic"))
+public class DummyComponent {
+
+    // The title is not actually rendered, so you may specify any meaningful string
+    @FixedColumns(@Column(title = "Tab column"))
+    @Place("Basic")
+    private int tabHolder; // Type of the field does not matter as well
+
+    @DialogField(label = "Enter text")
+    @TextField
+    @Place("Tab column")
+    private String text;
+
+    @DialogField(label = "Enter description")
+    @TextField
+    @Place("Tab column")
+    private String description;
+
+}
+```
+Else you can use a nested class annotated with `FixedColumns` for that purpose.
 
 ***
 #### See also

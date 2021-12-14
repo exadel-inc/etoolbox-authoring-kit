@@ -87,6 +87,8 @@ public class DialogWithAccordion {
 
 *Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
+The `@Accordion` annotation can be added to an arbitrary class member (field or method), its return type does not matter. Other widgets can refer to the columns with their `@Place` directives. See "Placing widgets" section below for more detail.
+
 Apart from this usage, `@Accordion` can be specified at class level as the layout hint for the entire dialog. See [Laying out your dialog](dialog-layout.md) for details.
 
 ### Alert
@@ -315,6 +317,45 @@ public class FileUploadDialog {
     String currentDate;
 }
 ```
+### FixedColumns
+
+* [@FixedColumns](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/layouts/FixedColumns.html)
+* Resource type: /libs/granite/ui/components/coral/foundation/fixedcolumns
+* See spec: [FixedColumns](https://www.adobe.io/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/fixedcolumns/index.html)
+
+Used to create a container which consists of one or more columns. See the following sample:
+
+```java
+public class DialogWithFixedColumnsWidget {
+    @DialogField
+    @TextField
+    @Place("First column")
+    private String field1;
+
+    @FixedColumns(
+        value = {
+            @Column(title = "First column"),
+            @Column(title = "Second column")
+        },
+        maximized = false, // optional
+        margin = true // optional
+    )
+    private Object columnsHolder;
+
+    @DialogField
+    @TextField
+    @Place("Second column")
+    private String field2;
+
+}
+```
+
+*Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
+
+The `@FixedColumns` annotation can be added to an arbitrary class member (field or method), its return type does not matter. Titles of columns do not get rendered, they are used merely for "binding" other widgets to particular columns. Other widgets can refer to the columns with their `@Place` directives. See the "Placing widgets" section below for more detail.
+
+Apart from this usage, `@FixedColumns` can be specified at the class level as the layout hint for the entire dialog. See [Laying out your dialog](dialog-layout.md) for details. Take a note that additional `@FixedColumns` properties are only meaningful for the in-dialog usage.
+
 ### Heading
 
 * [@Heading](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Heading.html)
@@ -634,6 +675,7 @@ public class DialogWithTabs {
         trackingFeature = "feature1",
         trackingWidgetName = "widget1"
     )
+    private TabsFieldset tabsHolder;
 
     private static class TabsFieldset { // Used as the source of widgets for the nested tabs structure
         @DialogField(label = "Field 1 in the inner Tab")
@@ -649,6 +691,8 @@ public class DialogWithTabs {
 }
 ```
 *Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
+
+The `@Tabs` annotation can be added to an arbitrary class member (field or method), its return type does not matter. Other widgets can refer to the columns with their `@Place` directives. See "Placing widgets" section below for more detail.
 
 Apart from this usage, `@Tabs` can be specified at class level as the layout hint for the entire dialog (see [Laying out your dialog](dialog-layout.md) for details). Take note that the `@Tabs` annotation contains properties for both usages, but not every property is meaningful for either. Refer to the Javadoc on `@Tabs` to learn which properties should be used for tabs at class level and tabs as a widget respectively.
 
@@ -722,6 +766,56 @@ Also, you can assign additional properties of Granite UI components or re-write 
 
 Read more on this in the [Additional properties](additional-properties.md) chapter.
 
+## Placing widgets
+
+In a plain Granite UI dialog, widgets are situated one under another, in the order of the corresponding Java class members  (note: as of ToolKit 2 the order is guaranteed for widgets based on Java fields, but may occasionally change for widgets based on Java methods. To guarantee the order of widgets based on Java class methods use `@Place(before=.../after=...)` as described below).
+
+If you use a more robust layout, such as a tabbed or accordion-shaped dialog, you would want to distribute widgets between sections (tabs or panels, accordingly). To do that, you specify `@Place("Section title")` next to your main widget annotation.
+
+There are in-dialog container widgets as well. E.g., you may want to place `@Accordion` within a tab of the tabbed layout.
+
+There are several ways to distribute widgets in such an in-dialog container. First is to declare a nested class, declare your widgets attached to the fields of this class, and then declare a field or method with the return type that matches the nested class:
+```
+    @Tabs({
+            @Tab(title = "First"),
+            @Tab(title = "Second")
+        })
+    private TabsFieldset tabsHolder;
+
+    private static class TabsFieldset {
+        @TextField
+        @Place("First")
+        private String field1;
+
+        @TextField
+        @Place("Second")
+        private String field2;
+    }
+
+```
+Note that the `TabsFieldset` can be extending another class, its widget set is subject to inheriting [in the usual way](reusing-code.md).
+
+The same result can be achieved  by just referring to section titles of an in-dialog container from "outside":
+```
+    @TextField
+    @Place("First")
+    private String field1;
+
+    @Tabs({
+            @Tab(title = "First"),
+            @Tab(title = "Second")
+        })
+    private TabsFieldset tabsHolder;
+
+    @TextField
+    @Place("Second")
+    private String field2;
+```
+You can combine both ways. If you have a nested class and some "outside" members claiming a  place in the same section, the members from the nested class will come first.
+
+You can easily fancy the situation when an in-dialog container lays within a dialog layout section (e.g., a `@Tabs` container within a tab of the tabbed layout). In this situation, the value of `@Place("...")` is resolved to the title of either the layout tab or the in-dialog container tab, whatever is the first match. That is why you would want to give unique titles to all of your containers.
+
+However, there's a way to specify the precise "path" to the container. Type it as a slash-delimited "pseudo-path by titles", e.g., `@Place("My layout section title/My in-dialog section title")`. Any number of "nested" titles is supported.
 
 ## Ordering widgets
 
