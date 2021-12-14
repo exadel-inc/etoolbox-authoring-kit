@@ -145,7 +145,7 @@ abstract class ContainerHandler {
     // in a version after 2.0.2
     private static List<ClassMemberSetting> getIgnoredMembers(MemberSource container, Class<?> membersHost) {
         // Note: This functionality is shared across single-section placement routines ({@code FieldSet}, {@code MultiField})
-        // and multi-section ones. First do not use MembersRegistry, while second do. That's why it is not encapsulated
+        // and multi-section ones. The former do not use MembersRegistry, while the latter do. That's why it is not encapsulated
         // in MembersRegistry (unlike the "ignored sections" functionality)
 
         // Build the collection of ignored members at nesting class level
