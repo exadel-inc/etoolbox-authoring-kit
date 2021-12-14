@@ -102,7 +102,7 @@ class ContainerSectionsRegistry extends SectionsRegistry {
 
     /**
      * Retrieves the prefix for the full "title-style" hierarchical address of the current container (e.g. {@code
-     * "My Tab/My Accordion Panel/My Inner Tab"}. If this container has its {@code @Place} directive, the title is
+     * "My Tab/My Accordion Panel/My Inner Tab"}). If this container has its {@code @Place} directive, the title is
      * according to the {@code @Place} value; otherwise it is defined by the titles of containers this one is
      * currently nested in
      * @param source {@code Source} instance matching the current container

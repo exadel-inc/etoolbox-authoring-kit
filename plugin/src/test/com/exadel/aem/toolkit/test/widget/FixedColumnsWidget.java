@@ -17,8 +17,10 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Column;
 import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 
@@ -29,7 +31,17 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONEN
     title = "Fixed Columns Widget Dialog"
 )
 @Dialog
+@SuppressWarnings("unused")
 public class FixedColumnsWidget {
+
+    @DialogField(label = "Number")
+    @NumberField(min = -10, max = 10)
+    @Place(value = "First", before = @ClassMember("text"))
+    private String number;
+
+    @FixedColumns(@Column(title = "Third"))
+    @Place("Second")
+    private byte nestedFixedColumns;
 
     @FixedColumns({
         @Column(title = "First"),
@@ -50,6 +62,13 @@ public class FixedColumnsWidget {
     @TextArea
     @Place("Second")
     private String description;
+
+    @DialogField(
+        label = "Extra-Nested Text"
+    )
+    @TextField
+    @Place("Second/Third")
+    private String extraNestedText;
 
     private static class FixedColumnsFieldset {
         @DialogField(

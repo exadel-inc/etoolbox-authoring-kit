@@ -28,7 +28,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
-import com.exadel.aem.toolkit.test.widget.AccordionWidget;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
 import com.exadel.aem.toolkit.test.widget.TabsWidget;
 
@@ -36,7 +35,7 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_2;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_3;
 
 @SuppressWarnings("unused")
-public class IgnoreTestCases {
+public class IgnoreMembersTestCases {
     @AemComponent(
         path = TestConstants.DEFAULT_COMPONENT_NAME,
         title = TestConstants.DEFAULT_COMPONENT_NAME
@@ -67,22 +66,6 @@ public class IgnoreTestCases {
         @DialogField
         @TextField
         private String field4;
-    }
-
-
-    @AemComponent(
-        path = TestConstants.DEFAULT_COMPONENT_NAME,
-        title = TestConstants.DEFAULT_COMPONENT_NAME
-    )
-    @Dialog
-    @Ignore(
-        sections = "Basic2",
-        members = @ClassMember(source = AccordionWidget.class, value = "field1")
-    )
-    public static class IgnoreMembersAccordionLayout extends AccordionWidget {
-        @DialogField
-        @TextField
-        private String field2;
     }
 
     @AemComponent(

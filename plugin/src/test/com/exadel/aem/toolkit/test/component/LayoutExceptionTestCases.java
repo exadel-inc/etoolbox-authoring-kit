@@ -14,6 +14,8 @@
 package com.exadel.aem.toolkit.test.component;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
+import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
+import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
@@ -109,4 +111,44 @@ public class LayoutExceptionTestCases {
     private static class RecursionChild extends ComponentWithRecursiveMember3 {
     }
 
+
+    /* ------------------
+       Circular placement
+       ------------------ */
+
+    @AemComponent(
+        path = DEFAULT_COMPONENT_NAME,
+        title = DEFAULT_COMPONENT_TITLE
+    )
+    @Dialog
+    public static class ComponentWithCircularPlacement1  {
+
+        @Accordion(@AccordionPanel(title = "Panel A"))
+        @Place("Panel B")
+        private int containerA;
+
+        @Accordion(@AccordionPanel(title = "Panel B"))
+        @Place("Panel A")
+        private int containerB;
+    }
+
+    @AemComponent(
+        path = DEFAULT_COMPONENT_NAME,
+        title = DEFAULT_COMPONENT_TITLE
+    )
+    @Dialog
+    public static class ComponentWithCircularPlacement2  {
+
+        @Accordion(@AccordionPanel(title = "Panel A"))
+        @Place("Panel C")
+        private int containerA;
+
+        @Accordion(@AccordionPanel(title = "Panel B"))
+        @Place("Panel A")
+        private int containerB;
+
+        @Accordion(@AccordionPanel(title = "Panel C"))
+        @Place("Panel B")
+        private int containerC;
+    }
 }

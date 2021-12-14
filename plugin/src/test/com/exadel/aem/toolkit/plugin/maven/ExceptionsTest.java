@@ -113,6 +113,22 @@ public class ExceptionsTest extends ExceptionsTestBase {
     }
 
     @Test
+    public void testCircularPlacement1() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
+        exceptionRule.expectMessage("Field named \"containerB\" in class \"ComponentWithCircularPlacement1\"");
+        exceptionRule.expectMessage("declared by field named \"containerA\" in class \"ComponentWithCircularPlacement1\"");
+        test(LayoutExceptionTestCases.ComponentWithCircularPlacement1.class);
+    }
+
+    @Test
+    public void testCircularPlacement2() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
+        exceptionRule.expectMessage("Field named \"containerA\" in class \"ComponentWithCircularPlacement2\"");
+        exceptionRule.expectMessage("declared by field named \"containerC\" in class \"ComponentWithCircularPlacement2\"");
+        test(LayoutExceptionTestCases.ComponentWithCircularPlacement2.class);
+    }
+
+    @Test
     public void testTerminateOnSettings() {
         // Test non-terminating cases
         Map<String, Exception> nonTerminatingCases = ImmutableMap.of(

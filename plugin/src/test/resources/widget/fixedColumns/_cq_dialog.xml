@@ -30,6 +30,18 @@
                                         fieldLabel="Nested text"
                                         renderHidden="{Boolean}false"
                                         required="{Boolean}false"/>
+                                    <number
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/numberfield"
+                                        name="./number"
+                                        disabled="{Boolean}false"
+                                        fieldLabel="Number"
+                                        max="{Double}10.0"
+                                        min="{Double}-10.0"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"
+                                        step="{Double}1.0"
+                                        value="0"/>
                                     <text
                                         jcr:primaryType="nt:unstructured"
                                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
@@ -54,6 +66,26 @@
                                         required="{Boolean}false"
                                         resize="none"
                                         rows="{Long}5"/>
+                                    <nestedFixedColumns
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <third
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/container">
+                                                <items jcr:primaryType="nt:unstructured">
+                                                    <extraNestedText
+                                                        jcr:primaryType="nt:unstructured"
+                                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                        name="./extraNestedText"
+                                                        disabled="{Boolean}false"
+                                                        fieldLabel="Extra-Nested Text"
+                                                        renderHidden="{Boolean}false"
+                                                        required="{Boolean}false"/>
+                                                </items>
+                                            </third>
+                                        </items>
+                                    </nestedFixedColumns>
                                     <description
                                         jcr:primaryType="nt:unstructured"
                                         sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
