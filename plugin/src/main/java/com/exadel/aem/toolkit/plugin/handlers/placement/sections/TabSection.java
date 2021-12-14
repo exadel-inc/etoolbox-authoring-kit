@@ -69,7 +69,7 @@ class TabSection extends Section {
         Target itemsContainer = host.createTarget(nodeName);
         itemsContainer.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
             .attributes(tab, MAIN_NODE_MEMBERS);
-        String configContainerTag = isLayoutSection()
+        String configContainerTag = isLayout()
             ? DialogConstants.NN_LAYOUT_CONFIG
             : DialogConstants.NN_PARENT_CONFIG;
         Target configContainer = Targets

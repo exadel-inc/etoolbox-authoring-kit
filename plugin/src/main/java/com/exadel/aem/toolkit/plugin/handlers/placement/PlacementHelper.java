@@ -82,7 +82,7 @@ public class PlacementHelper {
             if (needToSortAgain) {
                 currentSectionMembers = OrderingUtil.sortMembers(currentSectionMembers);
             }
-            if (!sections.getIgnored().contains(currentSection.getTitle())) {
+            if (!currentSection.isIgnored()) {
                 doSectionPlacement(currentSectionMembers, currentSection);
             } else {
                 currentSectionMembers.forEach(item -> members.checkOut(item));

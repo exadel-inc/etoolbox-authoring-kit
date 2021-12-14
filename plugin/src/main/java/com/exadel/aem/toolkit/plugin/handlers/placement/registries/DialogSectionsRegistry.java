@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.layouts.Column;
@@ -32,7 +31,6 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
-import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.placement.sections.Section;
@@ -54,7 +52,7 @@ class DialogSectionsRegistry extends SectionsRegistry {
     public DialogSectionsRegistry(Source source, Target target, List<Class<? extends Annotation>> annotationTypes) {
         super(
             collectSections(source.adaptTo(Class.class), target.getScope(), annotationTypes),
-            collectIgnoredSections(source));
+            collectIgnored(source));
     }
 
     /**
@@ -222,25 +220,6 @@ class DialogSectionsRegistry extends SectionsRegistry {
             } else {
                 result.add(other);
             }
-        }
-        return result;
-    }
-
-    /**
-     * Retrieves the list of ignored sections' titles
-     * @param source {@code Source} instance used as the data supplier for the markup
-     * @return List of titles, or an empty list
-     */
-    @SuppressWarnings("deprecation") // Processing of IgnoreTabs annotation is retained for
-    // compatibility and will be removed in a version after 2.0.2
-    private static List<String> collectIgnoredSections(Source source) {
-        List<String> result = new ArrayList<>();
-        if (source.tryAdaptTo(IgnoreTabs.class).isPresent()) {
-            result.addAll(Arrays.asList(source.adaptTo(IgnoreTabs.class).value()));
-        }
-        if (source.tryAdaptTo(Ignore.class).isPresent()
-            && source.adaptTo(Ignore.class).sections().length > 0) {
-            result.addAll(Arrays.asList(source.adaptTo(Ignore.class).sections()));
         }
         return result;
     }

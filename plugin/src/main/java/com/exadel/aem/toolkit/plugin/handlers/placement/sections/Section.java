@@ -88,8 +88,16 @@ public abstract class Section {
      * Returns true if the current section is a dialog layout section; false if it is a dialog widget section
      * @return True or false
      */
-    boolean isLayoutSection() {
+    boolean isLayout() {
         return isLayout;
+    }
+
+    /**
+     * Returns true if the current section is a dedicated section that represents an ignored block in the current layout
+     * @return True or false
+     */
+    public boolean isIgnored() {
+        return false;
     }
 
     /**
@@ -111,6 +119,10 @@ public abstract class Section {
      */
     public void merge(Section other) {
         sources.addAll(other.getSources());
+    }
+
+    public boolean isMatch(String title) {
+        return StringUtils.equalsAny(title, getTitle(), getFullTitle());
     }
 
     /* -----------------------
@@ -243,5 +255,9 @@ public abstract class Section {
             return null;
         }
         return new ColumnSection(value, isLayout);
+    }
+
+    public static Section ignored(String title) {
+        return new IgnoredSection(title);
     }
 }

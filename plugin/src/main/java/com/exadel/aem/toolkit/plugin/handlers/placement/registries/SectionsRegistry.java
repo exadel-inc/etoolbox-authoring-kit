@@ -14,12 +14,16 @@
 package com.exadel.aem.toolkit.plugin.handlers.placement.registries;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -31,8 +35,7 @@ import com.exadel.aem.toolkit.plugin.handlers.placement.sections.Section;
  */
 public abstract class SectionsRegistry {
 
-    private final List<Section> availableSections;
-    private final List<String> ignoredSections;
+    private final List<Section> sections;
 
     /**
      * Instance constructor
@@ -40,8 +43,11 @@ public abstract class SectionsRegistry {
      * @param ignoredSections   List of string representing titles of ignored sections
      */
     SectionsRegistry(List<Section> availableSections, List<String> ignoredSections) {
-        this.availableSections = availableSections;
-        this.ignoredSections = ignoredSections;
+        this.sections = new ArrayList<>(availableSections);
+        for (String ignoredTitle : ignoredSections) {
+            sections.stream().filter(section -> section.isMatch(ignoredTitle)).findFirst().ifPresent(sections::remove);
+            sections.add(Section.ignored(ignoredTitle));
+        }
     }
 
     /**
@@ -49,15 +55,7 @@ public abstract class SectionsRegistry {
      * @return {@code List} instance
      */
     public List<Section> getAvailable() {
-        return availableSections;
-    }
-
-    /**
-     * Retrieves the collection of strings representing titles of ignored sections
-     * @return {@code List} instance
-     */
-    public List<String> getIgnored() {
-        return ignoredSections;
+        return sections;
     }
 
     /* ---------------
@@ -75,6 +73,25 @@ public abstract class SectionsRegistry {
             return false;
         }
         return Stream.of(Tabs.class, Accordion.class, FixedColumns.class).anyMatch(sectionType -> source.tryAdaptTo(sectionType).isPresent());
+    }
+
+    /**
+     * Retrieves the list of ignored sections' titles
+     * @param source {@code Source} instance used as the data supplier for the markup
+     * @return List of titles, or an empty list
+     */
+    @SuppressWarnings("deprecation") // Processing of IgnoreTabs annotation is retained for
+    // compatibility and will be removed in a version after 2.0.2
+    static List<String> collectIgnored(Source source) {
+        List<String> result = new ArrayList<>();
+        if (source.tryAdaptTo(IgnoreTabs.class).isPresent()) {
+            result.addAll(Arrays.asList(source.adaptTo(IgnoreTabs.class).value()));
+        }
+        if (source.tryAdaptTo(Ignore.class).isPresent()
+            && source.adaptTo(Ignore.class).sections().length > 0) {
+            result.addAll(Arrays.asList(source.adaptTo(Ignore.class).sections()));
+        }
+        return result;
     }
 
     /* ---------------

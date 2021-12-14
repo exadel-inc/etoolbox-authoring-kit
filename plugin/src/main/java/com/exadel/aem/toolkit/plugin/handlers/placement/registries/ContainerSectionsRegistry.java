@@ -16,7 +16,9 @@ package com.exadel.aem.toolkit.plugin.handlers.placement.registries;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -27,10 +29,12 @@ import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.handlers.placement.sections.Section;
+import com.exadel.aem.toolkit.plugin.sources.Sources;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
@@ -50,7 +54,7 @@ class ContainerSectionsRegistry extends SectionsRegistry {
     public ContainerSectionsRegistry(Source source, Target target) {
         super(
             collectSections(source, getTitlePrefix(source, target)),
-            Collections.emptyList());
+            collectIgnoredSections(source));
     }
 
     /**
@@ -131,5 +135,11 @@ class ContainerSectionsRegistry extends SectionsRegistry {
             closestContainer = closestWidgetNode.findParent(CONTAINER_PREDICATE);
         }
         return String.join(CoreConstants.SEPARATOR_SLASH, resultChunks);
+    }
+
+    private static List<String> collectIgnoredSections(Source source) {
+        Set<String> result = new HashSet<>(collectIgnored(source));
+        result.addAll(collectIgnored(Sources.fromClass(source.adaptTo(MemberSource.class).getReportingClass())));
+        return new ArrayList<>(result);
     }
 }
