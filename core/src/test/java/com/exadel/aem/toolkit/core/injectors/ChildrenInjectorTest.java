@@ -13,9 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.injectors;
 
-import com.exadel.aem.toolkit.core.injectors.models.TestModelChildren;
-
-import com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel;
+import java.util.List;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
 
@@ -25,13 +23,16 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import com.exadel.aem.toolkit.core.injectors.models.TestModelChildren;
+import com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel;
+
 public class ChildrenInjectorTest {
+
+    private static TestModelChildren testModel;
 
     @Rule
     public final AemContext context = new AemContext();
@@ -43,11 +44,11 @@ public class ChildrenInjectorTest {
         context.load().json("/com/exadel/aem/toolkit/core/injectors/childInjector.json", "/content");
         ResourceResolver resolver = context.resourceResolver();
         context.request().setResource(resolver.getResource("/content/jcr:content"));
+        testModel = context.request().adaptTo(TestModelChildren.class);
     }
 
     @Test
     public void testInjectorChildrenResourceItems() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<Resource> resourceList = testModel.getResourceItems();
@@ -58,7 +59,6 @@ public class ChildrenInjectorTest {
 
     @Test
     public void testInjectorChildrenResourceList() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<Resource> resourceList = testModel.getResourceList();
@@ -69,7 +69,6 @@ public class ChildrenInjectorTest {
 
     @Test
     public void testInjectorChildrenListItemModels2() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getListItemModels2();
@@ -80,7 +79,6 @@ public class ChildrenInjectorTest {
 
     @Test
     public void testInjectorChildrenListItemModels3() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getListItemModels3();
@@ -91,7 +89,6 @@ public class ChildrenInjectorTest {
 
     @Test
     public void testInjectorChildrenListItemModels4() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getListItemModels4();
@@ -102,7 +99,6 @@ public class ChildrenInjectorTest {
 
     @Test
     public void testInjectorChildrenListItemModels5() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getListItemModels5();
@@ -113,7 +109,6 @@ public class ChildrenInjectorTest {
 
     @Test
     public void testInjectorChildrenListItemModels6() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getListItemModels6();
@@ -124,7 +119,6 @@ public class ChildrenInjectorTest {
 
     @Test
     public void testInjectorChildrenNotExistedResources() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<Resource> resourceList = testModel.getNotExistedResources();
@@ -133,7 +127,6 @@ public class ChildrenInjectorTest {
 
     @Test
     public void testInjectorChildrenNotExistedModel() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getNotExistedModel();
@@ -142,7 +135,6 @@ public class ChildrenInjectorTest {
 
     @Test
     public void testInjectorChildrenNotExistedPrefix() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getNotExistedPrefix();
@@ -151,7 +143,6 @@ public class ChildrenInjectorTest {
 
     @Test
     public void testInjectorChildrenNotExistedPostfix() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getNotExistedPostfix();
@@ -160,7 +151,6 @@ public class ChildrenInjectorTest {
 
     @Test
     public void testInjectorChildrenNotExistedFilter() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getNotExistedFilter();

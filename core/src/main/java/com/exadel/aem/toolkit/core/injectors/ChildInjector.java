@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import com.exadel.aem.toolkit.api.annotations.injectors.Child;
 
 /**
- * Injector implementation for `@Child`
+ * Injector implementation for {@code @Child}
  * Injects into a Sling model a child resource or adapted object
  * @see Injector
  */
@@ -104,7 +104,7 @@ public class ChildInjector implements Injector {
      * Retrieves the child {@code Resource} object according to the {@code Child} annotation parameters
      * @param currentResource  Current {@code Resource}
      * @param name        {@code String} Name of the Java class member to inject the value into
-     * @param annotation  annotation objects
+     * @param annotation  Annotation objects
      * @return {@code Resource} object if success. Otherwise, null is returned
      */
     private Resource getChildResource(Resource currentResource, String name, Child annotation) {
@@ -125,7 +125,7 @@ public class ChildInjector implements Injector {
 
     /**
      * Retrieves first matched {@code Resource}
-     * @param currentResource current {@code Resource}
+     * @param currentResource Current {@code Resource}
      * @param predicate       {@code Predicate} function
      * @return first matched {@code Resource}
      */

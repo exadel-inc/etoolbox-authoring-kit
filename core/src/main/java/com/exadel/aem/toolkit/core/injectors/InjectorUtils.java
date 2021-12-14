@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -171,8 +170,8 @@ class InjectorUtils {
 
     /**
      * Creates and initializes a new instance of a class
-     * @param instanceClass represent a {@code Class} to be initialized
-     * @param <T>           parameterized type
+     * @param instanceClass Represent a {@code Class} to be initialized
+     * @param <T>           Parameterized type
      * @return <T> initialized object instance
      */
     public static <T> T getObjectInstance(Class<? extends T> instanceClass) {
@@ -189,7 +188,7 @@ class InjectorUtils {
 
     /**
      * Retrieves the last parent resource
-     * @param currentResource current {@code Resource}
+     * @param currentResource Current {@code Resource}
      * @param relativePath    {@code String} relative path
      * @return {@code Resource} object that representing the last node in relative path if success. Otherwise, null is returned
      */

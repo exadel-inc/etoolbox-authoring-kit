@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 import com.exadel.aem.toolkit.api.annotations.injectors.Children;
 
 /**
- * Injector implementation for `@Children`
+ * Injector implementation for {@code @Children}
  * Injects into a Sling model a collection of children, all elements in the collection will be adapted
  * to the collection's parameterized type if success, otherwise null returned.
  * @see Injector
@@ -99,7 +99,7 @@ public class ChildrenInjector implements Injector {
         }
 
         List<Object> childrenList = getChildren(currentResource, type, annotation);
-        if (childrenList != null && !childrenList.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(childrenList)) {
             return childrenList;
         }
 
@@ -109,9 +109,9 @@ public class ChildrenInjector implements Injector {
 
     /**
      * Retrieves the filtered and adapted list of children objects according to the {@code Children} annotation parameters
-     * @param currentResource current {@code Resource}
-     * @param type            the {@code Type} to adapt to
-     * @param annotation      annotation objects
+     * @param currentResource Current {@code Resource}
+     * @param type            The {@code Type} to adapt to
+     * @param annotation      Annotation objects
      * @return {@code List<Object>} list of filtered and adapted objects. Otherwise, empty list is returned
      */
     private List<Object> getChildren(Resource currentResource, Type type, Children annotation) {
@@ -149,8 +149,8 @@ public class ChildrenInjector implements Injector {
 
     /**
      * Retrieves the filtered and adapted children from the current resource
-     * @param currentResource current {@code Resource}
-     * @param type            the {@code Type} to adapt to
+     * @param currentResource Current {@code Resource}
+     * @param type            The {@code Type} to adapt to
      * @param predicates      {@code List<Predicate<Resource>>} of predicates
      * @return {@code List<Object>} of filtered and adapted objects. Otherwise, empty list is returned
      */
@@ -176,7 +176,7 @@ public class ChildrenInjector implements Injector {
     /**
      * Retrieves the adapted to given {@code Type} type class from given {@code Resource}
      * @param resource   {@code Resource} to be adapted
-     * @param actualType actual type parameter
+     * @param actualType Actual type parameter
      * @return {@code Object} the object representing an adapted class if success. Otherwise, null is returned
      */
     private Object getAdaptedObject(Resource resource, Class<?> actualType) {

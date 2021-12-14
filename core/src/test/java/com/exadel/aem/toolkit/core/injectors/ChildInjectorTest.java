@@ -35,6 +35,7 @@ public class ChildInjectorTest {
 
     private static final String EXPECTED_RESOURCE_TYPE1 = "wcm/foundation/components/responsivegrid";
     private static final String EXPECTED_RESOURCE_TYPE2 = "etoolbox-authoring-kit/lists/components/content/listItem";
+    private static TestModelChild testModel;
 
     @Rule
     public final AemContext context = new AemContext();
@@ -46,11 +47,11 @@ public class ChildInjectorTest {
         context.load().json("/com/exadel/aem/toolkit/core/injectors/childInjector.json", "/content");
         ResourceResolver resolver = context.resourceResolver();
         context.request().setResource(resolver.getResource("/content/jcr:content"));
+        testModel = context.request().adaptTo(TestModelChild.class);
     }
 
     @Test
     public void testInjectChild() {
-        TestModelChild testModel = context.request().adaptTo(TestModelChild.class);
         assertNotNull(testModel);
         Resource actualResource = testModel.getList();
         assertNotNull(actualResource);
@@ -59,7 +60,6 @@ public class ChildInjectorTest {
 
     @Test
     public void testInjectChildName() {
-        TestModelChild testModel = context.request().adaptTo(TestModelChild.class);
         assertNotNull(testModel);
         Resource actualResource = testModel.getListItemResource();
         assertNotNull(actualResource);
@@ -68,7 +68,6 @@ public class ChildInjectorTest {
 
     @Test
     public void testInjectChildName2() {
-        TestModelChild testModel = context.request().adaptTo(TestModelChild.class);
         assertNotNull(testModel);
         Resource actualResource = testModel.getListItemResource2();
         assertNotNull(actualResource);
@@ -77,7 +76,6 @@ public class ChildInjectorTest {
 
     @Test
     public void testInjectChildNameNested() {
-        TestModelChild testModel = context.request().adaptTo(TestModelChild.class);
         assertNotNull(testModel);
         Resource actualResource = testModel.getNestedResource();
         assertNotNull(actualResource);
@@ -86,7 +84,6 @@ public class ChildInjectorTest {
 
     @Test
     public void testInjectChildAdapted() {
-        TestModelChild testModel = context.request().adaptTo(TestModelChild.class);
         assertNotNull(testModel);
         ListItemModel actualListItem = testModel.getListItemModel();
         assertNotNull(actualListItem);
@@ -100,7 +97,6 @@ public class ChildInjectorTest {
 
     @Test
     public void testInjectChildPrefix() {
-        TestModelChild testModel = context.request().adaptTo(TestModelChild.class);
         assertNotNull(testModel);
         ListItemModel actualListItem = testModel.getListItemModel2();
         assertNotNull(actualListItem);
@@ -114,7 +110,6 @@ public class ChildInjectorTest {
 
     @Test
     public void testInjectorPostfix() {
-        TestModelChild testModel = context.request().adaptTo(TestModelChild.class);
         assertNotNull(testModel);
         ListItemModel actualListItem = testModel.getListItemModel3();
         assertNotNull(actualListItem);
@@ -128,7 +123,6 @@ public class ChildInjectorTest {
 
     @Test
     public void testInjectorNotExistedResource() {
-        TestModelChild testModel = context.request().adaptTo(TestModelChild.class);
         assertNotNull(testModel);
 
         Resource resource = testModel.getNotExistedResource();
@@ -137,7 +131,6 @@ public class ChildInjectorTest {
 
     @Test
     public void testInjectorNotExistedModel() {
-        TestModelChild testModel = context.request().adaptTo(TestModelChild.class);
         assertNotNull(testModel);
 
         ListItemModel model = testModel.getNotExistedModel();
@@ -146,7 +139,6 @@ public class ChildInjectorTest {
 
     @Test
     public void testInjectorNotExistedPrefix() {
-        TestModelChild testModel = context.request().adaptTo(TestModelChild.class);
         assertNotNull(testModel);
 
         ListItemModel model = testModel.getNotExistedPrefix();
@@ -155,7 +147,6 @@ public class ChildInjectorTest {
 
     @Test
     public void testInjectorNotExistedPostfix() {
-        TestModelChild testModel = context.request().adaptTo(TestModelChild.class);
         assertNotNull(testModel);
 
         ListItemModel model = testModel.getNotExistedPostfix();
