@@ -13,11 +13,6 @@
  */
 package com.exadel.aem.toolkit.api.annotations.injectors;
 
-import com.exadel.aem.toolkit.core.injectors.ChildrenInjector;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.models.annotations.Source;
-import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,9 +20,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.function.Predicate;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Source;
+import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
+
+import com.exadel.aem.toolkit.core.injectors.ChildrenInjector;
+
 /**
- * Used on either a field, a method, or a method parameter of a Sling model to inject a requested Collection of children.
- * Otherwise. nothing is injected
+ * Used on either a field, a method, or a method parameter of a Sling model to inject a collection of children,
+ * all elements in the collection will be adapted to the collection's parameterized type if success, otherwise null returned.
+ * <p>If the user has not specified name, prefix, or postfix all children resources of the current resource will be injected</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
@@ -36,26 +39,37 @@ import java.util.function.Predicate;
 public @interface Children {
 
     /**
-     * Retrieves relative path to the parent node of the children nodes
+     * Used to specify a relative path to the parent resource, all of its children resources will be injected.
      * @return Optional non-blank string
      */
     String name() default StringUtils.EMPTY;
 
     /**
-     * Retrieves relative path to the parent node of the children nodes with the last node as a prefix
+     * Used to specify the prefix.
+     * All children resources that will match the prefix will be injected, if there are no matches null will be returned.
+     * The prefix also can be specified as a relative path, in this case, the prefix will be specified at the end of the path:
+     * <pre>{@code
+     *     @Child(prefix = "/components/prefix_")
+     * }</pre>
      * @return Optional non-blank string
      */
-    String namePrefix() default StringUtils.EMPTY;
+    String prefix() default StringUtils.EMPTY;
 
     /**
-     * Retrieves relative path to the parent node of the children nodes with the last node as a postfix
+     * Used to specify the postfix.
+     * All children resources that will match the postfix will be injected, if there are no matches null will be returned.
+     * The postfix also can be specified as a relative path, in this case, the postfix will be specified at the end of the path:
+     * <pre>{@code
+     *     @Child(postfix = "/components/_postfix")
+     * }</pre>
      * @return Optional non-blank string
      */
-    String namePostfix() default StringUtils.EMPTY;
+    String postfix() default StringUtils.EMPTY;
 
     /**
-     * Retrieves array of predicated
-     * @return Optional non-black array of predicates
+     * Used to specify predicates array.
+     * Resources will be filtered according to these predicates. If there will be no matches, null will be returned.
+     * @return Optional non-blank array of predicates
      */
-    Class<? extends Predicate>[] filters() default {};
+    Class<? extends Predicate<Resource>>[] filters() default {};
 }

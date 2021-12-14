@@ -13,9 +13,9 @@
  */
 package com.exadel.aem.toolkit.core.injectors.models.filters;
 
-import org.apache.sling.api.resource.Resource;
-
 import java.util.function.Predicate;
+
+import org.apache.sling.api.resource.Resource;
 
 public class NameFilter implements Predicate<Resource> {
 

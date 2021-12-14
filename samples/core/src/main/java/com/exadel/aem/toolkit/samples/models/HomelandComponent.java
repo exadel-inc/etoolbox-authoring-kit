@@ -14,16 +14,7 @@
 
 package com.exadel.aem.toolkit.samples.models;
 
-import java.util.List;
 import java.util.Optional;
-
-import com.exadel.aem.toolkit.api.annotations.injectors.Child;
-
-import com.exadel.aem.toolkit.api.annotations.injectors.Children;
-
-import com.exadel.aem.toolkit.samples.models.filters.ResourceTypeFilter;
-
-import com.exadel.aem.toolkit.samples.models.filters.SecondFilter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
@@ -85,63 +76,6 @@ public class HomelandComponent {
         @ImageUpload
         @ChildResource
         private Resource homelandImage;
-
-        /* ------------------------
-            Test @Child annotation
-           ------------------------ */
-        @Child
-        private AbilitiesComponent abilitiesComponent;
-
-        @Child(name = "abilitiesComponent")
-        private Resource abilitiesComponent1;
-
-        @Child(name = "./abilitiesComponent")
-        private AbilitiesComponent abilitiesComponent2;
-
-        @Child(name = "./someNode/homelandImage")
-        private Resource homelandImage1;
-
-        @Child(namePrefix = "./someNode/abilities_")
-        private AbilitiesComponent abilitiesComponent3;
-
-        @Child(namePrefix = "./abilities2_")
-        private AbilitiesComponent abilitiesComponent4;
-
-        @Child(namePrefix = "someNode/second-node/abilities3_")
-        private AbilitiesComponent abilitiesComponent5;
-
-        @Child(namePostfix = "./someNode/_component")
-        private AbilitiesComponent abilitiesComponent6;
-
-        @Child(namePostfix = "_component")
-        private Resource getAbilitiesComponent7;
-
-        /* ------------------------
-            Test @Child annotation
-           ------------------------ */
-        @Children
-        private List<Resource> resourceItems;
-
-        @Children
-        private List<AbilitiesComponent> abilitiesComponents;
-
-        @Children(name = "./someNode")
-        private List<Resource> resourceList;
-
-        @Children(name = "someNode/second-node")
-        private List<AbilitiesComponent> abilitiesComponents2;
-
-        @Children(namePrefix = "someNode/second-node/abilities")
-        private List<AbilitiesComponent> abilitiesComponents3;
-
-        @Children(namePostfix = "someNode/second-node/_component")
-        private List<AbilitiesComponent> abilitiesComponents4;
-
-        @Children(filters = {ResourceTypeFilter.class, SecondFilter.class})
-        private List<AbilitiesComponent> abilitiesComponents5;
-
-        @Children(name = "someNode/second-node/", filters = {ResourceTypeFilter.class})
-        private List<AbilitiesComponent> abilitiesComponents6;
 
         public String getHomelandImage() {
             if (homelandImage != null) {

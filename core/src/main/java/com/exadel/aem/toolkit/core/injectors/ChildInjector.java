@@ -13,7 +13,12 @@
  */
 package com.exadel.aem.toolkit.core.injectors;
 
-import com.exadel.aem.toolkit.api.annotations.injectors.Child;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Type;
+import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -25,15 +30,11 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Type;
-import java.util.function.Predicate;
-import java.util.stream.StreamSupport;
+import com.exadel.aem.toolkit.api.annotations.injectors.Child;
 
 /**
- * Injects into a Sling model the Resource or adapted object
+ * Injector implementation for `@Child`
+ * Injects into a Sling model a child resource or adapted object
  * @see Injector
  */
 @Component(service = Injector.class,
@@ -41,9 +42,9 @@ import java.util.stream.StreamSupport;
 )
 public class ChildInjector implements Injector {
 
-    public static final String NAME = "eak-child-resource-injector";
     private static final Logger LOG = LoggerFactory.getLogger(ChildInjector.class);
-    private Child annotation;
+
+    public static final String NAME = "eak-child-resource-injector";
 
     /**
      * Retrieves the name of the current instance
@@ -57,83 +58,83 @@ public class ChildInjector implements Injector {
     }
 
     /**
-     * Attempts to inject {@code Resource} resource or adapted object
+     * Attempts to inject {@code Resource} or adapted object
      * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param varName          Name of the Java class member to inject the value into
+     * @param name             Name of the Java class member to inject the value into
      * @param type             Type of receiving Java class member
      * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve annotation objects
      * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return {@code Resource} resources or adapted object if successful. Otherwise, null is returned
+     * @return {@code Resource} or adapted object if successful. Otherwise, null is returned
      */
     @CheckForNull
     @Override
     public Object getValue(
         @Nonnull Object adaptable,
-        String varName,
+        String name,
         @Nonnull Type type,
         @Nonnull AnnotatedElement element,
         @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
-        try {
-            annotation = element.getDeclaredAnnotation(Child.class);
-            if (annotation == null) {
-                return null;
-            }
-
-            Resource currentNode = InjectorUtils.getResource(adaptable);
-            if (currentNode == null) {
-                return null;
-            }
-
-            Resource childResource = getChildResource(currentNode, varName);
-            if (childResource == null) {
-                return null;
-            }
-
-            if (Resource.class.equals(type)) {
-                return childResource;
-            } else if (type instanceof Class) {
-                return childResource.adaptTo((Class<?>) type);
-            }
-        } catch (Exception ex) {
-            LOG.error("Failed to inject Child ", ex);
+        Child annotation = element.getDeclaredAnnotation(Child.class);
+        if (annotation == null) {
+            return null;
         }
 
+        Resource currentResource = InjectorUtils.getResource(adaptable);
+        if (currentResource == null) {
+            return null;
+        }
+
+        Resource childResource = getChildResource(currentResource, name, annotation);
+        if (childResource == null) {
+            return null;
+        }
+
+        if (Resource.class.equals(type)) {
+            return childResource;
+        } else if (type instanceof Class) {
+            return childResource.adaptTo((Class<?>) type);
+        }
+
+        LOG.debug("Failed to inject child");
         return null;
     }
 
     /**
-     * Retrieves the filtered child {@code Resource} resource object according to the {@code Child} annotation parameters
-     * @param currentNode {@code Resource} current resource node
-     * @param varName {@code String} Name of the Java class member to inject the value into
-     * @return {@code Resource} resource object if success. Otherwise, null is returned
+     * Retrieves the child {@code Resource} object according to the {@code Child} annotation parameters
+     * @param currentResource  Current {@code Resource}
+     * @param name        {@code String} Name of the Java class member to inject the value into
+     * @param annotation  annotation objects
+     * @return {@code Resource} object if success. Otherwise, null is returned
      */
-    private Resource getChildResource(Resource currentNode, String varName) {
+    private Resource getChildResource(Resource currentResource, String name, Child annotation) {
         if (StringUtils.isNotBlank(annotation.name())) {
-            return currentNode.getChild(InjectorUtils.prepareRelativePath(annotation.name()));
-        } else if (StringUtils.isNotBlank(annotation.namePrefix())) {
-            Resource actualParent = InjectorUtils.getLastNodeParentResource(currentNode, annotation.namePrefix());
-            return getFilteredResource(actualParent, InjectorUtils.getPatternPredicate(annotation.namePrefix(), InjectorConstants.CHILD_INJECTOR_PREFIX_EXPR));
-        } else if (StringUtils.isNotBlank(annotation.namePostfix())) {
-            Resource actualParent = InjectorUtils.getLastNodeParentResource(currentNode, annotation.namePostfix());
-            return getFilteredResource(actualParent, InjectorUtils.getPatternPredicate(annotation.namePostfix(), InjectorConstants.CHILD_INJECTOR_POSTFIX_EXPR));
-        } else {
-            return currentNode.getChild(varName);
+            return currentResource.getChild(InjectorUtils.prepareRelativePath(annotation.name()));
+
+        } else if (StringUtils.isNotBlank(annotation.prefix())) {
+            Resource actualParent = InjectorUtils.getLastParentResource(currentResource, annotation.prefix());
+            return getFilteredResource(actualParent, InjectorUtils.getPatternPredicate(annotation.prefix(), InjectorConstants.CHILD_INJECTOR_PREFIX_EXPR));
+
+        } else if (StringUtils.isNotBlank(annotation.postfix())) {
+            Resource actualParent = InjectorUtils.getLastParentResource(currentResource, annotation.postfix());
+            return getFilteredResource(actualParent, InjectorUtils.getPatternPredicate(annotation.postfix(), InjectorConstants.CHILD_INJECTOR_POSTFIX_EXPR));
         }
+
+        return currentResource.getChild(name);
     }
 
     /**
-     * Retrieves first matched {@code Resource} resource
-     * @param currentNode {@code Resource} current resource node
-     * @param predicate {@code Predicate} predicate function
-     * @return first matched {@code Resource} resource
+     * Retrieves first matched {@code Resource}
+     * @param currentResource current {@code Resource}
+     * @param predicate       {@code Predicate} function
+     * @return first matched {@code Resource}
      */
-    private Resource getFilteredResource(Resource currentNode, Predicate<Resource> predicate) {
-        if (currentNode == null) {
+    private Resource getFilteredResource(Resource currentResource, Predicate<Resource> predicate) {
+        if (currentResource == null) {
             return null;
         }
 
-        return StreamSupport.stream(currentNode.getChildren().spliterator(), false)
+        return StreamSupport.stream(currentResource.getChildren().spliterator(), false)
             .filter(predicate)
             .findFirst()
             .orElse(null);

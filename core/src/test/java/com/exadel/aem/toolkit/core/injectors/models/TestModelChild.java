@@ -13,14 +13,13 @@
  */
 package com.exadel.aem.toolkit.core.injectors.models;
 
-import com.exadel.aem.toolkit.api.annotations.injectors.Child;
-
-import com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel;
-
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
+
+import com.exadel.aem.toolkit.api.annotations.injectors.Child;
+import com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel;
 
 @Model(adaptables = SlingHttpServletRequest.class,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
@@ -46,10 +45,10 @@ public class TestModelChild {
     @Child(name = "/list/list_item_1")
     private ListItemModel listItemModel;
 
-    @Child(namePrefix = "list/list_item_")
+    @Child(prefix = "list/list_item_")
     private ListItemModel listItemModel2;
 
-    @Child(namePostfix = "/list/nested-node/_list2")
+    @Child(postfix = "/list/nested-node/_list2")
     private ListItemModel listItemModel3;
 
     /* ------------------------------
@@ -62,10 +61,10 @@ public class TestModelChild {
     @Child(name = "notExistedModel")
     private ListItemModel notExistedModel;
 
-    @Child(namePrefix = "/list/notExistedPrefix_")
+    @Child(prefix = "/list/notExistedPrefix_")
     private ListItemModel notExistedPrefix;
 
-    @Child(namePostfix = "./list/_notExistedPostfix")
+    @Child(postfix = "./list/_notExistedPostfix")
     private ListItemModel notExistedPostfix;
 
     /* ------------------------------

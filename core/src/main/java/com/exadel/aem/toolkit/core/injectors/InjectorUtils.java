@@ -152,7 +152,7 @@ class InjectorUtils {
 
     /**
      * Retrieves whether the provided {@code Type} of a Java class member is a parametrized collection
-     * @param type {@code Type} object
+     * @param type {@code Type}
      * @return True of false
      */
     public static boolean isTypeCollection(Type type) {
@@ -162,8 +162,8 @@ class InjectorUtils {
 
     /**
      * Retrieves actual type parameter from parameterized type
-     * @param parameterizedType {@code Class} object that represents a parameterized type
-     * @return {@code Class} object representing the actual type arguments to this type
+     * @param parameterizedType {@code Class} that represents a parameterized type
+     * @return {@code Class} representing the actual type arguments to this type
      */
     public static Class<?> getActualType(ParameterizedType parameterizedType) {
         return (Class<?>) parameterizedType.getActualTypeArguments()[0];
@@ -171,7 +171,7 @@ class InjectorUtils {
 
     /**
      * Creates and initializes a new instance of a class
-     * @param instanceClass {@code Class} represent a class to be initialized
+     * @param instanceClass represent a {@code Class} to be initialized
      * @param <T>           parameterized type
      * @return <T> initialized object instance
      */
@@ -188,32 +188,22 @@ class InjectorUtils {
     }
 
     /**
-     * Retrieves the last parent node at a relative path from the current node
-     * @param currentNode  {@code Resource} current Resource node
-     * @param relativePath {@code String} relative path
-     * @return {@code Resource} class that representing the last node in relative path if success. Otherwise, null is returned
+     * Retrieves the last parent resource
+     * @param currentResource current {@code Resource}
+     * @param relativePath    {@code String} relative path
+     * @return {@code Resource} object that representing the last node in relative path if success. Otherwise, null is returned
      */
-    public static Resource getLastNodeParentResource(Resource currentNode, String relativePath) {
+    public static Resource getLastParentResource(Resource currentResource, String relativePath) {
         if (!StringUtils.isNotBlank(relativePath)) {
             return null;
         }
-
-        Resource actualParent = currentNode;
-        relativePath = prepareRelativePath(relativePath);
-        String[] nodesNames = relativePath.split("/");
-        if (nodesNames.length > 1) {
-            actualParent = currentNode.getChild(Arrays.stream(nodesNames)
-                .limit((long) nodesNames.length - 1)
-                .collect(Collectors.joining("/")));
-        }
-
-        return actualParent;
+        return currentResource.getChild(StringUtils.substringBeforeLast(prepareRelativePath(relativePath), "/"));
     }
 
     /**
      * Retrieves the prepared relative path
      * @param path {@code String} current path
-     * @return {@code String} object that representing prepared path if success. Otherwise, an empty string is returned.
+     * @return {@code String} that representing prepared path if success. Otherwise, an empty string is returned.
      */
     public static String prepareRelativePath(String path) {
         if (StringUtils.isNotBlank(path)) {
@@ -243,9 +233,9 @@ class InjectorUtils {
     }
 
     /**
-     * Retrieves the last node name from a given relative path
+     * Retrieves the last name from a given relative path
      * @param relativePath {@code String} relative path
-     * @return {@code String} object representing the last node name
+     * @return {@code String} that representing the last name
      */
     public static String getLastNodeName(String relativePath) {
         String lastNodeName = relativePath;

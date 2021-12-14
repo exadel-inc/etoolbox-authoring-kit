@@ -13,20 +13,21 @@
  */
 package com.exadel.aem.toolkit.api.annotations.injectors;
 
-import com.exadel.aem.toolkit.core.injectors.ChildInjector;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.models.annotations.Source;
-import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.models.annotations.Source;
+import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
+
+import com.exadel.aem.toolkit.core.injectors.ChildInjector;
+
 /**
- * Used on either a field, a method, or a method parameter of a Sling model to inject a requested child resources.
- * Otherwise. nothing is injected
+ * Used on either a field, a method, or a method parameter of a Sling model to inject a child resource
+ * or adapted object if success, otherwise null returned.
+ * <p>If the user has not specified name, prefix, or postfix name will be retrieved from a field name.</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
@@ -35,20 +36,30 @@ import java.lang.annotation.Target;
 public @interface Child {
 
     /**
-     * Retrieves the relative path to child node
+     * Used to specify the relative path to child resource. If there will be no match, null will be returned.
      * @return Optional non-blank string
      */
     String name() default StringUtils.EMPTY;
 
     /**
-     * Retrieves relative path to child node with the last node as a prefix
+     * Used to specify the prefix.
+     * The first child resource that will match the prefix will be injected, if there are no matches null will be returned.
+     * The prefix also can be specified as a relative path, in this case, the prefix will be specified at the end of the path:
+     * <pre>{@code
+     *     @Child(prefix = "/components/prefix_")
+     * }</pre>
      * @return Optional non-blank string
      */
-    String namePrefix() default StringUtils.EMPTY;
+    String prefix() default StringUtils.EMPTY;
 
     /**
-     * Retrieves relative path to child node with the last node as a postfix
+     * Used to specify the postfix.
+     * The first child resource that will match the postfix will be injected, if there are no matches null will be returned.
+     * The postfix also can be specified as a relative path, in this case, the postfix will be specified at the end of the path:
+     * <pre>{@code
+     *     @Child(postfix = "/components/_postfix")
+     * }</pre>
      * @return Optional non-blank string
      */
-    String namePostfix() default StringUtils.EMPTY;
+    String postfix() default StringUtils.EMPTY;
 }

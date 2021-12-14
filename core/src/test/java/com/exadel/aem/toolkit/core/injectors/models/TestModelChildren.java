@@ -13,7 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.injectors.models;
 
-import com.exadel.aem.toolkit.api.annotations.injectors.Children;
+import java.util.List;
 
 import com.exadel.aem.toolkit.core.injectors.models.filters.NameFilter;
 import com.exadel.aem.toolkit.core.injectors.models.filters.ResourceTypeFilter;
@@ -24,7 +24,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 
-import java.util.List;
+import com.exadel.aem.toolkit.api.annotations.injectors.Children;
 
 @Model(adaptables = SlingHttpServletRequest.class,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
@@ -44,10 +44,10 @@ public class TestModelChildren {
     @Children(name = "list/nested-node")
     private List<ListItemModel> listItemModels2;
 
-    @Children(namePrefix = "list/nested-node/nested_")
+    @Children(prefix = "list/nested-node/nested_")
     private List<ListItemModel> listItemModels3;
 
-    @Children(namePostfix = "list/nested-node/_list2")
+    @Children(postfix = "list/nested-node/_list2")
     private List<ListItemModel> listItemModels4;
 
     @Children(name = "/list", filters = {ResourceTypeFilter.class, NameFilter.class})
@@ -66,10 +66,10 @@ public class TestModelChildren {
     @Children(name = "notExisted/path/route")
     private List<ListItemModel> notExistedModel;
 
-    @Children(namePrefix = "list/_notExistedPrefix")
+    @Children(prefix = "list/_notExistedPrefix")
     private List<ListItemModel> notExistedPrefix;
 
-    @Children(namePostfix = "list/notExistedPostfix")
+    @Children(postfix = "list/notExistedPostfix")
     private List<ListItemModel> notExistedPostfix;
 
     @Children(name = "/list/notExisted/path", filters = {ResourceTypeFilter.class, NameFilter.class})

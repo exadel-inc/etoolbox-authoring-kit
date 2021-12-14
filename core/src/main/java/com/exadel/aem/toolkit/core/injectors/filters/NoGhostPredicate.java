@@ -11,13 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.injectors.models.filters;
+package com.exadel.aem.toolkit.core.injectors.filters;
 
 import java.util.function.Predicate;
 
 import org.apache.sling.api.resource.Resource;
 
-public class ResourceTypeFilter implements Predicate<Resource> {
+/**
+ * The predicate that checks if a resource is not the type of the ghost type
+ */
+public class NoGhostPredicate implements Predicate<Resource> {
 
     /**
      * Evaluates this predicate on the given argument.
@@ -28,6 +31,6 @@ public class ResourceTypeFilter implements Predicate<Resource> {
      */
     @Override
     public boolean test(Resource resource) {
-        return resource.isResourceType("etoolbox-authoring-kit/lists/components/content/listItem");
+        return !resource.isResourceType("wcm/msm/components/ghost");
     }
 }
