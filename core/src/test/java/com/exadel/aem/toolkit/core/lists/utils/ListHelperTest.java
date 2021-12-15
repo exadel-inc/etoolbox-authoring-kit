@@ -35,12 +35,13 @@ import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.WCMException;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 public class ListHelperTest {
 
@@ -169,10 +170,13 @@ public class ListHelperTest {
     }
 
     @Test
-    public void shouldNotCreateListIfPassedResourceCollectionIsEmpty() throws PersistenceException, WCMException {
+    public void shouldCreateListWithoutItemsIfPassedResourceCollectionIsEmpty() throws PersistenceException, WCMException {
         Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.emptyList());
 
-        assertNull(listPage);
+        assertNotNull(listPage);
+        Resource list = listPage.getContentResource().getChild(ListConstants.NN_LIST);
+        assertNotNull(list);
+        assertFalse(list.hasChildren());
     }
 
     @Test
