@@ -36,7 +36,7 @@ public class TestModelChildren {
        ------------------------------ */
 
     @Children
-    private List<Resource> resourceItems;
+    private List<Resource> list;
 
     @Children(name = "./list")
     private List<Resource> resourceList;
@@ -44,17 +44,14 @@ public class TestModelChildren {
     @Children(name = "list/nested-node")
     private List<ListItemModel> listItemModels2;
 
-    @Children(prefix = "list/nested-node/nested_")
+    @Children(name = "/content/jcr:content/list/nested-node", prefix = "prefix_")
     private List<ListItemModel> listItemModels3;
 
-    @Children(postfix = "list/nested-node/_list2")
+    @Children(name = "/content/jcr:content/list/nested-node", postfix = "_postfix")
     private List<ListItemModel> listItemModels4;
 
-    @Children(name = "/list", filters = {ResourceTypeFilter.class, NameFilter.class})
+    @Children(name = "/content/jcr:content/list/nested-node", filters = {ResourceTypeFilter.class, NameFilter.class})
     private List<ListItemModel> listItemModels5;
-
-    @Children(filters = {ResourceTypeFilter.class})
-    private List<ListItemModel> listItemModels6;
 
     /* ------------------------------
                Invalid cases
@@ -79,8 +76,8 @@ public class TestModelChildren {
             Accessor valid cases
        ------------------------------ */
 
-    public List<Resource> getResourceItems() {
-        return resourceItems;
+    public List<Resource> getList() {
+        return list;
     }
 
     public List<Resource> getResourceList() {
@@ -101,10 +98,6 @@ public class TestModelChildren {
 
     public List<ListItemModel> getListItemModels5() {
         return listItemModels5;
-    }
-
-    public List<ListItemModel> getListItemModels6() {
-        return listItemModels6;
     }
 
     /* ------------------------------

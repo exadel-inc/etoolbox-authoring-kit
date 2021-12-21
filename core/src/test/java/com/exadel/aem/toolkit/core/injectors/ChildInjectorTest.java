@@ -20,7 +20,6 @@ import com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -54,6 +53,16 @@ public class ChildInjectorTest {
     public void testInjectChild() {
         assertNotNull(testModel);
         Resource actualResource = testModel.getList();
+
+        assertNotNull(actualResource);
+        assertEquals(EXPECTED_RESOURCE_TYPE2, actualResource.getResourceType());
+    }
+
+    @Test
+    public void testInjectChild2() {
+        assertNotNull(testModel);
+        Resource actualResource = testModel.getListItemResource();
+
         assertNotNull(actualResource);
         assertEquals(EXPECTED_RESOURCE_TYPE1, actualResource.getResourceType());
     }
@@ -61,95 +70,57 @@ public class ChildInjectorTest {
     @Test
     public void testInjectChildName() {
         assertNotNull(testModel);
-        Resource actualResource = testModel.getListItemResource();
-        assertNotNull(actualResource);
-        assertEquals(EXPECTED_RESOURCE_TYPE1, actualResource.getResourceType());
-    }
+        ListItemModel itemModel = testModel.getListItemModel();
 
-    @Test
-    public void testInjectChildName2() {
-        assertNotNull(testModel);
-        Resource actualResource = testModel.getListItemResource2();
-        assertNotNull(actualResource);
-        assertEquals(EXPECTED_RESOURCE_TYPE1, actualResource.getResourceType());
-    }
-
-    @Test
-    public void testInjectChildNameNested() {
-        assertNotNull(testModel);
-        Resource actualResource = testModel.getNestedResource();
-        assertNotNull(actualResource);
-        assertEquals(EXPECTED_RESOURCE_TYPE2, actualResource.getResourceType());
-    }
-
-    @Test
-    public void testInjectChildAdapted() {
-        assertNotNull(testModel);
-        ListItemModel actualListItem = testModel.getListItemModel();
-        assertNotNull(actualListItem);
-
-        Map<String, Object> expected = new HashMap<>();
-        expected.put("jcr:title", "key2");
-        expected.put("value", "value2");
-        Map<String, Object> actual = actualListItem.getProperties();
-        assertEquals(expected, actual);
+        assertNotNull(itemModel);
+        assertEquals(8L, itemModel.getProperties().size());
     }
 
     @Test
     public void testInjectChildPrefix() {
         assertNotNull(testModel);
-        ListItemModel actualListItem = testModel.getListItemModel2();
-        assertNotNull(actualListItem);
+        ListItemModel itemModel = testModel.getListItemModel1();
+
+        assertNotNull(itemModel);
+        assertEquals(3L, itemModel.getProperties().size());
 
         Map<String, Object> expected = new HashMap<>();
-        expected.put("jcr:title", "key1");
-        expected.put("value", "value1");
-        Map<String, Object> actual = actualListItem.getProperties();
-        assertEquals(expected, actual);
+        expected.put("prefix_value", "pref_value");
+        expected.put("prefix_value_2", "pref_value_2");
+        expected.put("prefix_value_3", "pref_value_3");
+        assertEquals(expected, itemModel.getProperties());
     }
 
     @Test
-    public void testInjectorPostfix() {
+    public void testInjectChildPostfix() {
         assertNotNull(testModel);
-        ListItemModel actualListItem = testModel.getListItemModel3();
-        assertNotNull(actualListItem);
+        ListItemModel itemModel = testModel.getListItemModel2();
+
+        assertNotNull(itemModel);
+        assertEquals(3L, itemModel.getProperties().size());
 
         Map<String, Object> expected = new HashMap<>();
-        expected.put("jcr:title", "key11");
-        expected.put("value", "nestedList2");
-        Map<String, Object> actual = actualListItem.getProperties();
-        assertEquals(expected, actual);
+        expected.put("value_1_postfix", "value_1_postfix");
+        expected.put("value_2_postfix", "value_2_postfix");
+        expected.put("value_3_postfix", "value_3_postfix");
+        assertEquals(expected, itemModel.getProperties());
     }
 
     @Test
-    public void testInjectorNotExistedResource() {
+    public void testInjectChildPrefixPostfix() {
         assertNotNull(testModel);
+        ListItemModel itemModel = testModel.getListItemModel3();
 
-        Resource resource = testModel.getNotExistedResource();
-        assertNull(resource);
-    }
+        assertNotNull(itemModel);
+        assertEquals(6L, itemModel.getProperties().size());
 
-    @Test
-    public void testInjectorNotExistedModel() {
-        assertNotNull(testModel);
-
-        ListItemModel model = testModel.getNotExistedModel();
-        assertNull(model);
-    }
-
-    @Test
-    public void testInjectorNotExistedPrefix() {
-        assertNotNull(testModel);
-
-        ListItemModel model = testModel.getNotExistedPrefix();
-        assertNull(model);
-    }
-
-    @Test
-    public void testInjectorNotExistedPostfix() {
-        assertNotNull(testModel);
-
-        ListItemModel model = testModel.getNotExistedPostfix();
-        assertNull(model);
+        Map<String, Object> expected = new HashMap<>();
+        expected.put("prefix_value", "pref_value");
+        expected.put("prefix_value_2", "pref_value_2");
+        expected.put("prefix_value_3", "pref_value_3");
+        expected.put("value_1_postfix", "value_1_postfix");
+        expected.put("value_2_postfix", "value_2_postfix");
+        expected.put("value_3_postfix", "value_3_postfix");
+        assertEquals(expected, itemModel.getProperties());
     }
 }

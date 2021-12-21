@@ -26,6 +26,7 @@
         "jcr:primaryType": "nt:unstructured",
         "jcr:title": "key1",
         "value": "value3",
+        "value_2": "value2",
         "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
       },
       "list_item_empty": {
@@ -44,6 +45,12 @@
           "jcr:primaryType": "nt:unstructured",
           "jcr:title": "key11",
           "value": "nestedList2",
+          "prefix_value": "pref_value",
+          "prefix_value_2": "pref_value_2",
+          "prefix_value_3": "pref_value_3",
+          "value_1_postfix": "value_1_postfix",
+          "value_2_postfix": "value_2_postfix",
+          "value_3_postfix": "value_3_postfix",
           "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
         }
       }

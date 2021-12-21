@@ -18,13 +18,12 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -44,6 +43,7 @@ import com.exadel.aem.toolkit.api.annotations.injectors.Children;
  * Injector implementation for {@code @Children}
  * Injects into a Sling model a collection of children, all elements in the collection will be adapted
  * to the collection's parameterized type if success, otherwise null returned.
+ * All parameters in the injected elements will be filtered according to annotation options
  * @see Injector
  */
 @Component(service = Injector.class,
@@ -89,8 +89,8 @@ public class ChildrenInjector implements Injector {
             return null;
         }
 
-        Resource currentResource = InjectorUtils.getResource(adaptable);
-        if (currentResource == null) {
+        Resource adaptableResource = InjectorUtils.getResource(adaptable);
+        if (adaptableResource == null) {
             return null;
         }
 
@@ -98,7 +98,13 @@ public class ChildrenInjector implements Injector {
             return null;
         }
 
-        List<Object> childrenList = getChildren(currentResource, type, annotation);
+        String resourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
+        Resource currentResource = adaptableResource.getChild(resourcePath);
+        if (currentResource == null) {
+            return null;
+        }
+
+        List<Object> childrenList = getFilteredChildrenList(currentResource, type, annotation);
         if (CollectionUtils.isNotEmpty(childrenList)) {
             return childrenList;
         }
@@ -114,33 +120,25 @@ public class ChildrenInjector implements Injector {
      * @param annotation      Annotation objects
      * @return {@code List<Object>} list of filtered and adapted objects. Otherwise, empty list is returned
      */
-    private List<Object> getChildren(Resource currentResource, Type type, Children annotation) {
-        List<Predicate<Resource>> predicates = getAnnotationPredicates(annotation);
+    private List<Object> getFilteredChildrenList(Resource currentResource, Type type, Children annotation) {
+        List<Predicate<Resource>> filters = getAnnotationFilters(annotation);
+        List<Predicate<String>> propertiesPredicates = InjectorUtils.getPropertiesPredicates(annotation.prefix(), annotation.postfix());
 
-        if (StringUtils.isNotBlank(annotation.name())) {
-            Resource actualParent = currentResource.getChild(InjectorUtils.prepareRelativePath(annotation.name()));
-            return getFilteredList(actualParent, type, predicates);
-
-        } else if (StringUtils.isNotBlank(annotation.prefix())) {
-            Resource actualParent = InjectorUtils.getLastParentResource(currentResource, annotation.prefix());
-            predicates.add(InjectorUtils.getPatternPredicate(annotation.prefix(), InjectorConstants.CHILD_INJECTOR_PREFIX_EXPR));
-            return getFilteredList(actualParent, type, predicates);
-
-        } else if (StringUtils.isNotBlank(annotation.postfix())) {
-            Resource actualParent = InjectorUtils.getLastParentResource(currentResource, annotation.postfix());
-            predicates.add(InjectorUtils.getPatternPredicate(annotation.postfix(), InjectorConstants.CHILD_INJECTOR_POSTFIX_EXPR));
-            return getFilteredList(actualParent, type, predicates);
-        }
-
-        return getFilteredList(currentResource, type, predicates);
+        List<Resource> filteredResourceList = getFilteredResourceList(currentResource, filters);
+        return getFilteredObjectsList(filteredResourceList, propertiesPredicates, type);
     }
 
     /**
      * Retrieves the list of initialized predicate functions from the annotation filter parameter
-     * @return {@code List<Predicate<Resource>>} of initialized predicate functions if success. Otherwise, empty list is returned
+     * @return {@code List<Predicate<Resource>>} of initialized predicate functions
      */
-    @SuppressWarnings("unchecked")
-    private List<Predicate<Resource>> getAnnotationPredicates(Children annotation) {
+    private List<Predicate<Resource>> getAnnotationFilters(Children annotation) {
+        if (annotation.filters().length == 0) {
+            List<Predicate<Resource>> filters = new ArrayList<>();
+            filters.add(resource -> true);
+            return filters;
+        }
+
         return Arrays.stream(annotation.filters())
             .map(InjectorUtils::getObjectInstance)
             .filter(Objects::nonNull)
@@ -148,28 +146,29 @@ public class ChildrenInjector implements Injector {
     }
 
     /**
-     * Retrieves the filtered and adapted children from the current resource
-     * @param currentResource Current {@code Resource}
-     * @param type            The {@code Type} to adapt to
+     * Retrieves the filtered children resources of the current resource
+     * @param currentResource Current {@code Resource} to be filtered
      * @param predicates      {@code List<Predicate<Resource>>} of predicates
-     * @return {@code List<Object>} of filtered and adapted objects. Otherwise, empty list is returned
+     * @return {@code List<Object>} of filtered children resources.
      */
-    private List<Object> getFilteredList(Resource currentResource, Type type, List<Predicate<Resource>> predicates) {
-        if (currentResource == null) {
-            return Collections.emptyList();
-        }
+    private List<Resource> getFilteredResourceList(Resource currentResource, List<Predicate<Resource>> predicates) {
+        return StreamSupport.stream(currentResource.getChildren().spliterator(), false)
+            .filter(resource -> predicates.stream().anyMatch(f -> f.test(resource)))
+            .collect(Collectors.toList());
+    }
 
+    /**
+     * Retrieves the list of adapted objects whose properties have been filtered according to properties predicated
+     * @param resourceList         List of resources
+     * @param propertiesPredicates List of properties predicates
+     * @param type                 Type of receiving Java class member
+     * @return List of adapted objects
+     */
+    private List<Object> getFilteredObjectsList(List<Resource> resourceList, List<Predicate<String>> propertiesPredicates, Type type) {
         final Class<?> actualType = InjectorUtils.getActualType((ParameterizedType) type);
-
-        Stream<Resource> stream = StreamSupport.stream(currentResource.getChildren().spliterator(), false);
-        if (CollectionUtils.isNotEmpty(predicates)) {
-            for (Predicate<Resource> predicate : predicates) {
-                stream = stream.filter(predicate);
-            }
-        }
-
-        return stream
-            .map(resource -> getAdaptedObject(resource, actualType))
+        return resourceList.stream()
+            .map(resource -> InjectorUtils.createFilteredResource(resource, propertiesPredicates))
+            .map(item -> getAdaptedObject(item, actualType))
             .collect(Collectors.toList());
     }
 
@@ -182,9 +181,7 @@ public class ChildrenInjector implements Injector {
     private Object getAdaptedObject(Resource resource, Class<?> actualType) {
         if (Resource.class.equals(actualType)) {
             return resource;
-        } else if (actualType != null) {
-            return resource.adaptTo(actualType);
         }
-        return null;
+        return resource.adaptTo(actualType);
     }
 }

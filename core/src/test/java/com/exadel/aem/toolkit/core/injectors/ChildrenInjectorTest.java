@@ -51,10 +51,10 @@ public class ChildrenInjectorTest {
     public void testInjectorChildrenResourceItems() {
         assertNotNull(testModel);
 
-        List<Resource> resourceList = testModel.getResourceItems();
+        List<Resource> resourceList = testModel.getList();
         assertNotNull(resourceList);
 
-        assertEquals(3, resourceList.size());
+        assertEquals(5L, resourceList.size());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class ChildrenInjectorTest {
         List<Resource> resourceList = testModel.getResourceList();
         assertNotNull(resourceList);
 
-        assertEquals(5, resourceList.size());
+        assertEquals(5L, resourceList.size());
     }
 
     @Test
@@ -74,7 +74,7 @@ public class ChildrenInjectorTest {
         List<ListItemModel> modelList = testModel.getListItemModels2();
         assertNotNull(modelList);
 
-        assertEquals(2, modelList.size());
+        assertEquals(4L, modelList.size());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class ChildrenInjectorTest {
         List<ListItemModel> modelList = testModel.getListItemModels3();
         assertNotNull(modelList);
 
-        assertEquals(2, modelList.size());
+        assertEquals(4L, modelList.size());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class ChildrenInjectorTest {
         List<ListItemModel> modelList = testModel.getListItemModels4();
         assertNotNull(modelList);
 
-        assertEquals(1, modelList.size());
+        assertEquals(4L, modelList.size());
     }
 
     @Test
@@ -104,17 +104,7 @@ public class ChildrenInjectorTest {
         List<ListItemModel> modelList = testModel.getListItemModels5();
         assertNotNull(modelList);
 
-        assertEquals(1, modelList.size());
-    }
-
-    @Test
-    public void testInjectorChildrenListItemModels6() {
-        assertNotNull(testModel);
-
-        List<ListItemModel> modelList = testModel.getListItemModels6();
-        assertNotNull(modelList);
-
-        assertEquals(2, modelList.size());
+        assertEquals(2L, modelList.size());
     }
 
     @Test

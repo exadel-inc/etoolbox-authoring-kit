@@ -16,16 +16,21 @@ package com.exadel.aem.toolkit.core.injectors;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.api.resource.ValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,60 +192,52 @@ class InjectorUtils {
     }
 
     /**
-     * Retrieves the last parent resource
-     * @param currentResource Current {@code Resource}
-     * @param relativePath    {@code String} relative path
-     * @return {@code Resource} object that representing the last node in relative path if success. Otherwise, null is returned
+     * Creates new {@code Resource} that contains filtered properties from {@code currentResource}
+     * @param currentResource Current {@code Resource} contains properties to be filtered
+     * @param predicates      {@code List<Predicate<String>>} that contains filters for properties
+     * @return New created {@code Resource} with filtered properties if success, otherwise null is returned
      */
-    public static Resource getLastParentResource(Resource currentResource, String relativePath) {
-        if (!StringUtils.isNotBlank(relativePath)) {
-            return null;
+    public static Resource createFilteredResource(Resource currentResource, List<Predicate<String>> predicates) {
+        Map<String, Object> values = currentResource
+            .getValueMap()
+            .entrySet()
+            .stream()
+            .filter(item -> predicates.stream().anyMatch(f -> f.test(item.getKey())))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        try {
+            return currentResource
+                .getResourceResolver()
+                .create(currentResource, ResourceUtil.createUniqueChildName(currentResource, "item"), values);
+        } catch (PersistenceException ex) {
+            LOG.debug("Cannot create new resource", ex);
         }
-        return currentResource.getChild(StringUtils.substringBeforeLast(prepareRelativePath(relativePath), "/"));
+
+        return null;
     }
 
     /**
-     * Retrieves the prepared relative path
-     * @param path {@code String} current path
-     * @return {@code String} that representing prepared path if success. Otherwise, an empty string is returned.
+     * Retrieves predicates list according to prefix and postfix arguments.
+     * If prefix and postfix arguments are empty default predicate is added
+     * @param prefix  String argument
+     * @param postfix String argument
+     * @return List of predicates
      */
-    public static String prepareRelativePath(String path) {
-        if (StringUtils.isNotBlank(path)) {
-            if (path.startsWith("./")) {
-                return path.substring(2);
-            }
+    public static List<Predicate<String>> getPropertiesPredicates(String prefix, String postfix) {
+        List<Predicate<String>> predicates = new ArrayList<>();
 
-            if (path.startsWith("/")) {
-                return path.substring(1);
-            }
-
-            return path;
+        if (StringUtils.isNotBlank(prefix)) {
+            predicates.add(value -> value.startsWith(prefix));
         }
-        return StringUtils.EMPTY;
-    }
 
-    /**
-     * Retrieves the predicate function that attempts to match the entire region against the pattern.
-     * @param relativePath {@code String} relative path
-     * @param regex        {@code String} regular expression
-     * @return {@code Predicate<Resource>} object that representing predicate function
-     */
-    public static Predicate<Resource> getPatternPredicate(String relativePath, String regex) {
-        String lastNodeName = InjectorUtils.getLastNodeName(relativePath);
-        Pattern pattern = Pattern.compile(regex.replace(InjectorConstants.CHILD_INJECTOR_REPLACE_NAME, lastNodeName));
-        return resource -> pattern.matcher(resource.getPath()).matches();
-    }
-
-    /**
-     * Retrieves the last name from a given relative path
-     * @param relativePath {@code String} relative path
-     * @return {@code String} that representing the last name
-     */
-    public static String getLastNodeName(String relativePath) {
-        String lastNodeName = relativePath;
-        if (relativePath.endsWith("/")) {
-            lastNodeName = lastNodeName.substring(0, relativePath.length() - 1);
+        if (StringUtils.isNotBlank(postfix)) {
+            predicates.add(value -> value.endsWith(postfix));
         }
-        return lastNodeName.substring(relativePath.lastIndexOf("/") + 1);
+
+        if (predicates.isEmpty()) {
+            predicates.add(value -> true);
+        }
+
+        return predicates;
     }
 }

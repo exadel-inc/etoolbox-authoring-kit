@@ -28,8 +28,8 @@ import com.exadel.aem.toolkit.core.injectors.ChildrenInjector;
 
 /**
  * Used on either a field, a method, or a method parameter of a Sling model to inject a collection of children,
- * all elements in the collection will be adapted to the collection's parameterized type if success, otherwise null returned.
- * <p>If the user has not specified name, prefix, or postfix all children resources of the current resource will be injected</p>
+ * all elements in the collection will be adapted to the collection's parameterized type with filtered properties,
+ * if success, otherwise null returned.
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
@@ -39,35 +39,29 @@ public @interface Children {
 
     /**
      * Used to specify a relative path to the parent resource, all of its children resources will be injected.
+     * If the user has not specified name parameter, relative path will be retrieved from a field name.
+     * If there will be no match, null will be returned.
      * @return Optional non-blank string
      */
     String name() default StringUtils.EMPTY;
 
     /**
      * Used to specify the prefix.
-     * All children resources that will match the prefix will be injected, if there are no matches null will be returned.
-     * The prefix also can be specified as a relative path, in this case, the prefix will be specified at the end of the path:
-     * <pre>{@code
-     *     @Child(prefix = "/components/prefix_")
-     * }</pre>
+     * All children's resources object's properties that matched with the prefix will be injected.
      * @return Optional non-blank string
      */
     String prefix() default StringUtils.EMPTY;
 
     /**
      * Used to specify the postfix.
-     * All children resources that will match the postfix will be injected, if there are no matches null will be returned.
-     * The postfix also can be specified as a relative path, in this case, the postfix will be specified at the end of the path:
-     * <pre>{@code
-     *     @Child(postfix = "/components/_postfix")
-     * }</pre>
+     * All object's properties that matched with the postfix will be injected.
      * @return Optional non-blank string
      */
     String postfix() default StringUtils.EMPTY;
 
     /**
      * Used to specify predicates array.
-     * Resources will be filtered according to these predicates. If there will be no matches, null will be returned.
+     * Resources will be filtered according to these predicates.
      * @return Optional non-blank array of predicates
      */
     Class<? extends Predicate<Resource>>[] filters() default {};

@@ -30,42 +30,24 @@ public class TestModelChild {
          @Child injector test cases
        ------------------------------ */
 
-    @Child
+    @Child(name = "./list_item_1")
     private Resource list;
 
     @Child(name = "list")
     private Resource listItemResource;
 
-    @Child(name = "./list")
-    private Resource listItemResource2;
-
-    @Child(name = "./list/list_item_1")
-    private Resource nestedResource;
-
-    @Child(name = "/list/list_item_1")
+    @Child(name = "/content/jcr:content/list/nested-node/nested_list2")
     private ListItemModel listItemModel;
 
-    @Child(prefix = "list/list_item_")
+    @Child(name = "/content/jcr:content/list/nested-node/nested_list2", prefix = "prefix_")
+    private ListItemModel listItemModel1;
+
+    @Child(name = "/content/jcr:content/list/nested-node/nested_list2", postfix = "_postfix")
     private ListItemModel listItemModel2;
 
-    @Child(postfix = "/list/nested-node/_list2")
+    @Child(name = "/content/jcr:content/list/nested-node/nested_list2", prefix = "prefix_", postfix = "_postfix")
     private ListItemModel listItemModel3;
 
-    /* ------------------------------
-               Invalid cases
-       ------------------------------ */
-
-    @Child
-    private Resource notExistedResource;
-
-    @Child(name = "notExistedModel")
-    private ListItemModel notExistedModel;
-
-    @Child(prefix = "/list/notExistedPrefix_")
-    private ListItemModel notExistedPrefix;
-
-    @Child(postfix = "./list/_notExistedPostfix")
-    private ListItemModel notExistedPostfix;
 
     /* ------------------------------
             Accessor valid cases
@@ -79,42 +61,19 @@ public class TestModelChild {
         return listItemResource;
     }
 
-    public Resource getListItemResource2() {
-        return listItemResource2;
-    }
-
-    public Resource getNestedResource() {
-        return nestedResource;
-    }
-
     public ListItemModel getListItemModel() {
         return listItemModel;
     }
+
+    public ListItemModel getListItemModel1() {
+        return listItemModel1;
+    }
+
     public ListItemModel getListItemModel2() {
         return listItemModel2;
     }
 
     public ListItemModel getListItemModel3() {
         return listItemModel3;
-    }
-
-    /* ------------------------------
-         Accessor for invalid cases
-       ------------------------------ */
-
-    public Resource getNotExistedResource() {
-        return notExistedResource;
-    }
-
-    public ListItemModel getNotExistedModel() {
-        return notExistedModel;
-    }
-
-    public ListItemModel getNotExistedPrefix() {
-        return notExistedPrefix;
-    }
-
-    public ListItemModel getNotExistedPostfix() {
-        return notExistedPostfix;
     }
 }

@@ -15,8 +15,6 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
-import java.util.function.Predicate;
-import java.util.stream.StreamSupport;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
@@ -80,20 +78,26 @@ public class ChildInjector implements Injector {
             return null;
         }
 
-        Resource currentResource = InjectorUtils.getResource(adaptable);
+        Resource adaptableResource = InjectorUtils.getResource(adaptable);
+        if (adaptableResource == null) {
+            return null;
+        }
+
+        String resourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
+        Resource currentResource = adaptableResource.getChild(resourcePath);
         if (currentResource == null) {
             return null;
         }
 
-        Resource childResource = getChildResource(currentResource, name, annotation);
-        if (childResource == null) {
+        Resource preparedResource = getPreparedResource(currentResource, annotation);
+        if (preparedResource == null) {
             return null;
         }
 
         if (Resource.class.equals(type)) {
-            return childResource;
+            return preparedResource;
         } else if (type instanceof Class) {
-            return childResource.adaptTo((Class<?>) type);
+            return preparedResource.adaptTo((Class<?>) type);
         }
 
         LOG.debug("Failed to inject child");
@@ -101,42 +105,13 @@ public class ChildInjector implements Injector {
     }
 
     /**
-     * Retrieves the child {@code Resource} object according to the {@code Child} annotation parameters
-     * @param currentResource  Current {@code Resource}
-     * @param name        {@code String} Name of the Java class member to inject the value into
-     * @param annotation  Annotation objects
+     * Retrieves the new {@code Resource} object with filtered properties.
+     * Properties will be filtered according to the annotation parameters
+     * @param currentResource Current {@code Resource} contains properties to be filtered
+     * @param annotation      Annotation objects
      * @return {@code Resource} object if success. Otherwise, null is returned
      */
-    private Resource getChildResource(Resource currentResource, String name, Child annotation) {
-        if (StringUtils.isNotBlank(annotation.name())) {
-            return currentResource.getChild(InjectorUtils.prepareRelativePath(annotation.name()));
-
-        } else if (StringUtils.isNotBlank(annotation.prefix())) {
-            Resource actualParent = InjectorUtils.getLastParentResource(currentResource, annotation.prefix());
-            return getFilteredResource(actualParent, InjectorUtils.getPatternPredicate(annotation.prefix(), InjectorConstants.CHILD_INJECTOR_PREFIX_EXPR));
-
-        } else if (StringUtils.isNotBlank(annotation.postfix())) {
-            Resource actualParent = InjectorUtils.getLastParentResource(currentResource, annotation.postfix());
-            return getFilteredResource(actualParent, InjectorUtils.getPatternPredicate(annotation.postfix(), InjectorConstants.CHILD_INJECTOR_POSTFIX_EXPR));
-        }
-
-        return currentResource.getChild(name);
-    }
-
-    /**
-     * Retrieves first matched {@code Resource}
-     * @param currentResource Current {@code Resource}
-     * @param predicate       {@code Predicate} function
-     * @return first matched {@code Resource}
-     */
-    private Resource getFilteredResource(Resource currentResource, Predicate<Resource> predicate) {
-        if (currentResource == null) {
-            return null;
-        }
-
-        return StreamSupport.stream(currentResource.getChildren().spliterator(), false)
-            .filter(predicate)
-            .findFirst()
-            .orElse(null);
+    private Resource getPreparedResource(Resource currentResource, Child annotation) {
+        return InjectorUtils.createFilteredResource(currentResource, InjectorUtils.getPropertiesPredicates(annotation.prefix(), annotation.postfix()));
     }
 }

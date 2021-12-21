@@ -26,8 +26,7 @@ import com.exadel.aem.toolkit.core.injectors.ChildInjector;
 
 /**
  * Used on either a field, a method, or a method parameter of a Sling model to inject a child resource
- * or adapted object if success, otherwise null returned.
- * <p>If the user has not specified name, prefix, or postfix name will be retrieved from a field name.</p>
+ * or adapted object with filtered properties, if success, otherwise null returned.
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
@@ -36,29 +35,23 @@ import com.exadel.aem.toolkit.core.injectors.ChildInjector;
 public @interface Child {
 
     /**
-     * Used to specify the relative path to child resource. If there will be no match, null will be returned.
+     * Used to specify the relative path to child resource.
+     * If the user has not specified name parameter, relative path will be retrieved from a field name.
+     * If there will be no match, null will be returned.
      * @return Optional non-blank string
      */
     String name() default StringUtils.EMPTY;
 
     /**
      * Used to specify the prefix.
-     * The first child resource that will match the prefix will be injected, if there are no matches null will be returned.
-     * The prefix also can be specified as a relative path, in this case, the prefix will be specified at the end of the path:
-     * <pre>{@code
-     *     @Child(prefix = "/components/prefix_")
-     * }</pre>
+     * All object's properties that matched with the prefix will be injected.
      * @return Optional non-blank string
      */
     String prefix() default StringUtils.EMPTY;
 
     /**
      * Used to specify the postfix.
-     * The first child resource that will match the postfix will be injected, if there are no matches null will be returned.
-     * The postfix also can be specified as a relative path, in this case, the postfix will be specified at the end of the path:
-     * <pre>{@code
-     *     @Child(postfix = "/components/_postfix")
-     * }</pre>
+     * All object's properties that matched with the postfix will be injected.
      * @return Optional non-blank string
      */
     String postfix() default StringUtils.EMPTY;
