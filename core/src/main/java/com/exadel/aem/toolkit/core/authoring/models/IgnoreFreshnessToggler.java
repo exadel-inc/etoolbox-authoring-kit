@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Represents the back-end part of the {@code IgnoreFreshnessToggler} component for Granite UI dialogs. This Sling model
- * is responsible for setting and unsetting the {@code forceIgnoreFreshness} flag to the Sling HTTP request, as needed
+ * is responsible for setting and unsetting the {@code forceIgnoreFreshness} flag to the Sling HTTP request when needed
  * @see Dialog#forceIgnoreFreshness()
  */
 @Model(adaptables = SlingHttpServletRequest.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
@@ -58,7 +58,8 @@ public class IgnoreFreshnessToggler {
         }
     }
 
-    /** Inherits {@link ValueMapDecorator} to provide a {@code ValueMap} that manages map keys containing the relative
+    /**
+     * Inherits {@link ValueMapDecorator} to provide a {@code ValueMap} that manages map keys containing the relative
      * path prefix ({@code ./}) in the same way the out-of-the-box {@code JcrValueMap} does
      */
     private static class RelativePathValueMapDecorator extends ValueMapDecorator {
