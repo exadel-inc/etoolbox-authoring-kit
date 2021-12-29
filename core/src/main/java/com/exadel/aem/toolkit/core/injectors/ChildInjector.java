@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.injectors.Child;
 
 /**
  * Injector implementation for {@code @Child}
- * Injects into a Sling model a child resource or adapted object
+ * Injects into a Sling model a child resource
  * @see Injector
  */
 @Component(service = Injector.class,
