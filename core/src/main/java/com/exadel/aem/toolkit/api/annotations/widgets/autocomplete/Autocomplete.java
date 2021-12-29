@@ -50,7 +50,7 @@ public @interface Autocomplete {
 
     /**
      * Maps to the {@code multiple} attribute of this Granite UI component's node.
-     * Used to set whether the user is able to make multiple selections
+     * Used to set whether the user can make multiple selections
      * @return True or false
      */
     boolean multiple() default false;
