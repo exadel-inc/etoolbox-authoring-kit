@@ -4,7 +4,9 @@
 
 Dialog fields are the Granite UI / Touch UI entities usually built around an HTTP web form element (`<input>`). Granite UI provides a vast scope of dialog elements, such as text fields, RTEs, date pickers, path pickers, etc.
 
-<small>All of these are generally referred to as "widgets" in the document below, despite the fact that the Granite UI documentation would most of the time name them "components". Our special naming is introduced not to mix up the components as "building bricks" of a dialog with "true" AEM components that represent a Java backend _plus_ the package folder.</small>
+<small>All of these are generally referred to as "widgets" in the document below, although the Granite UI documentation
+would most of the time name them "components." Our special naming is introduced not to mix up the components as "
+building bricks" of a dialog with "true" AEM components that represent a Java backend _plus_ the package folder.</small>
 
 The ToolKit makes use of `@DialogField` annotation and the set of specific annotations, such as `@TextField`, `@Checkbox`, `@DatePicker`, etc., as discussed further below. They can be applied to either a class field or a method (methods of both class and interface are supported).
 
@@ -14,7 +16,7 @@ The ToolKit makes use of `@DialogField` annotation and the set of specific annot
 * Resource type: /libs/granite/ui/components/coral/foundation/form/field
 * See spec: [Field](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html)
 
-Used for defining common properties of a dialog field, such as *name* attribute (specifies under which name the value will be persisted, equals to the class' field name if not specified), *label*, *description*, *required*, *disabled*, *wrapperClass*, and *renderHidden*. In addition, `@DialogField` makes it possible to order fields inside a container by specifying a *ranking* value.
+Used for defining common properties of a dialog field, such as *name* attribute (says under which name the value will be persisted, equals to the class' field name if not specified), *label*, *description*, *required*, *disabled*, *wrapperClass*, and *renderHidden*. In addition, `@DialogField` makes it possible to order fields inside a container by specifying a *ranking* value.
 
 Typically, `@DialogField` is used in a pair with a widget annotation (e.g. `@TextField`).
 
@@ -27,21 +29,21 @@ public class Dialog {
         wrapperClass = "my-class",
         renderHidden = true,
         ranking = 5,
-        validation = "foundation.jcr.name" // may as well accept array of strings
+        validation = "foundation.jcr.name" // may as well accept an array of strings
     )
     @TextField
     String field1;
 }
 ```
-Please note that if `@DialogField` is specified but a widget annotation is not, the field will not be rendered. This is because `@DialogField` exposes only the most common information about a field and does not specify which HTML component to use.
+Please note that if `@DialogField` is specified but a widget annotation is not, the field will not be rendered. That's because `@DialogField` exposes only the common information and does not specify which HTML component to use.
 
 The other way around, you can specify a widget annotation and omit the `@DialogField`. A field like this will be rendered (without *label* and *description*, etc.), but its value will not be persisted. This usage may be handy if you need a merely "temporary" or "service" field.
 
-In cases when the dialog class extends another class that has some fields marked with widget annotations, relevant fields from both the superclass and child class are rendered. All fields from the superclass and child class (even those sharing the same name) are considered different and rendered separately.
+In cases when the dialog class extends another class having some fields marked with widget annotations, relevant fields from both the superclass and child class are rendered. Members from the superclass and child class (even those sharing the same name) are considered different and rendered separately.
 
-Still, namesake fields may interfere if rendered within the same container (dialog or tab). Therefore, avoid “field name collisions” between a superclass and a child class where possible. Even so, if you wish to do some deliberate "field overriding", refer to the [chapter](reusing-code.md) speaking about the use of `@Extends`, `@Replace` and `@Ignore`.
+Still, namesake fields may interfere if rendered within the same container (dialog or tab). Therefore, avoid “field name collisions” between a superclass and a child class where possible. Even so, if you wish to do some deliberate "field overriding", refer to the [chapter](reusing-code.md) speaking about the use of `@Extends`, `@Replace`, and `@Ignore`.
 
-Unless manually aligned with `@Place` annotation, the fields are sorted in order of their *ranking*. If several fields have the same (or default) *ranking*, they are rendered in the order in which they appear in the source code. Class fields appear before class methods. Fields collected from ancestral classes have precedence over fields from child classes.
+Unless manually aligned with `@Place` annotation, the fields are sorted in order of their *ranking*. If several fields have the same (or default) *ranking*, they are rendered in the order in which they appear in the source code. Class fields appear before class methods. Members collected from ancestral classes have precedence over those from child classes.
 
 There are specific recommendations concerning fields' and methods' ordering. See the [Ordering widgets](#ordering-widgets) section below.
 
@@ -87,9 +89,10 @@ public class DialogWithAccordion {
 
 *Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
-The `@Accordion` annotation can be added to an arbitrary class member (field or method), its return type does not matter. Other widgets can refer to the columns with their `@Place` directives. See "Placing widgets" section below for more detail.
+The `@Accordion` annotation can be added to an arbitrary class member (field or method), its return type does not
+matter. Other widgets can refer to the columns with their `@Place` directives. See the "Placing widgets" section below for more detail.
 
-Apart from this usage, `@Accordion` can be specified at class level as the layout hint for the entire dialog. See [Laying out your dialog](dialog-layout.md) for details.
+Apart from this usage, `@Accordion` can be specified at the class level as the layout hint for the entire dialog. See [Laying out your dialog](dialog-layout.md) for details.
 
 ### Alert
 
@@ -143,7 +146,7 @@ public class DialogWithAnchorButton {
 * Resource type: /libs/granite/ui/components/coral/foundation/form/autocomplete
 * See spec: [Autocomplete](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/autocomplete/index.html)
 
-Used to render the Autocomplete component in Touch UI dialogs. Available options as the user enters text depend on the value of the *namespaces* property of the `@AutocompleteDataSource`. If unset, all tags under the *\<content/cq:Tags>* JCR directory will be available. Otherwise, you specify one or more particular *\<cq:Tag>* nodes as in the snippet below:
+Used to render the Autocomplete component in Touch UI dialogs. Options that appear as the user enters text depend on the value of the *namespaces* property of the `@AutocompleteDataSource`. If unset, all tags under the *\<content/cq:Tags>* JCR directory will be available. Otherwise, you specify one or more particular *\<cq:Tag>* nodes as in the snippet below:
 
 ```java
 public class AutocompleteDialog {
@@ -194,7 +197,7 @@ public class DialogWithCheckbox {
     @Checkbox(
         text = "Is option enabled?",
         value = "{Boolean}true",            // These are the defaults. You may override them
-        uncheckedValue = "{Boolean}false",  // to e.g. swap the field's meaning to "disabled" without migrating content
+        uncheckedValue = "{Boolean}false",  // to e.g., swap the field's meaning to "disabled" without migrating content
         autosubmit = true,
         tooltipPosition = Position.RIGHT
     )
@@ -296,7 +299,7 @@ Creates a fieldset (a group of fields that can be managed as one) in a Touch UI 
 * Resource type: /libs/granite/ui/components/coral/foundation/form/fileupload
 * See spec: [FileUpload](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fileupload/index.html)
 
-Used to render the FileUpload components in Touch UI dialogs. You can specify MIME types of files acceptable and graphic styles of the created component. You’ll be required to specify the *uploadUrl* to an actual and accessible JCR path (you may also specify a sub-node of an existing node that will be created as needed). Sling shortcut *${suffix.path}* for component-relative JCR path is also supported.
+Used to render the FileUpload components in Touch UI dialogs. You can specify acceptable MIME types of files and graphic styles of the created component. You’ll be required to provide the *uploadUrl* to an accessible JCR path (you may also specify a sub-node of an existing node that will be created as needed). Sling shortcut *${suffix.path}* for component-relative JCR path is also supported.
 
 ```java
 public class FileUploadDialog {
@@ -466,7 +469,7 @@ public class DialogWithInclude {
 * Resource type: /libs/granite/ui/components/coral/foundation/form/multifield
 * See spec: [Multifield](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html)
 
-Creates a multifield (a group of one or more fields that be reproduced multiple times) in a Touch UI dialog. See the [dedicated section on the multifields](multiplying-fields.md).
+Creates a multifield (a group of one or more fields that will be reproduced multiple times) in a Touch UI dialog. See the [dedicated section on the multifields](multiplying-fields.md).
 
 ### NumberField
 
@@ -692,9 +695,14 @@ public class DialogWithTabs {
 ```
 *Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
-The `@Tabs` annotation can be added to an arbitrary class member (field or method), its return type does not matter. Other widgets can refer to the columns with their `@Place` directives. See "Placing widgets" section below for more detail.
+The `@Tabs` annotation can be added to an arbitrary class member (field or method), its return type does not matter.
+Other widgets can refer to the columns with their `@Place` directives. See the "Placing widgets" section below for more
+detail.
 
-Apart from this usage, `@Tabs` can be specified at class level as the layout hint for the entire dialog (see [Laying out your dialog](dialog-layout.md) for details). Take note that the `@Tabs` annotation contains properties for both usages, but not every property is meaningful for either. Refer to the Javadoc on `@Tabs` to learn which properties should be used for tabs at class level and tabs as a widget respectively.
+Apart from this usage, `@Tabs` can be specified at the class level as the layout hint for the entire dialog (
+see [Laying out your dialog](dialog-layout.md) for details). Take note that the `@Tabs` annotation contains properties
+for both usages, but not every property has meaning for either. Refer to the Javadoc on `@Tabs` to learn which
+properties should be used for tabs at class level and tabs as a widget respectively.
 
 ### Text
 
@@ -726,6 +734,7 @@ public class DialogWithTextArea {
     @TextArea(
         value = "Default value",
         emptyText = "Empty text",
+        autocomplete = "on",
         autofocus = true,
         rows = 10,
         cols = 50,
@@ -752,7 +761,10 @@ public class DialogWithTextField {
     @DialogField
     @TextField(
         value = "Predefined value",
-        emptyText = "Empty text"
+        emptyText = "Empty text",
+        autocomplete = "on",
+        autofocus = true,
+        maxLength = 255
     )
     String text2;
 }
@@ -770,7 +782,7 @@ Read more on this in the [Additional properties](additional-properties.md) chapt
 
 In a plain Granite UI dialog, widgets are situated one under another, in the order of the corresponding Java class members  (note: as of ToolKit 2 the order is guaranteed for widgets based on Java fields, but may occasionally change for widgets based on Java methods. To guarantee the order of widgets based on Java class methods use `@Place(before=.../after=...)` as described below).
 
-If you use a more robust layout, such as a tabbed or accordion-shaped dialog, you would want to distribute widgets between sections (tabs or panels, accordingly). To do that, you specify `@Place("Section title")` next to your main widget annotation.
+When using a more robust layout, such as a tabbed or accordion-shaped dialog, you would want to distribute widgets between sections (tabs or panels, accordingly). To do that, you specify `@Place("Section title")` next to your main widget annotation.
 
 There are in-dialog container widgets as well. E.g., you may want to place `@Accordion` within a tab of the tabbed layout.
 
@@ -811,23 +823,26 @@ The same result can be achieved  by just referring to section titles of an in-di
     @Place("Second")
     private String field2;
 ```
-You can combine both ways. If you have a nested class and some "outside" members claiming a  place in the same section, the members from the nested class will come first.
+You can combine both ways. If you have a nested class, and some "outside" members claiming a  place in the same section, the members from the nested class will come first.
 
-You can easily fancy the situation when an in-dialog container lays within a dialog layout section (e.g., a `@Tabs` container within a tab of the tabbed layout). In this situation, the value of `@Place("...")` is resolved to the title of either the layout tab or the in-dialog container tab, whatever is the first match. That is why you would want to give unique titles to all of your containers.
+You can easily fancy the situation when an in-dialog container lays within a dialog layout section (e.g., a `@Tabs` container within a tab of the tabbed layout). In this situation, the value of `@Place("...")` is resolved to the title of either the layout tab, or the in-dialog container tab, whatever is the first match. That is why you would want to give unique titles to all of your containers.
 
 However, there's a way to specify the precise "path" to the container. Type it as a slash-delimited "pseudo-path by titles", e.g., `@Place("My layout section title/My in-dialog section title")`. Any number of "nested" titles is supported.
 
 ## Ordering widgets
 
-Widgets created upon class fields are placed in dialogs in the order they appear in the source class. When a class extends another class that also contains widgets, the ancestral ones are placed before the child ones.
+Widgets created upon class fields are placed in dialogs in the same order as they appear in the source class. When a class extends another class that contains more widgets, the ancestral ones are placed before the child ones.
 
-If there are widgets build upon both class fields and methods, the field-based ones come first.
+If there are widgets built upon both class fields and methods, the field-based ones come first.
 
-This behavior can be altered in two ways. First is the usage or *ranking* property of `@DialogField`. Ranking can equal to an integer value, no matter negative or positive. Fields with smaller ranking come first. Rankings persist across the superclass - child class relation and can be used in "insert" fields from a subclass in between fields of a superclass.
+This behavior can be altered in two ways. First is the usage or *ranking* property of `@DialogField`. Ranking is an integer value, no matter negative or positive. Fields with smaller rankings come first. Rankings persist across
+the superclass - child class relation and can be used to "insert" fields from a subclass in between fields of a
+superclass.
 
 In some respects using *rankings* is not quite convenient. That is why there is another mechanism, You can attach `@Place(before = @ClassMember("anotherFieldName"))` or `@Place(after = @ClassMember(source = Another.class, value "anotherFieldName"))` to the field or method you want to be precisely placed.
 
-The *before* and *after* parameters accept a `@ClassMember` argument. In its turn, the `@ClassMember` can contain the name of a relative field/method and optionally a reference to a class this fields originates from. When no class reference specified, the current class is assumed.
+The *before* and *after* parameters accept a `@ClassMember` argument. In its turn, the `@ClassMember` can contain the
+name of a relative field/method and optionally a reference to a class. When no class reference is specified, the current one is assumed.
 
 In the following sample you see the way to move a method from a subclass before field from a superclass and then the field from the same subclass before the former:
 
@@ -846,7 +861,7 @@ public class MyComponent extends MyComponentAncestor {
 
     @DialogField
     @TextField
-    @Place(before = @ClassMember("getName")) // Class reference is not specified, therefore, the current class
+    @Place(before = @ClassMember("getName")) // The class reference is not specified, therefore, the current class
     private Strning namePrefix;
 }
 ```
