@@ -94,7 +94,7 @@ public class ChildrenInjector implements Injector {
             return null;
         }
 
-        if (!InjectorUtils.isTypeCollection(type)) {
+        if (!InjectorUtils.isCollectionType(type)) {
             return null;
         }
 
@@ -109,7 +109,7 @@ public class ChildrenInjector implements Injector {
             return childrenList;
         }
 
-        LOG.debug("Failed to inject child");
+        LOG.debug("Failed to inject child resource by the name \"{}\"", resourcePath);
         return null;
     }
 
@@ -165,7 +165,7 @@ public class ChildrenInjector implements Injector {
      * @return List of adapted objects
      */
     private List<Object> getFilteredObjectsList(List<Resource> resourceList, List<Predicate<String>> propertiesPredicates, Type type) {
-        final Class<?> actualType = InjectorUtils.getActualType((ParameterizedType) type);
+        final Class<?> actualType = InjectorUtils.extractParameterType((ParameterizedType) type);
         return resourceList.stream()
             .map(resource -> InjectorUtils.createFilteredResource(resource, propertiesPredicates))
             .map(item -> getAdaptedObject(item, actualType))

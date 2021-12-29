@@ -50,7 +50,7 @@ public class ChildInjectorTest {
     }
 
     @Test
-    public void testInjectChild() {
+    public void shouldInjectChild() {
         assertNotNull(testModel);
         Resource actualResource = testModel.getList();
 
@@ -59,7 +59,7 @@ public class ChildInjectorTest {
     }
 
     @Test
-    public void testInjectChild2() {
+    public void shouldInjectChild2() {
         assertNotNull(testModel);
         Resource actualResource = testModel.getListItemResource();
 
@@ -68,7 +68,7 @@ public class ChildInjectorTest {
     }
 
     @Test
-    public void testInjectChildName() {
+    public void shouldInjectChildName() {
         assertNotNull(testModel);
         ListItemModel itemModel = testModel.getListItemModel();
 
@@ -77,7 +77,7 @@ public class ChildInjectorTest {
     }
 
     @Test
-    public void testInjectChildPrefix() {
+    public void shouldInjectChildPrefix() {
         assertNotNull(testModel);
         ListItemModel itemModel = testModel.getListItemModel1();
 
@@ -92,7 +92,7 @@ public class ChildInjectorTest {
     }
 
     @Test
-    public void testInjectChildPostfix() {
+    public void shouldInjectChildPostfix() {
         assertNotNull(testModel);
         ListItemModel itemModel = testModel.getListItemModel2();
 
@@ -107,7 +107,7 @@ public class ChildInjectorTest {
     }
 
     @Test
-    public void testInjectChildPrefixPostfix() {
+    public void shouldInjectChildPrefixPostfix() {
         assertNotNull(testModel);
         ListItemModel itemModel = testModel.getListItemModel3();
 

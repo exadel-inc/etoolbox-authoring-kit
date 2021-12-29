@@ -48,7 +48,7 @@ public class ChildrenInjectorTest {
     }
 
     @Test
-    public void testInjectorChildrenResourceItems() {
+    public void shouldInjectChildrenResourceItems() {
         assertNotNull(testModel);
 
         List<Resource> resourceList = testModel.getList();
@@ -58,7 +58,7 @@ public class ChildrenInjectorTest {
     }
 
     @Test
-    public void testInjectorChildrenResourceList() {
+    public void shouldInjectChildrenResourceList() {
         assertNotNull(testModel);
 
         List<Resource> resourceList = testModel.getResourceList();
@@ -68,7 +68,7 @@ public class ChildrenInjectorTest {
     }
 
     @Test
-    public void testInjectorChildrenListItemModels2() {
+    public void shouldInjectChildrenListItemModels2() {
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getListItemModels2();
@@ -78,7 +78,7 @@ public class ChildrenInjectorTest {
     }
 
     @Test
-    public void testInjectorChildrenListItemModels3() {
+    public void shouldInjectChildrenListItemModels3() {
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getListItemModels3();
@@ -88,7 +88,7 @@ public class ChildrenInjectorTest {
     }
 
     @Test
-    public void testInjectorChildrenListItemModels4() {
+    public void shouldInjectChildrenListItemModels4() {
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getListItemModels4();
@@ -98,7 +98,7 @@ public class ChildrenInjectorTest {
     }
 
     @Test
-    public void testInjectorChildrenListItemModels5() {
+    public void shouldInjectChildrenListItemModels5() {
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getListItemModels5();
@@ -108,7 +108,7 @@ public class ChildrenInjectorTest {
     }
 
     @Test
-    public void testInjectorChildrenNotExistedResources() {
+    public void shouldInjectChildrenNotExistedResources() {
         assertNotNull(testModel);
 
         List<Resource> resourceList = testModel.getNotExistedResources();
@@ -116,7 +116,7 @@ public class ChildrenInjectorTest {
     }
 
     @Test
-    public void testInjectorChildrenNotExistedModel() {
+    public void shouldInjectChildrenNotExistedModel() {
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getNotExistedModel();
@@ -124,7 +124,7 @@ public class ChildrenInjectorTest {
     }
 
     @Test
-    public void testInjectorChildrenNotExistedPrefix() {
+    public void shouldInjectChildrenNotExistedPrefix() {
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getNotExistedPrefix();
@@ -132,7 +132,7 @@ public class ChildrenInjectorTest {
     }
 
     @Test
-    public void testInjectorChildrenNotExistedPostfix() {
+    public void shouldInjectChildrenNotExistedPostfix() {
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getNotExistedPostfix();
@@ -140,7 +140,7 @@ public class ChildrenInjectorTest {
     }
 
     @Test
-    public void testInjectorChildrenNotExistedFilter() {
+    public void shouldInjectChildrenNotExistedFilter() {
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getNotExistedFilter();

@@ -13,12 +13,13 @@
  */
 package com.exadel.aem.toolkit.core.injectors.filters;
 
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.apache.sling.api.resource.Resource;
 
 /**
- * The predicate that checks if a resource is not the type of the ghost type
+ * The predicate that checks if a resource is not null and not of ghost type
  */
 public class NoGhostPredicate implements Predicate<Resource> {
 
@@ -31,6 +32,6 @@ public class NoGhostPredicate implements Predicate<Resource> {
      */
     @Override
     public boolean test(Resource resource) {
-        return !resource.isResourceType("wcm/msm/components/ghost");
+        return Objects.nonNull(resource) && !resource.isResourceType("wcm/msm/components/ghost");
     }
 }

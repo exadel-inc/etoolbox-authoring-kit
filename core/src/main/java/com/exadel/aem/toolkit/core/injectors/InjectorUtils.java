@@ -159,7 +159,7 @@ class InjectorUtils {
      * @param type {@code Type}
      * @return True of false
      */
-    public static boolean isTypeCollection(Type type) {
+    public static boolean isCollectionType(Type type) {
         return type instanceof ParameterizedType
             && ClassUtils.isAssignable((Class<?>) ((ParameterizedType) type).getRawType(), Collection.class);
     }
@@ -169,7 +169,7 @@ class InjectorUtils {
      * @param parameterizedType {@code Class} that represents a parameterized type
      * @return {@code Class} representing the actual type arguments to this type
      */
-    public static Class<?> getActualType(ParameterizedType parameterizedType) {
+    public static Class<?> extractParameterType(ParameterizedType parameterizedType) {
         return (Class<?>) parameterizedType.getActualTypeArguments()[0];
     }
 
@@ -186,7 +186,7 @@ class InjectorUtils {
             | IllegalAccessException
             | InvocationTargetException
             | NoSuchMethodException ex) {
-            LOG.error("Could not initialize object " + instanceClass.getName(), ex);
+            LOG.error("Could not initialize object {}", instanceClass.getName(), ex);
         }
         return null;
     }

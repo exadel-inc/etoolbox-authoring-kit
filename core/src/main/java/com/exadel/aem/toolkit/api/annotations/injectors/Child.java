@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.core.injectors.ChildInjector;
 
 /**
  * Used on either a field, a method, or a method parameter of a Sling model to inject a child resource
- * or adapted object with filtered properties, if success, otherwise null returned.
+ * with filtered properties, if success, otherwise null returned.
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)

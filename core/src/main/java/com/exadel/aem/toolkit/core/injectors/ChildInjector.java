@@ -100,7 +100,7 @@ public class ChildInjector implements Injector {
             return preparedResource.adaptTo((Class<?>) type);
         }
 
-        LOG.debug("Failed to inject child");
+        LOG.debug("Failed to inject child resource by the name \"{}\"", resourcePath);
         return null;
     }
 
