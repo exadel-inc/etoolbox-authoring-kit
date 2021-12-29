@@ -5,27 +5,25 @@
           width="{Double}560.0"
           height="{Double}480.0"
           jcr:primaryType="nt:unstructured"
-          jcr:title="TextArea Widget Dialog"
+          jcr:title="TextField Widget Dialog"
           sling:resourceType="cq/gui/components/authoring/dialog">
     <content jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
         <layout jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
         <items jcr:primaryType="nt:unstructured">
             <column jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
                 <items jcr:primaryType="nt:unstructured">
-                    <text1 jcr:primaryType="nt:unstructured"
-                           sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
-                           name="./text1"
-                           fieldLabel="Valid TextArea"
-                           autocomplete="name"
-                           autofocus="{Boolean}true"
-                           disabled="{Boolean}false"
-                           emptyText="empty text"
-                           rows="{Long}10"
-                           cols="{Long}50"
-                           renderHidden="{Boolean}false"
-                           required="{Boolean}false"
-                           resize="both"
-                           value="default value"/>
+                    <text jcr:primaryType="nt:unstructured"
+                          sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                          name="./text"
+                          autofocus="{Boolean}true"
+                          autocomplete="on"
+                          disabled="{Boolean}false"
+                          emptyText="empty text"
+                          fieldLabel="Enter text"
+                          maxLength="{Long}150"
+                          renderHidden="{Boolean}false"
+                          required="{Boolean}false"
+                          value="default value"/>
                 </items>
             </column>
         </items>
