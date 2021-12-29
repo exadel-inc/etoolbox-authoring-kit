@@ -52,6 +52,15 @@ public @interface TextArea {
     String emptyText() default "";
 
     /**
+     * When set to a non-blank string, maps to the {@code autocomplete} attribute of this Granite UI component's node.
+     * Indicates if the value can be automatically completed by the browser. See <a
+     * href="https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete">The HTML autocomplete
+     * attribute</a> for the supported values
+     * @return String value
+     */
+    String autocomplete() default "";
+
+    /**
      * When set to true, maps to the {@code autofocus} attribute of this Granite UI component's node.
      * Used to specify that this component will have focus after page load/refresh
      * @return True or false
@@ -59,9 +68,8 @@ public @interface TextArea {
     boolean autofocus() default false;
 
     /**
-     * Maps to the {@code maxlength} attribute of this Granite UI component's node.
-     * Sets the maximal number of characters to be stored via this TextArea
-     * @return Long value
+     * When set, defines the maximum number of characters (in Unicode code points) that the user can enter
+     * @return A numeric value greater than zero
      */
     @PropertyRendering(ignoreValues = "0")
     @ValueRestriction(ValueRestrictions.POSITIVE)
