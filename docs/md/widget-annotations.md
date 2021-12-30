@@ -89,8 +89,7 @@ public class DialogWithAccordion {
 
 *Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
-The `@Accordion` annotation can be added to an arbitrary class member (field or method), its return type does not
-matter. Other widgets can refer to the columns with their `@Place` directives. See the "Placing widgets" section below for more detail.
+The `@Accordion` annotation can be added to an arbitrary class member (field or method); its return type does not matter.
 
 Apart from this usage, `@Accordion` can be specified at the class level as the layout hint for the entire dialog. See [Laying out your dialog](dialog-layout.md) for details.
 
@@ -657,8 +656,6 @@ public class DialogWithTabs {
 *Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
 The `@Tabs` annotation can be added to an arbitrary class member (field or method); its return type does not matter.
-Other widgets can refer to the columns with their `@Place` directives. See the "Placing widgets" section below for more
-detail.
 
 Apart from this usage, `@Tabs` can be specified at the class level as the layout hint for the entire dialog (
 see [Laying out your dialog](dialog-layout.md) for details). Take note that the `@Tabs` annotation contains properties
