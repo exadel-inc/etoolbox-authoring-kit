@@ -35,15 +35,15 @@ public class Dialog {
     String field1;
 }
 ```
-Please note that if `@DialogField` is specified but a widget annotation is not, the field will not be rendered. That's because `@DialogField` exposes only the common information and does not specify which HTML component to use.
+Please note that if `@DialogField` is specified, but a widget annotation is not, the field will not be rendered. That's because `@DialogField` exposes only the common information and does not specify which HTML component to use.
 
 The other way around, you can specify a widget annotation and omit the `@DialogField`. A field like this will be rendered (without *label* and *description*, etc.), but its value will not be persisted. This usage may be handy if you need a merely "temporary" or "service" field.
 
 In cases when the dialog class extends another class having some fields marked with widget annotations, relevant fields from both the superclass and child class are rendered. Members from the superclass and child class (even those sharing the same name) are considered different and rendered separately.
 
-Still, namesake fields may interfere if rendered within the same container (dialog or tab). Therefore, avoid “field name collisions” between a superclass and a child class where possible. Even so, if you wish to do some deliberate "field overriding", refer to the [chapter](reusing-code.md) speaking about the use of `@Extends`, `@Replace`, and `@Ignore`.
+Still, namesake fields may interfere if rendered within the same container (dialog or tab). Therefore, avoid “field name collisions” between a superclass and a child class where possible. Even so, if you wish to do some deliberate "field overriding," refer to the [chapter](reusing-code.md) speaking about the use of `@Extends`, `@Replace`, and `@Ignore`.
 
-Unless manually aligned with `@Place` annotation, the fields are sorted in order of their *ranking*. If several fields have the same (or default) *ranking*, they are rendered in the order in which they appear in the source code. Class fields appear before class methods. Members collected from ancestral classes have precedence over those from child classes.
+Unless manually aligned with `@Place` annotation, the fields are sorted in order of their *ranking*. If several members have the same (or default) *ranking*, they are rendered in the order in which they appear in the source code. Class fields appear before class methods. Members collected from ancestral classes have precedence over those from child classes.
 
 There are specific recommendations concerning fields' and methods' ordering. See the [Ordering widgets](#ordering-widgets) section below.
 
@@ -523,7 +523,7 @@ public class DialogWithRadioGroup {
 }
 ```
 
-Just as for a `@RadioGroup`, you can define an *optionProvider* that will produce options based on a wide variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on [OptionProvider](option-provider.md).
+Just as for a `@Select`, you can define an *optionProvider* that will produce options based on a wide variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on [OptionProvider](option-provider.md).
 
 ### RichTextEditor
 
@@ -656,14 +656,14 @@ public class DialogWithTabs {
 ```
 *Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
-The `@Tabs` annotation can be added to an arbitrary class member (field or method), its return type does not matter.
+The `@Tabs` annotation can be added to an arbitrary class member (field or method); its return type does not matter.
 Other widgets can refer to the columns with their `@Place` directives. See the "Placing widgets" section below for more
 detail.
 
 Apart from this usage, `@Tabs` can be specified at the class level as the layout hint for the entire dialog (
 see [Laying out your dialog](dialog-layout.md) for details). Take note that the `@Tabs` annotation contains properties
 for both usages, but not every property has meaning for either. Refer to the Javadoc on `@Tabs` to learn which
-properties should be used for tabs at class level and tabs as a widget respectively.
+properties should be used for tabs at class level and tabs as a widget, respectively.
 
 ### Text
 
@@ -739,66 +739,13 @@ Also, you can assign additional properties of Granite UI components or re-write 
 
 Read more on this in the [Additional properties](additional-properties.md) chapter.
 
-## Placing widgets
-
-In a plain Granite UI dialog, widgets are situated one under another, in the order of the corresponding Java class members  (note: as of ToolKit 2 the order is guaranteed for widgets based on Java fields, but may occasionally change for widgets based on Java methods. To guarantee the order of widgets based on Java class methods use `@Place(before=.../after=...)` as described below).
-
-When using a more robust layout, such as a tabbed or accordion-shaped dialog, you would want to distribute widgets between sections (tabs or panels, accordingly). To do that, you specify `@Place("Section title")` next to your main widget annotation.
-
-There are in-dialog container widgets as well. E.g., you may want to place `@Accordion` within a tab of the tabbed layout.
-
-There are several ways to distribute widgets in such an in-dialog container. First is to declare a nested class, declare your widgets attached to the fields of this class, and then declare a field or method with the return type that matches the nested class:
-```
-    @Tabs({
-            @Tab(title = "First"),
-            @Tab(title = "Second")
-        })
-    private TabsFieldset tabsHolder;
-
-    private static class TabsFieldset {
-        @TextField
-        @Place("First")
-        private String field1;
-
-        @TextField
-        @Place("Second")
-        private String field2;
-    }
-
-```
-Note that the `TabsFieldset` can be extending another class, its widget set is subject to inheriting [in the usual way](reusing-code.md).
-
-The same result can be achieved  by just referring to section titles of an in-dialog container from "outside":
-```
-    @TextField
-    @Place("First")
-    private String field1;
-
-    @Tabs({
-            @Tab(title = "First"),
-            @Tab(title = "Second")
-        })
-    private TabsFieldset tabsHolder;
-
-    @TextField
-    @Place("Second")
-    private String field2;
-```
-You can combine both ways. If you have a nested class, and some "outside" members claiming a  place in the same section, the members from the nested class will come first.
-
-You can easily fancy the situation when an in-dialog container lays within a dialog layout section (e.g., a `@Tabs` container within a tab of the tabbed layout). In this situation, the value of `@Place("...")` is resolved to the title of either the layout tab, or the in-dialog container tab, whatever is the first match. That is why you would want to give unique titles to all of your containers.
-
-However, there's a way to specify the precise "path" to the container. Type it as a slash-delimited "pseudo-path by titles", e.g., `@Place("My layout section title/My in-dialog section title")`. Any number of "nested" titles is supported.
-
 ## Ordering widgets
 
 Widgets created upon class fields are placed in dialogs in the same order as they appear in the source class. When a class extends another class that contains more widgets, the ancestral ones are placed before the child ones.
 
 If there are widgets built upon both class fields and methods, the field-based ones come first.
 
-This behavior can be altered in two ways. First is the usage or *ranking* property of `@DialogField`. Ranking is an integer value, no matter negative or positive. Fields with smaller rankings come first. Rankings persist across
-the superclass - child class relation and can be used to "insert" fields from a subclass in between fields of a
-superclass.
+This behavior can be altered in two ways. First is the usage or *ranking* property of `@DialogField`. The ranking is an integer value, no matter negative or positive. Fields with smaller rankings come first. Rankings persist across the superclass - child class relation and can be used to "insert" fields from a subclass in between fields of a superclass.
 
 In some respects using *rankings* is not quite convenient. That is why there is another mechanism, You can attach `@Place(before = @ClassMember("anotherFieldName"))` or `@Place(after = @ClassMember(source = Another.class, value "anotherFieldName"))` to the field or method you want to be precisely placed.
 
