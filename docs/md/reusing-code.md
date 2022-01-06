@@ -16,21 +16,21 @@ However, it is possible to "cancel" a superclass-bound field from rendering in a
             layout = DialogLayout.TABS
     )
     @Ignore(members = {
-            // The "value" parameter is mandatory while "source" can be skipped
-            // In such case, current class is implied
-            // You can also assign the reserved value _Super.class to "source"
-            // Thus, the field/method from the superclass will be skipped
+            // The "value" parameter is mandatory while "source" can be skipped.
+            // In this case, the current class is implied.
+            // You can also assign the reserved value _Super.class to "source".
+            // Thus, the field/method from the superclass will be ignored
             @ClassMember(source = ComponentWithTabsAndInnerClass.class, value= "field1"),
             @ClassMember("field2")
     })
     public static class ComponentDialog extends MultipleFieldsDialog {/* ... */}
 ```
 
-This setting works similarly for dialog classes and `FieldSets` and `Multifields`. It is also possible to control secondary containers (*FieldSets* and *Multifields*) in an even more flexible manner.
+This setting works similarly for dialog classes and `FieldSets` and `Multifields`. It is also possible to control secondary containers (*FieldSets* and *Multifields*) in a more flexible manner.
 
 If we add an `@Ignore(@ClassMember(...))` instruction with its *source* pointing to a FieldSet or Multifield class in the current dialog, the field will be ignored in all the fieldsets/multifields of the given type that are declared within the dialog.
 
-But if we need to ignore a field in one particular FieldSet of Multifield within the dialog, we may add `@Ignore(members = @ClassMember(...))` to that same field below `@FieldSet` or `@Multifield` annotation accordingly. The *source* parameter is naturally skipped in this case. The setting will take effect for the field and will not affect others.
+But if we need to ignore a field in one particular FieldSet of Multifield within the dialog, we may add `@Ignore(members = @ClassMember(...))` to that same field below the `@FieldSet` or `@Multifield` annotation, accordingly. The *source* parameter is naturally skipped in this case. The setting will take effect for the field and will not affect others.
 
 The `@Ignore` setting is *not* inherited, unlike fields themselves, and works only for the class where it was specified.
 

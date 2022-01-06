@@ -35,7 +35,7 @@ public class Dialog {
     String field1;
 }
 ```
-Please note that if `@DialogField` is specified, but a widget annotation is not, the field will not be rendered. That's because `@DialogField` exposes only the common information and does not specify which HTML component to use.
+Please note that if `@DialogField` is specified but a widget annotation is not, the field will not be rendered. That's because `@DialogField` exposes only the common information and does not specify which HTML component to use.
 
 The other way around, you can specify a widget annotation and omit the `@DialogField`. A field like this will be rendered (without *label* and *description*, etc.), but its value will not be persisted. This usage may be handy if you need a merely "temporary" or "service" field.
 
@@ -43,7 +43,7 @@ In cases when the dialog class extends another class having some fields marked w
 
 Still, namesake fields may interfere if rendered within the same container (dialog or tab). Therefore, avoid “field name collisions” between a superclass and a child class where possible. Even so, if you wish to do some deliberate "field overriding," refer to the [chapter](reusing-code.md) speaking about the use of `@Extends`, `@Replace`, and `@Ignore`.
 
-Unless manually aligned with `@Place` annotation, the fields are sorted in order of their *ranking*. If several members have the same (or default) *ranking*, they are rendered in the order in which they appear in the source code. Class fields appear before class methods. Members collected from ancestral classes have precedence over those from child classes.
+Unless manually aligned with `@Place` annotation, the fields are sorted in order of their *ranking*. If several members have the same (or default) *ranking*, they are rendered in the order of their appearance in the source code. Class fields appear before class methods. Members collected from ancestral classes have precedence over those from child classes.
 
 There are specific recommendations concerning fields' and methods' ordering. See the [Ordering widgets](#ordering-widgets) section below.
 
@@ -181,6 +181,33 @@ public class DialogWithButton {
 ```
 *Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
+### ButtonGroup
+
+* [@ButtonGroup](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/buttongroup/ButtonGroup.html)
+* Resource type: /libs/granite/ui/components/coral/foundation/form/buttongroup
+* See spec: [Button](https://www.adobe.io/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/buttongroup/index.html)
+
+Used to render button groups in Touch UI dialogs. Normally a `@ButtonGroup` contains one or more manually specified `@ButtonGroupItem`s or else declares an `@OptionProvider`. It has the *selectionMode* to define how many values will be stored at once (the widget does not store values to JCR unless you select "single" or "multiple"). You can also specify the *ignoreData* and *deleteHint* flags.
+
+Each of a `@ButtonGroup`'s manual items is initialized with mandatory *text* and *value*. Use *checked* to define a button that is selected by default. You can specify several more optional parameters, such as *icon* or *size*. A visually textless button can be rendered with `hideText = true` while Adobe recommends that you never set the *text* property to an empty string.
+
+Next is a code snippet for a `@ButtonGroup` usage:
+
+```java
+public class DialogWithButtonGroup {
+    @ButtonGroup(items = {
+        @ButtonGroupItem(text = "Empty", value = ""),
+        @ButtonGroupItem(text = "One", value = "1", hideText = true, icon = "/content/some/icon"),
+        @ButtonGroupItem(text = "Two", value = "2", checked = true)
+    },
+        selectionMode = SelectionMode.SINGLE,
+        ignoreData = true,
+        deleteHint = false)
+    String options;
+}
+```
+You can define an *optionProvider* that will produce options based on a variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on [OptionProvider](option-provider.md).
+
 ### Checkbox
 
 * [@Checkbox](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Checkbox.html)
@@ -196,7 +223,7 @@ public class DialogWithCheckbox {
     @Checkbox(
         text = "Is option enabled?",
         value = "{Boolean}true",            // These are the defaults. You may override them
-        uncheckedValue = "{Boolean}false",  // to e.g., swap the field's meaning to "disabled" without migrating content
+        uncheckedValue = "{Boolean}false",  // to, e.g., swap the field's meaning to "disabled" without migrating content
         autosubmit = true,
         tooltipPosition = Position.RIGHT
     )
@@ -522,7 +549,7 @@ public class DialogWithRadioGroup {
 }
 ```
 
-Just as for a `@Select`, you can define an *optionProvider* that will produce options based on a wide variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on [OptionProvider](option-provider.md).
+You can define an *optionProvider* that will produce options based on a variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on [OptionProvider](option-provider.md).
 
 ### RichTextEditor
 
@@ -586,7 +613,7 @@ public class DialogWithDropdown {
 }
 ```
 
-Just as for a `@RadioGroup`, you can define an *optionProvider* that will produce options based on a wide variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on [OptionProvider](option-provider.md).
+You can define an *optionProvider* that will produce options based on a variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on [OptionProvider](option-provider.md).
 
 ### Switch
 
@@ -601,7 +628,7 @@ public class DialogWithSwitch {
     @DialogField
     @Switch(
         value = "{Boolean}true",            // These are the defaults. You may override them
-        uncheckedValue = "{Boolean}false",  // to e.g. swap the field's meaning to "disabled" without migrating content
+        uncheckedValue = "{Boolean}false",  // to, e.g., swap the field's meaning to "disabled" without migrating content
         checked = true,
         onText = "TurnedOn",                // These values are optional
         offText = "TurnedOff"
@@ -766,7 +793,7 @@ public class MyComponent extends MyComponentAncestor {
 
     @DialogField
     @TextField
-    @Place(before = @ClassMember("getName")) // The class reference is not specified, therefore, the current class
+    @Place(before = @ClassMember("getName")) // The class reference is not specified: therefore, the current class
     private Strning namePrefix;
 }
 ```
