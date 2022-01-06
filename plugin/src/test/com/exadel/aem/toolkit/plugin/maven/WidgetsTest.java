@@ -21,6 +21,7 @@ import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
 import com.exadel.aem.toolkit.test.widget.AccordionWidget;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
 import com.exadel.aem.toolkit.test.widget.AnchorButtonWidget;
+import com.exadel.aem.toolkit.test.widget.ButtonGroupWidget;
 import com.exadel.aem.toolkit.test.widget.ButtonWidget;
 import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
 import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
@@ -72,6 +73,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testButton() {
         test(ButtonWidget.class);
+    }
+
+    @Test
+    public void testButtonGroup() {
+        test(ButtonGroupWidget.class);
     }
 
     @Test
