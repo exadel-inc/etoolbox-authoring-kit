@@ -44,7 +44,7 @@ public class ButtonGroupHandler extends OptionProviderHandler implements Handler
         }
         if (ArrayUtils.isNotEmpty(buttonGroup.items())) {
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
-            for (ButtonGroupItem item: buttonGroup.items()) {
+            for (ButtonGroupItem item : buttonGroup.items()) {
                 appendOption(item, item.value(), items);
             }
         }

@@ -31,7 +31,7 @@ public @interface ButtonGroupItem {
 
     /**
      * Maps to the {@code text} attribute of this Granite UI component's node.
-     * Used to define the text displayed beside the option box
+     * Used to define the text displayed within the button
      * @return String value
      */
     String text();
@@ -46,7 +46,7 @@ public @interface ButtonGroupItem {
 
     /**
      * When set to true, maps to the {@code disabled} attribute of this Granite UI component's node.
-     * Defines that the current option is shown in the disabled state
+     * Defines that the current item is shown in the disabled state
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")
@@ -54,7 +54,7 @@ public @interface ButtonGroupItem {
 
     /**
      * When set to true, maps to the {@code checked} attribute of this Granite UI component's node.
-     * Defines that the current option is checked by default
+     * Defines that the current item is checked by default
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

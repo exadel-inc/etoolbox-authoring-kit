@@ -39,35 +39,36 @@ public @interface ButtonGroup {
 
     /**
      * Used to specify the collection of {@link ButtonGroupItem}s within this ButtonGroup
-     * @return Single {@code ButtonGroupItem} annotation, or an array of Options
+     * @return Single {@code ButtonGroupItem} annotation, or an array of items
      */
     ButtonGroupItem[] items() default {};
 
     /**
-     * Used to specify the source for this component's child items handled by the ToolKit's {@code OptionProvider} mechanism
+     * Used to specify the source for this component's child items handled by the ToolKit's {@code OptionProvider}
+     * mechanism
      * @return {@link OptionProvider} instance, or an empty {@code OptionProvider} if not needed
      */
     OptionProvider itemProvider() default @OptionProvider;
 
     /**
      * Maps to the {@code selectionMode} attribute of this {@code ButtonGroup}
-     * @return One of {@code SelectionMode} values
+     * @return One of {@code SelectionMode} values: "none" (default), "single", or "multiple"
      * @see SelectionMode
      */
     @PropertyRendering(transform = StringTransformation.LOWERCASE, ignoreValues = "none")
     SelectionMode selectionMode() default SelectionMode.NONE;
 
     /**
-     * If set to true, the @Delete hidden input is added to the HTTP form based on the field name. Its value will be
-     * processed by the Sling HTTP post servlet
+     * If set to true, the @Delete hidden input is added to the web form. Its value will be processed by the Sling HTTP
+     * post servlet
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "true")
     boolean deleteHint() default true;
 
     /**
-     * If true, the checked status of each item is based on its checked property. Otherwise, the status is based
-     * on matching the form values by name and value properties
+     * If true, the checked status of each item is based on its checked property. Otherwise, the status is based on
+     * matching the form values by name and value properties
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

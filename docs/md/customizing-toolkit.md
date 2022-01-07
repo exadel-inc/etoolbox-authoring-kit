@@ -113,8 +113,8 @@ public @interface CustomAnnotation {
 On the contrary,*ignorePrefix* allows for stripping off a name prefix if it was defined at an upper level (e.g., in the
 FieldSet).
 
-*scope* helps to alter the scope (whether it has been set at the `@AnnotationRendering` level or remains the default)
-for this particular property.
+*scope* can be specified to define what JCR node (XML file) will contain this particular property. Useful to distribute
+properties between, e.g., *_content.xml* and *_cq_dialog.xml* files.
 
 *allowBlank* determines that even empty or blank property values will be rendered (default behavior is to skip them). On
 the contrary, *ignoreValues* ensures that a particular non-blank value (or an array of values) will be skipped as the
@@ -156,9 +156,9 @@ public static class CustomMultifieldHandler implements Handler {
 
 Every custom handler is characterized by the following features:
 
-1) it is marked with the `@Handles` annotation;
-2) implements `Handler`;
-3) overrides the `accept(Source, Target)` method in which the payload logic is run.
+1) Marked with the `@Handles` annotation;
+2) Implements `Handler`;
+3) Overrides the `accept(Source, Target)` method in which the payload logic is run.
 
 Usually, the ToolKit initializes one instance of every handler and manages it as a *singleton*, so a developer is
 expected to avoid assigning handler-wide *states*. All the logic should be processed within the `accept(Source, Target)`
@@ -188,9 +188,9 @@ alphabetical order by name.
 
 The first argument of a handler's `accept` method is
 the [Source](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/handlers/Source.html)
-- a generic data provider that matches the entity (a Java class or a class member) the handler is called for. If the
-current handler is invoked due to an annotation attached to a class, the *Source* represents the class itself. But if
-the annotation was attached to a method or a field, the *Source* stands for the underlying member.
+. This is a generic data provider that matches the entity (a Java class or a class member) the handler is called for. If
+the current handler is invoked due to an annotation attached to a class, the *Source* represents the class itself. But
+if the annotation was attached to a method or a field, the *Source* stands for the underlying member.
 
 The *Source* is further specified by calling the `adaptTo()` method that accepts the only argument: the adapter type.
 You can, for example, call `source.adaptTo(Annotation[].class)` to get the array of annotations attached to the
@@ -252,13 +252,13 @@ collection of child targets (nodes) the same way that Granite/XML nodes do.
 The ToolKit API is designed in a way to make operation *Targets* more convenient than operation "bare" XML DOM entities.
 There are 40+ methods that comprise functional areas such as:
 
-- retrieving/setting of the (tag)name, prefix, and postfix;
-- retrieving/creating child targets by name or by relative path (multi-segment paths are supported);
-- traversing the targets tree upward and downward and finding a matching sub- or super-target by criteria;
-- moving, inserting, or deleting child targets;
-- setting an attribute to a target;
-- mapping a "whole" annotation to a target (its properties become the target's attributes);
-- removing attributes, etc.
+- Retrieving/setting of the (tag)name, prefix, and postfix;
+- Retrieving/creating child targets by name or by relative path (multi-segment paths are supported);
+- Traversing the targets tree upward and downward and finding a matching sub- or super-target by criteria;
+- Moving, inserting, or deleting child targets;
+- Setting an attribute to a target;
+- Mapping a "whole" annotation to a target (its properties become the target's attributes);
+- Removing attributes, etc.
 
 Consider the following example:
 
@@ -343,4 +343,5 @@ You can debug the ToolKit's plugin while building your AEM app. In order to do s
 mvnDebug clean install -Pinstall-assets
 ```
 
-Afterward, you can set breakpoints in your IDE, start a debugging session, and connect to the build process. The port is 8000.
+Afterward, you can set breakpoints in your IDE, start a debugging session, and connect to the build process. The port is
+8000.

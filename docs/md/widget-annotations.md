@@ -35,7 +35,7 @@ public class Dialog {
     String field1;
 }
 ```
-Please note that if `@DialogField` is specified but a widget annotation is not, the field will not be rendered. That's because `@DialogField` exposes only the common information and does not specify which HTML component to use.
+Please note: if `@DialogField` is specified but a widget annotation is not, the field will not be rendered. That's because `@DialogField` exposes only the common information and does not specify which HTML component to use.
 
 The other way around, you can specify a widget annotation and omit the `@DialogField`. A field like this will be rendered (without *label* and *description*, etc.), but its value will not be persisted. This usage may be handy if you need a merely "temporary" or "service" field.
 
@@ -126,8 +126,8 @@ This is a component to represent a standard HTML hyperlink (`<a>`), but to look 
 ```java
 public class DialogWithAnchorButton {
     @AnchorButton(
-        href = "http://acme.com/en/content/page.html",
-        hrefI18n = "http://acme.com/fr/content/page.html",
+        href = "https://acme.com/en/content/page.html",
+        hrefI18n = "https://acme.com/fr/content/page.html",
         text = "Button Text",
         linkChecker = LinkCheckerVariant.SKIP,
         icon = "search",
@@ -187,7 +187,7 @@ public class DialogWithButton {
 * Resource type: /libs/granite/ui/components/coral/foundation/form/buttongroup
 * See spec: [Button](https://www.adobe.io/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/buttongroup/index.html)
 
-Used to render button groups in Touch UI dialogs. Normally a `@ButtonGroup` contains one or more manually specified `@ButtonGroupItem`s or else declares an `@OptionProvider`. It has the *selectionMode* to define how many values will be stored at once (the widget does not store values to JCR unless you select "single" or "multiple"). You can also specify the *ignoreData* and *deleteHint* flags.
+Used to render button groups in Touch UI dialogs. A `@ButtonGroup` contains one or more manually specified `@ButtonGroupItem`s or declares an `@OptionProvider`. It has the *selectionMode* to define how many values will be stored at once (the widget does not store values to JCR unless you select "single" or "multiple"). You can also specify the *ignoreData* and *deleteHint* flags.
 
 Each of a `@ButtonGroup`'s manual items is initialized with mandatory *text* and *value*. Use *checked* to define a button that is selected by default. You can specify several more optional parameters, such as *icon* or *size*. A visually textless button can be rendered with `hideText = true` while Adobe recommends that you never set the *text* property to an empty string.
 
@@ -393,8 +393,8 @@ Used to represent HTML hyperlinks`(<a>)`in Touch UI dialogs. See the usage sampl
 ```java
 public class DialogWithHyperlink {
     @Hyperlink(
-        href = "http://acme.com/en/content/page.html",
-        hrefI18n = "http://acme.com/fr/content/page.html",
+        href = "https://acme.com/en/content/page.html",
+        hrefI18n = "https://acme.com/fr/content/page.html",
         text = "Link Text",
         hideText = true,
         linkChecker = LinkCheckerVariant.SKIP
@@ -769,7 +769,7 @@ Widgets created upon class fields are placed in dialogs in the same order as the
 
 If there are widgets built upon both class fields and methods, the field-based ones come first.
 
-This behavior can be altered in two ways. First is the usage or *ranking* property of `@DialogField`. The ranking is an integer value, no matter negative or positive. Fields with smaller rankings come first. Rankings persist across the superclass - child class relation and can be used to "insert" fields from a subclass in between fields of a superclass.
+This behavior can be altered in two ways. First is the usage or *ranking* property of `@DialogField`. The ranking is an integer value, no matter negative or positive. Fields with smaller numbers come first. Ranking values persist across the superclass - child class relation and can be used to "insert" members from a subclass in between fields of a superclass.
 
 In some respects using *rankings* is not quite convenient. That is why there is another mechanism, You can attach `@Place(before = @ClassMember("anotherFieldName"))` or `@Place(after = @ClassMember(source = Another.class, value "anotherFieldName"))` to the field or method you want to be precisely placed.
 
@@ -789,7 +789,7 @@ public class MyComponent extends MyComponentAncestor {
     @DialogField
     @TextField
     @Place(before = @ClassMember(source = MyComponentAncestor.class, value = "text"))
-    private String getName() {/* ... */};
+    private String getName() {/* ... */}
 
     @DialogField
     @TextField
