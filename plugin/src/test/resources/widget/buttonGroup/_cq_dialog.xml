@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0" height="{Double}480.0" jcr:primaryType="nt:unstructured"
+          jcr:title="ButtonGroup Widget Dialog" sling:resourceType="cq/gui/components/authoring/dialog"
+          width="{Double}560.0">
+    <content jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+        <layout jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
+        <items jcr:primaryType="nt:unstructured">
+            <column jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/container">
+                <items jcr:primaryType="nt:unstructured">
+                    <options jcr:primaryType="nt:unstructured"
+                             sling:resourceType="granite/ui/components/coral/foundation/form/buttongroup"
+                             name="./options"
+                             deleteHint="{Boolean}false"
+                             disabled="{Boolean}false"
+                             fieldLabel="Manual options list"
+                             ignoreData="{Boolean}true"
+                             renderHidden="{Boolean}false"
+                             required="{Boolean}false"
+                             selectionMode="single">
+                        <items jcr:primaryType="nt:unstructured">
+                            <item jcr:primaryType="nt:unstructured"
+                                  hideText="{Boolean}false"
+                                  text="Empty"
+                                  value=""/>
+                            <item1 jcr:primaryType="nt:unstructured"
+                                   hideText="{Boolean}false"
+                                   text="Blank"
+                                   value=" "/>
+                            <item2 jcr:primaryType="nt:unstructured"
+                                   checked="{Boolean}true"
+                                   hideText="{Boolean}false"
+                                   icon="/content/some/icon"
+                                   size="L"
+                                   text="One"
+                                   value="1"/>
+                            <item3 jcr:primaryType="nt:unstructured"
+                                   disabled="{Boolean}true"
+                                   hideText="{Boolean}true"
+                                   text="Two"
+                                   value="2"/>
+                        </items>
+                    </options>
+                    <optionList jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/buttongroup"
+                                name="./optionList"
+                                disabled="{Boolean}false"
+                                fieldLabel="Provided options list"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false">
+                        <datasource jcr:primaryType="nt:unstructured"
+                                    append="[All:all]"
+                                    prepend="[None:none]"
+                                    sling:resourceType="/apps/etoolbox-authoring-kit/datasources/option-provider"
+                                    selected="none"
+                                    sorted="{Boolean}true"/>
+                    </optionList>
+                </items>
+            </column>
+        </items>
+    </content>
+</jcr:root>
