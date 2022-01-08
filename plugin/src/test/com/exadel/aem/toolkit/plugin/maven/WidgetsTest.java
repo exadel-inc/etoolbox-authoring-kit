@@ -21,6 +21,7 @@ import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
 import com.exadel.aem.toolkit.test.widget.AccordionWidget;
 import com.exadel.aem.toolkit.test.widget.AlertWidget;
 import com.exadel.aem.toolkit.test.widget.AnchorButtonWidget;
+import com.exadel.aem.toolkit.test.widget.ButtonGroupWidget;
 import com.exadel.aem.toolkit.test.widget.ButtonWidget;
 import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
 import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
@@ -42,6 +43,7 @@ import com.exadel.aem.toolkit.test.widget.SelectWidget;
 import com.exadel.aem.toolkit.test.widget.TabsWidget;
 import com.exadel.aem.toolkit.test.widget.TagFieldWidget;
 import com.exadel.aem.toolkit.test.widget.TextAreaWidget;
+import com.exadel.aem.toolkit.test.widget.TextFieldWidget;
 import com.exadel.aem.toolkit.test.widget.TextWidget;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_WIDGET;
@@ -71,6 +73,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testButton() {
         test(ButtonWidget.class);
+    }
+
+    @Test
+    public void testButtonGroup() {
+        test(ButtonGroupWidget.class);
     }
 
     @Test
@@ -181,6 +188,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testTagField() {
         test(TagFieldWidget.class);
+    }
+
+    @Test
+    public void testTextField() {
+        test(TextFieldWidget.class);
     }
 
     @Test

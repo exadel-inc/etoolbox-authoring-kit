@@ -31,7 +31,7 @@ public @interface Option {
 
     /**
      * Maps to the {@code text} attribute of this Granite UI component's node.
-     * Used to define the optional text displayed beside the option box
+     * Used to define the text displayed beside the option box
      * @return String value
      */
     String text();
