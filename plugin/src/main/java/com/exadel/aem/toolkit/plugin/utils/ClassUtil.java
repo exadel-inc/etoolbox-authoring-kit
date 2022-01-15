@@ -52,19 +52,22 @@ public class ClassUtil {
      * @return List of {@code Source} objects
      */
     public static List<Source> getSources(Class<?> targetClass) {
-        return getSources(targetClass, null);
+        return getSources(targetClass, null, true);
     }
 
     /**
-     * Retrieves a sequential list of {@link Source} objects representing manageable members that belong to
-     * a certain {@code Class} (and its superclasses) and match the provided criteria represented by a {@code Predicate}
+     * Retrieves a list of {@link Source} objects representing manageable members that belong to a certain {@code Class}
+     * (and its superclasses) and match the criteria represented by a {@code Predicate}
      * @param targetClass The class to extract sources from
-     * @param condition   Nullable {@code Predicate<Member>} instance that helps to pick up appropriate fields and methods
+     * @param condition   Nullable {@code Predicate<Member>} instance that helps to pick up appropriate fields and
+     *                    methods
+     * @param ordered     True to perform proper sources ordering (considers the {@code @DialogField(ranking=..,)}
+     *                    values, and then the {@code @Place(before/after=...)} instructions). False to skip ordering
      * @return List of {@code Source} objects
      */
     @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
                                      // in a version after 2.0.2
-    public static List<Source> getSources(Class<?> targetClass, Predicate<Source> condition) {
+    public static List<Source> getSources(Class<?> targetClass, Predicate<Source> condition, boolean ordered) {
         List<Source> raw = new ArrayList<>();
         List<ClassMemberSetting> ignoredClassMembers = new ArrayList<>();
 
@@ -92,14 +95,12 @@ public class ClassUtil {
 
         List<Source> reducedWithReplacements = raw
             .stream()
-            .collect(ReplacementHelper.processSourceReplace());
-        List<Source> preSortedByRank = reducedWithReplacements
-            .stream()
             .filter(source -> ignoredClassMembers.stream().noneMatch(ignored -> ignored.matches(source)))
-            .sorted(OrderingUtil::compareByRank)
-            .collect(Collectors.toList());
+            .collect(ReplacementHelper.processSourceReplace());
 
-        return OrderingUtil.sortMembers(preSortedByRank);
+        return ordered
+            ? OrderingUtil.sortMembers(reducedWithReplacements)
+            : reducedWithReplacements;
     }
 
     /**
@@ -113,17 +114,17 @@ public class ClassUtil {
     }
 
     /**
-     * Retrieves a list of ancestors of a specific {@code Class} starting from the "top" of the inheritance
-     * tree. {@code Object} class is not added to the hierarchy
-     * @param targetClass   The class to analyze
-     * @param includeTarget Whether to include the {@code targetClass} itself to the hierarchy
+     * Retrieves a list of ancestors of a specific {@code Class} starting from the "top" of the inheritance tree. {@code
+     * Object} class is not added to the hierarchy
+     * @param targetClass    The class to analyze
+     * @param includeCurrent Whether to include the {@code targetClass} itself to the hierarchy
      * @return List of {@code Class} objects
      */
-    public static List<Class<?>> getInheritanceTree(Class<?> targetClass, boolean includeTarget) {
+    public static List<Class<?>> getInheritanceTree(Class<?> targetClass, boolean includeCurrent) {
         List<Class<?>> result = new LinkedList<>();
         Class<?> current = targetClass;
         while (current != null && !current.equals(Object.class)) {
-            if (!current.equals(targetClass) || includeTarget) {
+            if (!current.equals(targetClass) || includeCurrent) {
                 result.add(current);
                 result.addAll(Arrays.asList(current.getInterfaces()));
             }

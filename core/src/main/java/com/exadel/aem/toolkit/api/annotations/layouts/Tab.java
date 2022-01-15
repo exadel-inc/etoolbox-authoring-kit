@@ -24,6 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
  * Used to define a specific
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/tabs/index.html">
  *     Tab</a> item in a multi-tab Granite UI dialog or within a {@code Tabs} widget
+ * @see Tabs
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

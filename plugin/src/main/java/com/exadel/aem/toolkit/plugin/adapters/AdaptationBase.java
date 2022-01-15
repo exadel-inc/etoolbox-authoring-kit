@@ -75,4 +75,17 @@ public abstract class AdaptationBase<T> {
         }
         return null;
     }
+
+    /**
+     * Retrieves whether the given adaptation is actual for the current instance
+     * @param adaptation {@code Class} reference indicating the desired data type
+     * @return True if the current instance can be cast to the given class in principle otr the adaptation medium has
+     * already been initialized; otherwise, false
+     */
+    public boolean hasAdaptation(Class<?> adaptation) {
+        if (ClassUtils.isAssignable(getClass(), adaptation)) {
+            return true;
+        }
+        return adaptationsCache != null && adaptationsCache.containsKey(adaptation);
+    }
 }

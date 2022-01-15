@@ -59,7 +59,7 @@ public class OrderingUtil {
      * @return {@code List} that preserves the sequence of sorted items
      */
     public static <T> List<T> sortHandlers(List<T> handlers) {
-        if (handlers.size() < 2) {
+        if (handlers == null || handlers.size() < 2) {
             return handlers;
         }
 
@@ -67,7 +67,7 @@ public class OrderingUtil {
         List<T> nonOrderableHandlers = new ArrayList<>();
         for (T handler : handlers) {
             if (handler.getClass().isAnnotationPresent(Handles.class)) {
-                orderableHandlers.add(new Orderable<>(handler.getClass().getName(), handler));
+                orderableHandlers.add(new Orderable<>(handler, handler.getClass().getName()));
             } else {
                 nonOrderableHandlers.add(handler);
             }
@@ -91,18 +91,21 @@ public class OrderingUtil {
 
     /**
      * Sorts the collection of {@code Source} objects respecting the {@code before} and {@code after} hints
-     * specified in the managed {@link Place} annotations
+     * specified in the managed {@link Place} annotations. Before main sorting is done, the rank sorting is performed
      * @param sources List of {@code Source} objects to be sorted
      * @return {@code List} that preserves the sequence of sorted items
      */
     public static List<Source> sortMembers(List<Source> sources) {
-        if (sources.size() < 2) {
+        if (sources == null || sources.size() < 2) {
             return sources;
         }
 
         List<Orderable<Source>> list = new ArrayList<>(sources.size());
-        for (Source source : sources) {
-            list.add(new Orderable<>(createId(source), source));
+
+        // We must "pre-sort" members by their ranking because if the "@Place(before/after)" instructions are missing,
+        // the topological sorting won't change anything
+        for (Source source : sources.stream().sorted(OrderingUtil::compareByRank).collect(Collectors.toList())) {
+            list.add(new Orderable<>(source, createId(source), source.adaptTo(MemberRankingSetting.class).getRanking()));
         }
 
         for (int i = 0; i < sources.size(); i++) {
@@ -131,7 +134,9 @@ public class OrderingUtil {
             }
         }
 
-        return new TopologicalSorter<>(list).topologicalSort().stream()
+        return new TopologicalSorter<>(list)
+            .topologicalSort()
+            .stream()
             .map(Orderable::getValue)
             .collect(Collectors.toList());
     }
@@ -146,7 +151,7 @@ public class OrderingUtil {
      */
     private static <T> Orderable<T> findSibling(String id, List<Orderable<T>> scope) {
         for (Orderable<T> orderable : scope) {
-            if (orderable.getName().equals(id)) {
+            if (orderable.getId().equals(id)) {
                 return orderable;
             }
         }
@@ -192,42 +197,6 @@ public class OrderingUtil {
     /* -----------------
        Comparing methods
        ----------------- */
-
-    /**
-     * Facilitates ordering {@code Member} instances according to their optional {@link DialogField} annotations'
-     * ranking values and then their class affiliation
-     * @param f1 First comparison member, non-null
-     * @param f2 Second comparison member, non-null
-     * @return Integer value per {@code Comparator#compare(Object, Object)} convention
-     */
-    public static int compareByRank(Source f1, Source f2) {
-        if (f1 != null && f2 == null) {
-            return -1;
-        } else if (f1 == null && f2 != null) {
-            return 1;
-        } else if (f1 == null) {
-            return 0;
-        }
-
-        int rank1 = f1.adaptTo(MemberRankingSetting.class).getRanking();
-        int rank2 = f2.adaptTo(MemberRankingSetting.class).getRanking();
-        if (rank1 != rank2) {
-            return Integer.compare(rank1, rank2);
-        }
-        if (f1.adaptTo(MemberSource.class).getDeclaringClass() != f2.adaptTo(MemberSource.class).getDeclaringClass()) {
-            if (ClassUtils.isAssignable(
-                f1.adaptTo(MemberSource.class).getDeclaringClass(),
-                f2.adaptTo(MemberSource.class).getDeclaringClass())) {
-                return 1;
-            }
-            if (ClassUtils.isAssignable(
-                f2.adaptTo(MemberSource.class).getDeclaringClass(),
-                f1.adaptTo(MemberSource.class).getDeclaringClass())) {
-                return -1;
-            }
-        }
-        return 0;
-    }
 
     /**
      * Facilitates ordering {@code Source} instances according to their class affiliation (if both fields' classes
@@ -282,5 +251,41 @@ public class OrderingUtil {
             return 1;
         }
         return h1.getClass().getName().compareTo(h2.getClass().getName());
+    }
+
+    /**
+     * Facilitates ordering {@code Member} instances according to their optional {@link DialogField} annotations'
+     * ranking values and then their class affiliation
+     * @param f1 First comparison member, non-null
+     * @param f2 Second comparison member, non-null
+     * @return Integer value per {@code Comparator#compare(Object, Object)} convention
+     */
+    private static int compareByRank(Source f1, Source f2) {
+        if (f1 != null && f2 == null) {
+            return -1;
+        } else if (f1 == null && f2 != null) {
+            return 1;
+        } else if (f1 == null) {
+            return 0;
+        }
+
+        int rank1 = f1.adaptTo(MemberRankingSetting.class).getRanking();
+        int rank2 = f2.adaptTo(MemberRankingSetting.class).getRanking();
+        if (rank1 != rank2) {
+            return Integer.compare(rank1, rank2);
+        }
+        if (f1.adaptTo(MemberSource.class).getDeclaringClass() != f2.adaptTo(MemberSource.class).getDeclaringClass()) {
+            if (ClassUtils.isAssignable(
+                f1.adaptTo(MemberSource.class).getDeclaringClass(),
+                f2.adaptTo(MemberSource.class).getDeclaringClass())) {
+                return 1;
+            }
+            if (ClassUtils.isAssignable(
+                f2.adaptTo(MemberSource.class).getDeclaringClass(),
+                f1.adaptTo(MemberSource.class).getDeclaringClass())) {
+                return -1;
+            }
+        }
+        return 0;
     }
 }

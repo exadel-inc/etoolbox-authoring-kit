@@ -57,6 +57,7 @@ public class DialogConstants {
     public static final String NN_ITEM = "item";
     public static final String NN_ITEMS = "items";
     public static final String NN_FIELD = "field";
+    public static final String NN_FIXED_COLUMNS = "fixedColumns";
     public static final String NN_FORMATS = "formats";
     public static final String NN_FULLSCREEN = "fullscreen";
     public static final String NN_KEYS = "keys";

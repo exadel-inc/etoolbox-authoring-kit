@@ -25,6 +25,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
  * Used to set up a specific
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html">
  * Accordion panel</a> item in an accordion-shaped Granite UI dialog or within an {@code Accordion} widget
+ * @see Accordion
  */
 @Target(value = ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

@@ -17,5 +17,5 @@ package com.exadel.aem.toolkit.plugin.writers;
  * Contains the supported Granite UI dialog layout variants
  */
 public enum DialogLayout {
-    FIXED_COLUMNS, TABS, ACCORDION
+    DEFAULT_COLUMN, COLUMNS, TABS, ACCORDION
 }

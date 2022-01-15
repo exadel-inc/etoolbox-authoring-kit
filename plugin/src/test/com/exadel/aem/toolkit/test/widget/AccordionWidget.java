@@ -52,9 +52,9 @@ public class AccordionWidget {
     AccordionFieldSet accordion;
 
     private static class AccordionFieldSet {
-        @Place("Accordion Widget Panel 1")
         @DialogField
         @TextField
+        @Place("Accordion Widget Panel 1")
         String field6;
     }
 }
