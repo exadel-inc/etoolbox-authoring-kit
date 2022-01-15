@@ -56,8 +56,8 @@ public @interface Select {
     String emptyText() default "";
 
     /**
-     * When set, the {@code datasource} node is appended to the JCR buildup of this component
-     * and populated with values of provided {@link DataSource} annotation
+     * When set, the {@code datasource} node is appended to the JCR buildup of this component and populated with values
+     * of provided {@link DataSource} annotation
      * @return {@code @DataSource} instance
      */
     DataSource datasource() default @DataSource;
@@ -84,8 +84,8 @@ public @interface Select {
     boolean ordered() default false;
 
     /**
-     * It set to true, an empty option is added to this {@code Select} widget.
-     * Empty option is an option having both its {@code value} and {@code text} equal to an empty string
+     * It set to true, an empty option is added to this {@code Select} widget. Empty option is an option having both its
+     * {@code value} and {@code text} equal to an empty string
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")
@@ -93,8 +93,8 @@ public @interface Select {
 
     /**
      * Maps to the {@code variant} attribute of this {@code Select} widget
-     * @see SelectVariant
      * @return One of {@code SelectVariant} values
+     * @see SelectVariant
      */
     @PropertyRendering(
         ignoreValues = "default",
@@ -103,16 +103,16 @@ public @interface Select {
     SelectVariant variant() default SelectVariant.DEFAULT;
 
     /**
-     * If set to true, the @Delete hidden input is added to the HTTP form based on the field name. Its value will be
-     * processed by the Sling HTTP post servlet
+     * If set to true, the @Delete hidden input is added to the web form. Its value will be processed by the Sling HTTP
+     * post servlet
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "true")
     boolean deleteHint() default true;
 
     /**
-     * Used to set "ignore freshness" flag for this Granite UI component. This property is useful when there is
-     * a newly introduced field in the form, and there is a need to specifically set the default selected item
+     * Used to set "ignore freshness" flag for this Granite UI component. This property is useful when there is a newly
+     * introduced field in the form, and there is a need to specifically set the default selected item
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

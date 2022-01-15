@@ -16,27 +16,24 @@ package com.exadel.aem.toolkit.test.widget;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
-import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextAreaResizeType;
+import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @AemComponent(
         path = DEFAULT_COMPONENT_NAME,
-        title = "TextArea Widget Dialog"
+        title = "TextField Widget Dialog"
 )
 @Dialog
 @SuppressWarnings("unused")
-public class TextAreaWidget {
-    @DialogField(label = "Valid TextArea")
-    @TextArea(
+public class TextFieldWidget {
+    @DialogField(label = "Enter text")
+    @TextField(
         value = "default value",
         emptyText = "empty text",
-        autocomplete = "name",
         autofocus = true,
-        rows = 10,
-        cols = 50,
-        resize = TextAreaResizeType.BOTH
+        autocomplete = "on",
+        maxLength = 150
     )
-    String text1;
+    String text;
 }

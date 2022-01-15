@@ -25,15 +25,15 @@ We actively welcome your pull requests:
 
 #### Procedural pull request questions
 
-Every pull requests is dedicated to a single Github issue. Every issue has a tracking number like `EDMTP-333`.
+Every pull requests is dedicated to a single Github issue. Every issue has a tracking number like `EAK-333`.
 
-A branch for the pull request must be named in the format `bugfix/EDMTP-333` or `feature/EDMTP-333` where the part before the slash is the kind of PR (reflecting a bug or a feature request respectively), and the part after the slash in the tracking number.
+A branch for the pull request must be named in the format `bugfix/EAK-333` or `feature/EAK-333` where the part before the slash is the kind of PR (reflecting a bug or a feature request respectively), and the part after the slash in the tracking number.
 
-A pull request's title must start with the tracking number in square brackets; then comes a brief but detailed description of what is done in this PR like `[EDMTP-333] Fixed NPE when saving file to a removable media`.
+A pull request's title must start with the tracking number in square brackets; then comes a brief but detailed description of what is done in this PR like `[EAK-333] Fixed NPE when saving file to a removable media`.
 
-Detailed description in "description" section is optional but welcomed. You can assign labels from the provided set, such as `bug`, `enhancement`, `documentation`, etc.
+A more verbose description in the "description" section is optional but welcomed. You can assign labels from the provided set, such as `bug`, `enhancement`, `documentation`, etc.
 
-Every pull request consists of one or more commits. Commit messages message must be presented in the same format as the pull request title. E.g., the following 3 commits: `[EDMTP-333] Implemented the NPE fix... [EDMTP-333] Altered Javadoc for the affected method... [EDMTP-333] Added a unit test for the NPE fix`.
+Every pull request consists of one or more commits. Commit messages must be presented in the same format as the pull request title. E.g., the following 3 commits: `[EAK-333] Implemented the NPE fix... [EAK-333] Altered Javadoc for the affected method... [EAK-333] Added a unit test for the NPE fix`.
 
 ## Licensing
 Any contributions you make are understood to be under the  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0) that covers the whole project. Feel free to contact the maintainers if that's a concern.
@@ -53,13 +53,13 @@ Report a bug by opening a new issue.
 
 * We stick to the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) in essential parts.
 * We use 4 spaces for indentation rather than tabs.
-* Every import is a separate line.
+* Every import is a separate line, no wildcard imports.
 * Avoid static imports (like constants, etc.) unless absolutely must.
 * Give meaningful names to classes, methods and variables.
 * Split lengthy methods in smaller parts.
 * Observe length of lines, and split lengthy lines where appropriate (between method arguments, before ternary operators, etc.).
 * Avoid introducing multi-line lambdas.
-* Observe succession of methods: public, then package-private, then private; publish static, then package-private static, etc. You may place a private method immediately after the preceding public if called from this public as a secondary routine.
+* Observe succession of methods: public, then package-private, then private; public static, then package-private static, etc. You may place a private method immediately after the preceding public if called from this public as a secondary routine.
 * Add `try-catch` blocks to reduce the risk of code termination. Never ignore caught exceptions.
 * When unsure, follow the style of the existing code files.
 
@@ -67,7 +67,7 @@ You can use the [.editorconfig file](https://github.com/exadel-inc/etoolbox-auth
 
 #### For JavaScript / CSS / LESS code
 
-* Use the predefined [eslint rules](https://github.com/exadel-inc/etoolbox-authoring-kit/blob/master/ui.apps/.eslintrc.json) to verify code with  an IDE such as IntelliJ.
+* Use the predefined [eslint rules](https://github.com/exadel-inc/etoolbox-authoring-kit/blob/master/ui.apps/.eslintrc.json) to verify code with an IDE such as IntelliJ.
 * The rules are automatically applied via a Github workflow when you create of modify a pull request.
 * When unsure, follow the style of the existing code files.
 
