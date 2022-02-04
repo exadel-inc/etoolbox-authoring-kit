@@ -1,0 +1,24 @@
+{% from 'navigation/footer-menu.njk' import menu with context %}
+
+<div class="container footer-container">
+  <esl-panel-group mode="@+xs => accordion | @+md => open">
+    <ul class="footer-accordion-container">
+      <li class="footer-column footer-column-2 footer-margin">
+        {{ menu ('Components', 'components') }}
+      </li>
+    </ul>
+  </esl-panel-group>
+  <div class="footer-common-links-container">
+    <div class="footer-common-links">
+      <div class="footer-copyright">
+        EAK v{{ env.version }} © 2021 <a class="footer-link" href="{{site.exadel}}">Exadel</a>, Inc.
+        Code licenced under <a class="footer-link" href="{{site.apacheLicense}}">MIT</a>
+      </div>
+    </div>
+    <div class="footer-common-links footer-common-links-right">
+      <a class="footer-link icon-link" href="{{ site.github.url }}" target="_blank">
+          {% include "static/assets/helpers/github.svg" %}
+      </a>
+    </div>
+  </div>
+</div>

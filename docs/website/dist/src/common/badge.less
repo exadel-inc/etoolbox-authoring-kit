@@ -1,0 +1,53 @@
+@import (reference) "./variables.less";
+
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.4em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out,
+              background-color 0.15s ease-in-out,
+              border-color 0.15s ease-in-out,
+              box-shadow 0.15s ease-in-out;
+
+  &:empty {
+    display: none;
+  }
+
+  &-md {
+    padding: 0.4em 0.8em;
+    font-size: 80%;
+  }
+
+  &-warning {
+    color: #212529;
+    background-color: #ffc107;
+  }
+
+  &-danger {
+    color: #fff;
+    background-color: #dc3545;
+  }
+
+  &-link {
+    font-weight: 500;
+    background-color: #fff;
+    border: 1px solid @secondary-blue;
+  }
+
+  &-sup {
+    display: inline-block;
+    font-size: 50%;
+    font-weight: 700;
+    vertical-align: super;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}

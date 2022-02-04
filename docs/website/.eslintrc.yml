@@ -1,0 +1,45 @@
+# Library's global linting rules
+env:
+  browser: true
+  es6: true
+  es2017: true
+
+# Base rule sets
+extends:
+  # Recommended sets list
+  - 'eslint:recommended'
+  - 'plugin:import/typescript'
+  - 'plugin:@typescript-eslint/recommended'
+
+  # Library base set
+  - './eslint/codestyle.eslintrc.yml'
+  - './eslint/coderules.eslintrc.yml'
+  - './eslint/import.eslintrc.yml'
+  - './eslint/sonarjs.eslintrc.yml'
+  - './eslint/tests.eslintrc.yml'
+
+# TS configuration
+parser: '@typescript-eslint/parser'
+parserOptions:
+  project: 'tsconfig.eslint.json'
+  sourceType: module
+
+# Lint additional plugins
+plugins:
+  - 'import'
+  - 'sonarjs'
+  - 'editorconfig'
+  - '@typescript-eslint'
+  - 'eslint-plugin-tsdoc'
+
+# Overall rules
+rules:
+  # Enable TS Doc syntax check
+  'tsdoc/syntax': warn
+
+  # Enforce charset check
+  'editorconfig/charset': warn
+  # Enforce EOL for all files
+  'editorconfig/eol-last': warn
+  # Require no trailing spaces
+  'editorconfig/no-trailing-spaces': warn

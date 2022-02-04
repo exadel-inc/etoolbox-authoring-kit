@@ -1,0 +1,21 @@
+<div class="banner-container container d-flex mb-150">
+    <div class="banner-content">
+        <h2>Reimagine AEM components and content creation</h2>
+        <div class="banner-content-section">
+            <p class="banner-content-text mb-4 fw-300">Make AEM project setup simple and quick to market with our component-oriented open-source Exadel Authoring Kit for Adobe Experience Manager</p>
+            <div class="btns-container d-flex">
+                <a href="{{landing.urls.installationUrl}}" class="btn  btn-blue btn-media  ">Get started</a>
+                <a href="{{site.github.url}}" class="btn btn-mint btn-media ">Check it out</a>
+            </div>
+        </div>
+    </div>
+    <div class="banner-logo">
+        {% include 'static/assets/landing/banner.svg' %}
+    </div>
+</div>
+{% include "static/assets/landing/background-effect1.svg" %}
+
+<script>
+    const banner = document.getElementById("promo-banner")
+    const starsElems = banner.querySelectorAll(".stars")
+</script>

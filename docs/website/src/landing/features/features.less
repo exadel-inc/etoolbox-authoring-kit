@@ -1,0 +1,45 @@
+@import (reference) "../../common/variables.less";
+.features {
+    &-container {
+        flex-direction: row;
+        justify-content: space-between;
+        padding-top: 50px;
+        @media @xs {
+            flex-direction: column;
+        }
+    };
+    &-header {
+        padding-top: 1.25rem;
+        width: 33%;
+        &>h3{
+            color:@features-color;
+        }
+        @media @xs {
+            width: 100%;
+            text-align: center;
+        }
+    };
+    &-content {
+        width: 60%;
+        margin-right: 2.1rem;
+        @media @xs {
+            width: 100%;
+            text-align: center;
+            padding: 2rem;
+        }
+    };
+    &-list {
+        display: flex;
+        flex-wrap: wrap;
+    };
+    &-item {
+        flex: 1 1 30%;
+        margin: 0 0.75rem 0.75rem;
+        padding: 0 0.75rem 0.75rem;
+        text-align:start;
+        list-style-image: url("../assets/helpers/slash.svg");
+        @media @xs{
+            flex: 1 1 100%;
+        }
+    };
+};

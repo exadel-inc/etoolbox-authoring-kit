@@ -1,0 +1,12 @@
+<div class="features-container container d-flex mb-150">
+    <div class="features-header">
+        <h3>What’s the Exadel Authoring Kit for AEM all about?</h3>
+    </div>
+    <div class="features-content">
+        <ul class="features-list">
+        {% for feature in landing.features %}
+            <li class="features-item fw-300">{{ feature }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>

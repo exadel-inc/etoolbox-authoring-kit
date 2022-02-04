@@ -1,0 +1,36 @@
+{% extends './base.njk' %}
+{% set baseClass = 'sidebar-layout' %}
+
+{% block content %}
+  {% include 'navigation/header.njk' %}
+  {% include 'navigation/sidebar.njk' %}
+
+  <main class="esl-scrollable-content">
+    <div class="content {{ containerCls or 'container' }} {{ 'container-aside' if aside }}">
+      {% if title %}
+        <h1 class="page-title">
+          {{ title | safe }}
+          {% if 'beta' in [].concat(tags) %}<span class="badge badge-sup badge-warning">Beta</span>{% endif %}
+          {% if 'draft' in [].concat(tags) %}<span class="badge badge-sup badge-danger">Draft</span>{% endif %}
+        </h1>
+      {% endif %}
+
+      {% if aside %}
+        <aside class="aside">
+          {% from 'navigation/related-links.njk' import related with context %}
+          {{ related(aside.components, 'components', 'Related Components') }}
+          {{ related(aside.advanced-exps, 'advanced-exps', 'Advanced experience') }}
+        </aside>
+      {% endif %}
+
+      {{ content | safe or 'No content.' }}
+    </div>
+
+    <footer class="footer-compact container-fluid">
+      {% include 'navigation/footer-compact.njk' %}
+    </footer>
+  </main>
+
+  {# <esl-scrollbar target="::prev" class="main-scroll"></esl-scrollbar> #}
+  <div class="header-shadow"></div>
+{% endblock %}

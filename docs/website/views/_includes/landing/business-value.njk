@@ -1,0 +1,17 @@
+<div class="bv-container mx-0 mb-150">
+    <div class="bv-list">
+        {% for value in landing.businessValue %}
+            <div class="bv-block mx-2">
+                <div>
+                {% include "../../../static/assets/helpers/light-slash.svg" %}
+                </div>
+                <div class="bv-item mx-2">
+                    <div>
+                    <strong>{{value.emphasized}}</strong>
+                    <p class="fw-400 vertical-align">{{value.content}}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>

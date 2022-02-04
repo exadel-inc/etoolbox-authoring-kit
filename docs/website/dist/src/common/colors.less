@@ -1,0 +1,51 @@
+/* Colors */
+@primary-blue: #0097E7;
+@secondary-blue: #8bc2ff;
+
+@body-bg: #f8f8f8;
+@body-fg: rgba(22, 0, 27, .9);
+
+@link-fg: @primary-blue;
+@link-hover-fg: @primary-blue;
+@link-hover-underline: @primary-blue;
+
+@landing-bg-color: #004368;
+@landing-fg-color: #fff;
+
+@nav-dark-bg: @landing-bg-color;
+@nav-dark-fg: #fff;
+@nav-dark-hover: @secondary-blue;
+@nav-dark-selected: #00a2ff;
+@nav-dark-accent: #3eb2ff;
+
+@landing-blue: #0082CA;
+@landing-mint: #03E2AE;
+
+@features-color: #03E2B3;
+
+
+// Text helpers
+.text {
+  &-gray {
+    color: #6c757d !important;
+  }
+  &-white {
+    color: #fff !important;
+  }
+}
+
+// Borders
+.border {
+  border: 1px solid @secondary-blue !important;
+  border-radius: 8px;
+}
+
+// Svg
+.fill {
+  &-light svg {
+    fill: #fff;
+  }
+  &-primary svg {
+    fill: @primary-blue;
+  }
+}

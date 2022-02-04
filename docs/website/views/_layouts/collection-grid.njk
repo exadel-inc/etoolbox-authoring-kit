@@ -1,0 +1,15 @@
+---
+layout: content
+---
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap" rel="stylesheet">
+
+<div class="collection-grid">
+  {% for item in collections[collection] | notHidden | released | sortByName %}
+    <a class="collection-grid-item"
+       href="{{ item.url | url }}">
+      <div class="collection-grid-title collection-grid-box">
+        <span>{{ item.data.name }}</span>
+      </div>
+    </a>
+  {% endfor %}
+</div>
