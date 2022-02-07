@@ -3,6 +3,6 @@
     jcr:primaryType="cq:Template">
     <jcr:content
         jcr:primaryType="cq:PageContent"
-        jcr:title="Exadel Toolbox List page"
+        jcr:title="Exadel Trojan Horse page"
         status="enabled"/>
 </jcr:root>
