@@ -39,5 +39,4 @@
         DependsOn.SelectUtils.setOptions($select, options, selectedValue);
         setTimeout(() => $select.trigger('change.dependsOn'));
     });
-
 })(Granite, Granite.$, Granite.DependsOnPlugin);
