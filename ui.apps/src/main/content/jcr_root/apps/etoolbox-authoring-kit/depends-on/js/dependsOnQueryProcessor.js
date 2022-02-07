@@ -37,7 +37,7 @@
          * @returns current result of the query
          */
         static calculateQuery(query, $el) {
-            return QueryProcessor.evaluateQuery(QueryProcessor.parseQuery(query,$el), $el);
+            return QueryProcessor.evaluateQuery(QueryProcessor.parseQuery(query, $el), $el);
         }
 
         /**
@@ -76,7 +76,7 @@
                         ns.GroupReferenceRegistry.register(name, $context) :
                         ns.ElementReferenceRegistry.register(name, $context);
 
-                reference.subscribe(changeHandlerCB); //ignores undefined handler
+                reference.subscribe(changeHandlerCB); // ignores undefined handler
                 return `${reference.id}.value`;
             });
         }

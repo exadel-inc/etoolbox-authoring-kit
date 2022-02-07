@@ -28,7 +28,7 @@
 
     const ACTION_NAME = 'fill-select';
 
-    DependsOn.ActionRegistry.register(ACTION_NAME, function (options, {selected}) {
+    DependsOn.ActionRegistry.register(ACTION_NAME, function (options, { selected }) {
         if (!options || !options.length) {
             return;
         }
@@ -36,7 +36,7 @@
         const $select = this.$el;
         const selectedValue = DependsOn.QueryProcessor.calculateQuery(selected, $select);
 
-        DependsOn.SelectUtils.setOptions($select,options,selectedValue);
+        DependsOn.SelectUtils.setOptions($select, options, selectedValue);
         setTimeout(() => $select.trigger('change.dependsOn'));
     });
 
