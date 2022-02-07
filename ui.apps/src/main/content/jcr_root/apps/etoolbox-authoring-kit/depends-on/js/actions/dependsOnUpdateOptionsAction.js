@@ -94,23 +94,10 @@
         // resource (so that a new option can be assigned the "selected" state if its value matches),
         // and then replace the option set in DOM
         if ($select.attr(STORED_VALUE_ATTRIBUTE)) {
-            setOptions($select, options, $select.attr(STORED_VALUE_ATTRIBUTE));
+            DependsOn.SelectUtils.setOptions($select, options, $select.attr(STORED_VALUE_ATTRIBUTE));
         } else {
             setOptionsAndRestoreSelected($select, options, resourceAddr, valueMember);
         }
-    }
-
-    /**
-     * Set a new option set to the Granite Select component
-     *
-     * @param $select - Select widget to set options for
-     * @param options - new option set, represented by "raw" (non-Granite) entities
-     * @param selectedValue - the value to mark as selected in the option set
-     */
-    function setOptions($select, options, selectedValue) {
-        const itemCollection = $select.get(0).items;
-        itemCollection.clear();
-        options.map(src => createOption(src, selectedValue)).forEach(option => itemCollection.add(option));
     }
 
     /**
@@ -126,27 +113,11 @@
             .then(resource => {
                 const storedValue = resource[valueMember];
                 $select.attr(STORED_VALUE_ATTRIBUTE, storedValue);
-                setOptions($select, options, storedValue);
+                DependsOn.SelectUtils.setOptions($select, options, storedValue);
             })
             .fail(() => {
-                setOptions($select, options);
+                DependsOn.SelectUtils.setOptions($select, options);
             });
-    }
-
-    /**
-     * Create a new Granite option
-     *
-     * @param src - an object having a {@code text} and a {@code value} attribute
-     * @param selectedValue - the match value to trigger 'selected' state of the option
-     */
-    function createOption(src, selectedValue) {
-        return {
-            value: src.value,
-            content: {
-                textContent: src.text
-            },
-            selected: (!selectedValue && !src.value) || selectedValue === src.value || (Array.isArray(selectedValue) && selectedValue.includes(src.value))
-        };
     }
 
     /**
@@ -183,7 +154,7 @@
                 processNewOptions($select, newOptions, resourceAddress, valueMember);
             })
             .fail(() => {
-                setOptions($select, []);
+                DependsOn.SelectUtils.setOptions($select, []);
             });
     });
 })(Granite, Granite.$, Granite.DependsOnPlugin);

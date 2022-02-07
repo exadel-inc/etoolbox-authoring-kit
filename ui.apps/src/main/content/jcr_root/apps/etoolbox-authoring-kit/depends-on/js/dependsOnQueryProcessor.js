@@ -31,6 +31,16 @@
         static get REFERENCE_REGEXP() { return REFERENCE_REGEXP; }
 
         /**
+         *
+         * @param {string} query
+         * @param {JQuery} $el
+         * @returns current result of the query
+         */
+        static calculateQuery(query, $el) {
+            return QueryProcessor.evaluateQuery(QueryProcessor.parseQuery(query,$el), $el);
+        }
+
+        /**
          * Evaluate the parsed query
          * @param {string} query - parsed query
          * @param {object} context - context to execute
@@ -66,7 +76,7 @@
                         ns.GroupReferenceRegistry.register(name, $context) :
                         ns.ElementReferenceRegistry.register(name, $context);
 
-                reference.subscribe(changeHandlerCB);
+                reference.subscribe(changeHandlerCB); //ignores undefined handler
                 return `${reference.id}.value`;
             });
         }
