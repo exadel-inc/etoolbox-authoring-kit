@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root
+    fileName="_cq_dialog.xml"
+    jcr:title="Import template"
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="cq/gui/components/authoring/dialog"
+    xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+    xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+    height="{Decimal}150">
+    <content jcr:primaryType="nt:unstructured"
+             sling:resourceType="granite/ui/components/coral/foundation/container">
+        <layout jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
+        <items jcr:primaryType="nt:unstructured">
+            <column jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/container">
+                <items jcr:primaryType="nt:unstructured">
+                    <!-- Hidden field to replace form action with the ending '/' and store action path -->
+                    <action jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/form/hidden">
+                        <granite:data jcr:primaryType="nt:unstructured"
+                                      dependsOnRef="targetPath"
+                                      dependsOn="Granite.EToolboxTrojanHorse.setupInsertionFormTarget(this, '${param.path}')"
+                                      dependsOnAction="set"/>
+                    </action>
+
+                    <!-- Import path field -->
+                    <importPath
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/pathfield"
+                        rootPath="/content"
+                        fieldLabel="Link Skeleton"
+                        fieldDescription="Provide link to the custom skeleton page.">
+                        <granite:data jcr:primaryType="nt:unstructured"
+                                      dependsOnRef="importPath"
+                                      dependsOn="Granite.EToolboxTrojanHorse.canInsert(@importNode.type, @targetPath)"
+                                      dependsOnAction="validate"/>
+                    </importPath>
+
+                    <!-- Hidden JSON field to store resolved first child component from template -->
+                    <node jcr:primaryType="nt:unstructured"
+                          sling:resourceType="granite/ui/components/coral/foundation/form/hidden">
+                        <granite:data jcr:primaryType="nt:unstructured"
+                                      dependsOnRef="importNode"
+                                      dependsOnRefType="json"
+                                      dependsOn="Granite.EToolboxTrojanHorse.resolveJCRContentPath(@importPath)"
+                                      dependsOnAction="fetch"
+                                      dependsOn-fetch-map="Granite.EToolboxTrojanHorse.mapImportResourcePath"
+                                      dependsOn-fetch-err="Granite.EToolboxTrojanHorse.mapImportResourcePathError"
+                                      dependsOn-fetch-postfix=".2.json"/>
+                    </node>
+
+                    <!-- Sling instruction to define copy target -->
+                    <copyFrom jcr:primaryType="nt:unstructured"
+                              sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                              name="./@CopyFrom"
+                              required="{Boolean}true">
+                        <granite:data jcr:primaryType="nt:unstructured"
+                                      dependsOn="@importNode.path || ''"
+                                      dependsOnAction="set"/>
+                    </copyFrom>
+
+                    <!-- Readonly field to define copy resource type. Contains allowed component validation -->
+                    <resType jcr:primaryType="nt:unstructured"
+                             sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                             name="./sling:resourceType">
+                        <granite:data jcr:primaryType="nt:unstructured"
+                                      dependsOn="@importNode.type || ''"
+                                      dependsOnAction="set"/>
+                    </resType>
+
+                    <!-- Hidden field to send parent resource type -->
+                    <parentType jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                                name="parentResourceType"
+                                value="${param.parentType}">
+                    </parentType>
+
+                    <!-- Hidden field to send insertion order -->
+                    <order jcr:primaryType="nt:unstructured"
+                           sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                           name=":order" value="${param.order}">
+                    </order>
+
+                    <!-- Hidden field to send recommended name for new node -->
+                    <nameHint jcr:primaryType="nt:unstructured"
+                              sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                              name=":nameHint">
+                        <granite:data jcr:primaryType="nt:unstructured"
+                                      dependsOn="@importNode.name ? (@importNode.name + ' copy') : ''"
+                                      dependsOnAction="set"/>
+                    </nameHint>
+                </items>
+            </column>
+        </items>
+    </content>
+</jcr:root>

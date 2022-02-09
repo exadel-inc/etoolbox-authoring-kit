@@ -21,6 +21,18 @@
                         cq:styleDefaultClasses="etoolbox-list"
                         policyResourceType="wcm/foundation/components/responsivegrid">
                     </list>
+                    <trojan-horse
+                        cq:lastReplicated="{Date}2021-02-09T12:00:00.347Z"
+                        cq:lastReplicatedBy="admin"
+                        cq:lastReplicationAction="Activate"
+                        jcr:mixinTypes="[cq:ReplicationStatus]"
+                        jcr:description="Policy for Exadel Trojan Horse"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Trojan Horse"
+                        sling:resourceType="wcm/core/components/policy/policy"
+                        components="[group:HPE Content]"
+                        policyResourceType="wcm/foundation/components/responsivegrid">
+                    </trojan-horse>
                 </responsivegrid>
             </components>
         </foundation>
