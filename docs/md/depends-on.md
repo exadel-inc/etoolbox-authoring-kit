@@ -63,6 +63,9 @@ Built-in plug-in actions are:
 * `required` - set the required marker of the field from the Query result.
 * `validate` - set the validation state of the field from the Query result.
 * `disabled` - set the field's disabled state from the Query result.
+* `fill-select` - fill select options with values from the Query result. The result object must contain *value* and *text* fields
+  _Additional parameters:_
+    * `selected` (optional) - a dependsOn query, whose evaluation result should be a value or an array of selected values
 
 ##### Async actions
 

@@ -23,11 +23,9 @@
          * Creates a new Granite option
          *
          * @param option - an option object
-         * @param option.text - text to display
-         * @param option.value - actual value of an option
+         * @param {string} option.text - text to display
+         * @param {string} option.value - actual value of an option
          * @param selectedValue - value or array of values to trigger 'selected' state of the option
-         *
-         * @returns {Partial<HTMLOptionElement>}
          */
         static createOption(option, selectedValue) {
             return {

@@ -20,7 +20,7 @@
  * A simple action to fill select with options with provided values
  *
  * Action callback params:
- * {Array} options
+ * {Array<{value:string, text:string}>} options
  * {string} config.selected - a dependsOn query, whose evaluation result should be a value or an array of selected values
  */
 (function (Granite, $, DependsOn) {
@@ -34,7 +34,7 @@
         }
 
         const $select = this.$el;
-        const selectedValue = DependsOn.QueryProcessor.calculateQuery(selected, $select);
+        const selectedValue = selected? DependsOn.QueryProcessor.calculateQuery(selected, $select): '';
 
         DependsOn.SelectUtils.setOptions($select, options, selectedValue);
         setTimeout(() => $select.trigger('change.dependsOn'));

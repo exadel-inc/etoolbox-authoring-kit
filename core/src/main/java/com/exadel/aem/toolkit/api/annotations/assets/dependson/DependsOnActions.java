@@ -70,5 +70,10 @@ public class DependsOnActions {
      */
     public static final String UPDATE_OPTIONS = "update-options";
 
+    /**
+     * Refreshes the options set of a Coral3 Select widget with provided values
+     */
+    public static final String FILL_SELECT = "fill-select";
+
     private DependsOnActions() {}
 }
