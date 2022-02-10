@@ -34,7 +34,7 @@
         }
 
         const $select = this.$el;
-        const selectedValue = selected? DependsOn.QueryProcessor.calculateQuery(selected, $select): '';
+        const selectedValue = selected ? DependsOn.QueryProcessor.calculateQuery(selected, $select) : '';
 
         DependsOn.SelectUtils.setOptions($select, options, selectedValue);
         setTimeout(() => $select.trigger('change.dependsOn'));
