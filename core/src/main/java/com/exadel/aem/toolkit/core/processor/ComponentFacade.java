@@ -35,12 +35,12 @@ public class ComponentFacade {
 
     // Retrieves all views from AemComponent and builds from them ElementDefinitions.
     // Return map, where key is file name and value is data
-    public static Map<String, ElementDefinition> process(Element element) {
-        AemComponent aemComponent = element.getAnnotation(AemComponent.class);
-        ElementDefinition aemComponentDefinition = ElementDefinition.ELEMENT_TO_ELEMENT_DEFINITION.apply(element);
+    public static Map<String, ElementDefinition> process(Element aemComponentClass) {
+        AemComponent aemComponent = aemComponentClass.getAnnotation(AemComponent.class);
+        ElementDefinition aemComponentDefinition = ElementDefinition.ELEMENT_TO_ELEMENT_DEFINITION.apply(aemComponentClass);
 
         List<Element> elements = getElementsFromAemComponentViews(aemComponent);
-        elements.add(element);
+        elements.add(aemComponentClass);
 
         Map<String, ElementDefinition> result = new HashMap<>();
         result.put(aemComponent.path() + "/" + AemComponent.class.getSimpleName(),

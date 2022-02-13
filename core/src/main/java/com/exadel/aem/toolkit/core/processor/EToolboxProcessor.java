@@ -31,8 +31,8 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.core.processor.models.ElementDefinition;
 
-//@SupportedAnnotationTypes("com.exadel.aem.toolkit.api.annotations.main.AemComponent")
-@SupportedAnnotationTypes("com.exadel.aem.toolkit.api.annotations.*")
+@SupportedAnnotationTypes("com.exadel.aem.toolkit.api.annotations.main.AemComponent")
+//@SupportedAnnotationTypes("com.exadel.aem.toolkit.api.annotations.*")
 public class EToolboxProcessor extends AbstractProcessor {
 
     private static final String EAK_ANNOTATION_PREFIX = "com.exadel.aem.toolkit.api.annotations";
@@ -44,7 +44,7 @@ public class EToolboxProcessor extends AbstractProcessor {
     private static TypeElement object;
     private long time;
     private Messager messager;
-    public static Set<String> customAnnotationNames;
+    private static Set<String> customAnnotationNames;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -69,7 +69,7 @@ public class EToolboxProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        EToolboxProcessor.customAnnotationNames = roundEnv
+        customAnnotationNames = roundEnv
             .getElementsAnnotatedWith(Handles.class)
             .stream()
             .map(element -> element.getAnnotation(Handles.class))

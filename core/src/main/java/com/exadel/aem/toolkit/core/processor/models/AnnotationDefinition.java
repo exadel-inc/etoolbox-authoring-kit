@@ -27,7 +27,7 @@ public class AnnotationDefinition {
     }
 
     /**
-     * Converts {@code Map<? extends ExecutableElement, ? extends AnnotationValue>} to "simple" {@code Map<String, Object>}
+     * Converts {@code Map<? extends ExecutableElement, ? extends AnnotationValue>} to "simple" {@code Map<String, ValueDefinition>}
      * to easily serialize/deserialize
      */
     private Map<String, ValueDefinition> convert(Map<? extends ExecutableElement, ? extends AnnotationValue> mapWithEnteredValues,

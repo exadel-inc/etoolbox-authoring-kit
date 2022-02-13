@@ -82,7 +82,7 @@ public class ValueDefinitionFactory {
 
     // Gets string representation of return type kind.
     // Transforms TypeMirror to Element and gets kind of element.
-    // Because of this casting we can define whether this is ANNOTATION_TYPE, CLASS or ENUM.
+    // Due to this casting we can define whether this is ANNOTATION_TYPE, CLASS or ENUM.
     private static String getExactKind(TypeMirror typeMirror) {
         return EToolboxProcessor.getTypeUtils()
             .asElement(typeMirror)
