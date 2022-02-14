@@ -1,5 +1,6 @@
 const path = require('path');
 const fsAsync = require('fs').promises;
+const structure = require('../structure.json');
 
 const {JSDOM} = require('jsdom');
 const {markdown} = require('./markdown.lib');
@@ -90,11 +91,14 @@ class MDRenderer {
         }
         else if(elemLink.match(reForInstallationLinks)){
           let link = elemLink.replace('docs/md/', "")
-          elem.setAttribute("href", `/components/${link.replace(".md", "")}`)
+          for(let key in structure){
+            structure[key].includes(link) && elem.setAttribute("href", `/${[key]}/${link.replace(".md", "")}`)
+          }
         }
         else if(elemLink.match(reForMdLinks)){
-        let link = elemLink.replace(".md", "")
-        elem.setAttribute("href", `/components/${link}`)
+        for(let key in structure){
+            structure[key].includes(elemLink) && elem.setAttribute("href", `/${[key]}/${elemLink.replace(".md", "")}`)
+        }
       }
     });
     return content;

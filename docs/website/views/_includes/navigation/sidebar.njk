@@ -9,10 +9,12 @@
     <div class="sidebar-content">
       <div class="sidebar-nav-list esl-scrollable-content">
         <li class="sidebar-nav-item">
-          {{navitem ('Installation','installation')}}</li>
-          <li class="sidebar-nav-item">
-          {{ navitem ('Components', 'components') }}
-          </li>
+          {{navitem ('installation')}}</li>
+        {% for item in tagsList.tags %}
+        <li class="sidebar-nav-item">
+          {{ navitem (item) }}
+        </li>
+        {% endfor %}
       </div>
       <esl-scrollbar class="sidebar-scrollbar" target="::prev"></esl-scrollbar>
     </div>
@@ -20,13 +22,4 @@
   </nav>
 </esl-d-sidebar>
 <script>
-  {# if (localStorage.getItem('sidebar-collapsed')) {
-    var sidebar = document.querySelector('#sidebar');
-    sidebar.classList.remove('open');
-    sidebar.querySelector('.sidebar-trigger-btn').removeAttribute('active');
-    Array.from(sidebar.querySelectorAll('.sidebar-nav-secondary'))
-      .forEach(function(menu) {
-        menu.classList.remove('open');
-      });
-  } #}
 </script>

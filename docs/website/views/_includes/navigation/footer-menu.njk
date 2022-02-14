@@ -1,13 +1,13 @@
 {% macro menu(title, collection) %}
   <esl-trigger class="footer-accordion-trigger" target="::next" hover-hide-delay="400">
-    {{ title }} <span class="arrow"></span>
+    {{ title | title }} <span class="arrow"></span>
   </esl-trigger>
   <esl-panel class="footer-accordion-content"
              fallback-duration="400"
              close-on-esc>
     {% if collections[collection] %}
       <ul class="footer-list">
-        {% for item in collections[collection] | notHidden | releasedStrict | sortByNameAndOrder %}
+        {% for item in collections[collection] | notHidden | releasedStrict  %}
           <li class="footer-item" {% if isActive %}aria-current="page"{% endif %}>
             <a class="footer-link" href="{{ item.url | url }}">{{ item.data.name }}</a>
           </li>

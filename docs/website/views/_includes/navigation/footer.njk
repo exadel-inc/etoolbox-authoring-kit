@@ -3,9 +3,11 @@
 <div class="container footer-container">
   <esl-panel-group mode="@+xs => accordion | @+md => open">
     <ul class="footer-accordion-container">
+      {% for item in tagsList.tags %}
       <li class="footer-column footer-column-2 footer-margin">
-        {{ menu ('Components', 'components') }}
+        {{ menu (item, item) }}
       </li>
+      {% endfor %}
     </ul>
   </esl-panel-group>
   <div class="footer-common-links-container">

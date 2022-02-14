@@ -1,97 +1,96 @@
 const fs = require('fs');
-// const glob = require('glob');
+const path = require('path')
+const {setNjkTemplate} = require('./directory.helpers')
+const INIT_PATH = "../md"
 
-// const setNjkTemplate = (mdPath) => {
-//   const withoutMd = mdPath.replace(".md", "");
-//   const splitPath = withoutMd.split("/");
-//   const value = splitPath.length - 1;
-//   const withoutPath = splitPath[value];
-//   const UpperCaseHeading = withoutPath[0].toUpperCase() + withoutPath.substring(1);
-//   const prettifyHeading = UpperCaseHeading.split("-").join(" ")
-//   return `---
-// layout: content
-// title: EAK ${prettifyHeading}
-// seoTitle: EAK ${prettifyHeading}
-// name: ${prettifyHeading}
-// val: ${withoutPath}
-// ${mdPath.match(/\.\.\/\.\.\/docs\/md\/.+/) ? "tags: components" : ""}
-// ---
+let tags = [];
+let paths = ["../../README.md"];
+let structure = {};
 
-// {% mdRender '${mdPath}'  %}`
-// }
+const readMdDir = async(initPath, parentDirectory = "")=>{
+    let dirToWrite;
+fs.readdir(initPath, (err, files)=>{
+    if(err) throw err;
+    if(files.includes(".content")){
+        const contentPath = initPath + "/.content"
+        const data = fs.readFileSync(contentPath, "utf-8").toString().split("\n").join("").split("\r").filter(elem=> elem !== "");
+        data.forEach(elem=>{
+            if(elem.match(/dirToWrite=.+/)) dirToWrite = elem.replace(/dirToWrite=/, "");
+            return
+        })
+        const mdFiles = data.filter((elem)=>elem.match(/.+\.md/));
+        const mdArr = getMetaData(mdFiles, initPath)
+        fs.writeFile('./paths.json', `{"pathsArr":[${paths.map(elem=>`"${elem}"`)}]}`, (err)=>{
+            if(err) throw err;
+            console.log("paths updated")
+        })
+        if(dirToWrite) {
+            fs.mkdir(path.join( `./views/${parentDirectory && parentDirectory}`, dirToWrite), (err) => {
+            if (err) {
+                return console.error(err);
+            }
+            console.log('Directory created successfully!');
+        })
+            tags.push(dirToWrite)
+            fs.writeFile('./views/_data/tagsList.json', `{
+                "tags":[${tags.map(elem=> `"${elem}"`)}]
+            }`, (err)=>{
+                if(err) throw err;
+                console.log("JSON is updated")
+            })
+            structure = Object.assign(structure, {[dirToWrite]: mdFiles})
+            fs.writeFile('./structure.json', JSON.stringify(structure), (err)=>{
+                if(err) throw err;
+                console.log('Structure updated')
+            })
+        };
+        mdArr.map((elem, idx)=>{
+            console.log(elem.njkPath)
+             fs.writeFile(`./views/${elem.njkPath.replace(".md", ".njk")}`,setNjkTemplate(elem, initPath, dirToWrite, idx), (err)=>{
+                if(err) throw err;
+                console.log('File is created successfully.')
+            })
+        })
+    }
+    files.forEach((elem)=>{
+            if(!elem.match(/.+\.md/) && !elem.match(/\.content/)){
+                const newPath = initPath + "/" + elem
+                const parent = dirToWrite ? parentDirectory + "/" + dirToWrite : parentDirectory;
+                console.log(parent)
+                console.log(newPath)
+                readMdDir(newPath, parent)
+            }
+        })
+    return
+})}
 
-// const setNjkPathsTemplate = (path) => {
-//     if(path.match(/\.\.\/\.\.\/docs\/md\/.+/)){
-//         const njkFileName = path.split("/");
-//         const value = njkFileName.length - 1
-//         return `views/components/${njkFileName[value]}`;
-//     }
-//     if(path.match(/\.\.\/\.\.\/samples\/README\.njk/) || path.match(/\.\.\/\.\.\/README\.njk/)){
-//         const njkFileName = path.match(/\.\.\/\.\.\/samples\/README\.njk/) ? "samples.njk" : "installation.njk";
-//         return `views/introduction/${njkFileName}`;
-//     }
-//     else {
-//         const njkFileName = path.split("/");
-//         const value = njkFileName.length - 1
-//         return `views/temporarily/${njkFileName[value]}`;
-//     }
-// }
-
-// let ignorePaths = ["../../CLA.md", "../../CONTRIBUTING.md"]
-// let paths = []
-// for(let i = 0; i<=10; i++){
-//     if(i === 0) {
-//         paths.push("../../*.md");
-//         ignorePaths.push("../../*/*/node_modules/*/*.md");
-//     };
-//     paths.push(paths[paths.length-1].replace("*.md", "*/*.md"));
-//     ignorePaths.push(ignorePaths[ignorePaths.length - 1].replace("node_modules", "node_modules/*"))
-
-// }
-
-// const globOptions = {
-//     ignore: ignorePaths
-// }
-
-// paths.forEach((elem)=>{
-//     return glob(elem,globOptions,function(err,files){
-//         if(err) throw err
-//         files.forEach(mdPath => {
-//             const replaceMd = mdPath.replace(".md", ".njk");
-//             fs.writeFile(setNjkPathsTemplate(replaceMd),setNjkTemplate(mdPath),function (err) {
-//                 if (err) throw err;
-//                 console.log('File is created successfully.');
-//               });
-//         });
-//    });
-// })
-
-
-const setNjkTemplate = (fileName) => {
-    const UpperCaseHeading = fileName[0].toUpperCase() + fileName.substring(1);
-    const prettifyHeading = UpperCaseHeading.split("-").join(" ")
-    return `---
-layout: content
-title: EAK ${prettifyHeading}
-seoTitle: EAK ${prettifyHeading}
-name: ${prettifyHeading}
-val: ${fileName}
-tags: components
----
-
-{% mdRender '../md/${fileName}.md'  %}`
-}
-
-
-
-fs.readdir("../md", (err, files) => {
-    if (err)throw err;
-      files.forEach(mdFileName => {
-        console.log(mdFileName)
-        const withoutMd = mdFileName.replace(".md", "");
-        fs.writeFile(`views/components/${withoutMd}.njk`,setNjkTemplate(withoutMd),function (err) {
-            if (err) throw err;
-            console.log('File is created successfully.');
-          });
+const getMetaData = (arr,initPath) => {
+    const mdArr = arr.map((elem)=> {
+        const filePath = initPath + '/' + elem;
+        paths.push(filePath);
+        const file = fs.readFileSync(filePath, 'utf-8').toString().split('-->');
+        const filesMeta = file[0].replace("<!--", "");
+        const metaToArr = filesMeta.split(",");
+        const metaObj = {};
+        const removeExtraSymbols = (str) => {
+            return str.split("\r").join("").split("\n").join("");
+        }
+        metaToArr.forEach(elem=>{
+            if(elem.includes("navTitle:")) metaObj.navTitle = removeExtraSymbols(elem.replace("navTitle: ", ""));
+            if(elem.includes("title:")) metaObj.title = removeExtraSymbols(elem.replace("title: ", ""));
+            if(elem.includes("description:")) metaObj.description = removeExtraSymbols(elem.replace("description: ", ""));
+            if(elem.includes("keywords:")) metaObj.keywords = removeExtraSymbols(elem.replace("keywords: ", ""));
+        });
+        return {
+            fileName: elem,
+            metaData: metaObj,
+            njkPath: filePath.replace("../md/","")
+        };
     });
-});
+    return mdArr;
+};
+
+
+readMdDir(INIT_PATH, "")
+
+

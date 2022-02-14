@@ -1,4 +1,4 @@
-const structure = require('../structure.json');
+const paths = require('../paths.json')
 const {markdown} = require('./markdown.lib');
 const {JSDOM} = require('jsdom');
 const fsAsync = require('fs').promises;
@@ -33,20 +33,17 @@ class Headings {
         const {window} = new JSDOM();
         window.document.body.innerHTML += res;
         const result = await this.getHeadings(window.document.body, item.name);
-        // console.log(result);
         return result;
     };
     static getAbsolutePath(){
-        const res = structure.mdFiles.map( elem => {
-            if(elem =="installation"){
-                return {path:"../../README.md", name:elem}
-            } else {
-            return {path:"../md/" + elem + ".md", name:elem};
-            }
+        const res = paths.pathsArr.map( elem => {
+            const splitedElem = elem.split("/")
+            const lastVal = splitedElem.length - 1
+            if(elem === "../../README.md") return { path:elem, name: "installation"}
+            return { path:elem, name:splitedElem[lastVal].replace(".md", "") }
         });
         return res;
     };
-
 };
 
 module.exports = function(config){
