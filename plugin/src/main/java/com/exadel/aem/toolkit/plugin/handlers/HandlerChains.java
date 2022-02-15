@@ -13,15 +13,11 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers;
 
-import java.util.Map;
-import java.util.function.BiConsumer;
-
-import com.google.common.collect.ImmutableMap;
-
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.assets.dependson.DependsOnHandler;
+import com.exadel.aem.toolkit.plugin.handlers.common.AllowedChildrenHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.CasualAnnotationsHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.ComponentHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.CqChildEditConfigHandler;
@@ -39,6 +35,10 @@ import com.exadel.aem.toolkit.plugin.handlers.widgets.common.InheritanceHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.MultipleAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.PropertyAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.ResourceTypeHandler;
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 /**
  * Serves as the source for handler chains used to process user-specified data and prepare structures that are further
@@ -51,12 +51,13 @@ public class HandlerChains {
     // Generic handlers
     private static final BiConsumer<Source, Target> CASUAL_ANNOTATIONS_HANDLER = new CasualAnnotationsHandler();
     private static final BiConsumer<Source, Target> PROPERTY_MAPPING_HANDLER = new PropertyMappingHandler();
+    private static final BiConsumer<Source, Target> ALLOWED_CHILDREN_HANDLER = new AllowedChildrenHandler();
 
     // UI-specific handlers
-    private static final BiConsumer<Source, Target> CHILD_EDIT_CONFIG_HANDLER = new CqChildEditConfigHandler();
+    private static final BiConsumer<Source, Target> CHILD_EDIT_CONFIG_HANDLER = new CqChildEditConfigHandler().andThen(ALLOWED_CHILDREN_HANDLER);
     private static final BiConsumer<Source, Target> COMPONENT_HANDLER = new ComponentHandler();
     private static final BiConsumer<Source, Target> DIALOG_HANDLER = new CqDialogHandler();
-    private static final BiConsumer<Source, Target> EDIT_CONFIG_HANDLER = new CqEditConfigHandler();
+    private static final BiConsumer<Source, Target> EDIT_CONFIG_HANDLER = new CqEditConfigHandler().andThen(ALLOWED_CHILDREN_HANDLER);
     private static final BiConsumer<Source, Target> HTML_TAG_HANDLER = new CqHtmlTagHandler();
     private static final Map<String, BiConsumer<Source, Target>> UI_HANDLERS = ImmutableMap.<String, BiConsumer<Source, Target>>builder()
         .put(Scopes.COMPONENT, COMPONENT_HANDLER)
@@ -97,13 +98,9 @@ public class HandlerChains {
 
     // Complete editConfig chains
     private static final BiConsumer<Source, Target> EDIT_CONFIG_HANDLER_CHAIN =
-        PROPERTY_MAPPING_HANDLER
-        .andThen(EDIT_CONFIG_DROP_TARGETS_HANDLER)
+        EDIT_CONFIG_DROP_TARGETS_HANDLER
         .andThen(EDIT_CONFIG_FORM_PARAMS_HANDLER)
         .andThen(EDIT_CONFIG_INPLACE_HANDLER)
-        .andThen(EDIT_CONFIG_LISTENERS_HANDLER);
-    private static final BiConsumer<Source, Target> CHILD_EDIT_CONFIG_HANDLER_CHAIN =
-        EDIT_CONFIG_DROP_TARGETS_HANDLER
         .andThen(EDIT_CONFIG_LISTENERS_HANDLER);
 
     private static final BiConsumer<Source, Target> NOOP_HANDLER = (source, target) -> {};
@@ -141,13 +138,5 @@ public class HandlerChains {
      */
     public static BiConsumer<Source, Target> forEditConfig() {
         return EDIT_CONFIG_HANDLER_CHAIN;
-    }
-
-    /**
-     * Retrieves a handler conveyor for rendering {@code editConfig}
-     * @return {@code BiConsumer<Source, Target>} instance representing the conveyor
-     */
-    public static BiConsumer<Source, Target> forChildEditConfig() {
-        return CHILD_EDIT_CONFIG_HANDLER_CHAIN;
     }
 }

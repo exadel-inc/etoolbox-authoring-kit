@@ -149,6 +149,7 @@ public class DialogConstants {
     public static final String PN_TRACKING_ELEMENT = "trackingElement";
     public static final String PN_TYPE = "type";
     public static final String PN_TYPE_HINT = "typeHint";
+    public static final String PN_UPDATE_COMPONENT_LIST = "updatecomponentlist";
     public static final String PN_USE_FIXED_INLINE_TOOLBAR = "useFixedInlineToolbar";
     public static final String PN_VALUE_MEMBER = "valueMember";
     public static final String PN_VALUE_TRANSFORM = "valueTransform";
@@ -156,6 +157,7 @@ public class DialogConstants {
 
     public static final String VALUE_ALL = "all";
     public static final String VALUE_NONE = "none";
+    public static final String VALUE_POLICY_RESOLVER_FORMAT = "Granite.policyResolver.build('%s')";
 
     private DialogConstants() {}
 }

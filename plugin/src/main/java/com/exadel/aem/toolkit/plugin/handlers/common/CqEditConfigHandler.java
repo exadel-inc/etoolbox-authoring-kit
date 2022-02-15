@@ -13,12 +13,15 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.common;
 
-import java.util.function.BiConsumer;
-
+import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
+import com.exadel.aem.toolkit.plugin.sources.Sources;
+import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
+
+import java.util.function.BiConsumer;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
@@ -33,7 +36,14 @@ public class CqEditConfigHandler implements BiConsumer<Source, Target> {
      */
     @Override
     public void accept(Source source, Target target) {
-        target.attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG);
-        HandlerChains.forEditConfig().accept(source, target);
+        source.tryAdaptTo(EditConfig.class).ifPresent(adaptation -> populateEditConfig(adaptation, target));
+    }
+
+    private void populateEditConfig(EditConfig editConfig, Target target) {
+        target
+                .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
+                .attributes(editConfig, AnnotationUtil.getPropertyMappingFilter(editConfig));
+
+        HandlerChains.forEditConfig().accept(Sources.fromAnnotation(editConfig), target);
     }
 }

@@ -3,13 +3,7 @@
     <filter root="/apps/cq/core/content/nav/tools/etoolbox/lists"/>
     <filter root="/apps/wcm/core/content/sites/actions/secondary/create/items/createlist"/>
 
-    <filter root="/apps/etoolbox-authoring-kit/clientlib-injector"/>
-    <filter root="/apps/etoolbox-authoring-kit/components"/>
-    <filter root="/apps/etoolbox-authoring-kit/coral-overlay"/>
-    <filter root="/apps/etoolbox-authoring-kit/depends-on"/>
-    <filter root="/apps/etoolbox-authoring-kit/depends-on-injector"/>
-    <filter root="/apps/etoolbox-authoring-kit/install"/>
-    <filter root="/apps/etoolbox-authoring-kit/lists"/>
+    <filter root="/apps/etoolbox-authoring-kit"/>
 
     <!-- The following filters clear old directories in JCR content. They can be removed after v.2 release -->
     <filter root="/apps/authoring-toolkit"/>
