@@ -11,7 +11,7 @@ const setInfiniteTemplate = (elem, folder)=>{
         return `<li class="sidebar-nav-secondary-item {{ 'active' if isActive }} {{ 'draft' if isDraft }}"
         {% if isActive %}aria-selected="true"{% endif %}>
       <a class="sidebar-nav-secondary-link"{% if isActive %}aria-current="page"{% endif %} href="/${folder}/${elem.fileName.replace(".md","")}">
-      ${elem.fileName}
+      ${elem.metaData.navTitle}
       </a>
     </li>`
     } else if(!elem.hasOwnProperty("fileName") && !elem.hasOwnProperty("metaData") && !elem.hasOwnProperty("njkPath") && Object.keys(elem).length === 1){
@@ -71,6 +71,3 @@ const setSidebarTemplate = () =>{
 }
 
 fs.writeFileSync("./views/_includes/navigation/sidebar.njk", setSidebarTemplate());
-
-
-module.exports.setSidebarTemplate = setSidebarTemplate;

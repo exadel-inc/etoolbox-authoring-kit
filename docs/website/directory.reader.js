@@ -6,13 +6,11 @@ const INIT_PATH = "../md"
 let paths = ["../../README.md"];
 let structure = {};
 
-
-
 const readMdDir = async(initPath, folderPath = "/")=>{
     fs.readdir(initPath, async(err, files)=>{
         if(err) throw err;
         if(files.includes(".content")){
-            const contentPath = initPath + "/.content"
+            const contentPath = initPath + "/.content";
             const data = fs.readFileSync(contentPath, "utf-8").toString().split("\n").join("").split("\r").filter(elem=> elem !== "");
             const contentObj ={};
             data.forEach(elem=>{
@@ -23,13 +21,13 @@ const readMdDir = async(initPath, folderPath = "/")=>{
                     contentObj.files = elem.replace("files: ","").split(", ");
                 }
             })
-            writeFolders(contentObj, folderPath)
+            writeFolders(contentObj, folderPath);
             const metaData = getMetaData(contentObj.files, initPath);
             const structureArr = metaData.map(elem=>{
                 if(typeof elem === 'string' && elem.match(/.+\_folder/)){
                     return {
                         [elem.replace("_folder","")]:[]
-                    }
+                    };
                 } else {
                     return elem;
                 }
@@ -50,14 +48,14 @@ const readMdDir = async(initPath, folderPath = "/")=>{
                         readMdDir(newInitPath);
                     }
                 }
-            })
+            });
             fs.writeFile('./structure.json', JSON.stringify(structure), (err)=>{
                 if(err) throw err;
                 console.log("Structure.json is updated");
-             })
-        }
-})
-}
+             });
+        };
+});
+};
 function writeFolders(contentObj, folderPath){
     if(contentObj.title){
         const files = fs.readdirSync(`./views${folderPath}`)
@@ -101,4 +99,4 @@ const getMetaData = (arr,initPath) => {
     return mdArr;
 };
 
-readMdDir(INIT_PATH);
+readMdDir(INIT_PATH)

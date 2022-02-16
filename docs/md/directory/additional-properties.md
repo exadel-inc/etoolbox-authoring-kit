@@ -1,11 +1,9 @@
-<!-- [title] title -->
-<!-- [description] description -->
-<!-- [keywords] description -->
 <!--
-abasda
-asdasd
-asdasd
- -->
+nav-title: Additional properties,
+title: Additional properties,
+description: Some description,
+keywords: keyword1 keyword2 keyword3
+-->
 [Main page](../../README.md)
 
 ## Additional properties of components, dialogs and fields

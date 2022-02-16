@@ -1,3 +1,9 @@
+<!--
+nav-title: Depends on,
+title: Depends on,
+description: Some description,
+keywords: keyword1 keyword2 keyword3
+-->
 [Main page](../../README.md)
 
 ## DependsOn Plugin Client Library

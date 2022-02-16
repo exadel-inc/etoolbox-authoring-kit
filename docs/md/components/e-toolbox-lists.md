@@ -1,3 +1,9 @@
+<!--
+nav-title: E-toolbox lists,
+title: E-toolbox lists,
+description: Some description,
+keywords: keyword1 keyword2 keyword3
+-->
 [Main page](../../README.md)
 
 ## Managing structured data with Exadel Toolbox Lists

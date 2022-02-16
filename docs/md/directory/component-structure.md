@@ -1,3 +1,9 @@
+<!--
+nav-title: Component structure,
+title: Component structure,
+description: Some description,
+keywords: keyword1 keyword2 keyword3
+-->
 [Main page](../../README.md)
 
 ## @AemComponent

@@ -1,3 +1,9 @@
+<!--
+nav-title: Customizing toolkit,
+title: Customizing toolkit,
+description: Some description,
+keywords: keyword1 keyword2 keyword3
+-->
 [Main page](../../README.md)
 
 ## Customizing the ToolKit to your needs
