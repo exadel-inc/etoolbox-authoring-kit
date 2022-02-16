@@ -7,6 +7,19 @@ const {markdown} = require('./markdown.lib');
 
 const {github, rewriteRules, urlPrefix} = require('../views/_data/site.json');
 
+const recursiveCheckLinks = (arr, link, element, key) => {
+    arr.forEach(el=>{
+        if(el.hasOwnProperty("fileName") && el.fileName === link){
+            element.setAttribute("href", `/${[key]}/${link.replace(".md", "")}`)
+        }
+        if(!el.hasOwnProperty("fileName") && Object.keys(el).length === 1){
+            const elKey = Object.keys(el)[0]
+            const newKey =  key + "/" + elKey
+            recursiveCheckLinks(el[elKey], link,element, newKey)
+        }
+    })
+}
+
 class MDRenderer {
 
   static async render(filePath, startAnchor, endAnchor) {
@@ -92,12 +105,12 @@ class MDRenderer {
         else if(elemLink.match(reForInstallationLinks)){
           let link = elemLink.replace('docs/md/', "")
           for(let key in structure){
-            structure[key].includes(link) && elem.setAttribute("href", `/${[key]}/${link.replace(".md", "")}`)
+            recursiveCheckLinks(structure[key], link, elem, key)
           }
         }
         else if(elemLink.match(reForMdLinks)){
         for(let key in structure){
-            structure[key].includes(elemLink) && elem.setAttribute("href", `/${[key]}/${elemLink.replace(".md", "")}`)
+            recursiveCheckLinks(structure[key], elemLink, elem, key)
         }
       }
     });

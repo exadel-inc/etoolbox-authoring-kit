@@ -1,6 +1,3 @@
-configuring-rte.md
-customizing-toolkit.md
-depends-on.md
-test2.dir
+title: test
 
-dirToWrite=test
+files: customizing-toolkit.md, test2_folder

@@ -7,7 +7,7 @@ const setNjkTemplate = (elem, path, dirTag, idx) => {
 layout: content
 title: EAK ${elem.metaData.title || ElemUpperCase}
 seoTitle: EAK ${ElemUpperCase}
-navTitle: ${elem.metaData.navTitle || ElemUpperCase}
+nav-title: ${elem.metaData.navTitle || ElemUpperCase}
 description: ${elem.metaData.description || ElemUpperCase}
 keywords: ${elem.metaData.keywords || dirTag}
 name: ${ElemUpperCase}
@@ -19,5 +19,32 @@ orderValue: ${idx+1}
 {% mdRender '${path + "/" + elem.fileName}' %}`
 }
 
+const objDive = (obj, keyToFind, data) => {
+    if(keyToFind){
+    let isFound = false;
+    const dive = (obj, keyToFind) => {
+      for (let key in obj) {
+        if (key === keyToFind) {
+          obj[key] = data;
+          isFound = true;
+        }
+        if(Array.isArray(obj[key])){
+            obj[key].forEach(elem=>{
+                dive(elem,keyToFind)
+            })
+        }
+        if (typeof obj[key] === "object") {
+          dive(obj[key], keyToFind);
+        }
+      }
+    };
+    dive(obj, keyToFind)
+    if (!isFound) {
+      obj[keyToFind] = data;
+    }}
+    return
+  };
+
 module.exports.setNjkTemplate = setNjkTemplate
+module.exports.objDive = objDive
 

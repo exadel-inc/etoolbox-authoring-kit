@@ -9,6 +9,9 @@
     {% if description %}
       <meta name="description" content="{{ description | escape}}">
     {% endif %}
+    {%if keywords %}
+        <meta name="keywords" content="{{keywords}}">
+    {% endif %}
 
     {# Additional site meta information #}
     {% block meta %}{% endblock meta %}

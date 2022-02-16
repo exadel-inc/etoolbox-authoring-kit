@@ -1,2 +1,3 @@
-test.md
-test3.md
+title: test2
+
+files: depends-on.md

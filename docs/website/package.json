@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "concurrently \"npm:build-eleventy\" \"webpack\" \"npm:build-lessc\"",
-    "start": "concurrently \"node directory.reader.js\" \"npm:build-lessc\" \"npm:watch-eleventy\" \"npm:watch-webpack\" ",
+    "start": "npm run prebuild && npm run build-lessc && webpack && npm run watch-eleventy",
+    "prebuild": "node directory.reader.js && node sidebar.template.js",
     "watch-webpack": "webpack --watch",
     "watch-eleventy": "npx @11ty/eleventy --serve --port=3005",
     "build-eleventy": "npx @11ty/eleventy",

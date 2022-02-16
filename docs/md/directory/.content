@@ -1,5 +1,3 @@
-configuring-fieldset.md
-component-structure.md
-additional-properties.md
+title: directory
 
-dirToWrite=directory
+files: additional-properties.md, component-structure.md, configuring-fieldset.md, configuring-rte.md
