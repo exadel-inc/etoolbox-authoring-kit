@@ -1,0 +1,96 @@
+plugins:
+  # Custom plugin to disallow absolute import paths
+  - ./build/import.stylelint.js
+# Use LESS preprocessor
+customSyntax: postcss-less
+
+rules:
+  # Disallow unknown at-rules
+  at-rule-no-unknown: true
+  # Warn about empty selectors
+  block-no-empty:
+    - true
+    - severity: warning
+  # Warn that require a single space before the opening brace of blocks
+  block-opening-brace-space-before:
+    - always
+    - severity: warning
+  # Disallow invalid hex colors
+  color-no-invalid-hex: true
+  # Disallow empty comments
+  comment-no-empty: true
+  # Warn that require a single space after the colon of declarations
+  declaration-colon-space-after:
+    - always
+    - severity: warning
+  # Disallow duplicate properties within declaration blocks
+  declaration-block-no-duplicate-properties: true
+  # Disallow duplicated font family reverencing
+  font-family-no-duplicate-names: true
+  # Disallow missing font family keyword
+  font-family-no-missing-generic-family-keyword: true
+  # Disallow an unspaced operator within `calc` functions
+  function-calc-no-unspaced-operator: true
+  # Disallow direction values in `linear-gradient()` calls that are not valid according to the standard syntax
+  function-linear-gradient-no-nonstandard-direction: true
+  # Disallow !important within keyframe declarations
+  keyframe-declaration-no-important: true
+  # Disallow duplicated at-rules
+  no-duplicate-at-import-rules: true
+  # Warn about duplicate selectors within a stylesheet
+  no-duplicate-selectors:
+    - true
+    - severity: warning
+  # Warn if empty sources
+  no-empty-source:
+    - true
+    - severity: warning
+  # Disallow extra semicolons
+  no-extra-semicolons: true
+  # Disallow double-slash comments `(//...)` for clear CSS, as they are not supported by CSS
+  # and could lead to unexpected results
+  no-invalid-double-slash-comments: true
+  # Disallow unknown properties
+  property-no-unknown: true
+  # Disallow whitespace before the commas of selector lists
+  selector-list-comma-space-before: never
+  # Use lowercase for pseudo-class selectors
+  selector-pseudo-class-case: lower
+  # Disallow whitespace on the inside of the parentheses within pseudo-class selectors
+  selector-pseudo-class-parentheses-space-inside: never
+  # Use lowercase for pseudo-element selectors
+  selector-pseudo-element-case: lower
+  # Use double colon notation for applicable pseudo-elements
+  selector-pseudo-element-colon-notation: double
+  # Disallow unknown pseudo-class selectors
+  selector-pseudo-class-no-unknown: true
+  # Disallow unknown pseudo-element selectors
+  selector-pseudo-element-no-unknown:
+   - true
+   - ignorePseudoElements:
+       - /^-webkit-/
+       - /^-moz-/
+  # Disallow unknown type selectors
+  selector-type-no-unknown:
+    - true
+    - ignore:
+        - custom-elements
+  # Warn about newlines (unescaped) in strings
+  string-no-newline:
+    - true
+    - severity: warning
+  # Disallow unknown units
+  unit-no-unknown: true
+  # Disallow absolute paths for imports in bounds of library files
+  esl-less/import-root: never
+
+overrides:
+  # Demo site pages sources
+  - files: src/**/*.{css,less}
+    rules:
+      # Warn about duplicate properties within declaration blocks
+      declaration-block-no-duplicate-properties:
+        - true
+        - severity: warning
+      # No import restrictions
+      esl-less/import-root: off

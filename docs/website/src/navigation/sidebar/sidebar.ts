@@ -1,7 +1,7 @@
-import { prop, bind, ready, ESLToggleable, ESLMediaQuery } from '@exadel/esl';
-import { attr } from '@exadel/esl/modules/esl-base-element/core';
+import {prop, bind, ready, ESLToggleable, ESLMediaQuery} from '@exadel/esl';
+import {attr} from '@exadel/esl/modules/esl-base-element/core';
 
-import type { ToggleableActionParams } from '@exadel/esl';
+import type {ToggleableActionParams} from '@exadel/esl';
 
 interface SidebarActionParams extends ToggleableActionParams {
   /** Change state without animation */
@@ -17,7 +17,7 @@ export class ESLDemoSidebar extends ESLToggleable {
   @prop() public submenus: string = '.sidebar-nav-secondary';
   @prop() public activeMenuAttr: string = 'data-open';
 
-  @attr({ name: 'animation' }) protected _animation: boolean;
+  @attr({name: 'animation'}) protected _animation: boolean;
 
   public get $submenus(): ESLToggleable[] {
     return Array.from(this.querySelectorAll(this.submenus));
@@ -40,17 +40,17 @@ export class ESLDemoSidebar extends ESLToggleable {
   protected setInitialState() {
     const isDesktop = ESLMediaQuery.for('@+MD').matches;
     const isStoredOpen = !localStorage.getItem('sidebar-collapsed');
-    this.toggle(isDesktop && isStoredOpen, { force: true, initiator: 'init', immediate: true });
+    this.toggle(isDesktop && isStoredOpen, {force: true, initiator: 'init', immediate: true});
   }
 
   public collapseAll() {
-    this.$submenus.forEach((menu) => menu.hide({ activator: this }));
+    this.$submenus.forEach((menu) => menu.hide({activator: this}));
   }
 
   public expandActive(noCollapse: boolean = false) {
     this.$submenus
       .filter((menu) => menu.hasAttribute('data-open'))
-      .forEach((menu) => menu.show({ noCollapse, activator: this }));
+      .forEach((menu) => menu.show({noCollapse, activator: this}));
   }
 
   protected updateA11y() {
@@ -80,7 +80,7 @@ export class ESLDemoSidebar extends ESLToggleable {
   protected onBreakpointChange() {
     const isDesktop = ESLMediaQuery.for('@+MD').matches;
     const isStoredOpen = !localStorage.getItem('sidebar-collapsed');
-    this.toggle(isDesktop && isStoredOpen, { force: true, initiator: 'bpchange', immediate: !isDesktop });
+    this.toggle(isDesktop && isStoredOpen, {force: true, initiator: 'bpchange', immediate: !isDesktop});
   }
 
   @bind

@@ -1,5 +1,5 @@
 // Config
-import { ESLScreenBreakpoints } from '@exadel/esl';
+import {ESLScreenBreakpoints} from '@exadel/esl';
 
 
 ESLScreenBreakpoints.add('xs', 1, 599);

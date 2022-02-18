@@ -1,0 +1,14 @@
+# Specific lint overrides
+overrides:
+  # Allow the use of custom TypeScript modules and namespaces for JSX shapes
+  - files:
+      - '**/*.test.ts'
+    rules:
+      # no class count limit for tests
+      'max-classes-per-file': off
+      # it's ok to write braces single line in tests
+      '@typescript-eslint/brace-style': off
+      # ts-ignore is off to test clean es cases
+      '@typescript-eslint/ban-ts-comment': off
+      # there is no need to evaluate tests strictly
+      '@typescript-eslint/non-nullable-type-assertion-style': off

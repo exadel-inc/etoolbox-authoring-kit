@@ -1,5 +1,3 @@
-
-
 module.exports = (config) => {
 
     const consoleInfo = (elem) => {
