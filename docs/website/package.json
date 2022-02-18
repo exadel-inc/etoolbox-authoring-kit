@@ -1,7 +1,7 @@
 {
   "name": "AEK",
   "version": "1.0.0",
-  "isDev":"development",
+  "isDev": "development",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,7 @@
   "dependencies": {
     "@exadel/esl": "^3.9.1",
     "glob": "^7.2.0",
+    "gray-matter": "^4.0.3",
     "jsdom": "^19.0.0",
     "typescript": "^4.5.4"
   },
