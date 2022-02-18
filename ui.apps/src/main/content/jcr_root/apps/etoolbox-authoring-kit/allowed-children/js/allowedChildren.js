@@ -15,21 +15,13 @@
 (function (ns) {
     'use strict';
 
-    const testJson = '{' +
-        '"isEditConfig": false,' +
-        '"rules": [' +
-        '{"pageResourceTypes":["*page-hpe-generic-polaris*"],"pagePaths":[],"templates":[],"value":["group:HPE Navigation"],"parentsResTypes":[],"containers":[]},' +
-        '{"pageResourceTypes":["*page-hpe-browsing*"],"pagePaths":[],"templates":["*polaris*"],"value":["group:HPE Content"],"parentsResTypes":[],"containers":[]}' +
-        ']' +
-        '}';
-
     ns.policyResolver = ns.policyResolver || {};
 
-    ns.policyResolver.build = function (rules = testJson) {
+    ns.policyResolver.build = function (rules) {
         return function (cell, allowed, componentList) {
             resolve(componentList, this, allowed, rules);
         };
-    }
+    };
 
     function resolve(componentList, editable, allowed, configJson = testJson) {
         console.log('we are here');
@@ -42,7 +34,7 @@
             allowed.length = 0;
             allowed.push(...applicableRule.value);
         }
-    };
+    }
 
     function getCurrentSettings(editable, author, skipFirstParent) {
         return {
@@ -55,11 +47,11 @@
     }
 
     function isRuleApplied(rule, settings, componentList) {
-        return checkTemplate(rule.templates, settings.template) &&
-            checkPageResType(rule.pageResourceTypes, settings.pageResType) &&
-            checkParent(rule.parentsResourceTypes, settings.parentsResTypes, componentList) &&
-            checkPath(rule.pagePaths, settings.pagePath) &&
-            checkContainer(rule.containers, settings.container);
+        return checkTemplate(rule.templates ? rule.templates : [], settings.template) &&
+            checkPageResType(rule.pageResourceTypes ? rule.pageResourceTypes : [], settings.pageResType) &&
+            checkParent(rule.parentsResourceTypes ? rule.parentsResourceTypes : [], settings.parentsResTypes, componentList) &&
+            checkPath(rule.pagePaths ? rule.pagePaths : [], settings.pagePath) &&
+            checkContainer(rule.containers ? rule.containers : [], settings.container);
     }
 
     function checkTemplate(templates, curTemplate) {
@@ -70,19 +62,23 @@
     }
 
     function checkPageResType(resTypes, curResType) {
-        return !resTypes.length || resTypes.some(resType => match(resType, curResType));
+        return commonCheck(resTypes, curResType);
     }
 
     function checkParent(parentsResTypes, curParents, componentList) {
-        return parentsResTypes.length === 0 ? true : parentsResTypes.some(parents => parentMatch(parents, curParents, componentList));
+        return !parentsResTypes.length || parentsResTypes.some(parents => parentMatch(parents, curParents, componentList));
     }
 
     function checkPath(pagePaths, curPagePath) {
-        return pagePaths.length === 0 ? true : pagePaths.some(path => match(path, curPagePath));
+        return commonCheck(pagePaths, curPagePath);
     }
 
     function checkContainer(containers, curContainer) {
-        return containers.length === 0 ? true : containers.some(container => match(container, curContainer));
+        return commonCheck(containers, curContainer);
+    }
+
+    function commonCheck(array, curValue) {
+        return !array.length || array.some(element => match(element, curValue));
     }
 
     function parentMatch(parents, curParents, componentList) {
