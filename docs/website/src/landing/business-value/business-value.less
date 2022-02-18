@@ -12,6 +12,10 @@
         @media @xs {
             padding: 0.5rem;
             font-size: 14px;
+            background-image: none;
+        }
+        @media @sm {
+            background-position: center left;
         }
     }
     &-list {
@@ -25,13 +29,16 @@
             width: 100%;
             flex-wrap: wrap;
         }
+        @media @sm {
+            padding-top: 1rem;
+        }
     }
     &-block {
         padding: 1rem;
         flex: 1 1 23%;
         display: flex;
         @media @xs-sm {
-            flex: 1 1 42%;
+            flex: 1 1 45%;
             padding: 0.25rem;
             height: fit-content;
         }
