@@ -7,7 +7,7 @@ import {
   ESLScrollbar,
   ESLToggleableDispatcher,
 } from '@exadel/esl';
-import { ESLDemoSidebar } from './navigation/navigation';
+import {ESLDemoSidebar} from './navigation/navigation';
 
 ESLDemoSidebar.register();
 

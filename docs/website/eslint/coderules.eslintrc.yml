@@ -172,7 +172,6 @@ rules:
   '@typescript-eslint/explicit-member-accessibility': off
 
   # Do not require a consistent member declaration order
-  # TODO: discuss for the future
   'member-ordering': off
   '@typescript-eslint/member-ordering': off
 
@@ -192,7 +191,6 @@ rules:
   '@typescript-eslint/no-extraneous-class': off
 
   # Do not require Promise-like values to be handled appropriately
-  # TODO: enable
   '@typescript-eslint/no-floating-promises': off
 
   # Allows usage of the implicit any type in catch clauses
@@ -253,11 +251,3 @@ rules:
   # Allows the use of variables before they are defined
   'no-use-before-define': off
   '@typescript-eslint/no-use-before-define': off
-
-# Specific lint overrides
-overrides:
-  # Allow the use of custom TypeScript modules and namespaces for JSX shapes
-  - files:
-    - '*.shape.ts'
-    rules:
-      '@typescript-eslint/no-namespace': off

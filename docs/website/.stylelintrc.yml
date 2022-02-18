@@ -1,6 +1,3 @@
-plugins:
-  # Custom plugin to disallow absolute import paths
-  - ./build/import.stylelint.js
 # Use LESS preprocessor
 customSyntax: postcss-less
 
@@ -23,8 +20,10 @@ rules:
   declaration-colon-space-after:
     - always
     - severity: warning
-  # Disallow duplicate properties within declaration blocks
-  declaration-block-no-duplicate-properties: true
+  # Warn about duplicate properties within declaration blocks
+  declaration-block-no-duplicate-properties:
+    - true
+    - severity: warning
   # Disallow duplicated font family reverencing
   font-family-no-duplicate-names: true
   # Disallow missing font family keyword
@@ -66,10 +65,10 @@ rules:
   selector-pseudo-class-no-unknown: true
   # Disallow unknown pseudo-element selectors
   selector-pseudo-element-no-unknown:
-   - true
-   - ignorePseudoElements:
-       - /^-webkit-/
-       - /^-moz-/
+    - true
+    - ignorePseudoElements:
+        - /^-webkit-/
+        - /^-moz-/
   # Disallow unknown type selectors
   selector-type-no-unknown:
     - true
@@ -81,16 +80,3 @@ rules:
     - severity: warning
   # Disallow unknown units
   unit-no-unknown: true
-  # Disallow absolute paths for imports in bounds of library files
-  esl-less/import-root: never
-
-overrides:
-  # Demo site pages sources
-  - files: src/**/*.{css,less}
-    rules:
-      # Warn about duplicate properties within declaration blocks
-      declaration-block-no-duplicate-properties:
-        - true
-        - severity: warning
-      # No import restrictions
-      esl-less/import-root: off

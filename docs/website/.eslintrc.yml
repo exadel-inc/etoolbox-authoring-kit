@@ -16,7 +16,6 @@ extends:
   - './eslint/coderules.eslintrc.yml'
   - './eslint/import.eslintrc.yml'
   - './eslint/sonarjs.eslintrc.yml'
-  - './eslint/tests.eslintrc.yml'
 
 # TS configuration
 parser: '@typescript-eslint/parser'
