@@ -23,7 +23,7 @@
         };
     };
 
-    function resolve(componentList, editable, allowed, configJson = testJson) {
+    function resolve(componentList, editable, allowed, configJson) {
         console.log('we are here');
 
         const config = JSON.parse(configJson);
