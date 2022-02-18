@@ -13,7 +13,7 @@
     "build-eleventy": "npx @11ty/eleventy",
     "build-lessc": "lessc src/localdev.less dist/bundles/localdev.css",
     "lint": "concurrently \"npm run lint:js\" \"npm run lint:css\" \"npm run lint:spaces\" && node build/catlog.js \"Linting passed\"",
-    "lint:js": "eslint src/**/*.ts --max-warnings 3",
+    "lint:js": "eslint src/**/*.{ts,js} --max-warnings 3",
     "lint:css": "stylelint src/**/*.less",
     "lint:spaces": "lintspaces ./{src,views,controller}/**/*.{html,less,json} -n -t -d spaces"
   },
