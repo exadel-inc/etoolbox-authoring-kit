@@ -16,9 +16,6 @@ module.exports = (config) => {
     }
   }
 
-  // Add MD files from the sources
-  config.addWatchTarget('../md/**/*.md');
-
   // Setup simple copy operations
   config.addPassthroughCopy({
     'static/assets': 'assets',
