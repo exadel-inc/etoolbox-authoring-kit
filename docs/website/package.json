@@ -1,6 +1,7 @@
 {
   "name": "AEK",
   "version": "1.0.0",
+  "isDev":"development",
   "description": "",
   "main": "index.js",
   "scripts": {

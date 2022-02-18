@@ -5,7 +5,6 @@ const ucFirst = (str)=>{
     return str[0].toUpperCase() + str.slice(1)
 }
 
-
 const setInfiniteTemplate = (elem, folder)=>{
     if(elem.hasOwnProperty("fileName") && elem.hasOwnProperty("metaData") && elem.hasOwnProperty("njkPath")){
         return `<li class="sidebar-nav-secondary-item {{ 'active' if isActive }} {{ 'draft' if isDraft }}"
@@ -19,12 +18,15 @@ const setInfiniteTemplate = (elem, folder)=>{
         const content = elem[key].map(el=>{
             return setInfiniteTemplate(el, folder+"/"+key)
         }).join("")
+        const checkLvl = (str) => {
+            return str.split("/").length / 2;
+        }
         return `
-        <div class="sidebar-nav-item-heading">
+        <div class="sidebar-nav-item-heading" style="margin-left:${checkLvl(folder+"/"+key) + "rem"}">
         <esl-trigger class="sidebar-nav-item-trigger sidebar-nav-item-arrow"target="::parent::next">
         ${ucFirst(key)}
         </esl-trigger></div>
-        <esl-panel id="sidebar-${key}-menu">
+        <esl-panel style="margin-left:${checkLvl(folder+"/"+key) + "rem"}" id="sidebar-${key}-menu">
             ${content}
         </esl-panel>`
     }
@@ -36,15 +38,18 @@ const setSidebarTemplate = () =>{
 <esl-d-sidebar id="sidebar" class="open" aria-label="Site Navigation">
   <nav class="sidebar-nav">
     <a class="sidebar-heading" href="{{ '/' | url }}">
-      <span class="sidebar-logo fill-light">{% include "static/assets/helpers/icon.svg" %}</span>
-      <span class="sidebar-title">{{ site.name }}</span>
+      <span class="sidebar-logo fill-light">{% include "static/assets/helpers/icon.white.svg" %}</span>
+      <span class="sidebar-title">EXADEL AUTHORING </br> KIT FOR AEM</span>
     </a>
     <div class="sidebar-content">
       <div class="sidebar-nav-list esl-scrollable-content">
         <li class="sidebar-nav-item">
-            <div class="sidebar-nav-item-heading">
-                <a class="sidebar-nav-link" href="/introduction/installation">Introduction</a>
-            </div>
+        <div class="sidebar-nav-item-heading {{ 'active' if isPrimaryActive }}">
+            <esl-trigger class="sidebar-nav-item-trigger"
+            {% if isPrimaryActive %}active{% endif %}>
+            <a class="sidebar-nav-link" href="/introduction/installation">Introduction</a>
+            </esl-trigger>
+        </div>
         </li>
         <li class="sidebar-nav-item">
         ${structureFolders.map(folder => {
@@ -71,3 +76,4 @@ const setSidebarTemplate = () =>{
 }
 
 fs.writeFileSync("./views/_includes/navigation/sidebar.njk", setSidebarTemplate());
+

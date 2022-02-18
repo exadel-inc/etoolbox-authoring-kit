@@ -7,7 +7,7 @@
     </div>
     <div class="article-list d-flex">
         {% for article in landing.articleSection %}
-        <a class="article-link d-block mx-1" href="{{article.linkUrl}}">
+        <a class="article-link d-block" href="{{article.linkUrl}}">
         <div class="article-item text-white">
             <h5 class="fs-1 article-item-title mb-2">{{article.title}}</h5>
             <div class="d-flex article-item-img-container mb-1"><img class="article-item-img" src="{{article.imgUrl}}"></img></div>
@@ -17,12 +17,12 @@
             {% endfor %}
             </ul>
             <p class="article-content fw-300 fs-1 mb-1">{{ article.content }}</p>
-            <span class="article-item-date m-1">{{ article.date }}</span>
+            <span class="article-item-date">{{ article.date }}</span>
         </div>
         </a>
         {% endfor %}
     </div>
     <div class="z-index d-flex article-center">
-        <a href="{{landing.articleExadelUrl}}"class="btn btn-mint">Learn more</a>
+        <a href="{{landing.urls.articleExadelUrl}}"class="btn btn-mint m-0">Learn more</a>
     </div>
 </div>

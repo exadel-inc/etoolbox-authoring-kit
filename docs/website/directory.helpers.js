@@ -25,7 +25,7 @@ const objDive = (obj, keyToFind, data) => {
     const dive = (obj, keyToFind) => {
       for (let key in obj) {
         if (key === keyToFind) {
-          obj[key] = data;
+          obj[keyToFind] = data;
           isFound = true;
         }
         if(Array.isArray(obj[key])){

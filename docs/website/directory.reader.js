@@ -4,6 +4,7 @@ const {setNjkTemplate, objDive} = require('./directory.helpers');
 const INIT_PATH = "../md"
 
 let paths = ["../../README.md"];
+
 let structure = {};
 
 const readMdDir = async(initPath, folderPath = "/")=>{
@@ -37,7 +38,7 @@ const readMdDir = async(initPath, folderPath = "/")=>{
                 if(typeof file === "object" && file.fileName.match(/.+\.md/)){
                     fs.writeFile(`./views/${file.njkPath}`, setNjkTemplate(file, initPath, contentObj.title, idx), (err)=>{
                         if(err) throw err;
-                        console.log(`File ${file.fileName} is created`);
+                        //console.log(`File ${file.fileName} is created`);
                     });
                 };
                 if(typeof file === "string" && file.match(/.+\_folder/)){
@@ -49,10 +50,7 @@ const readMdDir = async(initPath, folderPath = "/")=>{
                     }
                 }
             });
-            fs.writeFile('./structure.json', JSON.stringify(structure), (err)=>{
-                if(err) throw err;
-                console.log("Structure.json is updated");
-             });
+            fs.writeFileSync('./structure.json', JSON.stringify(structure));
         };
 });
 };

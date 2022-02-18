@@ -1,11 +1,12 @@
-const env = process.argv.find(arg => arg.startsWith('--env='))?.split('=')[1];
-const version = 4
-const isDev = env === 'development';
+const package = require('../package.json')
 
-const context = {isDev, version, env};
+const version = package.version
+const isDev = package.isDev
+const date = new Date()
+const context = {isDev, version, date};
+
 
 module.exports = (config) => {
-//   Waiting for 11ty 1.0.0
-//   config.addGlobalData('env', context);
+   config.addGlobalData('env', context);
 };
-Object.assign(module.exports, context);
+
