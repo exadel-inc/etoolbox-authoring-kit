@@ -42,6 +42,7 @@
         }
         @media @xs-sm {
             flex: 1 1 40%;
+            height: fit-content;
         }
     }
     &-item {
@@ -71,6 +72,9 @@
                 padding: 2px 5px 2px 0;
                 font-size: 0.875rem;
             }
+            @media @xs-sm {
+                padding: 0 20px;
+            }
         }
         &-date {
             font-size: 0.875rem;
@@ -87,5 +91,10 @@
     &-center {
         width: 100%;
         justify-content: center;
+    }
+    &-content {
+        @media @xs-sm {
+            padding: 0 20px;
+        }
     }
 }
