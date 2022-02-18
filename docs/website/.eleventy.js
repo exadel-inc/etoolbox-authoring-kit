@@ -16,15 +16,13 @@ module.exports = (config) => {
     }
   }
 
-  // Add MD files from the library sources
-  // config.addWatchTarget('../src/**/*.md');
-  // config.addWatchTarget('../docs/**/*.md');
+  // Add MD files from the sources
+  config.addWatchTarget('../md/**/*.md');
 
   // Setup simple copy operations
   config.addPassthroughCopy({
     'static/assets': 'assets',
-    'static/tools': '.',
-    'src':'src'
+    'static/tools': '.'
   });
 
   // Update BS observed directories
