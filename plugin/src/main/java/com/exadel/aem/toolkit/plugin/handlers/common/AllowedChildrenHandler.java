@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 
 public class AllowedChildrenHandler implements Handler {
 
+    private static final Gson GSON = new Gson();
+
     @Override
     public void accept(Source source, Target target) {
         source.tryAdaptTo(AllowedChildren[].class).ifPresent(adaptation -> populatePolicies(adaptation, target));
@@ -39,7 +41,7 @@ public class AllowedChildrenHandler implements Handler {
     }
 
     private String toJson(List<AllowedChildren> rules, boolean isEditConfig) {
-        return new Gson().toJson(new Result(
+        return GSON.toJson(new Result(
                 rules.stream().map(this::annotationToMap).collect(Collectors.toList()),
                 isEditConfig)
         );
@@ -48,12 +50,16 @@ public class AllowedChildrenHandler implements Handler {
     private Map<String, String[]> annotationToMap(AllowedChildren allowedChildren) {
         Map<String, String[]> map = new HashMap<>(6);
         map.put("value", allowedChildren.value());
-        map.put("pageResourceTypes", allowedChildren.pageResourceTypes());
-        map.put("templates", allowedChildren.templates());
-        map.put("parentsResourceTypes", allowedChildren.parentsResourceTypes());
-        map.put("pagePaths", allowedChildren.pagePaths());
-        map.put("containers", allowedChildren.resourceNames());
+        map.put("pageResourceTypes", nullIfEmpty(allowedChildren.pageResourceTypes()));
+        map.put("templates", nullIfEmpty(allowedChildren.templates()));
+        map.put("parentsResourceTypes", nullIfEmpty(allowedChildren.parentsResourceTypes()));
+        map.put("pagePaths", nullIfEmpty(allowedChildren.pagePaths()));
+        map.put("containers", nullIfEmpty(allowedChildren.resourceNames()));
         return map;
+    }
+
+    private String[] nullIfEmpty(String[] arr) {
+        return arr.length != 0 ? arr : null;
     }
 
     private static class Result {
