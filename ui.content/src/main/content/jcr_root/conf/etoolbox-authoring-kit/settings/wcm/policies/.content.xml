@@ -30,11 +30,31 @@
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Trojan Horse"
                         sling:resourceType="wcm/core/components/policy/policy"
-                        components="[group:HPE Content]"
+                        components=""
                         policyResourceType="wcm/foundation/components/responsivegrid">
                     </trojan-horse>
                 </responsivegrid>
             </components>
         </foundation>
     </wcm>
+    <etoolbox-authoring-kit jcr:primaryType="nt:unstructured">
+        <trojan-horse jcr:primaryType="nt:unstructured">
+            <components jcr:primaryType="nt:unstructured">
+                <structure jcr:primaryType="nt:unstructured">
+                    <page-trojan-horse jcr:primaryType="nt:unstructured">
+                        <trojan-horse-page-policy
+                            cq:lastReplicated="{Date}2021-02-09T12:00:00.347Z"
+                            cq:lastReplicatedBy="admin"
+                            cq:lastReplicationAction="Activate"
+                            jcr:mixinTypes="[cq:ReplicationStatus]"
+                            jcr:primaryType="nt:unstructured"
+                            jcr:title="Trojan Horse Page Policy"
+                            sling:resourceType="wcm/core/components/policy/policy"
+                            clientlibs="trojan-horse.limit-parsys">
+                        </trojan-horse-page-policy>
+                    </page-trojan-horse>
+                </structure>
+            </components>
+        </trojan-horse>
+    </etoolbox-authoring-kit>
 </jcr:root>

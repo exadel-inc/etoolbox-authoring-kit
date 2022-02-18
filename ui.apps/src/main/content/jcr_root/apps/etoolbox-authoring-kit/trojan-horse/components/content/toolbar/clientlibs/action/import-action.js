@@ -2,11 +2,11 @@
  *  Import Toolbar Action to import "template" page content into current position
  **/
 (function ($document, author, ns) {
-    const IMPORT_ACTION = 'import-action';
+    const IMPORT_ACTION = 'trojan-horse-import-action';
 
     const JCR_CONTENT = '/jcr:content/';
-    const NEWPAR_TYPES = ['foundation/components/parsys/newpar', 'wcm/foundation/components/parsys/newpar'];
-    const IMPORT_DIALOG_PATH = '/mnt/override/apps/etoolbox-authoring-kit/trojan-horse/components/content/dialog/_cq_dialog.html';
+    const NEWPAR_TYPES = ['wcm/foundation/components/parsys/newpar', 'wcm/foundation/components/responsivegrid/new'];
+    const IMPORT_DIALOG_PATH = '/mnt/override/apps/etoolbox-authoring-kit/trojan-horse/components/content/toolbar/dialog/_cq_dialog.html';
 
     function condition(editable) {
         return author.pageInfoHelper.canModify() && editable.hasAction('INSERT');
@@ -36,10 +36,10 @@
         author.DialogFrame.openDialog(dlg);
     }
 
-    $document.off('cq-layer-activated.import-action').on('cq-layer-activated.import-action', function (ev) {
+    $document.off('cq-layer-activated.trojan-horse-import-action').on('cq-layer-activated.trojan-horse-import-action', function (ev) {
         if (ev.layer === 'Edit') {
             author.EditorFrame.editableToolbar.registerAction(IMPORT_ACTION, {
-                icon: 'coral-Icon--DataDownload',
+                icon: 'coral-Icon--dataUpload',
                 text: Granite.I18n.get('Import Trojan Horse'),
                 handler: openImportDialog,
                 condition: condition,

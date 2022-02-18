@@ -1,2 +1,2 @@
-importHelper.js
+import-helper.js
 import-action.js

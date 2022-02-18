@@ -3,6 +3,6 @@
     jcr:primaryType="cq:Template">
     <jcr:content
         jcr:primaryType="cq:PageContent"
-        jcr:title="Exadel Trojan Horse page"
+        jcr:title="Exadel Trojan Horse Template Type"
         status="enabled"/>
 </jcr:root>
