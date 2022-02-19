@@ -63,7 +63,7 @@ It is an open and growing project. The authors sincerely welcome creative input 
     </configuration>
 </plugin>
 ```
-Follow [Plugin settings](docs/md/plugin-settings.md) to learn more about the plugin's configuration.
+Follow [Plugin settings](docs/content/components/plugin-settings.md) to learn more about the plugin's configuration.
 
 ### Installing assets
 
@@ -372,21 +372,21 @@ Many more code snippets are available in the [Component management](#component-m
 
 #### Component management
 
-- [Component structure](docs/md/component-structure.md)
-- [Laying out your dialog](docs/md/dialog-layout.md)
-- [Defining dialog fields, setting attributes](docs/md/widget-annotations.md)
-    - [Configuring RichTextEditor](docs/md/configuring-rte.md)
-    - [Grouping fields with FieldSet](docs/md/configuring-fieldset.md)
-    - [Multiplying Fields](docs/md/multiplying-fields.md)
-- [Reusing code and making it brief](docs/md/reusing-code.md)
-- [Customizing the ToolKit to your needs](docs/md/customizing-toolkit.md)
-- [Additional properties of components, dialogs and fields](docs/md/additional-properties.md)
+- [Component structure](docs/content/get-started/component-structure.md)
+- [Laying out your dialog](docs/content/components/dialog-layout.md)
+- [Defining dialog fields, setting attributes](docs/content/components/widget-annotations.md)
+    - [Configuring RichTextEditor](docs/content/get-started/configuring-rte.md)
+    - [Grouping fields with FieldSet](docs/content/get-started/configuring-fieldset.md)
+    - [Multiplying Fields](docs/content/components/multiplying-fields.md)
+- [Reusing code and making it brief](docs/content/components/reusing-code.md)
+- [Customizing the ToolKit to your needs](docs/content/components/test/customizing-toolkit.md)
+- [Additional properties of components, dialogs and fields](docs/content/get-started/additional-properties.md)
 
 #### Enhanced authoring experience
 
-- [Programming dynamic dialog behavior: DependsOn plugin client library](docs/md/depends-on.md)
-- [Managing structured data with Exadel Toolbox Lists](docs/md/etoolbox-lists.md)
-- [Feeding data to selection widgets with OptionProvider](docs/md/option-provider.md)
+- [Programming dynamic dialog behavior: DependsOn plugin client library](docs/content/components/test/test2/depends-on.md)
+- [Managing structured data with Exadel Toolbox Lists](docs/content/components/e-toolbox-lists.md)
+- [Feeding data to selection widgets with OptionProvider](docs/content/components/option-provider.md)
 
 #### Need more documentation?
 
