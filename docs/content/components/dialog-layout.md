@@ -1,9 +1,9 @@
 <!--
-nav-title: Dialog layout,
-title: Dialog layout,
-description: Some description,
-keywords: keyword1 keyword2 keyword3
+layout: content
+title: Dialog layout
+tags: components
 -->
+
 [Main page](../../README.md)
 
 ## Laying out your dialogs

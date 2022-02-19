@@ -1,9 +1,9 @@
 <!--
-nav-title: Option provider,
-title: Option provider,
-description: Some description,
-keywords: keyword1 keyword2 keyword3
+layout: content
+title: Option provider
+tags: components
 -->
+
 [Main page](../../README.md)
 
 ## Feeding data to selection widgets with OptionProvider

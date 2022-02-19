@@ -1,9 +1,9 @@
 <!--
-nav-title: Reusing code,
-title: Reusing code,
-description: Some description,
-keywords: keyword1 keyword2 keyword3
+layout: content
+title: Reusing code
+tags: components
 -->
+
 [Main page](../../README.md)
 
 ## Reusing code and making it brief

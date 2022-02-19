@@ -1,9 +1,9 @@
 <!--
-nav-title: Fieldset,
-title: Fieldset,
-description: Some description,
-keywords: keyword1 keyword2 keyword3
+layout: content
+title: Fieldset
+tags: get-started
 -->
+
 [Main page](../../README.md)
 
 ## Grouping fields with FieldSet

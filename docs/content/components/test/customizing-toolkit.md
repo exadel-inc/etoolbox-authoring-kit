@@ -1,9 +1,9 @@
 <!--
-nav-title: Customizing toolkit,
-title: Customizing toolkit,
-description: Some description,
-keywords: keyword1 keyword2 keyword3
+layout: content
+title: Customizing toolkit
+tags: test
 -->
+
 [Main page](../../README.md)
 
 ## Customizing the ToolKit to your needs

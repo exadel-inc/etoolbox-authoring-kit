@@ -1,11 +1,12 @@
 <!--
 layout: content
-nav-title: Depends on
 title: Depends on
+tags: test2
 -->
+
 [Main page](../../README.md)
 
-## DependsOn Plugin Client Library
+## DependsO Plugin Client Library
 
 Authors: _Alexey Stsefanovich (ala'n)_, _Yana Bernatskaya (YanaBr)_, _Stepan Miakchilo_, _Liubou Masiuk_
 

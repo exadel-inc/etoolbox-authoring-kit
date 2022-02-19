@@ -1,9 +1,9 @@
 <!--
-nav-title: Configuring rte,
-title: Configuring rte,
-description: Some description,
-keywords: keyword1 keyword2 keyword3
+layout: content
+title: Configuring rte
+tags: get-started
 -->
+
 [Main page](../../README.md)
 
 

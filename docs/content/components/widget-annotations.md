@@ -1,9 +1,9 @@
 <!--
-nav-title: Widget annotations,
-title: Widget annotations,
-description: Some description,
-keywords: keyword1 keyword2 keyword3
+layout: content
+title: Widget annotations
+tags: components
 -->
+
 [Main page](../../README.md)
 
 ## Defining dialog fields

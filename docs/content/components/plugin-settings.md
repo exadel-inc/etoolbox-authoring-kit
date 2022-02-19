@@ -1,9 +1,9 @@
 <!--
-nav-title: Plugin settings,
-title: Plugin settings,
-description: Some description,
-keywords: keyword1 keyword2 keyword3
+layout: content
+title: Plugin settings
+tags: components
 -->
+
 [Main page](../../README.md)
 ## Plugin settings
 
