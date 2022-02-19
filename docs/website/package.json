@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build:prepare && concurrently --kill-others \"npm run watch:content\" \"npm run watch:less\" \"npm run watch:ts\" \"npm run watch:eleventy\"",
-    "build": "npm run clean && npm run build:prepare && concurrently \"npm run build:less\" \"npm run build:ts\" && \"npm run build:eleventy\"",
+    "start": "npm run build:prepare && concurrently --kill-others \"npm:watch:content\" \"npm:watch:less\" \"npm:watch:ts\" \"npm:watch:eleventy\"",
+    "build": "npm run clean && npm run build:prepare && concurrently \"npm:build:less\" \"npm:build:ts\" && \"npm:build:eleventy\"",
     "clean": "rimraf dist/**",
     "build:prepare": "npm run build:prepare:copy && npm run build:prepare:frontmeter",
     "build:prepare:copy": "copyfiles -u 2 ../content/* views/content",
@@ -17,7 +17,7 @@
     "watch:eleventy": "npx @11ty/eleventy --serve --port=3005 -- --env=development",
     "watch:less": "chokidar --initial \"**/*.less\" -c \"npm run build:less\"",
     "watch:ts": "webpack --watch",
-    "lint": "concurrently \"npm run lint:js\" \"npm run lint:css\" \"npm run lint:spaces\"",
+    "lint": "concurrently \"npm:lint:js\" \"npm:lint:css\" \"npm:lint:spaces\"",
     "lint:js": "eslint src/**/*.{ts,js} --max-warnings 3",
     "lint:css": "stylelint src/**/*.less",
     "lint:spaces": "lintspaces ./{src,views,controller}/**/*.{html,less,json} -n -t -d spaces"
