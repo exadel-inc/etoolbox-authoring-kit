@@ -16,6 +16,10 @@ module.exports = (config) => {
     }
   }
 
+  // Watch for changes in the content folder ignored by GIT
+  config.setUseGitIgnore(false);
+  config.addWatchTarget('views/content/*');
+
   // Setup simple copy operations
   config.addPassthroughCopy({
     'static/assets': 'assets',
