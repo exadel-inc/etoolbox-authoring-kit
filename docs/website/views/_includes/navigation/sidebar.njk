@@ -1,0 +1,31 @@
+{% from 'navigation/sidebar-item.njk' import navitem with context %}
+<esl-d-sidebar id="sidebar" class="open" aria-label="Site Navigation">
+  <nav class="sidebar-nav">
+    <a class="sidebar-heading" href="{{ '/' | url }}">
+      <span class="sidebar-logo fill-light">{% include "static/assets/helpers/icon.white.svg" %}</span>
+      <span class="sidebar-title">EXADEL AUTHORING </br> KIT FOR AEM</span>
+    </a>
+    <div class="sidebar-content">
+      <ul class="sidebar-nav-list esl-scrollable-content">
+        <li class="sidebar-nav-item">
+          {{ navitem ('Introduction', 'introduction') }}
+        </li>
+
+      </ul>
+      <esl-scrollbar class="sidebar-scrollbar" target="::prev"></esl-scrollbar>
+    </div>
+    <esl-trigger class="sidebar-trigger-btn sidebar-arrows-icon" target="#sidebar" data-store></esl-trigger>
+  </nav>
+</esl-d-sidebar>
+
+<script>
+    if (localStorage.getItem('sidebar-collapsed')) {
+        var sidebar = document.querySelector('#sidebar');
+        sidebar.classList.remove('open');
+        sidebar.querySelector('.sidebar-trigger-btn').removeAttribute('active');
+        Array.from(sidebar.querySelectorAll('.sidebar-nav-secondary'))
+        .forEach(function(menu) {
+            menu.classList.remove('open');
+        });
+    }
+</script>

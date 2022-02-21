@@ -3,7 +3,7 @@
 
 {% block content %}
   {% include 'navigation/header.njk' %}
-{#  {% include 'navigation/sidebar.njk' %}#}
+ {% include 'navigation/sidebar.njk' %}
   <main class="esl-scrollable-content">
     <div class="content">
       {{ content | safe or 'No content.' }}
