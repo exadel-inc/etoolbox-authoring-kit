@@ -13,19 +13,10 @@
  */
 package com.exadel.aem.toolkit.plugin.maven;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
+import com.exadel.aem.toolkit.test.common.AllowedChildrenAnnotation1;
+import com.exadel.aem.toolkit.test.common.AllowedChildrenAnnotation2;
+import com.exadel.aem.toolkit.test.common.AllowedChildrenAnnotation3;
 import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
 import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
@@ -39,6 +30,17 @@ import com.exadel.aem.toolkit.test.component.ForceIgnoreFreshnessTestCases;
 import com.exadel.aem.toolkit.test.component.WriteModeTestCases;
 import com.exadel.aem.toolkit.test.component.layout.MultiColumnDialog;
 import com.exadel.aem.toolkit.test.component.viewpattern.component1.ComplexComponentHolder;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 public class ComponentsTest extends DefaultTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(ComponentsTest.class);
@@ -88,6 +90,21 @@ public class ComponentsTest extends DefaultTestBase {
     @Test
     public void testChildEditConfig() {
         test(ChildEditConfigAnnotation.class);
+    }
+
+    @Test
+    public void testAllowedChildren1() {
+        test(AllowedChildrenAnnotation1.class, "common/allowedChildren/test1");
+    }
+
+    @Test
+    public void testAllowedChildren2() {
+        test(AllowedChildrenAnnotation2.class, "common/allowedChildren/test2");
+    }
+
+    @Test
+    public void testAllowedChildren3() {
+        test(AllowedChildrenAnnotation3.class, "common/allowedChildren/test3");
     }
 
     @Test
