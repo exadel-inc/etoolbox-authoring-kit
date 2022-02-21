@@ -1,0 +1,31 @@
+{% macro navitem(title, collection) %}
+    {% set isPrimaryActive = functions.isActivePath(page.url, collection) %}
+    <div class="sidebar-nav-item-heading {{ 'active' if isPrimaryActive }}">
+        <esl-trigger class="sidebar-nav-item-trigger sidebar-nav-item-arrow"
+                    target="::parent::next"
+                    {% if isPrimaryActive %}active{% endif %}>
+        {{ title }}
+        </esl-trigger>
+    </div>
+
+    <esl-panel id="sidebar-{{ collection }}-menu"
+                class="sidebar-nav-secondary {{ 'open' if isPrimaryActive }}"
+                {% if isPrimaryActive %}data-open{% endif %}
+                group="esl-nav"
+                fallback-duration="400">
+        <ul class="sidebar-nav-secondary-list">
+        {% for item in collections[collection] %}
+            {% set isActive = page.url === item.url %}
+            {% set isDraft = [].concat(item.data.tags).includes('draft') %}
+            <li class="sidebar-nav-secondary-item {{ 'active' if isActive }} {{ 'draft' if isDraft }}"
+                {% if isActive %}aria-selected="true"{% endif %}>
+            <a class="sidebar-nav-secondary-link"
+                {% if isActive %}aria-current="page"{% endif %}
+                href="{{ item.url | url }}">
+                {{ item.data.name }}
+            </a>
+            </li>
+        {% endfor %}
+        </ul>
+    </esl-panel>
+{% endmacro %}

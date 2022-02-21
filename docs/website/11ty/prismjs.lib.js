@@ -1,5 +1,7 @@
 const Prism = require('prismjs');
+
 require('prismjs/components/prism-java');
+require(`prismjs/components/prism-javascript`);
 
 const highlight = (str, lang) => {
   try {
