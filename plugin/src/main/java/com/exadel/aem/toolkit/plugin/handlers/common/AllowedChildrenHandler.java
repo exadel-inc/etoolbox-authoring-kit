@@ -27,15 +27,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
+ * object that define the "updatecomponentlist" listener of the {@code cq:childEditConfig} or {@code cq:editConfig} node of an AEM component
+ */
 public class AllowedChildrenHandler implements Handler {
 
     private static final Gson GSON = new Gson();
 
+    /**
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * @param source {@code Source} object used for data retrieval
+     * @param target Resulting {@code Target} object
+     */
     @Override
     public void accept(Source source, Target target) {
         source.tryAdaptTo(AllowedChildren[].class).ifPresent(adaptation -> populatePolicies(adaptation, target));
     }
 
+    /**
+     * Processes data from {@code AllowedChildren[]} annotations and stores it into 'cq:listeners' node of the provided {@code Target}
+     * @param rules {@code AllowedChildren[]} object used for data retrieval
+     * @param target Resulting {@code Target} object
+     */
     private void populatePolicies(AllowedChildren[] rules, Target target) {
         List<AllowedChildren> allowedChildrenList = Arrays.stream(rules)
                 .filter(ac -> isEditConfig(target) == ac.applyToCurrent())
@@ -51,6 +65,11 @@ public class AllowedChildrenHandler implements Handler {
                 .attribute(DialogConstants.PN_UPDATE_COMPONENT_LIST, String.format(DialogConstants.VALUE_POLICY_RESOLVER_FORMAT, json));
     }
 
+    /**
+     * Gets whether the given {@link Target} is a representation of a {@code cq:editConfig} node of an AEM component
+     * @param target {@code Target} instance
+     * @return True or false
+     */
     private boolean isEditConfig(Target target) {
         return Scopes.CQ_EDIT_CONFIG.equals(target.getScope());
     }
