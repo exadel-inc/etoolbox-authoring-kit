@@ -16,9 +16,13 @@ module.exports = (config) => {
     }
   }
 
+  // Wait before triggering a new build when files have changes
+  // Fix the problem with changing the front matter of MD files
+  config.setWatchThrottleWaitTime(500);
+
   // Watch for changes in the content folder ignored by GIT
   config.setUseGitIgnore(false);
-  config.addWatchTarget('views/content/*');
+  config.addWatchTarget('views/content/');
 
   // Setup simple copy operations
   config.addPassthroughCopy({
