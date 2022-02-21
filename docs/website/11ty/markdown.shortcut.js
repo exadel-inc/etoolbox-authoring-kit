@@ -1,6 +1,6 @@
 const path = require('path');
 const fsAsync = require('fs').promises;
-const structure = require('../structure.json');
+// const structure = require('../structure.json');
 
 const {JSDOM} = require('jsdom');
 const {markdown} = require('./markdown.lib');
@@ -44,8 +44,6 @@ class MDRenderer {
 
       // Resolve content links
       MDRenderer.resolveLinks(window.document.body, filePath);
-
-     MDRenderer.changePath(window.document.body);
       const res = await MDRenderer.changeImgPath(window.document.body);
       MDRenderer.setHeadingsId(res);
       // Render result content
@@ -88,34 +86,7 @@ class MDRenderer {
     }
     return github.srcUrl + linkPath;
   }
-  static changePath(content){
-    const reForMdLinks = /^[^https].+\.md/;
-    const reForInstallationLinks = /docs\/md\/.+\.md/;
-    const reForGHLinks = /https:\/\/github\.com\/exadel-inc\/etoolbox-authoring-kit\/tree\/.+/;
-    const linkArr = content.querySelectorAll('a');
-    linkArr.forEach(elem =>{
-      const elemLink = elem.getAttribute('href');
-        if(elemLink.match(reForGHLinks)){
-          const link = elemLink.replace("/tree/", "/blob/master/");
-          elem.setAttribute("href", link);
-        }
-        else if (elemLink.match(/.*samples.*/) && !elemLink.match(reForGHLinks)){
-        elem.setAttribute("href", '/introduction/samples/');
-        }
-        else if(elemLink.match(reForInstallationLinks)){
-          let link = elemLink.replace('docs/md/', "");
-          for(let key in structure){
-            recursiveCheckLinks(structure[key], link, elem, key);
-          };
-        }
-        else if(elemLink.match(reForMdLinks)){
-        for(let key in structure){
-            recursiveCheckLinks(structure[key], elemLink, elem, key)
-        };
-      };
-    });
-    return content;
-  };
+
   static changeImgPath(content){
       const imgArr = content.querySelectorAll('img');
       const imgPath = '../../assets/components';
