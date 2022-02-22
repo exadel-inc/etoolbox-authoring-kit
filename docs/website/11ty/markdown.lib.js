@@ -8,11 +8,12 @@ markdown.use((md)=>{
   md.normalizeLink = (link) => {
     if(link && typeof link === 'string' && link.match(/.+\.md/)){
       allContent.forEach(file=>{
-        if(link.startsWith("docs")) {
+        if(link.startsWith('docs')) {
           const linkSplit = link.split('/');
-          const linkNum = linkSplit.length - 1
-          link = linkSplit[linkNum]
+          const linkNum = linkSplit.length - 1;
+          link = linkSplit[linkNum];
         }
+        if(link === '../../README.md') link = "/introduction/installation/";
         const fileSplit = file.split('/');
         const fileLastNum = fileSplit.length - 1;
         const fileName = fileSplit[fileLastNum];
