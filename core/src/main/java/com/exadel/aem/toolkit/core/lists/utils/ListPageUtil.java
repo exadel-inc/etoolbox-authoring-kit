@@ -13,9 +13,14 @@
  */
 package com.exadel.aem.toolkit.core.lists.utils;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.ModifiableValueMap;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import com.day.cq.commons.jcr.JcrUtil;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
@@ -25,27 +30,26 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.ListConstants;
 
 /**
- * Contains methods for manipulation with List Page
+ * Contains methods for manipulating EToolbox List Pages
  */
-class ListPageUtils {
+class ListPageUtil {
+
+    private static final Map<String, Object> LIST_PROPERTIES = Collections.singletonMap(
+        JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY,
+        "wcm/foundation/components/responsivegrid");
+
 
     /**
-     * Default (instantiation-restricting) constructor
-     */
-    private ListPageUtils() {
-    }
-
-    /**
-     * Creates a list page under given path
+     * Creates a page representing an EToolbox List under the given JCR path
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
-     * @param path             JCR path of the items list page.
-     * @return {@link Page} containing list of entries
-     * @throws WCMException If a page cannot be created
+     * @param path             JCR path of the items list page
+     * @return {@link Page} containing the list of entries
+     * @throws WCMException If the page cannot be created
      */
-    public static Page createListPage(ResourceResolver resourceResolver, String path) throws WCMException {
+    public static Page createPage(ResourceResolver resourceResolver, String path) throws WCMException, PersistenceException {
         PageManager pageManager = resourceResolver.adaptTo(PageManager.class);
-        if (StringUtils.isBlank(path)) {
-            throw new IllegalArgumentException("Path cannot be blank!");
+        if (pageManager == null) {
+            throw new WCMException("Could not retrieve a PageManager instance");
         }
 
         String parentPath = StringUtils.substringBeforeLast(path, CoreConstants.SEPARATOR_SLASH);
@@ -57,7 +61,13 @@ class ListPageUtils {
             pageProperties.put(CoreConstants.PN_ITEM_RESOURCE_TYPE, ListConstants.SIMPLE_LIST_ITEM_RESOURCE_TYPE);
         }
 
+        resourceResolver.create(listPage.getContentResource(), ListConstants.NN_LIST, LIST_PROPERTIES);
         return listPage;
     }
 
+    /**
+     * Default (instantiation-restricting) constructor
+     */
+    private ListPageUtil() {
+    }
 }
