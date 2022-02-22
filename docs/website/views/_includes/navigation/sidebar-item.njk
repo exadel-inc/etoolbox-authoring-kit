@@ -22,7 +22,7 @@
             <a class="sidebar-nav-secondary-link"
                 {% if isActive %}aria-current="page"{% endif %}
                 href="{{ item.url | url }}">
-                {{ item.data.name }}
+                {{ item.data.title }}
             </a>
             </li>
         {% endfor %}

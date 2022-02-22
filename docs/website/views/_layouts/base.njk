@@ -39,4 +39,27 @@
       <script src="{{ '/bundles/localdev.js' | url }}"></script>
    {% endblock %}
   </body>
+  <script>
+  const checkLinks = () => {
+    const links = document.querySelectorAll("a");
+  const sidebarLinks = [];
+  Array.from(links).map(elem=>{
+    if(elem.classList.contains("sidebar-nav-secondary-link")){
+      sidebarLinks.push(elem.attributes.href.value)
+    }
+  });
+  links.forEach(mdLink=>{
+    const href = mdLink.getAttribute("href");
+    if(href.match(/.+\.md/)){
+      sidebarLinks.forEach(sideLink=>{
+        const sideLinkSplit = sideLink.split("/");
+        const sideLinkValueNum = sideLinkSplit.length
+        const sideLinkValue = sideLinkSplit[sideLinkValueNum - 2]
+        sideLinkValue === href.replace(".md", "") && mdLink.setAttribute("href", sideLink)
+      })
+    }
+  })
+  }
+  checkLinks()
+  </script>
 </html>
