@@ -24,16 +24,13 @@ import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
 import com.exadel.aem.toolkit.core.injectors.EToolboxListInjector;
 
 /**
- * Used on either a field, a method, or a method parameter of a Sling model to inject EToolbox Lists
- * obtained via {@code ResourceResolver} instance. <p>Injects list values of the same type that the ListHelper retrieves.
- * The annotation contains elements: {@code value()} and {@code keyProperty()}.
- * <p> The {@code value()} annotation element sets the JCR path of the items list. It is a required field.
- * <p> The {@code keyProperty()} annotation element sets the item resource property that holds the key of the resulting map.
- * If the annotated member is not a {@code Map<String, T>}, the {@code keyProperty()} is ignored.
- * <p>If the annotated member is of type {@code Collection<T>}, {@code List<T>}, {@code Map<String, T>},
- * {@code T[]} <p> the collection or array of list entries stored in the specified {@code JCR path}
- * will be injected. <p> If {@code value()} is empty or the type is wrong nothing will be injected.
- * Supports only models that are adaptable from request and resource.
+ * Used on either a field, a method, or a method parameter of a Sling model to inject a EToolbox List obtained via
+ * {@code ResourceResolver} instance.
+ * <p>Injects the list values of the same type that the ListHelper retrieves.
+ * <p>If the annotated member is of type {@code Collection<T>}, {@code List<T>}, {@code Map<String, T>}, or
+ * {@code T[]}, the collection of list entries stored in the specified JCR path is injected.
+ * <p> If {@code value()} is empty or the underlying entity has a wrong type, nothing is injected.
+ * Only the models that are adapted from Sling requests and resources are supported
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
