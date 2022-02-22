@@ -17,11 +17,13 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 
 /**
@@ -64,6 +66,22 @@ class InjectorUtils {
     }
 
     /**
+     * Retrieves a {@link ResourceResolver} instance from the provided adaptable object if it is assignable from
+     * {@code Resource} or {@code SlingHttpServletRequest}
+     * @param adaptable The object which Sling tries to adapt from
+     * @return {@code ResourceResolver} object if adaptable is of an appropriate type, or null
+     */
+    public static ResourceResolver getResourceResolver(Object adaptable) {
+        ResourceResolver resolver = null;
+        if (adaptable instanceof Resource) {
+            resolver = ((Resource) adaptable).getResourceResolver();
+        } else if (adaptable instanceof SlingHttpServletRequest) {
+            resolver = ((SlingHttpServletRequest) adaptable).getResourceResolver();
+        }
+        return resolver;
+    }
+
+    /**
      * Retrieves the {@code ValueMap} instance from the provided adaptable if it is of type {@code SlingHttpServletRequest},
      * or {@code Resource}, or else {@code ValueMap}
      * @param adaptable The object which Sling tries to adapt from
@@ -98,6 +116,36 @@ class InjectorUtils {
         }
         Class<?> componentType = (Class<?>) ((ParameterizedType) value).getActualTypeArguments()[0];
         return isValidObjectType(componentType, allowedMemberTypes);
+    }
+
+    /**
+     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized Map type and its
+     * parameter type matches the list of allowed value types
+     * @param value              {@code Type} object
+     * @param allowedMemberTypes {@code Class} objects representing allowed value types
+     * @return True or false
+     */
+    public static boolean isValidMap(Type value, Class<?>... allowedMemberTypes) {
+        if (!(value instanceof ParameterizedType)
+            || !ClassUtils.isAssignable((Class<?>) ((ParameterizedType) value).getRawType(), Map.class)) {
+            return false;
+        }
+        Class<?> componentType = (Class<?>) ((ParameterizedType) value).getActualTypeArguments()[1];
+        return isValidObjectType(componentType, allowedMemberTypes);
+    }
+
+    /**
+     * Retrieves whether the provided {@code Type} of a Java class member is a parameterized type and checks
+     * if the specified raw type is compatible with the allowed type
+     * @param value       {@code Type} object
+     * @param allowedType {@code Class} objects representing allowed type
+     * @return True or false
+     */
+    public static boolean isValidRawType(Type value, Class<?> allowedType) {
+        if (!(value instanceof ParameterizedType)) {
+            return false;
+        }
+        return ClassUtils.isAssignable((Class<?>) ((ParameterizedType) value).getRawType(), allowedType);
     }
 
     /**
