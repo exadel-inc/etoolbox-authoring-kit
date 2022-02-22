@@ -35,7 +35,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.targets.TargetImpl;
+import com.exadel.aem.toolkit.plugin.targets.LegacyHandlerAcceptor;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
@@ -87,7 +87,7 @@ public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
                 .composeElement(PluginRuntime.context().getXmlUtility().getDocument());
             if (element != null) {
                 legacyHandlers.forEach(handler -> ((DialogWidgetHandler) handler).accept(element, field));
-                ((TargetImpl) target).attributes(element);
+                target.adaptTo(LegacyHandlerAcceptor.class).attributes(element);
             }
         }
     }
@@ -101,7 +101,7 @@ public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
     @SuppressWarnings("deprecation") // DialogWidgetHandler processing is retained for compatibility and will be removed
                                      // in a version after 2.0.2
     private List<Handler> getEffectiveHandlers(Source source, String scope) {
-        if (predefinedHandlers != null && !predefinedHandlers.isEmpty()) {
+        if (predefinedHandlers != null) {
             return predefinedHandlers;
         }
 
@@ -137,7 +137,7 @@ public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
             .getReflection()
             .getHandlers()
             .stream()
-            .filter(handler -> handler instanceof DialogWidgetHandler)
+            .filter(DialogWidgetHandler.class::isInstance)
             .filter(handler -> StringUtils.equals(source, ((DialogWidgetHandler) handler).getName()))
             .map(DialogWidgetHandler.class::cast);
     }

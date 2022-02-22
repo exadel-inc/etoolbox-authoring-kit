@@ -61,7 +61,7 @@ class EmptyCqEditConfigWriter extends PackageEntryWriter {
      * {@inheritDoc}
      */
     @Override
-    BiConsumer<Source, Target> getHandler() {
+    BiConsumer<Source, Target> getHandlers() {
         return HANDLER;
     }
 }

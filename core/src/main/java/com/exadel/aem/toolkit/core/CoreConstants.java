@@ -36,6 +36,9 @@ public class CoreConstants {
     public static final String SEPARATOR_COMMA = ",";
     public static final String SEPARATOR_HYPHEN = "-";
     public static final String SEPARATOR_SLASH = "/";
+    public static final String SEPARATOR_UNDERSCORE = "_";
+
+    public static final String RELATIVE_PATH_PREFIX = "./";
 
     /**
      * Default (instantiation-restricting) constructor

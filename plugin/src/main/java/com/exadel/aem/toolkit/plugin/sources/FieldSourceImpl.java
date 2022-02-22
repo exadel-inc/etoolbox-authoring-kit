@@ -26,18 +26,17 @@ import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 /**
  * Implements {@link Source} to expose the metadata that is specific for the underlying class field
  */
-public class FieldSourceImpl extends MemberSourceImpl {
+class FieldSourceImpl extends MemberSourceImpl {
 
     private final Field field;
+    private String name;
+    private Class<?> declaringClass;
 
     /**
-     * Initializes a class instance with references to the managed field and the {@code Class} the current field is
-     * reported by
+     * Initializes a class instance with a references to the managed field
      * @param field          {@code Field} object
-     * @param reportingClass {@code Class} reference
      */
-    public FieldSourceImpl(Field field, Class<?> reportingClass) {
-        super(reportingClass);
+    public FieldSourceImpl(Field field) {
         this.field = field;
     }
 
@@ -46,6 +45,9 @@ public class FieldSourceImpl extends MemberSourceImpl {
      */
     @Override
     public String getName() {
+        if (StringUtils.isNotBlank(name)) {
+            return name;
+        }
         return field != null ? field.getName() : StringUtils.EMPTY;
     }
 
@@ -53,8 +55,27 @@ public class FieldSourceImpl extends MemberSourceImpl {
      * {@inheritDoc}
      */
     @Override
+    public void setName(String value) {
+        name = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Class<?> getDeclaringClass() {
+        if (declaringClass != null) {
+            return declaringClass;
+        }
         return field != null ? field.getDeclaringClass() : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setDeclaringClass(Class<?> value) {
+        declaringClass = value;
     }
 
     /**

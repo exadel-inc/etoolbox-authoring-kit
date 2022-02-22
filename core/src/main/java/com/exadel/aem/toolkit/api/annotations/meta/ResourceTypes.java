@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.meta;
 
 /**
- * Contains JCR paths of standard Granite UI components
+ * Contains JCR paths of AEM / Granite UI components managed by the ToolKit
  * @see ResourceType
  */
 @SuppressWarnings("unused")
@@ -27,6 +27,7 @@ public class ResourceTypes {
     public static final String AUTOCOMPLETE_LIST = "granite/ui/components/coral/foundation/form/autocomplete/list";
     public static final String AUTOCOMPLETE_TAG = "granite/ui/components/coral/foundation/form/autocomplete/tags";
     public static final String BUTTON = "granite/ui/components/coral/foundation/button";
+    public static final String BUTTON_GROUP = "granite/ui/components/coral/foundation/form/buttongroup";
     public static final String CHECKBOX = "granite/ui/components/coral/foundation/form/checkbox";
     public static final String COLORFIELD = "granite/ui/components/coral/foundation/form/colorfield";
     public static final String CONTAINER = "granite/ui/components/coral/foundation/container";
@@ -56,6 +57,14 @@ public class ResourceTypes {
     public static final String TEXT = "granite/ui/components/coral/foundation/text";
     public static final String TEXTAREA = "granite/ui/components/coral/foundation/form/textarea";
     public static final String TEXTFIELD = "granite/ui/components/coral/foundation/form/textfield";
+
+    public static class Service {
+
+        public static final String IGNORE_FRESHNESS_TOGGLER = "etoolbox-authoring-kit/components/authoring/ignoreFreshnessToggler";
+
+        private Service() {
+        }
+    }
 
     private ResourceTypes() {
     }

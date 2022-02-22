@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
  * Presents a basic implementation of {@link Source} that exposes the metadata that is specific for the underlying class
  * or class member
  */
-public abstract class SourceImpl extends AdaptationBase<Source> implements Source {
+abstract class SourceImpl extends AdaptationBase<Source> implements Source {
 
     /**
      * Default constructor

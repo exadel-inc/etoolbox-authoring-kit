@@ -106,7 +106,7 @@ public class ListHelper {
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param path             JCR path of the items list
      * @param listItems        List of {@link SimpleListItem}
-     * @return Created page containing list of entries
+     * @return {@link Page} containing list of entries
      * @throws WCMException         If a page cannot be created
      * @throws PersistenceException If a page cannot be deleted or list item cannot be created
      */
@@ -121,7 +121,7 @@ public class ListHelper {
      * @param path             JCR path of the items list
      * @param values           List of models
      * @param <T>              Model type
-     * @return Created page containing list of entries
+     * @return {@link Page} containing list of entries
      * @throws PersistenceException If a page cannot be created
      * @throws WCMException         If a page cannot be deleted or list item cannot be created
      */
@@ -142,7 +142,7 @@ public class ListHelper {
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param path             JCR path of the items list
      * @param values           Key-value map
-     * @return Created page containing list of entries
+     * @return {@link Page} containing list of entries
      * @throws WCMException         If a page cannot be created
      * @throws PersistenceException If a page cannot be deleted or list item cannot be created
      */
@@ -156,7 +156,7 @@ public class ListHelper {
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param path             JCR path of the items list
      * @param resources        List of {@link Resource}
-     * @return Created page containing list of entries or ${@code null} if page cannot be created
+     * @return {@link Page} containing list of entries
      * @throws WCMException         If a page cannot be created
      * @throws PersistenceException If a page cannot be deleted or list item cannot be created
      */

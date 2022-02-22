@@ -83,7 +83,7 @@ abstract class PackageEntryWriter {
      * writer with data
      * @return {@code BiConsumer} object representing the handler or handler chain
      */
-    BiConsumer<Source, Target> getHandler() {
+    BiConsumer<Source, Target> getHandlers() {
         return HandlerChains.forScope(getScope());
     }
 
@@ -159,8 +159,8 @@ abstract class PackageEntryWriter {
      */
     private Document createDocument(Class<?> componentClass) {
         Source source = Sources.fromClass(componentClass);
-        Target target = Targets.newInstance(DialogConstants.NN_ROOT, getScope());
-        getHandler().accept(source, target);
+        Target target = Targets.newRoot(getScope());
+        getHandlers().accept(source, target);
 
         Document result = target
             .adaptTo(DomAdapter.class)

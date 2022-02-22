@@ -66,4 +66,14 @@ public @interface MultiField {
      * @return String value
      */
     String typeHint() default "";
+
+    /**
+     * If set to true, forces multiple-source mode for this MultiField despite the amount of contained fields
+     * @return True or false
+     */
+    @PropertyRendering(
+        name = "composite",
+        ignoreValues = "false"
+    )
+    boolean forceComposite() default false;
 }

@@ -39,7 +39,7 @@ class ListPageUtils {
      * Creates a list page under given path
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param path             JCR path of the items list page.
-     * @return Created page containing list of entries
+     * @return {@link Page} containing list of entries
      * @throws WCMException If a page cannot be created
      */
     public static Page createListPage(ResourceResolver resourceResolver, String path) throws WCMException {

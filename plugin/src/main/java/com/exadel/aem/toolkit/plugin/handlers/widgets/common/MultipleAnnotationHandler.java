@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.ImmutableMap;
@@ -35,7 +36,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.handlers.common.CasualAnnotationsHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widgets.MultiFieldHandler;
+import com.exadel.aem.toolkit.plugin.handlers.placement.containers.MultiFieldHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
@@ -64,11 +65,9 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         if (isFieldSet(target)) {
             wrapFieldSet(target);
             isComposite = true;
-
         } else if (isMultifield(target)) {
             wrapNestedMultifield(source, target);
             isComposite = true;
-
         } else {
             wrapSingularField(source, target);
         }
@@ -94,19 +93,18 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Gets whether the given {@link Target} is a representation of a fieldset (judged by the fact it has a nonempty subnode
-     * named "items")
+     * Gets whether the given {@link Target} is a representation of a fieldset (judged by the fact it has an appropriate
+     * resource type)
      * @param target {@code Target} instance
      * @return True or false
      */
     private boolean isFieldSet(Target target) {
-        return target.getTarget(DialogConstants.NN_ITEMS) != null
-            && !target.getTarget(DialogConstants.NN_ITEMS).getChildren().isEmpty();
+        return StringUtils.equals(target.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE), ResourceTypes.FIELDSET);
     }
 
     /**
      * Gets whether the currently rendered XML element is a Granite {@code Multifield} element (judged by the fact
-     * it has an appropriate resource type and a non-empty subnode named "items")
+     * it has an appropriate resource type, or else it has the only subnode named field and is not equal to any of )
      * @param target {@code Target} instance
      * @return True or false
      */
@@ -135,7 +133,11 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     private void wrapSingularField(Source source, Target target) {
         Target fieldSubresource = target.createTarget(DialogConstants.NN_FIELD);
         // Move content to the new wrapper
-        transferProperties(target, fieldSubresource, getTransferPolicies(source));
+        // Leave alone the newly created "field" subnode. To achieve this, we specially override it in transfer policies
+        // by path
+        Map<String, PropertyTransferPolicy> transferPolicies = getTransferPolicies(source);
+        transferPolicies.put(fieldSubresource.getPath(), PropertyTransferPolicy.LEAVE_IN_MULTIFIELD);
+        transferProperties(target, fieldSubresource, transferPolicies);
     }
 
     /**
@@ -170,7 +172,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      */
     private void wrapNestedMultifield(Source source, Target target) {
         // We will create new "field" subresource, but we need it "detached" not to mingle with existing "field" subresource
-        Target fieldSubresource = Targets.newInstance(DialogConstants.NN_FIELD, target);
+        Target fieldSubresource = Targets.newTarget(DialogConstants.NN_FIELD, target);
         Target itemsSubresource = fieldSubresource.createTarget(DialogConstants.NN_ITEMS);
         Target nestedMultifield = itemsSubresource.createTarget(source.getName() + POSTFIX_NESTED);
 
@@ -179,7 +181,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         Map<String, PropertyTransferPolicy> multifieldPolicies = new LinkedHashMap<>();
         multifieldPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_COMPOSITE, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
         multifieldPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.NN_FIELD, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
-        standardPolicies.forEach(multifieldPolicies::put);
+        multifieldPolicies.putAll(standardPolicies);
         multifieldPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_SLING_RESOURCE_TYPE, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
         transferProperties(target, nestedMultifield, multifieldPolicies);
 
@@ -226,28 +228,29 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_RENDER_HIDDEN, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
         // Rest of element attributes will move to the inner node
         transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.WILDCARD, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
-        // While all child nodes will stay as the properties of multifield
-        transferPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.WILDCARD, PropertyTransferPolicy.LEAVE_IN_MULTIFIELD);
+        // granite:data must stay on multifield level because it's deeply interrelated with DependsOn. We most likely need
+        // to manipulate multifield in a whole, rather than a widget withing multifield.
+        transferPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.NN_GRANITE_DATA, PropertyTransferPolicy.LEAVE_IN_MULTIFIELD);
+        // While all child nodes will move to child node "field" of multifield
+        transferPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.WILDCARD, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
 
         return transferPolicies;
     }
 
     /**
      * Migrates attributes and child nodes between {@code source} and {@code target}. Whether particular attributes
-     * and child nodes are copied, moved or left alone, is defined by the {@code policies} map
+     * and child nodes are copied, moved, or left alone, is defined by the {@code policies} map
      * @param from     Element to serve as the source of migration
      * @param to       Element to serve as the target of migration
      * @param policies Map containing attribute names (must start with {@code @}), child node names (must start with
-     *                 {@code ./}) and the appropriate action, whether to copy element, move, or leave intact. The wildcard
+     *                 {@code ./}) and the appropriate action, whether to copy element, move or leave intact. The wildcard
      *                 symbol ({@code *}) is to specify a common policy for multiple elements
      */
     private static void transferProperties(Target from, Target to, Map<String, PropertyTransferPolicy> policies) {
         // Process attributes
         List<String> removableAttributes = new ArrayList<>();
         for (String attribute : from.getAttributes().keySet()) {
-            PropertyTransferPolicy policy = getPolicyForProperty(
-                policies,
-                CoreConstants.SEPARATOR_AT + attribute);
+            PropertyTransferPolicy policy = getPolicyForAttribute(policies, attribute);
             if (policy != PropertyTransferPolicy.LEAVE_IN_MULTIFIELD) {
                 to.attribute(attribute, from.getAttributes().get(attribute));
             }
@@ -259,9 +262,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         // Process child nodes
         List<Target> removableChildren = new ArrayList<>();
         for (Target child : from.getChildren()) {
-            PropertyTransferPolicy policy = getPolicyForProperty(
-                policies,
-                DialogConstants.RELATIVE_PATH_PREFIX + child.getName());
+            PropertyTransferPolicy policy = getPolicyForChildNode(policies, child);
             if (policy == PropertyTransferPolicy.LEAVE_IN_MULTIFIELD) {
                 continue;
             }
@@ -274,22 +275,71 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Called to pick up an appropriate {@link PropertyTransferPolicy}
-     * from the set of provided policies
+     * Picks up an appropriate {@link PropertyTransferPolicy} for an attribute from the set of provided policies
      * @param policies {@code Map} describing available policies
-     * @param propertyToken String representing the name of the current attribute or child node
+     * @param name     Name of the current attribute
      * @return The selected policy, or the default policy if no appropriate option found
      */
-    private static PropertyTransferPolicy getPolicyForProperty(
+    private static PropertyTransferPolicy getPolicyForAttribute(
         Map<String, PropertyTransferPolicy> policies,
-        String propertyToken) {
+        String name) {
         return policies.entrySet().stream()
-            .filter(entry -> entry.getKey().endsWith(DialogConstants.WILDCARD)
-                ? propertyToken.startsWith(StringUtils.stripEnd(entry.getKey(), DialogConstants.WILDCARD))
-                : propertyToken.equals(entry.getKey()))
+            .filter(entry -> entry.getKey().startsWith(CoreConstants.SEPARATOR_AT))
+            .filter(entry -> isAttributePolicyMatch(name, entry))
             .map(Map.Entry::getValue)
             .findFirst()
             .orElse(PropertyTransferPolicy.LEAVE_IN_MULTIFIELD);
+    }
+
+    /**
+     * Called from {@link MultipleAnnotationHandler#getPolicyForAttribute(Map, String)} as a predicate function for
+     * selecting a property transfer policy for the given attribute
+     * @param name          Name of the current attribute
+     * @param policyEntry   {@code Map.Entry} that represents a single property transfer policy
+     * @return True or false
+     */
+    private static boolean isAttributePolicyMatch(String name, Map.Entry<String, PropertyTransferPolicy> policyEntry) {
+        String key = StringUtils.stripStart(policyEntry.getKey(), CoreConstants.SEPARATOR_AT);
+        return key.endsWith(DialogConstants.WILDCARD)
+            ? name.startsWith(StringUtils.stripEnd(key, DialogConstants.WILDCARD))
+            : name.equals(key);
+    }
+
+    /**
+     * Picks up an appropriate {@link PropertyTransferPolicy} for a child node from the set of provided policies
+     * @param policies {@code Map} describing available policies
+     * @param child    {@code Target} object that represents the subnode
+     * @return The selected policy, or the default policy if no appropriate option found
+     */
+    private static PropertyTransferPolicy getPolicyForChildNode(
+        Map<String, PropertyTransferPolicy> policies,
+        Target child) {
+        return Stream.concat(
+            // We split policies in two streams to put absolute paths before the relative ones so that they are
+            // considered in the first turn even if added late
+            policies.entrySet().stream().filter(entry -> entry.getKey().startsWith(CoreConstants.SEPARATOR_SLASH)),
+            policies.entrySet().stream().filter(entry -> entry.getKey().startsWith(DialogConstants.RELATIVE_PATH_PREFIX))
+        )
+            .filter(entry -> isChildNodePolicyMatch(child, entry))
+            .map(Map.Entry::getValue)
+            .findFirst()
+            .orElse(PropertyTransferPolicy.LEAVE_IN_MULTIFIELD);
+    }
+
+    /**
+     * Called from {@link MultipleAnnotationHandler#getPolicyForChildNode(Map, Target)} as a predicate function for
+     * selecting a property transfer policy for the given node
+     * @param child         {@code Target} object that represents the subnode
+     * @param policyEntry   {@code Map.Entry} that represents a single property transfer policy
+     * @return True or false
+     */
+    private static boolean isChildNodePolicyMatch(Target child, Map.Entry<String, PropertyTransferPolicy> policyEntry) {
+        boolean isAbsolutePath = policyEntry.getKey().startsWith(CoreConstants.SEPARATOR_SLASH);
+        String key = isAbsolutePath ? policyEntry.getKey() : StringUtils.substring(policyEntry.getKey(), DialogConstants.RELATIVE_PATH_PREFIX.length());
+        String checkedValue = isAbsolutePath ? child.getPath() : child.getName();
+        return key.endsWith(DialogConstants.WILDCARD)
+            ? StringUtils.startsWith(checkedValue, StringUtils.stripEnd(key, DialogConstants.WILDCARD))
+            : StringUtils.equals(checkedValue, key);
     }
 
     /**

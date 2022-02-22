@@ -26,18 +26,17 @@ import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 /**
  * Implements {@link Source} to expose the metadata that is specific for the underlying class method
  */
-public class MethodSourceImpl extends MemberSourceImpl {
+class MethodSourceImpl extends MemberSourceImpl {
 
     private final Method method;
+    private String name;
+    private Class<?> declaringClass;
 
     /**
-     * Initializes a class instance with references to the managed method and the {@code Class} the current method is
-     * reported by
+     * Initializes a class instance with the reference to the managed method
      * @param method         {@code Method} object
-     * @param reportingClass {@code Class} reference
      */
-    MethodSourceImpl(Method method, Class<?> reportingClass) {
-        super(reportingClass);
+    MethodSourceImpl(Method method) {
         this.method = method;
     }
 
@@ -46,6 +45,9 @@ public class MethodSourceImpl extends MemberSourceImpl {
      */
     @Override
     public String getName() {
+        if (StringUtils.isNotBlank(name)) {
+            return name;
+        }
         return method != null ? method.getName() : StringUtils.EMPTY;
     }
 
@@ -53,8 +55,24 @@ public class MethodSourceImpl extends MemberSourceImpl {
      * {@inheritDoc}
      */
     @Override
+    public void setName(String value) {
+        name = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Class<?> getDeclaringClass() {
+        if (declaringClass != null) {
+            return declaringClass;
+        }
         return method != null ? method.getDeclaringClass() : null;
+    }
+
+    @Override
+    public void setDeclaringClass(Class<?> value) {
+        this.declaringClass = value;
     }
 
     /**

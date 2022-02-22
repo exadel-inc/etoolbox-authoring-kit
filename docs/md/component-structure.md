@@ -44,11 +44,17 @@ However, there is a way to make the plugin create a folder in the package when m
     helpPath = "https://www.google.com/search?q=my+aem+component",
     width = 800,
     height = 600,
-    extraClientlibs = "cq.common.wcm"
+    extraClientlibs = "cq.common.wcm",
+    forceIgnoreFreshness = true
 )
 public class MyComponentDialog {/* ... */}
 ```
 If you specify *title* in `@Dialog`, it will override the title specified in @AemComponent. Skip this if you need to have the same title rendered for the component itself and for the dialog.
+
+Pay attention to the *forceIgnoreFreshness* option. When set to true, it forces the entire dialog to ignore freshness of the Granite UI form beside the dialog. This will allow any component that resides within the dialog to display its default value (if specified) regardless of whether the underlying resource is being created anew (a "fresh" one) or just being edited.
+
+Most Granite UI components don't manage default values when editing a "non-fresh" resource. Some offer their own implementation of *forceIgnoreFreshness* (most notably, the Select component). However, specifying *forceIgnoreFreshness* at the `@Dialog` level makes the rest behave in the way the Select does.
+
 
 ### @DesignDialog
 
@@ -269,8 +275,36 @@ public class DummyComponent {
     private String basicTabHolder;
 }
 ```
-Else, you can add components to the tab as usual. Note that an additional nested container may be needed to provide the layout similar to that of the pre-existing tabs.
+Else, you can add components to the tab as usual. Note that usually in a Page properties dialog tab components are wrapped in an additional column so that they get centered on the screen and do not span the whole of the screen width. This can be achieved through a nested column.
 
+```java
+@AemComponent(
+        path = "../pages/my-page",
+        resourceSuperType = "my/components/pages/page",
+        title = "Page properties"
+)
+@Dialog
+@Tabs(@Tab(title = "Basic"))
+public class DummyComponent {
+
+    // The title is not actually rendered, so you may specify any meaningful string
+    @FixedColumns(@Column(title = "Tab column"))
+    @Place("Basic")
+    private int tabHolder; // Type of the field does not matter as well
+
+    @DialogField(label = "Enter text")
+    @TextField
+    @Place("Tab column")
+    private String text;
+
+    @DialogField(label = "Enter description")
+    @TextField
+    @Place("Tab column")
+    private String description;
+
+}
+```
+Else you can use a nested class annotated with `FixedColumns` for that purpose.
 
 ***
 #### See also

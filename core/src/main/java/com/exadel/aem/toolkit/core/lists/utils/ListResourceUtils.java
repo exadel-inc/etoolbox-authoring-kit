@@ -22,11 +22,14 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.MapUtils;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceMetadata;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import com.day.cq.commons.jcr.JcrConstants;
+import com.day.cq.wcm.api.Page;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
@@ -41,7 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 class ListResourceUtils {
 
-    public static final Map<String, Object> LIST_PROPERTIES
+    private static final Map<String, Object> LIST_PROPERTIES
         = Collections.singletonMap(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, "wcm/foundation/components/responsivegrid");
 
     private static final List<String> PROPERTIES_TO_IGNORE = Arrays.asList(
@@ -50,51 +53,43 @@ class ListResourceUtils {
     );
 
     /**
-     * Default (instantiation-restricting) constructor
+     * Creates a list resource under given parent
+     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
+     * @param parent           List Page that holds list resource
+     * @return list Resource or {@code null} if {@link ResourceResolver} or {@code parent} is null
+     * @throws PersistenceException if list resource cannot be created
      */
-    private ListResourceUtils() {
+    static Resource createListResource(ResourceResolver resourceResolver, Page parent) throws PersistenceException {
+        if (resourceResolver == null || parent == null) {
+            return null;
+        }
+
+        return resourceResolver.create(parent.getContentResource(), ListConstants.NN_LIST, LIST_PROPERTIES);
     }
 
     /**
-     * Converts key-value map to list of {@link ValueMapResource} where each item represents {@code listItem}
+     * Create {@link com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel} resource under {@code parent}
+     * container with given properties.
+     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
+     * @param parent           Container for {@code listItem}'s.
+     * @param properties       {@code listItem} properties
+     * @throws PersistenceException if {@code listItem} cannot be created
+     */
+    static void createListItem(ResourceResolver resourceResolver, Resource parent, Map<String, Object> properties) throws PersistenceException {
+        Map<String, Object> withoutSystemProperties = getMapWithoutSystemProperties(properties);
+        withoutSystemProperties.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ListConstants.LIST_ITEM_RESOURCE_TYPE);
+        resourceResolver.create(parent, ResourceUtil.createUniqueChildName(parent, CoreConstants.PN_LIST_ITEM), withoutSystemProperties);
+    }
+
+    /**
+     * Converts key-value map to list of {@link ValueMapResource}
      * @param values Key-value map that will be converted to {@link ValueMapResource}
      * @return List of {@link ValueMapResource}
      */
-    public static List<Resource> mapToListItemResources(Map<String, Object> values) {
+    static List<Resource> mapToValueMapResources(Map<String, Object> values) {
         return MapUtils.emptyIfNull(values).entrySet().stream()
-            .map(entry -> ListResourceUtils.createListItemResource(entry.getKey(), entry.getValue()))
+            .map(entry -> ListResourceUtils.createValueMapResource(entry.getKey(), entry.getValue()))
             .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns a map without system properties
-     * @param properties Initial map of properties
-     * @return Filtered map of properties
-     */
-    public static Map<String, Object> excludeSystemProperties(Map<String, Object> properties) {
-        return MapUtils.emptyIfNull(properties).entrySet().stream()
-            .filter(entry -> !PROPERTIES_TO_IGNORE.contains(entry.getKey()))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    /**
-     * Returns BiFunction mapper that converts model into resource.
-     * @param modelType Model type
-     * @return Mapper that converts model into resource.
-     */
-    public static BiFunction<Object, ObjectMapper, Resource> getMapper(Class<?> modelType) {
-        if (SimpleListItem.class.equals(modelType)) {
-            return (model, objectMapper) -> {
-                SimpleListItem simpleListItem = (SimpleListItem) model;
-                return createListItemResource(simpleListItem.getTitle(), simpleListItem.getValue());
-            };
-        }
-
-        return (model, objectMapper) -> {
-            Map<String, Object> properties = objectMapper.convertValue(model, new TypeReference<Map<String, Object>>() {
-            });
-            return new ValueMapResource(null, new ResourceMetadata(), JcrConstants.NT_UNSTRUCTURED, new ValueMapDecorator(properties));
-        };
     }
 
     /**
@@ -104,11 +99,56 @@ class ListResourceUtils {
      * @param value {@code value} of {@code listItem}
      * @return {@link ValueMapResource} representation of {@code listItem}
      */
-    private static Resource createListItemResource(String title, Object value) {
+    static Resource createValueMapResource(String title, Object value) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(JcrConstants.JCR_TITLE, title);
         properties.put(CoreConstants.PN_VALUE, value);
-        properties.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ListConstants.LIST_ITEM_RESOURCE_TYPE);
-        return new ValueMapResource(null, new ResourceMetadata(), JcrConstants.NT_UNSTRUCTURED, new ValueMapDecorator(properties));
+        return createValueMapResource(properties);
+    }
+
+    /**
+     * Creates {@link ValueMapResource} with given properties
+     * @param properties resource properties
+     * @return {@link ValueMapResource}
+     */
+    static Resource createValueMapResource(Map<String, Object> properties) {
+        return new ValueMapResource(null, "", JcrConstants.NT_UNSTRUCTURED, new ValueMapDecorator(properties));
+    }
+
+    /**
+     * Returns BiFunction mapper that converts model into properties.
+     * @param modelType Model type
+     * @return Mapper that converts model into properties.
+     */
+    static BiFunction<Object, ObjectMapper, Map<String, Object>> getMapper(Class<?> modelType) {
+        if (SimpleListItem.class.equals(modelType)) {
+            return (model, objectMapper) -> {
+                SimpleListItem simpleListItem = (SimpleListItem) model;
+                Map<String, Object> properties = new HashMap<>();
+                properties.put(JcrConstants.JCR_TITLE, simpleListItem.getTitle());
+                properties.put(CoreConstants.PN_VALUE, simpleListItem.getValue());
+                return properties;
+            };
+        }
+
+        return (model, objectMapper) -> objectMapper.convertValue(model, new TypeReference<Map<String, Object>>() {
+        });
+    }
+
+    /**
+     * Returns a map without ignored properties
+     * @param properties Initial map of properties
+     * @return Filtered map of properties
+     */
+    private static Map<String, Object> getMapWithoutSystemProperties(Map<String, Object> properties) {
+        return MapUtils.emptyIfNull(properties).entrySet().stream()
+            .filter(entry -> !PROPERTIES_TO_IGNORE.contains(entry.getKey()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    /**
+     * Default (instantiation-restricting) constructor
+     */
+    private ListResourceUtils() {
     }
 }

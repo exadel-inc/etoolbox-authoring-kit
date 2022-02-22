@@ -27,11 +27,15 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 
+import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Replace;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.api.markers._Default;
+import com.exadel.aem.toolkit.api.markers._Super;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
+import com.exadel.aem.toolkit.plugin.sources.ModifiableMemberSource;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
@@ -42,6 +46,10 @@ class ReplacementHelper {
     private static final SourceReplacingCollector SOURCE_REPLACING = new SourceReplacingCollector();
 
     private final List<Source> internal;
+
+    /* ---------------------------------
+       Instance constructors and methods
+       --------------------------------- */
 
     /**
      * Default (instantiation-restricting) constructor
@@ -60,7 +68,7 @@ class ReplacementHelper {
     private List<Source> processInternal() {
         List<Source> result = new ArrayList<>(internal);
         Queue<Source> replacingEntries = result.stream()
-            .filter(entry -> entry.adaptTo(Replace.class) != null)
+            .filter(entry -> entry.tryAdaptTo(Replace.class).isPresent())
             .sorted(OrderingUtil::compareByOrigin)
             .collect(Collectors.toCollection(LinkedList::new));
 
@@ -80,9 +88,27 @@ class ReplacementHelper {
                 continue;
             }
 
-            // Move the replacing member to the position of replaceable member
+            // Move the replacing member to the position of the member being replaced
+            // We try to find the index of the element being replaced in the resulting list. However, it can be missing
+            // from the list (in case there have been several @Replace-s pointing to that particular element, and
+            // it has already been replaced with the first of the "contenders"). In such case, we look for the element
+            // that has replaced the original one, and replace in with the new "contender".
+            // Therefore, the very last @Replace-annotated element is the actual replacement
             result.remove(replacingEntry);
             int insertPosition = result.indexOf(formerEntry);
+            boolean alreadyReplaced = insertPosition == -1;
+            if (alreadyReplaced) {
+                Source alreadyExistingReplacement = result.stream()
+                    .filter(source -> isSameReplacement(source, replacingEntry))
+                    .findFirst()
+                    .orElse(null);
+                if (alreadyExistingReplacement != null) {
+                    insertPosition = result.indexOf(alreadyExistingReplacement);
+                    result.remove(alreadyExistingReplacement);
+                } else {
+                    insertPosition = result.size();
+                }
+            }
             result.add(insertPosition, replacingEntry);
 
             // If the replacing entry has no particular ranking value, assign to it the ranking of the former entry
@@ -91,12 +117,21 @@ class ReplacementHelper {
                 replacingEntry.adaptTo(MemberRankingSetting.class).setRanking(formerRank);
             }
 
+            // Assign the {@code declaringClass} of the entry being replaced to the replacement entry
+            replacingEntry
+                .adaptTo(ModifiableMemberSource.class)
+                .setDeclaringClass(formerEntry.adaptTo(MemberSource.class).getDeclaringClass());
+
             // Purge the former entry
             result.remove(formerEntry);
             replacingEntries.remove(formerEntry); // because a replaceable member can also be declared as "replacing"
         }
         return result;
     }
+
+    /* ------------------
+       Public entry-point
+       ------------------ */
 
     /**
      * Retrieves the {@code Collector} instance performing  replacements in the stream of {@code Source}s as
@@ -107,6 +142,56 @@ class ReplacementHelper {
     public static Collector<Source, ReplacementHelper, List<Source>> processSourceReplace() {
         return SOURCE_REPLACING;
     }
+
+
+    /* ---------------
+       Utility methods
+       --------------- */
+
+    /**
+     * Gets whether the two {@code Source}s claim to replace the same Java class member pointed at by their {@link Replace}
+     * annotations
+     * @param existing  {@code Source} object that represents the already processed {@link Replace}-annotated class member
+     *                  that may have replaced some previous class member
+     * @param contender {@code Source} object that represents a {@link Replace}-annotated class member that has yet to
+     *                  be processed
+     * @return True if both members point to one prevoisly existing class member that needs to be replaced; otherwise
+     * false
+     */
+    private static boolean isSameReplacement(Source existing, Source contender) {
+        if (!existing.tryAdaptTo(Replace.class).isPresent() || !contender.tryAdaptTo(Replace.class).isPresent()) {
+            return false;
+        }
+        ClassMember firstMemberName = existing.adaptTo(Replace.class).value();
+        ClassMember secondMemberName = contender.adaptTo(Replace.class).value();
+        if (!firstMemberName.value().equals(secondMemberName.value())) {
+            return false;
+        }
+        return existing.adaptTo(MemberSource.class).getDeclaringClass()
+            .equals(getReferencedReplacementClass(contender));
+    }
+
+    /**
+     * Called by {@link ReplacementHelper#isSameReplacement(Source, Source)} to extract a reference to the class specified
+     * in the {@link Replace} annotation of the current Java class member, either directly or via a pointer interface,
+     * such as {@link _Super} or {@link _Default}
+     * @param source {@code Source} object that represents a {@link Replace}-annotated class member
+     * @return {@code Class} reference
+     */
+    private static Class<?> getReferencedReplacementClass(Source source) {
+        Class<?> result = source.adaptTo(Replace.class).value().source();
+        if (_Default.class.equals(result)) {
+            return source.adaptTo(MemberSource.class).getDeclaringClass();
+        }
+        if (_Super.class.equals(result)) {
+            return source.adaptTo(MemberSource.class).getDeclaringClass().getSuperclass();
+        }
+        return result;
+    }
+
+    /* ---------------
+       Utility classes
+       --------------- */
 
     /**
      * Implements {@code Collector<Source, ReplacementHelper, List<Source>>} to run the replacements as determined by

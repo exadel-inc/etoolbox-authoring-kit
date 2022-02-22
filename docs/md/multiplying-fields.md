@@ -14,7 +14,9 @@ Reference to that class is passed to `@MultiField`'s *value* property. Just as f
 
 Multifields allow you to specify the `deleteHint` (true/false) or `typeHint` values that will produce HTTP request parameters in line with Apache Sling specification for [@Delete](https://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#delete) and [@TypeHint](https://sling.apache.org/documentation/bundles/manipulating-content-the-slingpostservlet-servlets-post.html#typehint).
 
-See below how it works for a single field repetition and for a subset of fields multiplied.
+AEM multifields exist in two flavors. *Simple* multifields usually contain only one authorable field per item. If a user creates many items, the values are stored as an array. *Composite* multifields store their values in subnodes of the current resource's node. This is mainly useful when there are several authorable fields per item.
+
+By default the ToolKit renders a simple multifield when there is only one authorable field to manage in the reflected class, and creates a composite multifield if there are more. However, you can create a composite multifield for a class with only one authorable field by specifying `forceComposite = true`.
 
 #### Simple multifield
 
@@ -35,7 +37,7 @@ public class SimpleMultiFieldDialog {
 }
 ```
 
-#### Composite multi field
+#### Composite multifields
 
 ```java
 public class CompositeMultiFieldDialog {
@@ -54,15 +56,30 @@ public class CompositeMultiFieldDialog {
     }
 }
 ```
+
+```java
+public class CompositeMultiFieldDialog2 {
+    @DialogField(label = "Multi")
+    @MultiField(forceComposite = true)
+    List<MultiFieldContainer> containers;
+
+    static class MultiFieldContainer {
+        @DialogField
+        @TextField
+        String dialogItem;
+    }
+}
+```
+
 Note that the inheritance of class(-es) encapsulating multifield items works here the same way as for the `@FieldSet`.
 
-### Multiple
+### @Multiple
 
-The easiest way to create a *MultiField* is with the `@Multiple` annotation. Just add it to the Java class field where a widget annotation is already present. A *simple multifield* containing this particular widget will be created on the fly.
+The easiest way to create a *MultiField* is with the `@Multiple` annotation. Just add it to the Java class field where a widget annotation is already present. A *simple* multifield containing this particular widget will be created on the fly.
 
-On the other hand, if you add `@Multiple` to a field marked with `@FieldSet`, a *composite multifield* will be created (much like the one you could have adding `@Multifield` annotation itself). Moreover, you can add `@Multiple` to a mere `@Multifield`-marked field and enjoy a sort of "multifield of multifields."
+On the other hand, if you add `@Multiple` to a field marked with `@FieldSet`, a *composite* multifield will be created (much like the one you could have adding `@MultiField` annotation itself). Moreover, you can add `@Multiple` to a mere `@MultiField`-marked field and enjoy a sort of "multifield of multifields."
 
-Please note, however, that `@Multiple` is primarily designed for easy, "quick give me a multifield out of my single widget" cases. For more complicated cases, it lacks tweaking capabilities that `@MultiField` itself allows.
+Please note, however, that `@Multiple` is primarily designed for easy, "quick give me a multifield out of my single widget" cases. For more complicated cases it lacks tweaking capabilities that `@MultiField` itself has.
 
 ***
 #### See also

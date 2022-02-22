@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.plugin.sources;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
@@ -29,17 +29,9 @@ import com.exadel.aem.toolkit.api.markers._Default;
  * Presents an abstract implementation of {@link Source} that exposes the metadata that is specific for the underlying
  * class member
  */
-public abstract class MemberSourceImpl extends SourceImpl implements MemberSource {
+abstract class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
 
-    private final Class<?> reportingClass;
-
-    /**
-     * Initializes a class instance storing a reference to the {@code Class} the current member is reported by
-     * @param reportingClass {@code Class} reference
-     */
-    MemberSourceImpl(Class<?> reportingClass) {
-        this.reportingClass = reportingClass;
-    }
+    private Class<?> reportingClass;
 
     /**
      * {@inheritDoc}
@@ -47,6 +39,14 @@ public abstract class MemberSourceImpl extends SourceImpl implements MemberSourc
     @Override
     public Class<?> getReportingClass() {
         return this.reportingClass;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setReportingClass(Class<?> value) {
+        this.reportingClass = value;
     }
 
     /**
@@ -69,6 +69,18 @@ public abstract class MemberSourceImpl extends SourceImpl implements MemberSourc
             result = getDeclaredAnnotation(FieldSet.class).value();
         }
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isSame(Source other) {
+        if (!(other instanceof MemberSource)) {
+            return super.isSame(other);
+        }
+        return getDeclaringClass().equals(((MemberSource) other).getDeclaringClass())
+            && StringUtils.equals(getName(), other.getName());
     }
 
     /**

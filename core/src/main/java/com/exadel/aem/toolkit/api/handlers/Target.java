@@ -20,10 +20,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.exadel.aem.toolkit.core.CoreConstants;
+
 /**
- * Presents an abstraction of target entity for rendering AEM components and their configuration. Technically each
- * {@code Target} instance represents a future Granite UI entity, or a corresponding XML node. The {@code Target} can have
- * its attributes, a parent target and children in the same way as Granite/XML nodes do
+ * Presents an abstraction of target entity for rendering AEM components and their configurations. Technically each
+ * {@code Target} instance represents a future Granite UI entity, or a corresponding XML node. The {@code Target} can
+ * have its attributes, its parent target and its children in the same way as XML nodes do
  */
 public interface Target {
 
@@ -32,6 +36,18 @@ public interface Target {
      * @return String value
      */
     String getName();
+
+    /**
+     * Retrieves the path of the current {@code Target} instance. The path is the sequence of names of all the ancestor
+     * {@code Target}s of the current one, from the farthest ancestor to the nearest one, starting with and separated by
+     * the {@code /} symbol. The path is therefore in virtually the same format as a path of an XML node.
+     * If the current {@code Target} hasn't got a parent, its path is {@code /<target_name>}
+     * @return String value
+     */
+    default String getPath() {
+        String parentPath = getParent() != null ? getParent().getPath() : StringUtils.EMPTY;
+        return parentPath + CoreConstants.SEPARATOR_SLASH + getName();
+    }
 
     /**
      * Retrieves the name prefix associated with the current instance
@@ -61,9 +77,22 @@ public interface Target {
 
     /**
      * Retrieves the parent of the current {@code Target} instance
-     * @return Another {@code Target} instance, or null if the current target has no parents (is at the top of targets tree)
+     * @return Another {@code Target} instance, or null if the current target has no parents (is at the top of targets
+     * tree)
      */
     Target getParent();
+
+    /**
+     * Retrieves the root node of the tree to which the current {@code Target} belongs
+     * @return Another {@code Target} instance, or this instance if the current target has no parents (is at the top of
+     * targets tree)
+     */
+    default Target getRoot() {
+        if (getParent() == null) {
+            return this;
+        }
+        return getParent().getRoot();
+    }
 
     /**
      * Retrieves the collection of {@code Target} instances attached to the current instance. Each one of the children
