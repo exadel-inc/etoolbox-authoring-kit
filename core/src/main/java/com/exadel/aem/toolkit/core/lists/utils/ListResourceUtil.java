@@ -44,6 +44,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 class ListResourceUtil {
 
+    /**
+     * Default (instantiation-restricting) constructor
+     */
+    private ListResourceUtil() {
+    }
+
     private static final List<String> PROPERTIES_TO_IGNORE = Arrays.asList(
         "jcr:createdBy", "jcr:created", "cq:lastModified", "cq:lastModifiedBy", "jcr:lastModified", "jcr:lastModifiedBy",
         "cq:lastReplicationAction", "cq:lastReplicatedBy", "cq:lastReplicated"
@@ -126,11 +132,5 @@ class ListResourceUtil {
         return MapUtils.emptyIfNull(properties).entrySet().stream()
             .filter(entry -> !PROPERTIES_TO_IGNORE.contains(entry.getKey()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    /**
-     * Default (instantiation-restricting) constructor
-     */
-    private ListResourceUtil() {
     }
 }

@@ -49,6 +49,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class ListHelper {
 
+    /**
+     * Default (instantiation-restricting) constructor
+     */
+    private ListHelper() {
+    }
+
     /* -----------------
        Retrieval methods
        ----------------- */
@@ -327,11 +333,5 @@ public class ListHelper {
             return itemType::cast;
         }
         return resource -> resource.adaptTo(itemType);
-    }
-
-    /**
-     * Default (instantiation-restricting) constructor
-     */
-    private ListHelper() {
     }
 }

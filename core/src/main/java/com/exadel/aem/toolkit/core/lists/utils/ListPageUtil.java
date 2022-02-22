@@ -34,6 +34,12 @@ import com.exadel.aem.toolkit.core.lists.ListConstants;
  */
 class ListPageUtil {
 
+    /**
+     * Default (instantiation-restricting) constructor
+     */
+    private ListPageUtil() {
+    }
+
     private static final Map<String, Object> LIST_PROPERTIES = Collections.singletonMap(
         JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY,
         "wcm/foundation/components/responsivegrid");
@@ -63,11 +69,5 @@ class ListPageUtil {
 
         resourceResolver.create(listPage.getContentResource(), ListConstants.NN_LIST, LIST_PROPERTIES);
         return listPage;
-    }
-
-    /**
-     * Default (instantiation-restricting) constructor
-     */
-    private ListPageUtil() {
     }
 }
