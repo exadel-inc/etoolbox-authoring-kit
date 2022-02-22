@@ -1,6 +1,5 @@
 const path = require('path');
 const fsAsync = require('fs').promises;
-// const structure = require('../structure.json');
 
 const {JSDOM} = require('jsdom');
 const {markdown} = require('./markdown.lib');
