@@ -30,17 +30,22 @@ import com.exadel.aem.toolkit.core.lists.ListConstants;
 class ListPageUtils {
 
     /**
+     * Default (instantiation-restricting) constructor
+     */
+    private ListPageUtils() {
+    }
+
+    /**
      * Creates a list page under given path
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param path             JCR path of the items list page.
-     * @return Created page containing list of entries or {@code null} if {@link PageManager} cannot be instantiated
-     * or {@code path} is blank
+     * @return {@link Page} containing list of entries
      * @throws WCMException If a page cannot be created
      */
-    static Page createListPage(ResourceResolver resourceResolver, String path) throws WCMException {
+    public static Page createListPage(ResourceResolver resourceResolver, String path) throws WCMException {
         PageManager pageManager = resourceResolver.adaptTo(PageManager.class);
-        if (pageManager == null || StringUtils.isBlank(path)) {
-            return null;
+        if (StringUtils.isBlank(path)) {
+            throw new IllegalArgumentException("Path cannot be blank!");
         }
 
         String parentPath = StringUtils.substringBeforeLast(path, CoreConstants.SEPARATOR_SLASH);
@@ -55,9 +60,4 @@ class ListPageUtils {
         return listPage;
     }
 
-    /**
-     * Default (instantiation-restricting) constructor
-     */
-    private ListPageUtils() {
-    }
 }

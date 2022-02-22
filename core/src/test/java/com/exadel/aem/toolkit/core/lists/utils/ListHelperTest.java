@@ -35,11 +35,13 @@ import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.WCMException;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class ListHelperTest {
 
@@ -155,6 +157,7 @@ public class ListHelperTest {
 
         Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", listItems);
 
+        assertNotNull(listPage);
         Resource list = listPage.getContentResource("list");
 
         Resource firstListItem = IterableUtils.get(list.getChildren(), 0);
@@ -167,10 +170,13 @@ public class ListHelperTest {
     }
 
     @Test
-    public void shouldNotCreateListIfPassedResourceCollectionIsEmpty() throws PersistenceException, WCMException {
-        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.<Resource>emptyList());
+    public void shouldCreateListWithoutItemsIfPassedResourceCollectionIsEmpty() throws PersistenceException, WCMException {
+        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.emptyList());
 
-        assertNull(listPage);
+        assertNotNull(listPage);
+        Resource list = listPage.getContentResource().getChild(ListConstants.NN_LIST);
+        assertNotNull(list);
+        assertFalse(list.hasChildren());
     }
 
     @Test
@@ -181,8 +187,9 @@ public class ListHelperTest {
         Resource resource = context.create().resource("/testpath", properties);
 
         context.create().resource("/content/test");
-        Page list = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singleton(resource));
+        Page list = ListHelper.createResourceList(context.resourceResolver(), "/content/test", Collections.singleton(resource));
 
+        assertNotNull(list);
         Resource listItem = list.getContentResource("list/listItem");
         assertEquals("first", listItem.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
         assertEquals("firstValue", listItem.getValueMap().get(CoreConstants.PN_VALUE, StringUtils.EMPTY));
@@ -190,17 +197,26 @@ public class ListHelperTest {
 
     @Test
     public void shouldCreateListBasedOnListOfSimpleListItems() throws PersistenceException, WCMException {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(JcrConstants.JCR_TITLE, "first");
-        properties.put(CoreConstants.PN_VALUE, "firstValue");
-        Resource resource = context.create().resource("/testpath", properties);
-        SimpleListItem simpleListItem = resource.adaptTo(SimpleListItem.class);
+        SimpleListItem simpleListItem = new SimpleListItemImpl("first", "firstValue");
 
-        Page list = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(simpleListItem));
+        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(simpleListItem));
 
-        Resource listItem = list.getContentResource("list/listItem");
+        assertNotNull(listPage);
+        Resource listItem = listPage.getContentResource("list/listItem");
         assertEquals(simpleListItem.getTitle(), listItem.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
         assertEquals(simpleListItem.getValue(), listItem.getValueMap().get(CoreConstants.PN_VALUE, StringUtils.EMPTY));
+    }
+
+    @Test
+    public void shouldCreateListBasedOnModelUsingDefaultMapper() throws PersistenceException, WCMException {
+        ItemModel itemModel = new ItemModel("someValue", false);
+
+        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(itemModel), null);
+
+        assertNotNull(listPage);
+        Resource listItem = listPage.getContentResource("list/listItem");
+        assertEquals(itemModel.textValue, listItem.getValueMap().get("textValue", StringUtils.EMPTY));
+        assertEquals(itemModel.booleanValue, listItem.getValueMap().get("booleanValue", false));
     }
 
     @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
@@ -221,6 +237,14 @@ public class ListHelperTest {
             this.booleanValue = booleanValue;
         }
 
+        public String getTextValue() {
+            return textValue;
+        }
+
+        public boolean isBooleanValue() {
+            return booleanValue;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -236,6 +260,28 @@ public class ListHelperTest {
         @Override
         public int hashCode() {
             return Objects.hash(textValue, booleanValue);
+        }
+    }
+
+    @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+    private static class SimpleListItemImpl implements SimpleListItem {
+
+        private final String title;
+        private final String value;
+
+        public SimpleListItemImpl(String title, String value) {
+            this.title = title;
+            this.value = value;
+        }
+
+        @Override
+        public String getTitle() {
+            return title;
+        }
+
+        @Override
+        public String getValue() {
+            return value;
         }
     }
 

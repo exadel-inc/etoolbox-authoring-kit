@@ -14,14 +14,13 @@
 package com.exadel.aem.toolkit.core.lists.utils;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
@@ -36,6 +35,9 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Contains methods for manipulation with List Resource
@@ -54,8 +56,8 @@ class ListResourceUtils {
      * Creates a list resource under given parent
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param parent           List Page that holds list resource
-     * @return List Resource or {@code null} if {@link ResourceResolver} or {@code parent} is null
-     * @throws PersistenceException If list resource cannot be created
+     * @return list Resource or {@code null} if {@link ResourceResolver} or {@code parent} is null
+     * @throws PersistenceException if list resource cannot be created
      */
     static Resource createListResource(ResourceResolver resourceResolver, Page parent) throws PersistenceException {
         if (resourceResolver == null || parent == null) {
@@ -71,23 +73,12 @@ class ListResourceUtils {
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param parent           Container for {@code listItem}'s.
      * @param properties       {@code listItem} properties
-     * @throws PersistenceException If {@code listItem} cannot be created
+     * @throws PersistenceException if {@code listItem} cannot be created
      */
     static void createListItem(ResourceResolver resourceResolver, Resource parent, Map<String, Object> properties) throws PersistenceException {
         Map<String, Object> withoutSystemProperties = getMapWithoutSystemProperties(properties);
         withoutSystemProperties.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ListConstants.LIST_ITEM_RESOURCE_TYPE);
         resourceResolver.create(parent, ResourceUtil.createUniqueChildName(parent, CoreConstants.PN_LIST_ITEM), withoutSystemProperties);
-    }
-
-    /**
-     * Converts collection of {@link SimpleListItem} to list of {@link ValueMapResource}
-     * @param values Collection of {@link SimpleListItem} that will be converted to {@link ValueMapResource}
-     * @return List of {@link ValueMapResource}
-     */
-    static List<Resource> mapToValueMapResources(Collection<SimpleListItem> values) {
-        return CollectionUtils.emptyIfNull(values).stream()
-            .map(entry -> ListResourceUtils.createValueMapResource(entry.getTitle(), entry.getValue()))
-            .collect(Collectors.toList());
     }
 
     /**
@@ -112,7 +103,36 @@ class ListResourceUtils {
         Map<String, Object> properties = new HashMap<>();
         properties.put(JcrConstants.JCR_TITLE, title);
         properties.put(CoreConstants.PN_VALUE, value);
+        return createValueMapResource(properties);
+    }
+
+    /**
+     * Creates {@link ValueMapResource} with given properties
+     * @param properties resource properties
+     * @return {@link ValueMapResource}
+     */
+    static Resource createValueMapResource(Map<String, Object> properties) {
         return new ValueMapResource(null, "", JcrConstants.NT_UNSTRUCTURED, new ValueMapDecorator(properties));
+    }
+
+    /**
+     * Returns BiFunction mapper that converts model into properties.
+     * @param modelType Model type
+     * @return Mapper that converts model into properties.
+     */
+    static BiFunction<Object, ObjectMapper, Map<String, Object>> getMapper(Class<?> modelType) {
+        if (SimpleListItem.class.equals(modelType)) {
+            return (model, objectMapper) -> {
+                SimpleListItem simpleListItem = (SimpleListItem) model;
+                Map<String, Object> properties = new HashMap<>();
+                properties.put(JcrConstants.JCR_TITLE, simpleListItem.getTitle());
+                properties.put(CoreConstants.PN_VALUE, simpleListItem.getValue());
+                return properties;
+            };
+        }
+
+        return (model, objectMapper) -> objectMapper.convertValue(model, new TypeReference<Map<String, Object>>() {
+        });
     }
 
     /**
