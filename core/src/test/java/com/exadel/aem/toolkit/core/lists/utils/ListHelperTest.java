@@ -150,7 +150,7 @@ public class ListHelperTest {
     }
 
     @Test
-    public void shouldCreateListBasedOnMap() throws PersistenceException, WCMException {
+    public void shouldCreateListBasedOnMap() throws WCMException {
         Map<String, Object> listItems = new HashMap<>();
         listItems.put("first", "firstValue");
         listItems.put("second", "secondValue");
@@ -180,7 +180,7 @@ public class ListHelperTest {
     }
 
     @Test
-    public void shouldRecreateListBasedOnCollectionOfResourcesIfListAlreadyExists() throws PersistenceException, WCMException {
+    public void shouldRecreateListBasedOnCollectionOfResourcesIfListAlreadyExists() throws WCMException {
         Map<String, Object> properties = new HashMap<>();
         properties.put(JcrConstants.JCR_TITLE, "first");
         properties.put(CoreConstants.PN_VALUE, "firstValue");
@@ -196,7 +196,7 @@ public class ListHelperTest {
     }
 
     @Test
-    public void shouldCreateListBasedOnListOfSimpleListItems() throws PersistenceException, WCMException {
+    public void shouldCreateListBasedOnListOfSimpleListItems() throws WCMException {
         SimpleListItem simpleListItem = new SimpleListItemImpl("first", "firstValue");
 
         Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(simpleListItem));
@@ -208,10 +208,10 @@ public class ListHelperTest {
     }
 
     @Test
-    public void shouldCreateListBasedOnModelUsingDefaultMapper() throws PersistenceException, WCMException {
+    public void shouldCreateListBasedOnModelUsingDefaultMapper() throws WCMException {
         ItemModel itemModel = new ItemModel("someValue", false);
 
-        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(itemModel), null);
+        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(itemModel));
 
         assertNotNull(listPage);
         Resource listItem = listPage.getContentResource("list/listItem");

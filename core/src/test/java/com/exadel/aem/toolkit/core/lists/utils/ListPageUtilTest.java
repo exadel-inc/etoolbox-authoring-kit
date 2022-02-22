@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.core.lists.utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -31,43 +32,32 @@ import com.exadel.aem.toolkit.core.lists.ListConstants;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ListPageUtilsTest {
+public class ListPageUtilTest {
 
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
 
     @Test
-    public void shouldNotCreatePageIfPathIsBlank() throws WCMException {
-        Page listPage = ListPageUtils.createListPage(context.resourceResolver(), "");
-
-        assertNull(listPage);
-    }
-
-    @Test
     public void shouldNotCreatePageIfCannotGetPageManager() throws WCMException {
-        // needed to emulate a case when pageManager is null
-        ResourceResolver mockedResourceResolver = mock(ResourceResolver.class);
-
-        Page listPage = ListPageUtils.createListPage(mockedResourceResolver, "/test/path");
-
-        assertNull(listPage);
+        // Needed to emulate a case when {@code PageManager} is null
+        ResourceResolver mockResourceResolver = mock(ResourceResolver.class);
+        assertThrows(WCMException.class, () -> ListPageUtil.createPage(mockResourceResolver, "/test/path"));
     }
 
     @Test
     public void shouldThrowWCMExceptionIfParentDoesNotExist() {
-        assertThrows(WCMException.class, () -> ListPageUtils.createListPage(context.resourceResolver(), "/content/test"));
+        assertThrows(WCMException.class, () -> ListPageUtil.createPage(context.resourceResolver(), "/content/test"));
     }
 
     @Test
-    public void shouldCreateListPageUnderGivenPath() throws WCMException {
+    public void shouldCreateListPageUnderGivenPath() throws WCMException, PersistenceException {
         context.create().page("/content");
 
-        Page listPage = ListPageUtils.createListPage(context.resourceResolver(), "/content/test");
+        Page listPage = ListPageUtil.createPage(context.resourceResolver(), "/content/test");
 
         assertNotNull(listPage);
         ValueMap properties = listPage.getProperties();
