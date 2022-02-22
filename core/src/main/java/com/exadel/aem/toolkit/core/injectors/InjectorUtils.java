@@ -13,23 +13,36 @@
  */
 package com.exadel.aem.toolkit.core.injectors;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Contains common methods for use with the bundled {@code Injector} components
  */
 class InjectorUtils {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InjectorUtils.class);
 
     /**
      * Default (instantiation-restricting) constructor
@@ -187,5 +200,92 @@ class InjectorUtils {
             return true;
         }
         return Arrays.asList(allowedTypes).contains(value) || value.equals(Object.class);
+    }
+
+    /**
+     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized collection
+     * @param type {@code Type}
+     * @return True of false
+     */
+    public static boolean isCollectionType(Type type) {
+        return type instanceof ParameterizedType
+            && ClassUtils.isAssignable((Class<?>) ((ParameterizedType) type).getRawType(), Collection.class);
+    }
+
+    /**
+     * Retrieves actual type parameter from parameterized type
+     * @param parameterizedType {@code Class} that represents a parameterized type
+     * @return {@code Class} representing the actual type arguments to this type
+     */
+    public static Class<?> extractParameterType(ParameterizedType parameterizedType) {
+        return (Class<?>) parameterizedType.getActualTypeArguments()[0];
+    }
+
+    /**
+     * Creates and initializes a new instance of a class
+     * @param instanceClass Represent a {@code Class} to be initialized
+     * @param <T>           Parameterized type
+     * @return <T> initialized object instance
+     */
+    public static <T> T getObjectInstance(Class<? extends T> instanceClass) {
+        try {
+            return instanceClass.getConstructor().newInstance();
+        } catch (InstantiationException
+            | IllegalAccessException
+            | InvocationTargetException
+            | NoSuchMethodException ex) {
+            LOG.error("Could not initialize object {}", instanceClass.getName(), ex);
+        }
+        return null;
+    }
+
+    /**
+     * Creates new {@code Resource} that contains filtered properties from {@code currentResource}
+     * @param currentResource Current {@code Resource} contains properties to be filtered
+     * @param predicates      {@code List<Predicate<String>>} that contains filters for properties
+     * @return New created {@code Resource} with filtered properties if success, otherwise null is returned
+     */
+    public static Resource createFilteredResource(Resource currentResource, List<Predicate<String>> predicates) {
+        Map<String, Object> values = currentResource
+            .getValueMap()
+            .entrySet()
+            .stream()
+            .filter(item -> predicates.stream().anyMatch(f -> f.test(item.getKey())))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        try {
+            return currentResource
+                .getResourceResolver()
+                .create(currentResource, ResourceUtil.createUniqueChildName(currentResource, "item"), values);
+        } catch (PersistenceException ex) {
+            LOG.debug("Cannot create new resource", ex);
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieves predicates list according to prefix and postfix arguments.
+     * If prefix and postfix arguments are empty default predicate is added
+     * @param prefix  String argument
+     * @param postfix String argument
+     * @return List of predicates
+     */
+    public static List<Predicate<String>> getPropertiesPredicates(String prefix, String postfix) {
+        List<Predicate<String>> predicates = new ArrayList<>();
+
+        if (StringUtils.isNotBlank(prefix)) {
+            predicates.add(value -> value.startsWith(prefix));
+        }
+
+        if (StringUtils.isNotBlank(postfix)) {
+            predicates.add(value -> value.endsWith(postfix));
+        }
+
+        if (predicates.isEmpty()) {
+            predicates.add(value -> true);
+        }
+
+        return predicates;
     }
 }
