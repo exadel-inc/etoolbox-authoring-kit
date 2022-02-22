@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -31,6 +32,7 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceUtil;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +66,7 @@ class InjectorUtils {
      * Retrieves a {@link Resource} instance from the provided adaptable object if it is assignable from
      * {@code SlingHttpServletRequest} or {@code Resource}
      * @param adaptable The object which Sling tries to adapt from
-     * @return {@code Resource} object if adaptable is of an appropriate type, or null
+     * @return {@code Resource} object if the {@code adaptable} is of an appropriate type, or null
      */
     public static Resource getResource(Object adaptable) {
         if (adaptable instanceof SlingHttpServletRequest) {
@@ -74,6 +76,22 @@ class InjectorUtils {
             return (Resource) adaptable;
         }
         return null;
+    }
+
+    /**
+     * Retrieves a {@link ResourceResolver} instance from the provided adaptable object if it is assignable from
+     * {@code Resource} or {@code SlingHttpServletRequest}
+     * @param adaptable The object which Sling tries to adapt from
+     * @return {@code ResourceResolver} object if the {@code adaptable} is of an appropriate type, or null
+     */
+    public static ResourceResolver getResourceResolver(Object adaptable) {
+        ResourceResolver resolver = null;
+        if (adaptable instanceof Resource) {
+            resolver = ((Resource) adaptable).getResourceResolver();
+        } else if (adaptable instanceof SlingHttpServletRequest) {
+            resolver = ((SlingHttpServletRequest) adaptable).getResourceResolver();
+        }
+        return resolver;
     }
 
     /**
@@ -98,7 +116,7 @@ class InjectorUtils {
     }
 
     /**
-     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized collection type and its
+     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized collection type, and its
      * parameter type matches the list of allowed value types
      * @param value              {@code Type} object
      * @param allowedMemberTypes {@code Class} objects representing allowed value types
@@ -114,8 +132,38 @@ class InjectorUtils {
     }
 
     /**
-     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized collection type and its
+     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized Map type and its
      * parameter type matches the list of allowed value types
+     * @param value              {@code Type} object
+     * @param allowedMemberTypes {@code Class} objects representing allowed value types
+     * @return True or false
+     */
+    public static boolean isValidMap(Type value, Class<?>... allowedMemberTypes) {
+        if (!(value instanceof ParameterizedType)
+            || !ClassUtils.isAssignable((Class<?>) ((ParameterizedType) value).getRawType(), Map.class)) {
+            return false;
+        }
+        Class<?> componentType = (Class<?>) ((ParameterizedType) value).getActualTypeArguments()[1];
+        return isValidObjectType(componentType, allowedMemberTypes);
+    }
+
+    /**
+     * Retrieves whether the provided {@code Type} of a Java class member is a parameterized type and checks
+     * if the specified raw type is compatible with the {@code allowedType} parameter
+     * @param value       {@code Type} object
+     * @param allowedType {@code Class} object representing the allowed type
+     * @return True or false
+     */
+    public static boolean isValidRawType(Type value, Class<?> allowedType) {
+        if (!(value instanceof ParameterizedType)) {
+            return false;
+        }
+        return ClassUtils.isAssignable((Class<?>) ((ParameterizedType) value).getRawType(), allowedType);
+    }
+
+    /**
+     * Gets whether the provided {@code Type} of a Java class member is a parametrized collection type and checks whether
+     * its parameter type matches the list of allowed value types
      * @param value              {@code Type} object
      * @param allowedMemberTypes {@code Class} objects representing allowed value types
      * @return True or false

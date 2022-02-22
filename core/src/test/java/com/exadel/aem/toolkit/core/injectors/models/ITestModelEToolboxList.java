@@ -11,20 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.injectors;
+package com.exadel.aem.toolkit.core.injectors.models;
 
-/**
- * Contains constant values used across the injectors logic
- */
-class InjectorConstants {
+import com.exadel.aem.toolkit.api.annotations.injectors.EToolboxList;
 
-    public static final int SERVICE_RANKING = 10000;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Model;
 
-    public static final String EXCEPTION_UNSUPPORTED_TYPE = "Injector doesn't support type {}";
+import java.util.Map;
 
-    /**
-     * Default (instantiation-restricting) constructor.
-     */
-    private InjectorConstants() {
-    }
+@Model(adaptables = SlingHttpServletRequest.class)
+public interface ITestModelEToolboxList {
+
+    @EToolboxList("/content/etoolbox-lists/contentList")
+    Map<String, String> getItemsMapStringFromMethod();
 }
