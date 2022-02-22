@@ -14,9 +14,9 @@
 package com.exadel.aem.toolkit.core.injectors;
 
 /**
- * Contains constant values used across the injectors' logic
+ * Contains constant values used across the injectors logic
  */
-public class InjectorConstants {
+class InjectorConstants {
 
     public static final int SERVICE_RANKING = 10000;
 

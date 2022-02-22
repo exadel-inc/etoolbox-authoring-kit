@@ -53,7 +53,7 @@ class InjectorUtils {
      * Retrieves a {@link Resource} instance from the provided adaptable object if it is assignable from
      * {@code SlingHttpServletRequest} or {@code Resource}
      * @param adaptable The object which Sling tries to adapt from
-     * @return {@code Resource} object if adaptable is of an appropriate type, or null
+     * @return {@code Resource} object if the {@code adaptable} is of an appropriate type, or null
      */
     public static Resource getResource(Object adaptable) {
         if (adaptable instanceof SlingHttpServletRequest) {
@@ -69,7 +69,7 @@ class InjectorUtils {
      * Retrieves a {@link ResourceResolver} instance from the provided adaptable object if it is assignable from
      * {@code Resource} or {@code SlingHttpServletRequest}
      * @param adaptable The object which Sling tries to adapt from
-     * @return {@code ResourceResolver} object if adaptable is of an appropriate type, or null
+     * @return {@code ResourceResolver} object if the {@code adaptable} is of an appropriate type, or null
      */
     public static ResourceResolver getResourceResolver(Object adaptable) {
         ResourceResolver resolver = null;
@@ -103,7 +103,7 @@ class InjectorUtils {
     }
 
     /**
-     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized collection type and its
+     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized collection type, and its
      * parameter type matches the list of allowed value types
      * @param value              {@code Type} object
      * @param allowedMemberTypes {@code Class} objects representing allowed value types
@@ -136,9 +136,9 @@ class InjectorUtils {
 
     /**
      * Retrieves whether the provided {@code Type} of a Java class member is a parameterized type and checks
-     * if the specified raw type is compatible with the allowed type
+     * if the specified raw type is compatible with the {@code allowedType} parameter
      * @param value       {@code Type} object
-     * @param allowedType {@code Class} objects representing allowed type
+     * @param allowedType {@code Class} object representing the allowed type
      * @return True or false
      */
     public static boolean isValidRawType(Type value, Class<?> allowedType) {
@@ -149,8 +149,8 @@ class InjectorUtils {
     }
 
     /**
-     * Retrieves whether the provided {@code Type} of a Java class member is a parametrized collection type and its
-     * parameter type matches the list of allowed value types
+     * Gets whether the provided {@code Type} of a Java class member is a parametrized collection type and checks whether
+     * its parameter type matches the list of allowed value types
      * @param value              {@code Type} object
      * @param allowedMemberTypes {@code Class} objects representing allowed value types
      * @return True or false

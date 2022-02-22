@@ -38,7 +38,7 @@ import com.exadel.aem.toolkit.api.annotations.injectors.EToolboxList;
 import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
 /**
- * Injects EToolbox Lists into Sling models obtained via {@code ResourceResolver} instance
+ * Injects into a Sling model entries of an EToolbox List obtained via a {@code ResourceResolver} instance
  * @see ListHelper
  * @see Injector
  */
@@ -107,14 +107,14 @@ public class EToolboxListInjector implements Injector {
     }
 
     /**
-     * Retrieves the collection of items representing list entries stored under given {@code path}.
-     * If the provided {@code Type} of the Java class member is a {@code Resource} or {@code Object}, it retrieves
-     * a List of resources, otherwise it retrieves a List of generic typed instances adapted to the provided {@code Type}
+     * Retrieves the collection of list entries stored under the given {@code path}. If the {@code type} parameter
+     * points to a {@code Resource} or an {@code Object}, a list of resources is retrieved. Otherwise, a list of
+     * generic-typed entities adapted to the provided {@code type} is retrieved
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @param type             {@code Type} object
-     * @return List of generic typed instances. If the path provided is invalid or cannot be resolved,
-     * an empty list is returned
+     * @return List of generic-typed instances. If the provided path is invalid or cannot be resolved, an empty list is
+     * returned
      */
     private List<?> getList(ResourceResolver resourceResolver, String path, Type type) {
 
@@ -124,15 +124,15 @@ public class EToolboxListInjector implements Injector {
     }
 
     /**
-     * Retrieves the collection of list entries stored under given {@code path} that is transformed into a key-value map.
-     * If the {@code keyProperty} is not specified, the Map keys represent the {@code jcr:title} property
-     * of the underlying resource, otherwise the keys represent the attribute of the underlying resources
-     * specified by the given {@code keyProperty}
+     * Retrieves the list entries stored under the given {@code path}. Each is transformed into an entry of a key-value
+     * map. If the {@code keyProperty} is not specified, the map key represents the {@code jcr:title} property of the
+     * underlying resource. Otherwise, the key represents the attribute of the underlying resource specified by the
+     * given {@code keyProperty}
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
-     * @param keyProperty      Item resource property that holds the key of the resulting map
+     * @param keyProperty      Name of the property from which to extract keys for the resulting map
      * @param type             {@code Type} object
-     * @return Map containing a generic typed instances. If the path provided is invalid or cannot be resolved, an empty
+     * @return Map containing generic-typed instances. If the path provided is invalid or cannot be resolved, an empty
      * map is returned
      */
     private Map<?, ?> getMap(ResourceResolver resourceResolver, String path, String keyProperty, Type type) {
@@ -143,31 +143,14 @@ public class EToolboxListInjector implements Injector {
     }
 
     /**
-     * Retrieves the array of items representing list entries stored under given {@code path}.
-     * If the provided {@code Type} is {@code Resource} or {@code Object}, it retrieves an array of resources,
-     * otherwise it retrieves an array of generic typed instances adapted to the provided {@code type}
+     * Retrieves list entries stored under the given {@code path} in the form of a key-value map. The key represents the
+     * {@code jcr:title} property of the underlying resource. If the provided {@code type} is {@code String} or {@code
+     * Object}, the value represents {@code value} property. Otherwise, values are the underlying resources themselves
+     * adapted to the provided {@code type} model
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
-     * @param type             {@code Type} object
-     * @return Array of generic typed instances. If the path provided is invalid or cannot be resolved,
-     * an empty array is returned
-     */
-    private Object[] getArray(ResourceResolver resourceResolver, String path, Class<?> type) {
-
-        return InjectorUtils.isValidArray(type, Resource.class)
-            ? toArray(ListHelper.getResourceList(resourceResolver, path), type.getComponentType())
-            : toArray(ListHelper.getList(resourceResolver, path, type.getComponentType()), type.getComponentType());
-    }
-
-    /**
-     * Retrieves a collection of list entries stored under given {@code path} that is transformed into a key-value map.
-     * The keys represent {@code jcr:title} property of the underlying resource. If the provided {@code Type}
-     * is {@code String} or {@code Object}, the value represents {@code value} property, otherwise values are the
-     * underlying resources themselves as adapted to the provided {@code type} model
-     * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
-     * @param path             JCR path of the items list
-     * @param type             {@code Class} reference representing type of map values required
-     * @return Map containing a generic typed instances. If the path provided is invalid or cannot be resolved, an empty
+     * @param type             {@code Class} reference representing the type of the map values
+     * @return Map containing generic-typed instances. If the provided path is invalid or cannot be resolved, an empty
      * map is returned
      */
     private Map<?, ?> getMapWithoutKeyProperty(ResourceResolver resourceResolver, String path, Type type) {
@@ -178,15 +161,15 @@ public class EToolboxListInjector implements Injector {
     }
 
     /**
-     * Retrieves a collection of list entries stored under given {@code path} that is transformed into a key-value map.
-     * The keys represent the attribute of the underlying resources specified by the given {@code keyProperty}.
-     * If the provided {@code Type} is {@code Resource} or {@code Object}, the values are the underlying
-     * resources themselves, otherwise the underlying resources are adapted to the provided {@code type} model
+     * Retrieves the list entries stored under given {@code path} in the form of a key-value map. Each key in the map
+     * represents one selected attribute of the underlying resource specified by the given {@code keyProperty}. If the
+     * provided {@code Type} is {@code Resource} or {@code Object}, the values of the map are the underlying resources
+     * themselves. Otherwise, the underlying resources are adapted to the provided {@code type}
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
-     * @param keyProperty      Item resource property that holds the key of the resulting map
-     * @param type             {@code Type} object
-     * @return Map containing a generic typed instances. If the path provided is invalid or cannot be resolved, an empty
+     * @param keyProperty      Name of the property from which to extract keys for the resulting map
+     * @param type             {@code Type} of the map values
+     * @return Map containing generic-typed instances. If the provided path is invalid or cannot be resolved, an empty
      * map is returned
      */
     private Map<?, ?> getMapWithKeyProperty(ResourceResolver resourceResolver, String path, String keyProperty, Type type) {
@@ -197,17 +180,34 @@ public class EToolboxListInjector implements Injector {
     }
 
     /**
-     * Retrieves type arguments from parameterized collection type
+     * Retrieves an array representing list entries stored under the given {@code path}. If the {@code type} parameter is
+     * {@code Resource} or {@code Object}, an array of resources is retrieved. Otherwise, an array of generic-typed
+     * instances adapted to the provided {@code type} is retrieved
+     * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
+     * @param path             JCR path of the items list
+     * @param type             {@code Type} object
+     * @return An array of generic-typed instances. If the provided path is invalid or cannot be resolved, an empty
+     * array is returned
+     */
+    private Object[] getArray(ResourceResolver resourceResolver, String path, Class<?> type) {
+
+        return InjectorUtils.isValidArray(type, Resource.class)
+            ? toArray(ListHelper.getResourceList(resourceResolver, path), type.getComponentType())
+            : toArray(ListHelper.getList(resourceResolver, path, type.getComponentType()), type.getComponentType());
+    }
+
+    /**
+     * Retrieves a type argument from the parameterized collection type
      * @param type  Type of receiving Java class member
-     * @param index The index of the element in the array of type objects
-     * @return Class of type object
+     * @param index The index of the type argument
+     * @return {@code Class} object that matches the type parameter
      */
     private Class<?> getClass(Type type, int index) {
         return (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[index];
     }
 
     /**
-     * Converts the generic {@code List} to an array and casts it to the specified type
+     * Converts a generic {@code List} to an array and casts it to the specified type
      * @param list A generic {@code List} that contains list entries
      * @param type Type of receiving Java class member
      * @param <T>  The class of the objects in the array
