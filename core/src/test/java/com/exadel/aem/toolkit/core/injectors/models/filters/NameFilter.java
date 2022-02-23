@@ -19,13 +19,6 @@ import org.apache.sling.api.resource.Resource;
 
 public class NameFilter implements Predicate<Resource> {
 
-    /**
-     * Evaluates this predicate on the given argument.
-     *
-     * @param resource the input argument
-     * @return {@code true} if the input argument matches the predicate,
-     * otherwise {@code false}
-     */
     @Override
     public boolean test(Resource resource) {
         return resource.getName().equals("list_item_1006003058");

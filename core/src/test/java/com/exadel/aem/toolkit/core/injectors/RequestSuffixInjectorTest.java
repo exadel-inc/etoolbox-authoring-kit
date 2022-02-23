@@ -38,7 +38,7 @@ public class RequestSuffixInjectorTest {
     public void beforeTest() {
         context.addModelsForClasses(TestModelSuffix.class);
         context.registerInjectActivateService(new RequestSuffixInjector());
-        context.load().json("/com/exadel/aem/toolkit/core/injectors/content.json", "/content");
+        context.load().json("/com/exadel/aem/toolkit/core/injectors/suffixInjector.json", "/content");
     }
 
     @Test

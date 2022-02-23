@@ -54,8 +54,8 @@ public class EToolboxListInjectorTest {
     public void beforeTest() {
         context.addModelsForClasses(TestModelEToolboxList.class);
         context.registerInjectActivateService(new EToolboxListInjector());
-        context.load().json("/com/exadel/aem/toolkit/core/injectors/contentList.json", SIMPLE_LIST_PATH);
-        context.load().json("/com/exadel/aem/toolkit/core/injectors/customContentList.json", CUSTOM_LIST_PATH);
+        context.load().json("/com/exadel/aem/toolkit/core/injectors/listInjector.json", SIMPLE_LIST_PATH);
+        context.load().json("/com/exadel/aem/toolkit/core/injectors/customListInjector.json", CUSTOM_LIST_PATH);
     }
 
     @Test
@@ -104,9 +104,9 @@ public class EToolboxListInjectorTest {
     @Test
     public void shouldInjectCustomModelIntoList() {
         testModel = context.request().adaptTo(TestModelEToolboxList.class);
-        List<ListItemModel> expected = ListHelper.getList(
-            context.resourceResolver(), CUSTOM_LIST_PATH, ListItemModel.class);
-        List<ListItemModel> actual = testModel.getItemsListTestModel();
+        List<LocalListItemModel> expected = ListHelper.getList(
+            context.resourceResolver(), CUSTOM_LIST_PATH, LocalListItemModel.class);
+        List<LocalListItemModel> actual = testModel.getItemsListTestModel();
 
         assertNotNull(testModel);
         assertEquals(expected.size(), actual.size());
@@ -143,9 +143,9 @@ public class EToolboxListInjectorTest {
     @Test
     public void shouldInjectCustomModelInMapWithKeyProperty() {
         testModel = context.request().adaptTo(TestModelEToolboxList.class);
-        Map<String, ListItemModel> expected = ListHelper.getMap(context.resourceResolver(),
-            CUSTOM_LIST_PATH, "textValue", ListItemModel.class);
-        Map<String, ListItemModel> actual = testModel.getItemsMapTestModel();
+        Map<String, LocalListItemModel> expected = ListHelper.getMap(context.resourceResolver(),
+            CUSTOM_LIST_PATH, "textValue", LocalListItemModel.class);
+        Map<String, LocalListItemModel> actual = testModel.getItemsMapTestModel();
 
         assertNotNull(testModel);
         assertEquals(expected.size(), actual.size());
@@ -201,9 +201,9 @@ public class EToolboxListInjectorTest {
     @Test
     public void shouldInjectCustomModelItemsArray() {
         testModel = context.request().adaptTo(TestModelEToolboxList.class);
-        ListItemModel[] expected = ListHelper.getList(
-            context.resourceResolver(), CUSTOM_LIST_PATH, ListItemModel.class).toArray(new ListItemModel[0]);
-        ListItemModel[] actual = testModel.getItemsArrayModel();
+        LocalListItemModel[] expected = ListHelper.getList(
+            context.resourceResolver(), CUSTOM_LIST_PATH, LocalListItemModel.class).toArray(new LocalListItemModel[0]);
+        LocalListItemModel[] actual = testModel.getItemsArrayModel();
 
         assertNotNull(testModel);
         assertEquals(expected.length, testModel.getItemsArrayModel().length);
@@ -214,7 +214,7 @@ public class EToolboxListInjectorTest {
         defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
     )
     @SuppressWarnings("unused")
-    public static class ListItemModel {
+    public static class LocalListItemModel {
 
         @ValueMapValue
         private String textValue;
@@ -229,7 +229,7 @@ public class EToolboxListInjectorTest {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            ListItemModel that = (ListItemModel) o;
+            LocalListItemModel that = (LocalListItemModel) o;
             return booleanValue == that.booleanValue && intValue == that.intValue && Objects.equals(textValue, that.textValue);
         }
 

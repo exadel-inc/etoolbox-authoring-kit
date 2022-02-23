@@ -13,67 +13,111 @@
  */
 package com.exadel.aem.toolkit.core.injectors.models;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.Child;
+import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 import com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel;
 
 @Model(adaptables = SlingHttpServletRequest.class,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
+@SuppressWarnings("unused")
 public class TestModelChild {
 
-    /* ------------------------------
-         @Child injector test cases
-       ------------------------------ */
+    @Child
+    private SimpleListItem defaultChild;
 
-    @Child(name = "./list_item_1")
-    private Resource list;
+    @Child(name = "..")
+    private Resource parent;
 
     @Child(name = "list")
-    private Resource listItemResource;
+    private Resource listResource;
 
-    @Child(name = "/content/jcr:content/list/nested-node/nested_list2")
-    private ListItemModel listItemModel;
+    @Child(name = "./list_item_1")
+    private Object listItemResource;
 
-    @Child(name = "/content/jcr:content/list/nested-node/nested_list2", prefix = "prefix_")
-    private ListItemModel listItemModel1;
+    @Child(name = "/content/jcr:content/list/nested-node/nested_list_item_2")
+    private ListItemModel modelByAbsolutePath;
 
-    @Child(name = "/content/jcr:content/list/nested-node/nested_list2", postfix = "_postfix")
-    private ListItemModel listItemModel2;
+    @Child(name = "list/nested-node/nested_list_item_2")
+    private ListItemModel modelByRelativePath;
 
-    @Child(name = "/content/jcr:content/list/nested-node/nested_list2", prefix = "prefix_", postfix = "_postfix")
-    private ListItemModel listItemModel3;
+    @Child(name = "/content/jcr:content/list/nested-node/nested_list_item_2", prefix = "prefix_")
+    private ListItemModel modelFilteredByPrefix;
 
+    @Child(name = "/content/jcr:content/list/nested-node/nested_list_item_2", postfix = "_postfix")
+    private ListItemModel modelFilteredByPostfix;
 
-    /* ------------------------------
-            Accessor valid cases
-       ------------------------------ */
+    @Child(name = "/content/jcr:content/list/nested-node/nested_list_item_2", prefix = "foo_", postfix = "_bar")
+    private ListItemModel modelFilteredByPrefixAndPostfix;
 
-    public Resource getList() {
-        return list;
+    @Child(name = "./", prefix = "prefix_")
+    private Resource selfResourceFiltered;
+
+    private final Resource constructorArgument1;
+    private final ListItemModel constructorArgument2;
+
+    @Inject
+    public TestModelChild(
+        @Child @Named("./list_item_1") Resource constructorArgument1,
+        @Child @Named("list/nested-node/nested_list_item_2") ListItemModel constructorArgument2) {
+
+        this.constructorArgument1 = constructorArgument1;
+        this.constructorArgument2 = constructorArgument2;
     }
 
-    public Resource getListItemResource() {
+    public SimpleListItem getDefaultChild() {
+        return defaultChild;
+    }
+
+    public Resource getParent() {
+        return parent;
+    }
+
+    public Resource getListResource() {
+        return listResource;
+    }
+
+    public Object getListItemResource() {
         return listItemResource;
     }
 
-    public ListItemModel getListItemModel() {
-        return listItemModel;
+    public ListItemModel getModelByAbsolutePath() {
+        return modelByAbsolutePath;
     }
 
-    public ListItemModel getListItemModel1() {
-        return listItemModel1;
+    public ListItemModel getModelByRelativePath() {
+        return modelByRelativePath;
     }
 
-    public ListItemModel getListItemModel2() {
-        return listItemModel2;
+    public ListItemModel getModelFilteredByPrefix() {
+        return modelFilteredByPrefix;
     }
 
-    public ListItemModel getListItemModel3() {
-        return listItemModel3;
+    public ListItemModel getModelFilteredByPostfix() {
+        return modelFilteredByPostfix;
+    }
+
+    public ListItemModel getModelFilteredByPrefixAndPostfix() {
+        return modelFilteredByPrefixAndPostfix;
+    }
+
+    public Resource getSelfResourceFiltered() {
+        return selfResourceFiltered;
+    }
+
+    public Resource getConstructorArgument1() {
+        return constructorArgument1;
+    }
+
+    public ListItemModel getConstructorArgument2() {
+        return constructorArgument2;
     }
 }

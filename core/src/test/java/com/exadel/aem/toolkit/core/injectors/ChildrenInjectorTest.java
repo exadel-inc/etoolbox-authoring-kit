@@ -13,26 +13,26 @@
  */
 package com.exadel.aem.toolkit.core.injectors;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import io.wcm.testing.mock.aem.junit.AemContext;
-
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import com.day.cq.commons.jcr.JcrConstants;
 
+import com.exadel.aem.toolkit.core.injectors.models.ITestModelChildren;
+import com.exadel.aem.toolkit.core.injectors.models.TestModelChildren;
+import com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel;
+
+import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import com.exadel.aem.toolkit.core.injectors.models.TestModelChildren;
-import com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel;
-
 public class ChildrenInjectorTest {
-
-    private static TestModelChildren testModel;
 
     @Rule
     public final AemContext context = new AemContext();
@@ -42,108 +42,139 @@ public class ChildrenInjectorTest {
         context.addModelsForClasses(TestModelChildren.class);
         context.registerInjectActivateService(new ChildrenInjector());
         context.load().json("/com/exadel/aem/toolkit/core/injectors/childInjector.json", "/content");
-        ResourceResolver resolver = context.resourceResolver();
-        context.request().setResource(resolver.getResource("/content/jcr:content"));
-        testModel = context.request().adaptTo(TestModelChildren.class);
+        context.request().setResource(context.resourceResolver().getResource("/content/jcr:content"));
     }
 
+    /* -----------
+       Valid cases
+       ----------- */
+
     @Test
-    public void shouldInjectChildrenResourceItems() {
+    public void shouldInjectByFieldName() {
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<Resource> resourceList = testModel.getList();
         assertNotNull(resourceList);
-
-        assertEquals(5L, resourceList.size());
+        assertEquals(5, resourceList.size());
     }
 
     @Test
-    public void shouldInjectChildrenResourceList() {
+    public void shouldInjectByArbitraryName() {
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<Resource> resourceList = testModel.getResourceList();
         assertNotNull(resourceList);
-
-        assertEquals(5L, resourceList.size());
+        assertEquals(5, resourceList.size());
     }
 
     @Test
-    public void shouldInjectChildrenListItemModels2() {
+    public void shouldInjectModelsByRelativePath() {
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
-        List<ListItemModel> modelList = testModel.getListItemModels2();
+        Collection<ListItemModel> modelList = testModel.getListItemModels();
         assertNotNull(modelList);
-
-        assertEquals(4L, modelList.size());
+        assertEquals(2, modelList.size());
     }
 
     @Test
-    public void shouldInjectChildrenListItemModels3() {
+    public void shouldInjectChildrenUsePrefix() {
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
-        List<ListItemModel> modelList = testModel.getListItemModels3();
+        ListItemModel[] modelList = testModel.getListItemModelsWithPrefix();
         assertNotNull(modelList);
-
-        assertEquals(4L, modelList.size());
+        assertEquals(1, modelList.length);
     }
 
     @Test
-    public void shouldInjectChildrenListItemModels4() {
+    public void shouldInjectChildrenUsePostfix() {
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
-        List<ListItemModel> modelList = testModel.getListItemModels4();
+        List<ListItemModel> modelList = testModel.getListItemModelsWithPostfix();
         assertNotNull(modelList);
-
-        assertEquals(4L, modelList.size());
+        assertEquals(1, modelList.size());
+        assertEquals(3, modelList.get(0).getProperties().size());
     }
 
     @Test
-    public void shouldInjectChildrenListItemModels5() {
+    public void shouldInjectChildrenUseFilters() {
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
-        List<ListItemModel> modelList = testModel.getListItemModels5();
+        List<ListItemModel> modelList = testModel.getListItemModelsFiltered();
         assertNotNull(modelList);
-
-        assertEquals(2L, modelList.size());
+        assertEquals(1, modelList.size());
     }
 
     @Test
-    public void shouldInjectChildrenNotExistedResources() {
+    public void shouldInjectOwnChildren() {
+        context.request().setResource(context.resourceResolver().getResource("/content/jcr:content/list"));
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
+        assertNotNull(testModel);
+        assertNotNull(testModel.getOwnList());
+        assertEquals(5, testModel.getOwnList().size());
+    }
+
+    @Test
+    public void shouldInjectConstructorArguments() {
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
-        List<Resource> resourceList = testModel.getNotExistedResources();
+        List<ListItemModel> models = new ArrayList<>(testModel.getListItemModels());
+
+        assertEquals(testModel.getInjectedViaConstructor().length, models.size());
+        for (int i = 0; i < testModel.getInjectedViaConstructor().length; i++) {
+            assertEquals(
+                testModel.getInjectedViaConstructor()[i].getProperties().get(JcrConstants.JCR_TITLE),
+                models.get(i).getProperties().get(JcrConstants.JCR_TITLE));
+        }
+    }
+
+    @Test
+    public void shouldInjectViaMethod() {
+        ITestModelChildren testModel = context.request().adaptTo(ITestModelChildren.class);
+        assertNotNull(testModel);
+
+        assertEquals(2, testModel.getInjectedViaMethod().size());
+        assertEquals("key1", testModel.getInjectedViaMethod().get(0).getProperties().get(JcrConstants.JCR_TITLE));
+    }
+
+
+    /* -------------
+       Invalid cases
+       ------------- */
+
+    @Test
+    public void shouldNotInjectNonExistentResource() {
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
+        assertNotNull(testModel);
+
+        List<Resource> resourceList = testModel.getNonExistentResources();
         assertNull(resourceList);
-    }
 
-    @Test
-    public void shouldInjectChildrenNotExistedModel() {
-        assertNotNull(testModel);
-
-        List<ListItemModel> modelList = testModel.getNotExistedModel();
+        List<ListItemModel> modelList = testModel.getNotExistentModel();
         assertNull(modelList);
     }
 
     @Test
-    public void shouldInjectChildrenNotExistedPrefix() {
+    public void shouldNotInjectIfNotMatchingPrefix() {
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
-        List<ListItemModel> modelList = testModel.getNotExistedPrefix();
+        List<ListItemModel> modelList = testModel.getNonExistentPrefix();
         assertNull(modelList);
     }
 
     @Test
-    public void shouldInjectChildrenNotExistedPostfix() {
+    public void shouldNotInjectIfNotMatchingFilters() {
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
-        List<ListItemModel> modelList = testModel.getNotExistedPostfix();
-        assertNull(modelList);
-    }
-
-    @Test
-    public void shouldInjectChildrenNotExistedFilter() {
-        assertNotNull(testModel);
-
-        List<ListItemModel> modelList = testModel.getNotExistedFilter();
+        List<ListItemModel> modelList = testModel.getUnmatchedFilters();
         assertNull(modelList);
     }
 }

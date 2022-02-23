@@ -47,7 +47,7 @@ public class TestModelEToolboxList {
     private List<SimpleListItem> itemsListSimpleList;
 
     @EToolboxList("/content/etoolbox-lists/customContentList")
-    private List<EToolboxListInjectorTest.ListItemModel> itemsListTestModel;
+    private List<EToolboxListInjectorTest.LocalListItemModel> itemsListTestModel;
 
     @EToolboxList("/content/etoolbox-lists/contentList")
     private Map<String, Resource> itemsMapResource;
@@ -56,10 +56,10 @@ public class TestModelEToolboxList {
     private Map<String, String> itemsMapString;
 
     @EToolboxList(value = "/content/etoolbox-lists/customContentList", keyProperty = "textValue")
-    private Map<String, EToolboxListInjectorTest.ListItemModel> itemsMapTestModel;
+    private Map<String, EToolboxListInjectorTest.LocalListItemModel> itemsMapTestModel;
 
     @EToolboxList("/content/etoolbox-lists/customContentList")
-    private EToolboxListInjectorTest.ListItemModel[] itemsArrayModel;
+    private EToolboxListInjectorTest.LocalListItemModel[] itemsArrayModel;
 
     @EToolboxList("/content/etoolbox-lists/contentList")
     private List<Object> itemsListObject;
@@ -98,7 +98,7 @@ public class TestModelEToolboxList {
         return itemsListSimpleList;
     }
 
-    public List<EToolboxListInjectorTest.ListItemModel> getItemsListTestModel() {
+    public List<EToolboxListInjectorTest.LocalListItemModel> getItemsListTestModel() {
         return itemsListTestModel;
     }
 
@@ -110,7 +110,7 @@ public class TestModelEToolboxList {
         return itemsMapString;
     }
 
-    public Map<String, EToolboxListInjectorTest.ListItemModel> getItemsMapTestModel() {
+    public Map<String, EToolboxListInjectorTest.LocalListItemModel> getItemsMapTestModel() {
         return itemsMapTestModel;
     }
 
@@ -118,7 +118,7 @@ public class TestModelEToolboxList {
         return itemsListResourceFromMethodParameter;
     }
 
-    public EToolboxListInjectorTest.ListItemModel[] getItemsArrayModel() {
+    public EToolboxListInjectorTest.LocalListItemModel[] getItemsArrayModel() {
         return itemsArrayModel;
     }
 
