@@ -25,11 +25,19 @@ import org.apache.sling.models.annotations.Source;
 import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
 
 import com.exadel.aem.toolkit.core.injectors.ChildrenInjector;
+import com.exadel.aem.toolkit.core.injectors.filters.NonGhostPredicate;
 
 /**
- * Used on either a field, a method, or a method parameter of a Sling model to inject a collection of children,
- * all elements in the collection will be adapted to the collection's parameterized type with filtered properties,
- * if success, otherwise null returned.
+ * Used on either a field, a method, or a method parameter of a Sling model. Allows injecting a collection of either
+ * secondary models derived from the child (relative) resources of a target resource or such resources themselves. One
+ * can select particular properties used for injection by specifying their common prefix and/or postfix, or else provide
+ * a filtering {@link Predicate}.
+ * <p>Unlike in {@link Child}, one does not specify the precise Sling object to inject but instead the "parent" object
+ * children of which are injected.
+ * <p>The type of the underlying Java array (parameter type of Java collection) must be {@link
+ * org.apache.sling.api.resource.Resource} or a class that is adaptable from {@code Resource}. Otherwise, nothing is
+ * injected
+ * @see Child
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
@@ -38,31 +46,35 @@ import com.exadel.aem.toolkit.core.injectors.ChildrenInjector;
 public @interface Children {
 
     /**
-     * Used to specify a relative path to the parent resource, all of its children resources will be injected.
-     * If the user has not specified name parameter, relative path will be retrieved from a field name.
-     * If there will be no match, null will be returned.
+     * Used to specify the relative path to the common "parent" of the children that need to be injected. If not
+     * specified, defaults to the name of the underlying field/method. If such a resource does not exist, nothing is
+     * injected
+     * <p>Note: use {@code ./} to consider the current resource as the parent resource
      * @return Optional non-blank string
      */
     String name() default StringUtils.EMPTY;
 
     /**
-     * Used to specify the prefix.
-     * All children's resources object's properties that matched with the prefix will be injected.
+     * Used to specify the prefix. If set to a non-blank string, the properties of the child (relative) resource that
+     * start with the given value will be used for injection, while others will be skipped
      * @return Optional non-blank string
      */
     String prefix() default StringUtils.EMPTY;
 
     /**
-     * Used to specify the postfix.
-     * All object's properties that matched with the postfix will be injected.
+     * Used to specify the prefix. If set to a non-blank string, the properties of the child (relative) resource that
+     * end with the given value will be used for injection, while others will be skipped
      * @return Optional non-blank string
      */
     String postfix() default StringUtils.EMPTY;
 
     /**
-     * Used to specify predicates array.
-     * Resources will be filtered according to these predicates.
-     * @return Optional non-blank array of predicates
+     * Used to specify filters for the children The filters are a sequence of {@code Predicate<Resource>} instances
+     * referred to with their class names. Resources will be probed against these predicates. One possible predicate
+     * is "this resource is not a ghost component", or else "this resource is not null"
+     * @return Optional array of predicates
+     * @see NonGhostPredicate
+     * @see NonGhostPredicate
      */
     Class<? extends Predicate<Resource>>[] filters() default {};
 }

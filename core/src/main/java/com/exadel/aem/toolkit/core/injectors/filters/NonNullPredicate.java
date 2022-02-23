@@ -19,16 +19,12 @@ import java.util.function.Predicate;
 import org.apache.sling.api.resource.Resource;
 
 /**
- * The predicate that checks if a resource is non-null
+ * Tests a {@link Resource} for not being null
  */
 public class NonNullPredicate implements Predicate<Resource> {
 
     /**
-     * Evaluates this predicate on the given argument.
-     *
-     * @param resource the input argument
-     * @return {@code true} if the input argument matches the predicate,
-     * otherwise {@code false}
+     * {@inheritDoc}
      */
     @Override
     public boolean test(Resource resource) {

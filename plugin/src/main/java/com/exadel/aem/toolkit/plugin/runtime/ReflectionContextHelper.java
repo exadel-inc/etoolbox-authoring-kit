@@ -76,9 +76,9 @@ public class ReflectionContextHelper {
        -------------------------- */
 
     /**
-     * Returns list of {@code AemComponent}-annotated and {@code @Dialog}-annotated classes within the scope the plugin
-     * is operating in, to determine which of the component folders to process. If {@code componentsPath} is set for this
-     * instance, classes are tested to be under that path
+     * Returns the list of {@code AemComponent}-annotated and {@code @Dialog}-annotated classes within the scope of the
+     * plugin to determine which of the component folders to process. If {@code componentsPath} is set for this
+     * instance, the classes are tested to be under that path
      * @return {@code List} of class references
      */
     public List<Class<?>> getComponentClasses() {
@@ -104,8 +104,8 @@ public class ReflectionContextHelper {
     /**
      * Retrieves a list of {@link Handler} instances that match the provided annotations and scope. The list is ordered
      * in such a way as to honor the relations set by {@code before} and {@code after} anchors
-     * @param scope       Non-null string representing the scope that the handlers must match
-     * @param annotations Non-null array of {@code Annotation} objects, usually representing annotations of a method
+     * @param scope       A non-null string representing the scope that the handlers must match
+     * @param annotations A non-null array of {@code Annotation} objects, usually representing annotations of a method
      *                    or a class
      * @return {@code List} of handler instances, ordered
      */
@@ -117,9 +117,9 @@ public class ReflectionContextHelper {
     }
 
     /**
-     * Retrieves a list of {@link Handler} instances that match the provided annotation types and scope. The list
-     * is ordered in such a way as to honor the relations set by {@code before} and {@code after} anchors
-     * @param scope           Non-null string representing the scope that the handlers must match
+     * Retrieves a list of {@link Handler} instances that match the provided annotation types and scope. The list is
+     * ordered in such a way as to honor the relations set by {@code before} and {@code after} anchors
+     * @param scope           A non-null string representing the scope that the handlers must match
      * @param annotationTypes Non-null array of {@code Class} objects
      * @return {@code List} of handler instances, ordered
      */
@@ -152,7 +152,7 @@ public class ReflectionContextHelper {
      * {@code Scope} value
      * @param scope       String value representing the scope that the handlers must match
      * @param handler     {@code Handler} instance to test
-     * @param annotations Array of {@code Annotation} objects, usually representing annotations of a method or class
+     * @param annotations An array of {@code Annotation} objects, usually representing annotations of a method or class
      * @return True or false
      */
     private static boolean isHandlerMatches(Handler handler, String scope, Annotation[] annotations) {
@@ -164,8 +164,8 @@ public class ReflectionContextHelper {
      * {@code Scope} value
      * @param handler         {@code Handler} instance to test
      * @param scope           String value representing the scope that the handlers must match
-     * @param annotationTypes Array of {@code Class} references, usually representing types of annotations of a method
-     *                        or a class
+     * @param annotationTypes An array of {@code Class} references, usually representing types of annotations of a
+     *                        method or a class
      * @return True or false
      */
     @SuppressWarnings("deprecation") // HandlesWidgets processing is retained for compatibility and will be removed
@@ -240,8 +240,8 @@ public class ReflectionContextHelper {
        --------------------- */
 
     /**
-     * Initializes as necessary and returns collection of {@code Validator}s defined within the execution scope
-     * of the ToolKit Maven plugin
+     * Initializes as necessary and returns a collection of {@code Validator}s defined within the execution scope of the
+     * ToolKit Maven plugin
      * @return {@code List} of instances
      */
     public List<Validator> getValidators() {
@@ -272,8 +272,8 @@ public class ReflectionContextHelper {
         } catch (InstantiationException
             | IllegalAccessException
             | InvocationTargetException
-            | NoSuchMethodException e) {
-            PluginRuntime.context().getExceptionHandler().handle(new ExtensionApiException(instanceClass, e));
+            | NoSuchMethodException ex) {
+            PluginRuntime.context().getExceptionHandler().handle(new ExtensionApiException(instanceClass, ex));
         }
         return null;
     }
@@ -284,11 +284,11 @@ public class ReflectionContextHelper {
        --------------- */
 
     /**
-     * Used to initialize a {@code PluginReflectionUtility} instance based on the list of available classpath entries
-     * in the scope of this Maven plugin
+     * Used to initialize a {@code PluginReflectionUtility} instance based on the list of available classpath entries in
+     * the scope of this Maven plugin
      * @param elements    List of classpath elements to be used in reflection routines
-     * @param packageBase String representing package prefix of processable AEM backend components
-     *                    like {@code com.acme.aem.components.*}. If not specified, all available components will be processed
+     * @param packageBase String representing package prefix of processable AEM backend components like {@code
+     *                    com.acme.aem.components.*}. If not specified, all available components will be processed
      * @return {@link ReflectionContextHelper} instance
      */
     public static ReflectionContextHelper fromCodeScope(List<String> elements, String packageBase) {
@@ -312,7 +312,8 @@ public class ReflectionContextHelper {
     }
 
     /**
-     * Converts {@link URI} parameter, such as of a classpath element, to an {@link URL} instance used by {@link Reflections}
+     * Converts {@link URI} parameter, such as of a classpath element, to an {@link URL} instance used by {@link
+     * Reflections}
      * @param uri {@code URI} value
      * @return {@code URL} value
      */

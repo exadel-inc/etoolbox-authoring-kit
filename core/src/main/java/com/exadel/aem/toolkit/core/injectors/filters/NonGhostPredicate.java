@@ -19,16 +19,12 @@ import java.util.function.Predicate;
 import org.apache.sling.api.resource.Resource;
 
 /**
- * The predicate that checks if a resource is not null and not of ghost type
+ * Tests a {@link Resource} for not being null and not representing a ghost component
  */
-public class NoGhostPredicate implements Predicate<Resource> {
+public class NonGhostPredicate implements Predicate<Resource> {
 
     /**
-     * Evaluates this predicate on the given argument.
-     *
-     * @param resource the input argument
-     * @return {@code true} if the input argument matches the predicate,
-     * otherwise {@code false}
+     * {@inheritDoc}
      */
     @Override
     public boolean test(Resource resource) {
