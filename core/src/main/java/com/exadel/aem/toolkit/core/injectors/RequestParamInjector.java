@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestParam;
+import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
  * Injects into a Sling model the value of a HTTP request parameter (multiple parameters) obtained
@@ -80,26 +82,26 @@ public class RequestParamInjector implements Injector {
             return null;
         }
 
-        SlingHttpServletRequest request = InjectorUtils.getRequest(adaptable);
+        SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
             return null;
         }
 
         String paramName = annotation.name().isEmpty() ? name : annotation.name();
 
-        if (InjectorUtils.isValidObjectType(type, String.class)) {
+        if (TypeUtil.isValidObjectType(type, String.class)) {
             return request.getParameter(paramName);
 
-        } else if (InjectorUtils.isValidObjectType(type, RequestParameter.class)) {
+        } else if (TypeUtil.isValidObjectType(type, RequestParameter.class)) {
             return request.getRequestParameter(paramName);
 
-        } else if (InjectorUtils.isValidCollection(type, RequestParameter.class)) {
+        } else if (TypeUtil.isValidCollection(type, RequestParameter.class)) {
             return request.getRequestParameterList();
 
-        } else if (InjectorUtils.isValidArray(type, RequestParameter.class)) {
+        } else if (TypeUtil.isValidArray(type, RequestParameter.class)) {
             return request.getRequestParameters(paramName);
 
-        } else if (InjectorUtils.isValidObjectType(type, RequestParameterMap.class)) {
+        } else if (TypeUtil.isValidObjectType(type, RequestParameterMap.class)) {
             return request.getRequestParameterMap();
         }
 

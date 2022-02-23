@@ -35,11 +35,14 @@ import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.EToolboxList;
+import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
 /**
  * Injects into a Sling model entries of an EToolbox List obtained via a {@code ResourceResolver} instance
  * @see ListHelper
+ * @see EToolboxList
  * @see Injector
  */
 @Component(service = Injector.class,
@@ -87,15 +90,15 @@ public class EToolboxListInjector implements Injector {
             return null;
         }
 
-        ResourceResolver resourceResolver = InjectorUtils.getResourceResolver(adaptable);
+        ResourceResolver resourceResolver = AdaptationUtil.getResourceResolver(adaptable);
         if (resourceResolver == null) {
             return null;
         }
 
-        if (InjectorUtils.isValidRawType(type, Collection.class)) {
+        if (TypeUtil.isValidRawType(type, Collection.class)) {
             return getList(resourceResolver, annotation.value(), type);
 
-        } else if (InjectorUtils.isValidRawType(type, Map.class)) {
+        } else if (TypeUtil.isValidRawType(type, Map.class)) {
             return getMap(resourceResolver, annotation.value(), annotation.keyProperty(), type);
 
         } else if (!(type instanceof ParameterizedType) && ((Class<?>) type).isArray()) {
@@ -118,7 +121,7 @@ public class EToolboxListInjector implements Injector {
      */
     private List<?> getList(ResourceResolver resourceResolver, String path, Type type) {
 
-        return InjectorUtils.isValidCollection(type, Resource.class)
+        return TypeUtil.isValidCollection(type, Resource.class)
             ? ListHelper.getResourceList(resourceResolver, path)
             : ListHelper.getList(resourceResolver, path, getClass(type, 0));
     }
@@ -155,7 +158,7 @@ public class EToolboxListInjector implements Injector {
      */
     private Map<?, ?> getMapWithoutKeyProperty(ResourceResolver resourceResolver, String path, Type type) {
 
-        return InjectorUtils.isValidMap(type, String.class)
+        return TypeUtil.isValidMap(type, String.class)
             ? ListHelper.getMap(resourceResolver, path)
             : ListHelper.getMap(resourceResolver, path, JcrConstants.JCR_TITLE, getClass(type, 1));
     }
@@ -174,7 +177,7 @@ public class EToolboxListInjector implements Injector {
      */
     private Map<?, ?> getMapWithKeyProperty(ResourceResolver resourceResolver, String path, String keyProperty, Type type) {
 
-        return InjectorUtils.isValidMap(type, Resource.class)
+        return TypeUtil.isValidMap(type, Resource.class)
             ? ListHelper.getResourceMap(resourceResolver, path, keyProperty)
             : ListHelper.getMap(resourceResolver, path, keyProperty, getClass(type, 1));
     }
@@ -191,7 +194,7 @@ public class EToolboxListInjector implements Injector {
      */
     private Object[] getArray(ResourceResolver resourceResolver, String path, Class<?> type) {
 
-        return InjectorUtils.isValidArray(type, Resource.class)
+        return TypeUtil.isValidArray(type, Resource.class)
             ? toArray(ListHelper.getResourceList(resourceResolver, path), type.getComponentType())
             : toArray(ListHelper.getList(resourceResolver, path, type.getComponentType()), type.getComponentType());
     }

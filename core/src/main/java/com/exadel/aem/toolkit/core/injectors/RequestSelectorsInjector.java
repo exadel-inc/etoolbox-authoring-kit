@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSelectors;
+import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
  * Injects into a Sling model the value of the {@code selectors} property of the {@link SlingHttpServletRequest}
@@ -79,18 +81,18 @@ public class RequestSelectorsInjector implements Injector {
             return null;
         }
 
-        SlingHttpServletRequest request = InjectorUtils.getRequest(adaptable);
+        SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
             return null;
         }
 
-        if (InjectorUtils.isValidCollection(type, String.class)) {
+        if (TypeUtil.isValidCollection(type, String.class)) {
             return Arrays.asList(request.getRequestPathInfo().getSelectors());
         }
-        if (InjectorUtils.isValidArray(type, String.class)) {
+        if (TypeUtil.isValidArray(type, String.class)) {
             return request.getRequestPathInfo().getSelectors();
         }
-        if (InjectorUtils.isValidObjectType(type, String.class)) {
+        if (TypeUtil.isValidObjectType(type, String.class)) {
             return request.getRequestPathInfo().getSelectorString();
         }
 

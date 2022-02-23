@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSuffix;
+import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
  * Injects into a Sling model the value of the {@code suffix} or {@code suffixResource} properties
@@ -78,12 +80,12 @@ public class RequestSuffixInjector implements Injector {
             return null;
         }
 
-        SlingHttpServletRequest request = InjectorUtils.getRequest(adaptable);
+        SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
             return null;
         }
 
-        if (InjectorUtils.isValidObjectType(type, String.class)) {
+        if (TypeUtil.isValidObjectType(type, String.class)) {
             return request.getRequestPathInfo().getSuffix();
 
         } else if (type.equals(Resource.class)) {
