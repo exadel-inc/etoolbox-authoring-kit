@@ -29,10 +29,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.Child;
+import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
- * Injector implementation for {@code @Child}
- * Injects into a Sling model a child resource
+ * Injects into a Sling model a child resource or a secondary model that is adapted from a child resource
+ * @see Child
  * @see Injector
  */
 @Component(service = Injector.class,
@@ -56,11 +59,12 @@ public class ChildInjector implements Injector {
     }
 
     /**
-     * Attempts to inject {@code Resource} or adapted object
+     * Attempts to inject a value into the given adaptable
      * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
      * @param name             Name of the Java class member to inject the value into
      * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve annotation objects
+     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
+     *                         annotation objects
      * @param callbackRegistry {@link DisposalCallbackRegistry} object
      * @return {@code Resource} or adapted object if successful. Otherwise, null is returned
      */
@@ -78,7 +82,7 @@ public class ChildInjector implements Injector {
             return null;
         }
 
-        Resource adaptableResource = InjectorUtils.getResource(adaptable);
+        Resource adaptableResource = AdaptationUtil.getResource(adaptable);
         if (adaptableResource == null) {
             return null;
         }
@@ -90,11 +94,8 @@ public class ChildInjector implements Injector {
         }
 
         Resource preparedResource = getPreparedResource(currentResource, annotation);
-        if (preparedResource == null) {
-            return null;
-        }
 
-        if (Resource.class.equals(type)) {
+        if (TypeUtil.isValidObjectType(type, Resource.class)) {
             return preparedResource;
         } else if (type instanceof Class) {
             return preparedResource.adaptTo((Class<?>) type);
@@ -105,13 +106,15 @@ public class ChildInjector implements Injector {
     }
 
     /**
-     * Retrieves the new {@code Resource} object with filtered properties.
-     * Properties will be filtered according to the annotation parameters
-     * @param currentResource Current {@code Resource} contains properties to be filtered
-     * @param annotation      Annotation objects
-     * @return {@code Resource} object if success. Otherwise, null is returned
+     * Retrieves the new {@code Resource} object with selected properties. Properties will be picked up according to the
+     * annotation parameters
+     * @param current    The {@code Resource} instance that contains properties to be filtered
+     * @param annotation The annotation that holds the filtering parameters
+     * @return Valid {@code Resource} object or null if no match is found
      */
-    private Resource getPreparedResource(Resource currentResource, Child annotation) {
-        return InjectorUtils.createFilteredResource(currentResource, InjectorUtils.getPropertiesPredicates(annotation.prefix(), annotation.postfix()));
+    private Resource getPreparedResource(Resource current, Child annotation) {
+        return InstantiationUtil.createFilteredResource(
+            current,
+            InstantiationUtil.getPropertyNamePredicate(annotation.prefix(), annotation.postfix()));
     }
 }
