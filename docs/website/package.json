@@ -28,6 +28,7 @@
     "@exadel/esl": "^3.13.2",
     "glob": "^7.2.0",
     "jsdom": "^19.0.0",
+    "markdown-it-anchor": "^8.4.1",
     "prismjs": "^1.27.0",
     "typescript": "^4.5.4"
   },

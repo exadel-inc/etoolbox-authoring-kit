@@ -7,7 +7,6 @@
         {{ title }}
         </esl-trigger>
     </div>
-
     <esl-panel id="sidebar-{{ collection }}-menu"
                 class="sidebar-nav-secondary {{ 'open' if isPrimaryActive }}"
                 {% if isPrimaryActive %}data-open{% endif %}
@@ -22,7 +21,7 @@
             <a class="sidebar-nav-secondary-link"
                 {% if isActive %}aria-current="page"{% endif %}
                 href="{{ item.url | url }}">
-                {{ item.data.name }}
+                {{ item.data.title }}
             </a>
             </li>
         {% endfor %}
