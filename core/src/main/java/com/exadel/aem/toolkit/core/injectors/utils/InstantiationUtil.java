@@ -31,7 +31,7 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 /**
  * Contains utility methods for creating instances ob objects
- * <p>Note: This class is not a part of the public API</p>
+ * <p><u>Note</u>: This class is not a part of the public API</p>
  */
 public class InstantiationUtil {
 

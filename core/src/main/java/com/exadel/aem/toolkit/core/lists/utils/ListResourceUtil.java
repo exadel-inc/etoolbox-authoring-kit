@@ -41,6 +41,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Contains methods for manipulation with List Resource
+ * <p><u>Note</u>: This class is not a part of the public API</p>
  */
 class ListResourceUtil {
 

@@ -24,7 +24,7 @@ import org.apache.commons.lang3.ClassUtils;
 
 /**
  * Contains utility methods for validating types of entities involved in Sing injectors processing.
- * <p>Note: This class is not a part of the public API</p>
+ * <p><u>Note</u>: This class is not a part of the public API</p>
  */
 public class TypeUtil {
 

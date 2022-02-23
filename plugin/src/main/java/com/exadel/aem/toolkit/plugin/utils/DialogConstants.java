@@ -63,7 +63,6 @@ public class DialogConstants {
     public static final String NN_LAYOUT = "layout";
     public static final String NN_LAYOUT_CONFIG = "layoutConfig";
     public static final String NN_LINKS = "links";
-    public static final String NN_LIST = "list";
     public static final String NN_LISTENERS = "cq:listeners";
     public static final String NN_LISTS = "lists";
     public static final String NN_MISCTOOLS = "misctools";

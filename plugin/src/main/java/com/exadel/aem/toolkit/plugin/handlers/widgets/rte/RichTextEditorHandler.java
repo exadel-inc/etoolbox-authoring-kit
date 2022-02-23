@@ -32,6 +32,7 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
@@ -291,7 +292,7 @@ public class RichTextEditorHandler implements Handler {
                 .filter(name -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(name).matches())
                 .map(name -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(name).replaceAll("$1").toLowerCase())
                 .filter(propName -> {
-                    if (StringUtils.equalsAny(propName, DialogConstants.NN_TABLE, DialogConstants.NN_LIST)) {
+                    if (StringUtils.equalsAny(propName, DialogConstants.NN_TABLE, CoreConstants.NN_LIST)) {
                         htmlPasteRulesNode.getOrCreateTarget(propName).attribute(DialogConstants.PN_ALLOW, false)
                                 .attribute(DialogConstants.PN_IGNORE_MODE, DialogConstants.NN_TABLE.equals(propName)
                                 ? rules.allowTables().toString()
