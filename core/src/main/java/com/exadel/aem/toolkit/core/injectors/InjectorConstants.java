@@ -11,21 +11,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.lists;
+package com.exadel.aem.toolkit.core.injectors;
 
 /**
- * Contains constant values used across lists module
+ * Contains constant values used across the injectors logic
  */
-public class ListConstants {
+class InjectorConstants {
 
-    public static final String LIST_TEMPLATE_NAME = "/conf/etoolbox-authoring-kit/settings/wcm/templates/list";
+    public static final int SERVICE_RANKING = 10000;
 
-    public static final String LIST_ITEM_RESOURCE_TYPE = "etoolbox-authoring-kit/lists/components/content/listItem";
-    public static final String SIMPLE_LIST_ITEM_RESOURCE_TYPE = "/apps/etoolbox-authoring-kit/lists/components/content/simpleListItem";
+    public static final String EXCEPTION_UNSUPPORTED_TYPE = "Injector doesn't support type {}";
 
     /**
-     * Default (instantiation-restricting) constructor
+     * Default (instantiation-restricting) constructor.
      */
-    private ListConstants() {
+    private InjectorConstants() {
     }
 }

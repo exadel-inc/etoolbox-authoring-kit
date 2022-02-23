@@ -11,21 +11,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.lists;
+package com.exadel.aem.toolkit.core.injectors.filters;
+
+import java.util.Objects;
+import java.util.function.Predicate;
+
+import org.apache.sling.api.resource.Resource;
 
 /**
- * Contains constant values used across lists module
+ * Tests a {@link Resource} for not being null
  */
-public class ListConstants {
-
-    public static final String LIST_TEMPLATE_NAME = "/conf/etoolbox-authoring-kit/settings/wcm/templates/list";
-
-    public static final String LIST_ITEM_RESOURCE_TYPE = "etoolbox-authoring-kit/lists/components/content/listItem";
-    public static final String SIMPLE_LIST_ITEM_RESOURCE_TYPE = "/apps/etoolbox-authoring-kit/lists/components/content/simpleListItem";
+public class NonNullPredicate implements Predicate<Resource> {
 
     /**
-     * Default (instantiation-restricting) constructor
+     * {@inheritDoc}
      */
-    private ListConstants() {
+    @Override
+    public boolean test(Resource resource) {
+        return Objects.nonNull(resource);
     }
 }
