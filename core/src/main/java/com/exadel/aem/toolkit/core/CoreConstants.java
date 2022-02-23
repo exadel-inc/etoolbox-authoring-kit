@@ -17,6 +17,8 @@ package com.exadel.aem.toolkit.core;
  * Contains constant values used across the core module
  */
 public class CoreConstants {
+    public static final String NN_ITEM = "item";
+
     public static final String PN_APPEND = "append";
     public static final String PN_ITEM_RESOURCE_TYPE = "itemResourceType";
     public static final String PN_LIMIT = "limit";

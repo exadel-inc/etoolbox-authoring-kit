@@ -166,12 +166,12 @@ public class XmlContextHelper implements XmlUtility {
 
     @Override
     public String getValidName(String name) {
-        return NamingUtil.getValidNodeName(name, DialogConstants.NN_ITEM);
+        return NamingUtil.getValidNodeName(name, CoreConstants.NN_ITEM);
     }
 
     @Override
     public String getValidSimpleName(String name) {
-        return NamingUtil.getValidNodeName(name, DialogConstants.NN_ITEM);
+        return NamingUtil.getValidNodeName(name, CoreConstants.NN_ITEM);
     }
 
     @Override

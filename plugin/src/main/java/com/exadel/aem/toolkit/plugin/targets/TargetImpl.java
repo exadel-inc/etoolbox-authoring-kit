@@ -234,7 +234,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         if (SELF_PATH.equals(effectivePath)) {
             return this;
         }
-        String effectiveName = NamingUtil.getUniqueName(effectivePath, DialogConstants.NN_ITEM, this);
+        String effectiveName = NamingUtil.getUniqueName(effectivePath, CoreConstants.NN_ITEM, this);
         Target child = new TargetImpl(effectiveName, this);
         this.children.add(child);
         return child;

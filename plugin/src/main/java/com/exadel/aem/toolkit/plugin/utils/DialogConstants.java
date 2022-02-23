@@ -52,7 +52,6 @@ public class DialogConstants {
     public static final String NN_ICONS = "icons";
     public static final String NN_INLINE = "inline";
     public static final String NN_INPLACE_EDITING = "cq:inplaceEditing";
-    public static final String NN_ITEM = "item";
     public static final String NN_ITEMS = "items";
     public static final String NN_FIELD = "field";
     public static final String NN_FORMATS = "formats";

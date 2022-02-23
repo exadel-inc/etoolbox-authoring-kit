@@ -21,6 +21,7 @@ import org.w3c.dom.Element;
 import com.google.common.base.CaseFormat;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 /**
@@ -66,7 +67,7 @@ class NamingHelper {
      */
     String getValidName(String source, String defaultValue) {
         if (StringUtils.isBlank(source)) {
-            return StringUtils.defaultIfBlank(defaultValue, DialogConstants.NN_ITEM);
+            return StringUtils.defaultIfBlank(defaultValue, CoreConstants.NN_ITEM);
         }
 
         String result = source.trim();
