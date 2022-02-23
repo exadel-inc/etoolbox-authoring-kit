@@ -124,7 +124,7 @@ public class ChildrenInjector implements Injector {
      * Retrieves the filtered and adapted list of child objects according to the {@code Children} annotation parameters
      * @param current    Current {@code Resource}
      * @param type       The {@code Type} to adapt to
-     * @param annotation Annotation objects
+     * @param annotation {@code Children} annotation object holding the settings
      * @return {@code List<Object>} list of filtered and adapted objects, or an empty list
      */
     private static List<Object> getFilteredInjectables(Resource current, Type type, Children annotation) {
@@ -140,6 +140,7 @@ public class ChildrenInjector implements Injector {
     /**
      * Retrieves combined resource predicate that originates from the {@link Children} annotation {@code filter}
      * parameter
+     * @param annotation {@code Children} annotation object holding the settings
      * @return {@code List} of initialized predicate functions
      */
     private static Predicate<Resource> getResourceFilter(Children annotation) {

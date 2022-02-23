@@ -52,7 +52,7 @@ abstract class ContainerHandler {
         memberSource -> Arrays.asList(memberSource.getValueType(), memberSource.getReportingClass());
 
     private static final String RECURSION_MESSAGE_TEMPLATE = "Recursive rendering prohibited: a member of type \"%s\" " +
-        "was set to be rendered within a container created with member of type \"%s\"";
+        "was set to be rendered within a container created with a member of type \"%s\"";
 
     /* ----------------------------------
        Retrieving members for a container
@@ -62,16 +62,16 @@ abstract class ContainerHandler {
      * Retrieves the list of sources that can be inserted in the current container. Where to retrieve sources from,
      * depends on the nature of a current container handler.
      * <p>E.g., for a {@code @FieldSet} or {@code @MultiField}-annotated entry, members of the underlying class can be
-     * retrieved. But for an entry that does not necessarily refer to a container class, such as in-dialog {@code @Tabs},
-     * we need to take into account the members of the "surrounding" class (the "host" class) in which the current entry
-     * is declared.</p>
-     * <p>Note that for a nested class the exact set of members is retrieved; while dealing with a host class, the routine
+     * retrieved. But for an entry that does not necessarily refer to a container class, such as in-dialog {@code
+     * @Tabs}, we need to take into account the members of the "surrounding" class (the "host" class) in which the
+     * current entry is declared.</p>
+     * <p>Note that for a nested class the exact set of members is retrieved; while dealing with a host class, the
+     * routine
      * returns a greater number members that are expected to be filtered and distributed between sections of the current
-     * container with the use of {@link PlacementHelper}
-     * {@link PlacementHelper}</p>
+     * container with the use of {@link PlacementHelper} {@link PlacementHelper}</p>
      * @param host   {@code Source} object that represents the class member holding a multi-section container
      * @param target Current {@link Target instance}
-     * @return {@code List} containing {@code Source}-typed placeable members, or an empty list
+     * @return {@code List} containing {@code Source}-typed placeable members or an empty list
      */
     List<Source> getAvailableForContainer(Source host, Target target) {
         List<Source> result = new ArrayList<>();
@@ -81,9 +81,9 @@ abstract class ContainerHandler {
         Class<?> declaringClass = memberSource.getDeclaringClass();
         Class<?> valueTypeClass = memberSource.getValueType();
 
-        // Neither the valueTypeClass, nor the reportingClass can be equal to, or a descendant of the class that
-        // is currently being processed. Otherwise, we will face the "render MyFieldset inside MyFieldset" situation
-        // and get a stack overflow
+        // Neither the {@code valueTypeClass}, nor the {@code reportingClass} can be equal to, or a descendant of the
+        // class that is currently being processed. Otherwise, we will face the "render MyFieldset inside MyFieldset"
+        // situation and get a stack overflow
         if (ClassUtils.isAssignable(valueTypeClass, declaringClass)) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
                 String.format(RECURSION_MESSAGE_TEMPLATE, valueTypeClass.getName(), declaringClass.getName())));
@@ -99,8 +99,8 @@ abstract class ContainerHandler {
         for (Class<?> hostClass : hostsOfRenderedMembers) {
             boolean isDeclaringClass = hostClass.equals(declaringClass);
 
-            // Create the filter to sort out ignored fields (apart from those defined for the container class), exclude
-            // the current source (if needed), banish non-widget fields, and do custom filtering (if needed)
+            // Create the filter to sort out ignored fields (apart from those defined for the container class). Then
+            // exclude the current source (if needed), banish non-widget fields, and do custom filtering (if needed)
             List<ClassMemberSetting> ignoredMembers = getIgnoredMembers(memberSource, hostClass);
             Predicate<Source> nonIgnoredMembersFilter = source -> ignoredMembers.stream().noneMatch(ignored -> ignored.matches(source));
             if (isDeclaringClass) {
@@ -110,14 +110,14 @@ abstract class ContainerHandler {
             // Then, retrieve members for the current class, filter applied without ordering.
             // If this class is not an underlying class of e.g. a FieldSet or MultiField-annotated member, but the
             // "surrounding" class within which the current member is declared -- then we must use the set of members
-            // that is already attached to the target, and not collect the available members once more
+            // that are already attached to the target, and not collect the available members once more
             List<Source> renderedMembers = isDeclaringClass
                 ? target.getRoot().adaptTo(RootTarget.class).getMembers().getAllAvailable().stream().filter(nonIgnoredMembersFilter).collect(Collectors.toList())
                 : ClassUtil.getSources(hostClass, nonIgnoredMembersFilter, false);
             result.addAll(renderedMembers);
         }
 
-        // Finally, order the whole of the members collection
+        // Finally, order all of the members
         return OrderingUtil.sortMembers(result);
     }
 
@@ -125,16 +125,16 @@ abstract class ContainerHandler {
      * When overridden in a derived class, returns a {@code Function} used to extract one or more {@code Class} objects
      * from the given {@code Source}. This is required to compose a collection of class members eligible for the current
      * container.
-     * <p>Normally we expect a single class - the return type of the annotated member, or else two classes - the
-     * class represented by the return type, and the class in which the annotated member is declared</p>
+     * <p>Normally, we expect a single class - the return type of the annotated member, or else two classes - the
+     * class represented by the return type, and the class in which the annotated member has been declared</p>
      * @return {@code Function} reference that accepts one argument of type {@code MemberSource} and returns a non-null
      * list of {@code Class} objects
      */
     abstract Function<MemberSource, List<Class<?>>> getRenderedClassesProvider();
 
     /**
-     * Called from {@link ContainerHandler#getAvailableForContainer(Source, Target)} to find out which members are
-     * being ignored due to the {@code @Ignore} directives that are put either at class level or field/method level
+     * Called from {@link ContainerHandler#getAvailableForContainer(Source, Target)} to find out which members are being
+     * ignored due to the {@code @Ignore} directives that are put either at class level or field/method level
      * @param container   {@code Source} instance representing a field or a method marked with a "container"-type
      *                    annotation
      * @param membersHost {@code Class} reference that refers to one of the classes this member is associated with
@@ -164,7 +164,7 @@ abstract class ContainerHandler {
 
         }
 
-        // Now build collection of ignored members at member level
+        // Now build a collection of ignored members at the member level
         Stream<ClassMemberSetting> memberLevelIgnoredMembers = Stream.empty();
         if (container.adaptTo(Ignore.class) != null) {
             memberLevelIgnoredMembers = Arrays
@@ -194,6 +194,7 @@ abstract class ContainerHandler {
 
     /**
      * Used to fill plain (single-section) containers nested within a Granite UI dialog
+     * @param source  {@code Source} object used for data retrieval
      * @param members Collection of widget-holding class members that relate to the current container
      * @param target  {@code Target} to place widgets in
      */
@@ -207,16 +208,16 @@ abstract class ContainerHandler {
             .members(membersRegistry)
             .build()
             .doPlacement();
-        // Report to the MembersRegistry of members still not used. Due to the nature of getAvailableForContainer() method
-        // these can be sources other than those already registered, but we need them in the registry so that we can
-        // alert on members not used at the end of the rendering
+        // Report to the MembersRegistry of members still not used. Due to the nature of {@code getAvailableForContainer()}
+        // method, these can be sources other than those already registered, but we need them in the registry so that we
+        // can alert on members not used at the end of the rendering
         target.getRoot().adaptTo(RootTarget.class).getMembers().add(membersRegistry.getAvailable());
     }
 
     /**
      * Used to fill multi-section containers nested within a Granite UI dialog. This method extracts container sections,
      * such as {@code Tab}s or {@code AccordionPanel}s, from the current {@code Source} and fills the {@code Target}
-     * @param member Class member holding a multi-section container
+     * @param member A class member holding a multi-section container
      * @param target {@code Target} to place widgets in
      */
     void populateMultiSectionContainer(Source member, Target target) {

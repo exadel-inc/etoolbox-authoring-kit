@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 /**
  * Represents an abstraction of a container section such as {@code Tab} or {@code AccordionPanel}
  * that contains a list of members designed to be rendered within this container element.
- * Used to compose an ordered "containers -> container members" build-up for a component class
+ * Used to compose an ordered "containers to container members" build-up for a component class
  */
 public abstract class Section {
 

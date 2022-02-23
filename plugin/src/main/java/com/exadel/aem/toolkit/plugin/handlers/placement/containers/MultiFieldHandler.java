@@ -38,7 +38,8 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
     private static final String EMPTY_MULTIFIELD_EXCEPTION_MESSAGE = "No valid fields found in multifield class ";
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code
+     * Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
@@ -48,11 +49,11 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
         String name = target.getAttributes().get(DialogConstants.PN_NAME);
         target.getAttributes().remove(DialogConstants.PN_NAME);
 
-        // Get the filtered members' collection for the current container; early return if collection is empty
+        // Get the filtered members' collection for the current container; early return if the collection is empty
         List<Source> members = getAvailableForContainer(source, target);
         if (members.isEmpty()) {
             PluginRuntime.context().getExceptionHandler().handle(new InvalidLayoutException(
-                    EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.adaptTo(MemberSource.class).getValueType().getName()
+                EMPTY_MULTIFIELD_EXCEPTION_MESSAGE + source.adaptTo(MemberSource.class).getValueType().getName()
             ));
             return;
         }
@@ -67,15 +68,16 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
 
     /**
      * Places multiple widget sources to the container of the {@code Target} multifield
+     * @param source            {@code Source} object used for data retrieval
      * @param multiFieldEntries The collection of {@link Source} instances to become multifield children
-     * @param target  Current {@link Target} instance
-     * @param name    The {@code name} attribute for the target multifield
+     * @param target            Current {@link Target} instance
+     * @param name              The {@code name} attribute for the target multifield
      */
     private void placeMultiple(Source source, List<Source> multiFieldEntries, Target target, String name) {
         target.attribute(DialogConstants.PN_COMPOSITE, true);
         Target multifieldContainerElement = target.getOrCreateTarget(DialogConstants.NN_FIELD)
-                .attribute(DialogConstants.PN_NAME, name)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
+            .attribute(DialogConstants.PN_NAME, name)
+            .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
         populateSingleSectionContainer(source, multiFieldEntries, multifieldContainerElement);
     }
 

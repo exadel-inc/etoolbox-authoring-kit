@@ -94,21 +94,21 @@ public class ExceptionsTest extends ExceptionsTestBase {
     @Test
     public void testRenderingRecursion1() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
-        exceptionRule.expectMessage("container created with member of type \"com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases$RecursionParent\"");
+        exceptionRule.expectMessage("container created with a member of type \"com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases$RecursionParent\"");
         test(LayoutExceptionTestCases.ComponentWithRecursiveMember1.class);
     }
 
     @Test
     public void testRenderingRecursion2() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
-        exceptionRule.expectMessage("container created with member of type \"com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases$RecursionInterface\"");
+        exceptionRule.expectMessage("container created with a member of type \"com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases$RecursionInterface\"");
         test(LayoutExceptionTestCases.ComponentWithRecursiveMember2.class);
     }
 
     @Test
     public void testRenderingRecursion3() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
-        exceptionRule.expectMessage("container created with member of type \"com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases$ComponentWithRecursiveMember3\"");
+        exceptionRule.expectMessage("container created with a member of type \"com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases$ComponentWithRecursiveMember3\"");
         test(LayoutExceptionTestCases.ComponentWithRecursiveMember3.class);
     }
 
