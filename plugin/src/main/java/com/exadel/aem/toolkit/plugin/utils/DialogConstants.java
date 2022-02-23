@@ -54,7 +54,6 @@ public class DialogConstants {
     public static final String NN_ICONS = "icons";
     public static final String NN_INLINE = "inline";
     public static final String NN_INPLACE_EDITING = "cq:inplaceEditing";
-    public static final String NN_ITEM = "item";
     public static final String NN_ITEMS = "items";
     public static final String NN_FIELD = "field";
     public static final String NN_FIXED_COLUMNS = "fixedColumns";
@@ -64,7 +63,6 @@ public class DialogConstants {
     public static final String NN_LAYOUT = "layout";
     public static final String NN_LAYOUT_CONFIG = "layoutConfig";
     public static final String NN_LINKS = "links";
-    public static final String NN_LIST = "list";
     public static final String NN_LISTENERS = "cq:listeners";
     public static final String NN_LISTS = "lists";
     public static final String NN_MISCTOOLS = "misctools";

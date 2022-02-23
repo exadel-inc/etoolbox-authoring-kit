@@ -31,6 +31,7 @@ import com.exadel.aem.toolkit.core.lists.ListConstants;
 
 /**
  * Contains methods for manipulating EToolbox List Pages
+ * <p><u>Note</u>: This class is not a part of the public API</p>
  */
 class ListPageUtil {
 
@@ -67,7 +68,7 @@ class ListPageUtil {
             pageProperties.put(CoreConstants.PN_ITEM_RESOURCE_TYPE, ListConstants.SIMPLE_LIST_ITEM_RESOURCE_TYPE);
         }
 
-        resourceResolver.create(listPage.getContentResource(), ListConstants.NN_LIST, LIST_PROPERTIES);
+        resourceResolver.create(listPage.getContentResource(), CoreConstants.NN_LIST, LIST_PROPERTIES);
         return listPage;
     }
 }

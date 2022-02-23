@@ -66,7 +66,7 @@ class NamingHelper {
      */
     String getValidName(String source, String defaultValue) {
         if (StringUtils.isBlank(source)) {
-            return StringUtils.defaultIfBlank(defaultValue, DialogConstants.NN_ITEM);
+            return StringUtils.defaultIfBlank(defaultValue, CoreConstants.NN_ITEM);
         }
 
         String result = source.trim();

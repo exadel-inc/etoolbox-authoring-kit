@@ -21,7 +21,6 @@ import java.util.Objects;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
@@ -35,7 +34,6 @@ import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.WCMException;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
@@ -170,11 +168,11 @@ public class ListHelperTest {
     }
 
     @Test
-    public void shouldCreateListWithoutItemsIfPassedResourceCollectionIsEmpty() throws PersistenceException, WCMException {
+    public void shouldCreateListWithoutItemsIfPassedResourceCollectionIsEmpty() throws WCMException {
         Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.emptyList());
 
         assertNotNull(listPage);
-        Resource list = listPage.getContentResource().getChild(ListConstants.NN_LIST);
+        Resource list = listPage.getContentResource().getChild(CoreConstants.NN_LIST);
         assertNotNull(list);
         assertFalse(list.hasChildren());
     }
@@ -220,6 +218,7 @@ public class ListHelperTest {
     }
 
     @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+    @SuppressWarnings("unused")
     public static class ItemModel {
 
         @ValueMapValue

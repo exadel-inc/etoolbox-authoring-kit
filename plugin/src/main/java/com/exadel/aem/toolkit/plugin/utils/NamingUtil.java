@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Contains utility methods for creating valid entity names
@@ -80,7 +81,7 @@ public class NamingUtil {
      * @return String value
      */
     public static String getValidNodeName(String value) {
-        return NODE_NAME_HELPER.getValidName(value, DialogConstants.NN_ITEM);
+        return NODE_NAME_HELPER.getValidName(value, CoreConstants.NN_ITEM);
     }
 
     /**

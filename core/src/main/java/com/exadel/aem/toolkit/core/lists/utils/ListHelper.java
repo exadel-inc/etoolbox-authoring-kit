@@ -39,7 +39,6 @@ import com.day.cq.wcm.api.PageManager;
 import com.day.cq.wcm.api.WCMException;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -239,7 +238,7 @@ public class ListHelper {
             }
 
             listPage = ListPageUtil.createPage(resourceResolver, path);
-            list = listPage.getContentResource().getChild(ListConstants.NN_LIST);
+            list = listPage.getContentResource().getChild(CoreConstants.NN_LIST);
         } catch (PersistenceException e) {
             throw new WCMException(e);
         }
@@ -318,7 +317,7 @@ public class ListHelper {
             .map(resolver -> resolver.adaptTo(PageManager.class))
             .map(pageManager -> pageManager.getPage(path))
             .map(Page::getContentResource)
-            .map(contentRes -> contentRes.getChild(ListConstants.NN_LIST))
+            .map(contentRes -> contentRes.getChild(CoreConstants.NN_LIST))
             .orElse(null);
     }
 
