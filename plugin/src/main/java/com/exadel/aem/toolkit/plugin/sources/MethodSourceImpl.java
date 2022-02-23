@@ -29,6 +29,7 @@ import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 class MethodSourceImpl extends MemberSourceImpl {
 
     private final Method method;
+    private String name;
     private Class<?> declaringClass;
 
     /**
@@ -44,7 +45,18 @@ class MethodSourceImpl extends MemberSourceImpl {
      */
     @Override
     public String getName() {
+        if (StringUtils.isNotBlank(name)) {
+            return name;
+        }
         return method != null ? method.getName() : StringUtils.EMPTY;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setName(String value) {
+        name = value;
     }
 
     /**

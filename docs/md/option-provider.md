@@ -106,7 +106,7 @@ _valueTransform_ - if specified, defines the way the <u>value</u> will be transf
 
 Because an `@OptionProvider` supports _path references_ apart from regular paths, the setting that says "where to look for the path" can be stored in a dialog field other than the one that actually deals with paths.
 
-Therefore, it ought to be possible to dynamically respond to a _path reference_ change. In the real world, it may look like the following. Imagine there is a dialog field (say, a path picker) that allows you to select a data source (say, a Exadel Toolbox List). Below is a select dropdown with options coming from the Exadel Toolbox List selected in the above path picker.
+Therefore, it ought to be possible to dynamically respond to a _path reference_ change. In the real world, it may look like the following. Imagine there is a dialog field (say, a path picker) that allows you to select a data source (say, an Exadel Toolbox List). Below is a select dropdown with options coming from the Exadel Toolbox List selected in the above path picker.
 
 Here's how it may look in Java code:
 

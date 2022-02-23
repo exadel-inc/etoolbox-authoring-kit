@@ -124,9 +124,10 @@ class TopologicalSorter<T> {
                 this.adjacencyList.get(after.getPosition()).add(currNode);
             }
         }
-        // Sort every list to keep alphabetical order
+        // Sort every list to keep the fallback order (that is, by ranking, if there's ranking specified,
+        // and then alphabetically)
         for (int i = 0; i < this.nodes.size(); i++) {
-            this.adjacencyList.get(i).sort((Comparator.comparing(Orderable::getName)));
+            this.adjacencyList.get(i).sort(Comparator.<Orderable<T>>comparingInt(Orderable::getRank).thenComparing(Orderable::getId));
         }
     }
 

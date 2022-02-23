@@ -25,6 +25,12 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 public interface ModifiableMemberSource extends MemberSource {
 
     /**
+     * Stores the string that is used as the "overriding" name of the current {@code Source}
+     * @param value Non-blank string
+     */
+    void setName(String value);
+
+    /**
      * Assigns the {@code Class} that the underlying Java field or method will be considered belonging to. This is
      * basically used for implementing member "replacing"/"moving" logic
      * @param value {@code Class} reference
@@ -33,7 +39,7 @@ public interface ModifiableMemberSource extends MemberSource {
 
     /**
      * Assigns the {@code Class} that the underlying Java field or method will be considered "reported by". This is
-     * basically used for placing ToolKit widgets to proper containers
+     * basically used for placing ToolKit widgets in proper containers
      * @param value {@code Class} reference
      */
     void setReportingClass(Class<?> value);

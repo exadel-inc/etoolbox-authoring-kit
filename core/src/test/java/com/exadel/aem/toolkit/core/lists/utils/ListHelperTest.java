@@ -13,10 +13,15 @@
  */
 package com.exadel.aem.toolkit.core.lists.utils;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
@@ -25,12 +30,18 @@ import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import com.day.cq.commons.jcr.JcrConstants;
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.WCMException;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class ListHelperTest {
 
@@ -138,6 +149,76 @@ public class ListHelperTest {
         assertEquals(new ItemModel("World", false), actual.get("World"));
     }
 
+    @Test
+    public void shouldCreateListBasedOnMap() throws WCMException {
+        Map<String, Object> listItems = new HashMap<>();
+        listItems.put("first", "firstValue");
+        listItems.put("second", "secondValue");
+
+        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", listItems);
+
+        assertNotNull(listPage);
+        Resource list = listPage.getContentResource("list");
+
+        Resource firstListItem = IterableUtils.get(list.getChildren(), 0);
+        assertEquals("first", firstListItem.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
+        assertEquals("firstValue", firstListItem.getValueMap().get(CoreConstants.PN_VALUE, StringUtils.EMPTY));
+
+        Resource secondListItem = IterableUtils.get(list.getChildren(), 1);
+        assertEquals("second", secondListItem.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
+        assertEquals("secondValue", secondListItem.getValueMap().get(CoreConstants.PN_VALUE, StringUtils.EMPTY));
+    }
+
+    @Test
+    public void shouldCreateListWithoutItemsIfPassedResourceCollectionIsEmpty() throws PersistenceException, WCMException {
+        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.emptyList());
+
+        assertNotNull(listPage);
+        Resource list = listPage.getContentResource().getChild(ListConstants.NN_LIST);
+        assertNotNull(list);
+        assertFalse(list.hasChildren());
+    }
+
+    @Test
+    public void shouldRecreateListBasedOnCollectionOfResourcesIfListAlreadyExists() throws WCMException {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(JcrConstants.JCR_TITLE, "first");
+        properties.put(CoreConstants.PN_VALUE, "firstValue");
+        Resource resource = context.create().resource("/testpath", properties);
+
+        context.create().resource("/content/test");
+        Page list = ListHelper.createResourceList(context.resourceResolver(), "/content/test", Collections.singleton(resource));
+
+        assertNotNull(list);
+        Resource listItem = list.getContentResource("list/listItem");
+        assertEquals("first", listItem.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
+        assertEquals("firstValue", listItem.getValueMap().get(CoreConstants.PN_VALUE, StringUtils.EMPTY));
+    }
+
+    @Test
+    public void shouldCreateListBasedOnListOfSimpleListItems() throws WCMException {
+        SimpleListItem simpleListItem = new SimpleListItemImpl("first", "firstValue");
+
+        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(simpleListItem));
+
+        assertNotNull(listPage);
+        Resource listItem = listPage.getContentResource("list/listItem");
+        assertEquals(simpleListItem.getTitle(), listItem.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
+        assertEquals(simpleListItem.getValue(), listItem.getValueMap().get(CoreConstants.PN_VALUE, StringUtils.EMPTY));
+    }
+
+    @Test
+    public void shouldCreateListBasedOnModelUsingDefaultMapper() throws WCMException {
+        ItemModel itemModel = new ItemModel("someValue", false);
+
+        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(itemModel));
+
+        assertNotNull(listPage);
+        Resource listItem = listPage.getContentResource("list/listItem");
+        assertEquals(itemModel.textValue, listItem.getValueMap().get("textValue", StringUtils.EMPTY));
+        assertEquals(itemModel.booleanValue, listItem.getValueMap().get("booleanValue", false));
+    }
+
     @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
     public static class ItemModel {
 
@@ -156,10 +237,22 @@ public class ListHelperTest {
             this.booleanValue = booleanValue;
         }
 
+        public String getTextValue() {
+            return textValue;
+        }
+
+        public boolean isBooleanValue() {
+            return booleanValue;
+        }
+
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             ItemModel itemModel = (ItemModel) o;
             return booleanValue == itemModel.booleanValue && Objects.equals(textValue, itemModel.textValue);
         }
@@ -167,6 +260,28 @@ public class ListHelperTest {
         @Override
         public int hashCode() {
             return Objects.hash(textValue, booleanValue);
+        }
+    }
+
+    @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
+    private static class SimpleListItemImpl implements SimpleListItem {
+
+        private final String title;
+        private final String value;
+
+        public SimpleListItemImpl(String title, String value) {
+            this.title = title;
+            this.value = value;
+        }
+
+        @Override
+        public String getTitle() {
+            return title;
+        }
+
+        @Override
+        public String getValue() {
+            return value;
         }
     }
 

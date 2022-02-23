@@ -54,15 +54,34 @@ The List Items have a default view which enumerates all non-system properties. H
 1) You can add an Item preview section to a List Item. To do this, create a new `itemPreview.html` file in your Item's folder (in our case, `/apps/listItems/statusCode`). This preview will be displayed next to the info section.
 2) You can also customize the info section itself. To do this, create a new `itemInfo.html` file in your Item's folder. This view will be displayed instead of the default info section.
 
-Note: if you create you List Item anew, and do not have special requirements regarding how it is rendered (i.e. your List Item is not a reusable component for ordinary pages), you don't need to manually create the component folder. Just add `writeMode = WriteMode.CREATE` to the `@AemComponent`. Ignore this if you are actually reusing a pre-existing component.
+Note: if you create your List Item anew, and do not have special requirements regarding how it is rendered (i.e. your List Item is not a reusable component for ordinary pages), you don't need to manually create the component folder. Just add `writeMode = WriteMode.CREATE` to the `@AemComponent`. Ignore this if you are actually reusing a pre-existing component.
 
 ### Editing a List
 
 The Lists can be edited similarly to any other page. You can change the type of *Item Component* used in a list (even after the list has been populated with data) via the page properties.
 
+### Creating Lists in code
+[ListHelper](../../core/src/main/java/com/exadel/aem/toolkit/core/lists/utils/ListHelper.java) is a helper class that provides the ability to create a new EToolbox List from Java code. You can create a List out of a collection of *SimpleListItem*-s, or a collection of arbitrary Sling models, or a list of `Map` instances, or else a list of Sling *Resource*-s:
+```
+
+ResourceResolver currentResourceResolver = /*... */;
+String path = "/content/lists/myNewList";
+List<MyModel> models = Arrays.asList(new MyModel("First"), new MyModel("Second"));
+
+Page myNewList = ListHelper.createList(resourceResolver, path, models);
+
+// ...
+
+var propertyMaps = Arrays.asList(ImmutableMap.of("foo", "bar", "answer": 42), /* ... */);
+Page myAnotherList = ListHelper.createList(resourceResolver, path, propertyMaps);
+
+```
+You can find more examples in [ListHelperTest](../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
+
+
 ### Retrieving Lists' content programmatically
 
-[ListHelper](../../core/src/main/java/com/exadel/aem/toolkit/core/lists/utils/ListHelper.java) is a helper class that provides the ability to retrieve contents of any list by its path. See examples below:
+Apart from creating lists, [ListHelper](../../core/src/main/java/com/exadel/aem/toolkit/core/lists/utils/ListHelper.java) provides the ability to retrieve contents of any list by its path. See examples below:
 ```
    List<ItemModel> models = ListHelper.getList(resolver, "/content/myList", ItemModel.class);
    Map<String, String> mapping = ListHelper.getMap(resolver, "/content/myList");

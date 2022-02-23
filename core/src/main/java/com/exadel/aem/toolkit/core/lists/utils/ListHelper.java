@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.lists.utils;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,36 +21,37 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
+import com.day.cq.wcm.api.WCMException;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
- * Contains methods for retrieving Exadel Toolbox Lists values
+ * Contains methods for manipulating EToolbox Lists
  */
 public class ListHelper {
 
-    /**
-     * Default (instantiation-restricting) constructor
-     */
-    private ListHelper() {
-    }
-
-    /* --------------
-       Public methods
-       -------------- */
+    /* -----------------
+       Retrieval methods
+       ----------------- */
 
     /**
      * Retrieves a collection of Sling {@link Resource}s representing list entries stored under given {@code path}
@@ -78,8 +80,8 @@ public class ListHelper {
      * {@code itemType}
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
-     * @param itemType         {@code Class} reference representing type of entries required
-     * @param <T>              Type of list entries, must be one adaptable from a Sling {@code Resource}
+     * @param itemType         {@code Class} reference representing the type of entries required
+     * @param <T>              Type of list entries. Must be one adaptable from a Sling {@code Resource}
      * @return List of {@code <T>}-typed instances. If the path provided is invalid or cannot be resolved, or else
      * a non-adaptable {@code itemType} is given, an empty list is returned
      */
@@ -143,13 +145,108 @@ public class ListHelper {
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @param keyName          Item resource property that holds the key of the resulting map
-     * @param itemType         {@code Class} reference representing type of map values required
+     * @param itemType         {@code Class} reference representing the type of map values required
      * @param <T>              Type of map values; must be one adaptable from a Sling {@code Resource}
      * @return Map containing {@code <T>}-typed instances. If the path provided is invalid or cannot be resolved,
      * or else a non-adaptable model {@code itemType} is given, an empty map is returned
      */
     public static <T> Map<String, T> getMap(ResourceResolver resourceResolver, String path, String keyName, Class<T> itemType) {
         return getMap(resourceResolver, path, keyName, getMapperFunction(itemType));
+    }
+
+
+    /* ----------------
+       Creating methods
+       ---------------- */
+
+    /**
+     * Creates a list of entries under the given JCR {@code path} based on a list of arbitrary Sling models
+     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
+     * @param path             JCR path of the list
+     * @param values           List of models
+     * @param <T>              Type specifier of Sling models
+     * @return {@link Page} containing the list of entries or {@code null} if an invalid or void argument is passed
+     * @throws WCMException If a page cannot be created
+     */
+    public static <T> Page createList(
+        ResourceResolver resourceResolver,
+        String path,
+        List<T> values) throws WCMException {
+
+        if (resourceResolver == null || StringUtils.isBlank(path)) {
+            return null;
+        }
+
+        Class<?> modelType = CollectionUtils.isNotEmpty(values)? values.get(0).getClass() : null;
+
+        BiFunction<Object, ObjectMapper, Map<String, Object>> mapping = ListResourceUtil.getMapingFunction(modelType);
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        List<Resource> resources = values.stream()
+            .map(value -> mapping.apply(value, objectMapper))
+            .filter(Objects::nonNull)
+            .map(properties -> ListResourceUtil.createValueMapResource(resourceResolver, properties))
+            .collect(Collectors.toList());
+
+        return createResourceList(resourceResolver, path, resources);
+    }
+
+    /**
+     * Creates a list of entries under the given {@code path} based on a key-value map. Each entry is a separate list
+     * item
+     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
+     * @param path             JCR path of the items list
+     * @param values           Key-value map
+     * @return {@link Page} containing the list of entries or {@code null} if an invalid or void argument is passed
+     * @throws WCMException If the list could not be created
+     */
+    public static Page createList(ResourceResolver resourceResolver, String path, Map<String, Object> values)
+        throws WCMException {
+
+        List<Resource> resources = ListResourceUtil.mapToValueMapResources(resourceResolver, values);
+        return createResourceList(resourceResolver, path, resources);
+    }
+
+    /**
+     * Creates a list of entries under the given {@code path} based on the list of {@link Resource} objects
+     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
+     * @param path             JCR path of the items list
+     * @param resources        List of {@link Resource}
+     * @return {@link Page} containing the list of entries or {@code null} if an invalid or void argument is passed
+     * @throws WCMException If a page cannot be created or null is an illegal (empty or null) argument is passed
+     */
+    public static Page createResourceList(
+        ResourceResolver resourceResolver,
+        String path,
+        Collection<Resource> resources) throws WCMException {
+
+        if (resourceResolver == null || StringUtils.isBlank(path)) {
+            return null;
+        }
+
+        Page listPage;
+        Resource list;
+        try {
+            Resource pageResource = resourceResolver.getResource(path);
+            if (pageResource != null) {
+                resourceResolver.delete(pageResource);
+            }
+
+            listPage = ListPageUtil.createPage(resourceResolver, path);
+            list = listPage.getContentResource().getChild(ListConstants.NN_LIST);
+        } catch (PersistenceException e) {
+            throw new WCMException(e);
+        }
+
+        for (Resource resource : resources) {
+            try {
+                ListResourceUtil.createListItem(resourceResolver, list, resource.getValueMap());
+            } catch (PersistenceException e) {
+                throw new WCMException(e);
+            }
+        }
+
+        return listPage;
     }
 
 
@@ -163,7 +260,7 @@ public class ListHelper {
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @param keyName          Item resource property that holds the key of the resulting map
-     * @param mapper           {@code Function} that converts a list item resource into the object of required type
+     * @param mapper           {@code Function} that converts a list item resource into the object of the required type
      * @param <T>              Type of map values
      * @return Map containing {@code <T>}-typed instances
      */
@@ -186,7 +283,7 @@ public class ListHelper {
 
     /**
      * Retrieves a {@code ResourceResolver} instance and gets  a sequence of {@code Resource}s under the provided path
-     * as a Java {@code Stream} for further processing
+     * in the form of a Java {@code Stream} for further processing
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @return {@code Stream} or resource objects, or an empty stream
@@ -215,14 +312,13 @@ public class ListHelper {
             .map(resolver -> resolver.adaptTo(PageManager.class))
             .map(pageManager -> pageManager.getPage(path))
             .map(Page::getContentResource)
-            .map(contentRes -> contentRes.getChild("list"))
+            .map(contentRes -> contentRes.getChild(ListConstants.NN_LIST))
             .orElse(null);
     }
 
-
     /**
      * Retrieves a {@code Function} used to convert a {@code Resource} object into the required value type
-     * @param itemType {@code Class} reference representing type of entries required
+     * @param itemType {@code Class} reference representing the type of entries required
      * @param <T>      Type of value
      * @return {@code Function} object
      */
@@ -231,5 +327,11 @@ public class ListHelper {
             return itemType::cast;
         }
         return resource -> resource.adaptTo(itemType);
+    }
+
+    /**
+     * Default (instantiation-restricting) constructor
+     */
+    private ListHelper() {
     }
 }

@@ -28,6 +28,8 @@ import com.exadel.aem.toolkit.core.lists.models.ListItemTest;
 import com.exadel.aem.toolkit.core.lists.servlets.ItemComponentsServletTest;
 import com.exadel.aem.toolkit.core.lists.servlets.ListsServletTest;
 import com.exadel.aem.toolkit.core.lists.utils.ListHelperTest;
+import com.exadel.aem.toolkit.core.lists.utils.ListPageUtilTest;
+import com.exadel.aem.toolkit.core.lists.utils.ListResourceUtilTest;
 import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderTest;
 
 /**
@@ -35,16 +37,21 @@ import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderTe
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    ListItemTest.class,
     ListHelperTest.class,
-    ItemComponentsServletTest.class,
+    ListPageUtilTest.class,
+    ListResourceUtilTest.class,
+
     ListsServletTest.class,
-    OptionProviderTest.class,
+    ListItemTest.class,
+    ItemComponentsServletTest.class,
+
     RequestParamInjectorTest.class,
     RequestSelectorsInjectorTest.class,
     RequestSuffixInjectorTest.class,
     ChildInjectorTest.class,
-    ChildrenInjectorTest.class
+    ChildrenInjectorTest.class,
+
+    OptionProviderTest.class
 })
 public class AllTests {
 }

@@ -29,7 +29,6 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
  * with {@link NamingUtil}
  */
 class NamingHelper {
-    private static final String VERB_SEPARATOR = "_";
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
     private static final Pattern NODE_NAME_INDEX_PATTERN = Pattern.compile("\\d*$");
     private static final Pattern NAMESPACE_PATTERN = Pattern.compile("^\\w+:");
@@ -82,7 +81,7 @@ class NamingHelper {
         boolean convertToCamelCase = whitespacePatternMatcher.find();
 
         if (convertToCamelCase) {
-            result = WHITESPACE_PATTERN.matcher(result).replaceAll(VERB_SEPARATOR);
+            result = WHITESPACE_PATTERN.matcher(result).replaceAll(CoreConstants.SEPARATOR_UNDERSCORE);
         }
 
         result = clearingPattern.matcher(result).replaceAll(StringUtils.EMPTY);
