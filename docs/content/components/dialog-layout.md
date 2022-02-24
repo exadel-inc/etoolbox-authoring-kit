@@ -134,5 +134,5 @@ Accordion panels inheritance and ignoring works exactly the same as for the tabs
 ***
 #### See also
 
-- [Defining dialog fields, setting attributes](component-structure.md)
-- [Reusing code and making it brief](reusing-code.md)
+- [Defining dialog fields, setting attributes](./component-structure.md)
+- [Reusing code and making it brief](./reusing-code.md)

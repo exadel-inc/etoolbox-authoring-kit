@@ -13,6 +13,10 @@
         <meta name="keywords" content="{{keywords}}">
     {% endif %}
 
+    {%if redirect %}
+      <script> window.location.replace('{{ redirect | url }}'); </script>
+    {% endif %}
+
     {# Additional site meta information #}
     {% block meta %}{% endblock meta %}
     {# Site icon #}
@@ -24,7 +28,6 @@
     {% block head %}{% endblock %}
   </head>
   <body>
-
     <div class="page {{ baseClass }}">
       {% block content %}{% endblock %}
     </div>

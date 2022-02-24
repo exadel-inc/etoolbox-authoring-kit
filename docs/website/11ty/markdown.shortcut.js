@@ -45,7 +45,7 @@ class MDRenderer {
       MDRenderer.changeImgPath(window.document.body);
 
       // Render result content
-      return window.document.body.innerHTML;
+      return MDRenderer.renderContent(window.document.body);
     } catch (e) {
       return `Rendering error: ${e}`;
     }
@@ -62,6 +62,10 @@ class MDRenderer {
   static findAnchor(dom, name) {
     const anchor = dom.querySelector(`a[name='${name}']`);
     return anchor && anchor.matches(':only-child') ? anchor.parentElement : anchor;
+  }
+
+  static renderContent(content) {
+    return `<div class="markdown-container">${content.innerHTML}</div>`;
   }
 
   static resolveLinks(dom, basePath) {
