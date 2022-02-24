@@ -146,7 +146,7 @@ The first argument of a handler's `accept` method is the [Source](https://javado
 
 The *Source* is further specified by calling the `adaptTo()` method which accepts the only argument - the adapter type. You can, for example, call `source.adaptTo(Annotation[].class)` to get the array of annotations attached to the source-reflected class or class member. Also, you can specify a particular annotation like `source.adaptTo(DialogField.class)`. If the referred annotation is not actually present, `null` is returned. To mitigate null pointer management you can call the `tryAdaptTo()` method that will return an `Optional` object.
 
-There are a bunch of predefined source adapters. For instance, a source object can be adapted to `MemberSource` that has several properties specific for member-based sources (refer to this [javadoc](../../core/src/main/java/com/exadel/aem/toolkit/api/handlers/MemberSource.java) for details).
+There are a bunch of predefined source adapters. For instance, a source object can be adapted to `MemberSource` that has several properties specific for member-based sources (refer to this [javadoc](../../../core/src/main/java/com/exadel/aem/toolkit/api/handlers/MemberSource.java) for details).
 
 You can create your own adapter that will encapsulate some reasonable logic. See the following code snippet which shows how to virtually turn a ToolKit annotation into a writable Java entity:
 

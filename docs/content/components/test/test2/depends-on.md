@@ -6,7 +6,9 @@ tags: test2
 
 [Main page](../../../../../README.md)
 
-## DependsO Plugin Client Library
+## Depends On Plugin Client Library
+
+[TEST](../../dialog-layout.md)
 
 Authors: _Alexey Stsefanovich (ala'n)_, _Yana Bernatskaya (YanaBr)_, _Stepan Miakchilo_, _Liubou Masiuk_
 
@@ -38,7 +40,7 @@ The **Query** always goes with the **Action** and defines an expression that sho
 
 More details on the structure of DependsOn are presented below:
 
-![DependsOn Structure](../img/dependson-structure.jpg)
+![DependsOn Structure](../../../../img/dependson-structure.jpg)
 
 #### Introduction
 
