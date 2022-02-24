@@ -1,0 +1,11 @@
+name: Exadel Authoring Kit for AEM
+description: Exadel Authoring Kit for AEM
+url: "https://localhost:3005"
+urlPrefix: ""
+apacheLicense: "https://github.com/exadel-inc/etoolbox-authoring-kit/blob/master/LICENSE"
+github:
+  url: "https://github.com/exadel-inc/etoolbox-authoring-kit"
+  srcUrl: "https://github.com/exadel-inc/etoolbox-authoring-kit/tree/master"
+exadel: "https://exadel.com/",
+rewriteRules:
+  "docs/INSTALLATION_GUIDE.md": "/introduction"
