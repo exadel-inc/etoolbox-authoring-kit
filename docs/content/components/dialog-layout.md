@@ -1,7 +1,6 @@
 <!--
-layout: content
+layout: md-content
 title: Dialog layout
-tags: components
 -->
 
 [Main page](../../../README.md)

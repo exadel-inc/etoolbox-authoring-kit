@@ -1,7 +1,6 @@
 <!--
-layout: content
+layout: md-content
 title: Additional properties
-tags: get-started
 -->
 
 [Main page](../../../README.md)

@@ -1,4 +1,4 @@
-const {url: siteUrl} = require('../views/_data/site.json');
+const {url: siteUrl} = require('./site.config');
 
 module.exports = (config) => {
   config.addFilter('canonical', (path) => {

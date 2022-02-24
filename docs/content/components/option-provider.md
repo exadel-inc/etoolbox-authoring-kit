@@ -1,7 +1,6 @@
 <!--
-layout: content
+layout: md-content
 title: Option provider
-tags: components
 -->
 
 [Main page](../../../README.md)

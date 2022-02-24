@@ -1,7 +1,6 @@
 <!--
-layout: content
+layout: md-content
 title: Plugin settings
-tags: components
 -->
 
 [Main page](../../../README.md)
