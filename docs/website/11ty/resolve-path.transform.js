@@ -15,6 +15,7 @@ class PathResolver {
   }
 
   static resolve(content, outputUrl) {
+    if (!outputUrl.endsWith('.html')) return content;
     const filePath = path.dirname(outputUrl.replace(/dist\//, ''));
     const {window} = new JSDOM(content);
     PathResolver.resolveLinks(window.document.body, filePath);
