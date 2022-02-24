@@ -4,7 +4,7 @@ title: Dialog layout
 tags: components
 -->
 
-[Main page](../../README.md)
+[Main page](../../../README.md)
 
 ## Laying out your dialogs
 

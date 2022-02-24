@@ -4,7 +4,7 @@ title: Customizing toolkit
 tags: test
 -->
 
-[Main page](../../README.md)
+[Main page](../../../../README.md)
 
 ## Customizing the ToolKit to your needs
 

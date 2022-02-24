@@ -4,7 +4,7 @@ title: Option provider
 tags: components
 -->
 
-[Main page](../../README.md)
+[Main page](../../../README.md)
 
 ## Feeding data to selection widgets with OptionProvider
 

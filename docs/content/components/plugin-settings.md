@@ -4,7 +4,7 @@ title: Plugin settings
 tags: components
 -->
 
-[Main page](../../README.md)
+[Main page](../../../README.md)
 ## Plugin settings
 
 ### componentsPathBase

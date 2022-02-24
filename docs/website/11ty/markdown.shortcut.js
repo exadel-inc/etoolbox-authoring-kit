@@ -45,7 +45,6 @@ class MDRenderer {
       // Resolve content links
       MDRenderer.resolveLinks(window.document.body, filePath);
       const res = await MDRenderer.changeImgPath(window.document.body);
-      MDRenderer.setHeadingsId(res);
       // Render result content
       return MDRenderer.renderContent(res);
     } catch (e) {
@@ -97,14 +96,7 @@ class MDRenderer {
       });
       return content;
   };
-  static setHeadingsId(content){
-      const headingsArr = content.querySelectorAll("h1,h2,h3,h4,h5,h6");
-      headingsArr.forEach( elem => {
-          const id = elem.textContent.split(" ").join("-").split("@").join("").split(",").join("").toLowerCase();
-          elem.setAttribute('id', id);
-      });
-  };
-};
+}
 
 module.exports = (config) => {
   config.addNunjucksAsyncShortcode('mdRender', MDRenderer.render);

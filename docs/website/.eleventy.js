@@ -5,6 +5,7 @@ module.exports = (config) => {
   // Init all 11ty config modules
   const cfgFiles = fs.readdirSync('./11ty');
   for (const file of cfgFiles) {
+    // TODO: ignore dir
     if (file.startsWith('_')) continue;
     try {
       console.info(`Initializing module: ${file}`);

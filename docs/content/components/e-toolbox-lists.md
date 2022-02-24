@@ -4,7 +4,7 @@ title: E-toolbox lists
 tags: components
 -->
 
-[Main page](../../README.md)
+[Main page](../../../README.md)
 
 ## Managing structured data with Exadel Toolbox Lists
 

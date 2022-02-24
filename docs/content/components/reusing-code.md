@@ -4,7 +4,7 @@ title: Reusing code
 tags: components
 -->
 
-[Main page](../../README.md)
+[Main page](../../../README.md)
 
 ## Reusing code and making it brief
 

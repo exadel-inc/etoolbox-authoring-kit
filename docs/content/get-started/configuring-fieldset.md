@@ -4,7 +4,7 @@ title: Fieldset
 tags: get-started
 -->
 
-[Main page](../../README.md)
+[Main page](../../../README.md)
 
 ## Grouping fields with FieldSet
 

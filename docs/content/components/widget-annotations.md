@@ -4,7 +4,7 @@ title: Widget annotations
 tags: components
 -->
 
-[Main page](../../README.md)
+[Main page](../../../README.md)
 
 ## Defining dialog fields
 

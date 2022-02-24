@@ -4,7 +4,7 @@ title: Additional properties
 tags: get-started
 -->
 
-[Main page](../../README.md)
+[Main page](../../../README.md)
 
 ## Additional properties of components, dialogs and fields
 
