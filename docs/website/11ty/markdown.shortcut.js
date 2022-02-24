@@ -40,6 +40,7 @@ class MDRenderer {
       }
 
       // Resolve content links
+      // TODO: replace with resolve path utility
       MDRenderer.resolveLinks(window.document.body, filePath);
       MDRenderer.changeImgPath(window.document.body);
 
@@ -86,13 +87,13 @@ class MDRenderer {
 
   static changeImgPath(dom) {
       const imgArr = dom.querySelectorAll('img');
-      const imgPath = '../../assets/components';
+      const imgPath = '/assets/img';
       imgArr.forEach(elem => {
           const srcLink = elem.getAttribute('src');
           if(srcLink.startsWith('../img/')) elem.setAttribute('src', srcLink.replace('../img', imgPath ));
           if(srcLink.startsWith('./docs/img/')) elem.setAttribute('src', srcLink.replace('./docs/img', imgPath));
       });
-  };
+  }
 }
 
 module.exports = (config) => {

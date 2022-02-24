@@ -11,11 +11,11 @@ github:
 exadel: "https://exadel.com/"
 
 rewriteRules:
-  - regexp: "README.md"
+  - path: "README.md"
     value: "/content/introduction/installation"
   - regexp: "docs/content/(.+)\\.md"
     value: "/content/$1"
   - regexp: "(.+)\\.java"
     value: "https://github.com/exadel-inc/etoolbox-authoring-kit/blob/master/$1.java"
   - regexp: "docs/img/(.+)$"
-    value: "/assets/components/$1"
+    value: "/assets/img/$1"

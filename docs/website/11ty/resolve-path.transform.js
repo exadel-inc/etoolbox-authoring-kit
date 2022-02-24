@@ -44,13 +44,17 @@ class PathResolver {
   }
 
   static processRewriteRules(link, filePath) {
+    const [linkUrl, linkAnchor] = link.split('#');
     const fullFilePath = path.join(DOCS_PATH, filePath);
     const fullDirPath = path.dirname(fullFilePath);
-    const targetPath = path.resolve(fullDirPath, link);
+    const targetPath = path.resolve(fullDirPath, linkUrl);
     const target = path.relative(ROOT_PATH, targetPath).replace(/\\/g, '/');
 
-    for (const {regexp, replacement} of this.rules) {
-      if (regexp.test(target)) return target.replace(regexp, replacement);
+    for (const {path, regexp, replacement} of this.rules) {
+      if (path === target) return replacement;
+      if (!regexp || !regexp.test(target)) continue;
+      const url = target.replace(regexp, replacement);
+      return url + (linkAnchor ? `#${linkAnchor}` : '');
     }
     return link;
   }

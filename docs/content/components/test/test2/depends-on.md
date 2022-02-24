@@ -8,7 +8,7 @@ tags: test2
 
 ## Depends On Plugin Client Library
 
-[TEST](../../dialog-layout.md)
+[TEST](../../dialog-layout.md#see-also)
 
 Authors: _Alexey Stsefanovich (ala'n)_, _Yana Bernatskaya (YanaBr)_, _Stepan Miakchilo_, _Liubou Masiuk_
 
