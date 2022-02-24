@@ -1,7 +1,6 @@
 <!--
-layout: content
+layout: md-content
 title: Reusing code
-tags: components
 -->
 
 [Main page](../../../README.md)

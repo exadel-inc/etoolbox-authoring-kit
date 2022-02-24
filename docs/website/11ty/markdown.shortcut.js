@@ -1,6 +1,5 @@
 const path = require('path');
 const fsAsync = require('fs').promises;
-// const structure = require('../structure.json');
 
 const {JSDOM} = require('jsdom');
 const {markdown} = require('./markdown.lib');
@@ -21,12 +20,10 @@ const recursiveCheckLinks = (arr, link, element, key) => {
 }
 
 class MDRenderer {
-
   static async render(filePath, startAnchor, endAnchor) {
     try {
       const content = await MDRenderer.parseFile(filePath);
       const {window} = new JSDOM(content);
-
 
       // Exclude part before start anchor
       if (startAnchor) {
@@ -44,9 +41,10 @@ class MDRenderer {
 
       // Resolve content links
       MDRenderer.resolveLinks(window.document.body, filePath);
-      const res = await MDRenderer.changeImgPath(window.document.body);
+      MDRenderer.changeImgPath(window.document.body);
+
       // Render result content
-      return MDRenderer.renderContent(res);
+      return MDRenderer.renderContent(window.document.body);
     } catch (e) {
       return `Rendering error: ${e}`;
     }
@@ -86,20 +84,18 @@ class MDRenderer {
     return github.srcUrl + linkPath;
   }
 
-  static changeImgPath(content){
-      const imgArr = content.querySelectorAll('img');
+  static changeImgPath(dom) {
+      const imgArr = dom.querySelectorAll('img');
       const imgPath = '../../assets/components';
       imgArr.forEach(elem => {
           const srcLink = elem.getAttribute('src');
           if(srcLink.startsWith('../img/')) elem.setAttribute('src', srcLink.replace('../img', imgPath ));
           if(srcLink.startsWith('./docs/img/')) elem.setAttribute('src', srcLink.replace('./docs/img', imgPath));
       });
-      return content;
   };
 }
 
 module.exports = (config) => {
   config.addNunjucksAsyncShortcode('mdRender', MDRenderer.render);
-
 };
 module.exports.MDRenderer = MDRenderer;

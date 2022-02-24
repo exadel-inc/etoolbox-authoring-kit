@@ -1,7 +1,6 @@
 <!--
-layout: content
+layout: md-content
 title: Widget annotations
-tags: components
 -->
 
 [Main page](../../../README.md)

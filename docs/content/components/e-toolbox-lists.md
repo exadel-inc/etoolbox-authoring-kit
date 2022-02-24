@@ -1,7 +1,6 @@
 <!--
-layout: content
+layout: md-content
 title: E-toolbox lists
-tags: components
 -->
 
 [Main page](../../../README.md)
