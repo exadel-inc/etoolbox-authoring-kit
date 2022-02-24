@@ -3,7 +3,7 @@ const {highlight} = require('./prismjs.lib');
 const {resolveLink} = require('../helpers/resolveLink');
 const {setCorrectImageSrc} = require('../helpers/setCorrectImageSrc')
 const replaceSymbolAt = (str) =>{
-  return str.startsWith('@') && str.replace('@','');
+  return str.startsWith('@') ? str.replace('@','') : str;
 }
 const slugify = (s)=>encodeURIComponent(replaceSymbolAt(String(s).trim().toLowerCase().replace(/\s+/g, '-')));
 
