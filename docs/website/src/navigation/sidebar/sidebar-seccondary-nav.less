@@ -10,12 +10,16 @@ esl-d-sidebar {
   .sidebar-nav-secondary-item {
     display: block;
     position: relative;
-    padding: 10px 35px 10px 70px;
+    padding: 10px 35px 10px 54px;
     @media @sm {
-      padding-left: 81px;
+      padding-left: 65px;
     }
     @media @md-xl {
-      padding-left: 40px;
+      padding-left: 50px;
+    }
+    &.active {
+      color: @nav-dark-selected;
+      background: linear-gradient(to right, fade(@nav-dark-selected, 25%), fade(@nav-dark-selected, 0%));
     }
     &.draft::before {
       content: '';

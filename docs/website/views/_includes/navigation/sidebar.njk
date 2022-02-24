@@ -7,10 +7,14 @@
     </a>
     <div class="sidebar-content">
       <ul class="sidebar-nav-list esl-scrollable-content">
-        <li class="sidebar-nav-item">
-          {{ navitem ('Introduction', 'introduction') }}
-        </li>
-
+        {% set collection = collections.content | sortByNameAndOrder | navigation %}
+        {% if collection.children.length %}
+          {% for item in collection.children %}
+          <li class="sidebar-nav-item">
+            {{ navitem (item) }}
+          </li>
+          {% endfor %}
+        {% endif %}
       </ul>
       <esl-scrollbar class="sidebar-scrollbar" target="::prev"></esl-scrollbar>
     </div>
