@@ -18,7 +18,7 @@
         {% set isActive = page.url === itm.url %}
         {% set isDraft = [].concat(itm.data.tags).includes('draft') %}
         {% if itm.children.length %}
-          {{ navitem (itm) }}
+          <li class="sidebar-nav-secondary-item sidebar-secondary-nav-item-children">{{ navitem (itm) }}</li>
         {% else %}
         <li class="sidebar-nav-secondary-item {{ 'active' if isActive }} {{ 'draft' if isDraft }}"
             {% if isActive %}aria-selected="true"{% endif %}>
