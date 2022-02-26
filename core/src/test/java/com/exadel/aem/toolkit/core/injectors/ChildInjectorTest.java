@@ -104,9 +104,9 @@ public class ChildInjectorTest {
         assertEquals(3, itemModel.getProperties().size());
 
         Map<String, Object> expected = new HashMap<>();
-        expected.put("prefix_value", "pref_value");
-        expected.put("prefix_value_2", "pref_value_2");
-        expected.put("prefix_value_3", "pref_value_3");
+        expected.put("value", "pref_value");
+        expected.put("value_2", "pref_value_2");
+        expected.put("value_3", "pref_value_3");
         assertEquals(expected, itemModel.getProperties());
     }
 
@@ -120,9 +120,9 @@ public class ChildInjectorTest {
         assertEquals(3, itemModel.getProperties().size());
 
         Map<String, Object> expected = new HashMap<>();
-        expected.put("value_1_postfix", "value_1_postfix");
-        expected.put("value_2_postfix", "value_2_postfix");
-        expected.put("value_3_postfix", "value_3_postfix");
+        expected.put("value_1", "value_1_postfix");
+        expected.put("value_2", "value_2_postfix");
+        expected.put("value_3", "value_3_postfix");
         assertEquals(expected, itemModel.getProperties());
     }
 
@@ -134,7 +134,7 @@ public class ChildInjectorTest {
         ListItemModel itemModel = testModel.getModelFilteredByPrefixAndPostfix();
         assertNotNull(itemModel);
         assertEquals(1, itemModel.getProperties().size());
-        assertEquals(42L, itemModel.getProperties().get("foo_property_bar"));
+        assertEquals(42L, itemModel.getProperties().get("property"));
     }
 
     @Test

@@ -24,6 +24,6 @@ import com.exadel.aem.toolkit.api.annotations.injectors.RequestParam;
 )
 public interface ITestModelRequestParam {
 
-    @RequestParam(name = "also")
+    @RequestParam(name = "param2")
     String getRequestParamFromMethod();
 }

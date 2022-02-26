@@ -35,22 +35,28 @@ public class TestModelRequestParam {
     // Valid cases
 
     @RequestParam
-    private String param;
+    private String param1;
 
-    @RequestParam(name = "also")
+    @RequestParam(name = "param2")
     private String namedParam;
 
-    @RequestParam(name = "also")
+    @RequestParam(name = "param2")
     private Object paramObjectType;
 
-    @RequestParam(name = "param")
+    @RequestParam(name = "param1")
     private RequestParameter requestParameter;
 
-    @RequestParam(name = "also")
+    @RequestParam(name = "param2")
     private RequestParameter[] requestParameterArray;
+
+    @RequestParam(name = "param2")
+    private String[] requestParameterStringArray;
 
     @RequestParam
     private List<RequestParameter> requestParameterList;
+
+    @RequestParam(name = "param2")
+    private List<String> requestParameterStringList;
 
     @RequestParam
     private RequestParameterMap requestParameterMap;
@@ -65,20 +71,20 @@ public class TestModelRequestParam {
     @RequestParam
     private Set<RequestParameter> paramSet;
 
-    @RequestParam(name = "param")
+    @RequestParam(name = "param1")
     private List<Integer> paramListWrongType;
 
     // Constructor
 
     @Inject
-    public TestModelRequestParam(@RequestParam @Named("also") String param) {
-        this.paramRequestFromMethodParameter = param;
+    public TestModelRequestParam(@RequestParam @Named("param2") String param1) {
+        this.paramRequestFromMethodParameter = param1;
     }
 
     // Accessors - Valid cases
 
-    public String getParam() {
-        return param;
+    public String getParam1() {
+        return param1;
     }
 
     public String getNamedParam() {
@@ -97,8 +103,16 @@ public class TestModelRequestParam {
         return requestParameterArray;
     }
 
+    public String[] getRequestParameterStringArray() {
+        return requestParameterStringArray;
+    }
+
     public List<RequestParameter> getRequestParameterList() {
         return requestParameterList;
+    }
+
+    public List<String> getRequestParameterStringList() {
+        return requestParameterStringList;
     }
 
     public RequestParameterMap getRequestParameterMap() {
