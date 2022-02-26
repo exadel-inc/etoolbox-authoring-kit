@@ -10,12 +10,12 @@ esl-d-sidebar {
   .sidebar-nav-secondary-item {
     display: block;
     position: relative;
-    padding: 10px 35px 10px 54px;
+    padding: 10px 0px 10px 38px;
     @media @sm {
-      padding-left: 65px;
+      padding-left: 49px;
     }
     @media @md-xl {
-      padding-left: 50px;
+      padding-left: 34px;
     }
     &.active {
       color: @nav-dark-selected;
@@ -35,13 +35,54 @@ esl-d-sidebar {
       background-position: center;
       background-image: url('/assets/common/flask.svg');
     }
+    & .sidebar-nav-item-trigger {
+      margin-left: 0;
+      padding-left: 29px;
+      font-size: 1rem;
+      font-weight: 400;
+    }
   }
+
+  .sidebar-secondary-nav-item-children {
+   padding-left: 0;
+  }
+
+  .sidebar-nav-secondary-item.sidebar-secondary-nav-item-children {
+    padding-top: 0;
+    padding-bottom: 0;
+    .sidebar-nav-item-heading .sidebar-nav-item-trigger {
+     padding-left: 13px;
+    }
+    .sidebar-nav-secondary .sidebar-nav-secondary-list .sidebar-nav-item-trigger {
+      padding-left: 26px;
+    }
+    .sidebar-nav-secondary-item:not(.sidebar-secondary-nav-item-children) {
+      padding-left: 51px;
+      @media @sm-md {
+        padding-left: 64px;
+      }
+      @media @md-xl {
+        padding-left: 47px;
+      }
+    }
+    .sidebar-nav-secondary-item.sidebar-secondary-nav-item-children {
+      .sidebar-nav-secondary-item:not(.sidebar-secondary-nav-item-children)  {
+        padding-left: 64px;
+        @media @sm-md {
+          padding-left: 77px;
+        }
+        @media @md-xl {
+          padding-left: 60px;
+        }
+      }
+    }
+  }
+
   .sidebar-nav-secondary-link {
     display: block;
     font-size: 1rem;
     font-weight: 400;
     text-decoration: none;
-
     color: inherit;
 
     &:hover {
