@@ -18,18 +18,5 @@
       </ul>
       <esl-scrollbar class="sidebar-scrollbar" target="::prev"></esl-scrollbar>
     </div>
-    <esl-trigger class="sidebar-trigger-btn sidebar-arrows-icon" target="#sidebar" data-store></esl-trigger>
   </nav>
 </esl-d-sidebar>
-
-<script>
-    if (localStorage.getItem('sidebar-collapsed')) {
-        var sidebar = document.querySelector('#sidebar');
-        sidebar.classList.remove('open');
-        sidebar.querySelector('.sidebar-trigger-btn').removeAttribute('active');
-        Array.from(sidebar.querySelectorAll('.sidebar-nav-secondary'))
-        .forEach(function(menu) {
-            menu.classList.remove('open');
-        });
-    }
-</script>
