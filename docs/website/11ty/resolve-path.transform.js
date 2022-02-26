@@ -1,6 +1,7 @@
 const path = require('path');
 const {blue} = require('kleur');
 const {JSDOM} = require('jsdom');
+const {Minimatch} = require('minimatch');
 
 const {rewriteRules} = require('./site.config');
 
@@ -9,8 +10,9 @@ const DOCS_PATH = path.join(ROOT_PATH, 'docs');
 
 class PathResolver {
   static rules = rewriteRules.map(PathResolver.createRule);
-  static createRule({regexp, value}) {
+  static createRule({glob, regexp, value}) {
     if (typeof regexp === 'string') regexp = new RegExp(regexp, 'i');
+    if (typeof glob === 'string') regexp = (new Minimatch(glob)).makeRe();
     return {regexp, replacement: value};
   }
 
@@ -51,8 +53,7 @@ class PathResolver {
     const targetPath = path.resolve(fullDirPath, linkUrl);
     const target = path.relative(ROOT_PATH, targetPath).replace(/\\/g, '/');
 
-    for (const {path, regexp, replacement} of this.rules) {
-      if (path === target) return replacement;
+    for (const {regexp, replacement} of this.rules) {
       if (!regexp || !regexp.test(target)) continue;
       const url = target.replace(regexp, replacement);
       return url + (linkAnchor ? `#${linkAnchor}` : '');

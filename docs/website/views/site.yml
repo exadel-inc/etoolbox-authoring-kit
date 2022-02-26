@@ -11,7 +11,7 @@ github:
 exadel: "https://exadel.com/"
 
 rewriteRules:
-  - path: "README.md"
+  - glob: "README.md"
     value: "/content/introduction/installation"
   - regexp: "docs/content/(.+)\\.md"
     value: "/content/$1"
