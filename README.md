@@ -387,6 +387,7 @@ Many more code snippets are available in the [Component management](#component-m
 - [Programming dynamic dialog behavior: DependsOn plugin client library](docs/md/depends-on.md)
 - [Managing structured data with Exadel Toolbox Lists](docs/md/etoolbox-lists.md)
 - [Feeding data to selection widgets with OptionProvider](docs/md/option-provider.md)
+- [Enhancing AEM Components' back-end with advanced Injectors](docs/md/injectors.md)
 
 #### Need more documentation?
 
