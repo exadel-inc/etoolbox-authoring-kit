@@ -26,8 +26,8 @@ import com.exadel.aem.toolkit.core.injectors.RequestSelectorsInjector;
 /**
  * Used on either a field, a method, or a method parameter of a Sling model to inject Sling request selectors.
  * <p>If the annotated member is of type {@code String} or {@code Object}, the selector string is injected.
- * If the annotated member represents an array or a collection of strings or objects, selectors are injected array-like.
- * Otherwise. nothing is injected</p>
+ * If the annotated member represents an array or a {@code Collection} or {@code List} of strings or objects, selectors
+ * are injected array-like. Otherwise. nothing is injected</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)

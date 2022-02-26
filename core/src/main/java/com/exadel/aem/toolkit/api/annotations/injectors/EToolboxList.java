@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.core.injectors.EToolboxListInjector;
  * <p>If the annotated member is of type {@code Collection<T>}, {@code List<T>}, {@code Map<String, T>}, or
  * {@code T[]}, the collection of list entries stored in the specified JCR path is injected.
  * <p> If {@code value()} is empty or the underlying entity has a wrong type, nothing is injected.
- * Only the models that are adapted from Sling requests and resources are supported
+ * Only the models that are adapted from Sling resources are supported
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
