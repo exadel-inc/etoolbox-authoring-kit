@@ -1,1 +1,1 @@
-// export * from './marquee/marquee';
+export * from './banner-logo/banner-logo';

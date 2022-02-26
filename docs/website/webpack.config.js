@@ -4,7 +4,7 @@ module.exports = {
   mode: 'development',
   devtool: 'source-map',
   entry: {
-    'localdev': './src/localdev.js',
+    'localdev': './src/localdev.ts',
   },
   resolve: {
     modules: ['../node_modules'],

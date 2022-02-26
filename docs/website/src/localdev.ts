@@ -8,8 +8,11 @@ import {
   ESLToggleableDispatcher,
 } from '@exadel/esl';
 import {ESLDemoSidebar} from './navigation/navigation';
+import {EAKBannerLogo} from './landing/banner-logo/banner-logo';
 
 ESLDemoSidebar.register();
+EAKBannerLogo.register();
+
 ESLTabs.register();
 ESLTab.register();
 ESLToggleableDispatcher.init();
