@@ -19,7 +19,11 @@
         "jcr:primaryType": "nt:unstructured",
         "jcr:title": "key1",
         "value": "value1",
-        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
+        "rootProperty": "propertyValue",
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem",
+        "nested": {
+          "property": "nestedPropertyValue"
+        }
       },
       "list_item_1": {
         "jcr:primaryType": "nt:unstructured",

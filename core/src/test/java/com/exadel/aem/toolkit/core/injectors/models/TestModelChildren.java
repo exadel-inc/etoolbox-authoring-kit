@@ -47,6 +47,9 @@ public class TestModelChildren {
     @Children(name = "./list")
     private List<Resource> resourceList;
 
+    @Children(name = "./list")
+    private List<NestedModel> nestedModelList;
+
     @Children(name = "./list/nested-node")
     private Collection<ListItemModel> listItemModels;
 
@@ -99,6 +102,10 @@ public class TestModelChildren {
 
     public List<Object> getOwnList() {
         return ownList;
+    }
+
+    public List<NestedModel> getNestedModelList() {
+        return nestedModelList;
     }
 
     public List<Resource> getResourceList() {

@@ -167,7 +167,7 @@ public class ChildrenInjector implements Injector {
     private static List<Object> getAdaptedObjects(List<Resource> resources, String prefix, String postfix, Type type) {
         final Class<?> actualType = TypeUtil.extractComponentType(type);
         return resources.stream()
-            .map(resource -> InstantiationUtil.createFilteredResource(resource, prefix, postfix))
+            .map(resource -> InstantiationUtil.getFilteredResource(resource, prefix, postfix))
             .filter(resource -> !resource.getValueMap().isEmpty())
             .map(resource -> getAdaptedObject(resource, actualType))
             .filter(Objects::nonNull)

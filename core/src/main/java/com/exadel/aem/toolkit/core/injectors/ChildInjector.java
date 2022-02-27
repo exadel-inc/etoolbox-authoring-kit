@@ -93,7 +93,7 @@ public class ChildInjector implements Injector {
             return null;
         }
 
-        Resource preparedResource = InstantiationUtil.createFilteredResource(
+        Resource preparedResource = InstantiationUtil.getFilteredResource(
             currentResource,
             annotation.prefix(),
             annotation.postfix());

@@ -59,14 +59,17 @@ public class InstantiationUtil {
     }
 
     /**
-     * Creates a new {@code Resource} that contains properties from the given current resource filtered with a
-     * predicate
+     * Gets an existing resource or else creates a new {@code Resource} that contains properties from the given current
+     * resource filtered with a predicate
      * @param current {@code Resource} object contains properties to be filtered
      * @param prefix  {@code String} representing an optional prefix the properties are checked against when filtering
      * @param postfix {@code String} representing an optional postfix the properties are checked against when filtering
-     * @return New {@code Resource} instance, or null if creation failed
+     * @return {@code Resource} instance, or null if retrieval failed
      */
-    public static Resource createFilteredResource(Resource current, String prefix, String postfix) {
+    public static Resource getFilteredResource(Resource current, String prefix, String postfix) {
+        if (StringUtils.isEmpty(prefix) && StringUtils.isEmpty(postfix)) {
+            return current;
+        }
         Map<String, Object> values = current
             .getValueMap()
             .entrySet()
@@ -85,8 +88,8 @@ public class InstantiationUtil {
     /**
      * Returns whether the given property name is matched by the provided prefix or postfix
      * @param property String value representing the property name
-     * @param prefix  String value representing an optional prefix
-     * @param postfix String value representing an optional postfix
+     * @param prefix   String value representing an optional prefix
+     * @param postfix  String value representing an optional postfix
      * @return True or false
      */
     private static boolean isMatchByPrefixOrPostfix(String property, String prefix, String postfix) {
@@ -100,8 +103,8 @@ public class InstantiationUtil {
     /**
      * Removes the given prefix and/or postfix from the provided string if they are present
      * @param property String value representing the property name
-     * @param prefix  String value representing an optional prefix
-     * @param postfix String value representing an optional postfix
+     * @param prefix   String value representing an optional prefix
+     * @param postfix  String value representing an optional postfix
      * @return String value
      */
     private static String clearByPrefixOrPostfix(String property, String prefix, String postfix) {
