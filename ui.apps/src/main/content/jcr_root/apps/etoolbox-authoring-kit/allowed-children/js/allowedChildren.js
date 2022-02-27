@@ -47,11 +47,11 @@
     }
 
     function isRuleApplied(rule, settings, componentList) {
-        return checkTemplate(rule.templates ? rule.templates : [], settings.template) &&
-            checkPageResType(rule.pageResourceTypes ? rule.pageResourceTypes : [], settings.pageResType) &&
-            checkParent(rule.parentsResourceTypes ? rule.parentsResourceTypes : [], settings.parentsResTypes, componentList) &&
-            checkPath(rule.pagePaths ? rule.pagePaths : [], settings.pagePath) &&
-            checkContainer(rule.containers ? rule.containers : [], settings.container);
+        return checkTemplate(rule.templates, settings.template) &&
+            checkPageResType(rule.pageResourceTypes, settings.pageResType) &&
+            checkParent(rule.parentsResourceTypes, settings.parentsResTypes, componentList) &&
+            checkPath(rule.pagePaths, settings.pagePath) &&
+            checkContainer(rule.containers, settings.container);
     }
 
     function checkTemplate(templates, curTemplate) {
