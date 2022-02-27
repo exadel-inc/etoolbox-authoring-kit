@@ -80,6 +80,12 @@ public class AllowedChildrenHandler implements Handler {
         return Scopes.CQ_EDIT_CONFIG.equals(target.getScope());
     }
 
+    /**
+     * Converts {@code List} of {@link AllowedChildren} annotations and boolean value representing target node to JSON format.
+     * @param rules {@code List} of {@link AllowedChildren} annotations
+     * @param isEditConfig True indicates that listener specified in {@code cq:editConfig}; otherwise, in {@code cq:childEditConfig}
+     * @return True or false
+     */
     private String toJson(List<AllowedChildren> rules, boolean isEditConfig) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("isEditConfig", new JsonPrimitive(isEditConfig));
@@ -87,6 +93,13 @@ public class AllowedChildrenHandler implements Handler {
         return jsonObject.toString();
     }
 
+    /**
+     * Converts {@link AllowedChildren} annotation to the {@link JsonElement}
+     * @param allowedChildren {@link AllowedChildren} object used for data retrieval
+     * @param type The actual type of the source object
+     * @param context Context for serialization
+     * @return JsonElement corresponding to the AllowedChildren annotation
+     */
     private static JsonElement serialize(AllowedChildren allowedChildren, Type type, JsonSerializationContext context) {
         JsonObject result = new JsonObject();
         result.add("value", context.serialize(allowedChildren.value()));
