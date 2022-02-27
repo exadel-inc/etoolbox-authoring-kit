@@ -14,9 +14,7 @@
 package com.exadel.aem.toolkit.plugin.maven;
 
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
-import com.exadel.aem.toolkit.test.common.AllowedChildrenAnnotation1;
-import com.exadel.aem.toolkit.test.common.AllowedChildrenAnnotation2;
-import com.exadel.aem.toolkit.test.common.AllowedChildrenAnnotation3;
+import com.exadel.aem.toolkit.test.common.AllowedChildrenAnnotation;
 import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
 import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
@@ -94,17 +92,17 @@ public class ComponentsTest extends DefaultTestBase {
 
     @Test
     public void testAllowedChildren1() {
-        test(AllowedChildrenAnnotation1.class, "common/allowedChildren/test1");
+        test(AllowedChildrenAnnotation.Test1.class, "common/allowedChildren/test1");
     }
 
     @Test
     public void testAllowedChildren2() {
-        test(AllowedChildrenAnnotation2.class, "common/allowedChildren/test2");
+        test(AllowedChildrenAnnotation.Test2.class, "common/allowedChildren/test2");
     }
 
     @Test
     public void testAllowedChildren3() {
-        test(AllowedChildrenAnnotation3.class, "common/allowedChildren/test3");
+        test(AllowedChildrenAnnotation.Test3.class, "common/allowedChildren/test3");
     }
 
     @Test
