@@ -90,7 +90,7 @@ public class InstantiationUtil {
      * @return True or false
      */
     private static boolean isMatchByPrefixOrPostfix(String property, String prefix, String postfix) {
-        if (StringUtils.isAllEmpty(prefix, postfix)) {
+        if (StringUtils.isEmpty(prefix) && StringUtils.isEmpty(postfix)) {
             return true;
         }
         return (StringUtils.isNotEmpty(prefix) && StringUtils.startsWith(property, prefix))
