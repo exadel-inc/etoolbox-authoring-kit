@@ -71,17 +71,6 @@ public class AllowedChildrenHandler implements Handler {
                 .attribute(DialogConstants.PN_UPDATE_COMPONENT_LIST, String.format(DialogConstants.VALUE_POLICY_RESOLVER_FORMAT, json));
     }
 
-    private static JsonElement serialize(AllowedChildren allowedChildren, Type type, JsonSerializationContext context) {
-        JsonObject result = new JsonObject();
-        result.add("value", context.serialize(allowedChildren.value()));
-        result.add("pageResourceTypes", context.serialize(allowedChildren.pageResourceTypes()));
-        result.add("templates", context.serialize(allowedChildren.templates()));
-        result.add("parentsResourceTypes", context.serialize(allowedChildren.parents()));
-        result.add("pagePaths", context.serialize(allowedChildren.pagePaths()));
-        result.add("containers", context.serialize(allowedChildren.resourceNames()));
-        return result;
-    }
-
     /**
      * Gets whether the given {@link Target} is a representation of a {@code cq:editConfig} node of an AEM component
      * @param target {@code Target} instance
@@ -96,5 +85,16 @@ public class AllowedChildrenHandler implements Handler {
         jsonObject.add("isEditConfig", new JsonPrimitive(isEditConfig));
         jsonObject.add("rules", GSON.toJsonTree(rules));
         return jsonObject.toString();
+    }
+
+    private static JsonElement serialize(AllowedChildren allowedChildren, Type type, JsonSerializationContext context) {
+        JsonObject result = new JsonObject();
+        result.add("value", context.serialize(allowedChildren.value()));
+        result.add("pageResourceTypes", context.serialize(allowedChildren.pageResourceTypes()));
+        result.add("templates", context.serialize(allowedChildren.templates()));
+        result.add("parentsResourceTypes", context.serialize(allowedChildren.parents()));
+        result.add("pagePaths", context.serialize(allowedChildren.pagePaths()));
+        result.add("containers", context.serialize(allowedChildren.resourceNames()));
+        return result;
     }
 }
