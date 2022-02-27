@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.plugin.writers;
 import javax.xml.transform.Transformer;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
-import com.exadel.aem.toolkit.api.annotations.main.ac.AllowedChildren;
+import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 
 import java.util.Arrays;

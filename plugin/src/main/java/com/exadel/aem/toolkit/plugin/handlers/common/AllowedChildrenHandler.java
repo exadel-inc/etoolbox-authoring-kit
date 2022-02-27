@@ -13,18 +13,23 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.common;
 
-import com.exadel.aem.toolkit.api.annotations.main.ac.AllowedChildren;
+import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -33,7 +38,8 @@ import java.util.stream.Collectors;
  */
 public class AllowedChildrenHandler implements Handler {
 
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder().registerTypeHierarchyAdapter(AllowedChildren.class,
+            (JsonSerializer<AllowedChildren>) AllowedChildrenHandler::serialize).create();
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
@@ -65,6 +71,17 @@ public class AllowedChildrenHandler implements Handler {
                 .attribute(DialogConstants.PN_UPDATE_COMPONENT_LIST, String.format(DialogConstants.VALUE_POLICY_RESOLVER_FORMAT, json));
     }
 
+    private static JsonElement serialize(AllowedChildren allowedChildren, Type type, JsonSerializationContext context) {
+        JsonObject result = new JsonObject();
+        result.add("value", context.serialize(allowedChildren.value()));
+        result.add("pageResourceTypes", context.serialize(allowedChildren.pageResourceTypes()));
+        result.add("templates", context.serialize(allowedChildren.templates()));
+        result.add("parentsResourceTypes", context.serialize(allowedChildren.parents()));
+        result.add("pagePaths", context.serialize(allowedChildren.pagePaths()));
+        result.add("containers", context.serialize(allowedChildren.resourceNames()));
+        return result;
+    }
+
     /**
      * Gets whether the given {@link Target} is a representation of a {@code cq:editConfig} node of an AEM component
      * @param target {@code Target} instance
@@ -75,36 +92,9 @@ public class AllowedChildrenHandler implements Handler {
     }
 
     private String toJson(List<AllowedChildren> rules, boolean isEditConfig) {
-        return GSON.toJson(new Result(
-                rules.stream().map(this::annotationToMap).collect(Collectors.toList()),
-                isEditConfig)
-        );
-    }
-
-    private Map<String, String[]> annotationToMap(AllowedChildren allowedChildren) {
-        Map<String, String[]> map = new HashMap<>(6);
-        map.put("value", allowedChildren.value());
-        map.put("pageResourceTypes", nullIfEmpty(allowedChildren.pageResourceTypes()));
-        map.put("templates", nullIfEmpty(allowedChildren.templates()));
-        map.put("parentsResourceTypes", nullIfEmpty(allowedChildren.parentsResourceTypes()));
-        map.put("pagePaths", nullIfEmpty(allowedChildren.pagePaths()));
-        map.put("containers", nullIfEmpty(allowedChildren.resourceNames()));
-        return map;
-    }
-
-    private String[] nullIfEmpty(String[] arr) {
-        return arr.length != 0 ? arr : null;
-    }
-
-    private static class Result {
-
-        private final boolean isEditConfig;
-        private final List<Map<String, String[]>> rules;
-
-        public Result(List<Map<String, String[]>> rules, boolean isEditConfig) {
-            this.isEditConfig = isEditConfig;
-            this.rules = rules;
-        }
-
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("isEditConfig", new JsonPrimitive(isEditConfig));
+        jsonObject.add("rules", GSON.toJsonTree(rules));
+        return jsonObject.toString();
     }
 }

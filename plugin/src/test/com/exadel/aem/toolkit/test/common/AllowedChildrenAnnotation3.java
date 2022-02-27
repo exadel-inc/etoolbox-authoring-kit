@@ -17,7 +17,7 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
 import com.exadel.aem.toolkit.api.annotations.editconfig.InplaceEditingConfig;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
-import com.exadel.aem.toolkit.api.annotations.main.ac.AllowedChildren;
+import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
 @AemComponent(
@@ -38,7 +38,7 @@ import com.exadel.aem.toolkit.plugin.utils.TestConstants;
         pageResourceTypes = {"page/Res/Type1", "page/Res/Type2"},
         templates = {"template1, template2"},
         resourceNames = {"resource1, resource2", "resource3"},
-        parentsResourceTypes = {"parent/Res/Type1", "parent/Res/Type2"},
+        parents = {"parent/Res/Type1", "parent/Res/Type2"},
         applyToCurrent = true
 )
 @AllowedChildren(
