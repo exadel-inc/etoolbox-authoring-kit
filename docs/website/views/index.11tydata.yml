@@ -1,6 +1,6 @@
 landing:
   urls:
-    installationUrl: "/introduction/installation"
+    installationUrl: "content/introduction/installation"
     docsUrl: https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/index.html
     articleExadelUrl: https://exadel.com/news/tag/exadel-authoring-kit-for-aem/
   features:
