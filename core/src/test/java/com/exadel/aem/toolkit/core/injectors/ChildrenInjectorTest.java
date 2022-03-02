@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.exadel.aem.toolkit.core.injectors.models.NestedModel;
+
 import org.apache.sling.api.resource.Resource;
 import org.junit.Before;
 import org.junit.Rule;
@@ -67,6 +69,18 @@ public class ChildrenInjectorTest {
         List<Resource> resourceList = testModel.getResourceList();
         assertNotNull(resourceList);
         assertEquals(5, resourceList.size());
+    }
+
+    @Test
+    public void shouldInjectNestedProperties() {
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
+        assertNotNull(testModel);
+
+        List<NestedModel> nestedModelList = testModel.getNestedModelList();
+        assertNotNull(nestedModelList);
+        assertEquals(5, nestedModelList.size());
+        assertEquals("propertyValue", nestedModelList.get(0).getRootProperty());
+        assertEquals("nestedPropertyValue", nestedModelList.get(0).getNested());
     }
 
     @Test

@@ -67,7 +67,7 @@ public class TestModelSelectors {
     // Constructor
 
     @Inject
-    public TestModelSelectors(@RequestSelectors @Named("selectorsParam") String selectorsString) {
+    public TestModelSelectors(@RequestSelectors @Named String selectorsString) {
         this.selectorsFromParameter = selectorsString;
     }
 

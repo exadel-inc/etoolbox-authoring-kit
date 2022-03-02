@@ -33,8 +33,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class RequestParamInjectorTest {
-    private static final String EXPECTED_PARAM1_VALUE = "value";
-    private static final String EXPECTED_PARAM2_VALUE = "another";
+    private static final String EXPECTED_PARAM1_VALUE = "value1";
+    private static final String EXPECTED_PARAM2_VALUE = "value2";
 
     @Rule
     public final AemContext context = new AemContext();
@@ -47,8 +47,8 @@ public class RequestParamInjectorTest {
         context.registerInjectActivateService(new RequestParamInjector());
 
         Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("param", EXPECTED_PARAM1_VALUE);
-        requestMap.put("also", EXPECTED_PARAM2_VALUE);
+        requestMap.put("param1", EXPECTED_PARAM1_VALUE);
+        requestMap.put("param2", EXPECTED_PARAM2_VALUE);
         context.request().setParameterMap(requestMap);
 
         testModel = context.request().adaptTo(TestModelRequestParam.class);
@@ -57,7 +57,7 @@ public class RequestParamInjectorTest {
     @Test
     public void shouldInjectValue() {
         assertNotNull(testModel);
-        assertEquals(EXPECTED_PARAM1_VALUE, testModel.getParam());
+        assertEquals(EXPECTED_PARAM1_VALUE, testModel.getParam1());
     }
 
     @Test
@@ -72,26 +72,50 @@ public class RequestParamInjectorTest {
 
     @Test
     public void shouldInjectRequestParameter() {
-        RequestParameter expected = context.request().getRequestParameter("param");
+        RequestParameter expected = context.request().getRequestParameter("param1");
         assertEquals(expected, testModel.getRequestParameter());
     }
 
     @Test
     public void shouldInjectRequestParameterArray() {
-        RequestParameter[] expected = context.request().getRequestParameters("also");
+        RequestParameter[] expected = context.request().getRequestParameters("param2");
         assertArrayEquals(expected, testModel.getRequestParameterArray());
+    }
+
+    @Test
+    public void shouldInjectRequestParameterStringArray() {
+        RequestParameter[] expected = context.request().getRequestParameters("param2");
+        String[] actual = testModel.getRequestParameterStringArray();
+        assertNotNull(expected);
+        assertNotNull(actual);
+        for (int i = 0; i < expected.length; i++) {
+            assertEquals(expected[i].getString(), actual[i]);
+        }
     }
 
     @Test
     public void shouldInjectRequestParameterList() {
         List<RequestParameter> expected = context.request().getRequestParameterList();
         List<RequestParameter> actual = testModel.getRequestParameterList();
+        assertNotNull(expected);
+        assertNotNull(actual);
         assertEquals(expected.size(), actual.size());
         for (int i = 0; i < expected.size(); i++) {
             assertEquals(expected.get(i).getString(), actual.get(i).getString());
         }
     }
 
+    @Test
+    public void shouldInjectRequestParameterStringList() {
+        RequestParameter[] expected = context.request().getRequestParameters("param2");
+        List<String> actual = testModel.getRequestParameterStringList();
+        assertNotNull(expected);
+        assertNotNull(actual);
+        assertEquals(expected.length, actual.size());
+        for (int i = 0; i < expected.length; i++) {
+            assertEquals(expected[i].getString(), actual.get(i));
+        }
+    }
     @Test
     public void shouldInjectRequestParameterMap() {
         RequestParameterMap expected = context.request().getRequestParameterMap();

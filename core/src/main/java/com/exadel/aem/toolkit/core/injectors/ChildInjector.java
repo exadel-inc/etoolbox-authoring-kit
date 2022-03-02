@@ -93,7 +93,10 @@ public class ChildInjector implements Injector {
             return null;
         }
 
-        Resource preparedResource = getPreparedResource(currentResource, annotation);
+        Resource preparedResource = InstantiationUtil.getFilteredResource(
+            currentResource,
+            annotation.prefix(),
+            annotation.postfix());
 
         if (TypeUtil.isValidObjectType(type, Resource.class)) {
             return preparedResource;
@@ -103,18 +106,5 @@ public class ChildInjector implements Injector {
 
         LOG.debug("Failed to inject child resource by the name \"{}\"", resourcePath);
         return null;
-    }
-
-    /**
-     * Retrieves the new {@code Resource} object with selected properties. Properties will be picked up according to the
-     * annotation parameters
-     * @param current    The {@code Resource} instance that contains properties to be filtered
-     * @param annotation The annotation that holds the filtering parameters
-     * @return Valid {@code Resource} object or null if no match is found
-     */
-    private Resource getPreparedResource(Resource current, Child annotation) {
-        return InstantiationUtil.createFilteredResource(
-            current,
-            InstantiationUtil.getPropertyNamePredicate(annotation.prefix(), annotation.postfix()));
     }
 }

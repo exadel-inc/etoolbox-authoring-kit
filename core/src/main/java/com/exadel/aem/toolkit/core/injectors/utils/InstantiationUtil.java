@@ -14,10 +14,7 @@
 package com.exadel.aem.toolkit.core.injectors.utils;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -62,45 +59,62 @@ public class InstantiationUtil {
     }
 
     /**
-     * Creates a new {@code Resource} that contains properties from the given current resource filtered with a
-     * predicate
-     * @param current    {@code Resource} object contains properties to be filtered
-     * @param predicates {@code List} of predicates used to filter properties
-     * @return New {@code Resource} instance, or null if creation failed
+     * Gets an existing resource or else creates a new {@code Resource} that contains properties from the given current
+     * resource filtered with a predicate
+     * @param current {@code Resource} object contains properties to be filtered
+     * @param prefix  {@code String} representing an optional prefix the properties are checked against when filtering
+     * @param postfix {@code String} representing an optional postfix the properties are checked against when filtering
+     * @return {@code Resource} instance, or null if retrieval failed
      */
-    public static Resource createFilteredResource(Resource current, Predicate<String> predicates) {
+    public static Resource getFilteredResource(Resource current, String prefix, String postfix) {
+        if (StringUtils.isEmpty(prefix) && StringUtils.isEmpty(postfix)) {
+            return current;
+        }
         Map<String, Object> values = current
             .getValueMap()
             .entrySet()
             .stream()
-            .filter(item -> predicates.test(item.getKey()))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .filter(entry -> isMatchByPrefixOrPostfix(entry.getKey(), prefix, postfix))
+            .collect(Collectors.toMap(
+                entry -> clearByPrefixOrPostfix(entry.getKey(), prefix, postfix),
+                Map.Entry::getValue));
         return new ValueMapResource(
             current.getResourceResolver(),
-            StringUtils.EMPTY,
+            current.getPath(),
             values.getOrDefault(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, JcrConstants.NT_UNSTRUCTURED).toString(),
             new ValueMapDecorator(values));
     }
 
     /**
-     * Retrieves an aggregated predicate used against property names. The predicate takes into account the {@code
-     * prefix} and {@code postfix} filters as specified in an annotation such as {@link
-     * com.exadel.aem.toolkit.api.annotations.injectors.Child} or {@link com.exadel.aem.toolkit.api.annotations.injectors.Children}
-     * @param prefix  A string representing a required property name prefix
-     * @param postfix A string representing a required property name prefix
-     * @return List of predicates
+     * Returns whether the given property name is matched by the provided prefix or postfix
+     * @param property String value representing the property name
+     * @param prefix   String value representing an optional prefix
+     * @param postfix  String value representing an optional postfix
+     * @return True or false
      */
-    public static Predicate<String> getPropertyNamePredicate(String prefix, String postfix) {
-        List<Predicate<String>> predicates = new ArrayList<>();
-
-        if (StringUtils.isNotBlank(prefix)) {
-            predicates.add(value -> value.startsWith(prefix));
+    private static boolean isMatchByPrefixOrPostfix(String property, String prefix, String postfix) {
+        if (StringUtils.isEmpty(prefix) && StringUtils.isEmpty(postfix)) {
+            return true;
         }
+        return (StringUtils.isNotEmpty(prefix) && StringUtils.startsWith(property, prefix))
+            || (StringUtils.isNotEmpty(postfix) && StringUtils.endsWith(property, postfix));
+    }
 
-        if (StringUtils.isNotBlank(postfix)) {
-            predicates.add(value -> value.endsWith(postfix));
+    /**
+     * Removes the given prefix and/or postfix from the provided string if they are present
+     * @param property String value representing the property name
+     * @param prefix   String value representing an optional prefix
+     * @param postfix  String value representing an optional postfix
+     * @return String value
+     */
+    private static String clearByPrefixOrPostfix(String property, String prefix, String postfix) {
+        String result = property;
+        if (StringUtils.isNotEmpty(prefix)) {
+            result = StringUtils.removeStart(result, prefix);
         }
-
-        return predicates.stream().reduce(Predicate::and).orElse(value -> true);
+        if (StringUtils.isNotEmpty(postfix)) {
+            result = StringUtils.removeEnd(result, postfix);
+        }
+        return result;
     }
 }

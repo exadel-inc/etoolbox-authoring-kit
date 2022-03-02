@@ -70,6 +70,7 @@
 
     <properties>
         <project.prettyName>Exadel Toolbox Authoring Kit</project.prettyName>
+        <project.prettyName.short>EToolbox Authoring Kit</project.prettyName.short>
         <project.vendor>Exadel</project.vendor>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -108,7 +109,7 @@
                             <manifestEntries>
                                 <Built-By>${project.vendor}</Built-By>
                                 <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
-                                <Implementation-Title>${project.name}</Implementation-Title>
+                                <Implementation-Title>${project.prettyName.short}</Implementation-Title>
                                 <Implementation-Version>${project.version}</Implementation-Version>
                             </manifestEntries>
                         </archive>
@@ -133,6 +134,7 @@
                     <configuration>
                         <exportScr>true</exportScr>
                         <instructions>
+                            <Bundle-Name>${project.prettyName.short}</Bundle-Name>
                             <Import-Package>*;resolution:=optional</Import-Package>
                             <_dsannotations>*</_dsannotations>
                             <_metatypeannotations>*</_metatypeannotations>

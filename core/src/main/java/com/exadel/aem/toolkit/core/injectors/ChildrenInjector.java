@@ -129,12 +129,10 @@ public class ChildrenInjector implements Injector {
      */
     private static List<Object> getFilteredInjectables(Resource current, Type type, Children annotation) {
         Predicate<Resource> resourceFilter = getResourceFilter(annotation);
-        Predicate<String> propertyFilter = InstantiationUtil.getPropertyNamePredicate(annotation.prefix(), annotation.postfix());
-
         List<Resource> filteredChildren = StreamSupport.stream(current.getChildren().spliterator(), false)
             .filter(resourceFilter)
             .collect(Collectors.toList());
-        return getAdaptedObjects(filteredChildren, propertyFilter, type);
+        return getAdaptedObjects(filteredChildren, annotation.prefix(), annotation.postfix(), type);
     }
 
     /**
@@ -160,15 +158,16 @@ public class ChildrenInjector implements Injector {
     /**
      * Retrieves the list of objects adapted from the given resources. The adaptation honors the optional properties
      * filter defined by the {@code prefix} and {@code postfix}
-     * @param resources List of resources
-     * @param filter    List of properties predicates
+     * @param resources Collection of resources
+     * @param prefix    An optional leading string chunk to filter resources' properties with
+     * @param postfix   An optional trailing string chunk to filter resources' properties with
      * @param type      Type (parameter type) of receiving Java collection or array
      * @return List of adapted objects
      */
-    private static List<Object> getAdaptedObjects(List<Resource> resources, Predicate<String> filter, Type type) {
+    private static List<Object> getAdaptedObjects(List<Resource> resources, String prefix, String postfix, Type type) {
         final Class<?> actualType = TypeUtil.extractComponentType(type);
         return resources.stream()
-            .map(resource -> InstantiationUtil.createFilteredResource(resource, filter))
+            .map(resource -> InstantiationUtil.getFilteredResource(resource, prefix, postfix))
             .filter(resource -> !resource.getValueMap().isEmpty())
             .map(resource -> getAdaptedObject(resource, actualType))
             .filter(Objects::nonNull)

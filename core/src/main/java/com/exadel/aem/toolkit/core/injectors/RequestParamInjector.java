@@ -15,8 +15,11 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.request.RequestParameterMap;
@@ -92,6 +95,16 @@ public class RequestParamInjector implements Injector {
         if (TypeUtil.isValidObjectType(type, String.class)) {
             return request.getParameter(paramName);
 
+        } else if (TypeUtil.isValidArray(type, String.class)) {
+            return getFilteredRequestParameters(request, paramName)
+                .map(RequestParameter::getString)
+                .toArray(String[]::new);
+
+        } else if (TypeUtil.isValidCollection(type, String.class)) {
+            return getFilteredRequestParameters(request, paramName)
+                .map(RequestParameter::getString)
+                .collect(Collectors.toList());
+
         } else if (TypeUtil.isValidObjectType(type, RequestParameter.class)) {
             return request.getRequestParameter(paramName);
 
@@ -107,5 +120,19 @@ public class RequestParamInjector implements Injector {
 
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
         return null;
+    }
+
+    /**
+     * Retrieves the stream of {@link RequestParameter} objects extracted from the current Sling request filtered with
+     * the given parameter name
+     * @param request {@code SlingHttpServletRequest} instance
+     * @param name    The parameter name to filter the request parameters with
+     * @return {@code Stream} object containing matched request parameters
+     */
+    private Stream<RequestParameter> getFilteredRequestParameters(SlingHttpServletRequest request, String name) {
+        return request
+            .getRequestParameterList()
+            .stream()
+            .filter(requestParameter -> StringUtils.equals(name, requestParameter.getName()));
     }
 }
