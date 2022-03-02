@@ -23,11 +23,10 @@ private List<SimpleListItem> itemsListResource;
 
 ```
 
-Note that your injected field's type can be either `List` or an array, like `SimpleListItem[]`. Concerning the type of
+Note that your injected field's type can be either a `List` or an array, like `SimpleListItem[]`. Concerning the type of
 items, you can specify a valid Sling model, or a *Resource*, or else *Object*. In the latter case, *Resource*-s will be
-injected in place of *Object*-s. In the snippets we use the out-of-the-box *SimpleListItem* but any valid Sling model
-will go. Generally, this injector works according to the same principles as the [ListHelper](etoolbox-lists.md) utility
-class.
+injected in place of *Object*-s. In the snippets we use the out-of-the-box *SimpleListItem*. However, any valid Sling
+model will go (if it is adapted from a *Resource*). Generally, this injector works according to the same principles as the [ListHelper](etoolbox-lists.md) utility class.
 
 To get the map, type it as:
 
@@ -57,8 +56,8 @@ have their limitations. To bypass some of them you can use the `@Child` annotati
 
 Among the advantages are:
 
-- ability to inject any resource by an absolute or relative path (in fact not only a child or a "grandchild", and also a
-  parent, or an unrelated resource, or even *self*);
+- ability to inject any resource by an absolute or relative path (in fact not only a child or a "grandchild", but also a
+  parent, or an unrelated resource, or even the current resource itself);
 - ability to inject a secondary Sling model adapted from such resource;
 - ability to select particular properties from a target resource used for injection and/or adaptation into a secondary
   model. This way, you can create and manage several "virtual" resources from one "real" resource.
@@ -98,7 +97,7 @@ fieldset2_title = "Goodbye"
 fieldset2_description = "Moon"
 ```
 
-There are two obvious "sub-resources" within this structure that can be addressed to separately like in the sample:
+There are two obvious "sub-resources" within this structure. They can be addressed to separately like in the sample:
 
 ```
 @Child(prefix = "fieldset1_")
@@ -184,8 +183,7 @@ public class DateIsNotFuture implements Predicate<Resource> {
 }
 ```
 
-Some filters are supplied out of the box. E.g., `NonGhostPredicate` allows filtering out "ghost component" resources (
-those with the component type "*wcm/msm/components/ghost*"), and the `NonNullPredicate` filters out invalid/null
+Some filters are supplied out of the box. E.g., `NonGhostPredicate` allows filtering out "ghost component" resources (those with the resource type "*wcm/msm/components/ghost*"). The `NonNullPredicate` filters out invalid/null
 children.
 
 Note: the `@Children` annotation can be used with either a field, a method, or a constructor argument. When using with a
@@ -194,7 +192,7 @@ else `(@Children(name = "path") @Named List<ListItemModel> argument)` and also a
 
 #### Injector for request parameters
 
-The `@RequestParam` annotation is used to inject a request parameter. The annotated member can be of type *String* or *Object*, then a value coerced to string is injected. Else, the parameter can be of type *RequestParameter*, *RequestParameter* or *RequestParameterMap* so that the corresponding objects obtained via the *SlingHttpServletRequest* could be injected.
+The `@RequestParam` annotation is used to inject a request parameter. The annotated member can be of type *String* or *Object*, then a value coerced to string is injected. Else, the parameter can be of type *RequestParameter* (including a list or an array of that type) or *RequestParameterMap* so that the corresponding objects obtained via the *SlingHttpServletRequest* could be injected.
 
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, use the notation like `(@RequestParam @Named String argument)` and annotate the constructor itself with `@Inject`.

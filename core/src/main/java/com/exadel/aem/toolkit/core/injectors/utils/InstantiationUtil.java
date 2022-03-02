@@ -80,7 +80,7 @@ public class InstantiationUtil {
                 Map.Entry::getValue));
         return new ValueMapResource(
             current.getResourceResolver(),
-            StringUtils.EMPTY,
+            current.getPath(),
             values.getOrDefault(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, JcrConstants.NT_UNSTRUCTURED).toString(),
             new ValueMapDecorator(values));
     }
