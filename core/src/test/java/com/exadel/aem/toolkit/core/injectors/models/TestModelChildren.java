@@ -59,6 +59,9 @@ public class TestModelChildren {
     @Children(name = "/content/jcr:content/list/nested-node", postfix = "_postfix")
     private List<ListItemModel> listItemModelsWithPostfix;
 
+    @Children(name = "/content/jcr:content/list/nested-node", prefix = "prefix_", postfix = "_postfix")
+    private List<ListItemModel> listItemModelsWithPrefixAndPostfix;
+
     @Children(name = "list", filters = {ResourceTypeFilter.class, NameFilter.class})
     private List<ListItemModel> listItemModelsFiltered;
 
@@ -78,7 +81,7 @@ public class TestModelChildren {
     @Children(name = "list/nestedNode", filters = {ResourceTypeFilter.class, NameFilter.class})
     private List<ListItemModel> unmatchedFilters;
 
-    private ListItemModel[] injectedViaConstructor;
+    private final ListItemModel[] injectedViaConstructor;
 
     /* -----------
        Constructor
@@ -122,6 +125,10 @@ public class TestModelChildren {
 
     public List<ListItemModel> getListItemModelsWithPostfix() {
         return listItemModelsWithPostfix;
+    }
+
+    public List<ListItemModel> getListItemModelsWithPrefixAndPostfix() {
+        return listItemModelsWithPrefixAndPostfix;
     }
 
     public List<ListItemModel> getListItemModelsFiltered() {

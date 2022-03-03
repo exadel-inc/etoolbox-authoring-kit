@@ -76,7 +76,7 @@ public class InstantiationUtil {
             .stream()
             .filter(entry -> isMatchByPrefixOrPostfix(entry.getKey(), prefix, postfix))
             .collect(Collectors.toMap(
-                entry -> clearByPrefixOrPostfix(entry.getKey(), prefix, postfix),
+                entry -> clearPrefixOrPostfix(entry.getKey(), prefix, postfix),
                 Map.Entry::getValue));
         return new ValueMapResource(
             current.getResourceResolver(),
@@ -93,11 +93,16 @@ public class InstantiationUtil {
      * @return True or false
      */
     private static boolean isMatchByPrefixOrPostfix(String property, String prefix, String postfix) {
-        if (StringUtils.isEmpty(prefix) && StringUtils.isEmpty(postfix)) {
-            return true;
+        if (StringUtils.isNotEmpty(prefix) && StringUtils.isNotEmpty(postfix)) {
+            return StringUtils.startsWith(property, prefix) && StringUtils.endsWith(property, postfix);
         }
-        return (StringUtils.isNotEmpty(prefix) && StringUtils.startsWith(property, prefix))
-            || (StringUtils.isNotEmpty(postfix) && StringUtils.endsWith(property, postfix));
+        if (StringUtils.isNotEmpty(prefix) && StringUtils.isEmpty(postfix)) {
+            return StringUtils.startsWith(property, prefix);
+        }
+        if (StringUtils.isEmpty(prefix) && StringUtils.isNotEmpty(postfix)) {
+            return StringUtils.endsWith(property, postfix);
+        }
+        return true;
     }
 
     /**
@@ -107,7 +112,7 @@ public class InstantiationUtil {
      * @param postfix  String value representing an optional postfix
      * @return String value
      */
-    private static String clearByPrefixOrPostfix(String property, String prefix, String postfix) {
+    private static String clearPrefixOrPostfix(String property, String prefix, String postfix) {
         String result = property;
         if (StringUtils.isNotEmpty(prefix)) {
             result = StringUtils.removeStart(result, prefix);

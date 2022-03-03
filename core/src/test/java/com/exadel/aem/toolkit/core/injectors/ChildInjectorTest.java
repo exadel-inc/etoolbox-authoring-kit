@@ -86,12 +86,12 @@ public class ChildInjectorTest {
 
         ListItemModel itemModelByAbsPath = testModel.getModelByAbsolutePath();
         assertNotNull(itemModelByAbsPath);
-        assertEquals(9, itemModelByAbsPath.getProperties().size());
+        assertEquals(10, itemModelByAbsPath.getProperties().size());
         assertEquals("nestedListItem2", itemModelByAbsPath.getProperties().get(CoreConstants.PN_VALUE));
 
         ListItemModel itemModelByRelPath = testModel.getModelByRelativePath();
         assertNotNull(itemModelByRelPath);
-        assertEquals(9, itemModelByRelPath.getProperties().size());
+        assertEquals(10, itemModelByRelPath.getProperties().size());
     }
 
     @Test
@@ -101,12 +101,13 @@ public class ChildInjectorTest {
 
         ListItemModel itemModel = testModel.getModelFilteredByPrefix();
         assertNotNull(itemModel);
-        assertEquals(3, itemModel.getProperties().size());
+        assertEquals(4, itemModel.getProperties().size());
 
         Map<String, Object> expected = new HashMap<>();
-        expected.put("value", "pref_value");
-        expected.put("value_2", "pref_value_2");
-        expected.put("value_3", "pref_value_3");
+        expected.put("value", "Value with prefix");
+        expected.put("value_2", "Value with prefix 2");
+        expected.put("value_3", "Value with prefix 3");
+        expected.put("value_postfix", "Value with prefix and postfix");
         assertEquals(expected, itemModel.getProperties());
     }
 
@@ -117,12 +118,13 @@ public class ChildInjectorTest {
 
         ListItemModel itemModel = testModel.getModelFilteredByPostfix();
         assertNotNull(itemModel);
-        assertEquals(3, itemModel.getProperties().size());
+        assertEquals(4, itemModel.getProperties().size());
 
         Map<String, Object> expected = new HashMap<>();
-        expected.put("value_1", "value_1_postfix");
-        expected.put("value_2", "value_2_postfix");
-        expected.put("value_3", "value_3_postfix");
+        expected.put("value_1", "Value with postfix");
+        expected.put("value_2", "Value with postfix 2");
+        expected.put("value_3", "Value with postfix 3");
+        expected.put("prefix_value", "Value with prefix and postfix");
         assertEquals(expected, itemModel.getProperties());
     }
 
@@ -138,13 +140,13 @@ public class ChildInjectorTest {
     }
 
     @Test
-    public void shouldInjectSelfResource() {
+    public void shouldInjectOwnResource() {
         context.request().setResource(context.resourceResolver().getResource("/content/jcr:content/list/nested-node/nested_list_item_2"));
 
         TestModelChild testModelSelf = context.request().adaptTo(TestModelChild.class);
         assertNotNull(testModelSelf);
         assertNotNull(testModelSelf.getSelfResourceFiltered());
-        assertEquals(3, testModelSelf.getSelfResourceFiltered().getValueMap().size());
+        assertEquals(4, testModelSelf.getSelfResourceFiltered().getValueMap().size());
     }
 
     @Test

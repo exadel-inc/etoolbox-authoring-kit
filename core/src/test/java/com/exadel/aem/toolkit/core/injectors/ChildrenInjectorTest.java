@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.exadel.aem.toolkit.core.injectors.models.NestedModel;
-
 import org.apache.sling.api.resource.Resource;
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,6 +24,7 @@ import org.junit.Test;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import com.exadel.aem.toolkit.core.injectors.models.ITestModelChildren;
+import com.exadel.aem.toolkit.core.injectors.models.NestedModel;
 import com.exadel.aem.toolkit.core.injectors.models.TestModelChildren;
 import com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel;
 
@@ -94,7 +93,7 @@ public class ChildrenInjectorTest {
     }
 
     @Test
-    public void shouldInjectChildrenUsePrefix() {
+    public void shouldInjectChildrenUsingPrefix() {
         TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
@@ -104,18 +103,30 @@ public class ChildrenInjectorTest {
     }
 
     @Test
-    public void shouldInjectChildrenUsePostfix() {
+    public void shouldInjectChildrenUsingPostfix() {
         TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getListItemModelsWithPostfix();
         assertNotNull(modelList);
         assertEquals(1, modelList.size());
-        assertEquals(3, modelList.get(0).getProperties().size());
+        assertEquals(4, modelList.get(0).getProperties().size());
     }
 
     @Test
-    public void shouldInjectChildrenUseFilters() {
+    public void shouldInjectChildrenUsingPrefixAndPostfix() {
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
+        assertNotNull(testModel);
+
+        List<ListItemModel> modelList = testModel.getListItemModelsWithPrefixAndPostfix();
+        assertNotNull(modelList);
+        assertEquals(1, modelList.size());
+        assertEquals(1, modelList.get(0).getProperties().size());
+        assertEquals("Value with prefix and postfix", modelList.get(0).getProperties().get("value"));
+    }
+
+    @Test
+    public void shouldInjectChildrenUsingFilters() {
         TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
         assertNotNull(testModel);
 
