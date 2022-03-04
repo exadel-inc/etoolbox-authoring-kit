@@ -21,7 +21,7 @@ import org.apache.sling.api.resource.Resource;
 /**
  * Tests a {@link Resource} for not being null and not representing a ghost component
  */
-public class NonGhostPredicate implements Predicate<Resource> {
+public class NonGhostFilter implements Predicate<Resource> {
 
     /**
      * {@inheritDoc}

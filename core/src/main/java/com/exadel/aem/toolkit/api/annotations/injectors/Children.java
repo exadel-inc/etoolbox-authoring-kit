@@ -25,7 +25,8 @@ import org.apache.sling.models.annotations.Source;
 import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
 
 import com.exadel.aem.toolkit.core.injectors.ChildrenInjector;
-import com.exadel.aem.toolkit.core.injectors.filters.NonGhostPredicate;
+import com.exadel.aem.toolkit.core.injectors.filters.NonGhostFilter;
+import com.exadel.aem.toolkit.core.injectors.filters.NonNullFilter;
 
 /**
  * Used on either a field, a method, or a method parameter of a Sling model. Allows injecting a collection of either
@@ -73,8 +74,8 @@ public @interface Children {
      * referred to with their class names. Resources will be probed against these predicates. One possible predicate
      * is "this resource is not a ghost component", or else "this resource is not null"
      * @return Optional array of predicates
-     * @see NonGhostPredicate
-     * @see NonGhostPredicate
+     * @see NonGhostFilter
+     * @see NonNullFilter
      */
     Class<? extends Predicate<Resource>>[] filters() default {};
 }

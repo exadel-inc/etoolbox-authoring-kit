@@ -183,8 +183,7 @@ public class DateIsNotFuture implements Predicate<Resource> {
 }
 ```
 
-Some filters are supplied out of the box. E.g., `NonGhostPredicate` allows filtering out "ghost component" resources (those with the resource type "*wcm/msm/components/ghost*"). The `NonNullPredicate` filters out invalid/null
-children.
+Some filters are supplied out of the box. E.g., `NonGhostFilter` allows filtering out "ghost component" resources (those with the resource type "*wcm/msm/components/ghost*"). The `NonNullFilter` filters out invalid/null children.
 
 Note: the `@Children` annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, write it like `(@Children @Named("path") List<ListItemModel> argument)` or

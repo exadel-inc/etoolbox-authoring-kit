@@ -21,7 +21,7 @@ import org.apache.sling.api.resource.Resource;
 /**
  * Tests a {@link Resource} for not being null
  */
-public class NonNullPredicate implements Predicate<Resource> {
+public class NonNullFilter implements Predicate<Resource> {
 
     /**
      * {@inheritDoc}
