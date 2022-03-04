@@ -147,7 +147,7 @@ public class TestModelChildren {
         return nonExistentResources;
     }
 
-    public List<ListItemModel> getNotExistentModel() {
+    public List<ListItemModel> getNonExistentModel() {
         return notExistentModel;
     }
 

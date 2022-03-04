@@ -181,7 +181,7 @@ public class ChildrenInjectorTest {
         List<Resource> resourceList = testModel.getNonExistentResources();
         assertNull(resourceList);
 
-        List<ListItemModel> modelList = testModel.getNotExistentModel();
+        List<ListItemModel> modelList = testModel.getNonExistentModel();
         assertNull(modelList);
     }
 
@@ -191,15 +191,6 @@ public class ChildrenInjectorTest {
         assertNotNull(testModel);
 
         List<ListItemModel> modelList = testModel.getNonExistentPrefix();
-        assertNull(modelList);
-    }
-
-    @Test
-    public void shouldNotInjectIfNotMatchingFilters() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
-
-        List<ListItemModel> modelList = testModel.getUnmatchedFilters();
         assertNull(modelList);
     }
 }

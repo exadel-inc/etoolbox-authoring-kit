@@ -13,11 +13,11 @@
  */
 package com.exadel.aem.toolkit.core.lists.utils;
 
+import java.beans.Transient;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -178,7 +178,7 @@ public class ListHelperTest {
     }
 
     @Test
-    public void shouldRecreateListBasedOnCollectionOfResourcesIfListAlreadyExists() throws WCMException {
+    public void shouldRecreateListIfAlreadyExists() throws WCMException {
         Map<String, Object> properties = new HashMap<>();
         properties.put(JcrConstants.JCR_TITLE, "first");
         properties.put(CoreConstants.PN_VALUE, "firstValue");
@@ -194,7 +194,7 @@ public class ListHelperTest {
     }
 
     @Test
-    public void shouldCreateListBasedOnListOfSimpleListItems() throws WCMException {
+    public void shouldCreateListBasedOnSimpleListItem() throws WCMException {
         SimpleListItem simpleListItem = new SimpleListItemImpl("first", "firstValue");
 
         Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(simpleListItem));
@@ -206,13 +206,15 @@ public class ListHelperTest {
     }
 
     @Test
-    public void shouldCreateListBasedOnModelUsingDefaultMapper() throws WCMException {
+    public void shouldCreateListBasedOnArbitraryModel() throws WCMException {
         ItemModel itemModel = new ItemModel("someValue", false);
 
         Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(itemModel));
 
         assertNotNull(listPage);
         Resource listItem = listPage.getContentResource("list/listItem");
+        assertEquals(3, listItem.getValueMap().size());
+        assertEquals("etoolbox-authoring-kit/lists/components/content/listItem", listItem.getResourceType());
         assertEquals(itemModel.textValue, listItem.getValueMap().get("textValue", StringUtils.EMPTY));
         assertEquals(itemModel.booleanValue, listItem.getValueMap().get("booleanValue", false));
     }
@@ -227,7 +229,8 @@ public class ListHelperTest {
         @ValueMapValue
         private boolean booleanValue;
 
-        @SuppressWarnings("unused") //used by Sling injectors
+        public final transient String ignoredStringValue = "ignored";
+
         public ItemModel() {
         }
 
@@ -244,21 +247,9 @@ public class ListHelperTest {
             return booleanValue;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            ItemModel itemModel = (ItemModel) o;
-            return booleanValue == itemModel.booleanValue && Objects.equals(textValue, itemModel.textValue);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(textValue, booleanValue);
+        @Transient
+        public long getIgnoredLongValue() {
+            return 42L;
         }
     }
 
