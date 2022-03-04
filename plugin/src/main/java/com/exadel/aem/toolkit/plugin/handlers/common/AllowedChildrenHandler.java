@@ -63,7 +63,8 @@ public class AllowedChildrenHandler implements Handler {
         if (allowedChildrenList.isEmpty()) {
             return;
         }
-        String json = toJson(allowedChildrenList, isEditConfig(target));
+        String json = toJson(allowedChildrenList, isEditConfig(target))
+                .replace("'", "\\'");
         target
                 .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
                 .getOrCreateTarget(DialogConstants.NN_LISTENERS)
