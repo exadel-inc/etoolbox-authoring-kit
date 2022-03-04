@@ -50,7 +50,7 @@ import com.exadel.aem.toolkit.plugin.utils.StringUtil;
  * Implements {@link Target} to manage a tree-like data structure that is further rendered in a Granite UI component
  * or component configurations
  */
-public class TargetImpl extends AdaptationBase<Target> implements Target {
+class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandlerAcceptor {
 
     private static final String PARENT_PATH = "..";
     private static final String SELF_PATH = ".";
@@ -82,7 +82,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         this.parent = parent;
         this.attributes = new HashMap<>();
         this.children = new LinkedList<>();
-        this.scope = parent != null ? parent.getScope() : Scopes.CQ_DIALOG;
+        this.scope = parent != null ? parent.getScope() : Scopes.COMPONENT;
         this.attributes.put(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
     }
 
@@ -234,7 +234,7 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
         if (SELF_PATH.equals(effectivePath)) {
             return this;
         }
-        String effectiveName = NamingUtil.getUniqueName(effectivePath, DialogConstants.NN_ITEM, this);
+        String effectiveName = NamingUtil.getUniqueName(effectivePath, CoreConstants.NN_ITEM, this);
         Target child = new TargetImpl(effectiveName, this);
         children.add(child);
         return child;
@@ -295,11 +295,12 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
      */
     @Override
     public void addTarget(Target other, int position) {
-        if (other != null && other.getParent() != null) {
-            other.getParent().getChildren().remove(other);
-        }
-        if (other == null) {
+        // We cannot attach target B to target A if target A is a descendant of target A
+        if (other == null || other.findChild(child -> child.equals(this)) != null) {
             return;
+        }
+        if (other.getParent() != null) {
+            other.getParent().getChildren().remove(other);
         }
         if (other instanceof TargetImpl) {
             ((TargetImpl) other).parent = this;
@@ -565,10 +566,9 @@ public class TargetImpl extends AdaptationBase<Target> implements Target {
     }
 
     /**
-     * Assigns attributes to the current instance based on the provided DOM {@code Element} object
-     * @param value {@code Element} object used as the source of attribute names and values
-     * @return Current instance
+     * {@inheritDoc}
      */
+    @Override
     public Target attributes(Element value) {
         if (value != null) {
             populateElementProperties(value);

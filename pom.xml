@@ -4,7 +4,7 @@
 
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit</artifactId>
-    <version>2.0.8</version>
+    <version>2.1.0</version>
 
     <name>${project.prettyName}</name>
     <description>Automates generating and managing rich and responsive authoring interfaces for Adobe Experience Manager</description>
@@ -70,6 +70,7 @@
 
     <properties>
         <project.prettyName>Exadel Toolbox Authoring Kit</project.prettyName>
+        <project.prettyName.short>EToolbox Authoring Kit</project.prettyName.short>
         <project.vendor>Exadel</project.vendor>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -108,7 +109,7 @@
                             <manifestEntries>
                                 <Built-By>${project.vendor}</Built-By>
                                 <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
-                                <Implementation-Title>${project.name}</Implementation-Title>
+                                <Implementation-Title>${project.prettyName.short}</Implementation-Title>
                                 <Implementation-Version>${project.version}</Implementation-Version>
                             </manifestEntries>
                         </archive>
@@ -133,6 +134,7 @@
                     <configuration>
                         <exportScr>true</exportScr>
                         <instructions>
+                            <Bundle-Name>${project.prettyName.short}</Bundle-Name>
                             <Import-Package>*;resolution:=optional</Import-Package>
                             <_dsannotations>*</_dsannotations>
                             <_metatypeannotations>*</_metatypeannotations>
@@ -318,7 +320,7 @@
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>2.10.4</version>
+                            <version>3.2.0</version>
                             <executions>
                                 <execution>
                                     <id>attach-javadoc</id>
@@ -407,9 +409,9 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>2.5</version>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -422,6 +424,12 @@
                 <groupId>javax.jcr</groupId>
                 <artifactId>jcr</artifactId>
                 <version>2.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -522,7 +530,7 @@
         <repository>
             <id>adobe</id>
             <name>Adobe Public Repository</name>
-            <url>http://repo.adobe.com/nexus/content/groups/public</url>
+            <url>https://repo.adobe.com/nexus/content/groups/public</url>
             <layout>default</layout>
         </repository>
     </repositories>
@@ -531,7 +539,7 @@
         <pluginRepository>
             <id>adobe</id>
             <name>Adobe Public Repository</name>
-            <url>http://repo.adobe.com/nexus/content/groups/public/</url>
+            <url>https://repo.adobe.com/nexus/content/groups/public/</url>
             <layout>default</layout>
         </pluginRepository>
     </pluginRepositories>

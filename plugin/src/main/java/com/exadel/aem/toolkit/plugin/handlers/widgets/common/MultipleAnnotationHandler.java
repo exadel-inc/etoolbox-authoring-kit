@@ -36,7 +36,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.handlers.common.CasualAnnotationsHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widgets.MultiFieldHandler;
+import com.exadel.aem.toolkit.plugin.handlers.placement.containers.MultiFieldHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
@@ -172,7 +172,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      */
     private void wrapNestedMultifield(Source source, Target target) {
         // We will create new "field" subresource, but we need it "detached" not to mingle with existing "field" subresource
-        Target fieldSubresource = Targets.newInstance(DialogConstants.NN_FIELD, target);
+        Target fieldSubresource = Targets.newTarget(DialogConstants.NN_FIELD, target);
         Target itemsSubresource = fieldSubresource.createTarget(DialogConstants.NN_ITEMS);
         Target nestedMultifield = itemsSubresource.createTarget(source.getName() + POSTFIX_NESTED);
 
@@ -239,11 +239,11 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
 
     /**
      * Migrates attributes and child nodes between {@code source} and {@code target}. Whether particular attributes
-     * and child nodes are copied, moved or left alone, is defined by the {@code policies} map
+     * and child nodes are copied, moved, or left alone, is defined by the {@code policies} map
      * @param from     Element to serve as the source of migration
      * @param to       Element to serve as the target of migration
      * @param policies Map containing attribute names (must start with {@code @}), child node names (must start with
-     *                 {@code ./}) and the appropriate action, whether to copy element, move, or leave intact. The wildcard
+     *                 {@code ./}) and the appropriate action, whether to copy element, move or leave intact. The wildcard
      *                 symbol ({@code *}) is to specify a common policy for multiple elements
      */
     private static void transferProperties(Target from, Target to, Map<String, PropertyTransferPolicy> policies) {

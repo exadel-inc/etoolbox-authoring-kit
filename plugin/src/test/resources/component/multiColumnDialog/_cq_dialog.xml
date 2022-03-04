@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          jcr:title="Multi-Column Dialog Component"
+          height="{Double}480.0"
+          width="{Double}560.0">
+    <content jcr:primaryType="nt:unstructured"
+             sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <fixedColumns
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
+                <items jcr:primaryType="nt:unstructured">
+                    <firstColumn
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <altText
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./altText"
+                                disabled="{Boolean}false"
+                                fieldLabel="Parent alt text"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"/>
+                            <number
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/numberfield"
+                                name="./number"
+                                disabled="{Boolean}false"
+                                fieldLabel="Number"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"
+                                min="{Double}-10.0"
+                                max="{Double}10.0"
+                                step="{Double}1.0"
+                                value="0"/>
+                            <text
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./text"
+                                disabled="{Boolean}false"
+                                fieldLabel="Text"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"/>
+                        </items>
+                    </firstColumn>
+                    <secondColumn
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <description
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
+                                name="./description"
+                                autofocus="{Boolean}false"
+                                disabled="{Boolean}false"
+                                fieldLabel="Description"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"
+                                resize="none"
+                                rows="{Long}5"/>
+                        </items>
+                    </secondColumn>
+                </items>
+            </fixedColumns>
+        </items>
+    </content>
+</jcr:root>

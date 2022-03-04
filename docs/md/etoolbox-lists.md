@@ -15,7 +15,7 @@ The Lists provide a flexible way to create, store and retrieve lists of structur
     - description = "Not Found"
 ```
 
-A List consists of a number of items, the structure and authoring dialog of every item is defined by an arbitrary AEM component (a.k.a. *Item Component*).
+A List consists of a number of items. The structure and authoring dialog of every item is defined by an arbitrary AEM component (a.k.a. *Item Component*).
 Each list is an AEM page, which means that it can be placed anywhere in the content structure. Lists can be created, edited, localized and published via Touch UI interface.
 
 ### Creating a new List
@@ -60,9 +60,36 @@ Note: if you create your List Item anew, and do not have special requirements re
 
 The Lists can be edited similarly to any other page. You can change the type of *Item Component* used in a list (even after the list has been populated with data) via the page properties.
 
+### Creating Lists in code
+[ListHelper](../../core/src/main/java/com/exadel/aem/toolkit/core/lists/utils/ListHelper.java) is a helper class that provides the ability to create a new EToolbox List from Java code. You can create a List out of a collection of *SimpleListItem*-s, or a collection of arbitrary Sling models, or a list of `Map` instances, or else a list of Sling *Resource*-s:
+```
+
+ResourceResolver currentResourceResolver = /*... */;
+String path = "/content/lists/myNewList";
+List<MyModel> models = Arrays.asList(new MyModel("First"), new MyModel("Second"));
+
+Page myNewList = ListHelper.createList(resourceResolver, path, models);
+
+// ...
+
+var propertyMaps = Arrays.asList(ImmutableMap.of("foo", "bar", "answer": 42), /* ... */);
+Page myAnotherList = ListHelper.createList(resourceResolver, path, propertyMaps);
+
+```
+Note: when creating a list from an arbitrary Sling model, you use the model's public getters. They are expected to return values of types that are simply serialized (such as *String*, *long*, etc.). You can also use public fields.
+
+In fact, the *ObjectMapper* from [Jackson](https://github.com/FasterXML/jackson) is used under the hood. Therefore, all the techniques relevant to serializing entities with *Jackson* are applicable here. For instance, you can skip a field or getter by adding `@JsonIgnore` to it. All other `@Json`-related annotations will also work.
+
+Additionally, you can skip the getters or fields you don't want to be persisted in EToolbox List by:
+- adding the `@Transient` annotation (from *java.beans*) to a method;
+- adding the `transient` modifier to a public field.
+
+Find more examples on creating EToolbox Lists code in [ListHelperTest](../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
+
+
 ### Retrieving Lists' content programmatically
 
-[ListHelper](../../core/src/main/java/com/exadel/aem/toolkit/core/lists/utils/ListHelper.java) is a helper class that provides the ability to retrieve contents of any list by its path. See examples below:
+Apart from creating lists, [ListHelper](../../core/src/main/java/com/exadel/aem/toolkit/core/lists/utils/ListHelper.java) provides the ability to retrieve contents of any list by its path. See examples below:
 ```
    List<ItemModel> models = ListHelper.getList(resolver, "/content/myList", ItemModel.class);
    Map<String, String> mapping = ListHelper.getMap(resolver, "/content/myList");

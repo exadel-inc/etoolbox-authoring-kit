@@ -38,7 +38,7 @@ The `@Ignore` setting is *not* inherited, unlike fields themselves, and works on
 
 With the ToolKit, dialog sections (tabs or accordion panels) declared in a superclass are also "inherited" by the descendant class, and the layout instructions (`@Place`) are in effect even if referring to a superclass container.
 
-Surely, there's a possibility to ignore an "inherited" section as well. Add the `@Ignore` annotation to the current class (not a class member this time) and fill in its *sections* property. It accepts a single string equal to the title of the ignored section, or an array of strings.
+Surely, there's a possibility to ignore an "inherited" section as well. Add the `@Ignore` annotation to the current class or `@Tabs`/`@Accordion`/`@FixedColumns`-annotated class member and fill in its *sections* property. It accepts a single string equal to the title of the ignored section, or an array of strings.
 
 ```java
 @Dialog(

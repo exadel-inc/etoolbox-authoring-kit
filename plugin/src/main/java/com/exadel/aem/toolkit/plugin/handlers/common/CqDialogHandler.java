@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
+import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
@@ -33,7 +34,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
-import com.exadel.aem.toolkit.plugin.handlers.layouts.ContainerHandlers;
+import com.exadel.aem.toolkit.plugin.handlers.placement.layouts.LayoutHandlers;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
@@ -75,7 +76,7 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
         populateTitleProperty(source, target);
 
         DialogLayout dialogLayout = getLayout(source, target.getScope());
-        ContainerHandlers.forLayout(dialogLayout).accept(source, target);
+        LayoutHandlers.forLayout(dialogLayout).accept(source, target);
 
         renderIgnoreFreshness(source, target);
     }
@@ -107,7 +108,7 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
     /**
      * Retrieves the {@link DialogLayout} for the component class provided. The value is computed based
      * on layout annotations provided for the component class. If no specific annotations found, the default layout,
-     * which is {@link DialogLayout#FIXED_COLUMNS}, returned
+     * which is {@link DialogLayout#DEFAULT_COLUMN}, returned
      * @param source {@code Source} object used for data retrieval
      * @param scope  Value indicating whether to look for a {@code Dialog}, or {@code DesignDialog} annotation as a possible
      *               source of layout
@@ -116,28 +117,32 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
     @SuppressWarnings("deprecation") // Processing of Dialog#tabs is retained for compatibility and will be removed
     // in a version after 2.0.2
     private static DialogLayout getLayout(Source source, String scope) {
-        DialogLayout result = DialogLayout.FIXED_COLUMNS;
+        DialogLayout result = DialogLayout.DEFAULT_COLUMN;
 
-        List<Class<?>> hierarchy = ClassUtil.getInheritanceTree(source.adaptTo(Class.class), true);
-        ListIterator<Class<?>> hierarchyIterator = hierarchy.listIterator(hierarchy.size());
+        List<Class<?>> classHierarchy = ClassUtil.getInheritanceTree(source.adaptTo(Class.class), true);
+        ListIterator<Class<?>> classHierarchyIterator = classHierarchy.listIterator(classHierarchy.size());
 
-        while (hierarchyIterator.hasPrevious()) {
-            Class<?> current = hierarchyIterator.previous();
+        while (classHierarchyIterator.hasPrevious()) {
+            Class<?> currentClass = classHierarchyIterator.previous();
             if (scope.equals(Scopes.CQ_DIALOG)
-                && current.isAnnotationPresent(Dialog.class)
-                && current.getDeclaredAnnotation(Dialog.class).tabs().length > 0) {
+                && currentClass.isAnnotationPresent(Dialog.class)
+                && currentClass.getDeclaredAnnotation(Dialog.class).tabs().length > 0) {
                 return DialogLayout.TABS;
             }
-            Tabs tabsAnnotation = current.getDeclaredAnnotation(Tabs.class);
+            Tabs tabsAnnotation = currentClass.getDeclaredAnnotation(Tabs.class);
             if (tabsAnnotation != null && tabsAnnotation.value().length > 0) {
                 return DialogLayout.TABS;
             }
-            Accordion accordionAnnotation = current.getDeclaredAnnotation(Accordion.class);
+            Accordion accordionAnnotation = currentClass.getDeclaredAnnotation(Accordion.class);
             if (accordionAnnotation != null && accordionAnnotation.value().length > 0) {
                 return DialogLayout.ACCORDION;
             }
+            FixedColumns fixedColumnsAnnotation = currentClass.getDeclaredAnnotation(FixedColumns.class);
+            if (fixedColumnsAnnotation != null && fixedColumnsAnnotation.value().length > 0) {
+                return DialogLayout.COLUMNS;
+            }
             result = getLayoutFromNestedClasses(source.adaptTo(Class.class));
-            if (!result.equals(DialogLayout.FIXED_COLUMNS)) {
+            if (!result.equals(DialogLayout.DEFAULT_COLUMN)) {
                 return result;
             }
         }
@@ -148,7 +153,7 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
     /**
      * Called by {@link CqDialogHandler#getLayout(Source, String)} to search for an appropriate {@code DialogLayout} value
      * in case it is defined as an annotation to nested class. If such annotation is found, the appropriate value is
-     * immediately returned; otherwise the fallback value {@link DialogLayout#FIXED_COLUMNS} is returned
+     * immediately returned; otherwise the fallback value {@link DialogLayout#DEFAULT_COLUMN} is returned
      * @param componentClass The {@code Class} being processed
      * @return {@code DialogLayout} value
      */
@@ -156,7 +161,7 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
     // in a version after 2.0.2
     private static DialogLayout getLayoutFromNestedClasses(Class<?> componentClass) {
         if (ArrayUtils.isEmpty(componentClass.getDeclaredClasses())) {
-            return DialogLayout.FIXED_COLUMNS;
+            return DialogLayout.DEFAULT_COLUMN;
         }
         for (Class<?> nested : componentClass.getDeclaredClasses()) {
             if (nested.isAnnotationPresent(Tab.class)
@@ -167,7 +172,7 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
                 return DialogLayout.ACCORDION;
             }
         }
-        return DialogLayout.FIXED_COLUMNS;
+        return DialogLayout.DEFAULT_COLUMN;
     }
 
 
@@ -188,9 +193,9 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
         if (itemsRoot == null || itemsRoot.getChildren().isEmpty()) {
             return;
         }
-        Target forceIgnoreFreshnessOpen = Targets.newInstance(OPENING_FORCE_IGNORE_FRESHNESS_TAG)
+        Target forceIgnoreFreshnessOpen = Targets.newTarget(OPENING_FORCE_IGNORE_FRESHNESS_TAG)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.Service.IGNORE_FRESHNESS_TOGGLER);
-        Target forceIgnoreFreshnessClose = Targets.newInstance(CLOSING_FORCE_IGNORE_FRESHNESS_TAG)
+        Target forceIgnoreFreshnessClose = Targets.newTarget(CLOSING_FORCE_IGNORE_FRESHNESS_TAG)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.Service.IGNORE_FRESHNESS_TOGGLER);
         itemsRoot.addTarget(forceIgnoreFreshnessOpen, 0);
         itemsRoot.addTarget(forceIgnoreFreshnessClose, itemsRoot.getChildren().size());

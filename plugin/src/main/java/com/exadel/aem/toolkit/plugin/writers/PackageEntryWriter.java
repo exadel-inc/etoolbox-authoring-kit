@@ -159,7 +159,7 @@ abstract class PackageEntryWriter {
      */
     private Document createDocument(Class<?> componentClass) {
         Source source = Sources.fromClass(componentClass);
-        Target target = Targets.newInstance(DialogConstants.NN_ROOT, getScope());
+        Target target = Targets.newRoot(getScope());
         getHandlers().accept(source, target);
 
         Document result = target
