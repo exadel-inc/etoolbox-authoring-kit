@@ -62,8 +62,8 @@ abstract class ContainerHandler {
      * Retrieves the list of sources that can be inserted in the current container. Where to retrieve sources from,
      * depends on the nature of a current container handler.
      * <p>E.g., for a {@code @FieldSet} or {@code @MultiField}-annotated entry, members of the underlying class can be
-     * retrieved. But for an entry that does not necessarily refer to a container class, such as in-dialog {@code
-     * @Tabs}, we need to take into account the members of the "surrounding" class (the "host" class) in which the
+     * retrieved. But for an entry that does not necessarily refer to a container class, such as in-dialog {@code @Tabs},
+     * we need to take into account the members of the "surrounding" class (the "host" class) in which the
      * current entry is declared.</p>
      * <p>Note that for a nested class the exact set of members is retrieved; while dealing with a host class, the
      * routine
