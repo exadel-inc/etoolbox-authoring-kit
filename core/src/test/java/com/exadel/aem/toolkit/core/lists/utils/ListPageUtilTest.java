@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.core.lists.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
@@ -22,6 +23,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.NameConstants;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.WCMException;
@@ -49,15 +51,38 @@ public class ListPageUtilTest {
     }
 
     @Test
-    public void shouldThrowWCMExceptionIfParentDoesNotExist() {
-        assertThrows(WCMException.class, () -> ListPageUtil.createPage(context.resourceResolver(), "/content/test"));
+    public void shouldThrowExceptionIfPathInvalid() {
+        assertThrows(WCMException.class, () -> ListPageUtil.createPage(context.resourceResolver(), "/nocontent/test"));
+        assertThrows(WCMException.class, () -> ListPageUtil.createPage(context.resourceResolver(), "nocontent/test"));
+        assertThrows(WCMException.class, () -> ListPageUtil.createPage(context.resourceResolver(), "/content/../../test"));
     }
 
     @Test
-    public void shouldCreateListPageUnderGivenPath() throws WCMException, PersistenceException {
+    public void shouldCreateListPageUnderExisingPath() throws WCMException, PersistenceException {
         context.create().page("/content");
 
         Page listPage = ListPageUtil.createPage(context.resourceResolver(), "/content/test");
+
+        assertNotNull(listPage);
+        ValueMap properties = listPage.getProperties();
+        assertEquals(ListConstants.LIST_TEMPLATE_NAME, properties.get(NameConstants.NN_TEMPLATE, StringUtils.EMPTY));
+        assertEquals(ListConstants.SIMPLE_LIST_ITEM_RESOURCE_TYPE, properties.get(CoreConstants.PN_ITEM_RESOURCE_TYPE, StringUtils.EMPTY));
+    }
+
+
+    @Test
+    public void shouldCreateListPageUnderNonexistentPath() throws WCMException, PersistenceException {
+        context.create().page("/content");
+
+        Page listPage = ListPageUtil.createPage(context.resourceResolver(), "/content/nested/node/../node/test");
+
+        Resource nested = context.resourceResolver().getResource("/content/nested");
+        assertNotNull(nested);
+        assertEquals(JcrConstants.NT_UNSTRUCTURED, nested.getResourceType());
+
+        Resource nestedNode = context.resourceResolver().getResource("/content/nested/node");
+        assertNotNull(nestedNode);
+        assertEquals(JcrConstants.NT_UNSTRUCTURED, nestedNode.getResourceType());
 
         assertNotNull(listPage);
         ValueMap properties = listPage.getProperties();
