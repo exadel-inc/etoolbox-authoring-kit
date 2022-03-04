@@ -82,7 +82,7 @@
     }
 
     function parentMatch(parents, curParents, componentList) {
-        const tmp = parents.split(/\s+/);
+        const tmp = getParentsAsArray(parents);
         if (tmp.length === 1) {
             return resolveGroup(tmp[0], curParents.slice(-1)[0], componentList);
         }
@@ -97,9 +97,49 @@
         return false;
     }
 
+    function getParentsAsArray(parents) {
+        const chunks = parents.split(/\s+/);
+        const groupStartPositions = [];
+        for (let pos = 0; pos < chunks.length; pos++) {
+            if (/^group:['"`]/.test(chunks[pos])) {
+                groupStartPositions.push(pos);
+            }
+        }
+
+        if (!groupStartPositions.length) {
+            return chunks;
+        }
+
+        for (const startPos of groupStartPositions) {
+            const escapingChar = chunks[startPos].substring(6, 7);
+            if (endsWithEscapingChar(chunks[startPos], escapingChar)) {
+                continue;
+            }
+            for (let nextPos = startPos + 1; nextPos < chunks.length; nextPos++) {
+                const isEnding = endsWithEscapingChar(chunks[nextPos], escapingChar);
+                chunks[startPos] += ' ' + chunks[nextPos];
+                chunks[nextPos] = '';
+                if (isEnding) {
+                    break;
+                }
+            }
+        }
+        return chunks.filter(chunk => chunk).map(chunk => chunk.replace(/(['"`]){2}/g, '$1'));
+    }
+
+    function endsWithEscapingChar(value, char) {
+        return value &&
+            value.lastIndexOf(char) === value.length - 1 &&
+            (value.length < 2 || value[value.length - 2] !== char);
+    }
+
     function resolveGroup(parameter, setting, componentList) {
         if (parameter.startsWith('group:')) {
-            const arr = getComponentsResTypesByGroup(parameter.substring(6), componentList);
+            let groupName = parameter.substring(6);
+            if (groupName.startsWith('\'')) {
+                groupName = groupName.substring(1, groupName.length - 1);
+            }
+            const arr = getComponentsResTypesByGroup(groupName, componentList);
             return arr.includes(setting);
         }
         return match(parameter, setting);
