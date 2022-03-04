@@ -30,7 +30,7 @@ public class AllowedChildrenAnnotation {
             pageResourceTypes = {"page/Res/Type1", "page/Res/Type2"},
             templates = {"template1, template2"},
             resourceNames = {"resource1, resource2", "resource3"},
-            parents = {"parent/Res/Type1", "parent/Res/Type2"}
+            parents = {"parent/Res/Type1 group:Containers", "parent/Res/Type2"}
     )
     public static class Test1 {
     }
@@ -52,7 +52,7 @@ public class AllowedChildrenAnnotation {
             pageResourceTypes = {"page/Res/Type1", "page/Res/Type2"},
             templates = {"template1, template2"},
             resourceNames = {"resource1, resource2", "resource3"},
-            parents = {"parent/Res/Type1", "parent/Res/Type2"}
+            parents = {"parent/Res/Type1 group:'Containers and Buttons'", "parent/Res/Type2 group:'Containers'"}
     )
     @AllowedChildren(
             value = "res/Type1",
