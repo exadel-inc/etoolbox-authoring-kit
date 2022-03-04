@@ -15,7 +15,7 @@ The Lists provide a flexible way to create, store and retrieve lists of structur
     - description = "Not Found"
 ```
 
-A List consists of a number of items, the structure and authoring dialog of every item is defined by an arbitrary AEM component (a.k.a. *Item Component*).
+A List consists of a number of items. The structure and authoring dialog of every item is defined by an arbitrary AEM component (a.k.a. *Item Component*).
 Each list is an AEM page, which means that it can be placed anywhere in the content structure. Lists can be created, edited, localized and published via Touch UI interface.
 
 ### Creating a new List
@@ -76,7 +76,15 @@ var propertyMaps = Arrays.asList(ImmutableMap.of("foo", "bar", "answer": 42), /*
 Page myAnotherList = ListHelper.createList(resourceResolver, path, propertyMaps);
 
 ```
-You can find more examples in [ListHelperTest](../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
+Note: when creating a list from an arbitrary Sling model, you use the model's public getters. They are expected to return values of types that are simply serialized (such as *String*, *long*, etc.). You can also use public fields.
+
+In fact, the *ObjectMapper* from [Jackson](https://github.com/FasterXML/jackson) is used under the hood. Therefore, all the techniques relevant to serializing entities with *Jackson* are applicable here. For instance, you can skip a field or getter by adding `@JsonIgnore` to it. All other `@Json`-related annotations will also work.
+
+Additionally, you can skip the getters or fields you don't want to be persisted in EToolbox List by:
+- adding the `@Transient` annotation (from *java.beans*) to a method;
+- adding the `transient` modifier to a public field.
+
+Find more examples on creating EToolbox Lists code in [ListHelperTest](../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
 
 
 ### Retrieving Lists' content programmatically

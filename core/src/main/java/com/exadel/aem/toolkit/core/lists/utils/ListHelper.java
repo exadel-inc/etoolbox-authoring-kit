@@ -21,7 +21,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,8 +39,6 @@ import com.day.cq.wcm.api.WCMException;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Contains methods for manipulating EToolbox Lists
@@ -184,11 +181,10 @@ public class ListHelper {
 
         Class<?> modelType = CollectionUtils.isNotEmpty(values)? values.get(0).getClass() : null;
 
-        BiFunction<Object, ObjectMapper, Map<String, Object>> mapping = ListResourceUtil.getMapingFunction(modelType);
-        ObjectMapper objectMapper = new ObjectMapper();
+        Function<Object, Map<String, Object>> mapping = ListResourceUtil.getMappingFunction(modelType);
 
         List<Resource> resources = values.stream()
-            .map(value -> mapping.apply(value, objectMapper))
+            .map(mapping)
             .filter(Objects::nonNull)
             .map(properties -> ListResourceUtil.createValueMapResource(resourceResolver, properties))
             .collect(Collectors.toList());
@@ -205,8 +201,10 @@ public class ListHelper {
      * @return {@link Page} containing the list of entries or {@code null} if an invalid or void argument is passed
      * @throws WCMException If the list could not be created
      */
-    public static Page createList(ResourceResolver resourceResolver, String path, Map<String, Object> values)
-        throws WCMException {
+    public static Page createList(
+        ResourceResolver resourceResolver,
+        String path,
+        Map<String, Object> values) throws WCMException {
 
         List<Resource> resources = ListResourceUtil.mapToValueMapResources(resourceResolver, values);
         return createResourceList(resourceResolver, path, resources);
@@ -230,7 +228,6 @@ public class ListHelper {
         }
 
         Page listPage;
-        Resource list;
         try {
             Resource pageResource = resourceResolver.getResource(path);
             if (pageResource != null) {
@@ -238,17 +235,13 @@ public class ListHelper {
             }
 
             listPage = ListPageUtil.createPage(resourceResolver, path);
-            list = listPage.getContentResource().getChild(CoreConstants.NN_LIST);
+            Resource list = listPage.getContentResource().getChild(CoreConstants.NN_LIST);
+            for (Resource resource : resources) {
+                ListResourceUtil.createListItem(resourceResolver, list, resource.getValueMap());
+            }
+            resourceResolver.commit();
         } catch (PersistenceException e) {
             throw new WCMException(e);
-        }
-
-        for (Resource resource : resources) {
-            try {
-                ListResourceUtil.createListItem(resourceResolver, list, resource.getValueMap());
-            } catch (PersistenceException e) {
-                throw new WCMException(e);
-            }
         }
 
         return listPage;

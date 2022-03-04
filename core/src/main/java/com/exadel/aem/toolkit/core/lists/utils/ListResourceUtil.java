@@ -13,11 +13,14 @@
  */
 package com.exadel.aem.toolkit.core.lists.utils;
 
+import java.beans.Transient;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.MapUtils;
@@ -38,12 +41,21 @@ import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.Annotated;
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
 /**
  * Contains methods for manipulation with List Resource
  * <p><u>Note</u>: This class is not a part of the public API</p>
  */
 class ListResourceUtil {
+
+    private static final ObjectMapper OBJECT_MAPPER;
+
+    static {
+        OBJECT_MAPPER = new ObjectMapper();
+        OBJECT_MAPPER.setAnnotationIntrospector(new LocalAnnotationIntrospector());
+    }
 
     /**
      * Default (instantiation-restricting) constructor
@@ -65,16 +77,17 @@ class ListResourceUtil {
      * @throws PersistenceException If the list item could not be created
      */
     public static void createListItem(ResourceResolver resourceResolver, Resource parent, Map<String, Object> properties) throws PersistenceException {
-        Map<String, Object> withoutSystemProperties = excludeSystemProperties(properties);
-        withoutSystemProperties.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ListConstants.LIST_ITEM_RESOURCE_TYPE);
-        resourceResolver.create(parent, ResourceUtil.createUniqueChildName(parent, CoreConstants.PN_LIST_ITEM), withoutSystemProperties);
+        Map<String, Object> valueMapWithoutSystemProps = excludeSystemProperties(properties);
+        valueMapWithoutSystemProps.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ListConstants.LIST_ITEM_RESOURCE_TYPE);
+        resourceResolver.create(parent, ResourceUtil.createUniqueChildName(parent, CoreConstants.PN_LIST_ITEM), valueMapWithoutSystemProps);
     }
 
     /**
-     * Creates a {@link ValueMapResource} representation of a list entry using the provided {@code title} and {@code value}
+     * Creates a {@link ValueMapResource} representation of a list entry using the provided {@code title} and {@code
+     * value}
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
-     * @param title String value representing the title of the list entry
-     * @param value String value representing the value of the list entry
+     * @param title            String value representing the title of the list entry
+     * @param value            String value representing the value of the list entry
      * @return {@link ValueMapResource} object
      */
     public static Resource createValueMapResource(ResourceResolver resourceResolver, String title, Object value) {
@@ -100,8 +113,10 @@ class ListResourceUtil {
      * @return List of {@link ValueMapResource} objects
      */
     public static List<Resource> mapToValueMapResources(ResourceResolver resourceResolver, Map<String, Object> values) {
-        return MapUtils.emptyIfNull(values).entrySet().stream()
-            .map(entry -> ListResourceUtil.createValueMapResource(resourceResolver, entry.getKey(), entry.getValue()))
+        return MapUtils.emptyIfNull(values)
+            .entrySet()
+            .stream()
+            .map(entry -> createValueMapResource(resourceResolver, entry.getKey(), entry.getValue()))
             .collect(Collectors.toList());
     }
 
@@ -111,9 +126,9 @@ class ListResourceUtil {
      * @param modelType Type of the Sling model
      * @return {@code BiFunction}.
      */
-    public static BiFunction<Object, ObjectMapper, Map<String, Object>> getMapingFunction(Class<?> modelType) {
+    public static Function<Object, Map<String, Object>> getMappingFunction(Class<?> modelType) {
         if (ClassUtils.isAssignable(modelType, SimpleListItem.class)) {
-            return (model, objectMapper) -> {
+            return model -> {
                 SimpleListItem simpleListItem = (SimpleListItem) model;
                 Map<String, Object> properties = new HashMap<>();
                 properties.put(JcrConstants.JCR_TITLE, simpleListItem.getTitle());
@@ -121,7 +136,7 @@ class ListResourceUtil {
                 return properties;
             };
         }
-        return (model, objectMapper) -> objectMapper.convertValue(model, new TypeReference<Map<String, Object>>() {});
+        return model -> OBJECT_MAPPER.convertValue(model, new TypeReference<Map<String, Object>>() {});
     }
 
     /**
@@ -133,5 +148,26 @@ class ListResourceUtil {
         return MapUtils.emptyIfNull(properties).entrySet().stream()
             .filter(entry -> !PROPERTIES_TO_IGNORE.contains(entry.getKey()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    /**
+     * Extends {@link JacksonAnnotationIntrospector} to add support for ToolKit-specific annotations used in
+     * entity-to-map object mapping
+     */
+    private static class LocalAnnotationIntrospector extends JacksonAnnotationIntrospector {
+        @Override
+        protected boolean _isIgnorable(Annotated a) {
+            if (super._isIgnorable(a)) {
+                return true;
+            }
+            if (a.hasAnnotation(Transient.class)) {
+                return true;
+            }
+            if (a.getAnnotated() instanceof Field) {
+                Field field = (Field) a.getAnnotated();
+                return Modifier.isTransient(field.getModifiers());
+            }
+            return false;
+        }
     }
 }
