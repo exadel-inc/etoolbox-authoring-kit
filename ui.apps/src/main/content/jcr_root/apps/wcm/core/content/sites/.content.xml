@@ -25,19 +25,19 @@
                                   nesting="hide"
                                   src.uritemplate="/mnt/overlay/etoolbox-authoring-kit/lists/components/content/console/createpagedialog.html{+id}"/>
                         </createlist>
-                        <createTrojanHorse granite:rel="cq-siteadmin-admin-create-trojan-horse"
+                        <createcontentblueprint granite:rel="cq-siteadmin-admin-create-content-blueprint"
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/collection/actionlink"
                                     action="foundation.dialog"
                                     icon="dataDownload"
-                                    rel="cq-siteadmin-admin-create-trojan-horse"
+                                    rel="cq-siteadmin-admin-create-content-blueprint"
                                     relScope="item"
                                     target=".cq-siteadmin-admin-childpages"
-                                    text="Trojan Horse">
+                                    text="EToolbox Content Blueprint">
                             <data jcr:primaryType="nt:unstructured"
                                   nesting="hide"
-                                  src.uritemplate="/mnt/overlay/etoolbox-authoring-kit/trojan-horse/components/content/console/createpagedialog.html{+id}"/>
-                        </createTrojanHorse>
+                                  src.uritemplate="/mnt/overlay/etoolbox-authoring-kit/content-blueprints/components/content/console/createpagedialog.html{+id}"/>
+                        </createcontentblueprint>
                     </items>
                 </create>
             </secondary>
