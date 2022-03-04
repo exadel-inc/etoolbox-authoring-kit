@@ -182,8 +182,8 @@
      */
     function isMatchingGroupOrResourceType(parentsChunk, parentResType, componentList) {
         return parentsChunk.startsWith('group:') ?
-            isMatchingGroup(parentsChunk[0], parentResType, componentList) :
-            isMatching(parentsChunk[0], parentResType);
+            isMatchingGroup(parentsChunk, parentResType, componentList) :
+            isMatching(parentsChunk, parentResType);
     }
 
     /**
@@ -194,7 +194,7 @@
      */
     function isMatchingGroup(parentsChunk, parentResType, componentList) {
         let groupName = parentsChunk.substring(6);
-        if (groupName.startsWith('\'')) {
+        if (groupName.startsWith('\'') || groupName.startsWith('`')) {
             groupName = groupName.substring(1, groupName.length - 1);
         }
         const arr = getComponentsResTypesByGroup(groupName, componentList);
