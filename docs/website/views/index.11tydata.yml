@@ -65,37 +65,37 @@ landing:
     content: the reliable community
   articleSection:
   - title: 'How to Add Image Management to an AEM TouchUI Dialog: Tutorial'
-    imgUrl: "./assets/landing/article-section/add-image.jpg"
+    imgUrl: "./assets/landing/article-section/img-1.jpg"
     tags:
     - AEM
-    - CF
-    - contentfragments
-    - linkslocalization
-    content: Our previous article from the Content Fragments in AEM series provided
-      tips for setting up a translation project and links rewriting. This time, we’ll
-      address several AEM link localization issues you may encounter.
-    date: November 30, 2021
-    linkUrl: https://exadel.com/news/aem-tip-how-to-solve-issues-with-default-values-in-new-fields-with-existing-dialogs/
-  - title: 'Setting Up a Multifield in AEM Touch UI Dialogs: Tutorial'
-    imgUrl: "./assets/landing/article-section/setup-multifield.jpg"
+    - Exadel Authoring Kit for AEM
+    - Open Source
+    - Touch UI
+    content: >
+      Discussing ways to add images to your AEM component via a Touch UI dialog. The task has never been a
+      straightforward one, but using Exadel Authoring Kit for AEM makes it much easier.
+    date: October 12, 2021
+    linkUrl: https://exadel.com/news/how-to-add-image-management-to-an-aem-touchui-dialog-tutorial
+  - title: 'Exadel Toolbox Lists: A Brand-New Way to Create a Generic List in AEM'
+    imgUrl: "./assets/landing/article-section/img-2.jpg"
     tags:
     - AEM
-    - CF
-    - contentfragments
-    - linkslocalization
-    content: This new article in the AEM Content Fragments series describes the Content
-      Fragment localization problem and the ways to solve it.
-    date: November 30, 2021
-    linkUrl: https://exadel.com/news/setting-up-a-multifield-in-aem-touch-ui-dialogs-tutorial/
-  - title: 'AEM Tip: How to Solve Issues with Default Values in New Fields with Existing
-      Dialogs'
-    imgUrl: "./assets/landing/article-section/solve-issues.jpg"
+    - AEM Configuration
+    - Exadel Authoring Kit for AEM
+    - Open Source
+    - TouchUI
+    content: >
+      In this article we explain how Exadel Toolbox Lists help to create, edit, and retrieve dictionary-like and
+      table-like data (option lists, built-in data references, etc.) for use with AEM components.
+    date: June 8, 2021
+    linkUrl: https://exadel.com/news/exadel-toolbox-lists-a-brand-new-way-to-create-a-generic-list-in-aem/
+  - title: 'Exadel Authoring Kit for Adobe Experience Manager Version 2 Makes AEM Authoring Easier'
+    imgUrl: "./assets/landing/article-section/img-3.jpg"
     tags:
     - AEM
-    - CF
-    - contentfragments
-    - linkslocalization
-    content: Check out the new Appery.io online store app template that helps eCommerce
-      store owners create apps easily and quickly.
-    date: November 30, 2021
-    linkUrl: https://exadel.com/news/aem-tip-how-to-solve-issues-with-default-values-in-new-fields-with-existing-dialogs/;
+    - Exadel Authoring Kit for AEM
+    - Open Source
+    - TouchUI
+    content: Exadel MarTech team released the second version of Exadel Authoring Kit for Adobe Experience Manager.
+    date: May 18, 2021
+    linkUrl: https://exadel.com/news/exadel-authoring-kit-for-adobe-experience-manager-version-2-makes-aem-authoring-easier/

@@ -372,15 +372,15 @@ Many more code snippets are available in the [Component management](#component-m
 
 #### Component management
 
-- [Component structure](docs/content/get-started/component-structure.md)
+- [Component structure](docs/content/getting-started/component-structure.md)
 - [Laying out your dialog](docs/content/components/dialog-layout.md)
 - [Defining dialog fields, setting attributes](docs/content/components/widget-annotations.md)
-    - [Configuring RichTextEditor](docs/content/get-started/configuring-rte.md)
-    - [Grouping fields with FieldSet](docs/content/get-started/configuring-fieldset.md)
+    - [Configuring RichTextEditor](docs/content/getting-started/configuring-rte.md)
+    - [Grouping fields with FieldSet](docs/content/getting-started/configuring-fieldset.md)
     - [Multiplying Fields](docs/content/components/multiplying-fields.md)
 - [Reusing code and making it brief](docs/content/components/reusing-code.md)
 - [Customizing the ToolKit to your needs](docs/content/components/test/customizing-toolkit.md)
-- [Additional properties of components, dialogs and fields](docs/content/get-started/additional-properties.md)
+- [Additional properties of components, dialogs and fields](docs/content/getting-started/additional-properties.md)
 
 #### Enhanced authoring experience
 
