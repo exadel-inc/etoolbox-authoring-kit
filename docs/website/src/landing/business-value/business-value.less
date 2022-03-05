@@ -1,56 +1,63 @@
 @import (reference) "../../common/variables.less";
 
 .bv {
-    &-container {
-        padding: 5rem;
-        width: 100%;
-        height: max-content;
-        background-image: url("../assets/landing/bv-background.svg");
-        background-position: bottom left;
-        background-repeat: no-repeat;
-        align-content: center;
-        @media @xs {
-            padding: 0.5rem;
-            font-size: 14px;
-            background-image: none;
-        }
-        @media @sm {
-            background-position: center left;
-        }
+  &-container {
+    padding: 5rem;
+    width: 100%;
+    height: max-content;
+    background-image: url("../assets/landing/bv-background.svg");
+    background-position: bottom left;
+    background-repeat: no-repeat;
+    align-content: center;
+    @media @sm {
+      padding: 2.5rem;
+      background-position: center left;
     }
-    &-list {
-        margin: auto;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        line-height: 1;
-        width: 80%;
-        @media @xs-sm {
-            width: 100%;
-            flex-wrap: wrap;
-        }
-        @media @sm {
-            padding-top: 1rem;
-        }
+    @media @xs {
+      padding: 0.5rem;
+      font-size: 14px;
     }
-    &-block {
-        padding: 1rem;
-        flex: 1 1 23%;
-        display: flex;
-        @media @xs-sm {
-            flex: 1 1 45%;
-            padding: 0.25rem;
-            height: fit-content;
-        }
+  }
+
+  &-list {
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    line-height: 1;
+    @media @xs-sm {
+      width: 100%;
+      flex-wrap: wrap;
     }
-    &-item {
-        text-align: center;
-        padding: 5% 0;
-        &>div {
-            padding: 10% 0;
-        }
-        @media @xs-sm {
-            text-align: start;
-        }
+    @media @sm {
+      padding-top: 1rem;
     }
+  }
+
+  &-block {
+    display: flex;
+    padding: 1rem 0;
+    flex: 1 1 23%;
+
+    @media @xs-sm {
+      flex: 1 1 45%;
+      padding: 0.25rem;
+    }
+  }
+
+  &-item {
+    text-align: center;
+    padding: 1rem 2rem;
+
+    @media @xs {
+      text-align: start;
+    }
+
+    &-title {
+      display: block;
+    }
+    &-description {
+      margin: 0;
+    }
+  }
 }

@@ -1,0 +1,25 @@
+<esl-d-sidebar id="sidebar" class="open" aria-label="Site Navigation">
+  <nav class="sidebar-nav">
+    <a class="sidebar-heading" href="{{ '/' | url }}">
+      <span class="sidebar-logo fill-light">{% include "static/assets/helpers/icon.white.svg" %}</span>
+      <span class="sidebar-title">EXADEL AUTHORING </br> KIT FOR AEM</span>
+    </a>
+    <div class="sidebar-content">
+      <ul class="sidebar-nav-list esl-scrollable-content">
+        <li class="sidebar-nav-item">
+          <a class="sidebar-nav-item-heading" href="{{ landing.urls.installationUrl }}">Manuals</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="sidebar-nav-item-heading" href="{{ landing.urls.docsUrl }}">API Docs</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="sidebar-nav-item-heading" href="{{ landing.urls.articleExadelUrl }}">Blog</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a class="sidebar-nav-item-heading" href="{{ site.github.url }}" target="_blank">GitHub</a>
+        </li>
+      </ul>
+      <esl-scrollbar class="sidebar-scrollbar" target="::prev"></esl-scrollbar>
+    </div>
+  </nav>
+</esl-d-sidebar>
