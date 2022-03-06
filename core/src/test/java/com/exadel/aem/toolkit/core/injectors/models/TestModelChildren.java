@@ -65,6 +65,9 @@ public class TestModelChildren {
     @Children(name = "list", filters = {ResourceTypeFilter.class, NameFilter.class})
     private List<ListItemModel> listItemModelsFiltered;
 
+    @Children(name = "/content/jcr:content/list/nested-node", prefix = "prefix_", postfix = "_postfix")
+    private List<NestedModel> modelsAdaptedFromRequest;
+
     /* -------------
        Invalid cases
        ------------- */
@@ -133,6 +136,10 @@ public class TestModelChildren {
 
     public List<ListItemModel> getListItemModelsFiltered() {
         return listItemModelsFiltered;
+    }
+
+    public List<NestedModel> getModelsAdaptedFromRequest() {
+        return modelsAdaptedFromRequest;
     }
 
     public ListItemModel[] getInjectedViaConstructor() {
