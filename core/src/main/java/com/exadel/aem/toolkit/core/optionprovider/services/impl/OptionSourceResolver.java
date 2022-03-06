@@ -152,7 +152,7 @@ class OptionSourceResolver {
         Resource contentResource =  request.getResourceResolver().resolve(contentResourcePath);
         if (contentResource instanceof NonExistingResource
                 || StringUtils.isEmpty(relativePath)
-                || relativePath.equals("./")) {
+                || relativePath.equals(CoreConstants.RELATIVE_PATH_PREFIX)) {
             return contentResource;
         }
         return request.getResourceResolver().getResource(contentResource, relativePath);

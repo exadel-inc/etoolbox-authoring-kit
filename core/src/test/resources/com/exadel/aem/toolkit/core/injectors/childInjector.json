@@ -1,0 +1,82 @@
+{
+  "jcr:primaryType": "cq:Page",
+  "jcr:title": "Sample Page",
+  "jcr:content": {
+    "jcr:primaryType": "cq:PageContent",
+    "jcr:title": "Simple List Page",
+    "cq:template": "/conf/etoolbox-authoring-kit/settings/wcm/templates/list",
+    "itemResourceType": "/apps/etoolbox-authoring-kit/lists/components/content/simpleItem",
+    "sling:resourceType": "etoolbox-authoring-kit/lists/components/structure/page-list",
+    "option": "existingComponent",
+    "defaultChild": {
+      "jcr:title": "Hello",
+      "value": "World"
+    },
+    "list": {
+      "jcr:primaryType": "nt:unstructured",
+      "sling:resourceType": "wcm/foundation/components/responsivegrid",
+      "list_item_1006003058": {
+        "jcr:primaryType": "nt:unstructured",
+        "jcr:title": "key1",
+        "value": "value1",
+        "rootProperty": "propertyValue",
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem",
+        "nested": {
+          "property": "nestedPropertyValue"
+        }
+      },
+      "list_item_1": {
+        "jcr:primaryType": "nt:unstructured",
+        "jcr:title": "key2",
+        "value": "value2",
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
+      },
+      "list_item_2": {
+        "jcr:primaryType": "nt:unstructured",
+        "jcr:title": "key1",
+        "value": "value3",
+        "value_2": "value2",
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
+      },
+      "list_item_empty": {
+        "jcr:primaryType": "nt:unstructured",
+        "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
+      },
+      "nested-node": {
+        "jcr:primaryType": "nt:unstructured",
+        "nested_list_item_1": {
+          "jcr:primaryType": "nt:unstructured",
+          "jcr:title": "key1",
+          "value": "nestedListItem1",
+          "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
+        },
+        "nested_list_item_2": {
+          "jcr:primaryType": "nt:unstructured",
+          "jcr:title": "key11",
+          "value": "nestedListItem2",
+          "prefix_value": "Value with prefix",
+          "prefix_value_2": "Value with prefix 2",
+          "prefix_value_3": "Value with prefix 3",
+          "value_1_postfix": "Value with postfix",
+          "value_2_postfix": "Value with postfix 2",
+          "value_3_postfix": "Value with postfix 3",
+          "prefix_value_postfix": "Value with prefix and postfix",
+          "foo_property_bar": 42,
+          "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
+        }
+      }
+    },
+    "list_item_1": {
+      "jcr:primaryType": "nt:unstructured",
+      "jcr:title": "key1_2",
+      "value": "value1_2",
+      "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
+    },
+    "list_item_1_3": {
+      "jcr:primaryType": "nt:unstructured",
+      "jcr:title": "key1_3",
+      "value": "value1_3",
+      "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem"
+    }
+  }
+}

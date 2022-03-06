@@ -13,53 +13,85 @@
  */
 package com.exadel.aem.toolkit.core.authoring.models;
 
+import java.util.Map;
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 import com.adobe.granite.ui.components.FormData;
 
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Represents the back-end part of the {@code IgnoreFreshnessToggler} component for Granite UI dialogs. This Sling model
- * is responsible for setting and unsetting the {@code forceIgnoreFreshness} flag to the Sling HTTP request, as needed
+ * is responsible for setting and unsetting the {@code forceIgnoreFreshness} flag to the Sling HTTP request when needed
  * @see Dialog#forceIgnoreFreshness()
  */
 @Model(adaptables = SlingHttpServletRequest.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class IgnoreFreshnessToggler {
 
-    private static final String ATTRIBUTE_IGNORE_FRESHNESS = "toolkit.ignoreFreshness";
-
     @SlingObject
     private SlingHttpServletRequest request;
 
-    @SlingObject
-    private Resource resource;
-
     /**
-     * Sets or unsets the {@code forceIgnoreFreshness} flag to the Sling HTTP request upon this Sling model initialization
+     * Sets or unsets the {@code forceIgnoreFreshness} flag to the Sling HTTP requests upon this Sling model initialization
      */
     @PostConstruct
     private void init() {
-        if (isIgnoreFreshnessTurnedOn()) {
-            FormData.push(request, resource.getValueMap(), FormData.NameNotFoundMode.CHECK_FRESHNESS);
-            request.setAttribute(ATTRIBUTE_IGNORE_FRESHNESS, Boolean.FALSE.toString());
+        FormData formData = FormData.from(request);
+        if (formData == null) {
+            return;
+        }
+        boolean ignoreFreshnessTurnedOn = formData.getValueMap() instanceof RelativePathValueMapDecorator;
+
+        if (!ignoreFreshnessTurnedOn) {
+            RelativePathValueMapDecorator syntheticValueMap = new RelativePathValueMapDecorator(formData.getValueMap());
+            FormData.push(request, syntheticValueMap, FormData.NameNotFoundMode.IGNORE_FRESHNESS);
+
         } else {
-            FormData.push(request, resource.getValueMap(), FormData.NameNotFoundMode.IGNORE_FRESHNESS);
-            request.setAttribute(ATTRIBUTE_IGNORE_FRESHNESS, Boolean.TRUE.toString());
+            FormData.pop(request);
         }
     }
 
     /**
-     * Retrieves whether the {@code forceIgnoreFreshness} flag has been set for the current Sling HTTP request
-     * @return True or false
+     * Inherits {@link ValueMapDecorator} to provide a {@code ValueMap} that manages map keys containing the relative
+     * path prefix ({@code ./}) in the same way the out-of-the-box {@code JcrValueMap} does
      */
-    private boolean isIgnoreFreshnessTurnedOn() {
-        Object attributeValue = request.getAttribute(ATTRIBUTE_IGNORE_FRESHNESS);
-        return attributeValue != null && Boolean.parseBoolean(attributeValue.toString());
+    private static class RelativePathValueMapDecorator extends ValueMapDecorator {
+
+        /**
+         * Initializes a new decorator instance
+         * @param base {@code Map} containing data for the {@code ValueMap} presentation
+         */
+        public RelativePathValueMapDecorator(Map<String, Object> base) {
+            super(base);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <T> T get(String name, Class<T> type) {
+            if (StringUtils.startsWith(name, CoreConstants.RELATIVE_PATH_PREFIX)) {
+                return super.get(name.substring(CoreConstants.RELATIVE_PATH_PREFIX.length()), type);
+            }
+            return super.get(name, type);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean containsKey(Object key) {
+            if (key != null && StringUtils.startsWith(key.toString(), CoreConstants.RELATIVE_PATH_PREFIX)) {
+                return super.containsKey(key.toString().substring(CoreConstants.RELATIVE_PATH_PREFIX.length()));
+            }
+            return super.containsKey(key);
+        }
     }
 }

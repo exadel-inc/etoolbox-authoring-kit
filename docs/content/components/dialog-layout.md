@@ -130,6 +130,40 @@ public class MyComponent {
 ```
 Accordion panels inheritance and ignoring works exactly the same as for the tabs. And so is the ability to create a nested accordion within a dialog or its section. See the "Accordion" division in [Defining dialog fields, setting attributes](component-structure.md).
 
+### Fixed columns layout
+
+* [@FixedColumns](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/layouts/FixedColumns.html)
+* Resource type: /libs/granite/ui/components/foundation/layouts/fixedcolumns
+* See spec: [FixedColumns](https://www.adobe.io/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/layouts/fixedcolumns/index.html)
+
+Fixed columns are the default layout for a Granite UI dialog unless some specific one, such as Tabs or Accordion, is requested. By default, it creates a single fixed-width column.
+
+Most of the time you wouldn't need to specify it at all. Still, you might want to, and it is when more than one column is required.
+```java
+@AemComponent(
+    path= "path/to/my/component",
+    title = "My Component Dialog"
+)
+@Dialog
+@FixedColumns({
+    @Column(title = "First"),
+    @Column(title = "Second")
+})
+public class MyComponent {
+    @DialogField(label = "Field in the first column")
+    @TextField
+    @Place("First")
+    String field1;
+
+    @DialogField(label = "Field in the second column")
+    @TextField
+    @Place("Second")
+    String field2;
+}
+```
+Multiple columns are placed side-by-side if the width of the dialog allows, or else go one under the other. Please note that the title is not rendered in the UI; it is used for merely referring to a particular column in `@Place(...)`.
+
+Then again, same as for Tabs and Accordion, `@FixedColumns` can be used as an in-dialog widget. This is particularly useful when you need to render dialog content screen-centered, as within a Page properties' tab (see "Page properties" section in [Component structure](component-structure.md)). For the in-dialog usage two additional properties of `@FixedColumns` can be specified: *margin* and *maximized* (see the Javadoc for more detail).
 
 ***
 #### See also

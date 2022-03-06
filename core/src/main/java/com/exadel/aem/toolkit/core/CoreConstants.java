@@ -17,6 +17,9 @@ package com.exadel.aem.toolkit.core;
  * Contains constant values used across the core module
  */
 public class CoreConstants {
+    public static final String NN_ITEM = "item";
+    public static final String NN_LIST = "list";
+
     public static final String PN_APPEND = "append";
     public static final String PN_ITEM_RESOURCE_TYPE = "itemResourceType";
     public static final String PN_LIMIT = "limit";
@@ -37,6 +40,8 @@ public class CoreConstants {
     public static final String SEPARATOR_HYPHEN = "-";
     public static final String SEPARATOR_SLASH = "/";
     public static final String SEPARATOR_UNDERSCORE = "_";
+
+    public static final String RELATIVE_PATH_PREFIX = "./";
 
     /**
      * Default (instantiation-restricting) constructor

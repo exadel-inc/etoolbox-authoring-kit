@@ -392,12 +392,12 @@ public class Component {
     @DialogField
     @DependsOnRef(name = "checkbox")
     @Checkbox
-    @PlaceOnTab("tab1")
+    @Place("tab1")
     private boolean checkbox;
 
     @DialogField
     @TextField
-    @PlaceOnTab("tab2")
+    @Place("tab2")
     private String someField;
 }
 ```

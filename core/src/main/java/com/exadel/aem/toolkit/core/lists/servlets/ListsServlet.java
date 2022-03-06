@@ -24,6 +24,8 @@ import javax.annotation.Nonnull;
 import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 
+import com.exadel.aem.toolkit.core.lists.ListConstants;
+
 import org.apache.commons.collections.iterators.TransformIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -62,7 +64,6 @@ import com.exadel.aem.toolkit.core.CoreConstants;
     }
 )
 public class ListsServlet extends SlingSafeMethodsServlet {
-    private static final String LIST_TEMPLATE_NAME = "/conf/etoolbox-authoring-kit/settings/wcm/templates/list";
     private static final String PATH_JCR_CONTENT = CoreConstants.SEPARATOR_SLASH + JcrConstants.JCR_CONTENT;
     private static final String PREFIX_REP = "rep:";
 
@@ -124,7 +125,7 @@ public class ListsServlet extends SlingSafeMethodsServlet {
         Resource childParameters = resolver.getResource(resource.getPath() + PATH_JCR_CONTENT);
         if (childParameters != null) {
             String template = childParameters.getValueMap().get(NameConstants.NN_TEMPLATE, StringUtils.EMPTY);
-            return template.equals(LIST_TEMPLATE_NAME);
+            return ListConstants.LIST_TEMPLATE_NAME.equals(template);
         }
         return false;
     }
