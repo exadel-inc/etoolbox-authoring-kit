@@ -26,7 +26,8 @@ private List<SimpleListItem> itemsListResource;
 Note that your injected field's type can be either a `List` or an array, like `SimpleListItem[]`. Concerning the type of
 items, you can specify a valid Sling model, or a *Resource*, or else *Object*. In the latter case, *Resource*-s will be
 injected in place of *Object*-s. In the snippets we use the out-of-the-box *SimpleListItem*. However, any valid Sling
-model will go (if it is adapted from a *Resource*). Generally, this injector works according to the same principles as the [ListHelper](etoolbox-lists.md) utility class.
+model will go (if it is adapted from a *Resource*). Generally, this injector works according to the same principles as
+the [ListHelper](etoolbox-lists.md) utility class.
 
 To get the map, type it as:
 
@@ -58,7 +59,8 @@ Among the advantages are:
 
 - ability to inject any resource by an absolute or relative path (in fact not only a child or a "grandchild", but also a
   parent, or an unrelated resource, or even the current resource itself);
-- ability to inject a secondary Sling model adapted from such resource;
+- ability to inject a secondary Sling model adapted from such resource (or else from a resource wrapped in a synthetic
+  request);
 - ability to select particular properties from a target resource used for injection and/or adaptation into a secondary
   model. This way, you can create and manage several "virtual" resources from one "real" resource.
 
@@ -134,7 +136,8 @@ second.description == "Moon";
 The same principle applies to the *postfix* property.
 
 Note: the `@Child` annotation can be used with either a field, a method, or a constructor argument. When using with a
-constructor, use the notation like `(@Child @Named SomeModel argument)` and annotate the constructor itself with `@Inject`.
+constructor, use the notation like `(@Child @Named SomeModel argument)` and annotate the constructor itself
+with `@Inject`.
 
 #### Injector for a list of child resources
 
@@ -165,7 +168,7 @@ See the following samples:
 
 ```
 
-One or more filters can be specified as references to classes that implement `Predicate<Resource>`:
+Children's filters can be specified as references to classes that implement `Predicate<Resource>`:
 
 ```
 @Children(name = "list", filters = DateIsNotFuture.class)
@@ -183,18 +186,24 @@ public class DateIsNotFuture implements Predicate<Resource> {
 }
 ```
 
-Some filters are supplied out of the box. E.g., `NonGhostFilter` allows filtering out "ghost component" resources (those with the resource type "*wcm/msm/components/ghost*"). The `NonNullFilter` filters out invalid/null children.
+Some filters are supplied out of the box. E.g., `NonGhostFilter` allows filtering out "ghost component" resources (those
+with the resource type "*wcm/msm/components/ghost*"). The `NonNullFilter` sorts out invalid/null children.
 
 Note: the `@Children` annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, write it like `(@Children @Named("path") List<ListItemModel> argument)` or
-else `(@Children(name = "path") @Named List<ListItemModel> argument)` and also annotate the constructor itself with `@Inject`.
+else `(@Children(name = "path") @Named List<ListItemModel> argument)` and also annotate the constructor itself
+with `@Inject`.
 
 #### Injector for request parameters
 
-The `@RequestParam` annotation is used to inject a request parameter. The annotated member can be of type *String* or *Object*, then a value coerced to string is injected. Else, the parameter can be of type *RequestParameter* (including a list or an array of that type) or *RequestParameterMap* so that the corresponding objects obtained via the *SlingHttpServletRequest* could be injected.
+The `@RequestParam` annotation is used to inject a request parameter. The annotated member can be of type *String* or *
+Object*, then a value coerced to string is injected. Else, the parameter can be of type *RequestParameter* (including a
+list or an array of that type) or *RequestParameterMap* so that the corresponding objects obtained via the *
+SlingHttpServletRequest* could be injected.
 
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
-constructor, use the notation like `(@RequestParam @Named String argument)` and annotate the constructor itself with `@Inject`.
+constructor, use the notation like `(@RequestParam @Named String argument)` and annotate the constructor itself
+with `@Inject`.
 
 #### Injector for request selectors
 
@@ -214,12 +223,16 @@ private List<String> selectorsList; // Will inject the list of selectors
 @RequestSelectors
 private String[] selectorsArray; // Will inject the array of selectors
 ```
+
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
-constructor, use the notation like `(@RequestSelectors @Named String argument)` and annotate the constructor itself with `@Inject`.
+constructor, use the notation like `(@RequestSelectors @Named String argument)` and annotate the constructor itself
+with `@Inject`.
 
 #### Injector for request suffix
 
-The `@RequestSuffix` is used to inject a Sling request suffix. If the annotated member is of type *String* or *Object*, the string value of suffix is injected. If the annotated member is of type *Resource*, the injector will inject the corresponding JCR resource.
+The `@RequestSuffix` is used to inject a Sling request suffix. If the annotated member is of type *String* or *Object*,
+the string value of suffix is injected. If the annotated member is of type *Resource*, the injector will inject the
+corresponding JCR resource.
 
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, write it like `(@RequestSuffix @Named String argument)` and annotate the constructor itself with `@Inject`.
