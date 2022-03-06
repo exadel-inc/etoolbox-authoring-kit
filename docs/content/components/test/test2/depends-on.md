@@ -1,5 +1,5 @@
 <!--
-layout: content
+layout: md-content
 title: Depends on
 tags: test2
 -->

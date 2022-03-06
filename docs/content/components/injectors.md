@@ -1,3 +1,8 @@
+<!--
+layout: md-content
+title: Injectors
+tags: test2
+-->
 [Main page](../../README.md)
 
 ## Enhancing AEM Components' back-end with advanced Injectors

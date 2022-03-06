@@ -3,7 +3,6 @@ layout: md-content
 title: Plugin settings
 -->
 
-[Main page](../../../README.md)
 ## Plugin settings
 
 ### componentsPathBase

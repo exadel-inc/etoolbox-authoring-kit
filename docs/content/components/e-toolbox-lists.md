@@ -1,3 +1,8 @@
+<!--
+layout: md-content
+title: Lists
+tags: test2
+-->
 [Main page](../../README.md)
 
 ## Managing structured data with Exadel Toolbox Lists
