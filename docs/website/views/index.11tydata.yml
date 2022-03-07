@@ -2,7 +2,7 @@ landing:
   urls:
     installationUrl: "content/introduction/installation"
     docsUrl: https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/index.html
-    articleExadelUrl: https://exadel.com/news/tag/exadel-authoring-kit-for-aem/
+
   features:
   - A smart thoroughly tested extension for AEM authoring interfaces
   - Meant for developers, authors, and business analysts working in an AEM environment
@@ -11,6 +11,7 @@ landing:
     and managing structured data
   - Automatically generates AEM Touch UI dialogs and adds responsive features to the
     dialogs
+
   benefits:
   - imgUrl: static/assets/landing/benefits/developer-friendly.svg
     title: Developer-friendly
@@ -54,6 +55,7 @@ landing:
     content: Create an AEM 6.5 project or upgrade your AEM 6.1 - 6.4 site. The kit
       is another cherry on top of your AEM environment with AEM as a Cloud Service
       installation support.
+
   businessValue:
   - emphasized: Speed up
     content: development
@@ -63,39 +65,56 @@ landing:
     content: step-by-step page creation
   - emphasized: Join
     content: the reliable community
-  articleSection:
-  - title: 'How to Add Image Management to an AEM TouchUI Dialog: Tutorial'
-    imgUrl: "./assets/landing/article-section/img-1.jpg"
-    tags:
-    - AEM
-    - Exadel Authoring Kit for AEM
-    - Open Source
-    - Touch UI
-    content: >
-      Discussing ways to add images to your AEM component via a Touch UI dialog. The task has never been a
-      straightforward one, but using Exadel Authoring Kit for AEM makes it much easier.
-    date: October 12, 2021
-    linkUrl: https://exadel.com/news/how-to-add-image-management-to-an-aem-touchui-dialog-tutorial
-  - title: 'Exadel Toolbox Lists: A Brand-New Way to Create a Generic List in AEM'
-    imgUrl: "./assets/landing/article-section/img-2.jpg"
-    tags:
-    - AEM
-    - AEM Configuration
-    - Exadel Authoring Kit for AEM
-    - Open Source
-    - TouchUI
-    content: >
-      In this article we explain how Exadel Toolbox Lists help to create, edit, and retrieve dictionary-like and
-      table-like data (option lists, built-in data references, etc.) for use with AEM components.
-    date: June 8, 2021
-    linkUrl: https://exadel.com/news/exadel-toolbox-lists-a-brand-new-way-to-create-a-generic-list-in-aem/
-  - title: 'Exadel Authoring Kit for Adobe Experience Manager Version 2 Makes AEM Authoring Easier'
-    imgUrl: "./assets/landing/article-section/img-3.jpg"
-    tags:
-    - AEM
-    - Exadel Authoring Kit for AEM
-    - Open Source
-    - TouchUI
-    content: Exadel MarTech team released the second version of Exadel Authoring Kit for Adobe Experience Manager.
-    date: May 18, 2021
-    linkUrl: https://exadel.com/news/exadel-authoring-kit-for-adobe-experience-manager-version-2-makes-aem-authoring-easier/
+
+  articles:
+    title: Exadel Authoring Kit Digest
+    description: >
+      Insights on AEM and Adobe Experience Manager use cases with technical tips and tricks
+      from the creators of MarTech solutions
+
+    feed: 'https://exadel.com/news/tag/aem/feed/'
+    count: 3
+    moreLink: 'https://exadel.com/news/tag/exadel-authoring-kit-for-aem/'
+    moreText: Learn more
+
+    fallback:
+      image: "./assets/landing/article-section/img.jpg"
+      items:
+        - title: 'How to Add Image Management to an AEM TouchUI Dialog: Tutorial'
+          link: https://exadel.com/news/how-to-add-image-management-to-an-aem-touchui-dialog-tutorial
+          img: "./assets/landing/article-section/img-1.jpg"
+          pubDate: 9/12/2021
+          content: >
+            Discussing ways to add images to your AEM component via a Touch UI dialog. The task has never been a
+            straightforward one, but using Exadel Authoring Kit for AEM makes it much easier.
+          tags:
+            - AEM
+            - Exadel Authoring Kit for AEM
+            - Open Source
+            - Touch UI
+
+        - title: 'Exadel Toolbox Lists: A Brand-New Way to Create a Generic List in AEM'
+          link: https://exadel.com/news/exadel-toolbox-lists-a-brand-new-way-to-create-a-generic-list-in-aem/
+          img: "./assets/landing/article-section/img-2.jpg"
+          pubDate: 1/8/2021
+          content: >
+            In this article we explain how Exadel Toolbox Lists help to create, edit, and retrieve dictionary-like and
+            table-like data (option lists, built-in data references, etc.) for use with AEM components.
+          tags:
+            - AEM
+            - AEM Configuration
+            - Exadel Authoring Kit for AEM
+            - Open Source
+            - TouchUI
+
+        - title: 'Exadel Authoring Kit for Adobe Experience Manager Version 2 Makes AEM Authoring Easier'
+          link: https://exadel.com/news/exadel-authoring-kit-for-adobe-experience-manager-version-2-makes-aem-authoring-easier/
+          img: "./assets/landing/article-section/img-3.jpg"
+          pubDate: 5/18/2021
+          content: >
+            Exadel MarTech team released the second version of Exadel Authoring Kit for Adobe Experience Manager.
+          tags:
+            - AEM
+            - Exadel Authoring Kit for AEM
+            - Open Source
+            - TouchUI

@@ -1,17 +1,17 @@
 <div class="article-container container d-flex mb-150">
   <div class="article-title">
-    <h3 class="m-2">Exadel Authoring Kit Digest</h3>
-    <p class="fw-300 m-2">
-      Insights on AEM and Adobe Experience Manager use cases with technical tips and tricks from the creators of <span>MarTech solutions</span>
-    </p>
+    <h3 class="m-2">{{ landing.articles.title }}</h3>
+    <p class="fw-300 m-2">{{ landing.articles.description }}</p>
   </div>
+
+  {% set articles = landing.articles | feed %}
   <ul class="article-list">
-    {% for article in landing.articleSection %}
+    {% for article in articles %}
       <li class="article-item">
-        <a class="article-link text-white" href="{{ article.linkUrl }}">
-          <h5 class="fs-1 article-item-title mb-2">{{ article.title }}</h5>
+        <a class="article-link text-white" href="{{ article.link }}">
+          <h5 class="fs-1 article-item-title mb-1">{{ article.title }}</h5>
           <div class="d-flex article-item-img-container mb-1">
-            <img class="article-item-img" src="{{ article.imgUrl }}"/>
+            <img class="article-item-img" src="{{ article.img }}" alt="{{ article.title }}"/>
           </div>
           <ul class="article-item-taglist mb-1">
             {% for tag in article.tags %}
@@ -24,7 +24,8 @@
       </li>
     {% endfor %}
   </ul>
+
   <div class="z-index d-flex article-center">
-    <a href="{{ landing.urls.articleExadelUrl }}" class="btn btn-mint m-0">Learn more</a>
+    <a href="{{ landing.articles.moreText }}" class="btn btn-mint m-0">{{ landing.articles.moreText }}</a>
   </div>
 </div>
