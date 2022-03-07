@@ -17,49 +17,29 @@ The ToolKit has many options to make authoring interfaces rich, flexible, and re
 
 The ToolKit is compliant with the newest facilities of AEM 6.4/6.5, Granite UI, and Coral v.3+, and has support for Coral v.2.
 
-***
-> Learn and practice using the ToolKit with our **sandbox project** under [_samples_](/samples/README.md)
->
-***
-
 The ToolKit is developed in the course of Exadel&trade; Marketing Technology Practice (the MarTech) as a part of **Exadel Toolbox** initiative.
 
 It is an open and growing project. The authors sincerely welcome creative input from the AEM community worldwide to bring the best programming techniques and design.
 
+***
+> Learn more about the latest features Exadel Authoring Kit for AEM by visiting our [_website_](https:/exadel-inc.github.io/etoolbox-authoring-kit)
+>
+***
 
+### Manuals
 
+Check out our comprehensive [manual](https:/exadel-inc.github.io/etoolbox-authoring-kit/content/getting-started/installation/) to learn all about ToolKit installation, usage and available tools.
 
-
-## Features reference
-
-#### Component management
-
-- [Component structure](docs/content/dev-tools/component-management/component-structure.md)
-- [Laying out your dialog](docs/content/dev-tools/component-management/dialog-layout.md)
-- [Defining dialog fields, setting attributes](docs/content/temp/widget-annotations.md)
-    - [Configuring RichTextEditor](docs/content/dev-tools/component-management/dialog-fields/configuring-rte.md)
-    - [Grouping fields with FieldSet](docs/content/dev-tools/component-management/dialog-fields/configuring-fieldset.md)
-    - [Multiplying Fields](docs/content/dev-tools/component-management/dialog-fields/configuring-multifield.md)
-- [Reusing code and making it brief](docs/content/dev-tools/component-management/reusing-code.md)
-- [Customizing the ToolKit to your needs](docs/content/dev-tools/component-management/customizing-toolkit.md)
-- [Additional properties of components, dialogs and fields](docs/content/dev-tools/component-management/additional-properties.md)
-
-#### Enhanced authoring experience
-
+Also, you can take a look at these popular articles:
+- [Component management](docs/content/dev-tools/component-management/component-structure.md)
+- [Configuring RichTextEditor](docs/content/dev-tools/component-management/dialog-fields/configuring-rte.md)
 - [Programming dynamic dialog behavior: DependsOn plugin client library](docs/md/depends-on.md)
 - [Managing structured data with Exadel Toolbox Lists](docs/md/etoolbox-lists.md)
-- [Feeding data to selection widgets with OptionProvider](docs/md/option-provider.md)
 - [Enhancing AEM Components' back-end with advanced Injectors](docs/md/injectors.md)
 
-#### Need more documentation?
+### Need more documentation?
 
 See the complete API and core module documentation (Javadoc) [here](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/index.html).
-
-## Working with sample code
-
-Examples of how to use the ToolKit and the DependsOn client library are presented in the [Samples](samples) module.
-
-Run `mvn clean install -P install-samples` from the root folder of [Samples](samples) to install the sample project.
 
 
 
