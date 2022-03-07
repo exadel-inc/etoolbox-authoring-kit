@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import javax.annotation.Nonnull;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -54,6 +55,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
     /**
     * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public List<Resource> getOptions(SlingHttpServletRequest request) {
         Set<Option> options = new LinkedHashSet<>();
