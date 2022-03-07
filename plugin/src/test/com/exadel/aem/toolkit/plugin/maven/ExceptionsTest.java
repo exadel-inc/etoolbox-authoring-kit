@@ -29,8 +29,8 @@ import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.exceptions.MissingResourceException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
-import com.exadel.aem.toolkit.test.component.ExceptionsTestCases;
 import com.exadel.aem.toolkit.test.component.InheritanceExceptionTestCases;
+import com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases;
 import com.exadel.aem.toolkit.test.component.WriteModeTestCases;
 import com.exadel.aem.toolkit.test.component.placement.coincidences.ClassInterfaceCoincidenceTestCases;
 import com.exadel.aem.toolkit.test.component.placement.coincidences.ClassParentInterfaceCoincidenceTestCases;
@@ -53,14 +53,14 @@ public class ExceptionsTest extends ExceptionsTestBase {
     public void testComponentWithNonexistentTab() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidContainerException.class));
         exceptionRule.expectMessage("Container section \"Zeroth tab\" is not defined");
-        test(ExceptionsTestCases.ComponentWithNonexistentTab.class);
+        test(LayoutExceptionTestCases.ComponentWithNonexistentTab.class);
     }
 
     @Test
     public void testComponentWithWrongDependsOnTab() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidContainerException.class));
         exceptionRule.expectMessage("Container section \"Zeroth tab\" is not defined");
-        test(ExceptionsTestCases.ComponentWithNonexistentDependsOnTab.class);
+        test(LayoutExceptionTestCases.ComponentWithNonexistentDependsOnTab.class);
     }
 
     @Test
@@ -89,6 +89,43 @@ public class ExceptionsTest extends ExceptionsTestBase {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
         exceptionRule.expectMessage("Method named \"getTitle\" in class \"CoincidenceException\" collides with the method named \"getTitle\" in class \"ParentException\"");
         test(ClassParentInterfaceCoincidenceTestCases.CoincidenceException.class);
+    }
+
+    @Test
+    public void testRenderingRecursion1() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
+        exceptionRule.expectMessage("container created with a member of type \"com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases$RecursionParent\"");
+        test(LayoutExceptionTestCases.ComponentWithRecursiveMember1.class);
+    }
+
+    @Test
+    public void testRenderingRecursion2() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
+        exceptionRule.expectMessage("container created with a member of type \"com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases$RecursionInterface\"");
+        test(LayoutExceptionTestCases.ComponentWithRecursiveMember2.class);
+    }
+
+    @Test
+    public void testRenderingRecursion3() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
+        exceptionRule.expectMessage("container created with a member of type \"com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases$ComponentWithRecursiveMember3\"");
+        test(LayoutExceptionTestCases.ComponentWithRecursiveMember3.class);
+    }
+
+    @Test
+    public void testCircularPlacement1() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
+        exceptionRule.expectMessage("Field named \"containerB\" in class \"ComponentWithCircularPlacement1\"");
+        exceptionRule.expectMessage("declared by field named \"containerA\" in class \"ComponentWithCircularPlacement1\"");
+        test(LayoutExceptionTestCases.ComponentWithCircularPlacement1.class);
+    }
+
+    @Test
+    public void testCircularPlacement2() {
+        exceptionRule.expectCause(IsInstanceOf.instanceOf(InvalidLayoutException.class));
+        exceptionRule.expectMessage("Field named \"containerA\" in class \"ComponentWithCircularPlacement2\"");
+        exceptionRule.expectMessage("declared by field named \"containerC\" in class \"ComponentWithCircularPlacement2\"");
+        test(LayoutExceptionTestCases.ComponentWithCircularPlacement2.class);
     }
 
     @Test

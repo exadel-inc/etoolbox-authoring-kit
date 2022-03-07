@@ -27,24 +27,23 @@ public class Targets {
     }
 
     /**
+     * Creates a new unattached (root) {@code Target} instance with the specified name and scope
+     * @param scope Scope of the instance, see {@link com.exadel.aem.toolkit.api.annotations.meta.Scopes} for details
+     * @return {@code Target} object
+     */
+    public static Target newRoot(String scope) {
+        TargetImpl result = new RootTargetImpl();
+        result.setScope(scope);
+        return result;
+    }
+
+    /**
      * Creates a new unattached (root) {@code Target} instance with the specified name
      * @param name Name of the instance, non-blank String
      * @return {@code Target} object
      */
-    public static Target newInstance(String name) {
+    public static Target newTarget(String name) {
         return new TargetImpl(name, null);
-    }
-
-    /**
-     * Creates a new unattached (root) {@code Target} instance with the specified name and scope
-     * @param name  Name of the instance, non-blank String
-     * @param scope Scope of the instance, see {@link com.exadel.aem.toolkit.api.annotations.meta.Scopes} for details
-     * @return {@code Target} object
-     */
-    public static Target newInstance(String name, String scope) {
-        TargetImpl result = new TargetImpl(name, null);
-        result.setScope(scope);
-        return result;
     }
 
     /**
@@ -55,7 +54,7 @@ public class Targets {
      * @param parent Reference to a parent {@code Target} instance
      * @return {@code Target} object
      */
-    public static Target newInstance(String name, Target parent) {
+    public static Target newTarget(String name, Target parent) {
         return new TargetImpl(name, parent);
     }
 

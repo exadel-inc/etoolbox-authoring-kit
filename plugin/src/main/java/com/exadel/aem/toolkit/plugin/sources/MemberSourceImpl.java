@@ -16,11 +16,12 @@ package com.exadel.aem.toolkit.plugin.sources;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 
@@ -68,6 +69,18 @@ abstract class MemberSourceImpl extends SourceImpl implements ModifiableMemberSo
             result = getDeclaredAnnotation(FieldSet.class).value();
         }
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isSame(Source other) {
+        if (!(other instanceof MemberSource)) {
+            return super.isSame(other);
+        }
+        return getDeclaringClass().equals(((MemberSource) other).getDeclaringClass())
+            && StringUtils.equals(getName(), other.getName());
     }
 
     /**

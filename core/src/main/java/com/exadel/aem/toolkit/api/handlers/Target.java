@@ -25,9 +25,9 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
- * Presents an abstraction of target entity for rendering AEM components and their configuration. Technically each
- * {@code Target} instance represents a future Granite UI entity, or a corresponding XML node. The {@code Target} can have
- * its attributes, a parent target and children in the same way as Granite/XML nodes do
+ * Presents an abstraction of target entity for rendering AEM components and their configurations. Technically each
+ * {@code Target} instance represents a future Granite UI entity, or a corresponding XML node. The {@code Target} can
+ * have its attributes, its parent target and its children in the same way as XML nodes do
  */
 public interface Target {
 
@@ -77,9 +77,22 @@ public interface Target {
 
     /**
      * Retrieves the parent of the current {@code Target} instance
-     * @return Another {@code Target} instance, or null if the current target has no parents (is at the top of targets tree)
+     * @return Another {@code Target} instance, or null if the current target has no parents (is at the top of targets
+     * tree)
      */
     Target getParent();
+
+    /**
+     * Retrieves the root node of the tree to which the current {@code Target} belongs
+     * @return Another {@code Target} instance, or this instance if the current target has no parents (is at the top of
+     * targets tree)
+     */
+    default Target getRoot() {
+        if (getParent() == null) {
+            return this;
+        }
+        return getParent().getRoot();
+    }
 
     /**
      * Retrieves the collection of {@code Target} instances attached to the current instance. Each one of the children

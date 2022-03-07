@@ -20,8 +20,9 @@ package com.exadel.aem.toolkit.plugin.utils.ordering;
  */
 class Orderable<T> {
 
-    private final String name;
     private final T value;
+    private final String id;
+    private final int rank;
 
     private Orderable<T> before;
     private Orderable<T> after;
@@ -30,20 +31,36 @@ class Orderable<T> {
 
     /**
      * Initializes a class instance with the name and payload value provided
-     * @param name  Name of the instance
+     * @param id    Name of the instance
      * @param value The wrapped object (payload)
      */
-    public Orderable(String name, T value) {
-        this.name = name;
+    public Orderable(T value, String id) {
+        this(value, id, 0);
+    }
+
+    /**
+     * Initializes a class instance with the name and payload value provided
+     * @param id    Name of the instance
+     * @param value The wrapped object (payload)
+     * @param rank  Optional number representing a pre-defined item rank (such as the {@link
+     *              com.exadel.aem.toolkit.api.annotations.widgets.DialogField}'s {@code ranking} property
+     */
+    public Orderable(T value, String id, int rank) {
+        this.id = id;
         this.value = value;
+        this.rank = rank;
     }
 
     /**
      * Retrieves the name associated with this instance
      * @return String value
      */
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
+    }
+
+    public int getRank() {
+        return rank;
     }
 
     /**
@@ -110,7 +127,7 @@ class Orderable<T> {
         @SuppressWarnings("unchecked")
         Orderable<T> orderable = (Orderable<T>) o;
 
-        return name.equals(orderable.name);
+        return id.equals(orderable.id);
     }
 
     /**
@@ -118,6 +135,6 @@ class Orderable<T> {
      */
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return id.hashCode();
     }
 }

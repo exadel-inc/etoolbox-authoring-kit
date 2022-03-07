@@ -16,6 +16,7 @@
                            sling:resourceType="granite/ui/components/coral/foundation/form/textarea"
                            name="./text1"
                            fieldLabel="Valid TextArea"
+                           autocomplete="name"
                            autofocus="{Boolean}true"
                            disabled="{Boolean}false"
                            emptyText="empty text"

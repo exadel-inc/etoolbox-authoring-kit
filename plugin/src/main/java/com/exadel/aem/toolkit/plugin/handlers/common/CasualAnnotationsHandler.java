@@ -35,7 +35,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.targets.TargetImpl;
+import com.exadel.aem.toolkit.plugin.targets.LegacyHandlerAcceptor;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
@@ -87,7 +87,7 @@ public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
                 .composeElement(PluginRuntime.context().getXmlUtility().getDocument());
             if (element != null) {
                 legacyHandlers.forEach(handler -> ((DialogWidgetHandler) handler).accept(element, field));
-                ((TargetImpl) target).attributes(element);
+                target.adaptTo(LegacyHandlerAcceptor.class).attributes(element);
             }
         }
     }

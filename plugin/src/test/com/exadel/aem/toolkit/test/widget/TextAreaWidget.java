@@ -32,6 +32,7 @@ public class TextAreaWidget {
     @TextArea(
         value = "default value",
         emptyText = "empty text",
+        autocomplete = "name",
         autofocus = true,
         rows = 10,
         cols = 50,

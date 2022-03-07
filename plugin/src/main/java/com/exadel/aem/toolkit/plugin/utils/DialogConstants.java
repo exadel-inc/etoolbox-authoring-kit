@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.plugin.utils;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
+
 /**
  * Contains common string constants used for AEM Granite UI component and dialog rendering within the ToolKit Maven plugin
  * workflow
@@ -29,7 +31,7 @@ public class DialogConstants {
     public static final String SEPARATOR_DOT = ".";
     public static final String SEPARATOR_SEMICOLON = ";";
 
-    public static final String RELATIVE_PATH_PREFIX = "./";
+    public static final String RELATIVE_PATH_PREFIX = CoreConstants.RELATIVE_PATH_PREFIX;
     public static final String PARENT_PATH_PREFIX = "../";
     public static final String PARENT_PATH_INDICATOR = "..";
 
@@ -52,16 +54,15 @@ public class DialogConstants {
     public static final String NN_ICONS = "icons";
     public static final String NN_INLINE = "inline";
     public static final String NN_INPLACE_EDITING = "cq:inplaceEditing";
-    public static final String NN_ITEM = "item";
     public static final String NN_ITEMS = "items";
     public static final String NN_FIELD = "field";
+    public static final String NN_FIXED_COLUMNS = "fixedColumns";
     public static final String NN_FORMATS = "formats";
     public static final String NN_FULLSCREEN = "fullscreen";
     public static final String NN_KEYS = "keys";
     public static final String NN_LAYOUT = "layout";
     public static final String NN_LAYOUT_CONFIG = "layoutConfig";
     public static final String NN_LINKS = "links";
-    public static final String NN_LIST = "list";
     public static final String NN_LISTENERS = "cq:listeners";
     public static final String NN_LISTS = "lists";
     public static final String NN_MISCTOOLS = "misctools";
