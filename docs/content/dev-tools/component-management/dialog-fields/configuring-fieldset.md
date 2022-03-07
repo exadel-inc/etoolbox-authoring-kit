@@ -7,13 +7,13 @@ order: 4
 
 * [@FieldSet](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/FieldSet.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/fieldset
-* See spec: [FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html)
+* See spec: [FieldSet](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html)
 
 The *FieldSet* is used to logically group a number of fields. The goal is achieved with the use of an external or a nested class that encapsulates grouping fields. Then an *\<OtherClass>*-typed field is declared and `@FieldSet` annotation is added.
 
 The ToolKit will guess the kind of group of widgets to render through the type of the underlying field, but you might as well specify a particular type by setting the *value* property.
 
-Hierarchy of classes is honored so that a *FieldSet*-producing class may extend another class from the same or even foreign scope. Proper field order within a fieldset can be guaranteed through the use of *ranking* values (see chapter on `@DialogField` in [Defining dialog fields, setting attributes](widget-annotations.md)).
+Hierarchy of classes is honored so that a *FieldSet*-producing class may extend another class from the same or even foreign scope. Proper field order within a fieldset can be guaranteed through the use of *ranking* values (see chapter on `@DialogField` in [Defining dialog fields, setting attributes](./dialog-field.md)).
 
 Names of fields added to a FieldSet may share a common prefix and postfix.
 

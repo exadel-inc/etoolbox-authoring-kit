@@ -9,7 +9,7 @@ order: 5
 
 * [@MultiField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/MultiField.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/multifield
-* See spec: [Multifield](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html)
+* See spec: [Multifield](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html)
 
 Multifields are used to facilitate multiple (repeating) instances of same fields or groups of fields. The logic of this component relies on the presence of a nested class encapsulating one or more fields to be repeated.
 
@@ -86,4 +86,4 @@ Please note, however, that `@Multiple` is primarily designed for easy, "quick gi
 
 ***
 #### See also
-- [Grouping fields with FieldSet](configuring-fieldset.md)
+- [Grouping fields with FieldSet](./configuring-fieldset.md)

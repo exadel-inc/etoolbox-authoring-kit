@@ -5,7 +5,7 @@ order: 3
 -->
 ## Configuring RichTextEditor
 
-[RichTextEditor (RTE)](https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/rich-text-editor.html) is a somehow special yet vastly demanded dialog component that makes it possible to edit strings and texts with WYSIWYG experience. The functionality of the component is based upon a set of plugins, either built-in or custom. Most plugins expose sets of "features" reflected by UI elements (buttons, or dropdown lists, or button panels, or floating panels - so called "popovers").
+[RichTextEditor (RTE)](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/rich-text-editor.html?lang=en) is a somehow special yet vastly demanded dialog component that makes it possible to edit strings and texts with WYSIWYG experience. The functionality of the component is based upon a set of plugins, either built-in or custom. Most plugins expose sets of "features" reflected by UI elements (buttons, or dropdown lists, or button panels, or floating panels - so called "popovers").
 
 Traditionally, to add a feature to the RichTextEditor, a user needs to include a string representing a button in the *toolbar* attributes of one or more XML nodes, include another node representing a plugin to a corresponding plugin tree and/or populate the *features* attribute of that node and then possibly set the plugin's custom features, each in its own specific format. If the feature is to sit in a floating panel, the *\<popovers>* node and its sub-nodes must also be taken care of.
 
@@ -118,7 +118,7 @@ One substantial concern for a RichTextEditor component is the rules for processi
 )
 ```
 
-Setting the [htmlLinkRules](https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/configure-rich-text-editor-plug-ins.html#linkstyles) property allows you to also control the way internal and external links in pasted text are processed. See the following snippet:
+Setting the [htmlLinkRules](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/configure-rich-text-editor-plug-ins.html?lang=en#linkstyles) property allows you to also control the way internal and external links in pasted text are processed. See the following snippet:
 
 ```
 @RichTextEditor ( /* ... */
@@ -163,7 +163,7 @@ Set of formatting tags for a "paraformat" button can be defined in [formats](htt
 )
 ```
 
-RichTextEditor allows altering the visual representation of the text by [CSS rules](https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/configure-rich-text-editor-plug-ins.html#textstyles). Property *externalStyleSheets* is for specifying an array of strings representing paths to JCR-stored CSS files that will be applied to the RTE content. After *externalStyleSheets* are set, you can populate the *styles* property with the CSS classes that will be offered to a use in styles dropdown, as in the below snippet:
+RichTextEditor allows altering the visual representation of the text by [CSS rules](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/configure-rich-text-editor-plug-ins.html?lang=en#textstyles). Property *externalStyleSheets* is for specifying an array of strings representing paths to JCR-stored CSS files that will be applied to the RTE content. After *externalStyleSheets* are set, you can populate the *styles* property with the CSS classes that will be offered to a use in styles dropdown, as in the below snippet:
 
 ```
 @RichTextEditor ( /* ... */
@@ -181,4 +181,4 @@ Unlike *formats* above, these are not HTML tag definitions but rather *\<span st
 
 ### Miscellaneous tweaks
 
-Additionally, a user can specify the number of edit operations stored for undo/redo logic (via [maxUndoSteps](https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/configure-rich-text-editor-plug-ins.html#undohistory) property), the width of tabulation (in spaces, via [tabSize](https://helpx.adobe.com/experience-manager/6-3/sites/administering/using/configure-rich-text-editor-plug-ins.html#tabsize) property), and the indentation margin of lists (in spaces, via [indentMargin](https://helpx.adobe.com/experience-manager/6-3/sites/administering/using/configure-rich-text-editor-plug-ins.html#indentmargin) property).
+Additionally, a user can specify the number of edit operations stored for undo/redo logic (via [maxUndoSteps](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/configure-rich-text-editor-plug-ins.html?lang=en#undohistory) property), the width of tabulation (in spaces, via [tabSize](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/configure-rich-text-editor-plug-ins.html?lang=en#tabsize) property), and the indentation margin of lists (in spaces, via [indentMargin](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/configure-rich-text-editor-plug-ins.html?lang=en#indentmargin) property).

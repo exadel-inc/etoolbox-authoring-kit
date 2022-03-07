@@ -33,7 +33,7 @@ Built-in plug-in async actions:
 
 #### Widget-specific actions
 
-* `update-options` - changes the option set of a Granite Select component based on the path from the Query result. The path can lead to any endpoint that is supported by the [Option Provider mechanism](option-provider.md).
+* `update-options` - changes the option set of a Granite Select component based on the path from the Query result. The path can lead to any endpoint that is supported by the [Option Provider mechanism](../option-provider.md).
 
 ### Action Registry
 

@@ -64,7 +64,7 @@ Note: if you create your List Item anew, and do not have special requirements re
 The Lists can be edited similarly to any other page. You can change the type of *Item Component* used in a list (even after the list has been populated with data) via the page properties.
 
 ### Creating Lists in code
-[ListHelper](../../core/src/main/java/com/exadel/aem/toolkit/core/lists/utils/ListHelper.java) is a helper class that provides the ability to create a new EToolbox List from Java code. You can create a List out of a collection of *SimpleListItem*-s, or a collection of arbitrary Sling models, or a list of `Map` instances, or else a list of Sling *Resource*-s:
+[ListHelper](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/core/lists/utils/ListHelper.html) is a helper class that provides the ability to create a new EToolbox List from Java code. You can create a List out of a collection of *SimpleListItem*-s, or a collection of arbitrary Sling models, or a list of `Map` instances, or else a list of Sling *Resource*-s:
 ```
 
 ResourceResolver currentResourceResolver = /*... */;
@@ -87,17 +87,17 @@ Additionally, you can skip the getters or fields you don't want to be persisted 
 - adding the `@Transient` annotation (from *java.beans*) to a method;
 - adding the `transient` modifier to a public field.
 
-Find more examples on creating EToolbox Lists code in [ListHelperTest](../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
+Find more examples on creating EToolbox Lists code in [ListHelperTest](../../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
 
 
 ### Retrieving Lists' content programmatically
 
-Apart from creating lists, [ListHelper](../../core/src/main/java/com/exadel/aem/toolkit/core/lists/utils/ListHelper.java) provides the ability to retrieve contents of any list by its path. See examples below:
+Apart from creating lists, [ListHelper](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/core/lists/utils/ListHelper.html) provides the ability to retrieve contents of any list by its path. See examples below:
 ```
    List<ItemModel> models = ListHelper.getList(resolver, "/content/myList", ItemModel.class);
    Map<String, String> mapping = ListHelper.getMap(resolver, "/content/myList");
 ```
-You can find more examples in [ListHelperTest](../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
+You can find more examples in [ListHelperTest](../../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
 
 #### Populating dropdown widgets from a datasource.
 Exadel Toolbox Lists can be used as a data source for any widget consuming Granite datasources like in the following example:

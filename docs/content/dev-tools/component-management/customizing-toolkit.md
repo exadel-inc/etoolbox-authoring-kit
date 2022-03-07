@@ -1,6 +1,6 @@
 <!--
 layout: md-content
-title: Customizing Toolkit
+title: Customizing ToolKit
 order: 6
 -->
 
@@ -8,22 +8,15 @@ order: 6
 
 ### Custom annotations. Annotation scopes
 
-When creating markup for the Granite UI, the ToolKit handles data from the project's source code. Often it comes from
-Java annotations like `@AemComponent`, `@EditConfig`, or, e.g., `@DatePicker`.
+When creating markup for the Granite UI, the ToolKit handles data from the project's source code. Often it comes from Java annotations like `@AemComponent`, `@EditConfig`, or, e.g., `@DatePicker`.
 
-You can create such annotations yourself. In the most basic case, you only need to declare an arbitrary annotation and
-attach the `@AnnotationRendering` meta-annotation.
+You can create such annotations yourself. In the most basic case, you only need to declare an arbitrary annotation and attach the `@AnnotationRendering` meta-annotation.
 
-`@AnnotationRendering` allows specifying what properties will be automatically mapped to the underlying node's
-attributes and in what *scope*.
+`@AnnotationRendering` allows specifying what properties will be automatically mapped to the underlying node's attributes and in what *scope*.
 
 #### Custom annotation scope
 
-The notion of *scope* refers to the region of a component in which the current annotation/handler is effective. The most
-common scopes are enumerated in the `Scopes` class. These are the component scope (roughly maps to the *.content.xml*
-file in a component's folder as we see in the project source files), *\<cq:dialog>*, *\<cq:design_dialog>*, *\<cq:
-editConfig>*, *\<cq:childEditConfig>*, *\<cq:htmlTag>*. There can be custom scopes for specific cases. Whenever the
-scope is not specified, the default (or "all-included") scope is assumed.
+The notion of *scope* refers to the region of a component in which the current annotation/handler is effective. The most common scopes are enumerated in the `Scopes` class. These are the component scope (roughly maps to the *.content.xml* file in a component's folder as we see in the project source files), *\<cq:dialog>*, *\<cq:design_dialog>*, *\<cq:editConfig>*, *\<cq:childEditConfig>*, *\<cq:htmlTag>*. There can be custom scopes for specific cases. Whenever the scope is not specified, the default (or "all-included") scope is assumed.
 
 Consider the following example:
 
@@ -60,33 +53,19 @@ public class MyComponent {/* ... */
 }
 ```
 
-In this sample, the ToolKit essentially creates two Granite nodes: one that would be represented by *.content.xml* in
-the project's source code and one represented by *_cq_dialog.xml*. The former is based on `@AemComponent` and the latter
-on `@Dialog` because this is the default functionality of the ToolKit.
+In this sample, the ToolKit essentially creates two Granite nodes: one that would be represented by *.content.xml* in the project's source code and one represented by *_cq_dialog.xml*. The former is based on `@AemComponent` and the latter on `@Dialog` because this is the default functionality of the ToolKit.
 
-The `@CustomDialogAnnotation` will also affect the Granite UI markup. Its `@AnnotationRendering` meta-annotation
-determines that it will affect only the *_cq_dialog.xml* as follows from `scope = Scopes.CQ_DIALOG` (be aware that the *
-scope* property can also accept an array of values).
+The `@CustomDialogAnnotation` will also affect the Granite UI markup. Its `@AnnotationRendering` meta-annotation determines that it will affect only the *_cq_dialog.xml* as follows from `scope = Scopes.CQ_DIALOG` (be aware that the *scope* property can also accept an array of values).
 
-You can omit the *scope* property. Then the appropriate scope will be decided on from other annotations attached to the
-current class. That is, if the class is `@Dialog`-annotated and a custom annotation is missing a *scope*, it is assumed
-that the custom annotation is also bound to the dialog scope. But if the class has its `@EditConfig` specified but
-no `@Dialog`, it is assumed that the custom annotation is within the *\<cq:editConfig>* scope, etc.
+You can omit the *scope* property. Then the appropriate scope will be decided on from other annotations attached to the current class. That is, if the class is `@Dialog`-annotated and a custom annotation is missing a *scope*, it is assumed that the custom annotation is also bound to the dialog scope. But if the class has its `@EditConfig` specified but no `@Dialog`, it is assumed that the custom annotation is within the *\<cq:editConfig>* scope, etc.
 
 #### How to control the automapping
 
-From `@CustomDialogAnnotation`, the following property values will be automatically mapped: *field1*, *field2*, and *
-field3*. That is because they have the "mappable" property type. Automatic mapping works for `string`s (and string
-arrays); `long`s (and long arrays), `double`s (and double arrays), `boolean`s (and boolean arrays); `enum` types (ane
-enum arrays). However, it does not work for `Class<?>`-typed properties or annotation types.
+From `@CustomDialogAnnotation`, the following property values will be automatically mapped: *field1*, *field2*, and *field3*. That is because they have the "mappable" property type. Automatic mapping works for `string`s (and string arrays); `long`s (and long arrays), `double`s (and double arrays), `boolean`s (and boolean arrays); `enum` types (ane enum arrays). However, it does not work for `Class<?>`-typed properties or annotation types.
 
-There is a way to restrict automatic mapping to particular properties by specifying them in the following
-way: `@AnnotationRendering(properties = {"field1", "field2"})`. You can also turn off automapping completely without
-removing `@AnnotationRendering`. To do this you specify `@AnnotationRendering(value = {})`
-or `@AnnotationRendering(value = "none")`.
+There is a way to restrict automatic mapping to particular properties by specifying them in the following way: `@AnnotationRendering(properties = {"field1", "field2"})`. You can also turn off automapping completely without removing `@AnnotationRendering`. To do this you specify `@AnnotationRendering(value = {})` or `@AnnotationRendering(value = "none")`.
 
-You can also set a prefix for all the properties rendered via the current annotation. Just
-use `@AnnotationRendering(prefix="some_value")`.
+You can also set a prefix for all the properties rendered via the current annotation. Just use `@AnnotationRendering(prefix="some_value")`.
 
 #### @PropertyRendering
 
@@ -113,31 +92,19 @@ public @interface CustomAnnotation {
 }
 ```
 
-*name* is used to alter the attribute's name in JCR (in particular, to use a prefixed name or to prepend a namespace).
-On the contrary,*ignorePrefix* allows for stripping off a name prefix if it was defined at an upper level (e.g., in the
-FieldSet).
+*name* is used to alter the attribute's name in JCR (in particular, to use a prefixed name or to prepend a namespace). On the contrary,*ignorePrefix* allows for stripping off a name prefix if it was defined at an upper level (e.g., in the FieldSet).
 
-*scope* can be specified to define what JCR node (XML file) will contain this particular property. Useful to distribute
-properties between, e.g., *_content.xml* and *_cq_dialog.xml* files.
+*scope* can be specified to define what JCR node (XML file) will contain this particular property. Useful to distribute properties between, e.g., *_content.xml* and *_cq_dialog.xml* files.
 
-*allowBlank* determines that even empty or blank property values will be rendered (default behavior is to skip them). On
-the contrary, *ignoreValues* ensures that a particular non-blank value (or an array of values) will be skipped as the
-negligible default. *ignoreValues* accepts strings like `"42"` or `"false"` to ensure that even a numeric or boolean
-value matching the string can be skipped.
+*allowBlank* determines that even empty or blank property values will be rendered (default behavior is to skip them). On the contrary, *ignoreValues* ensures that a particular non-blank value (or an array of values) will be skipped as the negligible default. *ignoreValues* accepts strings like `"42"` or `"false"` to ensure that even a numeric or boolean value matching the string can be skipped.
 
-*transform* is primarily useful for `enum`-typed arguments. It provides a way to, for example, render Java enum values
-in lowercase, which is the standard for Granite settings. Important: if an enum value is set to be skipped via *
-ignoreValues*, specify the already transformed writing and not the original.
+*transform* is primarily useful for `enum`-typed arguments. It provides a way to, for example, render Java enum values in lowercase, which is the standard for Granite settings. Important: if an enum value is set to be skipped via *ignoreValues*, specify the already transformed writing and not the original.
 
-*valueType* allows you to control how a value is stored in JCR. For example, a value of type `boolean` would be by
-default rendered as `{Boolean}true` or `{Boolean}false`. If you need the type hint skipped, make the ToolKit perceive
-the value as a string by specifying `valueType = String.class`.
+*valueType* allows you to control how a value is stored in JCR. For example, a value of type `boolean` would be by default rendered as `{Boolean}true` or `{Boolean}false`. If you need the type hint skipped, make the ToolKit perceive the value as a string by specifying `valueType = String.class`.
 
 ### Custom handlers
 
-ToolKit annotations are rendered with *Handlers* (even an automatically mapped annotation is processed via an
-undercover "automapping handler"). All the out-of-box annotations are supplemented with bundled handlers, but you can
-declare custom ones as well.
+ToolKit annotations are rendered with *Handlers* (even an automatically mapped annotation is processed via an undercover "automapping handler"). All the out-of-box annotations are supplemented with bundled handlers, but you can declare custom ones as well.
 
 Here is an example of how a custom handler can look:
 
@@ -164,50 +131,29 @@ Every custom handler is characterized by the following features:
 2) Implements `Handler`;
 3) Overrides the `accept(Source, Target)` method in which the payload logic is run.
 
-Usually, the ToolKit initializes one instance of every handler and manages it as a *singleton*, so a developer is
-expected to avoid assigning handler-wide *states*. All the logic should be processed within the `accept(Source, Target)`
-method or in methods called from the latter.
+Usually, the ToolKit initializes one instance of every handler and manages it as a *singleton*, so a developer is expected to avoid assigning handler-wide *states*. All the logic should be processed within the `accept(Source, Target)`method or in methods called from the latter.
 
 #### @Handles
 
 `@Handles` is the marker of a handler. This annotation exposes the following properties.
 
-*value* is a single `Class` reference or an array of classes. The classes are indeed the annotation types. This setting
-determines what annotations of a component class or its member will trigger the execution of the current handler.
+*value* is a single `Class` reference or an array of classes. The classes are indeed the annotation types. This setting determines what annotations of a component class or its member will trigger the execution of the current handler.
 
-There is no restriction regarding what annotations can be handled; built-in ones (then the current handler will provide
-some "additional" handling); custom ones; and even third-party annotations are covered. A custom annotation doesn't
-necessarily have to be marked with something like `@AnnotationRendering`; the absence of the meta-annotation would only
-lead to the automapping not being performed.
+There is no restriction regarding what annotations can be handled; built-in ones (then the current handler will provide some "additional" handling); custom ones; and even third-party annotations are covered. A custom annotation doesn't necessarily have to be marked with something like `@AnnotationRendering`; the absence of the meta-annotation would only lead to the automapping not being performed.
 
-*scope* is an optional property determining in what [scope](#custom-annotation-scope) this handler will operate. If not
-specified, the scope will be decided on by querying for the  *scope* of the handled annotation. The default is all
-applicable scopes.
+*scope* is an optional property determining in what [scope](#custom-annotation-scope) this handler will operate. If not specified, the scope will be decided on by querying for the  *scope* of the handled annotation. The default is all applicable scopes.
 
-*before* and *after* parameters allow for arranging the sequence of handling. If neither is specified, the handlers are
-executed in the following sequence: first the built-in handlers hooked to this annotation, then custom handlers, in
-alphabetical order by name.
+*before* and *after* parameters allow for arranging the sequence of handling. If neither is specified, the handlers are executed in the following sequence: first the built-in handlers hooked to this annotation, then custom handlers, in alphabetical order by name.
 
 #### Source object
 
-The first argument of a handler's `accept` method is
-the [Source](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/handlers/Source.html)
-. This is a generic data provider that matches the entity (a Java class or a class member) the handler is called for. If
-the current handler is invoked due to an annotation attached to a class, the *Source* represents the class itself. But
-if the annotation was attached to a method or a field, the *Source* stands for the underlying member.
+The first argument of a handler's `accept` method is the [Source](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/handlers/Source.html). This is a generic data provider that matches the entity (a Java class or a class member) the handler is called for. If the current handler is invoked due to an annotation attached to a class, the *Source* represents the class itself. But if the annotation was attached to a method or a field, the *Source* stands for the underlying member.
 
-The *Source* is further specified by calling the `adaptTo()` method that accepts the only argument: the adapter type.
-You can, for example, call `source.adaptTo(Annotation[].class)` to get the array of annotations attached to the
-source-reflected class or class member. Also, you can specify a particular annotation
-like `source.adaptTo(DialogField.class)`. If the referred annotation is not present, `null` is returned. To mitigate
-null pointer management you can call the `tryAdaptTo()` method that will return an `Optional` object.
+The *Source* is further specified by calling the `adaptTo()` method that accepts the only argument: the adapter type. You can, for example, call `source.adaptTo(Annotation[].class)` to get the array of annotations attached to the source-reflected class or class member. Also, you can specify a particular annotation like `source.adaptTo(DialogField.class)`. If the referred annotation is not present, `null` is returned. To mitigate null pointer management you can call the `tryAdaptTo()` method that will return an `Optional` object.
 
-There are predefined source adapters. For instance, a source object can be adapted to `MemberSource` that has several
-properties specific for member-based sources (refer to
-this [javadoc](../../core/src/main/java/com/exadel/aem/toolkit/api/handlers/MemberSource.java) for details).
+There are predefined source adapters. For instance, a source object can be adapted to `MemberSource` that has several properties specific for member-based sources (refer to this [javadoc](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/handlers/MemberSource.html) for details).
 
-You can create your own adapter that will encapsulate some reasonable logic. See the following code snippet which shows
-how to virtually turn a ToolKit annotation into a writable Java entity:
+You can create your own adapter that will encapsulate some reasonable logic. See the following code snippet which shows how to virtually turn a ToolKit annotation into a writable Java entity:
 
 ```java
 
@@ -243,18 +189,13 @@ public class CustomHandler implements Handler {
 }
 ```
 
-Adapter instances are retained for a *Source* through the handling chain. Therefore, you can assign values to custom
-adapters and be sure that the same value can be retrieved in, for example, another handler processing some other
-annotation attached to the same class or class member.
+Adapter instances are retained for a *Source* through the handling chain. Therefore, you can assign values to custom adapters and be sure that the same value can be retrieved in, for example, another handler processing some other annotation attached to the same class or class member.
 
 #### Target object
 
-In a ToolKit's handler, *Target* stands for an abstraction of rendering a target. Each *Target* instance represents a
-future Granite UI entity or a corresponding XML node. It can have its attributes, a parent target, and an ordered
-collection of child targets (nodes) the same way that Granite/XML nodes do.
+In a ToolKit's handler, *Target* stands for an abstraction of rendering a target. Each *Target* instance represents a future Granite UI entity or a corresponding XML node. It can have its attributes, a parent target, and an ordered collection of child targets (nodes) the same way that Granite/XML nodes do.
 
-The ToolKit API is designed in a way to make operation *Targets* more convenient than operation "bare" XML DOM entities.
-There are 40+ methods that comprise functional areas such as:
+The ToolKit API is designed in a way to make operation *Targets* more convenient than operation "bare" XML DOM entities. There are 40+ methods that comprise functional areas such as:
 
 - Retrieving/setting of the (tag)name, prefix, and postfix;
 - Retrieving/creating child targets by name or by relative path (multi-segment paths are supported);
@@ -307,19 +248,15 @@ public class CustomHandler implements Handler {
 }
 ```
 
-In this example, the *items* node is created within the given *target*. Then *items* are populated with subnodes, each
-having the *ordinal* attribute with the values 1.. 10. Each one will be given two children of its own with the names *
-subitem1* and *subitem2*.
+In this example, the *items* node is created within the given *target*. Then *items* are populated with subnodes, each having the *ordinal* attribute with the values 1.. 10. Each one will be given two children of its own with the names *subitem1* and *subitem2*.
 
-The following code would help retrieve a collection of nodes (regardless the nested level), the names of which end
-with "1":
+The following code would help retrieve a collection of nodes (regardless the nested level), the names of which end with "1":
 
 ```
 List<Target> firstChildren = currentTarget.findChildren(t -> t.getName().endsWith("1"))
 ```
 
-Next is the way to collect all the targets within the target tree that are grandchildren of nodes with the container
-resource type:
+Next is the way to collect all the targets within the target tree that are grandchildren of nodes with the container resource type:
 
 ```
 List<Target> containerDescendants = currentTarget.findChildren(t -> StringUtils.defaultString(t.getTarget("../..").getAttribute("sling:resourceType")).equals("granite/ui/components/coral/foundation/container"));
@@ -331,13 +268,9 @@ Another snippet shows how to retrieve an ancestor with a particular name:
 Target root = currentTarget.findParent(t -> t.getName().equals("jcr:root"))
 ```
 
-There are many more possibilities. For greater detail, see the inline documentation
-on [Target](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/handlers/Target.html)
-.
+There are many more possibilities. For greater detail, see the inline documentation on [Target](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/handlers/Target.html).
 
-Just like *Source*, *Target* is an adaptable entity. By default, *Target* adapts to `DomAdapter` with the possibility of
-being serialized to an XML DOM document. You can apply any custom adapters in the way described in the "Source object"
-section.
+Just like *Source*, *Target* is an adaptable entity. By default, *Target* adapts to `DomAdapter` with the possibility of being serialized to an XML DOM document. You can apply any custom adapters in the way described in the "Source object" section.
 
 ### Debugging custom logic
 
@@ -347,5 +280,4 @@ You can debug the ToolKit's plugin while building your AEM app. In order to do s
 mvnDebug clean install -Pinstall-assets
 ```
 
-Afterward, you can set breakpoints in your IDE, start a debugging session, and connect to the build process. The port is
-8000.
+Afterward, you can set breakpoints in your IDE, start a debugging session, and connect to the build process. The port is 8000.

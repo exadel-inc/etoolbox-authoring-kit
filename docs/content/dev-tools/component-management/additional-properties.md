@@ -1,13 +1,13 @@
 <!--
 layout: md-content
-title: Additional properties
+title: Additional Properties
 order: 4
 -->
 
 ## Additional properties of components, dialogs and fields
 
 ### Attributes of fields
-Components Touch UI dialogs honor the concept of [global HTML attributes](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/docs/server/commonattrs.html) added to rendered HTML tags. To set them via AEM-Dialog-Plugin, you use the @Attribute annotation.
+Components Touch UI dialogs honor the concept of [global HTML attributes](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/docs/server/commonattrs.html) added to rendered HTML tags. To set them via AEM-Dialog-Plugin, you use the @Attribute annotation.
 ```java
 public class DialogWithHtmlAttributes {
     @DialogField

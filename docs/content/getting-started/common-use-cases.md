@@ -1,6 +1,6 @@
 <!--
 layout: md-content
-title: Common use cases
+title: Common Use Cases
 order: 2
 -->
 ## Common use cases
@@ -248,4 +248,4 @@ public class DummyComponent {
 ```
 
 
-Many more code snippets are available in the [Component management](#component-management) section and in the _samples_ project.
+Many more code snippets are available in the [Component management](../dev-tools/component-management/component-structure.md) section.

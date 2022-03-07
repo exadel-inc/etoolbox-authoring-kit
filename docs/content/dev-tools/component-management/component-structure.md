@@ -1,9 +1,9 @@
 <!--
 layout: md-content
-title: Component structure
+title: Component Structure
 order: 1
 -->
-## @AemComponent
+## Creating AEM Components with ToolKit annotations
 
 [@AemComponent](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/main/AemComponent.html) is your entry point to creating component authoring interfaces, such as a *Dialog*, a _Design dialog_, or an _In-place editing config_. When added to a Java class, this annotation must contain generic properties of the component such as *title*, *description*, etc.
 
@@ -80,7 +80,7 @@ Both the Touch UI dialog and design dialog can have either a relative simple or 
 
 In the first case, no specific setup is required. A dialog is automatically assigned the *"fixed column"* style.
 
-Otherwise, a dialog can be rendered in one or more tabs, or be organized as an *accordion* with one or more panels. To achieve this, you need to put the `@Tabs` or `@Accordion` annotation respectively beside your `@Dialog`/`@DesignDialog`. See [Laying out your dialog](dialog-layout.md) for details.
+Otherwise, a dialog can be rendered in one or more tabs, or be organized as an *accordion* with one or more panels. To achieve this, you need to put the `@Tabs` or `@Accordion` annotation respectively beside your `@Dialog`/`@DesignDialog`. See [Laying out your dialog](./dialog-layout.md) for details.
 
 ### EditConfig settings
 
@@ -154,7 +154,7 @@ public class CustomPropertiesDialog {
 
 Note that if you use `type = EditorType.PLAINTEXT`, there is an additional required *textPropertyName* value. If you do not specify a value, the same *propertyName* string will be used.
 
-It’s also possible to create [multiple in-place editors](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/multiple-inplace-editors.html) as in the following snippet
+It’s also possible to create [multiple in-place editors](https://experienceleague.adobe.com/docs/experience-manager-65/developing/components/multiple-inplace-editors.html?lang=en) as in the following snippet
 
 ```java
 @Dialog(name = "componentName")
@@ -179,7 +179,7 @@ public class CustomPropertiesDialog {/* ... */}
 
 #### RichText configuration for in-place editing
 
-With an in-place configuration of `type = EditorType.TEXT`, a *richTextConfig* can be specified with syntax equivalent to that of a [@RichTextEditor annotation](configuring-rte.md).
+With an in-place configuration of `type = EditorType.TEXT`, a *richTextConfig* can be specified with syntax equivalent to that of a [@RichTextEditor annotation](./dialog-fields/configuring-rte.md).
 Here is a very basic example of a *richTextConfig* for an in-place editor
 
 ```java
@@ -312,6 +312,6 @@ Else you can use a nested class annotated with `FixedColumns` for that purpose.
 ***
 #### See also
 
-- [Laying out your dialog](dialog-layout.md)
-- [Configuring RichTextEditor](configuring-rte.md)
-- [@Extends-ing fields annotations](reusing-code.md#extends-ing-fields-annotations)
+- [Laying out your dialog](./dialog-layout.md)
+- [Configuring RichTextEditor](./dialog-fields/configuring-rte.md)
+- [@Extends-ing fields annotations](./reusing-code.md#extends-ing-fields-annotations)

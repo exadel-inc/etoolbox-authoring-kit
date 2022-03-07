@@ -29,7 +29,7 @@ private List<SimpleListItem> itemsListResource;
 Note that your injected field's type can be either a `List` or an array, like `SimpleListItem[]`. Concerning the type of
 items, you can specify a valid Sling model, or a *Resource*, or else *Object*. In the latter case, *Resource*-s will be
 injected in place of *Object*-s. In the snippets we use the out-of-the-box *SimpleListItem*. However, any valid Sling
-model will go (if it is adapted from a *Resource*). Generally, this injector works according to the same principles as the [ListHelper](etoolbox-lists.md) utility class.
+model will go (if it is adapted from a *Resource*). Generally, this injector works according to the same principles as the [ListHelper](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/core/lists/utils/ListHelper.html) utility class.
 
 To get the map, type it as:
 

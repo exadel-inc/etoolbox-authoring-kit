@@ -1,6 +1,6 @@
 <!--
 layout: md-content
-title: Dialog layout
+title: Dialog Layout
 order: 2
 -->
 
@@ -10,11 +10,11 @@ order: 2
 
 * [@Tabs](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/layouts/Tabs.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/tabs
-* See spec: [Tabs](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/tabs/index.html)
+* See spec: [Tabs](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/tabs/index.html)
 
 If you need your dialog split in meaningful sections, tabs are probably the most common way to do the task. There can be reasons to create a tabbed dialog even if a single section would be sufficient. That's because the tab would have a title that would additionally hint at the dialog settings' role (something like "General config").
 
-There are several ways to create tabbed dialogs. First, you may need to mark a nested class of your @Dialog-annotated class with @Tab annotation. The _title_ property of @Tab will be used as the tab's node name and non-alphanumeric characters will be skipped (for example, `@Tab(title="First tab title!")` will produce _\<firstTabTitle>_ tag)
+There are several ways to create tabbed dialogs. First, you may need to mark a nested class of your `@Dialog`-annotated class with `@Tab` annotation. The _title_ property of `@Tab` will be used as the tab's node name and non-alphanumeric characters will be skipped (for example, `@Tab(title="First tab title!")` will produce _\<firstTabTitle>_ tag)
 
 ```java
 @Dialog
@@ -87,15 +87,15 @@ public class MyComponent extends MyComponentAncestor {
 }
 ```
 
-Note that the ancestor class does not have to be declared `@AemComponent` itself (however may as well stand as a separate entity). If not every tab present in an ancestor needs to be rendered in a child, the child class can have `@Ignore(sections = "Tab from ancestor")` attached. See more on this in [Reusing code and making it brief](reusing-code.md), the "Sections inheritance" division.
+Note that the ancestor class does not have to be declared `@AemComponent` itself (however may as well stand as a separate entity). If not every tab present in an ancestor needs to be rendered in a child, the child class can have `@Ignore(sections = "Tab from ancestor")` attached. See more on this in [Reusing code and making it brief](./reusing-code.md), the "Sections inheritance" division.
 
-Additionally, you can facilitate a tabbed area *within* the dialog or one of its sections to keep your visual elements well organized. See the "Tabs" division in [Defining dialog fields, setting attributes](component-structure.md) for particulars.
+Additionally, you can facilitate a tabbed area *within* the dialog or one of its sections to keep your visual elements well organized. See the "Tabs" division in [Component Structure](./component-structure.md) for particulars.
 
 ### Accordion layout
 
 * [@Accordion](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/layouts/Accordion.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/accordion
-* See spec: [Accordion](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html)
+* See spec: [Accordion](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html)
 
 Creating an accordion is also a widely used way to arrange multiple components within a dialog or a dialog section. This is done with the use of `@Accordion` annotation.
 
@@ -127,13 +127,13 @@ public class MyComponent {
     String field2;
 }
 ```
-Accordion panels inheritance and ignoring works exactly the same as for the tabs. And so is the ability to create a nested accordion within a dialog or its section. See the "Accordion" division in [Defining dialog fields, setting attributes](component-structure.md).
+Accordion panels inheritance and ignoring works exactly the same as for the tabs. And so is the ability to create a nested accordion within a dialog or its section. See the "Accordion" division in [Component Structure](./component-structure.md).
 
 ### Fixed columns layout
 
 * [@FixedColumns](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/layouts/FixedColumns.html)
 * Resource type: /libs/granite/ui/components/foundation/layouts/fixedcolumns
-* See spec: [FixedColumns](https://www.adobe.io/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/layouts/fixedcolumns/index.html)
+* See spec: [FixedColumns](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/layouts/fixedcolumns/index.html)
 
 Fixed columns are the default layout for a Granite UI dialog unless some specific one, such as Tabs or Accordion, is requested. By default, it creates a single fixed-width column.
 
@@ -162,10 +162,10 @@ public class MyComponent {
 ```
 Multiple columns are placed side-by-side if the width of the dialog allows, or else go one under the other. Please note that the title is not rendered in the UI; it is used for merely referring to a particular column in `@Place(...)`.
 
-Then again, same as for Tabs and Accordion, `@FixedColumns` can be used as an in-dialog widget. This is particularly useful when you need to render dialog content screen-centered, as within a Page properties' tab (see "Page properties" section in [Component structure](component-structure.md)). For the in-dialog usage two additional properties of `@FixedColumns` can be specified: *margin* and *maximized* (see the Javadoc for more detail).
+Then again, same as for Tabs and Accordion, `@FixedColumns` can be used as an in-dialog widget. This is particularly useful when you need to render dialog content screen-centered, as within a Page properties' tab (see "Page properties" section in [Component Structure](./component-structure.md)). For the in-dialog usage two additional properties of `@FixedColumns` can be specified: *margin* and *maximized* (see the Javadoc for more detail).
 
 ***
 #### See also
 
-- [Defining dialog fields, setting attributes](component-structure.md)
-- [Reusing code and making it brief](reusing-code.md)
+- [Component Structure](./component-structure.md)
+- [Reusing code and making it brief](./reusing-code.md)

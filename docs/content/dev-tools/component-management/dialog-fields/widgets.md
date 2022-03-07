@@ -9,8 +9,7 @@ order: 2
 
 * [@Accordion](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/layouts/Accordion.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/accordion
-* See
-  spec: [Accordion](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html)
+* See spec: [Accordion](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/accordion/index.html)
 
 Used to create an accordion widget containing other widgets organized in panels. See the following sample:
 
@@ -46,22 +45,17 @@ public class DialogWithAccordion {
 
 *Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
-The `@Accordion` annotation can be added to an arbitrary class member (field or method); its return type does not
-matter. Other widgets can refer to the columns with their `@Place` directives. See the "Placing widgets" section below
-for more detail.
+The `@Accordion` annotation can be added to an arbitrary class member (field or method); its return type does not matter. Other widgets can refer to the columns with their `@Place` directives. See the "Placing widgets" section below for more detail.
 
-Apart from this usage, `@Accordion` can be specified at the class level as the layout hint for the entire dialog.
-See [Laying out your dialog](dialog-layout.md) for details.
+Apart from this usage, `@Accordion` can be specified at the class level as the layout hint for the entire dialog. See [Laying out your dialog](../dialog-layout.md) for details.
 
 ### Alert
 
 * [@Alert](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Alert.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/alert
-* See
-  spec: [Alert](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html?highlight=alert)
+* See spec: [Alert](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/alert/index.html)
 
-Used to render a component responsible for showing conditional alerts to the users in Touch UI dialogs. Usage is similar
-to the following:
+Used to render a component responsible for showing conditional alerts to the users in Touch UI dialogs. Usage is similar to the following:
 
 *Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
@@ -81,11 +75,9 @@ public class DialogWithAlert {
 
 * [@AnchorButton](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/AnchorButton.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/anchorbutton
-* See
-  spec: [AnchorButton](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html)
+* See spec: [AnchorButton](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html)
 
-This is a component to represent a standard HTML hyperlink (`<a>`), but to look like a button in Touch UI dialogs. Usage
-is as follows:
+This is a component to represent a standard HTML hyperlink (`<a>`), but to look like a button in Touch UI dialogs. Usage is as follows:
 
 ```java
 public class DialogWithAnchorButton {
@@ -107,13 +99,9 @@ public class DialogWithAnchorButton {
 
 * [@Autocomplete](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/autocomplete/Autocomplete.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/autocomplete
-* See
-  spec: [Autocomplete](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/autocomplete/index.html)
+* See spec: [Autocomplete](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/autocomplete/index.html)
 
-Used to render the Autocomplete component in Touch UI dialogs. Options that appear as the user enters text depend on the
-value of the *namespaces* property of the `@AutocompleteDataSource`. If unset, all tags under the *\<content/cq:Tags>*
-JCR directory will be available. Otherwise, you specify one or more particular *\<cq:Tag>* nodes as in the snippet
-below:
+Used to render the Autocomplete component in Touch UI dialogs. Options that appear as the user enters text depend on the value of the *namespaces* property of the `@AutocompleteDataSource`. If unset, all tags under the *\<content/cq:Tags>* JCR directory will be available. Otherwise, you specify one or more particular *\<cq:Tag>* nodes as in the snippet below:
 
 ```java
 public class AutocompleteDialog {
@@ -130,8 +118,7 @@ public class AutocompleteDialog {
 
 * [@Button](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/button/Button.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/button
-* See
-  spec: [Button](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/button/index.html)
+* See spec: [Button](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/button/index.html)
 
 Helps to create buttons in Touch UI dialogs. Usage is as follows:
 
@@ -155,18 +142,11 @@ public class DialogWithButton {
 
 * [@ButtonGroup](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/buttongroup/ButtonGroup.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/buttongroup
-* See
-  spec: [Button](https://www.adobe.io/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/buttongroup/index.html)
+* See spec: [ButtonGroup](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/buttongroup/index.html)
 
-Used to render button groups in Touch UI dialogs. A `@ButtonGroup` contains one or more manually
-specified `@ButtonGroupItem`s or declares an `@OptionProvider`. It has the *selectionMode* to define how many values
-will be stored at once (the widget does not store values to JCR unless you select "single" or "multiple"). You can also
-specify the *ignoreData* and *deleteHint* flags.
+Used to render button groups in Touch UI dialogs. A `@ButtonGroup` contains one or more manually specified `@ButtonGroupItem`s or declares an `@OptionProvider`. It has the *selectionMode* to define how many values will be stored at once (the widget does not store values to JCR unless you select "single" or "multiple"). You can also specify the *ignoreData* and *deleteHint* flags.
 
-Each of a `@ButtonGroup`'s manual items is initialized with mandatory *text* and *value*. Use *checked* to define a
-button that is selected by default. You can specify several more optional parameters, such as *icon* or *size*. A
-visually textless button can be rendered with `hideText = true` while Adobe recommends that you never set the *text*
-property to an empty string.
+Each of a `@ButtonGroup`'s manual items is initialized with mandatory *text* and *value*. Use *checked* to define a button that is selected by default. You can specify several more optional parameters, such as *icon* or *size*. A visually textless button can be rendered with `hideText = true` while Adobe recommends that you never set the *text* property to an empty string.
 
 Next is a code snippet for a `@ButtonGroup` usage:
 
@@ -184,15 +164,13 @@ public class DialogWithButtonGroup {
 }
 ```
 
-You can define an *optionProvider* that will produce options based on a variety of supported media such as a JCR node
-tree, a tag folder, etc. See the chapter on [OptionProvider](../../option-provider.md).
+You can define an *optionProvider* that will produce options based on a variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on [OptionProvider](../../option-provider.md).
 
 ### Checkbox
 
 * [@Checkbox](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Checkbox.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/checkbox
-* See
-  spec: [Checkbox](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/checkbox/index.html)
+* See spec: [Checkbox](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/checkbox/index.html)
 
 Used to produce either simple or complex (nested) checkbox inputs in Touch UI dialogs.
 
@@ -214,10 +192,7 @@ public class DialogWithCheckbox {
 
 #### Checkbox nesting
 
-Sometimes you’ll need to supply a list of sub-level checkboxes to a parent checkbox whose displayed state will be
-affected by the states of child inputs. You can achieve this by specifying a *sublist* property of `@Checkbox` with a
-reference to a nested class encapsulating all the sub-level options. This is actually a full-feature rendition
-of [Granite UI NestedCheckboxList](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/nestedcheckboxlist/index.html)
+Sometimes you’ll need to supply a list of sub-level checkboxes to a parent checkbox whose displayed state will be affected by the states of child inputs. You can achieve this by specifying a *sublist* property of `@Checkbox` with a reference to a nested class encapsulating all the sub-level options. This is actually a full-feature rendition of [Granite UI NestedCheckboxList](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/nestedcheckboxlist/index.html)
 .
 
 ```java
@@ -254,8 +229,7 @@ public class NestedCheckboxListDialog {
 
 * [@ColorField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/color/ColorField.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/colorfield
-* See
-  spec: [ColorField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/colorfield/index.html)
+* See spec: [ColorField](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/colorfield/index.html)
 
 Used to render inputs for storing color values in Touch UI dialogs.
 
@@ -280,14 +254,9 @@ public class DialogWithColorField {
 
 * [@DatePicker](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/datepicker/DatePicker.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/datepicker
-* See
-  spec: [DatePicker](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/datepicker/index.html)
+* See spec: [DatePicker](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/datepicker/index.html)
 
-Used to render date/time pickers in Touch UI dialogs. You can set the type of DatePicker (whether it stores only the
-date, only the time, or both). You can also display format (
-see [Java documentation](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html) on possible
-formats) and minimal and maximal date/time to select (may also specify a timezone). To make the formatter effective,
-set `typeHint = TypeHint.STRING` to store date/time to JCR as only a string and not a numeric value.
+Used to render date/time pickers in Touch UI dialogs. You can set the type of DatePicker (whether it stores only the date, only the time, or both). You can also display format (see [Java documentation](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html) on possible formats) and minimal and maximal date/time to select (may also specify a timezone). To make the formatter effective, set `typeHint = TypeHint.STRING` to store date/time to JCR as only a string and not a numeric value.
 
 ```java
 public class DatePickerDialog {
@@ -308,23 +277,17 @@ public class DatePickerDialog {
 
 * [@FieldSet](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/FieldSet.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/fieldset
-* See
-  spec: [FieldSet](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html)
+* See spec: [FieldSet](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fieldset/index.html)
 
-Creates a fieldset (a group of fields that can be managed as one) in a Touch UI dialog. See
-the [dedicated section on the fieldsets](configuring-fieldset.md).
+Creates a fieldset (a group of fields that can be managed as one) in a Touch UI dialog. See the [dedicated section on the fieldsets](./configuring-fieldset.md).
 
 ### FileUpload
 
 * [@FileUpload](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/FileUpload.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/fileupload
-* See
-  spec: [FileUpload](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fileupload/index.html)
+* See spec: [FileUpload](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/fileupload/index.html)
 
-Used to render the FileUpload components in Touch UI dialogs. You can specify acceptable MIME types of files and graphic
-styles of the created component. You’ll be required to provide the *uploadUrl* to an accessible JCR path (you may also
-specify a sub-node of an existing node that will be created as needed). Sling shortcut *${suffix.path}* for
-component-relative JCR path is also supported.
+Used to render the FileUpload components in Touch UI dialogs. You can specify acceptable MIME types of files and graphic styles of the created component. You’ll be required to provide the *uploadUrl* to an accessible JCR path (you may also specify a sub-node of an existing node that will be created as needed). Sling shortcut *${suffix.path}* for component-relative JCR path is also supported.
 
 ```java
 public class FileUploadDialog {
@@ -350,8 +313,7 @@ public class FileUploadDialog {
 
 * [@FixedColumns](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/layouts/FixedColumns.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/fixedcolumns
-* See
-  spec: [FixedColumns](https://www.adobe.io/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/fixedcolumns/index.html)
+* See spec: [FixedColumns](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/fixedcolumns/index.html)
 
 Used to create a container which consists of one or more columns. See the following sample:
 
@@ -382,21 +344,15 @@ public class DialogWithFixedColumnsWidget {
 
 *Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
-The `@FixedColumns` annotation can be added to an arbitrary class member (field or method). Its return type does not
-matter. Titles of columns do not get rendered: they are used merely for "binding" other widgets to particular columns.
-Other widgets can refer to the columns with their `@Place` directives. See the "Placing widgets" section below for more
-detail.
+The `@FixedColumns` annotation can be added to an arbitrary class member (field or method). Its return type does not matter. Titles of columns do not get rendered: they are used merely for "binding" other widgets to particular columns. Other widgets can refer to the columns with their `@Place` directives. See the "Placing widgets" section below for more detail.
 
-Apart from this usage, `@FixedColumns` can be specified at the class level as the layout hint for the entire dialog.
-See [Laying out your dialog](dialog-layout.md) for details. Take a note that additional `@FixedColumns` properties, such
-as *maximized*, are only meaningful for the in-dialog usage.
+Apart from this usage, `@FixedColumns` can be specified at the class level as the layout hint for the entire dialog. See [Laying out your dialog](../dialog-layout.md) for details. Take a note that additional `@FixedColumns` properties, such as *maximized*, are only meaningful for the in-dialog usage.
 
 ### Heading
 
 * [@Heading](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Heading.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/heading
-* See
-  spec: [Heading](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/heading/index.html)
+* See spec: [Heading](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/heading/index.html)
 
 Renders a heading element in Touch UI dialogs. See the following usage example:
 
@@ -413,8 +369,7 @@ public class DialogWithHeading {
 
 * [@Hidden](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Hidden.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/hidden
-* See
-  spec: [Hidden](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/hidden/index.html)
+* See spec: [Hidden](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/hidden/index.html)
 
 Used to render hidden inputs in Touch UI dialogs.
 
@@ -434,8 +389,7 @@ public class DialogWithHiddenFields {
 
 * [@Hyperlink](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Hyperlink.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/hyperlink
-* See
-  spec: [Hyperlink](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html)
+* See spec: [Hyperlink](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html)
 
 Used to represent HTML hyperlinks`(<a>)`in Touch UI dialogs. See the usage sample below:
 
@@ -459,11 +413,7 @@ public class DialogWithHyperlink {
 * [@ImageUpload](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/imageupload/ImageUpload.html)
 * Resource type: cq/gui/components/authoring/dialog/fileupload
 
-Designed as a companion to @FileUpload, it mimics the features of the FileUpload component that was
-there [before Coral 3 was introduced](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/form/fileupload/index.html)
-and the built-in upload component situated at _cq/gui/components/authoring/dialog/fileupload_ in your AEM installation.
-Technically, this is just another rendition of the FileUpload logic aimed at mainly uploading images via drag-and-drop.
-Use it like you’ll see in the following code snippet:
+Designed as a companion to @FileUpload, it mimics the features of the FileUpload component that was there [before Coral 3 was introduced](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/foundation/form/fileupload/index.html) and the built-in upload component situated at _cq/gui/components/authoring/dialog/fileupload_ in your AEM installation. Technically, this is just another rendition of the FileUpload logic aimed at mainly uploading images via drag-and-drop. Use it like you’ll see in the following code snippet:
 
 ```java
 public class ImageFieldDialog {
@@ -487,11 +437,9 @@ public class ImageFieldDialog {
 
 * [@Include](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Include.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/include
-* See
-  spec: [Include](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/include/index.html)
+* See spec: [Include](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/include/index.html)
 
-Used to set up embedded resources in Touch UI dialogs. An inclusion can be any resource resolvable by a
-Sling `ResourceResolver`. See the usage sample below:
+Used to set up embedded resources in Touch UI dialogs. An inclusion can be any resource resolvable by a Sling `ResourceResolver`. See the usage sample below:
 
 ```java
 public class DialogWithInclude {
@@ -509,18 +457,15 @@ public class DialogWithInclude {
 
 * [@MultiField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/MultiField.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/multifield
-* See
-  spec: [Multifield](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html)
+* See spec: [Multifield](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html)
 
-Creates a multifield (a group of one or more fields that will be reproduced multiple times) in a Touch UI dialog. See
-the [dedicated section on the multifields](configuring-multifield.md).
+Creates a multifield (a group of one or more fields that will be reproduced multiple times) in a Touch UI dialog. See the [dedicated section on the multifields](./configuring-multifield.md).
 
 ### NumberField
 
 * [@NumberField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/NumberField.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/numberfield
-* See
-  spec: [NumberField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/numberfield/index.html)
+* See spec: [NumberField](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/numberfield/index.html)
 
 Used to render inputs for storing numbers in Touch UI dialogs. Use it as follows:
 
@@ -541,12 +486,9 @@ public class DialogWithNumberField {
 
 * [@Password](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Password.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/password
-* See
-  spec: [Password](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/password/index.html)
+* See spec: [Password](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/password/index.html)
 
-Used to render password inputs in Touch UI dialogs. If you wish to engage a "confirm the password" box in your dialog's
-layout, create two `@Password`-annotated fields in your Java class, then feed the name of the second field to the *
-retype* property for the first one. If the values of the two fields do not match, you’ll see a validation error.
+Used to render password inputs in Touch UI dialogs. If you wish to engage a "confirm the password" box in your dialog's layout, create two `@Password`-annotated fields in your Java class, then feed the name of the second field to the *retype* property for the first one. If the values of the two fields do not match, you’ll see a validation error.
 
 ```java
 public class DialogWithPasswordField {
@@ -564,8 +506,7 @@ public class DialogWithPasswordField {
 
 * [@PathField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/PathField.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/pathfield
-* See
-  spec: [PathField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/pathfield/index.html)
+* See spec: [PathField](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/pathfield/index.html)
 
 Used to produce path selectors in Touch UI dialogs. You can implement it as in the following example:
 
@@ -584,8 +525,7 @@ public class DialogWithPathField {
 
 * [@RadioGroup](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/radio/RadioGroup.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/radiogroup
-* See
-  spec: [RadioGroup](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/radiogroup/index.html)
+* See spec: [RadioGroup](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/radiogroup/index.html)
 
 Renders groups of RadioButtons in Touch UI dialogs. The usage is as follows:
 
@@ -603,8 +543,7 @@ public class DialogWithRadioGroup {
 }
 ```
 
-Note that you can set this up to use a *datasource* instead of a list of buttons. This way your `@RadioGroup` would look
-like this:
+Note that you can set this up to use a *datasource* instead of a list of buttons. This way your `@RadioGroup` would look like this:
 
 ```java
 public class DialogWithRadioGroup {
@@ -614,29 +553,23 @@ public class DialogWithRadioGroup {
 }
 ```
 
-You can define an *optionProvider* that will produce options based on a variety of supported media such as a JCR node
-tree, a tag folder, etc. See the chapter on [OptionProvider](../../option-provider.md).
+You can define an *optionProvider* that will produce options based on a variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on [OptionProvider](../../option-provider.md).
 
 ### RichTextEditor
 
 * [@RichTextEditor](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/rte/RichTextEditor.html)
 * Resource type: /libs/cq/gui/components/authoring/dialog/richtext
-* See
-  spec: [RichTextEditor](https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/rich-text-editor.html)
+* See spec: [RichTextEditor](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/rich-text-editor.html?lang=en)
 
-Renders a full-featured editor for rich text. See the [dedicated section on the usage of RTE](configuring-rte.md).
+Renders a full-featured editor for rich text. See the [dedicated section on the usage of RTE](./configuring-rte.md).
 
 ### Select
 
 * [@Select](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/select/Select.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/select
-* See
-  spec: [Select](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/select/index.html)
+* See spec: [Select](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/select/index.html)
 
-Used to render select inputs in Touch UI dialogs. `@Select` consists of a set of `@Option` items. Each of them must be
-initialized with mandatory *value* and several optional parameters, such as *text* (represents an option label), boolean
-flags *selected* and *disabled*, and String values responsible for visual presentation of an option: *icon*, *
-statusIcon*, *statusText* and *statusVariant*.
+Used to render select inputs in Touch UI dialogs. `@Select` consists of a set of `@Option` items. Each of them must be initialized with mandatory *value* and several optional parameters, such as *text* (represents an option label), boolean flags *selected* and *disabled*, and String values responsible for visual presentation of an option: *icon*, *statusIcon*, *statusText* and *statusVariant*.
 
 Here is a code snippet for a typical `@Select` usage:
 
@@ -671,8 +604,7 @@ public class DialogWithDropdown {
 }
 ```
 
-Note that you can set this up to use a *datasource* instead of a list of options. This way your `@Select` would look
-like this:
+Note that you can set this up to use a *datasource* instead of a list of options. This way your `@Select` would look like this:
 
 ```java
 public class DialogWithDropdown {
@@ -685,15 +617,13 @@ public class DialogWithDropdown {
 }
 ```
 
-You can define an *optionProvider* that will produce options based on a variety of supported media such as a JCR node
-tree, a tag folder, etc. See the chapter on [OptionProvider](../../option-provider.md).
+You can define an *optionProvider* that will produce options based on a variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on [OptionProvider](../../option-provider.md).
 
 ### Switch
 
 * [@Switch](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Switch.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/switch
-* See
-  spec: [Switch](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/switch/index.html)
+* See spec: [Switch](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/switch/index.html)
 
 Used to render an on-off toggle switch in a Touch UI dialog.
 
@@ -715,8 +645,7 @@ public class DialogWithSwitch {
 
 * [@Tabs](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/layouts/Tabs.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/tabs
-* See
-  spec: [Tabs](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/tabs/index.html)
+* See spec: [Tabs](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/tabs/index.html)
 
 Used to create a nested tabs container possessing other widgets organized in tabs. See the following sample:
 
@@ -758,21 +687,15 @@ public class DialogWithTabs {
 
 *Note:* this widget annotation does not need to be accompanied by a `@DialogField`.
 
-The `@Tabs` annotation can be added to an arbitrary class member (field or method); its return type does not matter.
-Other widgets can refer to the columns with their `@Place` directives. See the "Placing widgets" section below for more
-detail.
+The `@Tabs` annotation can be added to an arbitrary class member (field or method); its return type does not matter. Other widgets can refer to the columns with their `@Place` directives. See the "Placing widgets" section below for more detail.
 
-Apart from this usage, `@Tabs` can be specified at the class level as the layout hint for the entire dialog (
-see [Laying out your dialog](dialog-layout.md) for details). Take note that the `@Tabs` annotation contains properties
-for both usages, but not every property has meaning for either. Refer to the Javadoc on `@Tabs` to learn which
-properties should be used for tabs at class level and tabs as a widget, respectively.
+Apart from this usage, `@Tabs` can be specified at the class level as the layout hint for the entire dialog (see [Laying out your dialog](../dialog-layout.md) for details). Take note that the `@Tabs` annotation contains properties for both usages, but not every property has meaning for either. Refer to the Javadoc on `@Tabs` to learn which properties should be used for tabs at class level and tabs as a widget, respectively.
 
 ### Text
 
 * [@Text](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Text.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/text
-* See
-  spec: [Text](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html)
+* See spec: [Text](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/text/index.html)
 
 Used to produce a text component that is rendered as <span> in Touch UI dialog. That's how it may look like:
 
@@ -789,8 +712,7 @@ public class DialogWithText {
 
 * [@TextArea](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/textarea/TextArea.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/textarea
-* See
-  spec: [Textarea](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textarea/index.html)
+* See spec: [Textarea](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textarea/index.html)
 
 Used to render a *textarea*-type HTML input in Touch UI dialogs.
 
@@ -814,8 +736,7 @@ public class DialogWithTextArea {
 
 * [@TextField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/TextField.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/textfield
-* See
-  spec: [TextField](https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textfield/index.html)
+* See spec: [TextField](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/textfield/index.html)
 
 Used to produce text inputs in Touch UI dialogs. The usage is as follows:
 

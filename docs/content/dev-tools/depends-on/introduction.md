@@ -32,5 +32,5 @@ The **Query** always goes with the **Action** and defines an expression that sho
 
 More details on the structure of DependsOn are presented below:
 
-![DependsOn Structure](../img/dependson-structure.jpg)
+![DependsOn Structure](../../../img/dependson-structure.jpg)
 

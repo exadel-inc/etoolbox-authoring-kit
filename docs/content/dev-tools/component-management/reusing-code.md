@@ -1,6 +1,6 @@
 <!--
 layout: md-content
-title: Reusing code
+title: Reusing Code
 order: 5
 -->
 ## Reusing code and making it brief

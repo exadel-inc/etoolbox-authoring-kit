@@ -476,4 +476,4 @@ public class Component {
 ***
 ### See also
 
-[Feeding data to selection widgets with OptionProvider](option-provider.md)
+[Feeding data to selection widgets with OptionProvider](../option-provider.md)
