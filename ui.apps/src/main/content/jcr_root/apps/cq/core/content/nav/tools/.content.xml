@@ -8,7 +8,7 @@
                   jcr:description="Allows to manage lists of structured data"
                   order="2000"
                   href="/etoolbox-lists.html"
-                  icon="viewList"
+                  icon="etoolbox-lists"
                   sling:resourceType="crx/core/components/welcome/tool">
         </lists>
     </etoolbox>
