@@ -7,13 +7,13 @@
     </a>
     <ul class="header-links">
       <li class="header-li">
-        <a class="header-link" href="{{ landing.urls.installationUrl }}">Manuals</a>
+        <a class="header-link" href="{{ landing.urls.installationUrl | url }}">Manuals</a>
       </li>
       <li class="header-li">
-        <a class="header-link" href="{{ landing.urls.docsUrl }}">API Docs</a>
+        <a class="header-link" href="{{ landing.urls.docsUrl }}" target="_blank">API Docs</a>
       </li>
       <li class="header-li">
-        <a class="header-link" href="{{ landing.urls.articleExadelUrl }}">Blog</a>
+        <a class="header-link" href="{{ landing.urls.articleExadelUrl }}" target="_blank">Blog</a>
       </li>
       <li class="header-li">
         <a class="header-link" href="{{ site.github.url }}" target="_blank">
@@ -21,7 +21,7 @@
         </a>
       </li>
     </ul>
-     <div class="header-btn"><a href="{{landing.urls.installationUrl}}" class="btn btn-blue btn-media header-btn-link ">Get started</a></div>
+      <div class="header-btn"><a href="{{ landing.urls.installationUrl | url }}" class="btn btn-blue btn-media header-btn-link ">Get started</a></div>
     <div class="header-utility">
       <esl-trigger class="header-hamburger" target="#sidebar" aria-label="navigation menu"></esl-trigger>
     </div>

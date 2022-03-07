@@ -8,7 +8,7 @@
   <ul class="article-list">
     {% for article in landing.articleSection %}
       <li class="article-item">
-        <a class="article-link text-white" href="{{ article.linkUrl }}">
+        <a class="article-link text-white" href="{{ article.linkUrl }}" target="_blank">
           <h5 class="fs-1 article-item-title mb-2">{{ article.title }}</h5>
           <div class="d-flex article-item-img-container mb-1">
             <img class="article-item-img" src="{{ article.imgUrl }}"/>
@@ -25,6 +25,6 @@
     {% endfor %}
   </ul>
   <div class="z-index d-flex article-center">
-    <a href="{{ landing.urls.articleExadelUrl }}" class="btn btn-mint m-0">Learn more</a>
+    <a href="{{ landing.urls.articleExadelUrl }}" class="btn btn-mint m-0" target="_blank">Learn more</a>
   </div>
 </div>
