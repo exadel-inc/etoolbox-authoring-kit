@@ -1,9 +1,8 @@
 <!--
 layout: md-content
 title: Additional properties
+order: 4
 -->
-
-[Main page](../../../README.md)
 
 ## Additional properties of components, dialogs and fields
 
@@ -77,4 +76,3 @@ Pay attention to the third and forth `@CommonProperty`-s. Specifying the *path* 
 `@CommonProperties` are rendered after the XML tree is completed. Thus, setting them provides a kind of "last-chance" alternation of your Touch UI logic (can also be used for debugging). For example, the last `@CommonProperty` in the sample uses the power of XPath to change *size* attribute of every single node where size has been set to *"L"*. Only make sure that the *path* points to at least one truly existing XML node.
 
 Note that XPath parser is namespace-agnostic. That is why you need to use */root/inplaceEditing...* instead of */jcr:root/cq:inplaceEditing...* in the sample above.
-

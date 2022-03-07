@@ -11,7 +11,7 @@ title: Installation
 <dependency>
    <groupId>com.exadel.etoolbox</groupId>
    <artifactId>etoolbox-authoring-kit-core</artifactId>
-   <version>2.1.0</version> <!-- prefer latest stable version whenever possible -->
+   <version>2.1.0</version> <!-- prefer the latest stable version whenever possible -->
     <scope>provided</scope> <!-- do not use compile or runtime scope!-->
 </dependency>
 ```

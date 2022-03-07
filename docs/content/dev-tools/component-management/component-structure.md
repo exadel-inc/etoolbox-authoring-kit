@@ -1,10 +1,8 @@
 <!--
 layout: md-content
 title: Component structure
+order: 1
 -->
-
-[Main page](../../../README.md)
-
 ## @AemComponent
 
 [@AemComponent](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/main/AemComponent.html) is your entry point to creating component authoring interfaces, such as a *Dialog*, a _Design dialog_, or an _In-place editing config_. When added to a Java class, this annotation must contain generic properties of the component such as *title*, *description*, etc.

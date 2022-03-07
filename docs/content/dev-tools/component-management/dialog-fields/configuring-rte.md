@@ -1,11 +1,8 @@
 <!--
 layout: md-content
-title: Configuring rte
+title: Configuring RTE
+order: 3
 -->
-
-[Main page](../../../README.md)
-
-
 ## Configuring RichTextEditor
 
 [RichTextEditor (RTE)](https://helpx.adobe.com/experience-manager/6-5/sites/administering/using/rich-text-editor.html) is a somehow special yet vastly demanded dialog component that makes it possible to edit strings and texts with WYSIWYG experience. The functionality of the component is based upon a set of plugins, either built-in or custom. Most plugins expose sets of "features" reflected by UI elements (buttons, or dropdown lists, or button panels, or floating panels - so called "popovers").

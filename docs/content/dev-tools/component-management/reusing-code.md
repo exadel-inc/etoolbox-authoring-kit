@@ -1,10 +1,8 @@
 <!--
 layout: md-content
 title: Reusing code
+order: 5
 -->
-
-[Main page](../../../README.md)
-
 ## Reusing code and making it brief
 
 ### Members inheritance and how to cancel it

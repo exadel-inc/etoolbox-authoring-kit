@@ -34,15 +34,15 @@ It is an open and growing project. The authors sincerely welcome creative input 
 
 #### Component management
 
-- [Component structure](docs/content/component-management/component-structure.md)
-- [Laying out your dialog](docs/content/components/dialog-layout.md)
-- [Defining dialog fields, setting attributes](docs/content/components/widget-annotations.md)
-    - [Configuring RichTextEditor](docs/content/component-management/configuring-rte.md)
-    - [Grouping fields with FieldSet](docs/content/component-management/configuring-fieldset.md)
-    - [Multiplying Fields](docs/content/components/multiplying-fields.md)
-- [Reusing code and making it brief](docs/content/components/reusing-code.md)
-- [Customizing the ToolKit to your needs](docs/content/components/test/customizing-toolkit.md)
-- [Additional properties of components, dialogs and fields](docs/content/component-management/additional-properties.md)
+- [Component structure](docs/content/dev-tools/component-management/component-structure.md)
+- [Laying out your dialog](docs/content/dev-tools/component-management/dialog-layout.md)
+- [Defining dialog fields, setting attributes](docs/content/temp/widget-annotations.md)
+    - [Configuring RichTextEditor](docs/content/dev-tools/component-management/dialog-fields/configuring-rte.md)
+    - [Grouping fields with FieldSet](docs/content/dev-tools/component-management/dialog-fields/configuring-fieldset.md)
+    - [Multiplying Fields](docs/content/dev-tools/component-management/dialog-fields/configuring-multifield.md)
+- [Reusing code and making it brief](docs/content/dev-tools/component-management/reusing-code.md)
+- [Customizing the ToolKit to your needs](docs/content/dev-tools/component-management/customizing-toolkit.md)
+- [Additional properties of components, dialogs and fields](docs/content/dev-tools/component-management/additional-properties.md)
 
 #### Enhanced authoring experience
 

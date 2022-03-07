@@ -1,10 +1,8 @@
 <!--
 layout: md-content
 title: Injectors
-tags: test2
+order: 4
 -->
-[Main page](../../README.md)
-
 ## Enhancing AEM Components' back-end with advanced Injectors
 
 [Injectors](https://sling.apache.org/documentation/bundles/models.html#custom-injectors-1) are a powerful feature of
@@ -14,7 +12,7 @@ back AEM components. This reduces boilerplate code and simplifies authoring as w
 Exadel Toolbox Authoring Kit (*ToolKit*) offers a number of Injectors you can use in your projects: both bound to other
 ToolKit features and independent.
 
-#### Injector for EToolbox Lists
+### Injector for EToolbox Lists
 
 You can use it to inject the content of an EToolbox List directly into your Sling model. This injector can be used with
 either a field, a method, or a constructor argument. You can retrieve either a *Collection* / *List* of list items or a
@@ -53,7 +51,7 @@ public TestModelEToolboxList(@EToolboxList("/content/etoolbox-lists/myList") @Na
 }
 ```
 
-#### Injector for a child (or relative) resource
+### Injector for a child (or relative) resource
 
 it is often needed to inject a relative resource (by its path) or a derived Sling model into the current model. Usually,
 this is achieved through such annotations as *@ChildResource* or *@ChildResourceWithRequest*. However both solutions
@@ -141,7 +139,7 @@ The same principle applies to the *postfix* property.
 Note: the `@Child` annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, use the notation like `(@Child @Named SomeModel argument)` and annotate the constructor itself with `@Inject`.
 
-#### Injector for a list of child resources
+### Injector for a list of child resources
 
 The `@Children` injector follows much the same pattern as the `@Child` annotation. The differences are:
 
@@ -194,14 +192,14 @@ Note: the `@Children` annotation can be used with either a field, a method, or a
 constructor, write it like `(@Children @Named("path") List<ListItemModel> argument)` or
 else `(@Children(name = "path") @Named List<ListItemModel> argument)` and also annotate the constructor itself with `@Inject`.
 
-#### Injector for request parameters
+### Injector for request parameters
 
 The `@RequestParam` annotation is used to inject a request parameter. The annotated member can be of type *String* or *Object*, then a value coerced to string is injected. Else, the parameter can be of type *RequestParameter* (including a list or an array of that type) or *RequestParameterMap* so that the corresponding objects obtained via the *SlingHttpServletRequest* could be injected.
 
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, use the notation like `(@RequestParam @Named String argument)` and annotate the constructor itself with `@Inject`.
 
-#### Injector for request selectors
+### Injector for request selectors
 
 The `@RequestSelectors` annotation can be used to inject Sling request selectors. If the annotated member is of type *
 String* or *Object*, the "whole" selector string is injected. But if the annotated member represents an array or a list
@@ -222,7 +220,7 @@ private String[] selectorsArray; // Will inject the array of selectors
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, use the notation like `(@RequestSelectors @Named String argument)` and annotate the constructor itself with `@Inject`.
 
-#### Injector for request suffix
+### Injector for request suffix
 
 The `@RequestSuffix` is used to inject a Sling request suffix. If the annotated member is of type *String* or *Object*, the string value of suffix is injected. If the annotated member is of type *Resource*, the injector will inject the corresponding JCR resource.
 

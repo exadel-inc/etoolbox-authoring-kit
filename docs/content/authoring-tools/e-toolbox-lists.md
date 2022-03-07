@@ -1,9 +1,7 @@
 <!--
 layout: md-content
-title: Lists
-tags: test2
+title: Etoolbox Lists
 -->
-[Main page](../../README.md)
 
 ## Managing structured data with Exadel Toolbox Lists
 
@@ -125,4 +123,3 @@ public class MyComponent {
     String optionList;
 }
 ```
-

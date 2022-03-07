@@ -1,9 +1,8 @@
 <!--
 layout: md-content
 title: Dialog layout
+order: 2
 -->
-
-[Main page](../../../README.md)
 
 ## Laying out your dialogs
 
@@ -65,7 +64,7 @@ public class MyComponent {
     String field3;
 }
 ```
- Tabs declared this way are virtually "inherited" from a superclass to a descendant class. The following setup is valid:
+Tabs declared this way are virtually "inherited" from a superclass to a descendant class. The following setup is valid:
 
 ```java
 @Tabs({
@@ -168,5 +167,5 @@ Then again, same as for Tabs and Accordion, `@FixedColumns` can be used as an in
 ***
 #### See also
 
-- [Defining dialog fields, setting attributes](./component-structure.md)
-- [Reusing code and making it brief](./reusing-code.md)
+- [Defining dialog fields, setting attributes](component-structure.md)
+- [Reusing code and making it brief](reusing-code.md)

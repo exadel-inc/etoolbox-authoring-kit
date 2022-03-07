@@ -1,10 +1,8 @@
 <!--
 layout: md-content
-title: Fieldset
+title: Configuring Fieldset
+order: 4
 -->
-
-[Main page](../../../README.md)
-
 ## Grouping fields with FieldSet
 
 * [@FieldSet](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/FieldSet.html)

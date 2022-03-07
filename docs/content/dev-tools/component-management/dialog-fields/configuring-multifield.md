@@ -1,10 +1,8 @@
 <!--
 layout: md-content
-title: Multiplying fields
+title: Configuring Multifield
+order: 5
 -->
-
-[Main page](../../../README.md)
-
 ## Multiplying fields
 
 ### MultiField

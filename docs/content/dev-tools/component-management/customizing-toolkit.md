@@ -1,9 +1,8 @@
 <!--
 layout: md-content
 title: Customizing Toolkit
-tags: test2
+order: 6
 -->
-[Main page](../../README.md)
 
 ## Customizing the ToolKit to your needs
 
