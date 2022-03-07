@@ -1,12 +1,10 @@
 <div class="article-container container d-flex mb-150">
   <div class="article-title">
-    <h3 class="m-2">Exadel Authoring Kit Digest</h3>
-    <p class="fw-300 m-2">
-      Insights on AEM and Adobe Experience Manager use cases with technical tips and tricks from the creators of <span>MarTech solutions</span>
-    </p>
+    <h3 class="m-2">{{ landing.articleSection.title }}</h3>
+    <p class="fw-300 m-2">{{ landing.articleSection.description | safe }}</p>
   </div>
   <ul class="article-list">
-    {% for article in landing.articleSection %}
+    {% for article in landing.articleSection.articles %}
       <li class="article-item">
         <a class="article-link text-white" href="{{ article.linkUrl }}" target="_blank">
           <h5 class="fs-1 article-item-title mb-2">{{ article.title }}</h5>
