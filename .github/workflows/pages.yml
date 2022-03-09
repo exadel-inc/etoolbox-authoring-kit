@@ -15,7 +15,6 @@ jobs:
             -   name: Use Node v${{ env.node-version }}
                 uses: actions/setup-node@v2
                 with:
-                    cache: 'npm'
                     node-version: ${{ env.node-version }}
             -   name: Install NPM Dependencies
                 run: npm ci
