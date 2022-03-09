@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /404.html
+Sitemap: https://exadel-ink.github.io/etoolbox-authoring-kit/sitemap.xml
