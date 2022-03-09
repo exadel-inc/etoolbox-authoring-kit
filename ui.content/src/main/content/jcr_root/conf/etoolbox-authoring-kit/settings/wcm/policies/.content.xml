@@ -31,6 +31,7 @@
                         jcr:title="EToolbox Content Blueprints"
                         sling:resourceType="wcm/core/components/policy/policy"
                         components=""
+                        childrenLimit="1"
                         policyResourceType="wcm/foundation/components/responsivegrid">
                     </content-blueprints>
                 </responsivegrid>
