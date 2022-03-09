@@ -1,5 +1,5 @@
 <!--
-layout: md-content
+layout: content
 title: Injectors
 order: 4
 -->
@@ -20,7 +20,7 @@ map depending on the type of the underlying variable (or else the return type of
 
 To get the collection / list of items, use a notation as the following:
 
-```
+```java
 @EToolboxList("/content/etoolbox-lists/contentList")
 private List<SimpleListItem> itemsListResource;
 
@@ -33,7 +33,7 @@ model will go (if it is adapted from a *Resource*). Generally, this injector wor
 
 To get the map, type it as:
 
-```
+```java
 @EToolboxList(value = "/content/etoolbox-lists/contentList", keyProperty = "textValue")
 private Map<String, EToolboxListInjectorTest.LocalListItemModel> itemsMapTestModel;
 
@@ -44,7 +44,7 @@ key. By default it is the *jcr:title* property.
 
 When applying the injector to a constructor, please use the following format:
 
-```
+```java
 @Inject
 public TestModelEToolboxList(@EToolboxList("/content/etoolbox-lists/myList") @Named List<Resource> listResource) {
     this.itemsListResourceFromMethodParameter = listResource;
@@ -67,7 +67,7 @@ Among the advantages are:
 
 Consider the following code samples:
 
-```
+```java
 @Child
 private Resource childResource; // The direct child of the current resource by the self-implied name "childResource" is injected
 
@@ -102,7 +102,7 @@ fieldset2_description = "Moon"
 
 There are two obvious "sub-resources" within this structure. They can be addressed to separately like in the sample:
 
-```
+```java
 @Child(prefix = "fieldset1_")
 private TextDescriptionFieldset first;
 
@@ -113,7 +113,6 @@ private TextDescriptionFieldset second;
 While the model itself can have the following listing:
 
 ```java
-
 @Model(adaptables = Resource.class)
 public class TextDescriptionFieldset {
 
@@ -150,7 +149,7 @@ The `@Children` injector follows much the same pattern as the `@Child` annotatio
 
 See the following samples:
 
-```
+```java
     @Children
     private List<Resource> list; // Will inject children of the subresource named "list" of the current resource
 
@@ -170,7 +169,7 @@ See the following samples:
 
 One or more filters can be specified as references to classes that implement `Predicate<Resource>`:
 
-```
+```java
 @Children(name = "list", filters = DateIsNotFuture.class)
 private List<ListItemModel> listItemModels;
 
@@ -207,7 +206,7 @@ of strings or objects, selectors are injected one by one in the underlying *List
 
 See the code samples:
 
-```
+```java
 @RequestSelectors
 private String selectorsString; // Will inect all selectors like "seklector1.selector2.selector3"
 

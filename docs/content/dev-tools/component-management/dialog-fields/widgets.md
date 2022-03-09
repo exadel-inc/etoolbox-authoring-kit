@@ -1,5 +1,5 @@
 <!--
-layout: md-content
+layout: content
 title: Widgets (A-Z)
 order: 2
 -->

@@ -1,5 +1,5 @@
 <!--
-layout: md-content
+layout: content
 title: Customizing ToolKit
 order: 6
 -->

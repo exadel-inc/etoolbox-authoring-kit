@@ -1,5 +1,5 @@
 <!--
-layout: md-content
+layout: content
 title: Component Structure
 order: 1
 -->
