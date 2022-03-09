@@ -14,7 +14,7 @@
 (function (author, ns) {
     'use strict';
 
-    ns.EToolboxContentBlueprints = ns.EToolboxContentBlueprints || {}
+    ns.EToolboxContentBlueprints = ns.EToolboxContentBlueprints || {};
 
     /**
      * Join JCR path parts
@@ -30,7 +30,7 @@
     ns.EToolboxContentBlueprints.resolveJCRPath = function (path, ...rest) {
         if (rest.length > 0) return ns.EToolboxContentBlueprints.resolveJCRPath(ns.EToolboxContentBlueprints.joinJCRPath(path, ...rest));
         return path.replace(/\/$/, '').replace(/\/_jcr_content\//g, '/jcr:content/');
-    }
+    };
 
     /**
      * Resolve path to the JCR content
@@ -46,7 +46,7 @@
         if (!resourceType) return 'No component to insert';
         if (!parentPath) return 'Insertion target is incorrect';
 
-        const component = Granite.author.components.find({resourceType})[0];
+        const component = Granite.author.components.find({ resourceType })[0];
         if (!component) return 'Component resourceType is not is the list';
 
         const componentPath = component.getPath();
@@ -101,7 +101,7 @@
                 if (!isValidComponentNode(node)) continue;
                 const path = ns.EToolboxContentBlueprints.resolveJCRPath(parentPath, '/', rootName, '/', name);
                 const type = node['sling:resourceType'];
-                return JSON.stringify({type, path, name});
+                return JSON.stringify({ type, path, name });
             }
         } catch {
             // no action
@@ -110,5 +110,4 @@
     };
     /** Fetch action unsuccessful response handler stub */
     ns.EToolboxContentBlueprints.mapImportResourcePathError = () => '';
-
 }(Granite.author, Granite));
