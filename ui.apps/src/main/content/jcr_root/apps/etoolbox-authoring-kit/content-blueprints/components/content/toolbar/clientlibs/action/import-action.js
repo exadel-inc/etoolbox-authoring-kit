@@ -5,7 +5,7 @@
     const IMPORT_ACTION = 'content-blueprint-import-action';
 
     const JCR_CONTENT = '/jcr:content/';
-    const NEWPAR_TYPES = ['wcm/foundation/components/parsys/newpar', 'wcm/foundation/components/responsivegrid/new'];
+    const NEWPAR_TYPES = ['foundation/components/parsys/newpar', 'wcm/foundation/components/parsys/newpar', 'wcm/foundation/components/responsivegrid/new'];
     const IMPORT_DIALOG_PATH = '/mnt/override/apps/etoolbox-authoring-kit/content-blueprints/components/content/toolbar/dialog/_cq_dialog.html';
 
     function condition(editable) {
