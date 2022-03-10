@@ -1,6 +1,8 @@
 name: GH Pages Build and Deploy
 
 on:
+    push:
+        branches: [ master ]
     workflow_dispatch:
 
 env:

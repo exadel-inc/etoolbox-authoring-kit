@@ -1,0 +1,19 @@
+brand: Exadel Authoring Kit for AEM
+description: Exadel Authoring Kit for AEM
+
+url: "https://exadel-ink.github.io"
+urlPrefix: "/etoolbox-authoring-kit/"
+
+apacheLicense: "https://github.com/exadel-inc/etoolbox-authoring-kit/blob/master/LICENSE"
+github:
+  url: "https://github.com/exadel-inc/etoolbox-authoring-kit"
+  srcUrl: "https://github.com/exadel-inc/etoolbox-authoring-kit/tree/master"
+exadel: "https://exadel.com/"
+
+rewriteRules:
+  - regexp: "docs/content/(.+)\\.md"
+    value: "/etoolbox-authoring-kit/content/$1"
+  - regexp: "(.+)\\.java"
+    value: "https://github.com/exadel-inc/etoolbox-authoring-kit/blob/master/$1.java"
+  - regexp: "docs/img/(.+)$"
+    value: "/etoolbox-authoring-kit/assets/img/$1"

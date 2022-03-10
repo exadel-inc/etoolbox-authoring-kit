@@ -1,0 +1,68 @@
+@import (reference) "../../common/variables.less";
+
+.banner {
+  &-container {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    @media @xs-sm {
+      margin-bottom: 50px;
+    }
+  }
+
+  &-content {
+    width: 60%;
+    flex-direction: column;
+    justify-content: center;
+    padding: 100px 0 100px;
+
+    & > h2 {
+      @media @xs-sm {
+        text-align: center;
+      }
+    }
+
+    &-section {
+      width: 80%;
+      @media @xs-sm {
+        width: 100%;
+      }
+    }
+
+    &-text {
+      padding-right: 20%;
+      @media @xs-sm {
+        padding-right: 0;
+      }
+    }
+
+    @media @xs-sm {
+      width: 100%;
+    }
+  }
+
+  &-logo {
+    width: 40%;
+
+    & > svg {
+      position: absolute;
+      top: 20px;
+      right: -20px;
+    }
+
+    @media @xs-sm {
+      display: none;
+    }
+  }
+
+  &-btns-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+
+    @media @xs-sm {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

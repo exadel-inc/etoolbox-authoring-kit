@@ -1,0 +1,42 @@
+.btn {
+    margin-top: 5px;
+    margin-right: 5%;
+    padding: 0 15px;
+    width: fit-content;
+    height: fit-content;
+    min-height: 62px;
+    display: block;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 8px;
+    text-decoration: none;
+    line-height: 3;
+    text-align: center;
+    z-index: 4;
+    &:hover {
+        text-decoration: none;
+    }
+    &-blue {
+        border-color: @landing-blue;
+        background-color: @landing-blue;
+        color: #FFF !important;
+        &:hover {
+            background-color: mix(#65BDEA, #fff, 80%);
+            border-color: mix(#65BDEA, #fff, 80%);
+        }
+    }
+    &-mint {
+        border-color: @landing-mint;
+        color: @landing-mint !important;
+        &:hover {
+            background-color: #02b58b;
+            color: #fff !important;
+            border-color: #02b58b;
+        }
+    }
+    &-header {
+        height: 40px;
+        width: 150px;
+        line-height: 2;
+    }
+}
