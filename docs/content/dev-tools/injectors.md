@@ -209,7 +209,7 @@ See the code samples:
 
 ```
 @RequestSelectors
-private String selectorsString; // Will inect all selectors like "seklector1.selector2.selector3"
+private String selectorsString; // Will inject all selectors like "selector1.selector2.selector3"
 
 @RequestSelectors
 private List<String> selectorsList; // Will inject the list of selectors

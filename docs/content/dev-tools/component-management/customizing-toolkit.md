@@ -1,6 +1,6 @@
 <!--
 layout: md-content
-title: Customizing ToolKit
+title: Customization
 order: 6
 -->
 
