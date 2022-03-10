@@ -2,83 +2,83 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/authoring-tools/etoolbox-lists</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/injectors</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/option-provider</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/getting-started/common-use-cases</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/getting-started/installation</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/component-management/additional-properties</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/component-management/component-structure</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/component-management/customizing-toolkit</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
-  </url>
-  <url>
-    <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/component-management/reusing-code</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
-  </url>
-  <url>
-    <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/depends-on/api</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
-  </url>
-  <url>
-    <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/depends-on/examples</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/component-management/dialog-layout</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
+  </url>
+  <url>
+    <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/component-management/reusing-code</loc>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
+  </url>
+  <url>
+    <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/depends-on/api</loc>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
+  </url>
+  <url>
+    <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/depends-on/examples</loc>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/depends-on/introduction</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/depends-on/usage</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/component-management/dialog-fields/configuring-fieldset</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/component-management/dialog-fields/configuring-multifield</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/component-management/dialog-fields/configuring-rte</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/component-management/dialog-fields/dialog-field</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit/content/dev-tools/component-management/dialog-fields/widgets</loc>
-    <lastmod>2022-03-09T22:47:39.377Z</lastmod>
+    <lastmod>2022-03-10T12:50:04.014Z</lastmod>
   </url>
   <url>
     <loc>https://exadel-ink.github.io/etoolbox-authoring-kit</loc>
-    <lastmod>2022-03-09T22:47:09.243Z</lastmod>
+    <lastmod>2022-03-10T12:49:39.110Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>

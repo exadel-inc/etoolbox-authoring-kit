@@ -1374,6 +1374,7 @@ esl-d-sidebar .sidebar-md-headings-list {
   height: max-content;
   background-image: url("../assets/landing/bv-background.svg");
   background-position: bottom left;
+  background-size: cover;
   background-repeat: no-repeat;
   align-content: center;
 }
@@ -1425,6 +1426,8 @@ esl-d-sidebar .sidebar-md-headings-list {
 @media (min-width: 1px) and (max-width: 599px) {
   .bv-item {
     text-align: start;
+    margin-left: 0!important;
+    margin-right: 0!important;
   }
 }
 .bv-item-title {
@@ -1577,18 +1580,15 @@ esl-d-sidebar .sidebar-md-headings-list {
     max-width: 90%;
   }
 }
-.job-btns {
+.job-btns-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
   justify-content: center;
 }
-.job-btns > .btn {
-  width: fit-content;
-  margin: 1.5rem;
-}
-@media (min-width: 1px) and (max-width: 599px) {
-  .job-btns {
-    margin-bottom: 50px;
+@media (min-width: 1px) and (max-width: 991px) {
+  .job-btns-container {
     width: 100%;
-    align-items: center;
   }
 }
 .btn {
