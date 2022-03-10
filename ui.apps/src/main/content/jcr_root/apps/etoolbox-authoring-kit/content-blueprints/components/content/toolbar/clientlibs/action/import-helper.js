@@ -41,11 +41,11 @@
      * Check if the passed resource type can be placed inside of passed path
      * */
     ns.canInsert = function (resourceType, parentPath) {
-        if (!resourceType) return 'No component to insert';
-        if (!parentPath) return 'Insertion target is incorrect';
+        if (!resourceType) return Granite.I18n.get('No component to insert');
+        if (!parentPath) return Granite.I18n.get('Insertion target is incorrect');
 
         const component = author.components.find({ resourceType })[0];
-        if (!component) return 'Component resourceType is not is the list';
+        if (!component) return Granite.I18n.get('Component resourceType is not is the list');
 
         const componentPath = component.getPath();
         const componentRelativePath = componentPath.replace(/^\/[a-z]+\//, '');
@@ -55,13 +55,13 @@
         const allowedComponents = author.components.allowedComponentsFor[resolvedPath];
 
         if (!allowedComponents || !allowedComponents.length) {
-            return `No allowed components found for '${resolvedPath}'`;
+            return Granite.I18n.get('No allowed components found for {0}').replace('{0}', resolvedPath);
         }
 
         if (allowedComponents.indexOf(componentPath) === -1 &&
             allowedComponents.indexOf(componentRelativePath) === -1 &&
             allowedComponents.indexOf(componentGroup) === -1) {
-            return `Component '${component.getTitle()}' is not allowed for current target`;
+            return Granite.I18n.get('Component {0} is not allowed for current target').replace('{0}', component.getTitle());
         }
         return true;
     };
