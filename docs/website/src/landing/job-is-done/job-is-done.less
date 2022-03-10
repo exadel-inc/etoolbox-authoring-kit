@@ -1,38 +1,36 @@
 .job {
-    &-container {
-        margin-top: 50px;
-        padding: 50px;
-        min-height: 62px;
-        justify-content: center;
-        flex-direction: column;
-        @media @xs {
-            padding: 0.75rem;
-            margin-bottom: 200px;
-        }
+  &-container {
+    margin-top: 50px;
+    padding: 50px;
+    min-height: 62px;
+    justify-content: center;
+    flex-direction: column;
+    @media @xs {
+      padding: 0.75rem;
+      margin-bottom: 200px;
     }
-    &-block {
-        margin: auto;
-        max-width: 50%;
-        height: 300px;
-        flex-direction: column;
-        justify-content: center;
-        text-align: center;
-        @media @xs-sm {
-            max-width: 90%;
-        }
+  }
+
+  &-block {
+    margin: auto;
+    max-width: 50%;
+    height: 300px;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    @media @xs-sm {
+      max-width: 90%;
     }
-    &-btns {
-        justify-content: center;
-        &>.btn {
-            width: fit-content;
-            margin-left: 1.5rem;
-            margin-right: 1.5rem;
-        }
-        @media @xs {
-            margin-bottom: 50px;
-            width: 100%;
-            align-items: center;
-            flex-direction: column;
-        }
+  }
+
+  &-btns-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+
+    @media @xs-sm {
+      width: 100%;
     }
+  }
 }
