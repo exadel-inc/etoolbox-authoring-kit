@@ -4,7 +4,9 @@ module.exports = {
   mode: 'development',
   devtool: 'source-map',
   entry: {
-    'localdev': './src/localdev.ts',
+    'site': './src/site.ts',
+    'polyfill-light': './src/polyfill-light.ts',
+    'polyfill-medium': './src/polyfill-medium.ts'
   },
   resolve: {
     modules: ['../node_modules'],

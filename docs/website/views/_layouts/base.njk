@@ -22,8 +22,14 @@
     {# Site icon #}
     <link rel="icon" type="image/png" href="{{ '/assets/logo-64x64.png' | url }}"/>
 
+    {% if not env.isDev %}
+      {% include 'analytics.njk' %}
+    {% endif %}
+    {% block polyfils %}
+      {% include 'polyfill.njk' %}
+    {% endblock %}
     {% block headlib %}
-      <link rel="stylesheet" type="text/css" href="{{ '/bundles/localdev.css' | url }}"/>
+      <link rel="stylesheet" type="text/css" href="{{ '/bundles/site.css' | url }}"/>
     {% endblock %}
     {% block head %}{% endblock %}
   </head>
@@ -39,7 +45,7 @@
     {% endif %}
 
     {% block bodylib %}
-      <script src="{{ '/bundles/localdev.js' | url }}"></script>
+      <script src="{{ '/bundles/site.js' | url }}"></script>
    {% endblock %}
   </body>
 </html>

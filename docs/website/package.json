@@ -9,7 +9,7 @@
     "clean": "rimraf dist/**",
     "build:prepare": "node build/copy.js",
     "build:eleventy": "npx @11ty/eleventy -- --env=production",
-    "build:less": "lessc src/localdev.less dist/bundles/localdev.css",
+    "build:less": "lessc src/site.less dist/bundles/site.css",
     "build:ts": "webpack --mode=production",
     "watch:content": "chokidar \"../content/**/*\" -c \"npm run build:prepare\"",
     "watch:eleventy": "npx @11ty/eleventy --serve --port=3005 -- --env=development",
