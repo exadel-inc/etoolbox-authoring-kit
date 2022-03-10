@@ -9,12 +9,12 @@ class EAKRssService {
     year: 'numeric'
   });
 
-  static async load({feed, count, fallback}, callback) {
+  static async load({feed, count, baseUrl, fallback}, callback) {
     const items = await EAKRssService.loadFeed(feed);
     const result = items
       .concat(fallback.items || [])
       .slice(0, count)
-      .map((item) => EAKRssService.parseItems(item, fallback.image));
+      .map((item) => EAKRssService.parseItems(item, baseUrl, fallback.image));
     callback(null, result);
   }
 
@@ -28,20 +28,21 @@ class EAKRssService {
     return [];
   }
 
-  static parseItems(item, imgFallback) {
+  static parseItems(item, baseUrl, imgFallback) {
     const {title, link, pubDate} = item;
     const tags = item.tags || item.categories;
     const content = item.contentSnippet || item.content;
-    const img = item.img || EAKRssService.extractImg(item) || imgFallback;
+    const img = item.img || EAKRssService.extractImg(item, baseUrl) || imgFallback;
     const date = EAKRssService.DATE_FORMATTER.format(new Date(pubDate));
     return {title, link, img, content, date, tags};
   }
 
-  static extractImg(item) {
+  static extractImg(item, baseUrl) {
     try {
       const {window} = new JSDOM(item['content:encoded']);
       const image = window.document.querySelector('img');
-      return image.src;
+      const imageSrc = image.src;
+      return imageSrc.startsWith('/') ? (baseUrl + imageSrc) : imageSrc;
     } catch {
       return '';
     }

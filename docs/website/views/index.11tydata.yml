@@ -85,50 +85,12 @@ landing:
       from the creators of MarTech solutions
 
     feed: 'https://exadel.com/news/tag/exadel-authoring-kit-for-aem/feed/'
+    baseUrl: 'https://exadel.com'
     count: 3
     moreText: Learn more
 
     fallback:
       image: "./assets/landing/article-section/img.jpg"
-      items:
-        - title: 'How to Add Image Management to an AEM TouchUI Dialog: Tutorial'
-          link: https://exadel.com/news/how-to-add-image-management-to-an-aem-touchui-dialog-tutorial
-          img: "./assets/landing/article-section/img-1.jpg"
-          pubDate: 9/12/2021
-          content: >
-            Discussing ways to add images to your AEM component via a Touch UI dialog. The task has never been a
-            straightforward one, but using Exadel Authoring Kit for AEM makes it much easier.
-          tags:
-            - AEM
-            - Exadel Authoring Kit for AEM
-            - Open Source
-            - Touch UI
-
-        - title: 'Exadel Toolbox Lists: A Brand-New Way to Create a Generic List in AEM'
-          link: https://exadel.com/news/exadel-toolbox-lists-a-brand-new-way-to-create-a-generic-list-in-aem/
-          img: "./assets/landing/article-section/img-2.jpg"
-          pubDate: 1/8/2021
-          content: >
-            In this article we explain how Exadel Toolbox Lists help to create, edit, and retrieve dictionary-like and
-            table-like data (option lists, built-in data references, etc.) for use with AEM components.
-          tags:
-            - AEM
-            - AEM Configuration
-            - Exadel Authoring Kit for AEM
-            - Open Source
-            - TouchUI
-
-        - title: 'Exadel Authoring Kit for Adobe Experience Manager Version 2 Makes AEM Authoring Easier'
-          link: https://exadel.com/news/exadel-authoring-kit-for-adobe-experience-manager-version-2-makes-aem-authoring-easier/
-          img: "./assets/landing/article-section/img-3.jpg"
-          pubDate: 5/18/2021
-          content: >
-            Exadel MarTech team released the second version of Exadel Authoring Kit for Adobe Experience Manager.
-          tags:
-            - AEM
-            - Exadel Authoring Kit for AEM
-            - Open Source
-            - TouchUI
 
   promo:
     title: Let the kit get the job done!

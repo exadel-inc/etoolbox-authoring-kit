@@ -1,7 +1,7 @@
 brand: Exadel Authoring Kit for AEM
 description: Exadel Authoring Kit for AEM
 
-url: "https://localhost:3005"
+url: "https://exadel-ink.github.io"
 urlPrefix: "/etoolbox-authoring-kit/"
 
 apacheLicense: "https://github.com/exadel-inc/etoolbox-authoring-kit/blob/master/LICENSE"

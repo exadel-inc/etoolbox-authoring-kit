@@ -1,5 +1,5 @@
 <!--
-layout: md-content
+layout: content
 title: Configuring RTE
 order: 3
 -->
@@ -19,7 +19,7 @@ The built-in plugin#feature pairs are stored as constants of `RteFeatures` class
 
 The nearly maximal set of built-in features for a RichTextEditor can be exposed in the following manner:
 
-```
+```java
 @RichTextEditor(
     features = {
         RteFeatures.Popovers.CONTROL_ALL,
@@ -50,7 +50,7 @@ In addition to built-in features, you can append features provided by a custom R
 
 This is how you alter any of the predefined popovers or compose a different popover (from either built-in, or custom features, or both). See the following snippet that indicates appending a custom feature, then two custom popovers to a feature set:
 
-```
+```java
 @RichTextEditor ( /* ... */
     features = {
         "some#feature",
@@ -85,7 +85,7 @@ If neither *features* nor *fullscreenFeatures* are populated, a default set of b
 
 A user can override existing or add new icon definitions for toolbar buttons via the *icons* property. Several icon definitions may be missing from the Coral installation. To provide a complete user experience with the mentioned full feature set, you may use the following snippet:
 
-```
+```java
 @RichTextEditor ( /* ... */
     icons = {
         @IconMapping(command = "#edit", icon = "copy"),
@@ -103,7 +103,7 @@ A user can override existing or add new icon definitions for toolbar buttons via
 
 One substantial concern for a RichTextEditor component is the rules for processing the input from the clipboard. A user may specify *defaultPasteMode* and *htmlPasteRules* for dealing with non-plaintext clipboard content as in the snippet below:
 
-```
+```java
 @RichTextEditor ( /* ... */
     defaultPasteMode = PasteMode.WORDHTML,
     htmlPasteRules = @HtmlPasteRules(
@@ -120,7 +120,7 @@ One substantial concern for a RichTextEditor component is the rules for processi
 
 Setting the [htmlLinkRules](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/configure-rich-text-editor-plug-ins.html?lang=en#linkstyles) property allows you to also control the way internal and external links in pasted text are processed. See the following snippet:
 
-```
+```java
 @RichTextEditor ( /* ... */
     htmlLinkRules = @HtmlLinkRules(
         cssInternal = "my-internal-link-style",
@@ -137,7 +137,7 @@ Setting the [htmlLinkRules](https://experienceleague.adobe.com/docs/experience-m
 
 Among the commonly user RTE assets is the *misctools#specialchars* feature that represents an "Insert symbol"-like dialog. The set of Unicode characters to offer may be defined in specialCharacters property. This is an array that stores either a single HTML entity definition or a Unicode range (decimal values) as in the following snippet:
 
-```
+```java
 @RichTextEditor ( /* ... */
     specialCharacters = {
         @Characters(name = "Copyright", entity = "&copy"),
@@ -154,7 +154,7 @@ Among the commonly user RTE assets is the *misctools#specialchars* feature that 
 
 Set of formatting tags for a "paraformat" button can be defined in [formats](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/configure-rich-text-editor-plug-ins.html?lang=en#operations) property as in the snippet:
 
-```
+```java
 @RichTextEditor ( /* ... */
     formats = {
         @ParagraphFormat(tag = "h1", description = "My custom header"),
@@ -165,7 +165,7 @@ Set of formatting tags for a "paraformat" button can be defined in [formats](htt
 
 RichTextEditor allows altering the visual representation of the text by [CSS rules](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/configure-rich-text-editor-plug-ins.html?lang=en#textstyles). Property *externalStyleSheets* is for specifying an array of strings representing paths to JCR-stored CSS files that will be applied to the RTE content. After *externalStyleSheets* are set, you can populate the *styles* property with the CSS classes that will be offered to a use in styles dropdown, as in the below snippet:
 
-```
+```java
 @RichTextEditor ( /* ... */
     externalStyleSheets = {
         "/etc/clientlibs/myLib/style1.css",

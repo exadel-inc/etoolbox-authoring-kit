@@ -1,5 +1,5 @@
 <!--
-layout: md-content
+layout: content
 title: Common Use Cases
 order: 2
 -->

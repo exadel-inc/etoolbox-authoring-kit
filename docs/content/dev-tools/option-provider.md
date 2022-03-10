@@ -1,5 +1,5 @@
 <!--
-layout: md-content
+layout: content
 title: Option Provider
 order: 3
 -->

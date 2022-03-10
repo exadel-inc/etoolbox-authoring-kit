@@ -1,5 +1,5 @@
 <!--
-layout: md-content
+layout: content
 title: Reusing Code
 order: 5
 -->
