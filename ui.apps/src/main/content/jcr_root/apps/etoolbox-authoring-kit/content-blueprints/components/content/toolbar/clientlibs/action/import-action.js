@@ -21,7 +21,7 @@
         const page = path.substr(0, path.indexOf(JCR_CONTENT) + JCR_CONTENT.length);
         const dialogPath = ns.EToolboxContentBlueprints.joinJCRPath(IMPORT_DIALOG_PATH, page);
         const dialogConfig = {
-            src: Granite.HTTP.externalize(dialogPath.replace(/\*\//, '')),
+            src: ns.HTTP.externalize(dialogPath.replace(/\*\//, '')),
             loadingMode: 'auto',
             layout: 'auto'
         };

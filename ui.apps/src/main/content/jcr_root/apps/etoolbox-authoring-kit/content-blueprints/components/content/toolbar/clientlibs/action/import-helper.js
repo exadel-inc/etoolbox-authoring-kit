@@ -14,47 +14,45 @@
 (function (author, ns) {
     'use strict';
 
-    ns.EToolboxContentBlueprints = ns.EToolboxContentBlueprints || {};
-
     /**
      * Join JCR path parts
      * */
-    ns.EToolboxContentBlueprints.joinJCRPath = function (path1, path2, ...rest) {
-        if (rest.length > 0) return ns.EToolboxContentBlueprints.joinJCRPath(ns.EToolboxContentBlueprints.joinJCRPath(path1, path2), ...rest);
+    ns.joinJCRPath = function (path1, path2, ...rest) {
+        if (rest.length > 0) return ns.joinJCRPath(ns.joinJCRPath(path1, path2), ...rest);
         return (path1 + '/' + path2).replace(/\/(\/)+/g, '/');
     };
 
     /**
      * Join and normalize JCR path. Removes ending '/'
      * */
-    ns.EToolboxContentBlueprints.resolveJCRPath = function (path, ...rest) {
-        if (rest.length > 0) return ns.EToolboxContentBlueprints.resolveJCRPath(ns.EToolboxContentBlueprints.joinJCRPath(path, ...rest));
+    ns.resolveJCRPath = function (path, ...rest) {
+        if (rest.length > 0) return ns.resolveJCRPath(ns.joinJCRPath(path, ...rest));
         return path.replace(/\/$/, '').replace(/\/_jcr_content\//g, '/jcr:content/');
     };
 
     /**
      * Resolve path to the JCR content
      * */
-    ns.EToolboxContentBlueprints.resolveJCRContentPath = function (path) {
-        return path ? ns.EToolboxContentBlueprints.joinJCRPath(path, '/_jcr_content/') : '';
+    ns.resolveJCRContentPath = function (path) {
+        return path ? ns.joinJCRPath(path, '/_jcr_content/') : '';
     };
 
     /**
      * Check if the passed resource type can be placed inside of passed path
      * */
-    ns.EToolboxContentBlueprints.canInsert = function (resourceType, parentPath) {
+    ns.canInsert = function (resourceType, parentPath) {
         if (!resourceType) return 'No component to insert';
         if (!parentPath) return 'Insertion target is incorrect';
 
-        const component = Granite.author.components.find({ resourceType })[0];
+        const component = author.components.find({ resourceType })[0];
         if (!component) return 'Component resourceType is not is the list';
 
         const componentPath = component.getPath();
         const componentRelativePath = componentPath.replace(/^\/[a-z]+\//, '');
         const componentGroup = 'group:' + component.getGroup();
 
-        const resolvedPath = ns.EToolboxContentBlueprints.resolveJCRPath(parentPath);
-        const allowedComponents = Granite.author.components.allowedComponentsFor[resolvedPath];
+        const resolvedPath = ns.resolveJCRPath(parentPath);
+        const allowedComponents = author.components.allowedComponentsFor[resolvedPath];
 
         if (!allowedComponents || !allowedComponents.length) {
             return `No allowed components found for '${resolvedPath}'`;
@@ -81,8 +79,8 @@
      * Add ending '/' to the form action.
      * @returns result path
      * */
-    ns.EToolboxContentBlueprints.setupInsertionFormTarget = function ($el, path) {
-        path = ns.EToolboxContentBlueprints.joinJCRPath(path, '/');
+    ns.setupInsertionFormTarget = function ($el, path) {
+        path = ns.joinJCRPath(path, '/');
         $el.closest('form[action]').attr('action', path);
         return path;
     };
@@ -90,7 +88,7 @@
     /**
      * Fetch action successful response handler to resolve first content component
      * */
-    ns.EToolboxContentBlueprints.mapImportResourcePath = function (response, parentName, parentPath) {
+    ns.mapImportResourcePath = function (response, parentName, parentPath) {
         try {
             const rootName = findRootName(response);
             if (!rootName) return '';
@@ -99,7 +97,7 @@
             for (const name of nodeNames) {
                 const node = root[name];
                 if (!isValidComponentNode(node)) continue;
-                const path = ns.EToolboxContentBlueprints.resolveJCRPath(parentPath, '/', rootName, '/', name);
+                const path = ns.resolveJCRPath(parentPath, '/', rootName, '/', name);
                 const type = node['sling:resourceType'];
                 return JSON.stringify({ type, path, name });
             }
@@ -109,5 +107,5 @@
         return '';
     };
     /** Fetch action unsuccessful response handler stub */
-    ns.EToolboxContentBlueprints.mapImportResourcePathError = () => '';
-}(Granite.author, Granite));
+    ns.mapImportResourcePathError = () => '';
+}(Granite.author, Granite.EToolboxContentBlueprints = (Granite.EToolboxContentBlueprints || {})));
