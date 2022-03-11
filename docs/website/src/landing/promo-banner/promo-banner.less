@@ -1,17 +1,24 @@
 @import (reference) "../../common/variables.less";
 
 .banner {
+  display: flex;
+  position: relative;
+
   &-container {
+    display: flex;
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
+
+    min-height: 500px;
+    margin-bottom: 200px;
     @media @xs-sm {
       margin-bottom: 50px;
     }
   }
 
   &-content {
-    width: 60%;
+    width: 90%;
     flex-direction: column;
     justify-content: center;
     padding: 100px 0 100px;
@@ -63,6 +70,27 @@
     @media @xs-sm {
       width: 100%;
       justify-content: center;
+    }
+    > .btn {
+      box-shadow: 0 0 30px 2px  rgba(255,255,255, .8);
+    }
+    > .btn.btn-sec {
+      background-color: white;
+    }
+  }
+
+  &-waves {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 50px);
+    > svg {
+      display: block;
+      width: 100%;
+      min-width: 100%;
+      height: 150%;
+      margin-top: -100px;
     }
   }
 }

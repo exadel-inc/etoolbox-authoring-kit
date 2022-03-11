@@ -1,42 +1,68 @@
 .btn {
-    margin-top: 5px;
-    margin-right: 5%;
-    padding: 0 15px;
-    width: fit-content;
-    height: fit-content;
-    min-height: 62px;
-    display: block;
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 8px;
+  margin-top: 5px;
+  margin-right: 5%;
+  padding: 0 15px;
+  width: fit-content;
+  height: fit-content;
+  min-height: 62px;
+  display: block;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 8px;
+  text-decoration: none;
+  line-height: 3;
+  text-align: center;
+  z-index: 4;
+
+  &:hover {
     text-decoration: none;
-    line-height: 3;
-    text-align: center;
-    z-index: 4;
+  }
+
+  &-blue {
+    border-color: @landing-blue;
+    background-color: @landing-blue;
+    color: #FFF;
+
     &:hover {
-        text-decoration: none;
+      color: #FFF;
+      background-color: mix(#65BDEA, #fff, 80%);
+      border-color: mix(#65BDEA, #fff, 80%);
     }
-    &-blue {
-        border-color: @landing-blue;
-        background-color: @landing-blue;
-        color: #FFF !important;
-        &:hover {
-            background-color: mix(#65BDEA, #fff, 80%);
-            border-color: mix(#65BDEA, #fff, 80%);
-        }
+
+    &.btn-sec {
+      color: @landing-blue;
+      background-color: transparent;
+
+      &:hover {
+        box-shadow: inset 0 0 1px 2px @landing-blue;
+      }
     }
-    &-mint {
-        border-color: @landing-mint;
-        color: @landing-mint !important;
-        &:hover {
-            background-color: #02b58b;
-            color: #fff !important;
-            border-color: #02b58b;
-        }
+  }
+
+  &-mint {
+    border-color: @landing-mint;
+    background-color: @landing-mint;
+    color: white;
+
+    &:hover {
+      background-color: #02b58b;
+      color: #fff;
+      border-color: #02b58b;
     }
-    &-header {
-        height: 40px;
-        width: 150px;
-        line-height: 2;
+
+    &.btn-sec {
+      color: @landing-mint;
+      background-color: transparent;
+
+      &:hover {
+        box-shadow: inset 0 0 1px 2px @landing-mint;
+      }
     }
+  }
+
+  &-header {
+    height: 40px;
+    width: 150px;
+    line-height: 2;
+  }
 }
