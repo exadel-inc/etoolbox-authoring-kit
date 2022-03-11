@@ -12,7 +12,7 @@
 
     <artifactId>etoolbox-authoring-kit-core</artifactId>
 
-    <name>${project.prettyName} - Core</name>
+    <name>Exadel Toolbox Authoring Kit - Core</name>
     <description>API and core functionality module of Exadel Toolbox Authoring Kit</description>
 
     <packaging>jar</packaging>
