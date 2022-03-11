@@ -30,11 +30,14 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.adapter.AdapterManager;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.factory.ModelFactory;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +60,14 @@ public class ChildrenInjector implements Injector {
     private static final Logger LOG = LoggerFactory.getLogger(ChildrenInjector.class);
 
     public static final String NAME = "eak-children-resource-injector";
+
+    private static final Predicate<Resource> DEFAULT_FILTER = resource -> true;
+
+    @Reference
+    private AdapterManager adapterManager;
+
+    @Reference
+    private ModelFactory modelFactory;
 
     /**
      * Retrieves the name of the current instance
@@ -108,7 +119,7 @@ public class ChildrenInjector implements Injector {
             return null;
         }
 
-        List<Object> children = getFilteredInjectables(currentResource, type, annotation);
+        List<Object> children = getFilteredInjectables(adaptable, currentResource, type, annotation);
         if (CollectionUtils.isEmpty(children)) {
             LOG.debug("Failed to inject child resources for the name \"{}\"", resourcePath);
             return null;
@@ -122,69 +133,86 @@ public class ChildrenInjector implements Injector {
 
     /**
      * Retrieves the filtered and adapted list of child objects according to the {@code Children} annotation parameters
-     * @param current    Current {@code Resource}
-     * @param type       The {@code Type} to adapt to
-     * @param annotation {@code Children} annotation object holding the settings
+     * @param source          Initial {@link SlingHttpServletRequest} or {@link Resource} instance
+     * @param currentResource Current {@code Resource}
+     * @param type            The {@code Type} to adapt to
+     * @param settingsHolder  {@code Children} annotation object containing the adaptation settings
      * @return {@code List<Object>} list of filtered and adapted objects, or an empty list
      */
-    private static List<Object> getFilteredInjectables(Resource current, Type type, Children annotation) {
-        Predicate<Resource> resourceFilter = getResourceFilter(annotation);
-        List<Resource> filteredChildren = StreamSupport.stream(current.getChildren().spliterator(), false)
+    private List<Object> getFilteredInjectables(
+        Object source,
+        Resource currentResource,
+        Type type,
+        Children settingsHolder) {
+
+        Predicate<Resource> resourceFilter = getResourceFilter(settingsHolder);
+        List<Resource> filteredChildren = StreamSupport.stream(currentResource.getChildren().spliterator(), false)
             .filter(resourceFilter)
             .collect(Collectors.toList());
-        return getAdaptedObjects(filteredChildren, annotation.prefix(), annotation.postfix(), type);
+        return getAdaptedObjects(source, filteredChildren, type, settingsHolder);
+    }
+
+    /**
+     * Retrieves the list of objects adapted from the initial {@code SlingHttpServletRequest} or {@code Resource} and
+     * the retrieved or constructed child (relative) resources. The adaptation honors the optional properties filter
+     * defined by the {@code prefix} and {@code postfix}
+     * @param source         Initial {@link SlingHttpServletRequest} or {@link Resource} instance
+     * @param childResources Collection of child (relative) resources retrieved or constructed for the current
+     *                       adaptable
+     * @param type           Type (parameter type) of receiving Java collection or array
+     * @param settingsHolder {@code Children} annotation object containing the adaptation settings
+     * @return List of adapted objects
+     */
+    private List<Object> getAdaptedObjects(Object source, List<Resource> childResources, Type type, Children settingsHolder) {
+        final Class<?> actualType = TypeUtil.extractComponentType(type);
+        if (actualType == null) {
+            return null;
+        }
+        return childResources.stream()
+            .map(resource -> InstantiationUtil.getFilteredResource(resource, settingsHolder.prefix(), settingsHolder.postfix()))
+            .filter(resource -> !resource.getValueMap().isEmpty())
+            .map(resource -> getAdaptedObject(source, resource, actualType))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves the object adapted from the initial {@code SlingHttpServletRequest} or {@code Resource} and the
+     * retrieved or constructed child (relative) resource
+     * @param source        Initial {@link SlingHttpServletRequest} or {@link Resource} instance
+     * @param childResource {@code Resource} to be adapted
+     * @param type          Type of the adaptation
+     * @return The object that represents an adapted resource, or null if the adaptation failed
+     */
+    private Object getAdaptedObject(Object source, Resource childResource, Class<?> type) {
+        if (Resource.class.equals(type) || Object.class.equals(type)) {
+            return childResource;
+        }
+        if (source instanceof SlingHttpServletRequest && TypeUtil.isSlingRequestAdapter(modelFactory, type)) {
+            return adapterManager.getAdapter(
+                AdaptationUtil.getRequest((SlingHttpServletRequest) source, childResource),
+                type);
+        }
+        return childResource.adaptTo(type);
     }
 
     /**
      * Retrieves combined resource predicate that originates from the {@link Children} annotation {@code filter}
      * parameter
-     * @param annotation {@code Children} annotation object holding the settings
+     * @param settingsHolder {@code Children} annotation object containing the adaptation settings
      * @return {@code List} of initialized predicate functions
      */
-    private static Predicate<Resource> getResourceFilter(Children annotation) {
-        if (ArrayUtils.isEmpty(annotation.filters())) {
+    private static Predicate<Resource> getResourceFilter(Children settingsHolder) {
+        if (ArrayUtils.isEmpty(settingsHolder.filters())) {
             return resource -> true;
         }
-
-        return Arrays.stream(annotation.filters())
+        return Arrays.stream(settingsHolder.filters())
             .filter(cls -> ClassUtils.isAssignable(cls, Predicate.class))
             .map(InstantiationUtil::getObjectInstance)
             .filter(Objects::nonNull)
             .map(filter -> (Predicate<Resource>) filter)
             .reduce(Predicate::and)
-            .orElse(resource -> true);
-    }
-
-    /**
-     * Retrieves the list of objects adapted from the given resources. The adaptation honors the optional properties
-     * filter defined by the {@code prefix} and {@code postfix}
-     * @param resources Collection of resources
-     * @param prefix    An optional leading string chunk to filter resources' properties with
-     * @param postfix   An optional trailing string chunk to filter resources' properties with
-     * @param type      Type (parameter type) of receiving Java collection or array
-     * @return List of adapted objects
-     */
-    private static List<Object> getAdaptedObjects(List<Resource> resources, String prefix, String postfix, Type type) {
-        final Class<?> actualType = TypeUtil.extractComponentType(type);
-        return resources.stream()
-            .map(resource -> InstantiationUtil.getFilteredResource(resource, prefix, postfix))
-            .filter(resource -> !resource.getValueMap().isEmpty())
-            .map(resource -> getAdaptedObject(resource, actualType))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * Retrieves the adaptation of the given {@code Resource} to the provided type
-     * @param resource {@code Resource} to be adapted
-     * @param type     Type of the adaptation
-     * @return The object that represents an adapted resource, or null if the adaptation failed
-     */
-    private static Object getAdaptedObject(Resource resource, Class<?> type) {
-        if (Resource.class.equals(type) || Object.class.equals(type)) {
-            return resource;
-        }
-        return resource.adaptTo(type);
+            .orElse(DEFAULT_FILTER);
     }
 
     /**

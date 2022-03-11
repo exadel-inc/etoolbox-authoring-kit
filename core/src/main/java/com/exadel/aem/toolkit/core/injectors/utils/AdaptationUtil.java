@@ -13,10 +13,13 @@
  */
 package com.exadel.aem.toolkit.core.injectors.utils;
 
+import javax.annotation.Nonnull;
+
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
 
 /**
  * Contains utility methods for adaptation and conversion of entities involved in Sing injectors processing.
@@ -40,6 +43,20 @@ public class AdaptationUtil {
             return (SlingHttpServletRequest) adaptable;
         }
         return null;
+    }
+
+    /**
+     * Retrieves a {@code SlingHttpServletRequest} instance from the provided initial request and the given Sling
+     * resource
+     * @param request  {@code SlingHttpServletRequest} instance used to construct the resulting request
+     * @param resource Sling resource that the resulting request will report as its bundled resource
+     * @return {@code SlingHttpServletRequest} instance
+     */
+    public static SlingHttpServletRequest getRequest(SlingHttpServletRequest request, Resource resource) {
+        if (request.getResource().equals(resource)) {
+            return request;
+        }
+        return new SlingHttpServletRequestFacade(request, resource);
     }
 
     /**
@@ -94,5 +111,37 @@ public class AdaptationUtil {
             return result;
         }
         return ValueMap.EMPTY;
+    }
+
+    /* ---------------
+       Utility classes
+       --------------- */
+
+    /**
+     * Extends {@link SlingHttpServletRequestWrapper} to provide a {@code SlingHttpServletRequest} instance that reports
+     * the pre-defined {@code Resource} as its bundled resource
+     */
+    private static class SlingHttpServletRequestFacade extends SlingHttpServletRequestWrapper {
+        private Resource resource;
+
+        /**
+         * Creates a new instance that is based on the given {@code SlingHttpServletRequest} while reporting the given
+         * {@code Resource} as the bundled resource
+         * @param request  {@code SlingHttpServletRequest} instance used for the decoration
+         * @param resource Sling resource that the resulting request will report as its bundled resource
+         */
+        public SlingHttpServletRequestFacade(SlingHttpServletRequest request, Resource resource) {
+            super(request);
+            this.resource = resource;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        @Nonnull
+        public Resource getResource() {
+            return resource != null ? resource : super.getResource();
+        }
     }
 }

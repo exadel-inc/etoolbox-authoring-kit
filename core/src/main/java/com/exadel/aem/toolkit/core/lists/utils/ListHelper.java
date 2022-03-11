@@ -25,6 +25,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -62,6 +64,7 @@ public class ListHelper {
      * @return List of resources. If the path provided is invalid or cannot be resolved, an empty list
      * is returned
      */
+    @Nonnull
     public static List<Resource> getResourceList(ResourceResolver resourceResolver, String path) {
         return getList(resourceResolver, path, Resource.class);
     }
@@ -73,6 +76,7 @@ public class ListHelper {
      * @return List of {@link SimpleListItem}s. If the path provided is invalid or cannot be resolved, an empty list
      * is returned
      */
+    @Nonnull
     public static List<SimpleListItem> getList(ResourceResolver resourceResolver, String path) {
         return getList(resourceResolver, path, SimpleListItem.class);
     }
@@ -87,6 +91,7 @@ public class ListHelper {
      * @return List of {@code <T>}-typed instances. If the path provided is invalid or cannot be resolved, or else
      * a non-adaptable {@code itemType} is given, an empty list is returned
      */
+    @Nonnull
     public static <T> List<T> getList(ResourceResolver resourceResolver, String path, Class<T> itemType) {
         return getItemsStream(resourceResolver, path)
             .map(getMapperFunction(itemType))
@@ -103,6 +108,7 @@ public class ListHelper {
      * @return Map representing title-to-value pairs. If the path provided is invalid or cannot be resolved, an empty
      * map is returned
      */
+    @Nonnull
     public static Map<String, Resource> getResourceMap(ResourceResolver resourceResolver, String path) {
         return getMap(resourceResolver, path, JcrConstants.JCR_TITLE, Resource.class);
     }
@@ -118,6 +124,7 @@ public class ListHelper {
      * @return Map representing title-to-value pairs. If the path provided is invalid or cannot be resolved, an empty
      * map is returned
      */
+    @Nonnull
     public static Map<String, Resource> getResourceMap(ResourceResolver resourceResolver, String path, String keyName) {
         return getMap(resourceResolver, path, keyName, Resource.class);
     }
@@ -131,6 +138,7 @@ public class ListHelper {
      * @return Map representing title-to-value pairs. If the path provided is invalid or cannot be resolved, an empty
      * map is returned
      */
+    @Nonnull
     public static Map<String, String> getMap(ResourceResolver resourceResolver, String path) {
         return getMap(
             resourceResolver,
@@ -152,6 +160,7 @@ public class ListHelper {
      * @return Map containing {@code <T>}-typed instances. If the path provided is invalid or cannot be resolved,
      * or else a non-adaptable model {@code itemType} is given, an empty map is returned
      */
+    @Nonnull
     public static <T> Map<String, T> getMap(ResourceResolver resourceResolver, String path, String keyName, Class<T> itemType) {
         return getMap(resourceResolver, path, keyName, getMapperFunction(itemType));
     }
@@ -170,6 +179,7 @@ public class ListHelper {
      * @return {@link Page} containing the list of entries or {@code null} if an invalid or void argument is passed
      * @throws WCMException If a page cannot be created
      */
+    @Nullable
     public static <T> Page createList(
         ResourceResolver resourceResolver,
         String path,
@@ -201,6 +211,7 @@ public class ListHelper {
      * @return {@link Page} containing the list of entries or {@code null} if an invalid or void argument is passed
      * @throws WCMException If the list could not be created
      */
+    @Nullable
     public static Page createList(
         ResourceResolver resourceResolver,
         String path,
@@ -218,6 +229,7 @@ public class ListHelper {
      * @return {@link Page} containing the list of entries or {@code null} if an invalid or void argument is passed
      * @throws WCMException If a page cannot be created or null is an illegal (empty or null) argument is passed
      */
+    @Nullable
     public static Page createResourceList(
         ResourceResolver resourceResolver,
         String path,
