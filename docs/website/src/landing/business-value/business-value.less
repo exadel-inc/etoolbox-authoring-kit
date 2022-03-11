@@ -1,0 +1,66 @@
+@import (reference) "../../common/variables.less";
+
+.bv {
+  &-container {
+    padding: 5rem;
+    width: 100%;
+    height: max-content;
+    background-image: url("../assets/landing/bv-background.svg");
+    background-position: bottom left;
+    background-size: cover;
+    background-repeat: no-repeat;
+    align-content: center;
+    @media @sm {
+      padding: 2.5rem;
+      background-position: center left;
+    }
+    @media @xs {
+      padding: 0.5rem;
+      font-size: 14px;
+    }
+  }
+
+  &-list {
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    line-height: 1;
+    @media @xs-sm {
+      width: 100%;
+      flex-wrap: wrap;
+    }
+    @media @sm {
+      padding-top: 1rem;
+    }
+  }
+
+  &-block {
+    display: flex;
+    padding: 1rem 0;
+    flex: 1 1 23%;
+
+    @media @xs-sm {
+      flex: 1 1 45%;
+      padding: 0.25rem;
+    }
+  }
+
+  &-item {
+    text-align: center;
+    padding: 1rem 2rem;
+
+    @media @xs {
+      text-align: start;
+      margin-left: 0!important;
+      margin-right: 0!important;
+    }
+
+    &-title {
+      display: block;
+    }
+    &-description {
+      margin: 0;
+    }
+  }
+}

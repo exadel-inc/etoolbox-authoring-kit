@@ -1,0 +1,29 @@
+<header class="header">
+  <nav class="header-container container">
+    <a class="header-link header-logo fill-light logo-animated" href="{{ '/' | url }}" aria-label="landing page">
+      {% include "static/assets/helpers/icon.svg" %}
+      {# <span class="header-short-name"></span> #}
+      <span class="header-long-name">{{ site.brand }}</span>
+    </a>
+    <ul class="header-links">
+      <li class="header-li">
+        <a class="header-link" href="{{ landing.urls.installationUrl | url }}">Manuals</a>
+      </li>
+      <li class="header-li">
+        <a class="header-link" href="{{ landing.urls.docsUrl }}" target="_blank">API Docs</a>
+      </li>
+      <li class="header-li">
+        <a class="header-link" href="{{ landing.urls.articleExadelUrl }}" target="_blank">Blog</a>
+      </li>
+      <li class="header-li">
+        <a class="header-link" href="{{ site.github.url }}" target="_blank">
+          {% include "static/assets/helpers/github.svg" %}
+        </a>
+      </li>
+    </ul>
+      <div class="header-btn"><a href="{{ landing.urls.installationUrl | url }}" class="btn btn-blue btn-media header-btn-link ">Get started</a></div>
+    <div class="header-utility">
+      <esl-trigger class="header-hamburger" target="#sidebar" aria-label="navigation menu"></esl-trigger>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,22 @@
+{% from 'navigation/sidebar-item.njk' import navitem with context %}
+<esl-d-sidebar id="sidebar" class="open" aria-label="Site Navigation">
+  <nav class="sidebar-nav">
+    <a class="sidebar-heading" href="{{ '/' | url }}">
+      <span class="sidebar-logo fill-light">{% include "static/assets/helpers/icon.white.svg" %}</span>
+      <span class="sidebar-title">EXADEL AUTHORING </br> KIT FOR AEM</span>
+    </a>
+    <div class="sidebar-content">
+      <ul class="sidebar-nav-list esl-scrollable-content">
+        {% set collection = collections.content | sortByNameAndOrder | navigation %}
+        {% if collection.children.length %}
+          {% for item in collection.children %}
+          <li class="sidebar-nav-item">
+            {{ navitem (item) }}
+          </li>
+          {% endfor %}
+        {% endif %}
+      </ul>
+      <esl-scrollbar class="sidebar-scrollbar" target="::prev"></esl-scrollbar>
+    </div>
+  </nav>
+</esl-d-sidebar>
