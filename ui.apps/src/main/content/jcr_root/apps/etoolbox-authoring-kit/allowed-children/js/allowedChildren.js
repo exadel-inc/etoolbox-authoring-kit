@@ -82,7 +82,7 @@
      * @param value - resource type of the current template (empty for pages based on static templates)
      */
     function checkTemplate(templates, value) {
-        if (!templates.length || !value) {
+        if (!templates || !templates.length || !value) {
             return true;
         }
         return templates.some(template => isMatching(template, value));
@@ -94,7 +94,7 @@
      * @param value - current identifier
      */
     function arrayContains(array, value) {
-        return !array.length || array.some(element => isMatching(element, value));
+        return !array || !array.length || array.some(element => isMatching(element, value));
     }
 
     /**
@@ -104,7 +104,7 @@
      * @param componentList
      */
     function checkParent(parentsResTypes, values, componentList) {
-        return !parentsResTypes.length || parentsResTypes.some(parents => parentMatch(parents, values, componentList));
+        return !parentsResTypes || !parentsResTypes.length || parentsResTypes.some(parents => parentMatch(parents, values, componentList));
     }
 
     /**
