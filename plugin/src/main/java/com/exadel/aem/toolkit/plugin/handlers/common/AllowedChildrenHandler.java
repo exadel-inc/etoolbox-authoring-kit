@@ -13,21 +13,20 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.common;
 
-import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
+import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.lang.reflect.Type;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,8 +37,9 @@ import java.util.stream.Collectors;
  */
 public class AllowedChildrenHandler implements Handler {
 
-    private static final Gson GSON = new GsonBuilder().registerTypeHierarchyAdapter(AllowedChildren.class,
-            (JsonSerializer<AllowedChildren>) AllowedChildrenHandler::serialize).create();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+            .registerModule(new SimpleModule()
+                    .addSerializer(AllowedChildren.class, createSerializer()));
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
@@ -88,27 +88,39 @@ public class AllowedChildrenHandler implements Handler {
      * @return True or false
      */
     private String toJson(List<AllowedChildren> rules, boolean isEditConfig) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.add("isEditConfig", new JsonPrimitive(isEditConfig));
-        jsonObject.add("rules", GSON.toJsonTree(rules));
-        return jsonObject.toString();
+        ObjectNode objectNode = OBJECT_MAPPER.createObjectNode();
+        objectNode.put("isEditConfig", isEditConfig);
+        objectNode.set("rules", OBJECT_MAPPER.valueToTree(rules));
+        return objectNode.toString();
     }
 
     /**
-     * Converts {@link AllowedChildren} annotation to the {@link JsonElement}
-     * @param allowedChildren {@link AllowedChildren} object used for data retrieval
-     * @param type The actual type of the source object
-     * @param context Context for serialization
-     * @return JsonElement corresponding to the AllowedChildren annotation
+     * Creates {@link JsonSerializer} to serialize {@link AllowedChildren} annotation to the Json
+     * @return JsonSerializer corresponding to the AllowedChildren annotation
      */
-    private static JsonElement serialize(AllowedChildren allowedChildren, Type type, JsonSerializationContext context) {
-        JsonObject result = new JsonObject();
-        result.add("value", context.serialize(allowedChildren.value()));
-        result.add("pageResourceTypes", context.serialize(allowedChildren.pageResourceTypes()));
-        result.add("templates", context.serialize(allowedChildren.templates()));
-        result.add("parentsResourceTypes", context.serialize(allowedChildren.parents()));
-        result.add("pagePaths", context.serialize(allowedChildren.pagePaths()));
-        result.add("containers", context.serialize(allowedChildren.resourceNames()));
-        return result;
+    private static JsonSerializer<AllowedChildren> createSerializer() {
+        return new JsonSerializer<AllowedChildren>() {
+            @Override
+            public void serialize(AllowedChildren allowedChildren, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+                jsonGenerator.writeStartObject();
+                serializeStringArray("value", allowedChildren.value(), jsonGenerator, serializerProvider);
+                serializeStringArray("pageResourceTypes", allowedChildren.pageResourceTypes(), jsonGenerator, serializerProvider);
+                serializeStringArray("templates", allowedChildren.templates(), jsonGenerator, serializerProvider);
+                serializeStringArray("parentsResourceTypes", allowedChildren.parents(), jsonGenerator, serializerProvider);
+                serializeStringArray("pagePaths", allowedChildren.pagePaths(), jsonGenerator, serializerProvider);
+                serializeStringArray("containers", allowedChildren.resourceNames(), jsonGenerator, serializerProvider);
+                jsonGenerator.writeEndObject();
+            }
+
+            private void serializeStringArray(String fieldName,
+                                              String[] value,
+                                              JsonGenerator jsonGenerator,
+                                              SerializerProvider serializerProvider) throws IOException {
+                if (value.length == 0) {
+                    return;
+                }
+                serializerProvider.defaultSerializeField(fieldName, value, jsonGenerator);
+            }
+        };
     }
 }
