@@ -8,7 +8,7 @@
   <ul class="article-list">
     {% for article in articles %}
       <li class="article-item">
-        <a class="article-link text-white" href="{{ article.link }}" target="_blank">
+        <a class="article-link" href="{{ article.link }}" target="_blank">
           <h5 class="fs-1 article-item-title mb-1">{{ article.title }}</h5>
           <div class="d-flex article-item-img-container mb-1">
             <img class="article-item-img" src="{{ article.img }}" alt="{{ article.title }}"/>
