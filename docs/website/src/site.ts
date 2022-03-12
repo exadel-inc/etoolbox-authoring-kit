@@ -7,11 +7,11 @@ import {
   ESLScrollbar,
   ESLToggleableDispatcher,
 } from '@exadel/esl';
-import {ESLDemoSidebar} from './navigation/navigation';
-import {EAKBannerLogo} from './landing/banner-logo/banner-logo';
+import {EAKSidebar} from './navigation/navigation';
+import {EAKBanner} from './landing/banner/banner';
 
-ESLDemoSidebar.register();
-EAKBannerLogo.register();
+EAKBanner.register();
+EAKSidebar.register();
 
 ESLTabs.register();
 ESLTab.register();

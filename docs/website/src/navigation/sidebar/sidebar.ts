@@ -8,8 +8,8 @@ interface SidebarActionParams extends ToggleableActionParams {
   immediate: boolean;
 }
 
-export class ESLDemoSidebar extends ESLToggleable {
-  static is = 'esl-d-sidebar';
+export class EAKSidebar extends ESLToggleable {
+  static is = 'eak-sidebar';
 
   @prop() public closeOnEsc = true;
   @prop() public closeOnOutsideAction = true;
@@ -74,6 +74,6 @@ export class ESLDemoSidebar extends ESLToggleable {
   @bind
   protected onBreakpointChange() {
     const isDesktop = ESLMediaQuery.for('@+MD').matches;
-    this.toggle(isDesktop, {force: true, initiator: 'bpchange', immediate: !isDesktop});
+    this.toggle(isDesktop, {force: true, initiator: 'bp-change', immediate: !isDesktop});
   }
 }
