@@ -1,45 +1,59 @@
 @import (reference) "../../common/variables.less";
+
+@features-marker: escape('
+  <svg width="19" height="46" viewBox="0 0 19 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="17.0146" y1="1.28171" x2="1.28171" y2="44.5076" stroke="@{landing-blue}" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+');
+
 .features {
-    &-container {
-        flex-direction: row;
-        justify-content: space-between;
-        padding-top: 50px;
-        @media @xs {
-            flex-direction: column;
-        }
+  &-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-top: 50px;
+    @media @xs {
+      flex-direction: column;
     }
-    &-header {
-        padding-top: 1.25rem;
-        width: 33%;
-        &>h3 {
-            color: @features-color;
-        }
-        @media @xs {
-            width: 100%;
-            text-align: center;
-        }
+  }
+
+  &-header {
+    padding-top: 1.25rem;
+    width: 33%;
+
+    & > h3 {
+      color: @landing-blue;
     }
-    &-content {
-        width: 60%;
-        margin-right: 2.1rem;
-        @media @xs {
-            width: 100%;
-            text-align: center;
-            padding: 2rem;
-        }
+
+    @media @xs {
+      width: 100%;
+      text-align: center;
     }
-    &-list {
-        display: flex;
-        flex-wrap: wrap;
+  }
+
+  &-content {
+    width: 60%;
+    margin-right: 2.1rem;
+    @media @xs {
+      width: 100%;
+      text-align: center;
+      padding: 2rem;
     }
-    &-item {
-        flex: 1 1 30%;
-        margin: 0 0.75rem 0.75rem;
-        padding: 0 0.75rem 0.75rem;
-        text-align: start;
-        list-style-image: url("../assets/helpers/slash.svg");
-        @media @xs {
-            flex: 1 1 100%;
-        }
+  }
+
+  &-list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &-item {
+    flex: 1 1 30%;
+    margin: 0 0.75rem 0.75rem;
+    padding: 0 0.75rem 0.75rem;
+    text-align: start;
+    list-style-image: url('data:image/svg+xml,@{features-marker}');
+    @media @xs {
+      flex: 1 1 100%;
     }
+  }
 }

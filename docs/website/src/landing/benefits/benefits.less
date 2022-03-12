@@ -1,19 +1,31 @@
+@import (reference) "../../common/variables.less";
+
 .benefits {
-    &-container {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-between;
+  &-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  &-item {
+    width: 26%;
+    margin: 2rem 2.1rem 2rem 0;
+    text-align: start;
+
+    @media @xs {
+      flex: 1 1 40%;
     }
-    &-item {
-        width: 26%;
-        margin: 2rem 2.1rem 2rem 0;
-        text-align: start;
-        @media @xs {
-            flex: 1 1 40%;
-        }
+
+    > svg {
+      width: 40px;
+      height: 40px;
+      fill: @landing-blue;
+      stroke: @landing-blue;
     }
-    &-title {
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-    }
+  }
+
+  &-title {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
 }
