@@ -11,12 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ *  A simple clientlib that disables insert, drag/drop and copy/paste to an editable more components than defined
+ *  in 'childrenLimit' property and hides insertion parsys
+ */
 (function ($document, author) {
     'use strict';
     const INSERT_ACTION = 'INSERT';
-
     const LIMIT_PROPERTY = 'childrenLimit';
 
+    /**
+     * Returns the value of the given property from policy
+     */
     function findPropertyFromPolicy(editable, propertyName) {
         const cell = author.util.resolveProperty(author.pageDesign, editable.config.policyPath);
         return cell && cell[propertyName] ? cell[propertyName] : null;
@@ -42,6 +49,9 @@
         return null;
     }
 
+    /**
+     * Returns the value of the given property of an editable from policy or design configuration
+     */
     function findPropertyFromConfig(editable, propertyName) {
         if (editable && editable.config) {
             if (editable.config.policyPath) {
@@ -53,10 +63,9 @@
         return null;
     }
 
-    function templateInsertCondition(editableBefore) {
-        return isChildrenInLimit(editableBefore.getParent());
-    }
-
+    /**
+     * Checks if editable contains no more children, than defined in 'childrenLimit' property
+     */
     function isChildrenInLimit(editable) {
         const limitCfg = findPropertyFromConfig(editable, LIMIT_PROPERTY);
         const limit = limitCfg === null ? Number.POSITIVE_INFINITY : +limitCfg;
@@ -64,6 +73,9 @@
         return (children.length <= limit);
     }
 
+    /**
+     * Show/hide all editables' insert parsys depending on {@link isChildrenInLimit} function
+     */
     function toggleInsertParsys() {
         author.editables.forEach((editable) => {
             const insertEditable = author.editables.find(editable.path + '/*')[0];
@@ -77,13 +89,16 @@
         if (ev.layer === 'Edit') {
             const action = author.edit.EditableActions[INSERT_ACTION];
             const defaultInsertActionCondition = action.condition;
+
+            // override of the original action condition by adding children amount check
             action.condition = function (editableBefore, componentPath, componentGroup) {
-                return templateInsertCondition(editableBefore) && defaultInsertActionCondition(editableBefore, componentPath, componentGroup);
+                return isChildrenInLimit(editableBefore) && defaultInsertActionCondition(editableBefore, componentPath, componentGroup);
             };
 
             // set initial visibility state
             toggleInsertParsysDebounced();
 
+            // track editables and overlays updates to hide insert parsys
             $document
                 .off('cq-editables-updated.limited-parsys cq-overlays-repositioned.limited-parsys')
                 .on('cq-editables-updated.limited-parsys cq-overlays-repositioned.limited-parsys', toggleInsertParsysDebounced);
