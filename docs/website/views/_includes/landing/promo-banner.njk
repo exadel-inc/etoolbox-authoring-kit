@@ -1,17 +1,15 @@
-<div class="banner-container container d-flex mb-150">
-  <div class="banner-content">
-    <h2>{{ landing.marquee.title }}</h2>
-    <div class="banner-content-section">
-      <p class="banner-content-text mb-4 fw-300">{{ landing.marquee.description }}</p>
-      <div class="banner-btns-container">
-        <a href="{{ landing.urls.installationUrl | url }}" class="btn btn-blue btn-media">Get started</a>
-        <a href="{{ site.github.url }}" class="btn btn-mint btn-media" target="_blank">Check it out</a>
+<div class="promo-banner mb-50">
+  <div class="promo-banner-container container">
+    <div class="promo-banner-block">
+      <h2>{{ landing.promo.title }}</h2>
+      <p>{{ landing.promo.description }}</p>
+      <div class="promo-banner-btns">
+        <a href="{{ landing.urls.installationUrl | url }}" class="btn btn-blue">Start now</a>
+        <a href="{{ landing.urls.docsUrl }}" class="btn btn-mint" target="_blank">Read the docs</a>
       </div>
     </div>
   </div>
-  <eak-banner-logo class="banner-logo">
-    {% include 'static/assets/' + landing.marquee.logo %}
-  </eak-banner-logo>
+  <div class="promo-banner-waves">
+    {% include "static/assets/landing/waves-1.svg" %}
+  </div>
 </div>
-
-{% include "static/assets/landing/background-effect1.svg" %}

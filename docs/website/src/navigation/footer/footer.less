@@ -3,6 +3,7 @@
 .footer {
   @footer-primary: @primary-blue;
   @footer-gradient: linear-gradient(to right, #131A2E, @footer-primary,@footer-primary, #ffffff, #131A2E) 47% 0%;
+
   display: block;
   @media @md-xl {
     display: flex;
@@ -12,13 +13,13 @@
   &-margin {
     margin-top: 100px;
     @media @xs-sm {
-      margin-top: 250px;
+      margin-top: 150px;
     }
   }
 
   &-link {
     display: inline-block;
-    color: white;
+    color: inherit;
     padding: 10px;
     outline-offset: -2px;
     font-size: 1.125rem;
