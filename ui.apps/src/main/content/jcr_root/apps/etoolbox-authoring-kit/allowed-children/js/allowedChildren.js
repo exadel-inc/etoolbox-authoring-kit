@@ -48,7 +48,9 @@
 
         if (applicableRule) {
             allowed.length = 0;
-            allowed.push(...applicableRule.value);
+            if (applicableRule.value) {
+                allowed.push(...applicableRule.value);
+            }
         }
         ns.PolicyResolver.cache.set(editable.path, allowed);
     }
@@ -56,7 +58,7 @@
     /**
      * Retrieves properties of the current container
      * @param editable - current container
-     * @param graniteAuthor - native Granite object used to retrieve page data упоминать в правиле заведомо известный контейнер
+     * @param graniteAuthor - native Granite object used to retrieve page data
      * @param skipFirstParent - true if the policy applied via childEditConfig so that the user does not need to specify the well-known container in the rule.
      * E.g. when adding a rule to the component that has a nested parsys we don't need to specify the name of the component itself
      */
@@ -124,9 +126,6 @@
      */
     function parentMatch(parentsEntry, parentsResTypes, componentList) {
         const parentsSetting = getParentsAsArray(parentsEntry);
-        if (parentsSetting.length === 1) {
-            return isMatchingGroupOrResourceType(parentsSetting[0], parentsResTypes.slice(-1)[0], componentList);
-        }
         for (const parent of parentsResTypes) {
             if (isMatchingGroupOrResourceType(parentsSetting[0], parent, componentList)) {
                 parentsSetting.shift();
