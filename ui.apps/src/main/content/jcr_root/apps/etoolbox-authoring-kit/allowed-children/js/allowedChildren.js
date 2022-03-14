@@ -20,6 +20,8 @@
 
     ns.PolicyResolver = ns.PolicyResolver || {};
 
+    ns.PolicyResolver.cache = new Map();
+
     ns.PolicyResolver.build = function (rules) {
         return function (cell, allowed, componentList) {
             resolve(allowed, componentList, this, rules);
@@ -34,6 +36,12 @@
      * @param configJson - serialized set of rules
      */
     function resolve(allowed, componentList, editable, configJson) {
+        if (ns.PolicyResolver.cache.has(editable.path)) {
+            allowed.length = 0;
+            allowed.push(...ns.PolicyResolver.cache.get(editable.path));
+            return;
+        }
+
         const config = JSON.parse(configJson);
         const settings = getContainerProperties(editable, ns.author, !config.isEditConfig);
         const applicableRule = config.rules.find(rule => isRuleApplicable(rule, settings, componentList));
@@ -42,6 +50,7 @@
             allowed.length = 0;
             allowed.push(...applicableRule.value);
         }
+        ns.PolicyResolver.cache.set(editable.path, allowed);
     }
 
     /**
