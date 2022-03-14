@@ -14,7 +14,7 @@
 
 /**
  *  A simple clientlib that disables insert, drag/drop and copy/paste to an editable more components than defined
- *  in 'childrenLimit' property and hides insertion parsys
+ *  in 'childrenLimit' property
  */
 (function ($document, author) {
     'use strict';
@@ -22,7 +22,7 @@
     const LIMIT_PROPERTY = 'childrenLimit';
 
     /**
-     * Returns the value of the given property from policy
+     * @returns the value of the given property defined in the policy
      */
     function findPropertyFromPolicy(editable, propertyName) {
         const cell = author.util.resolveProperty(author.pageDesign, editable.config.policyPath);
@@ -31,7 +31,7 @@
 
     /**
      * @see /libs/cq/gui/components/authoring/editors/clientlibs/core/js/storage/components.js _findAllowedComponentsFromDesign
-     * Returns the value of the given property from design object
+     * @returns the value of the given property from design object
      */
     function findPropertyFromDesign(editable, propertyName) {
         const cellSearchPaths = editable.config.cellSearchPath;
@@ -50,7 +50,7 @@
     }
 
     /**
-     * Returns the value of the given property of an editable from policy or design configuration
+     * @returns the value of the given property of an editable from policy or design configuration
      */
     function findPropertyFromConfig(editable, propertyName) {
         if (editable && editable.config) {
@@ -64,7 +64,7 @@
     }
 
     /**
-     * Checks if editable contains no more children, than defined in 'childrenLimit' property
+     * Checks if editable contains equal or less children than defined in 'childrenLimit' property
      */
     function isChildrenInLimit(editable) {
         const limitCfg = findPropertyFromConfig(editable, LIMIT_PROPERTY);
