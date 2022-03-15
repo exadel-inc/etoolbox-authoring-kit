@@ -233,6 +233,6 @@
         if (setting.endsWith('*')) {
             return property.startsWith(setting.substring(0, setting.length - 1));
         }
-        return property === setting;
+        return property === setting.replace(/^\/?(apps)?\//, '');
     }
 }(Granite));
