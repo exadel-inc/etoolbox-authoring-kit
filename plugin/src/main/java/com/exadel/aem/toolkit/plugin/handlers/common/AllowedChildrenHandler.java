@@ -13,23 +13,24 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.common;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
@@ -103,19 +104,19 @@ public class AllowedChildrenHandler implements Handler {
             @Override
             public void serialize(AllowedChildren allowedChildren, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
                 jsonGenerator.writeStartObject();
-                serializeStringArray("value", allowedChildren.value(), jsonGenerator, serializerProvider);
-                serializeStringArray("pageResourceTypes", allowedChildren.pageResourceTypes(), jsonGenerator, serializerProvider);
-                serializeStringArray("templates", allowedChildren.templates(), jsonGenerator, serializerProvider);
-                serializeStringArray("parentsResourceTypes", allowedChildren.parents(), jsonGenerator, serializerProvider);
-                serializeStringArray("pagePaths", allowedChildren.pagePaths(), jsonGenerator, serializerProvider);
-                serializeStringArray("containers", allowedChildren.resourceNames(), jsonGenerator, serializerProvider);
+                serializeNonEmptyStringArray("value", allowedChildren.value(), jsonGenerator, serializerProvider);
+                serializeNonEmptyStringArray("pageResourceTypes", allowedChildren.pageResourceTypes(), jsonGenerator, serializerProvider);
+                serializeNonEmptyStringArray("templates", allowedChildren.templates(), jsonGenerator, serializerProvider);
+                serializeNonEmptyStringArray("parentsResourceTypes", allowedChildren.parents(), jsonGenerator, serializerProvider);
+                serializeNonEmptyStringArray("pagePaths", allowedChildren.pagePaths(), jsonGenerator, serializerProvider);
+                serializeNonEmptyStringArray("containers", allowedChildren.resourceNames(), jsonGenerator, serializerProvider);
                 jsonGenerator.writeEndObject();
             }
 
-            private void serializeStringArray(String fieldName,
-                                              String[] value,
-                                              JsonGenerator jsonGenerator,
-                                              SerializerProvider serializerProvider) throws IOException {
+            private void serializeNonEmptyStringArray(String fieldName,
+                                                      String[] value,
+                                                      JsonGenerator jsonGenerator,
+                                                      SerializerProvider serializerProvider) throws IOException {
                 if (value.length == 0) {
                     return;
                 }
