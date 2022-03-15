@@ -109,7 +109,8 @@
     }
 
     /**
-     *
+     * Gets whether the current parents is contained within the array of parents.
+     * Always returns {@code true} for pages based on static templates
      * @param parentsResTypes
      * @param values
      * @param componentList
