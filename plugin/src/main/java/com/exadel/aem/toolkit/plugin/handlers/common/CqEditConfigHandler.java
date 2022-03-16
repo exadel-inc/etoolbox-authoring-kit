@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.common;
 
+import java.util.function.BiConsumer;
+
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -20,8 +22,6 @@ import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
-
-import java.util.function.BiConsumer;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}

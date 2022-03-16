@@ -13,6 +13,11 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers;
 
+import java.util.Map;
+import java.util.function.BiConsumer;
+
+import com.google.common.collect.ImmutableMap;
+
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -35,10 +40,6 @@ import com.exadel.aem.toolkit.plugin.handlers.widgets.common.InheritanceHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.MultipleAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.PropertyAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.ResourceTypeHandler;
-import com.google.common.collect.ImmutableMap;
-
-import java.util.Map;
-import java.util.function.BiConsumer;
 
 /**
  * Serves as the source for handler chains used to process user-specified data and prepare structures that are further
