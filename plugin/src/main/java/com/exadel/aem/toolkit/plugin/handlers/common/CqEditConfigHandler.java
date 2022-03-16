@@ -30,7 +30,8 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 public class CqEditConfigHandler implements BiConsumer<Source, Target> {
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code
+     * Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
@@ -39,10 +40,15 @@ public class CqEditConfigHandler implements BiConsumer<Source, Target> {
         source.tryAdaptTo(EditConfig.class).ifPresent(adaptation -> populateEditConfig(adaptation, target));
     }
 
+    /**
+     * Stores the data bound to the {@code cq:editConfig} node in the content repository
+     * @param editConfig {@link EditConfig} instance
+     * @param target     Resulting {@code Target} object
+     */
     private void populateEditConfig(EditConfig editConfig, Target target) {
         target
-                .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
-                .attributes(editConfig, AnnotationUtil.getPropertyMappingFilter(editConfig));
+            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
+            .attributes(editConfig, AnnotationUtil.getPropertyMappingFilter(editConfig));
 
         HandlerChains.forEditConfig().accept(Sources.fromAnnotation(editConfig), target);
     }

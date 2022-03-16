@@ -13,7 +13,7 @@
  */
 
 /**
- * Policies handling entry point
+ * Provides methods for managing policies set up via {@code AllowedChildren} or a similar mechanism
  */
 (function (ns) {
     'use strict';
@@ -30,7 +30,7 @@
 
     /**
      * Modifies the list of allowed components for the current container according to the set of rules
-     * @param allowed - array of allowed components, modified within the method by reference
+     * @param allowed - array of allowed components; modified within the method by reference
      * @param componentList - list of all components available in the instance
      * @param editable - current container
      * @param configJson - serialized set of rules
@@ -59,8 +59,9 @@
      * Retrieves properties of the current container
      * @param editable - current container
      * @param graniteAuthor - native Granite object used to retrieve page data
-     * @param skipFirstParent - true if the policy applied via childEditConfig so that the user does not need to specify the well-known container in the rule.
-     * E.g. when adding a rule to the component that has a nested parsys we don't need to specify the name of the component itself
+     * @param skipFirstParent - true if the policy applied via childEditConfig so that the user does not need to specify
+     * the well-known container in the rule. E.g., when adding a rule to the component that has a nested parsys we don't
+     * need to specify the name of the component itself
      */
     function getContainerProperties(editable, graniteAuthor, skipFirstParent) {
         return {
@@ -120,9 +121,11 @@
     }
 
     /**
-     * Gets whether the particular entry of the {@code parents} rule setting matches the property as retrieved from the {@code getContainerProperties()} method
+     * Gets whether the particular entry of the {@code parents} rule setting matches the property as retrieved from the
+     * {@code getContainerProperties()} method
      * @param parentsEntry - entry representing single parent or a succession of parents for the current container
-     * @param parentsResTypes - resource types of all parents of the current container (from the most remote parent to the closest one)
+     * @param parentsResTypes - resource types of all parents of the current container (from the most remote parent to
+     *     the closest one)
      * @param componentList - list of all components available in the instance
      */
     function parentMatch(parentsEntry, parentsResTypes, componentList) {
@@ -184,7 +187,8 @@
     }
 
     /**
-     * Gets whether the given chunk of the {@code parents} rule entry represents a component group or component resource type that matches the parent
+     * Gets whether the given chunk of the {@code parents} rule entry represents a component group or component
+     * resource type that matches the parent
      * @param parentsChunk - an element of the {@code parents} rule entry
      * @param parentResType - resource type of the given parent
      * @param componentList - list of all components available in the instance
@@ -196,7 +200,8 @@
     }
 
     /**
-     * Gets whether the given chunk of the {@code parents} rule entry represents a component group that matches the parent
+     * Gets whether the given chunk of the {@code parents} rule entry represents a component group that matches the
+     * parent
      * @param parentsChunk - an element of the {@code parents} rule entry
      * @param parentResType - resource type of the given parent
      * @param componentList - list of all components available in the instance
@@ -220,7 +225,8 @@
     }
 
     /**
-     * Gets whether the given rule setting matches the property retrieved from the {@code getContainerProperties()} method
+     * Gets whether the given rule setting matches the property retrieved from the {@code getContainerProperties()}
+     * method
      * @param setting - rule setting
      * @param property - container property
      */

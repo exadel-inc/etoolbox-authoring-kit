@@ -19,7 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represents a collection of rules to specify own list of allowed components for parsys-like components
+ * Represents a collection of rules to specify the list of allowed components for parsys-like components
  * @see AllowedChildren
  */
 @Target(ElementType.TYPE)

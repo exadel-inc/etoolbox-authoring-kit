@@ -44,6 +44,11 @@ public class CqChildEditConfigHandler implements BiConsumer<Source, Target> {
         source.tryAdaptTo(ChildEditConfig.class).ifPresent(adaptation -> populateChildEditConfig(adaptation, target));
     }
 
+    /**
+     * Stores the data bound to the {@code cq:childEditConfig} node in the content repository
+     * @param childEditConfig {@link ChildEditConfig} instance
+     * @param target Resulting {@code Target} object
+     */
     private void populateChildEditConfig(ChildEditConfig childEditConfig, Target target) {
         target
                 .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)

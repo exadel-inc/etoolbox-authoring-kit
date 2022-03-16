@@ -63,7 +63,7 @@ public @interface AllowedChildren {
      * present in the hierarchy of current resource. If this setting is skipped, the rule is not restricted by parents.
      * <p>You can use wildcards, e.g. {@code "acme/pages/design2/*", "*design2/homepage",
      * "*pages/design2/*"}.
-     * <p><u>Note</u>: every item can represent either a single parent or a "chain" -- a succession of
+     * <p><u>Note</u>: every item can represent either a single parent or a "chain" - a succession of
      * parents/groups. In this case, successive parents are divided with a space. E.g. {@code "acme/pages/design2/*
      * *design2/homepage *pages/design2/*"} means that among the parents of the current resource there must be component
      * with resource type matching "acme/pages/design2/*", and below it there must be another component with resource
@@ -97,7 +97,7 @@ public @interface AllowedChildren {
      * component. Otherwise, the rule is applied to a container nested within the current component. E.g. if the current
      * component is an inheritor of parsys, setting {@code applyToCurrent} to {@code true} means that the rule affects
      * which components can be added to the current one. But if the current component contains a parsys inside you need
-     * to leave {@code applyToCurrent} as false so that the rule applies to the parsys.
+     * to skip {@code applyToCurrent} or set it to {@code false} so that the rule applies to the parsys.
      * <p><u>Note</u>: if the component contains more than one parsys, you can specify the particular target for the
      * rule using the {@code resourceNames} setting
      * @return True or false
