@@ -61,7 +61,8 @@ Among the advantages are:
 
 - ability to inject any resource by an absolute or relative path (in fact not only a child or a "grandchild", but also a
   parent, or an unrelated resource, or even the current resource itself);
-- ability to inject a secondary Sling model adapted from such resource;
+- ability to inject a secondary Sling model adapted from such resource (or else from a resource wrapped in a synthetic
+  request);
 - ability to select particular properties from a target resource used for injection and/or adaptation into a secondary
   model. This way, you can create and manage several "virtual" resources from one "real" resource.
 
@@ -167,7 +168,7 @@ See the following samples:
 
 ```
 
-One or more filters can be specified as references to classes that implement `Predicate<Resource>`:
+Children's filters can be specified as references to classes that implement `Predicate<Resource>`:
 
 ```java
 @Children(name = "list", filters = DateIsNotFuture.class)
@@ -216,6 +217,7 @@ private List<String> selectorsList; // Will inject the list of selectors
 @RequestSelectors
 private String[] selectorsArray; // Will inject the array of selectors
 ```
+
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, use the notation like `(@RequestSelectors @Named String argument)` and annotate the constructor itself with `@Inject`.
 

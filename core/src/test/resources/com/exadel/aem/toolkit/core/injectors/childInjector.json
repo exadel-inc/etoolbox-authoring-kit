@@ -18,11 +18,10 @@
       "list_item_1006003058": {
         "jcr:primaryType": "nt:unstructured",
         "jcr:title": "key1",
-        "value": "value1",
-        "rootProperty": "propertyValue",
+        "value": "value",
         "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem",
         "nested": {
-          "property": "nestedPropertyValue"
+          "property": "nestedValue"
         }
       },
       "list_item_1": {

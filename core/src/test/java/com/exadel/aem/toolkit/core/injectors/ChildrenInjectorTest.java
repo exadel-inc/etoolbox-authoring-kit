@@ -78,8 +78,8 @@ public class ChildrenInjectorTest {
         List<NestedModel> nestedModelList = testModel.getNestedModelList();
         assertNotNull(nestedModelList);
         assertEquals(5, nestedModelList.size());
-        assertEquals("propertyValue", nestedModelList.get(0).getRootProperty());
-        assertEquals("nestedPropertyValue", nestedModelList.get(0).getNested());
+        assertEquals("value", nestedModelList.get(0).getValue());
+        assertEquals("nestedValue", nestedModelList.get(0).getNestedProperty());
     }
 
     @Test
@@ -133,6 +133,17 @@ public class ChildrenInjectorTest {
         List<ListItemModel> modelList = testModel.getListItemModelsFiltered();
         assertNotNull(modelList);
         assertEquals(1, modelList.size());
+    }
+
+    @Test
+    public void shouldInjectChildrenAdaptedFromRequest() {
+        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
+        assertNotNull(testModel);
+
+        List<NestedModel> modelsFromRequest = testModel.getModelsAdaptedFromRequest();
+        assertEquals(1, modelsFromRequest.size());
+        assertEquals("Value with prefix and postfix", modelsFromRequest.get(0).getValue());
+        assertNotNull(modelsFromRequest.get(0).getRequest());
     }
 
     @Test

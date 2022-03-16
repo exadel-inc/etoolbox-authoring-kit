@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.core.optionprovider.services;
 
 import java.util.List;
+import javax.annotation.Nonnull;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -30,5 +31,6 @@ public interface OptionProviderService {
      * @param request {@code SlingHttpServletRequest} object
      * @return List of {@link ValueMapDecorator} options, or an empty list if no options could be created
      */
+    @Nonnull
     List<Resource> getOptions(SlingHttpServletRequest request);
 }
