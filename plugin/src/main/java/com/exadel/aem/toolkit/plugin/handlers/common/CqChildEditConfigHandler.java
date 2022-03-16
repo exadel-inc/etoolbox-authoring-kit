@@ -41,16 +41,20 @@ public class CqChildEditConfigHandler implements BiConsumer<Source, Target> {
      */
     @Override
     public void accept(Source source, Target target) {
-        ChildEditConfig childEditConfig = source.adaptTo(ChildEditConfig.class);
+        source.tryAdaptTo(ChildEditConfig.class).ifPresent(adaptation -> populateChildEditConfig(adaptation, target));
+    }
+
+    private void populateChildEditConfig(ChildEditConfig childEditConfig, Target target) {
         target
-            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
-            .attributes(childEditConfig, AnnotationUtil.getPropertyMappingFilter(childEditConfig));
+                .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
+                .attributes(childEditConfig, AnnotationUtil.getPropertyMappingFilter(childEditConfig));
         // Herewith we create a "proxied" @EditConfig object out of the provided @ChildEditConfig
         // with "dropTargets" and "listeners" methods of @EditConfig populated with  @ChildEditConfig values
         EditConfig derivedEditConfig = AnnotationUtil.createInstance(EditConfig.class, ImmutableMap.of(
-            METHOD_DROP_TARGETS, childEditConfig.dropTargets(),
-            METHOD_LISTENERS, childEditConfig.listeners()
+                METHOD_DROP_TARGETS, childEditConfig.dropTargets(),
+                METHOD_LISTENERS, childEditConfig.listeners()
         ));
-        HandlerChains.forChildEditConfig().accept(Sources.fromAnnotation(derivedEditConfig), target);
+
+        HandlerChains.forEditConfig().accept(Sources.fromAnnotation(derivedEditConfig), target);
     }
 }
