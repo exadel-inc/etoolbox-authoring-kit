@@ -38,6 +38,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class AllowedChildrenHandler implements Handler {
 
+    private static final String VALUE_POLICY_RESOLVER_FORMAT = "Granite.PolicyResolver.build('%s')";
+
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
             .registerModule(new SimpleModule()
                     .addSerializer(AllowedChildren.class, createSerializer()));
@@ -70,7 +72,7 @@ public class AllowedChildrenHandler implements Handler {
                 .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
                 .getOrCreateTarget(DialogConstants.NN_LISTENERS)
                 .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_LISTENERS)
-                .attribute(DialogConstants.PN_UPDATE_COMPONENT_LIST, String.format(DialogConstants.VALUE_POLICY_RESOLVER_FORMAT, json));
+                .attribute(DialogConstants.PN_UPDATE_COMPONENT_LIST, String.format(VALUE_POLICY_RESOLVER_FORMAT, json));
     }
 
     /**

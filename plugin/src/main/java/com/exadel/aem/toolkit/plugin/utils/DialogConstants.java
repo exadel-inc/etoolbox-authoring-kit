@@ -157,7 +157,6 @@ public class DialogConstants {
 
     public static final String VALUE_ALL = "all";
     public static final String VALUE_NONE = "none";
-    public static final String VALUE_POLICY_RESOLVER_FORMAT = "Granite.PolicyResolver.build('%s')";
 
     private DialogConstants() {}
 }
