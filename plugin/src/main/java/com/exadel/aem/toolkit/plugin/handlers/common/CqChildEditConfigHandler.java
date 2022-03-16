@@ -35,7 +35,8 @@ public class CqChildEditConfigHandler implements BiConsumer<Source, Target> {
     private static final String METHOD_LISTENERS = "listeners";
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code
+     * Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
@@ -47,17 +48,17 @@ public class CqChildEditConfigHandler implements BiConsumer<Source, Target> {
     /**
      * Stores the data bound to the {@code cq:childEditConfig} node in the content repository
      * @param childEditConfig {@link ChildEditConfig} instance
-     * @param target Resulting {@code Target} object
+     * @param target          Resulting {@code Target} object
      */
     private void populateChildEditConfig(ChildEditConfig childEditConfig, Target target) {
         target
-                .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
-                .attributes(childEditConfig, AnnotationUtil.getPropertyMappingFilter(childEditConfig));
+            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
+            .attributes(childEditConfig, AnnotationUtil.getPropertyMappingFilter(childEditConfig));
         // Herewith we create a "proxied" @EditConfig object out of the provided @ChildEditConfig
         // with "dropTargets" and "listeners" methods of @EditConfig populated with  @ChildEditConfig values
         EditConfig derivedEditConfig = AnnotationUtil.createInstance(EditConfig.class, ImmutableMap.of(
-                METHOD_DROP_TARGETS, childEditConfig.dropTargets(),
-                METHOD_LISTENERS, childEditConfig.listeners()
+            METHOD_DROP_TARGETS, childEditConfig.dropTargets(),
+            METHOD_LISTENERS, childEditConfig.listeners()
         ));
 
         HandlerChains.forEditConfig().accept(Sources.fromAnnotation(derivedEditConfig), target);
