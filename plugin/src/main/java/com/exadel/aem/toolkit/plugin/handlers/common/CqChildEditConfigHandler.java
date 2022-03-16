@@ -50,7 +50,7 @@ public class CqChildEditConfigHandler implements BiConsumer<Source, Target> {
      * @param childEditConfig {@link ChildEditConfig} instance
      * @param target          Resulting {@code Target} object
      */
-    private void populateChildEditConfig(ChildEditConfig childEditConfig, Target target) {
+    private static void populateChildEditConfig(ChildEditConfig childEditConfig, Target target) {
         target
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
             .attributes(childEditConfig, AnnotationUtil.getPropertyMappingFilter(childEditConfig));

@@ -45,7 +45,7 @@ public class CqEditConfigHandler implements BiConsumer<Source, Target> {
      * @param editConfig {@link EditConfig} instance
      * @param target     Resulting {@code Target} object
      */
-    private void populateEditConfig(EditConfig editConfig, Target target) {
+    private static void populateEditConfig(EditConfig editConfig, Target target) {
         target
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
             .attributes(editConfig, AnnotationUtil.getPropertyMappingFilter(editConfig));

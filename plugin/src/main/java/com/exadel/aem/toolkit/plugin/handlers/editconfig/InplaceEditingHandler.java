@@ -76,7 +76,7 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
      * @param config {@link EditConfig} annotation instance
      * @param target Current {@link Target} instance
      */
-    private void getChildEditorsNode(EditConfig config, Target target) {
+    private static void getChildEditorsNode(EditConfig config, Target target) {
         Target childEditorsNode = target.getOrCreateTarget(DialogConstants.NN_CHILD_EDITORS);
         Arrays.stream(config.inplaceEditing())
                 .forEach(inplaceEditingConfig -> getSingleChildEditorNode(inplaceEditingConfig, childEditorsNode));
@@ -87,7 +87,7 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
      * @param config {@link InplaceEditingConfig} annotation instance
      * @param target Current {@link Target} instance
      */
-    private void getSingleChildEditorNode(InplaceEditingConfig config, Target target) {
+    private static void getSingleChildEditorNode(InplaceEditingConfig config, Target target) {
         target.getOrCreateTarget(getConfigName(config))
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_CHILD_EDITORS_CONFIG)
             .attribute(DialogConstants.PN_TITLE, StringUtils.isNotBlank(config.title()) ? config.title() : getConfigName(config))
@@ -100,7 +100,7 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
      * @param config {@link EditConfig} annotation instance
      * @param target Current {@link Target} instance
      */
-    private void getConfigNode(EditConfig config, Target target) {
+    private static void getConfigNode(EditConfig config, Target target) {
         Target configNode = target.getOrCreateTarget(DialogConstants.NN_CONFIG);
         for (InplaceEditingConfig childConfig : config.inplaceEditing()) {
             Target childConfigNode = configNode.getOrCreateTarget(getConfigName(childConfig))
@@ -114,7 +114,7 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
      * @param config {@link InplaceEditingConfig} annotation instance
      * @param target {@link Target} representing config node
      */
-    private void populateConfigNode(InplaceEditingConfig config, Target target) {
+    private static void populateConfigNode(InplaceEditingConfig config, Target target) {
         String propertyName = getValidPropertyName(config.propertyName());
         String textPropertyName = config.textPropertyName().isEmpty()
                 ? propertyName
@@ -127,10 +127,10 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
 
     /**
      * Gets a standard-compliant value for a {@code propertyName} or {@code textPropertyName} attribute of {@link InplaceEditingConfig}
-     * @param rawName Attribute value as passed by user
+     * @param rawName Attribute value as passed by the user
      * @return Converted standard-compliant name
      */
-    private String getValidPropertyName(String rawName) {
+    private static String getValidPropertyName(String rawName) {
         String propertyName = NamingUtil.getValidFieldName(rawName);
         if (propertyName.startsWith(DialogConstants.PARENT_PATH_PREFIX)) {
             return propertyName;
@@ -144,7 +144,7 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
      * @param config {@link InplaceEditingConfig} annotation instance
      * @param target {@link Target} representing config node
      */
-    private void populateRteConfig(InplaceEditingConfig config, Target target) {
+    private static void populateRteConfig(InplaceEditingConfig config, Target target) {
         Source referencedRteField = getReferencedRteField(config);
         if (referencedRteField != null && referencedRteField.adaptTo(RichTextEditor.class) != null) {
             BiConsumer<Source, Target> rteHandler = new RichTextEditorHandler(false);
@@ -169,7 +169,7 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
     private static Source getReferencedRteField(InplaceEditingConfig config) {
         if (config.richText().value().equals(_Default.class)
                 && StringUtils.isBlank(config.richText().field())) {
-            // richText attribute not specified, which is a valid case
+            // The "richText" attribute not specified, which is a valid case
             return null;
         }
         try {
