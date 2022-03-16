@@ -91,8 +91,8 @@
             const defaultInsertActionCondition = action.condition;
 
             // override of the original action condition by adding children amount check
-            action.condition = function (editableBefore, componentPath, componentGroup) {
-                return isChildrenInLimit(editableBefore) && defaultInsertActionCondition(editableBefore, componentPath, componentGroup);
+            action.condition = function (editableBefore) {
+                return isChildrenInLimit(editableBefore) && defaultInsertActionCondition.apply(this, arguments);
             };
 
             // set initial visibility state
