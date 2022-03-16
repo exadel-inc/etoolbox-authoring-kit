@@ -5,10 +5,12 @@
 
     <filter root="/apps/etoolbox-authoring-kit/clientlib-injector"/>
     <filter root="/apps/etoolbox-authoring-kit/components"/>
+    <filter root="/apps/etoolbox-authoring-kit/content-blueprints"/>
     <filter root="/apps/etoolbox-authoring-kit/coral-overlay"/>
     <filter root="/apps/etoolbox-authoring-kit/depends-on"/>
     <filter root="/apps/etoolbox-authoring-kit/depends-on-injector"/>
     <filter root="/apps/etoolbox-authoring-kit/install"/>
+    <filter root="/apps/etoolbox-authoring-kit/limit-parsys"/>
     <filter root="/apps/etoolbox-authoring-kit/lists"/>
 
     <!-- The following filters clear old directories in JCR content. They can be removed after v.2 release -->
