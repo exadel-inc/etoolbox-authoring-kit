@@ -59,7 +59,7 @@ public class AllowedChildrenHandler implements Handler {
      * @param rules {@code AllowedChildren[]} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
-    private void populatePolicies(AllowedChildren[] rules, Target target) {
+    private static void populatePolicies(AllowedChildren[] rules, Target target) {
         List<AllowedChildren> allowedChildrenList = Arrays.stream(rules)
                 .filter(ac -> isEditConfig(target) == ac.applyToCurrent())
                 .collect(Collectors.toList());
@@ -80,7 +80,7 @@ public class AllowedChildrenHandler implements Handler {
      * @param target {@code Target} instance
      * @return True or false
      */
-    private boolean isEditConfig(Target target) {
+    private static boolean isEditConfig(Target target) {
         return Scopes.CQ_EDIT_CONFIG.equals(target.getScope());
     }
 
@@ -90,7 +90,7 @@ public class AllowedChildrenHandler implements Handler {
      * @param isEditConfig True indicates that listener specified in {@code cq:editConfig}; otherwise, in {@code cq:childEditConfig}
      * @return True or false
      */
-    private String toJson(List<AllowedChildren> rules, boolean isEditConfig) {
+    private static String toJson(List<AllowedChildren> rules, boolean isEditConfig) {
         ObjectNode objectNode = OBJECT_MAPPER.createObjectNode();
         objectNode.put("isEditConfig", isEditConfig);
         objectNode.set("rules", OBJECT_MAPPER.valueToTree(rules));
