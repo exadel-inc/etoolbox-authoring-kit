@@ -34,18 +34,20 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
- * object that define the "updatecomponentlist" listener of the {@code cq:childEditConfig} or {@code cq:editConfig} node of an AEM component
+ * object. The source refers to the {@code updatecomponentlist} listener of the {@code cq:childEditConfig} or {@code
+ * cq:editConfig} node of an AEM component
  */
 public class AllowedChildrenHandler implements Handler {
 
     private static final String VALUE_POLICY_RESOLVER_FORMAT = "Granite.PolicyResolver.build('%s')";
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-            .registerModule(new SimpleModule()
-                    .addSerializer(AllowedChildren.class, createSerializer()));
+        .registerModule(new SimpleModule()
+            .addSerializer(AllowedChildren.class, new AllowedChildrenSerializer()));
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code
+     * Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
@@ -55,24 +57,25 @@ public class AllowedChildrenHandler implements Handler {
     }
 
     /**
-     * Processes data from {@code AllowedChildren[]} annotations and stores it into 'cq:listeners' node of the provided {@code Target}
-     * @param rules {@code AllowedChildren[]} object used for data retrieval
+     * Processes data from {@code AllowedChildren[]} annotations and stores it into 'cq:listeners' node of the provided
+     * {@code Target}
+     * @param rules  {@code AllowedChildren[]} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
     private static void populatePolicies(AllowedChildren[] rules, Target target) {
         List<AllowedChildren> allowedChildrenList = Arrays.stream(rules)
-                .filter(ac -> isEditConfig(target) == ac.applyToCurrent())
-                .collect(Collectors.toList());
+            .filter(ac -> isEditConfig(target) == ac.applyToCurrent())
+            .collect(Collectors.toList());
         if (allowedChildrenList.isEmpty()) {
             return;
         }
         String json = toJson(allowedChildrenList, isEditConfig(target))
-                .replace("'", "\\\\'");
+            .replace("'", "\\\\'");
         target
-                .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
-                .getOrCreateTarget(DialogConstants.NN_LISTENERS)
-                .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_LISTENERS)
-                .attribute(DialogConstants.PN_UPDATE_COMPONENT_LIST, String.format(VALUE_POLICY_RESOLVER_FORMAT, json));
+            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
+            .getOrCreateTarget(DialogConstants.NN_LISTENERS)
+            .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_LISTENERS)
+            .attribute(DialogConstants.PN_UPDATE_COMPONENT_LIST, String.format(VALUE_POLICY_RESOLVER_FORMAT, json));
     }
 
     /**
@@ -84,10 +87,16 @@ public class AllowedChildrenHandler implements Handler {
         return Scopes.CQ_EDIT_CONFIG.equals(target.getScope());
     }
 
+    /* -------------
+       Serialization
+       ------------- */
+
     /**
-     * Converts {@code List} of {@link AllowedChildren} annotations and boolean value representing target node to JSON format.
-     * @param rules {@code List} of {@link AllowedChildren} annotations
-     * @param isEditConfig True indicates that listener specified in {@code cq:editConfig}; otherwise, in {@code cq:childEditConfig}
+     * Converts {@code List} of {@link AllowedChildren} annotations and boolean value representing target node to the
+     * JSON format
+     * @param rules        {@code List} of {@link AllowedChildren} annotations
+     * @param isEditConfig True indicates that the listener specified in {@code cq:editConfig} is used. Otherwise, the
+     *                     listener in {@code cq:childEditConfig} is used
      * @return True or false
      */
     private static String toJson(List<AllowedChildren> rules, boolean isEditConfig) {
@@ -98,32 +107,52 @@ public class AllowedChildrenHandler implements Handler {
     }
 
     /**
-     * Creates {@link JsonSerializer} to serialize {@link AllowedChildren} annotation to the Json
-     * @return JsonSerializer corresponding to the AllowedChildren annotation
+     * Represents {@link JsonSerializer} for storing the configuration set up via {@link AllowedChildren} in the content
+     * repository
      */
-    private static JsonSerializer<AllowedChildren> createSerializer() {
-        return new JsonSerializer<AllowedChildren>() {
-            @Override
-            public void serialize(AllowedChildren allowedChildren, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-                jsonGenerator.writeStartObject();
-                serializeNonEmptyStringArray("value", allowedChildren.value(), jsonGenerator, serializerProvider);
-                serializeNonEmptyStringArray("pageResourceTypes", allowedChildren.pageResourceTypes(), jsonGenerator, serializerProvider);
-                serializeNonEmptyStringArray("templates", allowedChildren.templates(), jsonGenerator, serializerProvider);
-                serializeNonEmptyStringArray("parentsResourceTypes", allowedChildren.parents(), jsonGenerator, serializerProvider);
-                serializeNonEmptyStringArray("pagePaths", allowedChildren.pagePaths(), jsonGenerator, serializerProvider);
-                serializeNonEmptyStringArray("containers", allowedChildren.resourceNames(), jsonGenerator, serializerProvider);
-                jsonGenerator.writeEndObject();
-            }
+    private static class AllowedChildrenSerializer extends JsonSerializer<AllowedChildren> {
 
-            private void serializeNonEmptyStringArray(String fieldName,
-                                                      String[] value,
-                                                      JsonGenerator jsonGenerator,
-                                                      SerializerProvider serializerProvider) throws IOException {
-                if (value.length == 0) {
-                    return;
-                }
-                serializerProvider.defaultSerializeField(fieldName, value, jsonGenerator);
+        /**
+         * Retrieves a JSON render of the provided {@code AllowedChildren} annotation
+         * @param allowedChildren    {@code AllowedChildren} object
+         * @param jsonGenerator      Managed {@code JsonGenerator} object
+         * @param serializerProvider Managed {@code SerializerProvider} object
+         * @throws IOException if the serialization fails
+         */
+        @Override
+        public void serialize(
+            AllowedChildren allowedChildren,
+            JsonGenerator jsonGenerator,
+            SerializerProvider serializerProvider) throws IOException {
+
+            jsonGenerator.writeStartObject();
+            serializeNonEmptyArray("value", allowedChildren.value(), jsonGenerator, serializerProvider);
+            serializeNonEmptyArray("pageResourceTypes", allowedChildren.pageResourceTypes(), jsonGenerator, serializerProvider);
+            serializeNonEmptyArray("templates", allowedChildren.templates(), jsonGenerator, serializerProvider);
+            serializeNonEmptyArray("parentsResourceTypes", allowedChildren.parents(), jsonGenerator, serializerProvider);
+            serializeNonEmptyArray("pagePaths", allowedChildren.pagePaths(), jsonGenerator, serializerProvider);
+            serializeNonEmptyArray("containers", allowedChildren.resourceNames(), jsonGenerator, serializerProvider);
+            jsonGenerator.writeEndObject();
+        }
+
+        /**
+         * Retrieves a JSON render of the provided array
+         * @param fieldName          Name of the field being serialized
+         * @param value              Value of the field
+         * @param jsonGenerator      Managed {@code JsonGenerator} object
+         * @param serializerProvider Managed {@code SerializerProvider} object
+         * @throws IOException if the serialization fails
+         */
+        private void serializeNonEmptyArray(
+            String fieldName,
+            String[] value,
+            JsonGenerator jsonGenerator,
+            SerializerProvider serializerProvider) throws IOException {
+
+            if (value.length == 0) {
+                return;
             }
-        };
+            serializerProvider.defaultSerializeField(fieldName, value, jsonGenerator);
+        }
     }
 }
