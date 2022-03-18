@@ -251,7 +251,7 @@
                 if (rule.value) {
                     allowed.push(...rule.value);
                 }
-              break;
+                break;
             case 'EXCLUDE':
                 if (rule.value) {
                     allowed.remove(rule.value);
