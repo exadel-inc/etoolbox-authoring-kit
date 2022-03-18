@@ -47,7 +47,7 @@
         const applicableRule = config.rules.find(rule => isRuleApplicable(rule, settings, componentList));
 
         if (applicableRule) {
-            applyRule(applicableRule, allowed);
+            applyRule(applicableRule, allowed, componentList);
         }
         ns.PolicyResolver.cache.set(editable.path, allowed);
     }
@@ -213,15 +213,6 @@
     }
 
     /**
-     * Retrieves array of resource types of components with given group name
-     * @param group - group name
-     * @param componentList - list of all components available in the instance
-     */
-    function getComponentsResTypesByGroup(group, componentList) {
-        return componentList.filter(comp => comp.componentConfig.group === group).map(comp => comp.componentConfig.resourceType);
-    }
-
-    /**
      * Gets whether the given rule setting matches the property retrieved from the {@code getContainerProperties()}
      * method
      * @param setting - rule setting
@@ -244,8 +235,9 @@
      * Modifies the list of allowed components for the current container according to the mode of specified rule
      * @param rule - matched rule
      * @param allowed - array of allowed components; modified within the method by reference
+     * @param componentList - list of all components available in the instance
      */
-    function applyRule(rule, allowed) {
+    function applyRule(rule, allowed, componentList) {
         switch (rule.mode) {
             case 'MERGE':
                 if (rule.value) {
@@ -254,7 +246,10 @@
                 break;
             case 'EXCLUDE':
                 if (rule.value) {
-                    allowed.remove(rule.value);
+                    const componentsFromRule = flatGroups(rule.value, componentList);
+                    const result = flatGroups(allowed, componentList).filter(comp => !componentsFromRule.includes(comp));
+                    allowed.length = 0;
+                    allowed.push(...result);
                 }
                 break;
             default:
@@ -263,5 +258,29 @@
                     allowed.push(...rule.value);
                 }
         }
+    }
+
+    /**
+     * Retrieves array of resource types of components from given array of resource types and groups
+     * @param components - array of resource types and groups
+     * @param componentList - list of all components available in the instance
+     */
+    function flatGroups(components, componentList) {
+        return components.flatMap(comp => {
+            if (comp.startsWith('group:')) {
+                return getComponentsResTypesByGroup(comp.substring(6), componentList);
+            }
+            return [comp.replace(/^\/?(apps)?\//, '')];
+        });
+    }
+
+
+    /**
+     * Retrieves array of resource types of components with given group name
+     * @param group - group name
+     * @param componentList - list of all components available in the instance
+     */
+    function getComponentsResTypesByGroup(group, componentList) {
+        return componentList.filter(comp => comp.componentConfig.group === group).map(comp => comp.componentConfig.resourceType);
     }
 }(Granite));
