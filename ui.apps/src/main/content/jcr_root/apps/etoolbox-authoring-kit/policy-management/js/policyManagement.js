@@ -274,7 +274,6 @@
         });
     }
 
-
     /**
      * Retrieves array of resource types of components with given group name
      * @param group - group name
