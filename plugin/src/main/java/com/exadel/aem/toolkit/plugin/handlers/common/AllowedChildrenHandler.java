@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
+import com.exadel.aem.toolkit.api.annotations.policies.PolicyMergeMode;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -132,6 +133,9 @@ public class AllowedChildrenHandler implements Handler {
             serializeNonEmptyArray("parentsResourceTypes", allowedChildren.parents(), jsonGenerator, serializerProvider);
             serializeNonEmptyArray("pagePaths", allowedChildren.pagePaths(), jsonGenerator, serializerProvider);
             serializeNonEmptyArray("containers", allowedChildren.resourceNames(), jsonGenerator, serializerProvider);
+            if (!PolicyMergeMode.OVERRIDE.equals(allowedChildren.mode())) {
+                serializerProvider.defaultSerializeField("mode", allowedChildren.mode(), jsonGenerator);
+            }
             jsonGenerator.writeEndObject();
         }
 

@@ -47,10 +47,7 @@
         const applicableRule = config.rules.find(rule => isRuleApplicable(rule, settings, componentList));
 
         if (applicableRule) {
-            allowed.length = 0;
-            if (applicableRule.value) {
-                allowed.push(...applicableRule.value);
-            }
+            applyRule(applicableRule, allowed);
         }
         ns.PolicyResolver.cache.set(editable.path, allowed);
     }
@@ -241,5 +238,30 @@
             return property.startsWith(setting.substring(0, setting.length - 1));
         }
         return property === setting.replace(/^\/?(apps)?\//, '');
+    }
+
+    /**
+     * Modifies the list of allowed components for the current container according to the mode of specified rule
+     * @param rule - matched rule
+     * @param allowed - array of allowed components; modified within the method by reference
+     */
+    function applyRule(rule, allowed) {
+        switch (rule.mode) {
+            case 'MERGE':
+                if (rule.value) {
+                    allowed.push(...rule.value);
+                }
+              break;
+            case 'EXCLUDE':
+                if (rule.value) {
+                    allowed.remove(rule.value);
+                }
+                break;
+            default:
+                allowed.length = 0;
+                if (rule.value) {
+                    allowed.push(...rule.value);
+                }
+        }
     }
 }(Granite));

@@ -103,4 +103,17 @@ public @interface AllowedChildren {
      * @return True or false
      */
     boolean applyToCurrent() default false;
+
+    /**
+     * Used to specify merge mode of components from {@link AllowedChildren#value()} with components from policies or
+     * designs.
+     * <br>{@link PolicyMergeMode#OVERRIDE} - removes all components that comes from policies or designs and shows
+     * components from {@link AllowedChildren#value()} only.
+     * <br>{@link PolicyMergeMode#MERGE} - adds components from {@link AllowedChildren#value()} to list of components
+     * that comes from policies or designs.
+     * <br>{@link PolicyMergeMode#EXCLUDE} - removes {@link AllowedChildren#value()} components from list of
+     * components that comes from policies or designs.
+     * @return One of the {@link PolicyMergeMode} options
+     */
+    PolicyMergeMode mode() default PolicyMergeMode.OVERRIDE;
 }
