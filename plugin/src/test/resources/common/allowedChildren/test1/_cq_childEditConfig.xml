@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
-          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           jcr:primaryType="cq:EditConfig">
     <cq:listeners
-            jcr:primaryType="cq:EditListenersConfig"
-            updatecomponentlist="Granite.PolicyResolver.build('{&quot;isEditConfig&quot;:false,&quot;rules&quot;:[{&quot;value&quot;:[&quot;res/Type1&quot;,&quot;res/Type2&quot;,&quot;res/Type3&quot;],&quot;pageResourceTypes&quot;:[&quot;page/Res/Type1&quot;,&quot;page/Res/Type2&quot;],&quot;templates&quot;:[&quot;template1, template2&quot;],&quot;pagePaths&quot;:[&quot;page/Path1, page/Path2&quot;],&quot;containers&quot;:[&quot;resource1, resource2&quot;,&quot;resource3&quot;],&quot;mode&quot;:&quot;EXCLUDE&quot;}]}')"/>
+        jcr:primaryType="cq:EditListenersConfig"
+        updatecomponentlist="Granite.PolicyResolver.build('{&quot;isEditConfig&quot;:false,&quot;rules&quot;:[{&quot;value&quot;:[&quot;res/Type1&quot;,&quot;res/Type2&quot;,&quot;res/Type3&quot;],&quot;pageResourceTypes&quot;:[&quot;page/Res/Type1&quot;,&quot;page/Res/Type2&quot;],&quot;templates&quot;:[&quot;template1, template2&quot;],&quot;pagePaths&quot;:[&quot;page/Path1, page/Path2&quot;],&quot;containers&quot;:[&quot;resource1, resource2&quot;,&quot;resource3&quot;]}]}')"/>
 </jcr:root>

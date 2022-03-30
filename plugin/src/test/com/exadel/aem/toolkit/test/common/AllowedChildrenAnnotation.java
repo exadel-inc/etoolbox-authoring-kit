@@ -8,6 +8,7 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.annotations.policies.PolicyMergeMode;
+import com.exadel.aem.toolkit.api.annotations.policies.PolicyTargetContainer;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
 public class AllowedChildrenAnnotation {
@@ -22,7 +23,7 @@ public class AllowedChildrenAnnotation {
             pageResourceTypes = {"page/Res/Type1", "page/Res/Type2"},
             resourceNames = {"resource1, resource2", "resource3"},
             parents = {"parent/Res/Type1", "parent/Res/Type2"},
-            applyToCurrent = true,
+            targetContainer = PolicyTargetContainer.CURRENT_CONTAINER,
             mode = PolicyMergeMode.MERGE
     )
     @AllowedChildren(
@@ -31,7 +32,7 @@ public class AllowedChildrenAnnotation {
             pageResourceTypes = {"page/Res/Type1", "page/Res/Type2"},
             templates = {"template1, template2"},
             resourceNames = {"resource1, resource2", "resource3"},
-            mode = PolicyMergeMode.EXCLUDE
+            mode = PolicyMergeMode.OVERRIDE
     )
     public static class Test1 {
     }
@@ -86,18 +87,18 @@ public class AllowedChildrenAnnotation {
             templates = {"template1, template2"},
             resourceNames = {"resource1, resource2", "resource3"},
             parents = {"parent/Res/Type1", "parent/Res/Type2"},
-            applyToCurrent = true,
-            mode = PolicyMergeMode.EXCLUDE
+            targetContainer = PolicyTargetContainer.CURRENT_CONTAINER,
+            mode = PolicyMergeMode.OVERRIDE
     )
     @AllowedChildren(
             value = "res/Type1",
             templates = {"template1, template2"},
             resourceNames = {"resource1, resource2", "resource3"},
-            applyToCurrent = true
+            targetContainer = PolicyTargetContainer.CURRENT_CONTAINER
     )
     @AllowedChildren(
             value = {},
-            applyToCurrent = true
+            targetContainer = PolicyTargetContainer.CURRENT_CONTAINER
     )
     public static class Test3 {
     }
