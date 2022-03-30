@@ -238,25 +238,11 @@
      * @param componentList - list of all components available in the instance
      */
     function applyRule(rule, allowed, componentList) {
-        switch (rule.mode) {
-            case 'MERGE':
-                if (rule.value) {
-                    allowed.push(...rule.value);
-                }
-                break;
-            case 'EXCLUDE':
-                if (rule.value) {
-                    const componentsFromRule = flatGroups(rule.value, componentList);
-                    const result = flatGroups(allowed, componentList).filter(comp => !componentsFromRule.includes(comp));
-                    allowed.length = 0;
-                    allowed.push(...result);
-                }
-                break;
-            default:
-                allowed.length = 0;
-                if (rule.value) {
-                    allowed.push(...rule.value);
-                }
+        if (rule.mode === 'OVERRIDE') {
+            allowed.length = 0;
+        }
+        if (rule.value) {
+            allowed.push(...rule.value);
         }
     }
 
