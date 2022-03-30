@@ -247,20 +247,6 @@
     }
 
     /**
-     * Retrieves array of resource types of components from given array of resource types and groups
-     * @param components - array of resource types and groups
-     * @param componentList - list of all components available in the instance
-     */
-    function flatGroups(components, componentList) {
-        return components.flatMap(comp => {
-            if (comp.startsWith('group:')) {
-                return getComponentsResTypesByGroup(comp.substring(6), componentList);
-            }
-            return [comp.replace(/^\/?(apps)?\//, '')];
-        });
-    }
-
-    /**
      * Retrieves array of resource types of components with given group name
      * @param group - group name
      * @param componentList - list of all components available in the instance
