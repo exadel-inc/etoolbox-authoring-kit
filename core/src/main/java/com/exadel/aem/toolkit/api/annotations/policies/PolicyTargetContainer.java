@@ -14,9 +14,9 @@
 package com.exadel.aem.toolkit.api.annotations.policies;
 
 /**
- * Defines possible values of {@link AllowedChildren#mode()} property
+ * Defines possible values of {@link AllowedChildren#targetContainer()} property
  */
-public enum PolicyMergeMode {
-    OVERRIDE,
-    MERGE
+public enum PolicyTargetContainer {
+    CHILD_CONTAINERS,
+    CURRENT_CONTAINER
 }
