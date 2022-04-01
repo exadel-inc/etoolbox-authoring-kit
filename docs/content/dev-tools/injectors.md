@@ -276,8 +276,6 @@ Please take into account that AEM operates with resource bundles specified by bo
 Also mind that for most of the use cases the internationalization will be successful if your Sling model is adapted from a request, rather that a resource.
 
 ```java
-import com.sun.org.apache.xml.internal.security.utils.I18n;
-
 public class SampleModel {
     // ...
     @I18nValue
