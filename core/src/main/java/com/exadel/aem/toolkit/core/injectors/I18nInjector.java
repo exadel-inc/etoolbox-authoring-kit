@@ -15,13 +15,16 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -32,6 +35,7 @@ import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.day.cq.i18n.I18n;
@@ -59,8 +63,8 @@ public class I18nInjector implements Injector {
 
     private static final Pattern LOCALE_PARTS_SPLITTER = Pattern.compile("[/_-]");
 
-    @Reference
-    private ResourceBundleProvider resourceBundleProvider;
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE)
+    private List<ResourceBundleProvider> resourceBundleProviders;
 
     /**
      * Retrieves the name of the current instance
@@ -149,13 +153,18 @@ public class I18nInjector implements Injector {
      * @return {@code I18n} instance
      */
     private I18n getI18n(Object adaptable, Locale locale) {
-        Locale effectiveLocale = locale != null ? locale : Locale.getDefault();
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
-        if (request != null) {
-            return new I18n(request.getResourceBundle(effectiveLocale));
+        if (request != null && locale != null) {
+            return new I18n(request.getResourceBundle(locale));
+        } else if (request != null) {
+            return new I18n(request);
         }
-        LOG.debug("Could not retrieve a request object. A fallback resource bundle will be used");
-        ResourceBundle resourceBundle = resourceBundleProvider.getResourceBundle(effectiveLocale);
+        ResourceBundle resourceBundle = CollectionUtils.emptyIfNull(resourceBundleProviders)
+            .stream()
+            .map(provider -> provider.getResourceBundle(locale != null ? locale : Locale.getDefault()))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
         return new I18n(resourceBundle);
     }
 
