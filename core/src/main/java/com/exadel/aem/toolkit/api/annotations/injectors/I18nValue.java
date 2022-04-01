@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.core.injectors.i18n.PageLocaleDetector;
  * Used on either a field, a method, or a method parameter of a Sling model to inject an {@code  I18n} object or a
  * particular internationalized string. Internationalization depends on the detection of locale.
  * <p>By default, the locale is detected through the property of the current resource page. To override this, one can
- * either provide a particular locale value, a locale detector (a routine that guesses on the locale  by, e.g., the
+ * either provide a particular locale value, a locale detector (a routine that guesses on the locale by, e.g., the
  * request path), or fall back to the standard mechanism which guesses on a locale by the preferences of the current
  * user.
  * <p>The preferred adaptable object for this injector in an AEM environment is {@code SlingHttpServletRequest}. If
@@ -56,7 +56,7 @@ public @interface I18nValue {
 
     /**
      * Used to specify the locale in one of the formats like {@code en}, {@code en/us}, {@code en-us}, or {@code en_US}.
-     * One can provide either a two-symbol language token or a language-country pair (not: language must come first).
+     * One can provide either a two-symbol language token or a language-country pair (note: language must come first).
      * <p>If this parameter is specified it overrides the {@link I18nValue#localeDetector()} property. If neither
      * {@code locale} nor {@code localeDetector} are set, the locale is guessed based on the current resource page
      * @return Optional non-blank string
