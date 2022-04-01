@@ -3,11 +3,7 @@
   "jcr:title": "Sample Page",
   "jcr:content": {
     "jcr:primaryType": "cq:PageContent",
-    "jcr:title": "Simple List Page",
-    "cq:template": "/conf/etoolbox-authoring-kit/settings/wcm/templates/list",
-    "itemResourceType": "/apps/etoolbox-authoring-kit/lists/components/content/simpleItem",
-    "sling:resourceType": "etoolbox-authoring-kit/lists/components/structure/page-list",
-    "option": "existingComponent",
+    "jcr:title": "Sample Page",
     "defaultChild": {
       "jcr:title": "Hello",
       "value": "World"
