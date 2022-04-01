@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.test.component;
 
+import com.exadel.aem.toolkit.api.annotations.container.PlaceOnTab;
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditorType;
@@ -326,7 +327,7 @@ public class ComplexComponent2 {
             description = "description widget"
     )
     @PathField
-    @Place(LABEL_TAB_7)
+    @PlaceOnTab(LABEL_TAB_7)
     private String widget;
 
 
