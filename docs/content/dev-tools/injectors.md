@@ -21,8 +21,12 @@ map depending on the type of the underlying variable (or else the return type of
 To get the collection / list of items, use a notation as the following:
 
 ```java
-@EToolboxList("/content/etoolbox-lists/contentList")
-private List<SimpleListItem> itemsListResource;
+public class SampleModel {
+    // ...
+    @EToolboxList("/content/etoolbox-lists/contentList")
+    private List<SimpleListItem> itemsListResource;
+    // ...
+}
 
 ```
 
@@ -34,9 +38,12 @@ model will go (if it is adapted from a *Resource*). Generally, this injector wor
 To get the map, type it as:
 
 ```java
-@EToolboxList(value = "/content/etoolbox-lists/contentList", keyProperty = "textValue")
-private Map<String, EToolboxListInjectorTest.LocalListItemModel> itemsMapTestModel;
-
+public class SampleModel {
+    // ...
+    @EToolboxList(value = "/content/etoolbox-lists/contentList", keyProperty = "textValue")
+    private Map<String, EToolboxListInjectorTest.LocalListItemModel> itemsMapTestModel;
+    // ...
+}
 ```
 
 The optional *keyProperty* parameter is responsible for which of the properties of a list item is to be used as the map
@@ -45,9 +52,13 @@ key. By default it is the *jcr:title* property.
 When applying the injector to a constructor, please use the following format:
 
 ```java
-@Inject
-public TestModelEToolboxList(@EToolboxList("/content/etoolbox-lists/myList") @Named List<Resource> listResource) {
-    this.itemsListResourceFromMethodParameter = listResource;
+public class SampleModel {
+    // ...
+    @Inject
+    public TestModelEToolboxList(@EToolboxList("/content/etoolbox-lists/myList") @Named List<Resource> listResource) {
+        this.itemsListResourceFromMethodParameter = listResource;
+    }
+    // ...
 }
 ```
 
@@ -69,24 +80,27 @@ Among the advantages are:
 Consider the following code samples:
 
 ```java
-@Child
-private Resource childResource; // The direct child of the current resource by the self-implied name "childResource" is injected
+public class SampleModel {
+    // ...
+    @Child
+    private Resource childResource; // The direct child of the current resource by the self-implied name "childResource" is injected
 
-@Child(name = "list")
-private Resource listResource; // The direct child of the current resource by the name "list" is injected
+    @Child(name = "list")
+    private Resource listResource; // The direct child of the current resource by the name "list" is injected
 
-@Child(name = "./list")
-private Object listResource; // Same as above. If a field is of "Object" type, Resource is injected
+    @Child(name = "./list")
+    private Object listResource; // Same as above. If a field is of "Object" type, Resource is injected
 
-@Child(name = "..")
-private Resource parent; // The direct parent of the current resource is injected
+    @Child(name = "..")
+    private Resource parent; // The direct parent of the current resource is injected
 
-@Child(name = "/content/myPage/jcr:content/myResource")
-private ListItemModel modelByAbsolutePath; // An adaptation of the current resource to the "ListItemModel" class is injected
+    @Child(name = "/content/myPage/jcr:content/myResource")
+    private ListItemModel modelByAbsolutePath; // An adaptation of the current resource to the "ListItemModel" class is injected
 
-@Child(name = "some/path/nestedListItem")
-private ListItemModel modelByRelativePath; // Same as above; a relative path is used
-
+    @Child(name = "some/path/nestedListItem")
+    private ListItemModel modelByRelativePath; // Same as above; a relative path is used
+    // ...
+}
 ```
 
 The other example will show how to virtually "split" one resource into several "sub-resources" representing different
@@ -104,14 +118,18 @@ fieldset2_description = "Moon"
 There are two obvious "sub-resources" within this structure. They can be addressed to separately like in the sample:
 
 ```java
-@Child(prefix = "fieldset1_")
-private TextDescriptionFieldset first;
+public class SampleModel {
+    // ...
+    @Child(prefix = "fieldset1_")
+    private TextDescriptionFieldset first;
 
-@Child(prefix = "fieldset2_")
-private TextDescriptionFieldset second;
+    @Child(prefix = "fieldset2_")
+    private TextDescriptionFieldset second;
+    // ...
+}
 ```
 
-While the model itself can have the following listing:
+While the referenced model itself can have the following listing:
 
 ```java
 @Model(adaptables = Resource.class)
@@ -151,6 +169,8 @@ The `@Children` injector follows much the same pattern as the `@Child` annotatio
 See the following samples:
 
 ```java
+public class SampleModel {
+
     @Children
     private List<Resource> list; // Will inject children of the subresource named "list" of the current resource
 
@@ -160,28 +180,35 @@ See the following samples:
     @Children(name = "./")
     private List<Object> ownList; // Will inject children of the current resource
 
-    @Children(name = "/content/nested-node", prefix = "prefix_") // Will inject children of "/content/nested-node" adapted to the "ListItemModel" class. Will only consider the properties names of which start with "prefix_"
+    @Children(name = "/content/nested-node", prefix = "prefix_")
+    // Will inject children of "/content/nested-node" adapted to the "ListItemModel" class.
+    // Will only consider the properties names of which start with "prefix_"
     private ListItemModel[] listItemModelsWithPrefix;
 
-    @Children(name = "/content/nested-node", postfix = "-secondary") // Will inject children of "/content/nested-node" adapted to the "ListItemModel" class. Will only consider the properties names of which end with "-secondary"
+    @Children(name = "/content/nested-node", postfix = "-secondary")
+    // Will inject children of "/content/nested-node" adapted to the "ListItemModel" class.
+    // Will only consider the properties names of which end with "-secondary"
     private List<ListItemModel> listItemModelsWithPrefix;
-
+}
 ```
 
 Children's filters can be specified as references to classes that implement `Predicate<Resource>`:
 
 ```java
-@Children(name = "list", filters = DateIsNotFuture.class)
-private List<ListItemModel> listItemModels;
+public class SampleModel {
 
-// ...
+    @Children(name = "list", filters = DateIsNotFuture.class)
+    private List<ListItemModel> listItemModels;
 
-public class DateIsNotFuture implements Predicate<Resource> {
+    // ...
 
-    @Override
-    public boolean test(Resource value) {
-        Calendar date = return value.getValueMap().get("date", Calendar.class);
-        return date != null && !date.after(Calendar.getInstance());
+    public class DateIsNotFuture implements Predicate<Resource> {
+
+        @Override
+        public boolean test(Resource value) {
+            Calendar date = value.getValueMap().get("date", Calendar.class);
+            return date != null && !date.after(Calendar.getInstance());
+        }
     }
 }
 ```
@@ -208,14 +235,18 @@ of strings or objects, selectors are injected one by one in the underlying *List
 See the code samples:
 
 ```java
-@RequestSelectors
-private String selectorsString; // Will inject all selectors like "selector1.selector2.selector3"
+public class SampleModel {
+    // ...
+    @RequestSelectors
+    private String selectorsString; // Will inject all selectors like "selector1.selector2.selector3"
 
-@RequestSelectors
-private List<String> selectorsList; // Will inject the list of selectors
+    @RequestSelectors
+    private List<String> selectorsList; // Will inject the list of selectors
 
-@RequestSelectors
-private String[] selectorsArray; // Will inject the array of selectors
+    @RequestSelectors
+    private String[] selectorsArray; // Will inject the array of selectors
+    // ...
+}
 ```
 
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
@@ -227,3 +258,46 @@ The `@RequestSuffix` is used to inject a Sling request suffix. If the annotated 
 
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, write it like `(@RequestSuffix @Named String argument)` and annotate the constructor itself with `@Inject`.
+
+### Injector for I18n
+
+The `@I18nValue` annotation can be used to inject either the OOTB `I18n` object or a particular internationalized value. Therefore, it is legitimate to use this annotation with an *I18n*-typed or a *String*-typed class member (and also with an *Object*-typed member which is then considered a string).
+
+The behavior of *I18n* depends on the current locale. By default, the locale is guessed from the path of the page the current resource belongs to, or else the *jcr:language* property of that page. That is, a resource with the path like `/content/site/us/en/myPage/jcr:content/resource` or `/content/site/us-en/myPage/jcr:content/resource` will be considered belonging to the *en_US* locale.
+
+You can override this guessing in two ways:
+- directly specify the *locale* parameter of `@I18nValue`. The string value can contain either a two-char language token, or a 5-char language-and-country in one of the following formats: *en-us*, *en_us*, *en/us*. Mind that the language token always comes first, and the country token comes second.
+- or specify a reference to a locale detector. A locale detector is a class which implements `Function<Object, Locale>`. The *Object* argument is the adaptable (usually a request or a resource). There are two predefined locale detectors: the `PageLocaleDetector` (it implements guessing by the page path as described above; you don't have to specify it manually), and the `NativeLocaleDetector`. If the latter is specified, the returned locale is effectively *null* which triggers the native AEM behavior - the locale is then derived from the logged user's preferences.
+
+When using `@I18nValue` with a String-typed Java class member you can specify the value to be internationalized. Use either to *value* property of `@I18nValue` or the standard `@Named` annotation. If none of the options is selected, the string to internationalize will derive from the name of the underlying class member.
+
+Please take into account that AEM operates with resource bundles specified by both language and country. So if you specify a locale as *"en"* in one place and *"en-us"* elsewhere, these may bre considered as two different locales and different resource bundles.
+
+Also mind that for most of the use cases the internationalization will be successful if your Sling model is adapted from a request, rather that a resource.
+
+```java
+import com.sun.org.apache.xml.internal.security.utils.I18n;
+
+public class SampleModel {
+    // ...
+    @I18nValue
+    private I18n i18n;
+
+    @I18nValue(locale = "it-it")
+    private I18n i18nItalian;
+
+    @I18nValue(localeDetector = NativeLocaleDetector.class)
+    private I18n i18nFromUserPreferences;
+
+    @I18nValue(locale = "it")
+    @Named("Hello world")
+    private String helloWorld; // Injects the "Ciao mondo" value if such is present in the resource bundle
+
+    @I18nValue(value = "Hello world", localeDetector = MyDetectorReturnsItalian.class)
+    private String helloWorld2; // Same as above
+}
+```
+
+Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
+constructor, write it like `(@RequestSuffix @Named String argument)` and annotate the constructor itself with `@Inject`.
+
