@@ -118,7 +118,7 @@ public class I18nInjector implements Injector {
     }
 
     /**
-     * Creates a new {@link  Locale} object from the provided string token
+     * Creates a new {@link Locale} object from the provided string token
      * @param value String value parsed to create a {@code Locale}
      * @return {@code Locale} instance
      */
@@ -131,7 +131,7 @@ public class I18nInjector implements Injector {
     }
 
     /**
-     * Creates a new {@link  Locale} object from the given adaptable object using the provided locale detector
+     * Creates a new {@link Locale} object from the given adaptable object using the provided locale detector
      * @param adaptable A {@link SlingHttpServletRequest} or a {@link Resource} instance
      * @return {@code Locale} instance; might be null
      */

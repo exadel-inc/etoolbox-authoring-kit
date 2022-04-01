@@ -297,5 +297,5 @@ public class SampleModel {
 ```
 
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
-constructor, write it like `(@RequestSuffix @Named String argument)` and annotate the constructor itself with `@Inject`.
+constructor, write it like `(@I18nValue @Named String argument)` and annotate the constructor itself with `@Inject`.
 
