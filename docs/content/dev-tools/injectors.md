@@ -266,14 +266,14 @@ The `@I18nValue` annotation can be used to inject either the OOTB `I18n` object 
 The behavior of *I18n* depends on the current locale. By default, the locale is guessed from the path of the page the current resource belongs to, or else the *jcr:language* property of that page. That is, a resource with the path like `/content/site/us/en/myPage/jcr:content/resource` or `/content/site/us-en/myPage/jcr:content/resource` will be considered belonging to the *en_US* locale.
 
 You can override this guessing in two ways:
-- directly specify the *locale* parameter of `@I18nValue`. The string value can contain either a two-char language token, or a 5-char language-and-country in one of the following formats: *en-us*, *en_us*, *en/us*. Mind that the language token always comes first, and the country token comes second.
+- directly specify the *locale* parameter of `@I18nValue`. The *locale* can contain either a two-char language token, or a 5-char language-and-country in one of the following formats: *en-us*, *en_us*, *en/us*. Mind that the language token always comes first, and the country token comes second;
 - or specify a reference to a locale detector. A locale detector is a class which implements `Function<Object, Locale>`. The *Object* argument is the adaptable (usually a request or a resource). There are two predefined locale detectors: the `PageLocaleDetector` (it implements guessing by the page path as described above; you don't have to specify it manually), and the `NativeLocaleDetector`. If the latter is specified, the returned locale is effectively *null* which triggers the native AEM behavior - the locale is then derived from the logged user's preferences.
 
-When using `@I18nValue` with a String-typed Java class member you can specify the value to be internationalized. Use either to *value* property of `@I18nValue` or the standard `@Named` annotation. If none of the options is selected, the string to internationalize will derive from the name of the underlying class member.
+If both *locale* and *localeDetector* are specified, *locale* takes precedence.
 
-Please take into account that AEM operates with resource bundles specified by both language and country. So if you specify a locale as *"en"* in one place and *"en-us"* elsewhere, these may bre considered as two different locales and different resource bundles.
+When using `@I18nValue` with a String-typed class member you can specify the value to be internationalized. Use either to *value* property of `@I18nValue` or the standard `@Named` annotation. If none of these is present, the string to internationalize will derive from the name of the underlying class member.
 
-Also mind that for most of the use cases the internationalization will be successful if your Sling model is adapted from a request, rather that a resource.
+Please take into account that AEM operates with resource bundles specified by both language and country. So if you specify a locale as *"en"* in one place and *"en-us"* elsewhere, these may be considered as two different locales and different resource bundles.
 
 ```java
 public class SampleModel {
