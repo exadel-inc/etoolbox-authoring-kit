@@ -5,10 +5,10 @@ eak-sidebar {
     width: 100%;
     height: 100%;
     overflow: hidden;
-
+    color: @body-fg;
     display: flex;
     flex-direction: column;
-    padding: 24px 0;
+    padding: 33px 0 20px 0;
   }
 
   .sidebar-scrollbar.sidebar-scrollbar {
@@ -20,7 +20,6 @@ eak-sidebar {
     min-width: auto;
     padding: 0 8px;
     margin: 0 2px 15px 7px;
-    color: inherit;
     text-decoration: none;
 
     @media @md-xl {
@@ -30,21 +29,25 @@ eak-sidebar {
 
   .sidebar-logo {
     flex: 0 0 auto;
-    width: 52px;
-    height: 52px;
     padding-left: 8px;
     line-height: 3;
+
+    svg {
+      width: 50px;
+      height: 50px;
+    }
   }
 
   .sidebar-title {
+    display: inline-block;
+    width: calc(100% - 77px);
     flex: 1 0 auto;
-    padding-left: 10px;
+    padding: 1px 65px 0 10px;
     overflow: hidden;
-
     font-size: 1.05rem;
-    font-weight: 600;
-    line-height: 20px;
-    text-transform: uppercase;
+    font-weight: 500;
+    line-height: 15.75px;
+    color: @sidebar-text-active;
     &-d-none {
         display: none;
         transition: all 1s;
@@ -60,6 +63,34 @@ eak-sidebar {
     margin-top: 0;
     @media @md-lg {
       margin-top: 30px;
+    }
+
+    .sidebar-scrollable-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 0px;
+    }
+
+    .sidebar-footer-copyright {
+      padding: 0 40px 0 25px;
+      font-size: 0.75rem;
+      line-height: 14px;
+
+      .sidebar-footer-link {
+        display: inline-block;
+        color: inherit;
+        padding: 0 5px;
+        &:hover {
+          color: @link-hover-underline;
+        }
+      }
+
+      @media @sm {
+        padding-left: 36px;
+      }
+      @media @md-xl {
+        padding-left: 26px;
+      }
     }
   }
 

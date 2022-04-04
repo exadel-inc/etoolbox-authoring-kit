@@ -10,14 +10,19 @@ eak-sidebar {
     display: block;
     overflow: hidden;
     max-width: 100%;
-    margin-bottom: 5px;
+    margin-bottom: 32px;
+
+    & > .sidebar-nav-item-heading {
+      font-size: 12px;
+      opacity: .8;
+    }
   }
 
   // Primary Heading
   .sidebar-nav-item-heading {
     position: relative;
     display: flex;
-    padding: 10px 40px 10px 25px;
+    padding: 6px 40px 6px 25px;
     color: inherit;
     @media @sm {
       padding-left: 36px;
@@ -26,40 +31,14 @@ eak-sidebar {
       padding-left: 26px;
     }
 
-    &.active {
-      color: white;
-      background: linear-gradient(to right, fade(@nav-dark-selected, 25%), fade(@nav-dark-selected, 0%));
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 1px;
-        height: 100%;
-        border-left: 3px solid @nav-dark-accent;
-      }
-    }
-  }
-  .sidebar-nav-link {
-    display: block;
-    font-size: 1.25rem;
-    font-weight: 400;
-    text-decoration: none;
-    color: inherit;
-
-    &:hover {
-      color: @nav-dark-hover;
-    }
-  }
-  .sidebar-nav-item-link {
-    flex: 0 0 auto;
-    display: inline-flex;
-    padding: 2px;
-
-    > svg {
-      fill: #fff;
-      height: 24px;
-      width: 24px;
+    &.active ::before,
+    &.active ~ .sidebar-nav-secondary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 1px;
+      height: 100%;
+      border-left: 3px solid @nav-dark-accent;
     }
   }
 
@@ -68,9 +47,6 @@ eak-sidebar {
     margin: 0;
     padding: 0;
     opacity: 0;
-
-    font-size: 1.125rem;
-    font-weight: 500;
 
     transition: opacity .5s ease-in;
 
@@ -92,7 +68,7 @@ eak-sidebar {
     width: 12px;
     height: 6px;
 
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9' xml:space='preserve'%3E%3Cpolyline points='0,0 8,8 16,0' fill='none' stroke='white' stroke-width='2'%3E%3C/polyline%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9' xml:space='preserve'%3E%3Cpolyline points='0,0 8,8 16,0' fill='none' stroke='rgb(51,54,56)' stroke-width='2'%3E%3C/polyline%3E%3C/svg%3E");
     background-repeat: no-repeat;
 
     transform: rotate(0deg);

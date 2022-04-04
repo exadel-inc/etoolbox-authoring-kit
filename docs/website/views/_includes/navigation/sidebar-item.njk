@@ -10,7 +10,7 @@
   </div>
 
   <esl-panel id="sidebar-{{ collection }}-menu"
-             class="sidebar-nav-secondary {{ 'open' if isPrimaryActive }}"
+             class="sidebar-nav-secondary nav-secondary-panel {{ 'open' if isPrimaryActive }}"
              {% if isPrimaryActive %}data-open{% endif %}
              group="{{ 'esl-nav' if item.parent === 'content' }} {{ collection if item.parent != 'content' }}">
     <ul class="sidebar-nav-secondary-list">

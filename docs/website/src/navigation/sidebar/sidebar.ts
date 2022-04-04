@@ -14,7 +14,7 @@ export class EAKSidebar extends ESLToggleable {
   @prop() public closeOnEsc = true;
   @prop() public closeOnOutsideAction = true;
 
-  @prop() public submenus: string = '.sidebar-nav-secondary';
+  @prop() public submenus: string = '.sidebar-nav-secondary.nav-secondary-panel';
   @prop() public activeMenuAttr: string = 'data-open';
 
   @attr({name: 'animation'}) protected _animation: boolean;

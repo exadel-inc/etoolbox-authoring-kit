@@ -2,21 +2,50 @@
 <eak-sidebar id="sidebar" class="open" aria-label="Site Navigation">
   <nav class="sidebar-nav">
     <a class="sidebar-heading" href="{{ '/' | url }}">
-      <span class="sidebar-logo fill-light">{% include "static/assets/helpers/icon.white.svg" %}</span>
-      <span class="sidebar-title">EXADEL AUTHORING </br> KIT FOR AEM</span>
+      <span class="sidebar-logo"> {% include "static/assets/helpers/icon.svg" %}</span>
+      <span class="sidebar-title">Exadel Authoring Kit for AEM</span>
     </a>
     <div class="sidebar-content">
-      <ul class="sidebar-nav-list esl-scrollable-content">
-        {% set collection = collections.content | sortByNameAndOrder | navigation %}
-        {% if collection.children.length %}
-          {% for item in collection.children %}
-          <li class="sidebar-nav-item">
-            {{ navitem (item) }}
-          </li>
-          {% endfor %}
-        {% endif %}
-      </ul>
-      <esl-scrollbar class="sidebar-scrollbar" target="::prev"></esl-scrollbar>
+      <div class="sidebar-scrollable-content esl-scrollable-content">
+        <ul class="sidebar-nav-list">
+          {% set collection = collections.content | sortByNameAndOrder | navigation %}
+          {% if collection.children.length %}
+            {% for item in collection.children %}
+
+            <li class="sidebar-nav-item">
+              <div class="sidebar-nav-item-heading">
+                {{ item.data.title }}
+              </div>
+
+              <div class="sidebar-nav-secondary">
+                <ul class="sidebar-nav-secondary-list">
+                  {% for itm in item.children | sortByNameAndOrder %}
+                    {% set isActive = page.url === itm.url %}
+                    {% set isDraft = [].concat(itm.data.tags).includes('draft') %}
+                    {% if itm.children.length %}
+                    <li class="sidebar-nav-secondary-item sidebar-secondary-nav-item-children">{{ navitem (itm) }}</li>
+                    {% else %}
+                    <li class="sidebar-nav-secondary-item {{ 'active' if isActive }} {{ 'draft' if isDraft }}"
+                        {% if isActive %}aria-selected="true"{% endif %}>
+                      <a class="sidebar-nav-secondary-link"
+                        {% if isActive %}aria-current="page"{% endif %}
+                        href="{{ itm.url | url }}">
+                        {{ itm.data.title }}
+                      </a>
+                    </li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              </div>
+            </li>
+            {% endfor %}
+          {% endif %}
+        </ul>
+        <div class="sidebar-footer-copyright">
+          EAK v{{ env.version }} © {{ env.date.getFullYear() }}<a class="sidebar-footer-link" href="{{ site.exadel }}" target="_blank">Exadel</a>, Inc.
+        </div>
+      </div>
+      <esl-scrollbar class="sidebar-scrollbar" target="::prev" ></esl-scrollbar>
     </div>
   </nav>
 </eak-sidebar>
