@@ -18,18 +18,17 @@ eak-sidebar {
   .sidebar-heading {
     display: none;
     min-width: auto;
-    padding: 0 8px;
-    margin: 0 2px 15px 7px;
+    margin: 0 40px 40px 25px;
     text-decoration: none;
 
     @media @md-xl {
       display: flex;
+      align-items: center;
     }
   }
 
   .sidebar-logo {
     flex: 0 0 auto;
-    padding-left: 8px;
     line-height: 3;
 
     svg {
@@ -42,7 +41,7 @@ eak-sidebar {
     display: inline-block;
     width: calc(100% - 77px);
     flex: 1 0 auto;
-    padding: 1px 65px 0 10px;
+    padding: 0 65px 0 10px;
     overflow: hidden;
     font-size: 1.05rem;
     font-weight: 500;
@@ -60,10 +59,6 @@ eak-sidebar {
     flex-direction: column;
 
     height: 100%;
-    margin-top: 0;
-    @media @md-lg {
-      margin-top: 30px;
-    }
 
     .sidebar-scrollable-content {
       display: flex;
