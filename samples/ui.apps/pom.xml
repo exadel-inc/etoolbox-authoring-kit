@@ -84,6 +84,7 @@
                         <artifactId>etoolbox-authoring-kit-plugin</artifactId>
                         <configuration>
                             <componentsPathBase>jcr_root/apps/${project.jcrAppFolder}/components</componentsPathBase>
+                            <terminateOn>none</terminateOn>
                         </configuration>
                     </plugin>
                 </plugins>
