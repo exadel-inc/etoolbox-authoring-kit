@@ -22,7 +22,7 @@ import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import com.day.cq.i18n.I18n;
 
-import com.exadel.aem.toolkit.api.annotations.injectors.I18nValue;
+import com.exadel.aem.toolkit.api.annotations.injectors.I18N;
 import com.exadel.aem.toolkit.core.injectors.i18n.NativeLocaleDetector;
 import com.exadel.aem.toolkit.core.injectors.models.i18n.TestLocaleDetector;
 
@@ -32,36 +32,36 @@ import com.exadel.aem.toolkit.core.injectors.models.i18n.TestLocaleDetector;
 @SuppressWarnings("unused")
 public class TestModelI18n {
 
-    @I18nValue
+    @I18N
     private I18n i18n;
 
     private final I18n i18nConstructor;
 
-    @I18nValue(locale = "it-it")
+    @I18N(locale = "it-it")
     private I18n i18nLocale;
 
-    @I18nValue(localeDetector = TestLocaleDetector.class)
+    @I18N(localeDetector = TestLocaleDetector.class)
     private I18n i18nDetector;
 
-    @I18nValue(localeDetector = NativeLocaleDetector.class)
+    @I18N(localeDetector = NativeLocaleDetector.class)
     private I18n i18nNative;
 
-    @I18nValue
+    @I18N
     private String helloWorld;
 
-    @I18nValue(value = "Hello world", locale = "it_it")
+    @I18N(value = "Hello world", locale = "it_it")
     private String helloWorldLocale;
 
-    @I18nValue(localeDetector = TestLocaleDetector.class)
+    @I18N(localeDetector = TestLocaleDetector.class)
     @Named("Hello world")
     private String helloWorldDetector;
 
-    @I18nValue(value = "Hello world", localeDetector = NativeLocaleDetector.class)
+    @I18N(value = "Hello world", localeDetector = NativeLocaleDetector.class)
     private String helloWorldNative;
 
     @Inject
     public TestModelI18n(
-        @I18nValue @Named I18n i18n) {
+        @I18N @Named I18n i18n) {
         this.i18nConstructor = i18n;
     }
 

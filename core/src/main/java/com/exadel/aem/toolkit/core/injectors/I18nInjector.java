@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.day.cq.i18n.I18n;
 
-import com.exadel.aem.toolkit.api.annotations.injectors.I18nValue;
+import com.exadel.aem.toolkit.api.annotations.injectors.I18N;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
@@ -49,7 +49,7 @@ import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 /**
  * Injects into a Sling model an {@link com.day.cq.i18n.I18n} object that corresponds to the current locale, or else an
  * internationalized string value
- * @see I18nValue
+ * @see I18N
  * @see Injector
  */
 @Component(service = Injector.class,
@@ -97,7 +97,7 @@ public class I18nInjector implements Injector {
         @Nonnull AnnotatedElement element,
         @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
-        I18nValue annotation = element.getDeclaredAnnotation(I18nValue.class);
+        I18N annotation = element.getDeclaredAnnotation(I18N.class);
         if (annotation == null) {
             return null;
         }

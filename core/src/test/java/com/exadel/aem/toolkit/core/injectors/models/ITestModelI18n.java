@@ -20,20 +20,20 @@ import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import com.day.cq.i18n.I18n;
 
-import com.exadel.aem.toolkit.api.annotations.injectors.I18nValue;
+import com.exadel.aem.toolkit.api.annotations.injectors.I18N;
 
 @Model(adaptables = SlingHttpServletRequest.class,
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
 )
 public interface ITestModelI18n {
 
-    @I18nValue
+    @I18N
     I18n getI18n();
 
-    @I18nValue
+    @I18N
     String getHelloWorld();
 
-    @I18nValue
+    @I18N
     @Named("Hello world")
     String getHelloWorldNamed();
 }

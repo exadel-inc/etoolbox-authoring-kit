@@ -261,41 +261,41 @@ constructor, write it like `(@RequestSuffix @Named String argument)` and annotat
 
 ### Injector for I18n
 
-The `@I18nValue` annotation can be used to inject either the OOTB `I18n` object or a particular internationalized value. Therefore, it is legitimate to use this annotation with an *I18n*-typed or a *String*-typed class member (and also with an *Object*-typed member which is then considered a string).
+The `@I18N` annotation can be used to inject either the OOTB `I18n` object or a particular internationalized value. Therefore, it is legitimate to use this annotation with an *I18n*-typed or a *String*-typed class member (and also with an *Object*-typed member which is then considered a string).
 
-The behavior of *I18n* depends on the current locale. By default, the locale is guessed from the path of the page the current resource belongs to, or else the *jcr:language* property of that page. That is, a resource with the path like `/content/site/us/en/myPage/jcr:content/resource` or `/content/site/us-en/myPage/jcr:content/resource` will be considered belonging to the *en_US* locale.
+The behavior of *I18N* depends on the current locale. By default, the locale is guessed from the path of the page the current resource belongs to, or else the *jcr:language* property of that page. That is, a resource with the path like `/content/site/us/en/myPage/jcr:content/resource` or `/content/site/us-en/myPage/jcr:content/resource` will be considered belonging to the *en_US* locale.
 
 You can override this guessing in two ways:
-- directly specify the *locale* parameter of `@I18nValue`. The *locale* can contain either a two-char language token, or a 5-char language-and-country in one of the following formats: *en-us*, *en_us*, *en/us*. Mind that the language token always comes first, and the country token comes second;
+- directly specify the *locale* parameter of `@I18N`. The *locale* can contain either a two-char language token, or a 5-char language-and-country in one of the following formats: *en-us*, *en_us*, *en/us*. Mind that the language token always comes first, and the country token comes second;
 - or specify a reference to a locale detector. A locale detector is a class which implements `Function<Object, Locale>`. The *Object* argument is the adaptable (usually a request or a resource). There are two predefined locale detectors: the `PageLocaleDetector` (it implements guessing by the page path as described above; you don't have to specify it manually), and the `NativeLocaleDetector`. If the latter is specified, the returned locale is effectively *null* which triggers the native AEM behavior - the locale is then derived from the logged user's preferences.
 
 If both *locale* and *localeDetector* are specified, *locale* takes precedence.
 
-When using `@I18nValue` with a String-typed class member you can specify the value to be internationalized. Use either to *value* property of `@I18nValue` or the standard `@Named` annotation. If none of these is present, the string to internationalize will derive from the name of the underlying class member.
+When using `@I18N` with a String-typed class member you can specify the value to be internationalized. Use either to *value* property of `@I18N` or the standard `@Named` annotation. If none of these is present, the string to internationalize will derive from the name of the underlying class member.
 
 Please take into account that AEM operates with resource bundles specified by both language and country. So if you specify a locale as *"en"* in one place and *"en-us"* elsewhere, these may be considered as two different locales and different resource bundles.
 
 ```java
 public class SampleModel {
     // ...
-    @I18nValue
+    @I18N
     private I18n i18n;
 
-    @I18nValue(locale = "it-it")
+    @I18N(locale = "it-it")
     private I18n i18nItalian;
 
-    @I18nValue(localeDetector = NativeLocaleDetector.class)
+    @I18N(localeDetector = NativeLocaleDetector.class)
     private I18n i18nFromUserPreferences;
 
-    @I18nValue(locale = "it")
+    @I18N(locale = "it")
     @Named("Hello world")
     private String helloWorld; // Injects the "Ciao mondo" value if such is present in the resource bundle
 
-    @I18nValue(value = "Hello world", localeDetector = MyDetectorReturnsItalian.class)
+    @I18N(value = "Hello world", localeDetector = MyDetectorReturnsItalian.class)
     private String helloWorld2; // Same as above
 }
 ```
 
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
-constructor, write it like `(@I18nValue @Named String argument)` and annotate the constructor itself with `@Inject`.
+constructor, write it like `(@I18N @Named String argument)` and annotate the constructor itself with `@Inject`.
 

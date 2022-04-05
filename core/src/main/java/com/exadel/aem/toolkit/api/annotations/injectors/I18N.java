@@ -44,7 +44,7 @@ import com.exadel.aem.toolkit.core.injectors.i18n.PageLocaleDetector;
 @Retention(RetentionPolicy.RUNTIME)
 @InjectAnnotation
 @Source(I18nInjector.NAME)
-public @interface I18nValue {
+public @interface I18N {
 
     /**
      * Used to specify the string value to internationalize. If not set, defaults to the name of the underlying Java
@@ -57,7 +57,7 @@ public @interface I18nValue {
     /**
      * Used to specify the locale in one of the formats like {@code en}, {@code en/us}, {@code en-us}, or {@code en_US}.
      * One can provide either a two-symbol language token or a language-country pair (note: language must come first).
-     * <p>If this parameter is specified it overrides the {@link I18nValue#localeDetector()} property. If neither
+     * <p>If this parameter is specified it overrides the {@link I18N#localeDetector()} property. If neither
      * {@code locale} nor {@code localeDetector} are set, the locale is guessed based on the current resource page
      * @return Optional non-blank string
      */
@@ -65,7 +65,7 @@ public @interface I18nValue {
 
     /**
      * Used to specify a routine that will be used for detecting the current locale unless a particular value is set up
-     * via {@link I18nValue#locale()}. A locale detector must implement the {@code Function<Object, Locale>} interface.
+     * via {@link I18N#locale()}. A locale detector must implement the {@code Function<Object, Locale>} interface.
      * It is invoked with the call to the interface's {@link Function#apply(Object)} method.
      * <p>By default, the {@link PageLocaleDetector} is turned on. It detects the locale based on the current resource
      * page property. To bring back the AEM's default behavior (detection based on the authenticated user's properties),
