@@ -10,7 +10,7 @@ Defining allowed components has always been a tiring task for developers. The XM
 
 ### Defining allowed children
 
-In order to specify a list of allowed children for a container component, use `@AllowedChildren` annotation. One `@AllowedChildren` annotation describes a set of allowed components/groups and, optionally, the conditions, under which this list should be applied.
+In order to specify a list of allowed children for a container component, use `@AllowedChildren` annotation.  There can be one or more `@AlowedChildren` annotations per component. Every `@AllowedChildren` entry describes a set of allowed components/groups and, optionally, the conditions under which it should be applied.
 
 You can either specify a single rule that will apply everywhere the component can be inserted, or have several rules with different conditions. The rules are evaluated in the order they were specified. The first suitable rule takes effect, so you would want to specify the rules from the more specific ones to more generic ones.
 
@@ -22,6 +22,12 @@ A detailed description of all properties of `@AllowedChildren` annotation can be
 - _resourceNames_ - specify applicable resource subnode names.
 
 For _templates_, _pageResourceTypes_, _parents_, _pagePaths_ and the _value_ itself, you can use wildcard symbol (`*`) to omit the beginning or the end of the path to a component or template: `/apps/acme/components/content/new_design/*`, `*/new_design/*`, `*/text`. However, such policies are hard to support and may lead to unwanted components being allowed, therefore they should be used with caution.
+
+The final setting that can be applied to a rule is the _mode_. Mode defines whether the current rule replaces (or "overrides") the rules defined through the conventional policies for editable templates / designs, or just merges with them.
+
+The default behavior is "override". It helps to keep the policies and the `@AllowedChildren` logic apart.
+
+Use the _merge_ mode with caution. It allows using the policies of editable templates and the code-defined rules at the same time, and this can be a quick way to alter things. But it complicates debugging policy issues: it will be harder to guess for what exact reason a component is in or out of the "allowed" list.
 
 ### Examples
 Here are some examples that showcase the typical use cases.
@@ -71,10 +77,14 @@ public class ColumnsComponent {
 }
 ```
 
-5. Allow Text component under CustomParsys component, which extends OOTB Parsys.
+5. Allow Text component under CustomParsys component, which extends OOTB Parsys. Let this rule be added to the conventional policy for the current component
 ```java
 @AemComponent(title = "Columns Component", path = "columns", resourceSuperType = "wcm/foundation/components/parsys")
-@AllowedChildren(value = "/apps/acme/components/content/text", applyToCurrent = true)
+@AllowedChildren(
+        value = "/apps/acme/components/content/text",
+        applyToCurrent = true,
+        mode = PolicyMergeMode.MERGE
+)
 public class CustomParsys {
 }
 ```

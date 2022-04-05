@@ -70,8 +70,8 @@ public @interface AllowedChildren {
      * type matching "*design2/homepage". They need not be direct parent and child: any level of nesting is allowed.
      * This works much like a sequence of CSS selectors.
      * <p><u>Note</u>: If you use sequences of parents within one entry and one of them is a group with a space in its
-     * name, you should escape it with single quotes or backticks.
-     * E.g. {@code "acme/pages/design2/* group:'My Group Name' group:GroupName *pages/design2/*"}
+     * name, you should escape it with single quotes or backticks. E.g. {@code "acme/pages/design2/* group:'My Group
+     * Name' group:GroupName *pages/design2/*"}
      * @return Optional {@code String} value, or an array of strings
      */
     String[] parents() default {};
@@ -93,14 +93,25 @@ public @interface AllowedChildren {
     String[] resourceNames() default {};
 
     /**
-     * Used to specify target node for rules. If set to {@code true} the rule applies to the current annotated
-     * component. Otherwise, the rule is applied to a container nested within the current component. E.g. if the current
-     * component is an inheritor of parsys, setting {@code applyToCurrent} to {@code true} means that the rule affects
-     * which components can be added to the current one. But if the current component contains a parsys inside you need
-     * to skip {@code applyToCurrent} or set it to {@code false} so that the rule applies to the parsys.
+     * Used to specify target node for rules. If set to {@link PolicyTargetContainer#CURRENT_CONTAINER} the rule applies
+     * to the current annotated component. Otherwise, the rule is applied to a container nested within the current
+     * component. E.g. if the current component is an inheritor of parsys, setting {@code targetContainer} to {@link
+     * PolicyTargetContainer#CURRENT_CONTAINER} means that the rule affects which components can be added to the current
+     * one. But if the current component contains a parsys inside you need to skip {@code targetContainer} or set it to
+     * {@link PolicyTargetContainer#CHILD_CONTAINERS} so that the rule applies to the parsys.
      * <p><u>Note</u>: if the component contains more than one parsys, you can specify the particular target for the
      * rule using the {@code resourceNames} setting
      * @return True or false
      */
-    boolean applyToCurrent() default false;
+    PolicyTargetContainer targetContainer() default PolicyTargetContainer.CHILD_CONTAINERS;
+
+    /**
+     * Used to specify the mode of merging policies defined via {@link AllowedChildren#value()} with original component
+     * policies (designs).
+     * <br>{@link PolicyMergeMode#OVERRIDE} (default) removes from the component selection menu all the entries that are
+     * defined by the conventional policy (design) and shows only the entries defined by {@code AllowedChildren};
+     * <br>{@link PolicyMergeMode#MERGE} adds entries defined by {@code AllowedChildren} to the original list
+     * @return One of the {@link PolicyMergeMode} options
+     */
+    PolicyMergeMode mode() default PolicyMergeMode.OVERRIDE;
 }

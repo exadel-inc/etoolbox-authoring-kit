@@ -47,10 +47,7 @@
         const applicableRule = config.rules.find(rule => isRuleApplicable(rule, settings, componentList));
 
         if (applicableRule) {
-            allowed.length = 0;
-            if (applicableRule.value) {
-                allowed.push(...applicableRule.value);
-            }
+            applyRule(applicableRule, allowed, componentList);
         }
         ns.PolicyResolver.cache.set(editable.path, allowed);
     }
@@ -216,15 +213,6 @@
     }
 
     /**
-     * Retrieves array of resource types of components with given group name
-     * @param group - group name
-     * @param componentList - list of all components available in the instance
-     */
-    function getComponentsResTypesByGroup(group, componentList) {
-        return componentList.filter(comp => comp.componentConfig.group === group).map(comp => comp.componentConfig.resourceType);
-    }
-
-    /**
      * Gets whether the given rule setting matches the property retrieved from the {@code getContainerProperties()}
      * method
      * @param setting - rule setting
@@ -241,5 +229,29 @@
             return property.startsWith(setting.substring(0, setting.length - 1));
         }
         return property === setting.replace(/^\/?(apps)?\//, '');
+    }
+
+    /**
+     * Modifies the list of allowed components for the current container according to the mode of specified rule
+     * @param rule - matched rule
+     * @param allowed - array of allowed components; modified within the method by reference
+     * @param componentList - list of all components available in the instance
+     */
+    function applyRule(rule, allowed, componentList) {
+        if (rule.mode === 'OVERRIDE') {
+            allowed.length = 0;
+        }
+        if (rule.value) {
+            allowed.push(...rule.value);
+        }
+    }
+
+    /**
+     * Retrieves array of resource types of components with given group name
+     * @param group - group name
+     * @param componentList - list of all components available in the instance
+     */
+    function getComponentsResTypesByGroup(group, componentList) {
+        return componentList.filter(comp => comp.componentConfig.group === group).map(comp => comp.componentConfig.resourceType);
     }
 }(Granite));
