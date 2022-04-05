@@ -101,7 +101,7 @@ public @interface AllowedChildren {
      * {@link PolicyTarget#CHILD} so that the rule applies to the parsys.
      * <p><u>Note</u>: if the component contains more than one parsys, you can specify the particular target for the
      * rule using the {@code resourceNames} setting
-     * @return True or false
+     * @return {@link PolicyTarget} value
      */
     PolicyTarget targetContainer() default PolicyTarget.CHILD;
 
