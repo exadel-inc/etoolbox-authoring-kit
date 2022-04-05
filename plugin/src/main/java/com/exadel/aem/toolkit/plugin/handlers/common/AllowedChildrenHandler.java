@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.annotations.policies.PolicyMergeMode;
-import com.exadel.aem.toolkit.api.annotations.policies.PolicyTargetContainer;
+import com.exadel.aem.toolkit.api.annotations.policies.PolicyTarget;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
@@ -66,7 +66,7 @@ public class AllowedChildrenHandler implements Handler {
      */
     private static void populatePolicies(AllowedChildren[] rules, Target target) {
         List<AllowedChildren> allowedChildrenList = Arrays.stream(rules)
-            .filter(ac -> isEditConfig(target) == PolicyTargetContainer.CURRENT_CONTAINER.equals(ac.targetContainer()))
+            .filter(ac -> isEditConfig(target) == PolicyTarget.CURRENT.equals(ac.targetContainer()))
             .collect(Collectors.toList());
         if (allowedChildrenList.isEmpty()) {
             return;

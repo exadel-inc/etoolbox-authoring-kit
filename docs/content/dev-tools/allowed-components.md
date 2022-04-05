@@ -82,7 +82,7 @@ public class ColumnsComponent {
 @AemComponent(title = "Columns Component", path = "columns", resourceSuperType = "wcm/foundation/components/parsys")
 @AllowedChildren(
         value = "/apps/acme/components/content/text",
-        applyToCurrent = true,
+        targetContainer = PolicyTarget.CURRENT,
         mode = PolicyMergeMode.MERGE
 )
 public class CustomParsys {

@@ -93,17 +93,17 @@ public @interface AllowedChildren {
     String[] resourceNames() default {};
 
     /**
-     * Used to specify target node for rules. If set to {@link PolicyTargetContainer#CURRENT_CONTAINER} the rule applies
+     * Used to specify target node for rules. If set to {@link PolicyTarget#CURRENT} the rule applies
      * to the current annotated component. Otherwise, the rule is applied to a container nested within the current
      * component. E.g. if the current component is an inheritor of parsys, setting {@code targetContainer} to {@link
-     * PolicyTargetContainer#CURRENT_CONTAINER} means that the rule affects which components can be added to the current
+     * PolicyTarget#CURRENT} means that the rule affects which components can be added to the current
      * one. But if the current component contains a parsys inside you need to skip {@code targetContainer} or set it to
-     * {@link PolicyTargetContainer#CHILD_CONTAINERS} so that the rule applies to the parsys.
+     * {@link PolicyTarget#CHILD} so that the rule applies to the parsys.
      * <p><u>Note</u>: if the component contains more than one parsys, you can specify the particular target for the
      * rule using the {@code resourceNames} setting
      * @return True or false
      */
-    PolicyTargetContainer targetContainer() default PolicyTargetContainer.CHILD_CONTAINERS;
+    PolicyTarget targetContainer() default PolicyTarget.CHILD;
 
     /**
      * Used to specify the mode of merging policies defined via {@link AllowedChildren#value()} with original component
