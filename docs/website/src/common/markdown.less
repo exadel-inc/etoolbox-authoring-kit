@@ -1,4 +1,15 @@
+@import "./common/colors.less";
+
 .markdown-container {
+  h1, h2, h3, h4, h5, h6 {
+    color: @nav-accent;
+    margin-bottom: 20px;
+
+    &:not(:first-child) {
+      margin-top: 40px;
+    }
+  }
+
   & ul,
   & ol {
     padding-left: 1.5rem;
@@ -10,5 +21,39 @@
     p:last-child {
       margin-bottom: 0;
     }
+  }
+
+  pre {
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 25px 20px;
+  }
+
+  #see-also {
+    margin-top: 60px;
+
+    + ul {
+      display: flex;
+      flex-direction: column;
+      padding-left: 0;
+
+      li {
+        padding-bottom: 10px;
+        list-style: none;
+
+        a { color: @body-fg; }
+      }
+
+      @media @md-xl {
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        li {
+          flex: 0 0 33.333333%;
+        }
+      }
+    }
+
+    + p a { color: @body-fg; }
   }
 }
