@@ -45,6 +45,7 @@
         const config = JSON.parse(configJson);
         const settings = getContainerProperties(editable, ns.author, !config.isEditConfig);
         const applicableRule = config.rules.find(rule => isRuleApplicable(rule, settings, componentList));
+        applicableRule.mode = applicableRule.mode || 'OVERRIDE';
 
         if (applicableRule) {
             applyRule(applicableRule, allowed, componentList);
