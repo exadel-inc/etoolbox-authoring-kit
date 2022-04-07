@@ -3,6 +3,7 @@ landing:
     installationUrl: content/getting-started/installation
     docsUrl: https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/index.html
     articleExadelUrl: https://exadel.com/news/tag/exadel-authoring-kit-for-aem/
+    popularArticlesUrl: content/getting-started/popular-articles
 
   marquee:
     logo: landing/banner.svg

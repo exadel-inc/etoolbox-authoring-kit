@@ -1,0 +1,28 @@
+@import "../common/breakpoints.less";
+@import "../common/colors.less";
+
+.popular-articles {
+    &-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 50px;
+        grid-auto-rows: minmax(100px, auto);
+      @media @xs-md {
+        grid-template-columns: repeat(1, 1fr);
+      }
+      
+    }
+    &-item {
+        list-style: none;
+    }   
+
+    &-page-title{
+        color: #004368;
+        margin-bottom: 24px;
+    }
+
+    &-page-subheader{
+        color: #004368;
+        margin-bottom: 40px;
+    }
+}
