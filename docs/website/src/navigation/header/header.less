@@ -1,7 +1,7 @@
 @import (reference) "../../common/variables.less";
 
 .header {
-  z-index: 10;
+  z-index: 11;
 
   color: @landing-fg-color;
   background-color: @landing-bg-color;
@@ -44,7 +44,7 @@
     padding: 10px;
 
     &:hover {
-      color: @nav-dark-hover;
+      color: @nav-hover;
       text-decoration: none;
     }
   }
@@ -126,8 +126,8 @@
     height: 22px;
     margin: 0 2px;
 
-    border-top: 2px solid @sidebar-text-active;
-    border-bottom: 2px solid @sidebar-text-active;
+    border-top: 2px solid @nav-accent;
+    border-bottom: 2px solid @nav-accent;
 
     transition: border .5s ease-in-out;
 
@@ -142,7 +142,7 @@
       top: 50%;
       left: 50%;
 
-      background: @sidebar-text-active;
+      background: @nav-accent;
 
       transform: translate(-50%, -50%);
       transition: transform .5s ease-in-out;
@@ -163,7 +163,6 @@
 
   &-short-name {
     display: none;
-    text-transform: uppercase;
     @media @xs-md {
       display: inline-block;
     }
@@ -179,6 +178,5 @@
   &-short-name, &-long-name {
     font-size: 1.125rem;
     font-weight: 500;
-    margin-left: 11px;
   }
 }

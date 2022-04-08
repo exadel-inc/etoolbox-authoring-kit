@@ -17,10 +17,10 @@ eak-sidebar {
     &.active,
     & .sidebar-nav-item-heading.active {
       font-weight: 700;
-      color: @sidebar-text-active;
+      color: @nav-accent;
     }
     & .sidebar-nav-item-heading.active + .sidebar-nav-secondary {
-      color: @sidebar-text-active;
+      color: @nav-accent;
     }
 
     &.active::before {
@@ -29,7 +29,7 @@ eak-sidebar {
       top: 0;
       left: 1px;
       height: 100%;
-      border-left: 3px solid @nav-dark-accent;
+      border-left: 3px solid @nav-accent;
     }
 
     &:not(.sidebar-secondary-nav-item-children) {
@@ -81,7 +81,7 @@ eak-sidebar {
     color: inherit;
 
     &:hover {
-      color: @nav-dark-hover;
+      color: @nav-hover;
     }
   }
 }

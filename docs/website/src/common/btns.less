@@ -1,17 +1,13 @@
 .btn {
   margin-top: 5px;
   margin-right: 5%;
-  padding: 0 15px;
-  width: fit-content;
-  height: fit-content;
-  min-height: 62px;
+  padding: 10px 20px;
   display: block;
   border-width: 1px;
   border-style: solid;
   border-radius: 8px;
   font-weight: 500;
   text-decoration: none;
-  line-height: 3;
   text-align: center;
   z-index: 4;
 
@@ -19,41 +15,33 @@
     text-decoration: none;
   }
 
-  &-blue {
-    border-color: @landing-blue;
-    background-color: @landing-blue;
-    color: #FFF;
-
-    &:hover {
-      color: #FFF;
-      background-color: mix(#65BDEA, #fff, 80%);
-      border-color: mix(#65BDEA, #fff, 80%);
-      box-shadow: inset 0 0 1px 2px @landing-blue;
-    }
-
-    &.btn-sec {
-      color: @landing-blue;
-      background-color: rgba(255,255,255,.75);
-    }
-  }
-
-  &-mint {
-    border-color: @landing-mint;
-    background-color: @landing-mint;
-    color: white;
-
-    &:hover {
-      background-color: #02b58b;
+  // mixin to add button color theme
+  .addBtnColorTheme(@name, @primary-color, @secondary-color) {
+    &-@{name} {
+      border-color: @primary-color;
+      background-color: @primary-color;
       color: #fff;
-      border-color: #02b58b;
-      box-shadow: inset 0 0 1px 2px @landing-mint;
-    }
 
-    &.btn-sec {
-      color: @landing-mint;
-      background-color: rgba(255,255,255,.75);
+      &:hover {
+        color: #fff;
+        background-color: @secondary-color;
+        border-color: @secondary-color;
+      }
+
+      &.btn-sec {
+        color: @primary-color;
+        background-color: rgba(255,255,255,.75);
+
+        &:hover {
+          color: @secondary-color;
+        }
+      }
     }
   }
+
+  // applying color themes
+  .addBtnColorTheme(~"blue", @landing-blue, @landing-sec-blue);
+  .addBtnColorTheme(~"mint", @landing-mint, @landing-sec-mint);
 
   &-header {
     height: 40px;

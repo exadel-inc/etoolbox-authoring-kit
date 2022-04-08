@@ -2,13 +2,11 @@
 
 eak-sidebar {
   display: block;
-
-  color: @nav-dark-fg;
-  background: @nav-dark-bg;
-
+  background: @nav-bg;
   position: fixed;
   top: @header-height-mobile;
   z-index: 10;
+  box-shadow: 0 5px 8px 0 rgba(0, 66, 94, .5);
   /* stylelint-disable */
   height: calc(~'100vh - @{header-height-mobile}');
   height: calc(~'var(--100vh, 100vh) - @{header-height-mobile}');
@@ -45,23 +43,22 @@ eak-sidebar {
   @media @md-xl {
     position: relative;
     top: 0;
+    box-shadow: none;
     /* stylelint-disable */
     height: 100vh;
     height: var(--100vh, 100vh);
     /* stylelint-enable */
     max-width: 72px;
+
+    .landing-layout & {
+      display: none;
+    }
   }
 
   &.open {
     max-width: 100vw;
     @media @md-xl {
       max-width: 17.875rem;
-    }
-  }
-
-  @media @md-xl {
-    .landing-layout & {
-      display: none;
     }
   }
 }
