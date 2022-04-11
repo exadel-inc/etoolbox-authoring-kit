@@ -1,0 +1,15 @@
+---
+layout: content
+---
+
+<h2 class="popular-articles-title">Welcome on Exadel authoring Kit for AEM</h2>
+<h3 class="popular-articles-subheader">Popular articles</h3>
+<ul class="popular-articles-container">
+  {% for article in popularArticles %}
+    <li class="popular-articles-item">
+      <h4 class="mb-2">{{ article.title }}</h4>
+      <p>{{ article.textPreview }}</p>
+      <a href="{{ article.url | url }}">Learn More</a>
+    </li>
+  {% endfor %}
+</ul>

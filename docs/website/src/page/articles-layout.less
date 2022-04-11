@@ -1,0 +1,25 @@
+@import "../common/variables.less";
+
+.popular-articles {
+  &-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 50px;
+    @media @xs-md {
+      grid-template-columns: repeat(1, 1fr);
+    }
+  }
+  &-item {
+    list-style: none;
+  }
+
+  &-title {
+    color: @nav-accent;
+    margin-bottom: 24px;
+  }
+
+  &-subheader {
+    color: @nav-accent;
+    margin-bottom: 40px;
+  }
+}
