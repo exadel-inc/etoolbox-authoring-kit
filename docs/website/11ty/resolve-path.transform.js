@@ -20,8 +20,9 @@ class PathResolver {
     if (!outputUrl.endsWith('.html')) return content;
     const filePath = path.dirname(outputUrl.replace(/dist\//, ''));
     const {window} = new JSDOM(content);
+
     PathResolver.resolveLinks(window.document.body, filePath);
-    PathResolver.resolveImages(window.document.body, filePath);
+    PathResolver.resolveImages(window.document.body, filePath,window.document);
     return window.document.documentElement.innerHTML;
   }
 
@@ -32,11 +33,23 @@ class PathResolver {
       link.href = resolved;
     });
   }
-  static resolveImages(dom, filePath) {
+
+  static resolveImages(dom, filePath,document) {
+    console.log(document)
+
     dom.querySelectorAll('img[src^="."]').forEach((img) => {
       const resolved = PathResolver.resolveLink(img.src, filePath);
       if (resolved !== img.src) console.info(blue(`Rewrite image source "${img.src}" to "${resolved}"`));
-      img.src = resolved;
+
+      const newItem = document.createElement('div');
+      newItem.classList.add("image-container")
+      newItem.innerHTML = ` <input type="checkbox" id="zoomCheck">
+      <label for="zoomCheck">
+        <img src=${resolved}></img>
+      </label>
+      ` 
+      img.parentNode.replaceChild(newItem,img);
+      
     });
   }
 

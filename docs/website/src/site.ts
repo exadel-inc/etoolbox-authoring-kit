@@ -6,6 +6,7 @@ import {
   ESLTrigger,
   ESLScrollbar,
   ESLToggleableDispatcher,
+  ESLImage
 } from '@exadel/esl';
 import {EAKSidebar} from './navigation/navigation';
 import {EAKBanner} from './landing/banner/banner';
@@ -20,3 +21,4 @@ ESLPanelGroup.register();
 ESLPanel.register();
 ESLTrigger.register();
 ESLScrollbar.register();
+ESLImage.register();

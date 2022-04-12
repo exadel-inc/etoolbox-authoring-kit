@@ -1,0 +1,16 @@
+.image-container {
+  transition: transform 0.25s ease;
+}
+
+.image-container img {
+  transition: transform 0.2s ease; /* Animation */
+}
+
+.image-container input[type="checkbox"] {
+  display: none;
+}
+
+input[type="checkbox"]:checked ~ label > img {
+  transform: scale(2);
+  cursor: zoom-out;
+}
