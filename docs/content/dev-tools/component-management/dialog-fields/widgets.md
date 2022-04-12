@@ -515,7 +515,8 @@ public class DialogWithPathField {
     @DialogField
     @PathField(
         rootPath = "/content/dam",
-        emptyText = "Enter a path here"
+        emptyText = "Enter a path here",
+        droppable = true
     )
     String path;
 }

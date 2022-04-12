@@ -19,6 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 
@@ -34,15 +35,24 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 public @interface PathField {
 
     /**
-     * When set to a non-blank string, maps to the {@code emptyText} attribute of this Granite UI component's node.
-     * Used to define the text hint for an empty PathField
+     * Maps to the {@code droppable} attribute of this Granite UI component's node. Indicates if assets can be dropped
+     * on the {@code PathField}
+     * @return True or false
+     */
+    @PropertyRendering(ignoreValues = "false")
+    boolean droppable() default false;
+
+
+    /**
+     * When set to a non-blank string, maps to the {@code emptyText} attribute of this Granite UI component's node. Used
+     * to define the text hint for an empty PathField
      * @return String value
      */
     String emptyText() default "";
 
     /**
-     * Maps to the {@code root} attribute of this Granite UI component's node.
-     * Used to define the root node from which PathField navigation starts
+     * Maps to the {@code root} attribute of this Granite UI component's node. Used to define the root node from which
+     * PathField navigation starts
      * @return String value representing valid JCR path
      */
     String rootPath() default "/";
