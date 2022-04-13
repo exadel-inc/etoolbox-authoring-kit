@@ -17,6 +17,7 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.NodeFilter;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
 @AemComponent(
@@ -29,9 +30,22 @@ public class PathFieldWidget {
 
     @DialogField(label = "Edit path")
     @PathField(
-            emptyText = "Path goes here",
-            droppable = true,
-            rootPath = "/content"
+        deleteHint = false,
+        emptyText = "Path goes here",
+        droppable = true,
+        filter = NodeFilter.NOSYSTEM,
+        multiple = true,
+        rootPath = "/content",
+        suggestionSrc = "suggestion"
     )
     String path;
+
+    @DialogField(label = "Edit path 2")
+    @PathField(
+        emptyText = "Path goes here",
+        rootPath = "/content/dam",
+        forceSelection = true,
+        pickerSrc = "picker"
+    )
+    String path2;
 }
