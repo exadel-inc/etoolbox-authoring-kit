@@ -54,7 +54,7 @@ public @interface PathField {
 
     /**
      * Maps to the {@code droppable} attribute of this Granite UI component's node. Indicates if assets can be dropped
-     * on the {@code PathField}
+     * on the {@code PathField} (note: supported since AEM 6.5.10)
      * @return True or false
      */
     @PropertyRendering(ignoreValues = "false")

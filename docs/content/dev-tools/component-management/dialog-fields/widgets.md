@@ -524,6 +524,7 @@ public class DialogWithPathField {
     String path;
 }
 ```
+Note: *droppable* property is supported since AEM 6.5.10.
 
 ### RadioGroup
 
