@@ -516,7 +516,10 @@ public class DialogWithPathField {
     @PathField(
         rootPath = "/content/dam",
         emptyText = "Enter a path here",
-        droppable = true
+        forceSelection = true,
+        droppable = true,
+        multiple = true,
+        filter = NodeFilter.NOSYSTEM
     )
     String path;
 }
