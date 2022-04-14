@@ -38,6 +38,7 @@ import com.exadel.aem.toolkit.test.widget.MultipleAnnotatedWidget;
 import com.exadel.aem.toolkit.test.widget.NestedCheckboxListWidget;
 import com.exadel.aem.toolkit.test.widget.NumberFieldWidget;
 import com.exadel.aem.toolkit.test.widget.PasswordWidget;
+import com.exadel.aem.toolkit.test.widget.PathFieldWidget;
 import com.exadel.aem.toolkit.test.widget.RadioGroupWidget;
 import com.exadel.aem.toolkit.test.widget.RichTextEditorWidget;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
@@ -159,6 +160,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testPassword() {
         test(PasswordWidget.class);
+    }
+
+    @Test
+    public void testPathField() {
+        test(PathFieldWidget.class);
     }
 
     @Test

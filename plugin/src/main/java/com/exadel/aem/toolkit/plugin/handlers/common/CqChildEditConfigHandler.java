@@ -35,13 +35,22 @@ public class CqChildEditConfigHandler implements BiConsumer<Source, Target> {
     private static final String METHOD_LISTENERS = "listeners";
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code
+     * Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
     @Override
     public void accept(Source source, Target target) {
-        ChildEditConfig childEditConfig = source.adaptTo(ChildEditConfig.class);
+        source.tryAdaptTo(ChildEditConfig.class).ifPresent(adaptation -> populateChildEditConfig(adaptation, target));
+    }
+
+    /**
+     * Stores the data bound to the {@code cq:childEditConfig} node in the content repository
+     * @param childEditConfig {@link ChildEditConfig} instance
+     * @param target          Resulting {@code Target} object
+     */
+    private static void populateChildEditConfig(ChildEditConfig childEditConfig, Target target) {
         target
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
             .attributes(childEditConfig, AnnotationUtil.getPropertyMappingFilter(childEditConfig));
@@ -51,6 +60,7 @@ public class CqChildEditConfigHandler implements BiConsumer<Source, Target> {
             METHOD_DROP_TARGETS, childEditConfig.dropTargets(),
             METHOD_LISTENERS, childEditConfig.listeners()
         ));
-        HandlerChains.forChildEditConfig().accept(Sources.fromAnnotation(derivedEditConfig), target);
+
+        HandlerChains.forEditConfig().accept(Sources.fromAnnotation(derivedEditConfig), target);
     }
 }

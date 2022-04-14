@@ -1,0 +1,18 @@
+{
+  "jcr:primaryType": "cq:Page",
+  "jcr:content": {
+    "jcr:primaryType": "cq:PageContent",
+    "jcr:title": "IT-IT"
+  },
+  "page": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType": "cq:PageContent",
+      "jcr:title": "Sample Page",
+      "resource": {
+        "jcr:primaryType": "nt:unstructured",
+        "locale": "it"
+      }
+    }
+  }
+}
