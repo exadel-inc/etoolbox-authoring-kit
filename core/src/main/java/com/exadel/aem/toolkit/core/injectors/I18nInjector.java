@@ -137,6 +137,7 @@ public class I18nInjector implements Injector {
     /**
      * Creates a new {@link Locale} object from the given adaptable object using the provided locale detector
      * @param adaptable A {@link SlingHttpServletRequest} or a {@link Resource} instance
+     * @param detector  A routine used to guess the proper locale from the current request or resource
      * @return {@code Locale} instance; might be null
      */
     private Locale getLocale(
@@ -149,7 +150,7 @@ public class I18nInjector implements Injector {
     /**
      * Retrieves an {@link I18n} object for the given adaptable and locale
      * @param adaptable A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param locale A nullable {@link Locale} object
+     * @param locale    A nullable {@link Locale} object
      * @return {@code I18n} instance
      */
     private I18n getI18n(Object adaptable, Locale locale) {
