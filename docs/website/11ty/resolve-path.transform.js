@@ -35,21 +35,44 @@ class PathResolver {
   }
 
   static resolveImages(dom, filePath,document) {
-    console.log(document)
-
     dom.querySelectorAll('img[src^="."]').forEach((img) => {
       const resolved = PathResolver.resolveLink(img.src, filePath);
       if (resolved !== img.src) console.info(blue(`Rewrite image source "${img.src}" to "${resolved}"`));
-
-      const newItem = document.createElement('div');
-      newItem.classList.add("image-container")
-      newItem.innerHTML = ` <input type="checkbox" id="zoomCheck">
-      <label for="zoomCheck">
-        <img src=${resolved}></img>
-      </label>
-      ` 
-      img.parentNode.replaceChild(newItem,img);
       
+      //replacing img with esl-image and ability to zoom
+      const newItem = document.createElement('div')
+      newItem.classList.add("image-container")
+
+      const zoomedImg = document.createElement("esl-image")
+      zoomedImg.setAttribute('data-src',resolved)
+      zoomedImg.setAttribute('lazy',"auto")
+      zoomedImg.setAttribute('mode',"cover")
+      zoomedImg.setAttribute('class',"zoom-hidden")
+      zoomedImg.style.backgroundSize = "1280px 640px"
+
+      const originalImg = document.createElement("esl-image")
+      originalImg.setAttribute('data-src',resolved)
+      originalImg.setAttribute('lazy',"auto")
+      originalImg.setAttribute('mode',"fit")
+
+      newItem.appendChild(originalImg)
+      newItem.appendChild(zoomedImg)
+      
+      zoomedImg.addEventListener('click',()=>{
+        zoomedImg.setAttribute("class","zoom-hidden")
+      })
+    
+      newItem.addEventListener('click',()=>{
+        zoomedImg.setAttribute("class","zoom-active")
+      })
+
+      newItem.onmousemove = (e)=>{
+        let x = e.clientX; 
+        let y = e.clientY;
+        zoomedImg.style.backgroundPosition = `${x}% ${y}%`
+      }
+
+      img.parentNode.replaceChild(newItem,img);
     });
   }
 
