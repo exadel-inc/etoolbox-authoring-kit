@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Configuring Multifield
+seoTitle: Configuring Multifield - Exadel Authoring Kit
 order: 5
 -->
 ## Multiplying fields

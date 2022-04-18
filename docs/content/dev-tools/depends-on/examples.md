@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Examples
+seoTitle: Examples - Exadel Authoring Kit
 order: 4
 -->
 ## Examples

@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Option Provider
+seoTitle: Option Provider - Exadel Authoring Kit
 order: 3
 -->
 ## Feeding data to selection widgets with OptionProvider

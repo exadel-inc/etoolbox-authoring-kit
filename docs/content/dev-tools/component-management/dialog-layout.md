@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Dialog Layout
+seoTitle: Dialog Layout - Exadel Authoring Kit
 order: 2
 -->
 

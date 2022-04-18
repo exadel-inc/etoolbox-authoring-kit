@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Dialog Field
+seoTitle: Dialog Field - Exadel Authoring Kit
 order: 1
 -->
 ## Defining dialog fields

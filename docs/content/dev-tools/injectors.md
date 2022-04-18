@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Injectors
+seoTitle: Injectors - Exadel Authoring Kit
 order: 4
 -->
 ## Enhancing AEM Components' back-end with advanced Injectors

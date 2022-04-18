@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Installation
+seoTitle: Installation - Exadel Authoring Kit
 -->
 ## Installation
 

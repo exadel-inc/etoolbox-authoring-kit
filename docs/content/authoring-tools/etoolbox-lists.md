@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Etoolbox Lists
+seoTitle: Etoolbox Lists - Exadel Authoring Kit
 -->
 
 ## Managing structured data with Exadel Toolbox Lists

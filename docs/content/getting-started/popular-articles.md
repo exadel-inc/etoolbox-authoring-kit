@@ -1,6 +1,7 @@
 <!--
 layout: popular-articles
 title: Popular Articles
+seoTitle: Popular Articles - Exadel Authoring Kit
 order: 3
 containerCls: container
 popularArticles:

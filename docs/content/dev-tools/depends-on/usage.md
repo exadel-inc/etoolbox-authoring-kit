@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Usage
+seoTitle: Usages - Exadel Authoring Kit
 order: 2
 -->
 ## Using Depends On

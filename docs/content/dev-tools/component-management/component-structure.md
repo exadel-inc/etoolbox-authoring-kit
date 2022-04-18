@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Component Structure
+seoTitle: Component Structure - Exadel Authoring Kit
 order: 1
 -->
 ## Creating AEM Components with ToolKit annotations
