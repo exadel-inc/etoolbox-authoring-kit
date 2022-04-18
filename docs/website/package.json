@@ -24,7 +24,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@exadel/esl": "^3.14.0-beta.3",
+    "@exadel/esl": "4.0.0-beta.3",
     "@juggle/resize-observer": "^3.3.1",
     "@webcomponents/custom-elements": "1.5.0",
     "@webcomponents/webcomponents-platform": "1.0.1",

@@ -1,0 +1,28 @@
+md-image {
+    &-container {
+        display: block;
+        width: 500px;
+        height: 500px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    &-zoom {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        z-index: 2;
+        opacity: 0;
+    }
+
+    &-zoom-active {
+        display: block;
+        transition: opacity 0.2s ease;
+        opacity: 1;
+    }
+
+    .md-image>img {
+        width: 100%;
+    }
+}
