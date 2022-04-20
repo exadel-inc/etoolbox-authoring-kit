@@ -1,4 +1,4 @@
-import { attr, boolAttr, ESLBaseElement, listen } from "@exadel/esl/modules/esl-base-element/core";
+import { attr, ESLBaseElement, listen } from "@exadel/esl/modules/esl-base-element/core";
 
 export class MdImage extends ESLBaseElement {
 
@@ -6,33 +6,46 @@ export class MdImage extends ESLBaseElement {
 
     @attr({ dataAttr: true })
     public src: string
-    @boolAttr() private isZoomActive = false
+    private isZoomActive: boolean = false
 
     connectedCallback() {
         super.connectedCallback()
 
-        const eslImage = document.createElement('esl-image');
-        eslImage.setAttribute("data-src", this.src)
-        eslImage.setAttribute("lazy", '')
-        eslImage.setAttribute("mode", 'fit')
+        const originalImage = document.createElement('esl-image');
+        originalImage.setAttribute("data-src", this.src)
+        originalImage.setAttribute("lazy", '')
+        originalImage.setAttribute("mode", 'fit')
 
 
-        this.appendChild(eslImage)
-        this.addEventListener('click', this.onClick)
+        this.appendChild(originalImage)
+
     }
 
     disconnectedCallback() {
         super.disconnectedCallback()
         // cleanup 
-
-        this.removeEventListener('click', this.onClick)
     }
 
     @listen('click')
     onClick() {
         this.isZoomActive = !this.isZoomActive
-        console.log("click")
+        this.isZoomActive ? this.classList.add('md-image-zoom') : this.classList.remove('md-image-zoom')
     };
+
+
+    @listen('mousemove')
+    onMouseMove(e: MouseEvent) {
+
+        if (this.isZoomActive) {
+
+            let img = this.firstChild?.firstChild  // esl-image > img
+
+
+            img.style.right = e.clientX - this.offsetWidth + 'px'
+            img.style.bottom = e.clientY - this.offsetHeight + 'px'
+
+        }
+    }
 
 }
 
