@@ -22,7 +22,7 @@ class PathResolver {
     const {window} = new JSDOM(content);
 
     PathResolver.resolveLinks(window.document.body, filePath);
-    PathResolver.resolveImages(window.document.body, filePath,window.document);
+    PathResolver.resolveImages(window.document, filePath);
     return window.document.documentElement.innerHTML;
   }
 
@@ -34,12 +34,12 @@ class PathResolver {
     });
   }
 
-  static resolveImages(dom, filePath,document) {
-    dom.querySelectorAll('img[src^="."]').forEach((img) => {
+  static resolveImages(dom, filePath) {
+    dom.body.querySelectorAll('img[src^="."]').forEach((img) => {
       const resolved = PathResolver.resolveLink(img.src, filePath);
       if (resolved !== img.src) console.info(blue(`Rewrite image source "${img.src}" to "${resolved}"`));
       
-      const mdImg = document.createElement("md-image")
+      const mdImg = dom.createElement("md-image")
       mdImg.setAttribute("data-src", resolved)
 
       img.parentNode.replaceChild(mdImg, img);
