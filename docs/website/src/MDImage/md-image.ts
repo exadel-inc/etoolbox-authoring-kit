@@ -1,51 +1,65 @@
-import { attr, ESLBaseElement, listen } from "@exadel/esl/modules/esl-base-element/core";
+import {
+  attr,
+  ESLBaseElement,
+  listen,
+} from '@exadel/esl/modules/esl-base-element/core';
+import { DeviceDetector } from '@exadel/esl';
 
 export class MdImage extends ESLBaseElement {
+  static is = 'md-image';
 
-    static is = "md-image";
+  @attr({ dataAttr: true })
+  public src: string;
 
-    @attr({ dataAttr: true })
-    public src: string
-    private isZoomActive: boolean = false
+  static zoomClass: string = 'md-image-zoom';
 
-    connectedCallback() {
-        super.connectedCallback()
+  connectedCallback(): void {
+    super.connectedCallback();
 
-        const originalImage = document.createElement('esl-image');
-        originalImage.setAttribute("data-src", this.src)
-        originalImage.setAttribute("lazy", '')
-        originalImage.setAttribute("mode", 'fit')
+    const originalImage = document.createElement('esl-image');
+    originalImage.setAttribute('data-src', this.src);
+    originalImage.setAttribute('lazy', '');
+    originalImage.setAttribute('mode', 'fit');
 
+    this.appendChild(originalImage);
+  }
 
-        this.appendChild(originalImage)
+  @listen('click')
+  protected onClick(): void {
+    this.classList.toggle(MdImage.zoomClass);
 
+    if (!this.classList.contains(MdImage.zoomClass)) {
+      this.$$off('touchmove mousemove');
+      return;
     }
 
-    disconnectedCallback() {
-        super.disconnectedCallback()
-        // cleanup 
+    if (DeviceDetector.isMobile) {
+      this.$$on('touchmove', this.onTouchMove);
+    } else {
+      this.$$on('mousemove', this.onMouseMove);
     }
+  }
 
-    @listen('click')
-    onClick() {
-        this.isZoomActive = !this.isZoomActive
-        this.isZoomActive ? this.classList.add('md-image-zoom') : this.classList.remove('md-image-zoom')
-    };
+  protected getImg(): HTMLImageElement | null {
+    return this.querySelector('.inner-image') as HTMLImageElement; // esl-image > img
+  }
 
+  protected onMouseMove(e: MouseEvent): void {
+    const img = this.getImg();
 
-    @listen('mousemove')
-    onMouseMove(e: MouseEvent) {
+    if (!img) return;
 
-        if (this.isZoomActive) {
+    img.style.right = e.clientX - this.offsetWidth + 'px';
+    img.style.bottom = e.clientY - this.offsetHeight + 'px';
+  }
 
-            let img = this.firstChild?.firstChild  // esl-image > img
+  protected onTouchMove(e: TouchEvent): void {
+    const img = this.getImg();
 
+    if (!img) return;
 
-            img.style.right = e.clientX - this.offsetWidth + 'px'
-            img.style.bottom = e.clientY - this.offsetHeight + 'px'
-
-        }
-    }
-
+    img.style.right = e.changedTouches[0].clientX - this.clientWidth + 'px';
+    img.style.bottom =
+      e.changedTouches[0].clientY / 2 - this.clientHeight + 'px';
+  }
 }
-
