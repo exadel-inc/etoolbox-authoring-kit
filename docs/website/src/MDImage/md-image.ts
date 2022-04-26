@@ -29,7 +29,9 @@ export class MdImage extends ESLBaseElement {
     this.classList.toggle(MdImage.zoomClass);
 
     if (!this.classList.contains(MdImage.zoomClass)) {
-      this.$$off('touchmove mousemove');
+      this.$$off('mousemove');
+      this.$$off('touchmove');
+
       return;
     }
 
@@ -49,8 +51,11 @@ export class MdImage extends ESLBaseElement {
 
     if (!img) return;
 
-    img.style.right = e.clientX - this.offsetWidth + 'px';
-    img.style.bottom = e.clientY - this.offsetHeight + 'px';
+    const x = e.clientX - this.offsetWidth;
+    const y = e.clientY - this.offsetHeight;
+
+    img.style.right = (x * 100) / img.offsetWidth + '%';
+    img.style.bottom = (y * 100) / img.offsetHeight + '%';
   }
 
   protected onTouchMove(e: TouchEvent): void {
@@ -59,7 +64,5 @@ export class MdImage extends ESLBaseElement {
     if (!img) return;
 
     img.style.right = e.changedTouches[0].clientX - this.clientWidth + 'px';
-    img.style.bottom =
-      e.changedTouches[0].clientY / 2 - this.clientHeight + 'px';
   }
 }
