@@ -1,0 +1,47 @@
+@import (reference) "../common/variables.less";
+
+.md-image {
+  max-width: 1200px;
+
+  display: block;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  cursor: zoom-in;
+
+  &[in-zoom] {
+    border: 1px solid black;
+    cursor: move;
+
+    esl-image {
+      pointer-events: none;
+      position: absolute;
+      z-index: 2;
+      transform-origin: top left;
+    }
+
+  }
+
+  esl-image .inner-image {
+    width: 100%;
+  }
+}
+
+.close-button{
+  padding: 5px;
+  border:2px solid gray;
+  position: absolute;
+  z-index:3;
+  top:10px;
+  right: 10px;
+  background-color: black;
+  color: white;
+  border-radius: 8px;
+
+  @media @xs {
+    padding: 0px 2px 0px 2px;
+
+    top:2px;
+    right:2px;
+  }
+}

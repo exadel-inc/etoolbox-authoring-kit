@@ -6,12 +6,12 @@ import {
   ESLTrigger,
   ESLScrollbar,
   ESLToggleableDispatcher,
-  ESLImage
+  ESLImage,
 } from '@exadel/esl';
 
 import { EAKSidebar } from './navigation/navigation';
 import { EAKBanner } from './landing/banner/banner';
-import { MdImage } from "./MDImage/md-image"
+import { MdImage } from './md-image/md-image';
 
 EAKBanner.register();
 EAKSidebar.register();
