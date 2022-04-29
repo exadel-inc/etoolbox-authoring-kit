@@ -14,10 +14,10 @@
     cursor: move;
 
     esl-image {
-      pointer-events: none;
       position: absolute;
       z-index: 2;
       transform-origin: top left;
+      touch-action: none;
     }
 
   }
@@ -28,19 +28,18 @@
 }
 
 .close-button{
-  padding: 5px;
+  padding: 0px 5px 0px 5px;
   border:2px solid gray;
   position: absolute;
   z-index:3;
   top:10px;
   right: 10px;
-  background-color: black;
+  background-color: @primary-blue;
   color: white;
   border-radius: 8px;
 
   @media @xs {
     padding: 0px 2px 0px 2px;
-
     top:2px;
     right:2px;
   }

@@ -37,21 +37,6 @@ export class MdImage extends ESLBaseElement {
     return button;
   }
 
-  set offsetX(pos: number) {
-    pos = Math.min(1, Math.max(0, pos));
-    const img = this.$image;
-    const maxOffsetX = this.$image.offsetWidth * this.scale - this.offsetWidth;
-    if (maxOffsetX < 0) return;
-    img.style.left = `${-maxOffsetX * pos}px`;
-  }
-  set offsetY(pos: number) {
-    pos = Math.min(1, Math.max(0, pos));
-    const img = this.$image;
-    const maxOffsetY = this.$image.offsetHeight * this.scale - this.offsetHeight;
-    if (maxOffsetY < 0) return;
-    img.style.top = `${-maxOffsetY * pos}px`;
-  }
-
   connectedCallback(): void {
     super.connectedCallback();
     this.appendChild(this.$image);
@@ -68,7 +53,7 @@ export class MdImage extends ESLBaseElement {
     this.style.height = `${this.$image.offsetHeight}px`;
 
     this.$closeButton.style.display = 'block';
-    this.$$on('pointerdown', this.onMouseDown);
+    this.$$on('pointerdown', this.onPointerDown);
   }
 
   protected onClose(e: MouseEvent): void {
@@ -82,27 +67,28 @@ export class MdImage extends ESLBaseElement {
 
     this.$closeButton.style.display = 'none';
 
-    this.$$off(this.onMouseDown);
+    this.$$off(this.onPointerDown);
   }
 
-  protected onMouseDown(e: MouseEvent): void {
+  protected onPointerDown(e: MouseEvent): void {
     this.inDrag = true;
     this.startPoint = getTouchPoint(e);
     this.startPosition = {
       x: parseInt(this.$image.style.left, 10) || 0,
       y: parseInt(this.$image.style.top, 10) || 0,
     };
-    this.$$on({ event: 'pointermove', target: document.body }, this.onMouseMove);
-    this.$$on({ event: 'pointerup', target: document.body }, this.onMouseUp);
+    this.$$on('pointermove', this.onPointerMove);
+    this.$$on('pointerup', this.onPointerUp);
   }
 
-  protected onMouseUp(): void {
+  protected onPointerUp(): void {
     this.inDrag = false;
-    this.$$off(this.onMouseMove);
-    this.$$off(this.onMouseUp);
+    this.$$off(this.onPointerMove);
+    this.$$off(this.onPointerUp);
   }
 
-  protected onMouseMove(e: MouseEvent): void {
+  protected onPointerMove(e: MouseEvent): void {
+    e.preventDefault();
     if (!this.inDrag) return;
     const point = getTouchPoint(e);
 
