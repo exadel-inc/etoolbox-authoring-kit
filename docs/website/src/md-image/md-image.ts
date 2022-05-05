@@ -108,4 +108,11 @@ export class MdImage extends ESLBaseElement {
 
     Object.assign(this.$image.style, { top: normalizedY, left: normalizedX });
   }
+
+  @listen({ event: 'click', target: 'body' })
+  protected onOutsideClick(e: MouseEvent): void {
+    if (!this.$image.contains(e.target as Node)) {
+      if (this.inZoom) this.onClose(e);
+    }
+  }
 }
