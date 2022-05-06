@@ -1,6 +1,6 @@
 @import (reference) "../common/variables.less";
 
-.md-image {
+.eak-zoom-image {
   max-width: 1200px;
 
   display: block;
@@ -18,6 +18,9 @@
       z-index: 2;
       transform-origin: top left;
       touch-action: none;
+    }
+    button {
+      display: block;
     }
 
   }
@@ -37,6 +40,7 @@
   color: white;
   border-radius: 50%;
   text-align: center;
+  display: none;
 
   @media @xs {
     top:2px;

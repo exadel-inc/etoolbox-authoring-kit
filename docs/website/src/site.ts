@@ -11,7 +11,7 @@ import {
 
 import { EAKSidebar } from './navigation/navigation';
 import { EAKBanner } from './landing/banner/banner';
-import { MdImage } from './md-image/md-image';
+import { EAKZoomImage } from './eak-zoom-image/EAKZoomImage';
 
 EAKBanner.register();
 EAKSidebar.register();
@@ -24,4 +24,4 @@ ESLPanel.register();
 ESLTrigger.register();
 ESLScrollbar.register();
 ESLImage.register();
-MdImage.register();
+EAKZoomImage.register();

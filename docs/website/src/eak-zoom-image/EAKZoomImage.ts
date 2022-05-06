@@ -1,10 +1,8 @@
-import { attr, boolAttr, ESLBaseElement, listen } from '@exadel/esl/modules/esl-base-element/core';
-import { DeviceDetector, getOffsetPoint, getTouchPoint, Point } from '@exadel/esl';
-import { memoize } from '@exadel/esl/modules/esl-utils/decorators/memoize';
+import { boolAttr, attr, getTouchPoint, Point, memoize } from '@exadel/esl';
+import { listen, ESLBaseElement } from '@exadel/esl/modules/esl-base-element/core';
 
-export class MdImage extends ESLBaseElement {
-  static is = 'md-image';
-  static zoomClass: string = 'md-image-zoom';
+export class EAKZoomImage extends ESLBaseElement {
+  static is = 'eak-zoom-image';
 
   @attr({ dataAttr: true })
   public src: string;
@@ -14,7 +12,8 @@ export class MdImage extends ESLBaseElement {
   @boolAttr()
   public inDrag: boolean;
 
-  public scale: number = 2;
+  @attr({ defaultValue: '2' }) public scale: string;
+
   protected startPoint: Point;
   protected startPosition: Point;
 
@@ -30,10 +29,8 @@ export class MdImage extends ESLBaseElement {
   @memoize()
   get $closeButton() {
     const button = document.createElement('button');
-    button.onclick = this.onClose.bind(this);
     button.setAttribute('class', 'close-button');
     button.innerText = 'X';
-    button.style.display = 'none';
     return button;
   }
 
@@ -45,6 +42,10 @@ export class MdImage extends ESLBaseElement {
 
   @listen('click')
   protected onClick(e: MouseEvent): void {
+    if (this.$closeButton.contains(e.target as Node)) {
+      this.reset();
+    }
+
     if (this.inDrag || this.inZoom) return;
     this.inZoom = true;
 
@@ -52,22 +53,7 @@ export class MdImage extends ESLBaseElement {
     this.style.width = `${this.$image.offsetWidth}px`;
     this.style.height = `${this.$image.offsetHeight}px`;
 
-    this.$closeButton.style.display = 'block';
     this.$$on('pointerdown', this.onPointerDown);
-  }
-
-  protected onClose(e: MouseEvent): void {
-    e.stopPropagation();
-    if (!this.inZoom) return;
-    this.inZoom = false;
-
-    this.$image.style.removeProperty('transform');
-    this.style.width = 'auto';
-    this.style.height = 'auto';
-
-    this.$closeButton.style.display = 'none';
-
-    this.$$off(this.onPointerDown);
   }
 
   protected onPointerDown(e: MouseEvent): void {
@@ -94,9 +80,10 @@ export class MdImage extends ESLBaseElement {
 
     const offsetX = point.x - this.startPoint.x;
     const offsetY = point.y - this.startPoint.y;
+    const scale = parseInt(this.scale);
 
-    const maxOffsetX = this.$image.offsetWidth * this.scale - this.offsetWidth;
-    const maxOffsetY = this.$image.offsetHeight * this.scale - this.offsetHeight;
+    const maxOffsetX = this.$image.offsetWidth * scale - this.offsetWidth;
+    const maxOffsetY = this.$image.offsetHeight * scale - this.offsetHeight;
 
     if (maxOffsetX < 0 || maxOffsetY < 0) return;
 
@@ -109,10 +96,20 @@ export class MdImage extends ESLBaseElement {
     Object.assign(this.$image.style, { top: normalizedY, left: normalizedX });
   }
 
+  protected reset(): void {
+    if (!this.inZoom) return;
+    this.inZoom = false;
+    this.$image.style.removeProperty('transform');
+    this.style.width = 'auto';
+    this.style.height = 'auto';
+
+    this.$$off(this.onPointerDown);
+  }
+
   @listen({ event: 'click', target: 'body' })
   protected onOutsideClick(e: MouseEvent): void {
     if (!this.$image.contains(e.target as Node)) {
-      if (this.inZoom) this.onClose(e);
+      this.reset();
     }
   }
 }

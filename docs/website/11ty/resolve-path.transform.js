@@ -39,10 +39,10 @@ class PathResolver {
       const resolved = PathResolver.resolveLink(img.src, filePath);
       if (resolved !== img.src) console.info(blue(`Rewrite image source "${img.src}" to "${resolved}"`));
       
-      const mdImg = dom.createElement("md-image")
-      mdImg.setAttribute("data-src", resolved)
+      const zoomImg = dom.createElement("eak-zoom-image")
+      zoomImg.setAttribute("data-src", resolved)
 
-      img.parentNode.replaceChild(mdImg, img);
+      img.parentNode.replaceChild(zoomImg, img);
     });
   }
 
