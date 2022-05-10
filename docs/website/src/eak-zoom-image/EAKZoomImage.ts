@@ -1,5 +1,9 @@
-import { boolAttr, attr, getTouchPoint, Point, memoize } from '@exadel/esl';
-import { listen, ESLBaseElement } from '@exadel/esl/modules/esl-base-element/core';
+import { ESLBaseElement } from '@exadel/esl/modules/esl-base-element/core';
+import { listen } from '@exadel/esl/modules/esl-utils/decorators/listen';
+import { attr } from '@exadel/esl/modules/esl-utils/decorators/attr';
+import { boolAttr } from '@exadel/esl/modules/esl-utils/decorators/bool-attr';
+import { memoize } from '@exadel/esl/modules/esl-utils/decorators/memoize';
+import { Point, getTouchPoint } from '@exadel/esl/modules/esl-utils/dom/events/misc';
 
 export class EAKZoomImage extends ESLBaseElement {
   static is = 'eak-zoom-image';
