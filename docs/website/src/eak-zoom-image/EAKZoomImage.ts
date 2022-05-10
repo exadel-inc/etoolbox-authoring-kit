@@ -30,7 +30,6 @@ export class EAKZoomImage extends ESLBaseElement {
   get $closeButton() {
     const button = document.createElement('button');
     button.setAttribute('class', 'close-button');
-    button.innerText = 'X';
     return button;
   }
 
