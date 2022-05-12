@@ -9,9 +9,9 @@ import {
   ESLImage,
 } from '@exadel/esl';
 
-import { EAKSidebar } from './navigation/navigation';
-import { EAKBanner } from './landing/banner/banner';
-import { EAKZoomImage } from './eak-zoom-image/EAKZoomImage';
+import {EAKSidebar} from './navigation/navigation';
+import {EAKBanner} from './landing/banner/banner';
+import {EAKZoomImage} from './eak-zoom-image/eak-zoom-image';
 
 EAKBanner.register();
 EAKSidebar.register();
