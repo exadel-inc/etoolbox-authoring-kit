@@ -4,8 +4,19 @@
 
   &-title {
     text-align: left;
+    margin-bottom: 30px;
+
     @media @xs-sm {
       width: 100%;
+    }
+  }
+
+  &-description{
+    width: 50%;
+    margin-top: 24px;
+
+    @media @xs-sm {
+      width: auto;
     }
   }
 
@@ -18,6 +29,7 @@
     flex-direction: row;
     align-items: flex-start;
     margin-bottom: 64px;
+
     @media @xs-sm {
       margin: 10px 0 15px;
       flex-direction: column;
@@ -26,7 +38,6 @@
     }
   }
 
-  
   &-link {
     display: block;
     text-decoration: none;
@@ -36,38 +47,33 @@
       color: inherit;
       text-decoration: none;
     }
-
-    @media @xs-sm {
-      flex: 1 1 40%;
-      height: fit-content;
-    }
   }
 
   &-item{
+    padding: 5px;
+
+    @media @xs-sm {
+      padding: 0;
+    }
+
     &-title {
-      height: 2rem;
       text-overflow: ellipsis;
       font-weight: 500;
       font-size: 20px;
-
-      @media @xs-sm {
-        height: 2.4rem;
-      }
-      @media @xs {
-        height: auto;
-      }
     }
 
     &-taglist {
       display: flex;
       flex-wrap: wrap;
       list-style-type: none;
+      margin: 10px 0px;  
 
       &-tag {
         flex: 0 0 auto;
         padding: 0 5px 0 0;
         color: @landing-sec-blue;
         font-size: 0.875rem;
+        font-weight: 500;
       }
     }
 
@@ -76,19 +82,15 @@
       opacity: 0.6;
       height: 1.5rem;
       color: inherit;
-      margin:20px 0px;
+      margin: 20px 0px;
     }
   }
 
   &-first{
-    max-width: 50%;
-    padding: 5px;
+    flex-basis: 60%;
 
     @media @xs-sm {
-      max-width: 90%;
-      margin:auto;
-    }
-    @media @xs {
+      margin: auto;
       padding: 5px 0;
     }
 
@@ -96,34 +98,27 @@
       min-width: 150px;
       width: 100%;
       justify-content: center;
+      margin-bottom: 10px;
     }
   }
 
   &-other {
-    margin-left: 25px;
-    width: 100%;
-    padding: 5px;
+    margin-left: 50px;
+    flex-basis: 40%; 
     text-align: start;
 
     @media @xs-sm {
       flex: 1 1 100%;
-      margin-left: 15px;
+      margin: 0;
     }
-    @media @xs {
-      max-width: 90%;
-      padding: 5px 0;
-    }
-
+    
     &-list {
       display: flex;
       flex-direction: column;
       list-style: none;
-      margin-bottom: 10px;  
-      @media @xs {
-        padding: 0;
-      }
+      
       @media @xs-sm {
-        padding: 5px;
+        padding: 0;
       }
       @media @sm-md {
         width: 100%;

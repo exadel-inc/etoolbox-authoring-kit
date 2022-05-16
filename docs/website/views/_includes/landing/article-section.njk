@@ -1,12 +1,21 @@
+{% macro taglist(tags) %}
+  <ul class="article-item-taglist mb-1">
+    {% for tag in tags %}
+      <li class="article-item-taglist-tag">#{{ tag }}</li>
+    {% endfor %}
+  </ul>
+{% endmacro %}
+
+{% set articles = landing.articles | feed %}
+{% set firstArticle = articles | first %}
+{% set otherArticles = articles.slice(1) %}
+
 <div class="container mb-150">
   <div class="article-title">
     <h3 class="article-heading">{{ landing.articles.title }}</h3>
-    <p class="fw-300">{{ landing.articles.description }}</p>
+    <p class="fw-300 article-description">{{ landing.articles.description }}</p>
   </div>
-  {% set articles = landing.articles | feed %}
-  {% set firstArticle = articles | first %}
-  {% set otherArticles = articles.slice(1) %}
-  {# first article with image #}
+  
   <div class="article-container">
     <div class="article-first article-item">
       <a class="article-link" href="{{ firstArticle.link }}" target="_blank">
@@ -15,33 +24,28 @@
           <img class="article-first-img" src="{{ firstArticle.img }}" alt="{{ firstArticle.title }}"/>
           <span class="article-item-date">{{ firstArticle.date }}</span>
         </div>
-        <ul class="article-item-taglist mb-1">
-          {% for tag in firstArticle.tags %}
-            <li class="article-item-taglist-tag">#{{ tag }}</li>
-          {% endfor %}
-        </ul>
+        {{ taglist(firstArticle.tags) }}
         <p class="article-content fw-300 fs-1 mb-1">{{ firstArticle.content }}</p>
       </a>
     </div>
+
     <div class="article-other">
       <ul class="article-other-list article-container">
         {% for article in otherArticles %}
-          <li class=" article-other article-item">
+          <li class="article-item">
             <a class="article-link" href="{{ article.link }}" target="_blank">
               <h5 class="article-item-title">{{ article.title }}</h5>
               <span class="article-item-date">{{ article.date }}</span>
-              <ul class="article-item-taglist">
-                {% for tag in article.tags %}
-                  <li class="article-item-taglist-tag">#{{ tag }}</li>
-                {% endfor %}
-              </ul>
+              {{ taglist(article.tags) }}
               <p class="article-content fw-300 fs-1 mb-1">{{ article.content }}</p>
             </a>
           </li>
         {% endfor %}
-      </div>
-    </div>
-    <div class="z-index d-flex article-center">
-      <a href="{{ landing.urls.articleExadelUrl }}" target="_blank" class="btn btn-mint m-0">{{ landing.articles.moreText }}</a>
+      </ul>
     </div>
   </div>
+
+  <div class="z-index d-flex article-center">
+    <a href="{{ landing.urls.articleExadelUrl }}" target="_blank" class="btn btn-mint m-0">{{ landing.articles.moreText }}</a>
+  </div>
+</div>
