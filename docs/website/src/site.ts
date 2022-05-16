@@ -13,9 +13,6 @@ import {EAKSidebar} from './navigation/navigation';
 import {EAKBanner} from './landing/banner/banner';
 import {EAKZoomImage} from './eak-zoom-image/eak-zoom-image';
 
-EAKBanner.register();
-EAKSidebar.register();
-
 ESLTabs.register();
 ESLTab.register();
 ESLToggleableDispatcher.init();
@@ -24,4 +21,7 @@ ESLPanel.register();
 ESLTrigger.register();
 ESLScrollbar.register();
 ESLImage.register();
+
+EAKBanner.register();
+EAKSidebar.register();
 EAKZoomImage.register();

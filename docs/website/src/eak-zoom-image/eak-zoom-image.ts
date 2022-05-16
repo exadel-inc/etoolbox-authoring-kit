@@ -10,8 +10,7 @@ import type { Point } from '@exadel/esl/modules/esl-utils/dom/events/misc';
 export class EAKZoomImage extends ESLBaseElement {
   static is = 'eak-zoom-image';
 
-  @attr({ dataAttr: true })
-  public src: string;
+  @attr({ dataAttr: true }) public src: string;
   @attr({ defaultValue: '2' }) public scale: string;
 
   @boolAttr()
