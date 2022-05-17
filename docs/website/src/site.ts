@@ -6,12 +6,10 @@ import {
   ESLTrigger,
   ESLScrollbar,
   ESLToggleableDispatcher,
-} from '@exadel/esl';
-import {EAKSidebar} from './navigation/navigation';
-import {EAKBanner} from './landing/banner/banner';
-
-EAKBanner.register();
-EAKSidebar.register();
+  ESLImage,
+} from "@exadel/esl";
+import {EAKSidebar} from "./navigation/navigation";
+import {EAKBanner} from "./landing/banner/banner";
 
 ESLTabs.register();
 ESLTab.register();
@@ -20,3 +18,7 @@ ESLPanelGroup.register();
 ESLPanel.register();
 ESLTrigger.register();
 ESLScrollbar.register();
+ESLImage.register();
+
+EAKBanner.register();
+EAKSidebar.register();

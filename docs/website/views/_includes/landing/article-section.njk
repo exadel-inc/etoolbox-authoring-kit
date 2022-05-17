@@ -15,13 +15,13 @@
     <h3 class="article-heading">{{ landing.articles.title }}</h3>
     <p class="fw-300 article-description">{{ landing.articles.description }}</p>
   </div>
-  
+
   <div class="article-container">
     <div class="article-first article-item">
       <a class="article-link" href="{{ firstArticle.link }}" target="_blank">
         <h5 class="article-item-title mb-1">{{ firstArticle.title }}</h5>
         <div class="article-first-img mb-1">
-          <img class="article-first-img" src="{{ firstArticle.img }}" alt="{{ firstArticle.title }}"/>
+          <esl-image data-src="{{ firstArticle.img }}" lazy="" alt="{{ firstArticle.title }}" mode="fit"></esl-image>
           <span class="article-item-date">{{ firstArticle.date }}</span>
         </div>
         {{ taglist(firstArticle.tags) }}
