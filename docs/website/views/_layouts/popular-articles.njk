@@ -13,8 +13,8 @@ layout: content
       {% if link === article.page.filePathStem %}
         <li class="popular-articles-item">
           {% set text = article.content %}
-          <h4 class="mb-2">{{ text.match(title)[0] | safe | striptags }}</h4>
-          <p class="popular-articles-content">{{ text.match(content).join(' ') | striptags |  truncate(350) }}</p>
+          <h4 class="mb-2">{{ text.match(title)[0] | striptags }}</h4>
+          <p class="popular-articles-content">{{ text.match(content).join(' ') | striptags |  truncate(270) }}</p>
           <a href="{{ article.page.filePathStem | url }}">Learn More</a>
         </li>
       {% endif %}
