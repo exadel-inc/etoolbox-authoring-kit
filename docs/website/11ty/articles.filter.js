@@ -7,7 +7,7 @@ module.exports = (config) => {
     const headerRegex = /<h2.*>.*?<\/h2>/ig;
     return text.match(headerRegex)[0]
   });
-  config.addFilter('filterArticles', function (arr, linkToArticle) {
+  config.addFilter('filterArticles',  (arr, linkToArticle) => {
     return arr.filter((article) => article.data.page.filePathStem === linkToArticle);
   });
 };
