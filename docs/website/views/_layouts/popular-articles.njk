@@ -4,20 +4,27 @@ layout: content
 
 <h2 class="popular-articles-title">Welcome on Exadel authoring Kit for AEM</h2>
 <h3 class="popular-articles-subheader">Popular articles</h3>
-<ul class="popular-articles-container">
-  {% set title = r/<h2.*?>.*?<\/h2>/ig %}
-  {% set content = r/<p.*>.*?<\/p>/ig %}
-  {% for item in collections.all %}
-    {% for link in articlesLink %}
-      {% set article = item.data %}
-      {% if link === article.page.filePathStem %}
+<ul
+  class="popular-articles-container">
+  {# Search for manually added articles #}
+  {% for link in articlesLink %}
+    {% if link.title %}
+      <li class="popular-articles-item">
+        <h4 class="mb-2">{{ link.title }}</h4>
+        <p class="popular-articles-content">{{ link.content }}</p>
+        <a href="{{ link.url }}">Learn More</a>
+      </li>
+    {# Search for articles only using its link (/content/..) #}
+    {% else %}
+      {% for item in collections.all | filterArticles(link) %}
+        {% set article = item.data %}
         <li class="popular-articles-item">
           {% set text = article.content %}
-          <h4 class="mb-2">{{ text.match(title)[0] | striptags }}</h4>
-          <p class="popular-articles-content">{{ text.match(content).join(' ') | striptags |  truncate(270) }}</p>
+          <h4 class="mb-2">{{ text | articleHeader | striptags }}</h4>
+          <p class="popular-articles-content">{{ text | articleContent | striptags }}</p>
           <a href="{{ article.page.filePathStem | url }}">Learn More</a>
         </li>
-      {% endif %}
-    {% endfor %}
+      {% endfor %}
+    {% endif %}
   {% endfor %}
 </ul>
