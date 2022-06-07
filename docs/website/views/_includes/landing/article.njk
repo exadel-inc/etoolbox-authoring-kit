@@ -1,0 +1,21 @@
+{% macro article(article,isFirst) %}
+  <div class="article-item">
+    <a class="article-link" href="{{ article.link }}" target="_blank">
+      <h5 class="article-item-title mb-2">{{ article.title }}</h5>
+      {% if isFirst %}
+        <div class="article-item-img mb-1">
+          <esl-image class="container" data-src="{{ article.img }}" lazy alt="{{ article.title }}" mode="fit"></esl-image>
+          <span class="article-item-date">{{ article.date }}</span>
+        </div>
+      {% else %}
+        <span class="article-item-date">{{ article.date }}</span>
+      {% endif %}
+      <ul class="article-item-taglist mb-1">
+        {% for tag in article.tags %}
+          <li class="article-item-taglist-tag">#{{ tag }}</li>
+        {% endfor %}
+      </ul>
+      <p class="article-item-content fw-300 fs-1 mb-1">{{ article.content }}</p>
+    </a>
+  </div>
+{% endmacro %}
