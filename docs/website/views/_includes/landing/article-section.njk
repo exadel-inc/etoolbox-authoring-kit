@@ -1,50 +1,43 @@
-{% macro taglist(tags) %}
-  <ul class="article-item-taglist mb-1">
-    {% for tag in tags %}
-      <li class="article-item-taglist-tag">#{{ tag }}</li>
-    {% endfor %}
-  </ul>
+{% macro article(article,isFirst) %}
+  <div class="article-item">
+    <a class="article-link" href="{{ article.link }}" target="_blank">
+      <h5 class="article-item-title mb-2">{{ article.title }}</h5>
+      {% if isFirst %}
+        <div class="article-item-img mb-1">
+          <esl-image data-src="{{ article.img }}" lazy="" alt="{{ article.title }}" mode="fit"></esl-image>
+          <span class="article-item-date">{{ article.date }}</span>
+        </div>
+      {% else %}
+        <span class="article-item-date">{{ article.date }}</span>
+      {% endif %}
+      <ul class="article-item-taglist mb-1">
+        {% for tag in article.tags %}
+          <li class="article-item-taglist-tag">#{{ tag }}</li>
+        {% endfor %}
+      </ul>
+      <p class="article-item-content fw-300 fs-1 mb-1">{{ article.content }}</p>
+    </a>
+  </div>
 {% endmacro %}
 
 {% set articles = landing.articles | feed %}
-{% set firstArticle = articles | first %}
-{% set otherArticles = articles.slice(1) %}
 
 <div class="container mb-150">
   <div class="article-title">
     <h3 class="article-heading">{{ landing.articles.title }}</h3>
     <p class="fw-300 article-description">{{ landing.articles.description }}</p>
   </div>
-
   <div class="article-content">
-    <div class="article-first article-item">
-      <a class="article-link" href="{{ firstArticle.link }}" target="_blank">
-        <h5 class="article-item-title mb-2">{{ firstArticle.title }}</h5>
-        <div class="article-first-img mb-1">
-          <esl-image data-src="{{ firstArticle.img }}" lazy="" alt="{{ firstArticle.title }}" mode="fit"></esl-image>
-          <span class="article-item-date">{{ firstArticle.date }}</span>
-        </div>  
-        {{ taglist(firstArticle.tags) }}
-        <p class="article-content fw-300 fs-1 mb-1">{{ firstArticle.content }}</p>
-      </a>
+    <div class="article-first">
+      {{ article(articles[0],true) }}
     </div>
-
-    <div class="article-other">
-      <ul class="article-other-list article-container">
-        {% for article in otherArticles %}
-          <li class="article-item">
-            <a class="article-link" href="{{ article.link }}" target="_blank">
-              <h5 class="article-item-title">{{ article.title }}</h5>
-              <span class="article-item-date">{{ article.date }}</span>
-              {{ taglist(article.tags) }}
-              <p class="article-content fw-300 fs-1 mb-1">{{ article.content }}</p>
-            </a>
-          </li>
-        {% endfor %}
-      </ul>
+    <div class="article-second">
+      {{ article(articles[1]) }}
+    </div>
+    <div class="article-third">
+      {{ article(articles[2]) }}
     </div>
   </div>
-
   <div class="z-index d-flex article-center">
     <a href="{{ landing.urls.articleExadelUrl }}" target="_blank" class="btn btn-blue btn-sec m-0">{{ landing.articles.moreText }}</a>
   </div>
