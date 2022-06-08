@@ -1,15 +1,15 @@
 @import (reference) "../../common/variables.less";
 
 @features-marker: escape('
-  <svg width="19" height="46" viewBox="0 0 19 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="17.0146" y1="1.28171" x2="1.28171" y2="44.5076" stroke="@{landing-blue}" stroke-width="2" stroke-linecap="round"/>
+  <svg width="19" height="100" viewBox="0 0 19 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="17.0146" y1="1.28171" x2="1.28171" y2="100%" stroke="@{landing-blue}" stroke-width="2" stroke-linecap="round"/>
   </svg>
 ');
 
 .features {
   &-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     padding-top: 50px;
     @media @xs {
@@ -32,7 +32,7 @@
   }
 
   &-content {
-    width: 60%;
+    width: 100%;
     margin-right: 2.1rem;
     @media @xs {
       width: 100%;
@@ -47,14 +47,15 @@
   }
 
   &-item {
-    flex: 1 1 30%;
-    margin: 0 0.75rem 0.75rem;
-    padding: 0 0.75rem 0.75rem;
+    width: 31%;
+    height: fit-content;
+    margin: 2.5rem 1.75rem 2.5rem 0;
+    padding: 0 5rem 0 2.5rem;
     text-align: start;
-    list-style-image: url('data:image/svg+xml,@{features-marker}');
-
     font-size: 1.1rem;
-    font-weight: 300;
+    font-weight: normal;
+    list-style-type: none;
+    background: url('data:image/svg+xml,@{features-marker}') no-repeat 0 0;
     @media @xs {
       flex: 1 1 100%;
     }
