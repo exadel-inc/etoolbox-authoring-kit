@@ -11,7 +11,7 @@
     }
   }
 
-  &-description{
+  &-description {
     width: 50%;
     margin-top: 24px;
 
@@ -20,7 +20,7 @@
     }
   }
 
-  &-heading{
+  &-heading {
     color: @landing-blue;
   }
 
@@ -88,17 +88,12 @@
       text-align: start;
     }
 
-    .inner-image {
-      min-width: 150px;
-      height: 380px;
-      margin-bottom: 10px;
-    }
-
     &-img {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      text-align: center;
+      &.esl-image {
+        height: 380px;
+      }
+      
+      margin-bottom: 10px;
     }
 
     &-content {
@@ -114,6 +109,9 @@
   &-first {
     grid-area: first;
     padding-right: 50px;
+    @media @xs-sm {
+      padding: 0;
+    }
   }
 
   &-second {
