@@ -27,16 +27,13 @@
   &-content {
     display: grid; 
     grid-template-columns: repeat(5,1fr);
-    grid-template-rows: 300px 300px; 
     grid-template-areas: 
     "first first first second second"
     "first first first third third"; 
-    margin-bottom: 150px;
+    margin-bottom: 70px;
 
     @media @xs-sm {
       display: block;
-    }
-    @media @xs-sm {
       margin: 10px 0 15px;
     }
   }
@@ -90,7 +87,7 @@
 
     &-img {
       &.esl-image {
-        height: 380px;
+        height: auto;
       }
       
       margin-bottom: 10px;
