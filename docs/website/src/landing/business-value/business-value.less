@@ -5,11 +5,8 @@
     padding: 5rem;
     width: 100%;
     height: max-content;
-    background-image: url("../assets/landing/bv-background.svg");
-    background-position: bottom left;
-    background-size: cover;
-    background-repeat: no-repeat;
     align-content: center;
+    text-align: start;
     @media @sm {
       padding: 2.5rem;
       background-position: center left;
@@ -18,6 +15,42 @@
       padding: 0.5rem;
       font-size: 14px;
     }
+
+    &.design-1 {
+      background-color: @landing-blue;
+      color: #fff;
+    }
+
+    &.design-2 {
+      background: linear-gradient(@body-bg,@body-fg);
+      color: #fff;
+    }
+
+    &.design-3 {
+      background: linear-gradient(to left,@landing-blue,@secondary-blue);
+      color: #fff;
+    }
+
+    &.design-4 {
+      background: linear-gradient(@body-bg,@landing-blue);
+      color: #fff;
+    }
+
+    &.design-5 {
+      background: linear-gradient(to top,@body-bg,@landing-blue);
+      color: #fff;
+    }
+
+    &.design-6 {
+      background: linear-gradient(to right,@body-bg,@secondary-blue,@landing-blue);
+      color: #fff;
+    }
+
+    &.design-7 {
+      background: linear-gradient(@landing-blue,@body-bg,@landing-blue);
+      color: #000;
+    }
+
   }
 
   &-list {
@@ -44,11 +77,17 @@
       flex: 1 1 45%;
       padding: 0.25rem;
     }
+
+    svg line {
+      stroke: @secondary-blue;
+    }
   }
 
   &-item {
-    text-align: center;
+    text-align: start;
+    width: 200px;
     padding: 1rem 2rem;
+    line-height: 1.2em;
 
     @media @xs {
       text-align: start;
