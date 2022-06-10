@@ -1,3 +1,5 @@
+@import (reference) "./variables.less";
+
 .btn {
   margin-top: 10px;
   margin-right: 5%;
@@ -15,37 +17,24 @@
     text-decoration: none;
   }
 
-  // mixin to add button color theme
-  .addBtnColorTheme(@name, @primary-color, @secondary-color) {
-    &-@{name} {
-      border-color: @primary-color;
-      background-color: @primary-color;
+  &-primary {
+    border-color: @landing-blue;
+    background-color: @landing-blue;
+    color: #fff;
+
+    &:hover {
       color: #fff;
-
-      &:hover {
-        color: #fff;
-        background-color: @secondary-color;
-        border-color: @secondary-color;
-      }
-
-      &.btn-sec {
-        color: @primary-color;
-        background-color: rgba(255,255,255,.75);
-
-        &:hover {
-          color: @secondary-color;
-        }
-      }
+      background-color: @landing-sec-blue;
+      border-color: @landing-sec-blue;
     }
   }
 
-  // applying color themes
-  .addBtnColorTheme(~"blue", @landing-blue, @landing-sec-blue);
-  .addBtnColorTheme(~"mint", @landing-mint, @landing-sec-mint);
+  &-secondary {
+    color: @landing-blue;
+    background-color: rgba(255,255,255,.75);
 
-  &-header {
-    height: 40px;
-    width: 150px;
-    line-height: 2;
+    &:hover {
+      color: @landing-sec-blue;
+    }
   }
 }
