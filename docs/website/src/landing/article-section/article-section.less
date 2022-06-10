@@ -25,11 +25,11 @@
   }
 
   &-content {
-    display: grid; 
+    display: grid;
     grid-template-columns: repeat(5,1fr);
-    grid-template-areas: 
+    grid-template-areas:
     "first first first second second"
-    "first first first third third"; 
+    "first first first third third";
     margin-bottom: 70px;
 
     @media @xs-sm {
@@ -49,7 +49,7 @@
     }
   }
 
-  &-item{
+  &-item {
     padding: 5px;
 
     @media @xs-sm {
@@ -65,7 +65,7 @@
       display: flex;
       flex-wrap: wrap;
       list-style-type: none;
-      margin: 10px 0px;  
+      margin: 10px 0;
 
       &-tag {
         flex: 0 0 auto;
@@ -81,7 +81,7 @@
       opacity: 0.6;
       height: 1.5rem;
       color: inherit;
-      margin: 20px 0px;
+      margin: 20px 0;
       text-align: start;
     }
 
@@ -89,12 +89,12 @@
       &.esl-image {
         height: auto;
       }
-      
+
       margin-bottom: 10px;
     }
 
     &-content {
-      @media @md-lg {
+      @media @md-xl {
         overflow: hidden;
         display: -webkit-box;
         -webkit-line-clamp: 3;
@@ -105,9 +105,8 @@
 
   &-first {
     grid-area: first;
-    padding-right: 50px;
-    @media @xs-sm {
-      padding: 0;
+    @media @md-xl {
+      padding-right: 50px;
     }
   }
 
