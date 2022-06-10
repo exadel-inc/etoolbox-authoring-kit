@@ -85,7 +85,7 @@ landing:
     feed: 'https://exadel.com/news/tag/exadel-authoring-kit-for-aem/feed/'
     baseUrl: 'https://exadel.com'
     count: 3
-    moreText: Learn more
+    moreText: See more
 
     fallback:
       image: "./assets/landing/article-section/img.jpg"
