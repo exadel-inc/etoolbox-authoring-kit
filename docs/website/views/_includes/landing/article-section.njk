@@ -1,31 +1,24 @@
-<div class="article-container container d-flex mb-150">
+{% from 'landing/article.njk' import article %}
+
+{% set articles = landing.articles | feed %}
+
+<div class="container mb-150 article">
   <div class="article-title">
-    <h3 class="m-2">{{ landing.articles.title }}</h3>
-    <p class="fw-300 m-2">{{ landing.articles.description }}</p>
+    <h3 class="article-heading">{{ landing.articles.title }}</h3>
+    <p class="fw-300 article-description">{{ landing.articles.description }}</p>
   </div>
-
-  {% set articles = landing.articles | feed %}
-  <ul class="article-list">
-    {% for article in articles %}
-      <li class="article-item">
-        <a class="article-link" href="{{ article.link }}" target="_blank">
-          <h5 class="fs-1 article-item-title mb-1">{{ article.title }}</h5>
-          <div class="d-flex article-item-img-container mb-1">
-            <img class="article-item-img" src="{{ article.img }}" alt="{{ article.title }}"/>
-          </div>
-          <ul class="article-item-taglist mb-1">
-            {% for tag in article.tags %}
-              <li class="article-item-taglist-tag">#{{ tag }}</li>
-            {% endfor %}
-          </ul>
-          <p class="article-content fw-300 fs-1 mb-1">{{ article.content }}</p>
-          <span class="article-item-date">{{ article.date }}</span>
-        </a>
-      </li>
-    {% endfor %}
-  </ul>
-
+  <div class="article-content">
+    <div class="article-first">
+      {{ article(articles[0],true) }}
+    </div>
+    <div class="article-second">
+      {{ article(articles[1]) }}
+    </div>
+    <div class="article-third">
+      {{ article(articles[2]) }}
+    </div>
+  </div>
   <div class="z-index d-flex article-center">
-    <a href="{{ landing.urls.articleExadelUrl }}" target="_blank" class="btn btn-mint m-0">{{ landing.articles.moreText }}</a>
+    <a href="{{ landing.urls.articleExadelUrl }}" target="_blank" class="btn btn-blue btn-sec m-0">{{ landing.articles.moreText }}</a>
   </div>
 </div>
