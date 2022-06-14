@@ -62,12 +62,17 @@
     }
 
     &.design-10 {
-      background: radial-gradient(circle at left, #58a) top left,
-      radial-gradient(circle at top right, transparent 15px, #58a 0) top right;
+      background-color:#999bff;
+      background-image:
+      radial-gradient(at 78% 79%, hsla(343,86%,76%,1) 0px, transparent 50%),
+      radial-gradient(at 77% 16%, @primary-blue 0px, transparent 50%),
+      radial-gradient(at 30% 35%, hsla(43,62%,73%,1) 0px, transparent 50%),
+      radial-gradient(at 72% 98%, @gray-bg 0px, transparent 50%),
+      radial-gradient(at 92% 15%, @secondary-blue 0px, transparent 50%),
+      radial-gradient(at 37% 33%, hsla(306,71%,68%,1) 0px, transparent 50%),
+      radial-gradient(at 65% 58%, hsla(68,82%,60%,1) 0px, transparent 50%);
 
-      background-size: 50% 50%;
-      background-repeat: no-repeat;
-      color: @primary-blue;
+      color: @white-bg;
     }
 
   }
