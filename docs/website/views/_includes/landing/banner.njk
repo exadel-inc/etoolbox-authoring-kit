@@ -1,17 +1,13 @@
-<eak-banner class="banner mb-50">
+{% macro banner(title,description) %}
   <div class="banner-container container">
     <div class="banner-content">
-      <h2>{{ landing.marquee.title }}</h2>
+      <h2>{{ title }}</h2>
       <div class="banner-content-section">
-        <p class="banner-content-text mb-4">{{ landing.marquee.description }}</p>
+        <p class="banner-content-text mb-4">{{ description }}</p>
         <div class="banner-btns-container">
-          <a href="{{ landing.urls.installationUrl | url }}" class="btn btn-primary">Get started</a>
-          <a href="{{ site.github.url }}" class="btn btn-secondary" target="_blank">Check it out</a>
+          {{ caller() }}
         </div>
       </div>
     </div>
   </div>
-  <div class="banner-waves">
-    {% include "static/assets/landing/banner-waves.svg" %}
-  </div>
-</eak-banner>
+{% endmacro %}

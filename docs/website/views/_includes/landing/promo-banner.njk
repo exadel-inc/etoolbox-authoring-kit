@@ -1,15 +1,11 @@
-<div class="promo-banner mb-50">
-  <div class="promo-banner-container container">
-    <div class="promo-banner-block">
-      <h2>{{ landing.promo.title }}</h2>
-      <p>{{ landing.promo.description }}</p>
-      <div class="promo-banner-btns">
-        <a href="{{ landing.urls.installationUrl | url }}" class="btn btn-primary">Start now</a>
-        <a href="{{ landing.urls.docsUrl }}" class="btn btn-secondary" target="_blank">Read the docs</a>
-      </div>
-    </div>
-  </div>
-  <div class="promo-banner-waves">
-    {% include "static/assets/landing/waves-1.svg" %}
+{% from 'landing/banner.njk' import banner %}
+
+<div class="banner banner-promo">
+  {% call banner(landing.promo.title,landing.promo.description) %}
+  <a href="{{ landing.urls.installationUrl | url }}" class="btn btn-primary">Start now</a>
+  <a href="{{ landing.urls.docsUrl }}" class="btn btn-secondary" target="_blank">Read the docs</a>
+  {% endcall %}
+  <div class="banner-waves">
+    {% include "static/assets/landing/promo-banner-waves.svg" %}
   </div>
 </div>
