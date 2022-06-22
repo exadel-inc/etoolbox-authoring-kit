@@ -1,16 +1,7 @@
 {% from 'landing/banner.njk' import banner %}
 
-{% set buttons = [{
-  link : landing.urls.installationUrl,
-  text : 'Start now'    
-},
-{
-  link : landing.urls.docsUrl,
-  text : 'Read the docs'
-}] %}
-
 <div class="banner banner-promo">
-  {{ banner(landing.promo.title,landing.promo.description,buttons) }}
+  {{ banner(landing.promo.title,landing.promo.description,landing.promo.buttons) }}
   
   <div class="banner-waves">
     {% include "static/assets/landing/promo-banner-waves.svg" %}
