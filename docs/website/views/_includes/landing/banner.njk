@@ -1,4 +1,6 @@
-{% macro banner(title,description,buttons) %}
+{% set landingDir = 'static/assets/landing/' %}
+
+{% macro banner(title,description,buttons,backgroundFile) %}
   <div class="banner-container container">
     <div class="banner-content">
       <h2 class="banner-title">{{ title }}</h2>
@@ -11,6 +13,9 @@
           </div>
         {% endif %}
       </div>
+    </div>
+    <div class="banner-waves">
+      {% include landingDir + backgroundFile %}
     </div>
   </div>
 {% endmacro %}

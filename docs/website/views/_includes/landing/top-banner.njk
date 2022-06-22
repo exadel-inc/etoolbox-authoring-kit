@@ -1,9 +1,6 @@
 {% from 'landing/banner.njk' import banner %}
+{% set bgFile = 'banner-waves.svg' %}
 
 <div class="banner mb-50">
-  {{ banner(landing.marquee.title,landing.marquee.description,landing.marquee.buttons) }}
-  
-  <div class="banner-waves">
-    {% include "static/assets/landing/banner-waves.svg" %}
-  </div>
+  {{ banner(landing.marquee.title,landing.marquee.description,landing.marquee.buttons,bgFile) }}
 </div>
