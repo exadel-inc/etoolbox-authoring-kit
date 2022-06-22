@@ -1,8 +1,14 @@
 @import (reference) "../../common/variables.less";
 
 @features-marker: escape('
-  <svg width="19" height="100" viewBox="0 0 19 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="19" height="150" fill="none" xmlns="http://www.w3.org/2000/svg">
     <line x1="17.0146" y1="1.28171" x2="1.28171" y2="100%" stroke="@{landing-blue}" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+');
+
+@features-marker-xs: escape('
+  <svg width="7" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="6.10438" y1="0.884513" x2="0.884513" y2="30" stroke="@{landing-blue}" stroke-width="2" stroke-linecap="round"/>
   </svg>
 ');
 
@@ -19,7 +25,7 @@
 
   &-header {
     padding-top: 1.25rem;
-    width: 33%;
+    width: 60%;
 
     & > h3 {
       color: @landing-blue;
@@ -37,27 +43,48 @@
     @media @xs {
       width: 100%;
       text-align: center;
-      padding: 2rem;
+      padding: 0.5rem;
     }
   }
 
   &-list {
     display: flex;
+    flex-direction: column;
+    height: 320px;
     flex-wrap: wrap;
+
+    @media @xs {
+      height: auto;
+    }
+
+    @media @sm-md {
+      height: 450px;
+    }
   }
 
   &-item {
-    width: 31%;
-    height: fit-content;
-    margin: 2.5rem 1.75rem 2.5rem 0;
-    padding: 0 5rem 0 2.5rem;
+    flex-shrink: 1;
+    padding: 0 .5rem 0 2rem;
+    margin: 2rem 1.75rem 2rem 0;
+    width: 29%;
     text-align: start;
-    font-size: 1.1rem;
-    font-weight: normal;
     list-style-type: none;
-    background: url('data:image/svg+xml,@{features-marker}') no-repeat 0 0;
+    background: url('data:image/svg+xml,@{features-marker}') no-repeat 0 3px;
+
     @media @xs {
-      flex: 1 1 100%;
+      width: 100%;
+      margin: 1rem 0;
+      background: url('data:image/svg+xml, @{features-marker-xs}') no-repeat 0 3px;
+    }
+
+    @media @xs-md {
+      padding-right: 0;
+    }
+
+    @media @sm-md {
+      margin: 2rem .5rem 2rem 0;
+      padding-left: 1.5rem;
+      width: 50%;
     }
   }
 }
