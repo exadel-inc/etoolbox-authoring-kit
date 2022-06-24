@@ -5,6 +5,7 @@ seoTitle: Etoolbox Lists - Exadel Authoring Kit
 -->
 
 ## Managing structured data with Exadel Toolbox Lists
+
 Exadel Toolbox Lists, or simply *Lists*, is an accessory of the ToolKit that represents a contribution to the Exadel Toolbox package
 
 The Lists provide a flexible way to create, store and retrieve lists of structured items, e.g. a list of HTTP status codes and their descriptions:
