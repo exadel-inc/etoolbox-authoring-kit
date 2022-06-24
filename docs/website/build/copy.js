@@ -2,10 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const del = require('del');
 const glob = require('glob');
+const chokidar = require('chokidar');
 
 const INPUT_DIR = path.resolve(__dirname, '../../content');
 const INPUT_GLOB = '**/*.{md,html,njk}';
 const OUTPUT_DIR = path.resolve(__dirname, '../views/content');
+
 
 console.log(`Searching for files in ${INPUT_DIR}`);
 
@@ -31,6 +33,23 @@ console.log(`Searching for files in ${INPUT_DIR}`);
   });
 })();
 
-if (process.argv.includes('watch')) {
-    // TODO: chokidar + build single file
+if(process.argv.includes('watch')){
+    const watch = chokidar.watch('../content');
+
+    watch.on('change', async fileInitPath => {
+
+      const fileName = fileInitPath.replace('\.\.\\content\\', '');
+      const filePath = path.join(INPUT_DIR, '/', fileInitPath);
+      const outputPath = path.join(OUTPUT_DIR, '/', fileName);
+      const file = await fs.promises.readFile(filePath);
+      const content = file.toString();
+      const parsedContent = content.replace(/(^)(<!--|-->)/gm, '$1---');
+
+      await fs.promises.writeFile(outputPath, parsedContent);
+
+      console.log(`\t - ${fileName} - updated`);
+})
 }
+
+
+
