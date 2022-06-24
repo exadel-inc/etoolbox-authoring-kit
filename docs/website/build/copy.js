@@ -46,7 +46,26 @@ if(process.argv.includes('watch')){
       await fs.promises.writeFile(outputPath, parsedContent);
 
       console.log(`\t - ${fileName} - updated`);
-})
+    })
+
+    watch.on('add', async fileInitPath => {
+      const fileName = fileInitPath.replace('\.\.\\content\\', '');
+      const outputPath = path.join(OUTPUT_DIR, '/', fileName);
+
+      await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
+      await fs.promises.writeFile(outputPath, '');
+
+      console.log(`\t - ${fileName} - added`);
+    })
+
+    watch.on('unlink', async fileInitPath => {
+      const fileName = fileInitPath.replace('\.\.\\content\\', '');
+      const outputPath = path.join(OUTPUT_DIR, '/', fileName);
+
+      await fs.promises.unlink(outputPath);
+
+      console.log(`\t - ${fileName} - deleted`);
+    })
 }
 
 
