@@ -8,7 +8,6 @@ const INPUT_DIR = path.resolve(__dirname, '../../content');
 const INPUT_GLOB = '**/*.{md,html,njk}';
 const OUTPUT_DIR = path.resolve(__dirname, '../views/content');
 
-
 console.log(`Searching for files in ${INPUT_DIR}`);
 
 (async () => {
@@ -37,7 +36,6 @@ if(process.argv.includes('watch')){
     const watch = chokidar.watch('../content');
 
     watch.on('change', async fileInitPath => {
-
       const fileName = fileInitPath.replace('\.\.\\content\\', '');
       const filePath = path.join(INPUT_DIR, '/', fileInitPath);
       const outputPath = path.join(OUTPUT_DIR, '/', fileName);
