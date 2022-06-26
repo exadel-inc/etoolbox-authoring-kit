@@ -19,14 +19,13 @@ landing:
   features:
     title: What’s the Exadel Authoring Kit for AEM all about?
     items:
-      - A smart thoroughly tested extension for AEM authoring interfaces
       - Meant for developers, authors, and business analysts working in an AEM environment
+      - A smart thoroughly tested extension for AEM authoring interfaces
+      - Automatically generates AEM Touch UI dialogs and adds responsive features to the
+        dialogs
       - Filled with reusable coding and visual patterns
       - Rich in utilities for handling AEM Sling models, modifying AEM component policy,
         and managing structured data
-      - Automatically generates AEM Touch UI dialogs and adds responsive features to the
-        dialogs
-
   benefits:
     - imgUrl: developer-friendly.svg
       title: Developer-friendly

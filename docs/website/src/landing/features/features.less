@@ -1,15 +1,21 @@
 @import (reference) "../../common/variables.less";
 
 @features-marker: escape('
-  <svg width="19" height="46" viewBox="0 0 19 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="17.0146" y1="1.28171" x2="1.28171" y2="44.5076" stroke="@{landing-blue}" stroke-width="2" stroke-linecap="round"/>
+  <svg width="19" height="150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="17.0146" y1="1.28171" x2="1.28171" y2="100%" stroke="@{landing-blue}" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+');
+
+@features-marker-xs: escape('
+  <svg width="7" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="6.10438" y1="0.884513" x2="0.884513" y2="30" stroke="@{landing-blue}" stroke-width="2" stroke-linecap="round"/>
   </svg>
 ');
 
 .features {
   &-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     padding-top: 50px;
     @media @xs {
@@ -19,7 +25,7 @@
 
   &-header {
     padding-top: 1.25rem;
-    width: 33%;
+    width: 60%;
 
     & > h3 {
       color: @landing-blue;
@@ -32,31 +38,53 @@
   }
 
   &-content {
-    width: 60%;
+    width: 100%;
     margin-right: 2.1rem;
     @media @xs {
       width: 100%;
       text-align: center;
-      padding: 2rem;
+      padding: 0.5rem;
     }
   }
 
   &-list {
     display: flex;
+    flex-direction: column;
+    height: 320px;
     flex-wrap: wrap;
+
+    @media @xs {
+      height: auto;
+    }
+
+    @media @sm-md {
+      height: 450px;
+    }
   }
 
   &-item {
-    flex: 1 1 30%;
-    margin: 0 0.75rem 0.75rem;
-    padding: 0 0.75rem 0.75rem;
+    flex-shrink: 1;
+    padding: 0 .5rem 0 2rem;
+    margin: 2rem 1.75rem 2rem 0;
+    width: 29%;
     text-align: start;
-    list-style-image: url('data:image/svg+xml,@{features-marker}');
+    list-style-type: none;
+    background: url('data:image/svg+xml,@{features-marker}') no-repeat 0 3px;
 
-    font-size: 1.1rem;
-    font-weight: 300;
     @media @xs {
-      flex: 1 1 100%;
+      width: 100%;
+      margin: 1rem 0;
+      background: url('data:image/svg+xml, @{features-marker-xs}') no-repeat 0 3px;
+    }
+
+    @media @xs-md {
+      padding-right: 0;
+    }
+
+    @media @sm-md {
+      margin: 2rem .5rem 2rem 0;
+      padding-left: 1.5rem;
+      width: 50%;
     }
   }
 }
