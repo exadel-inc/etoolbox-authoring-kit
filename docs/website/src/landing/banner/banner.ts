@@ -10,10 +10,11 @@ export class EAKBanner extends ESLBaseElement {
 
   static TARGETS = 'g > path';
 
-  @attr({ defaultValue: '5' }) public targetsNumber: string;
-  @attr({ defaultValue: '2500' }) public iterationTime: string;
+  @attr({ defaultValue: '6' }) public targetsNumber: string;
+  @attr({ defaultValue: '4000' }) public iterationTime: string;
 
   private _animateTimer: number = 0;
+  private _$active: SVGGeometryElement[] = [];
 
   @ready
   protected connectedCallback(): void {
@@ -48,14 +49,20 @@ export class EAKBanner extends ESLBaseElement {
   @bind
   protected _onIteration(): void {
     const $candidates = range(+this.targetsNumber, () => this.$randomLine);
+    this._$active.forEach((line) => {
+      line.classList.remove('animate');
+      line.style.strokeDashoffset = '';
+    });
 
     $candidates.forEach((line: SVGGeometryElement) => {
-      let lineLength = line.getTotalLength();
       line.classList.add('animate');
 
+      let lineLength = line.getTotalLength();
       line.style.strokeDasharray = lineLength + ' ';
-      line.style.strokeDashoffset = -lineLength + '';
+      line.style.strokeDashoffset = lineLength + '';
     });
+
+    this._$active = $candidates;
 
     this._animateTimer = window.setTimeout(this._onIteration, +this.iterationTime);
   }
