@@ -100,8 +100,7 @@
         transition: all .25s linear;
       }
       .animate {
-        stroke: mix(#fff, @landing-blue, 50%);
-        stroke-width: 1;
+        transition : stroke-dashoffset 3s ease-in-out;
       }
     }
 
@@ -113,6 +112,7 @@
         stroke: @secondary-blue;
     }
   }
+  
   &-promo {
     background-color: @light-blue-bg;
     padding-bottom: 50px;
