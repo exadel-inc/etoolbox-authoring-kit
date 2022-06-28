@@ -8,6 +8,17 @@
     align-content: center;
     text-align: start;
 
+    background-color: @white-bg;
+    background-image:
+      radial-gradient(circle at 2% 92%, @primary-blue 0px, transparent 20%),
+      radial-gradient(circle at 5% 22%, @white-bg 0px, transparent 30%),
+      radial-gradient(circle at 4% 18%, @primary-blue 0px, transparent 50%),
+      radial-gradient(circle at 14% 40%, @light-blue-bg 0px, transparent 60%),
+      radial-gradient(circle at 8% 45%, @white-bg 0px, transparent 60%),
+      radial-gradient(circle at 51% 59%, @secondary-blue 0px, transparent 50%),
+      radial-gradient(circle at 93% 47%, @secondary-blue 10px, transparent 30%),
+      radial-gradient(circle at 14% 67%, @primary-blue 0px, transparent 50%);
+
     @media @sm {
       padding: 2.5rem;
       background-position: center left;
@@ -18,41 +29,6 @@
       font-size: 14px;
     }
 
-    &.horizontal-gradient {
-      background: linear-gradient(to right,@light-blue-bg,@secondary-blue,@landing-blue);
-      color: @white-bg;
-    }
-
-    &.stains {
-      background-color: @white-bg;
-      background-image:
-        radial-gradient(circle at 2% 92%, @primary-blue 0px, transparent 20%),
-        radial-gradient(circle at 5% 22%, @white-bg 0px, transparent 30%),
-        radial-gradient(circle at 4% 18%, @primary-blue 0px, transparent 50%),
-        radial-gradient(circle at 14% 40%, @light-blue-bg 0px, transparent 60%),
-        radial-gradient(circle at 8% 45%, @white-bg 0px, transparent 60%),
-        radial-gradient(circle at 51% 59%, @secondary-blue 0px, transparent 50%),
-        radial-gradient(circle at 93% 47%, @secondary-blue 10px, transparent 30%),
-        radial-gradient(circle at 14% 67%, @primary-blue 0px, transparent 50%);
-
-    }
-
-    &.center-stains {
-      background-color: @light-blue-bg;
-      background-image:
-      radial-gradient(at 93% 59%, @secondary-blue 0px, transparent 50%),
-      radial-gradient(at 47% 52%, @primary-blue 0px, transparent 40%),
-      radial-gradient(at 77% 55%, @primary-blue 0px, transparent 40%),
-      radial-gradient(at 27% 57%, @primary-blue 0px, transparent 40%),
-      radial-gradient(at 13% 57%, @secondary-blue  0px, transparent 50%),
-
-      radial-gradient(at 15% 100%, @white-bg 0px, transparent 50%),
-      radial-gradient(at 35% 100%, @white-bg 0px, transparent 50%),
-      radial-gradient(at 65% 100%, @white-bg 0px, transparent 50%),
-      radial-gradient(at 85% 100%, @white-bg 0px, transparent 50%);
-
-      color: @white-bg;
-    }
   }
 
   &-list {
