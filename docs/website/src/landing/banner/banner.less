@@ -108,14 +108,19 @@
     &-primary {
         stroke: @landing-blue
     }
-  
+
     &-secondary {
         stroke: @secondary-blue;
     }
   }
+
   &-promo {
     background-color: @light-blue-bg;
     padding-bottom: 50px;
+  }
+
+  &-promo &-waves > svg {
+    max-height: calc(100% + 85px);
   }
 
   &-title{
