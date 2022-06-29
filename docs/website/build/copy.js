@@ -82,6 +82,3 @@ if(process.argv.includes('watch')){
       console.log(`\t - ${dirname} deleted`);
     })
 }
-
-
-
