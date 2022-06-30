@@ -26,11 +26,12 @@
 
   &-content {
     display: grid;
-    grid-template-columns: repeat(5,1fr);
+    grid-template-columns: repeat(3,1fr);
     grid-template-areas:
-    "first first first second second"
-    "first first first third third";
+    "first second third"
+    "first fourth fifth";
     margin-bottom: 70px;
+    grid-gap:50px;
 
     @media @xs-sm {
       display: block;
@@ -105,9 +106,7 @@
 
   &-first {
     grid-area: first;
-    @media @md-xl {
-      padding-right: 50px;
-    }
+
   }
 
   &-second {
@@ -117,6 +116,15 @@
   &-third {
     grid-area: third;
   }
+
+  &-forth {
+    grid-area: fouth;
+  }
+
+  &-fifth {
+    grid-area: fifth;
+  }
+
 
   &-center {
     width: 100%;
