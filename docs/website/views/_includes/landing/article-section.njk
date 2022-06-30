@@ -1,11 +1,9 @@
 {% from 'landing/article.njk' import article %}
-
 {% set articles = landing.articles | feed %}
-
-<div class="container mb-150 article">
+<div class="container mb-100 article">
   <div class="article-title">
     <h3 class="article-heading">{{ landing.articles.title }}</h3>
-    <p class="fw-300 article-description">{{ landing.articles.description }}</p>
+    <p class="article-description">{{ landing.articles.description }}</p>
   </div>
   <div class="article-content">
     <div class="article-first">
@@ -16,6 +14,12 @@
     </div>
     <div class="article-third">
       {{ article(articles[2]) }}
+    </div>
+    <div class="article-fourth">
+      {{ article(articles[3]) }}
+    </div>
+    <div class="article-fifth">
+      {{ article(articles[4]) }}
     </div>
   </div>
   <div class="z-index d-flex article-center">
