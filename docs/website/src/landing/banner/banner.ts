@@ -10,7 +10,7 @@ export class EAKBanner extends ESLBaseElement {
 
   static TARGETS = 'g > path';
 
-  @attr({ defaultValue: '6' }) public targetsNumber: string;
+  @attr({ defaultValue: '2' }) public targetsNumber: string;
   @attr({ defaultValue: '4000' }) public iterationTime: string;
 
   private _animateTimer: number = 0;
@@ -39,7 +39,7 @@ export class EAKBanner extends ESLBaseElement {
   }
 
   public startAnimation(): void {
-    this._animateTimer = window.setTimeout(this._onIteration, +this.iterationTime);
+    this._onIteration();
   }
 
   public stopAnimation(): void {
@@ -62,7 +62,7 @@ export class EAKBanner extends ESLBaseElement {
       window.setTimeout(() => {
         line.classList.add('animate');
 
-        let lineLength = line.getTotalLength();
+        const lineLength = line.getTotalLength();
         line.style.strokeDasharray = lineLength + '';
         line.style.strokeDashoffset = lineLength + '';
       }, delay * i);
