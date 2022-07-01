@@ -1,7 +1,6 @@
 @import (reference) "../../common/variables.less";
 
 .article {
-
   &-title {
     text-align: left;
     margin-bottom: 30px;
@@ -25,36 +24,46 @@
   }
 
   &-content {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    grid-template-areas:
-    "first second third"
-    "first fourth fifth";
-    margin-bottom: 70px;
-    grid-gap:50px;
+    display: block;
+    margin-bottom: 30px;
 
-    @media @xs-sm {
-      display: block;
-      margin: 10px 0 15px;
+    @media @md-xl {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-areas:
+      "first second third"
+      "first fourth fifth";
+      margin-bottom: 50px;
+      grid-gap: 10px;
     }
   }
 
   &-link {
     display: block;
+    overflow: hidden;
     text-decoration: none;
     color: inherit;
 
+    border: 2px solid @light-blue-bg;
+    border-radius: 10px;
+    padding: 10px;
+
     &:hover {
-      color: inherit;
       text-decoration: none;
+      color: inherit;
+      background: @light-blue-bg;
+    }
+
+    @media @md-xl {
+      padding: 20px;
+      height: 100%;
     }
   }
 
   &-item {
-    padding: 5px;
-
-    @media @xs-sm {
-      padding: 0;
+    margin-bottom: 1rem;
+    @media @md-xl {
+      margin-bottom: 0;
     }
 
     &-title {
@@ -87,14 +96,24 @@
     }
 
     &-img {
+      margin-bottom: 1rem;
+
+      @media @sm {
+        margin-bottom: 0;
+
+        &-container {
+          width: 40%;
+          float: left;
+          margin-right: 1rem;
+        }
+      }
+
       &.esl-image {
         height: auto;
       }
-
-      margin-bottom: 10px;
     }
 
-    &-content {
+    &-description {
       @media @md-xl {
         overflow: hidden;
         display: -webkit-box;

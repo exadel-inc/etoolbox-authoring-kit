@@ -1,25 +1,33 @@
 @import (reference) "../../common/variables.less";
 
 .benefits {
-  background: linear-gradient(to bottom, #fff 0, transparent 60px), @light-blue-bg;
+  background: linear-gradient(to bottom, #fff 0, transparent 100px), @light-blue-bg;
 
   &-container {
-    flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
 
     padding-top: 100px;
-    padding-bottom: 75px;
+    padding-bottom: 30px;
+
+    @media @md-xl {
+      padding-bottom: 100px;
+    }
   }
 
   &-item {
-    width: 26%;
-    margin: 2rem 2.1rem 2rem 0;
-    text-align: start;
+    width: 100%;
+    margin-bottom: 2rem;
+    text-align: center;
 
-    @media @xs {
-      flex: 1 1 40%;
-      text-align: center;
+    @media @sm-xl {
+      width: 42%;
+      margin: 2rem 2rem 2rem 0;
+      text-align: start;
+    }
+
+    @media @md-xl {
+      width: 26%;
     }
 
     > svg {

@@ -2,7 +2,8 @@
 
 .bv {
   &-container {
-    padding: 5rem;
+    padding: 2rem;
+    margin-bottom: 75px;
     width: 100%;
     height: max-content;
     align-content: center;
@@ -10,16 +11,10 @@
 
     background-color: @landing-sec-light-blue;
 
-    @media @sm {
-      padding: 2.5rem;
-      background-position: center left;
+    @media @md-xl {
+      padding: 5rem 0;
+      margin-bottom: 150px;
     }
-
-    @media @xs {
-      padding: 0.5rem;
-      font-size: 14px;
-    }
-
   }
 
   &-list {
@@ -28,33 +23,38 @@
     flex-direction: row;
     justify-content: center;
     line-height: 1;
+
     @media @xs-sm {
       width: 100%;
       flex-wrap: wrap;
-    }
-    @media @sm {
-      padding-top: 1rem;
     }
   }
 
   &-block {
     display: flex;
-    padding: 1rem 0;
+    padding: 0.5rem;
     flex: 1 1 23%;
 
-    @media @xs-sm {
-      flex: 1 1 45%;
-      padding: 0.25rem;
+    @media @md-xl {
+      padding: 1rem 0;
     }
 
-    svg line {
-      stroke: @landing-blue;
+    svg {
+      width: 49px;
+
+      height: 100px;
+      @media @md-xl {
+        height: 130px;
+      }
+
+      line {
+        stroke: @landing-blue;
+      }
     }
   }
 
   &-item {
     text-align: start;
-    width: 200px;
     padding: 1rem 2rem;
     line-height: 1.2em;
 

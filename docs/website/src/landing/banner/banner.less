@@ -1,5 +1,11 @@
 @import (reference) "../../common/variables.less";
 
+eak-banner {
+  @media @lg-xl {
+    margin-bottom: 50px;
+  }
+}
+
 .banner {
   display: flex;
   position: relative;
@@ -11,9 +17,9 @@
     width: 100%;
 
     min-height: 500px;
-    margin-bottom: 100px;
-    @media @xs-sm {
-      margin-bottom: 50px;
+    margin-bottom: 50px;
+    @media @lg-xl {
+      margin-bottom: 100px;
     }
   }
 
@@ -21,15 +27,9 @@
     width: 75%;
     flex-direction: column;
     justify-content: center;
-    padding: 100px 0 100px;
+    padding: 100px 0;
     z-index: 1;
     text-shadow: 1px 1px 2px #fff, 0 0 1em #fff;
-
-    & > h2 {
-      @media @xs-sm {
-        text-align: center;
-      }
-    }
 
     &-section {
       width: 80%;
@@ -48,6 +48,7 @@
 
     @media @xs-sm {
       width: 100%;
+      padding: 50px 0;
     }
   }
 
@@ -82,12 +83,16 @@
 
   &-waves {
     position: absolute;
-    top: 50px;
+    top: 100px;
     left: 0;
     width: 100%;
     height: calc(100% - 50px);
 
     pointer-events: none;
+
+    @media @md-xl {
+      top: 50px;
+    }
 
     > svg {
       display: block;
@@ -114,15 +119,22 @@
   }
 
   &-promo {
-    padding: 50px 0;
-    background: linear-gradient(to bottom, @white-bg 0, transparent 60px), @light-blue-bg;
+    background: linear-gradient(to bottom, @white-bg 0, transparent 100px), @light-blue-bg;
+
+    @media @lg-xl {
+      padding: 50px 0;
+    }
   }
 
   &-promo &-waves > svg {
     max-height: calc(100% + 85px);
   }
 
-  &-title{
+  &-title {
     color: @landing-blue;
+
+    @media @xs-sm {
+      text-align: center;
+    }
   }
 }
