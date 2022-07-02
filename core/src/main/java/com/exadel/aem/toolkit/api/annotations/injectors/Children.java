@@ -29,10 +29,9 @@ import com.exadel.aem.toolkit.core.injectors.filters.NonGhostFilter;
 import com.exadel.aem.toolkit.core.injectors.filters.NonNullFilter;
 
 /**
- * Used on either a field, a method, or a method parameter of a Sling model. Allows injecting a collection of either
- * secondary models derived from the child (relative) resources of a target resource or such resources themselves. One
- * can select particular properties used for injection by specifying their common prefix and/or postfix, or else provide
- * a filtering {@link Predicate}.
+ * Used on a field, a method, or a method parameter of a Sling model to inject a collection of either secondary models
+ * derived from the child (relative) resources or the resources themselves. One can select particular properties used
+ * for injection by specifying their common prefix and/or postfix, or else provide a filtering {@link Predicate}.
  * <p>Unlike in {@link Child}, one does not specify the precise Sling object to inject but instead the "parent" object
  * children of which are injected.
  * <p>The type of the underlying Java array (parameter type of Java collection) must be {@link
@@ -71,8 +70,8 @@ public @interface Children {
 
     /**
      * Used to specify filters for the children The filters are a sequence of {@code Predicate<Resource>} instances
-     * referred to with their class names. Resources will be probed against these predicates. One possible predicate
-     * is "this resource is not a ghost component", or else "this resource is not null"
+     * referred to with their class names. Resources will be probed against these predicates. One possible predicate is
+     * "this resource is not a ghost component", or else "this resource is not null"
      * @return Optional array of predicates
      * @see NonGhostFilter
      * @see NonNullFilter

@@ -3,11 +3,7 @@
   "jcr:title": "Sample Page",
   "jcr:content": {
     "jcr:primaryType": "cq:PageContent",
-    "jcr:title": "Simple List Page",
-    "cq:template": "/conf/etoolbox-authoring-kit/settings/wcm/templates/list",
-    "itemResourceType": "/apps/etoolbox-authoring-kit/lists/components/content/simpleItem",
-    "sling:resourceType": "etoolbox-authoring-kit/lists/components/structure/page-list",
-    "option": "existingComponent",
+    "jcr:title": "Sample Page",
     "defaultChild": {
       "jcr:title": "Hello",
       "value": "World"
@@ -18,11 +14,10 @@
       "list_item_1006003058": {
         "jcr:primaryType": "nt:unstructured",
         "jcr:title": "key1",
-        "value": "value1",
-        "rootProperty": "propertyValue",
+        "value": "value",
         "sling:resourceType": "etoolbox-authoring-kit/lists/components/content/listItem",
         "nested": {
-          "property": "nestedPropertyValue"
+          "property": "nestedValue"
         }
       },
       "list_item_1": {

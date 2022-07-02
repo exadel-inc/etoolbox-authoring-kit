@@ -144,7 +144,7 @@ public class PackageWriter implements AutoCloseable {
      * e.g. for populating {@code .content.xml}, {@code _cq_dialog.xml}, {@code _cq_editConfig.xml}, etc.
      * are called in sequence. If the component is split into several "modules" (views), each is processed separately
      * @param componentClass Current {@code Class} instance
-     * @return True if at least one file/node was stored into the component's folder; otherwise, false
+     * @return True if at least one file/node was stored in the component's folder; otherwise, false
      */
     public boolean write(Class<?> componentClass) {
         String providedComponentPath = getComponentPath(componentClass);

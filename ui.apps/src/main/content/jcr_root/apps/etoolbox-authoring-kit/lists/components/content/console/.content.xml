@@ -31,7 +31,7 @@
         <head jcr:primaryType="nt:unstructured">
             <clientlibs jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/includeclientlibs"
-                        categories="[cq.common.wcm,lists.console,cq.authoring.dialog,granite.ui.foundation,cq.sites.validations]">
+                        categories="[cq.common.wcm,eak.lists.console,cq.authoring.dialog,granite.ui.foundation,cq.sites.validations]">
             </clientlibs>
         </head>
         <redirector

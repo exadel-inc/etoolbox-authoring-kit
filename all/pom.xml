@@ -7,12 +7,12 @@
     <parent>
         <groupId>com.exadel.etoolbox</groupId>
         <artifactId>etoolbox-authoring-kit</artifactId>
-        <version>2.1.0</version>
+        <version>2.2.0</version>
     </parent>
 
     <artifactId>etoolbox-authoring-kit-all</artifactId>
 
-    <name>${project.prettyName} - Cumulative Package</name>
+    <name>Exadel Toolbox Authoring Kit - Cumulative Package</name>
     <description>All-in-one content package for the ui.apps and ui.content modules of Exadel Toolbox Authoring Kit</description>
 
     <packaging>content-package</packaging>

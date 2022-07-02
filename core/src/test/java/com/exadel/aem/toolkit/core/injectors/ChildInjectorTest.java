@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.testing.mock.sling.MockAdapterManagerImpl;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,6 +44,7 @@ public class ChildInjectorTest {
     public void beforeTest() {
         context.addModelsForClasses(TestModelChild.class, ITestModelChild.class);
         context.registerInjectActivateService(new ChildInjector());
+        context.registerInjectActivateService(new MockAdapterManagerImpl());
         context.load().json("/com/exadel/aem/toolkit/core/injectors/childInjector.json", "/content");
         context.request().setResource(context.resourceResolver().getResource("/content/jcr:content"));
     }
@@ -137,6 +139,15 @@ public class ChildInjectorTest {
         assertNotNull(itemModel);
         assertEquals(1, itemModel.getProperties().size());
         assertEquals(42L, itemModel.getProperties().get("property"));
+    }
+
+    @Test
+    public void shouldInjectModelAdaptedFromRequest() {
+        TestModelChild testModel = context.request().adaptTo(TestModelChild.class);
+        assertNotNull(testModel);
+        assertNotNull(testModel.getModelAdaptedFromRequest());
+        assertNotNull(testModel.getModelAdaptedFromRequest().getRequest());
+        assertEquals("nestedValue", testModel.getModelAdaptedFromRequest().getNestedProperty());
     }
 
     @Test
