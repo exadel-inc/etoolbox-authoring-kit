@@ -11,7 +11,8 @@ env:
     node-version: 14.x
 
 jobs:
-    eslint:
+    eslint-main:
+        name: Liting ui.apps directory ...
         runs-on: ubuntu-latest
 
         steps:
@@ -26,3 +27,26 @@ jobs:
             -   name: Run Linting & Tests
                 run: npm run lint
                 working-directory: ui.apps
+
+    eslint-website:
+        name: Liting docs/website directory ...
+        runs-on: ubuntu-latest
+
+        steps:
+            -   uses: actions/checkout@v3
+            -   name: Use Node v${{ env.node-version }}
+                uses: actions/setup-node@v3
+                with:
+                    node-version: ${{ env.node-version }}
+            -   name: Install NPM Dependencies
+                run: npm ci
+                working-directory: docs/website
+            -   name: Run ES Lint
+                run: npm run lint:js
+                working-directory: docs/website
+            -   name: Run Style Lint
+                run: npm run lint:css
+                working-directory: docs/website
+            -   name: Run Lintspaces
+                run: npm run lint:spaces
+                working-directory: docs/website
