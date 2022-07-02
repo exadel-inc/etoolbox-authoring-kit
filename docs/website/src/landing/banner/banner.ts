@@ -1,17 +1,17 @@
-import { ESLBaseElement, attr } from '@exadel/esl/modules/esl-base-element/core';
-import { ready } from '@exadel/esl/modules/esl-utils/decorators/ready';
-import { isIE } from '@exadel/esl/modules/esl-utils/environment/device-detector';
-import { bind } from '@exadel/esl/modules/esl-utils/decorators/bind';
-import { memoize } from '@exadel/esl/modules/esl-utils/decorators/memoize';
-import { range } from '@exadel/esl/modules/esl-utils/misc/array';
+import {ESLBaseElement, attr} from '@exadel/esl/modules/esl-base-element/core';
+import {ready} from '@exadel/esl/modules/esl-utils/decorators/ready';
+import {isIE} from '@exadel/esl/modules/esl-utils/environment/device-detector';
+import {bind} from '@exadel/esl/modules/esl-utils/decorators/bind';
+import {memoize} from '@exadel/esl/modules/esl-utils/decorators/memoize';
+import {range} from '@exadel/esl/modules/esl-utils/misc/array';
 
 export class EAKBanner extends ESLBaseElement {
   static is = 'eak-banner';
 
   static TARGETS = 'g > path';
 
-  @attr({ defaultValue: '2' }) public targetsNumber: string;
-  @attr({ defaultValue: '4000' }) public iterationTime: string;
+  @attr({defaultValue: '2'}) public targetsNumber: string;
+  @attr({defaultValue: '4000'}) public iterationTime: string;
 
   private _animateTimer: number = 0;
   private _$active: SVGGeometryElement[] = [];

@@ -1,17 +1,17 @@
-import { ESLBaseElement } from '@exadel/esl/modules/esl-base-element/core';
-import { listen } from '@exadel/esl/modules/esl-utils/decorators/listen';
-import { attr } from '@exadel/esl/modules/esl-utils/decorators/attr';
-import { boolAttr } from '@exadel/esl/modules/esl-utils/decorators/bool-attr';
-import { memoize } from '@exadel/esl/modules/esl-utils/decorators/memoize';
-import { getTouchPoint } from '@exadel/esl/modules/esl-utils/dom/events/misc';
+import {ESLBaseElement} from '@exadel/esl/modules/esl-base-element/core';
+import {listen} from '@exadel/esl/modules/esl-utils/decorators/listen';
+import {attr} from '@exadel/esl/modules/esl-utils/decorators/attr';
+import {boolAttr} from '@exadel/esl/modules/esl-utils/decorators/bool-attr';
+import {memoize} from '@exadel/esl/modules/esl-utils/decorators/memoize';
+import {getTouchPoint} from '@exadel/esl/modules/esl-utils/dom/events/misc';
 
-import type { Point } from '@exadel/esl/modules/esl-utils/dom/events/misc';
+import type {Point} from '@exadel/esl/modules/esl-utils/dom/events/misc';
 
 export class EAKZoomImage extends ESLBaseElement {
   static is = 'eak-zoom-image';
 
-  @attr({ dataAttr: true }) public src: string;
-  @attr({ defaultValue: '2' }) public scale: string;
+  @attr({dataAttr: true}) public src: string;
+  @attr({defaultValue: '2'}) public scale: string;
 
   @boolAttr()
   public inZoom: boolean;
@@ -79,6 +79,7 @@ export class EAKZoomImage extends ESLBaseElement {
     this.setPointerCapture(e.pointerId);
     e.preventDefault();
   }
+
   protected onPointerUp(e: PointerEvent): void {
     if (!this.inDrag) return;
     e.preventDefault();
@@ -88,6 +89,7 @@ export class EAKZoomImage extends ESLBaseElement {
     this.$$off(this.onPointerUp);
     this.releasePointerCapture(e.pointerId);
   }
+
   protected onPointerMove(e: PointerEvent): void {
     if (!this.inDrag) return;
 
@@ -117,7 +119,8 @@ export class EAKZoomImage extends ESLBaseElement {
     const isCloseBtn = this.$closeButton.contains(e.target as Node);
     isCloseBtn ? this.unzoom() : this.zoom();
   }
-  @listen({ event: 'pointerdown', target: 'body' })
+
+  @listen({event: 'pointerdown', target: 'body'})
   protected onOutsideClick(e: PointerEvent): void {
     if (!this.$image.contains(e.target as Node)) {
       this.unzoom();

@@ -18,7 +18,7 @@ rules:
   comment-no-empty: true
   # Warn that require a single space after the colon of declarations
   declaration-colon-space-after:
-    - always
+    - always-single-line
     - severity: warning
   # Warn about duplicate properties within declaration blocks
   declaration-block-no-duplicate-properties:
@@ -74,8 +74,8 @@ rules:
     - true
     - ignore:
         - custom-elements
-  # Warn about newlines (unescaped) in strings
-  string-no-newline:
+  # Zero unit recommended to not be provided
+  length-zero-no-unit:
     - true
     - severity: warning
   # Disallow unknown units
