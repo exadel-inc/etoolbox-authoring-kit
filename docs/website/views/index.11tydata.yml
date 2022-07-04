@@ -21,7 +21,7 @@ landing:
     items:
       - Meant for developers, authors, and business analysts working in an AEM environment
       - Rich in utilities for handling AEM Sling models, modifying AEM component policy,
-          and managing structured data
+        and managing structured data
       - Automatically generates AEM Touch UI dialogs and adds responsive features to the
         dialogs
       - A smart thoroughly tested extension for AEM authoring interfaces

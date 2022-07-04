@@ -16,15 +16,9 @@
 @nav-hover: @primary-blue;
 @nav-accent: #004368;
 
-// Blue theme
-@landing-blue: #0082CA;
+@landing-blue: @primary-blue;
 @landing-sec-blue: mix(@landing-blue, #fff, 80%);
 @landing-sec-light-blue: #d0ebf9;
-
-// Purple theme
-//@landing-blue: #0B0088;
-//@landing-sec-blue: mix(@landing-blue, #fff, 80%);
-//@landing-sec-light-blue: #b7b3e9;
 
 // Text helpers
 .text {
@@ -40,6 +34,6 @@
   }
 
   &:hover {
-    svg { fill: #339bd5; }
+    svg { fill: @landing-sec-blue; }
   }
 }
