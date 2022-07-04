@@ -13,10 +13,8 @@ export class EAKZoomImage extends ESLBaseElement {
   @attr({dataAttr: true}) public src: string;
   @attr({defaultValue: '2'}) public scale: string;
 
-  @boolAttr()
-  public inZoom: boolean;
-  @boolAttr()
-  public inDrag: boolean;
+  @boolAttr() public inZoom: boolean;
+  @boolAttr() public inDrag: boolean;
 
   protected startPoint: Point;
   protected startPosition: Point;

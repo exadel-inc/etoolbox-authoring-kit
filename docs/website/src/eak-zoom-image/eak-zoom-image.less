@@ -19,7 +19,7 @@
   }
 
   &[in-zoom] {
-    border: 1px solid black;
+    border: 1px solid @secondary-blue;
     cursor: move;
   }
 
@@ -39,13 +39,9 @@
     background-repeat: no-repeat;
 
     border-radius: 50%;
-    background-color: gray;
-
-    @media @xs {
-      top: 2px;
-      right: 2px;
-    }
+    background-color: @primary-blue;
   }
+
   &[in-zoom] .close-button {
     display: block;
   }
