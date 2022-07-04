@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +58,7 @@ public class TargetsTest {
                     item
                         .attribute(PN_INT_ARRAY, new long[] {1, 2, 3})
                         .attribute(PN_BOOL_ARRAY, new boolean[] {true, true, false, true})
-                        .attribute(PN_DATE_ARRAY, new Date[] {getDate(2020,10,01), getDate(2021, 1, 10)})
+                        .attribute(PN_DATE_ARRAY, new Date[] {getDate(2020,10,1), getDate(2021, 1, 10)})
                         .createTarget(NN_SUBITEM + i + CoreConstants.SEPARATOR_SLASH + NN_SUBSUBITEM + i)
                             .attribute(PN_ORDINAL, i);
                 }
@@ -139,8 +140,8 @@ public class TargetsTest {
             "{Boolean}[true,true,false,true]",
             ((Element) document.getDocumentElement().getFirstChild()).getAttribute(PN_BOOL_ARRAY));
         Assert.assertEquals(
-            "{Date}[2020-11-01T00:00:00.000+00:00,2021-02-10T00:00:00.000+00:00]",
-            ((Element) document.getDocumentElement().getFirstChild()).getAttribute(PN_DATE_ARRAY).replaceAll("\\+\\d{2}:", "+00:"));
+            "{Date}[2020-11-01T00:00:00.000,2021-02-10T00:00:00.000]",
+            ((Element) document.getDocumentElement().getFirstChild()).getAttribute(PN_DATE_ARRAY).replaceAll("\\+\\d{2}:\\d{2}|Z|z(?<=$|,)", StringUtils.EMPTY));
     }
 
     private static Date getDate(int year, int month, int day) {
