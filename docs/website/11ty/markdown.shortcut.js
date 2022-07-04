@@ -8,12 +8,12 @@ const {github, rewriteRules, urlPrefix} = require('./site.config');
 
 const recursiveCheckLinks = (arr, link, element, key) => {
     arr.forEach(el=>{
-        if(el.hasOwnProperty("fileName") && el.fileName === link){
-            element.setAttribute("href", `/${[key]}/${link.replace(".md", "")}`);
+        if(el.hasOwnProperty('fileName') && el.fileName === link){
+            element.setAttribute('href', `/${[key]}/${link.replace('.md', '')}`);
         }
-        if(!el.hasOwnProperty("fileName") && Object.keys(el).length === 1){
+        if(!el.hasOwnProperty('fileName') && Object.keys(el).length === 1){
             const elKey = Object.keys(el)[0];
-            const newKey =  key + "/" + elKey;
+            const newKey =  key + '/' + elKey;
             recursiveCheckLinks(el[elKey], link,element, newKey);
         }
     })
