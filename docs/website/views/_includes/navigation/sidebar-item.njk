@@ -1,6 +1,7 @@
 {% macro navitem(item) %}
   {% set collection = item.navPath[item.navPath.length - 1] %}
-  {% set isPrimaryActive = functions.isActivePath(page.url, collection) %}
+  {% set isPrimaryActive = collection | includesUrl(page.url) %}
+
   <div class="sidebar-nav-item-heading {{ 'active' if isPrimaryActive }}">
     <esl-trigger class="sidebar-nav-item-trigger sidebar-nav-item-arrow "
                  target="::parent::next"
