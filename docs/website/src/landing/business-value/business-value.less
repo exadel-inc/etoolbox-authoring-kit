@@ -2,14 +2,9 @@
 
 .bv {
   &-container {
+    background-color: @landing-sec-light-blue;
     padding: 2rem;
     margin-bottom: 75px;
-    width: 100%;
-    height: max-content;
-    align-content: center;
-    text-align: start;
-
-    background-color: @landing-sec-light-blue;
 
     @media @md-xl {
       padding: 5rem 0;
@@ -18,26 +13,22 @@
   }
 
   &-list {
-    margin: auto;
     display: flex;
-    flex-direction: row;
     justify-content: center;
     line-height: 1;
 
     @media @xs-sm {
-      width: 100%;
+      flex-direction: column;
       flex-wrap: wrap;
+      padding: 0;
     }
   }
 
   &-block {
     display: flex;
-    padding: 0.5rem;
+    align-items: center;
+    padding: 0.5rem 0;
     flex: 1 1 23%;
-
-    @media @md-xl {
-      padding: 1rem 0;
-    }
 
     svg {
       width: 49px;
@@ -55,19 +46,17 @@
 
   &-item {
     text-align: start;
-    padding: 1rem 2rem;
+    padding: 1rem;
     line-height: 1.2em;
 
-    @media @xs-sm {
-      margin-left: 0!important;
-      margin-right: 0!important;
-      width: 85vw;
-      padding: 1rem 1.5rem;
+    @media @lg-xl {
+      padding: 1rem 2rem;
     }
 
     &-title {
       display: block;
     }
+
     &-description {
       margin: 0;
     }

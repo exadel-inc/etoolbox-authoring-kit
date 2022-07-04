@@ -1,6 +1,6 @@
 {% from 'landing/article.njk' import article %}
 {% set articles = landing.articles | feed %}
-<div class="container mb-100 article">
+<div class="container article">
   <div class="article-title">
     <h3 class="article-heading">{{ landing.articles.title }}</h3>
     <p class="article-description">{{ landing.articles.description }}</p>
@@ -22,7 +22,7 @@
       {{ article(articles[4]) }}
     </div>
   </div>
-  <div class="z-index d-flex article-center">
+  <div class="article-btn">
     <a href="{{ landing.urls.articleExadelUrl }}" target="_blank" class="btn btn-secondary">{{ landing.articles.moreText }}</a>
   </div>
 </div>

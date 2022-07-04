@@ -21,7 +21,7 @@ layout: content
           {% set text = item.data.content %}
           <h4 class="mb-2">{{ text | articleHeader | striptags }}</h4>
           <p class="popular-articles-content">{{ text | articleContent | striptags }}</p>
-          <a href="{{ item.data.page.filePathStem | url }}"> Learn More</a>
+          <a href="{{ item.data.page.filePathStem | url }}">Learn More</a>
         </li>
       {% endfor %}
     {% endif %}

@@ -1,21 +1,18 @@
 @import (reference) "../../common/variables.less";
 
 .article {
+  margin-bottom: 100px;
+
   &-title {
     text-align: left;
     margin-bottom: 30px;
-
-    @media @xs-sm {
-      width: 100%;
-    }
   }
 
   &-description {
-    width: 50%;
     margin-top: 24px;
 
-    @media @xs-md {
-      width: auto;
+    @media @lg-xl {
+      width: 50%;
     }
   }
 
@@ -74,7 +71,6 @@
     &-taglist {
       display: flex;
       flex-wrap: wrap;
-      list-style-type: none;
       margin: 10px 0;
 
       &-tag {
@@ -114,6 +110,8 @@
     }
 
     &-description {
+      font-size: 1rem;
+
       @media @md-xl {
         overflow: hidden;
         display: -webkit-box;
@@ -125,28 +123,22 @@
 
   &-first {
     grid-area: first;
-
   }
-
   &-second {
     grid-area: second;
   }
-
   &-third {
     grid-area: third;
   }
-
   &-fourth {
     grid-area: fourth;
   }
-
   &-fifth {
     grid-area: fifth;
   }
 
-
-  &-center {
-    width: 100%;
+  &-btn {
+    display: flex;
     justify-content: center;
   }
 }

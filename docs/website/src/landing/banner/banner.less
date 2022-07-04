@@ -12,71 +12,60 @@ eak-banner {
 
   &-container {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-
     min-height: 500px;
     margin-bottom: 50px;
+
     @media @lg-xl {
       margin-bottom: 100px;
     }
   }
 
+  &-title {
+    color: @landing-blue;
+
+    @media @xs-sm {
+      text-align: center;
+    }
+  }
+
   &-content {
-    width: 75%;
-    flex-direction: column;
-    justify-content: center;
-    padding: 100px 0;
+    width: 100%;
+    padding: 50px 0;
     z-index: 1;
     text-shadow: 1px 1px 2px #fff, 0 0 1em #fff;
 
+    @media @md-xl {
+      width: 75%;
+      padding: 100px 0;
+    }
+
     &-section {
-      width: 80%;
-      @media @xs-sm {
-        width: 100%;
+      @media @md-xl {
+        width: 60%;
       }
     }
 
     &-text {
-      padding-right: 20%;
-      @media @xs-sm {
-        padding-right: 0;
-        text-align: center;
+      text-align: center;
+
+      @media @md-xl {
+        text-align: left;
       }
-    }
-
-    @media @xs-sm {
-      width: 100%;
-      padding: 50px 0;
-    }
-  }
-
-  &-logo {
-    width: 40%;
-
-    & > svg {
-      position: absolute;
-      top: 20px;
-      right: -20px;
-    }
-
-    @media @xs-sm {
-      display: none;
     }
   }
 
   &-btns-container {
     display: flex;
     flex-wrap: wrap;
-    flex-direction: row;
+    gap: 1rem;
     text-shadow: none;
 
     @media @xs-sm {
-      width: 100%;
       justify-content: center;
     }
-    > .btn {
+
+    .btn {
+      margin-top: 0;
       box-shadow: 0 0 30px 2px  rgba(255,255,255, .8);
     }
   }
@@ -128,13 +117,5 @@ eak-banner {
 
   &-promo &-waves > svg {
     max-height: calc(100% + 85px);
-  }
-
-  &-title {
-    color: @landing-blue;
-
-    @media @xs-sm {
-      text-align: center;
-    }
   }
 }
