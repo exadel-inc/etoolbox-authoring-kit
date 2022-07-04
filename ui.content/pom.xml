@@ -8,12 +8,12 @@
     <parent>
         <groupId>com.exadel.etoolbox</groupId>
         <artifactId>etoolbox-authoring-kit</artifactId>
-        <version>2.1.0</version>
+        <version>2.1.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>etoolbox-authoring-kit-ui.content</artifactId>
 
-    <name>${project.prettyName} - UI Content</name>
+    <name>Exadel Toolbox Authoring Kit - UI Content</name>
     <description>Presents assets designed for the /conf and /content sections of an AEM instance</description>
 
     <packaging>content-package</packaging>

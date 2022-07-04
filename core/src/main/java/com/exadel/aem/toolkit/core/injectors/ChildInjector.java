@@ -20,11 +20,14 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.adapter.AdapterManager;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.factory.ModelFactory;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +60,12 @@ public class ChildInjector implements Injector {
     public String getName() {
         return NAME;
     }
+
+    @Reference
+    private ModelFactory modelFactory;
+
+    @Reference
+    private AdapterManager adapterManager;
 
     /**
      * Attempts to inject a value into the given adaptable
@@ -101,6 +110,11 @@ public class ChildInjector implements Injector {
         if (TypeUtil.isValidObjectType(type, Resource.class)) {
             return preparedResource;
         } else if (type instanceof Class) {
+            if (adaptable instanceof SlingHttpServletRequest && TypeUtil.isSlingRequestAdapter(modelFactory, type)) {
+                return adapterManager.getAdapter(
+                    AdaptationUtil.getRequest((SlingHttpServletRequest) adaptable, preparedResource),
+                    (Class<?>) type);
+            }
             return preparedResource.adaptTo((Class<?>) type);
         }
 

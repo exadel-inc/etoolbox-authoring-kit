@@ -25,9 +25,9 @@ import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
 import com.exadel.aem.toolkit.core.injectors.ChildInjector;
 
 /**
- * Used on either a field, a method, or a method parameter of a Sling model. Allows injecting either a secondary model
- * derived from the current or a child (relative) resource or such a resource itself. One can select particular
- * properties used for injection by specifying their common prefix and/or postfix.
+ * Used on a field, a method, or a method parameter of a Sling model to inject either a secondary model derived from the
+ * current or a child (relative) resource or such a resource itself. One can select particular properties used for
+ * injection by specifying their common prefix and/or postfix.
  * <p>The type of the underlying Java must be {@link org.apache.sling.api.resource.Resource} or a class adaptable from
  * {@code Resource}. Otherwise, nothing is injected
  * @see Children
@@ -41,7 +41,8 @@ public @interface Child {
     /**
      * Used to specify the relative path to the child resource. If not specified, defaults to the name of the underlying
      * field/method. If such a resource does not exist, nothing is injected.
-     * <p>Note: use {@code ./} to consider the current resource as the source of injection (the prefix and postfix values
+     * <p>Note: use {@code ./} to consider the current resource as the source of injection (the prefix and postfix
+     * values
      * will apply to the properties of the current resource)
      * @return Optional non-blank string
      */

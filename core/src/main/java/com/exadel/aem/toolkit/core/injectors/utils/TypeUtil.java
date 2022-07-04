@@ -21,6 +21,9 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.factory.ModelFactory;
 
 /**
  * Contains utility methods for validating types of entities involved in Sing injectors processing.
@@ -144,5 +147,34 @@ public class TypeUtil {
             return true;
         }
         return Arrays.asList(allowedTypes).contains(value) || value.equals(Object.class);
+    }
+
+    /**
+     * Gets whether the given {@code type} is a {@code SlingHttpServletRequest} adapter
+     * @param modelFactory {@link ModelFactory} instance
+     * @param type Type of injectable
+     * @return True or false
+     */
+    public static boolean isSlingRequestAdapter(ModelFactory modelFactory, Type type) {
+        if (!(type instanceof Class<?>)) {
+            return false;
+        }
+        Class<?> modelClass = (Class<?>) type;
+        return isSlingRequestAdapter(modelFactory, modelClass);
+    }
+
+    /**
+     * Gets whether the given {@code type} is a {@code SlingHttpServletRequest} adapter
+     * @param modelFactory {@link ModelFactory} instance
+     * @param type {@code Class<?>} object representing the type of injectable
+     * @return True or false
+     */
+    public static boolean isSlingRequestAdapter(ModelFactory modelFactory, Class<?> type) {
+        if (!modelFactory.isModelClass(type)) {
+            return false;
+        }
+        return ArrayUtils.contains(
+            type.getAnnotation(Model.class).adaptables(),
+            SlingHttpServletRequest.class);
     }
 }

@@ -13,10 +13,13 @@
  */
 package com.exadel.aem.toolkit.plugin.writers;
 
+import java.util.Arrays;
 import javax.xml.transform.Transformer;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
+import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
+import com.exadel.aem.toolkit.api.annotations.policies.PolicyTarget;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing author UI aspects for child components that do not define
@@ -48,6 +51,8 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
      */
     @Override
     boolean canProcess(Class<?> componentClass) {
-        return componentClass.isAnnotationPresent(ChildEditConfig.class);
+        return componentClass.isAnnotationPresent(ChildEditConfig.class)
+                || Arrays.stream(componentClass.getAnnotationsByType(AllowedChildren.class))
+                .anyMatch(ac -> PolicyTarget.CHILD.equals(ac.targetContainer()));
     }
 }

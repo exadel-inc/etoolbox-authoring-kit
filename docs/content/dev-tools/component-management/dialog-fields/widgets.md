@@ -515,11 +515,16 @@ public class DialogWithPathField {
     @DialogField
     @PathField(
         rootPath = "/content/dam",
-        emptyText = "Enter a path here"
+        emptyText = "Enter a path here",
+        forceSelection = true,
+        droppable = true,
+        multiple = true,
+        filter = NodeFilter.NOSYSTEM
     )
     String path;
 }
 ```
+Note: *droppable* property is supported since AEM 6.5.10.
 
 ### RadioGroup
 
