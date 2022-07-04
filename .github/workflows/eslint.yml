@@ -1,4 +1,4 @@
-name: eslint
+name: UI Tests
 
 on:
     push:
@@ -11,13 +11,13 @@ env:
     node-version: 14.x
 
 jobs:
-    eslint:
+    uilint:
         runs-on: ubuntu-latest
-
+        name: Run Linters
         steps:
-            -   uses: actions/checkout@v2
+            -   uses: actions/checkout@v3
             -   name: Use Node v${{ env.node-version }}
-                uses: actions/setup-node@v1
+                uses: actions/setup-node@v3
                 with:
                     node-version: ${{ env.node-version }}
             -   name: Install NPM Dependencies
