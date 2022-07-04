@@ -1,4 +1,4 @@
-name: build-samples
+name: Maven Unit Tests
 
 on:
     push:
@@ -8,22 +8,23 @@ on:
     workflow_dispatch:
 
 jobs:
-    build-samples:
+    maven-test:
         runs-on: ubuntu-latest
 
         strategy:
             matrix:
-                java: [ '8', '11' ]
+                java: ['8']
+
+        name: Run Maven Tests on JDK ${{ matrix.java }}
 
         steps:
             -   uses: actions/checkout@v3
-            -   name: Set up JDK ${{ matrix.Java }}
+            -   name: Set up JDK ${{ matrix.java }}
                 uses: actions/setup-java@v3
                 with:
-                    distribution: 'temurin'
+                    distribution: 'zulu'
                     java-version: ${{ matrix.java }}
                     cache: 'maven'
 
-            -   name: Build Samples with Maven (JDK ${{ matrix.Java }})
-                run: mvn clean package
-                working-directory: samples
+            -   name: Run Maven Tests (JDK ${{ matrix.Java }})
+                run: mvn clean test

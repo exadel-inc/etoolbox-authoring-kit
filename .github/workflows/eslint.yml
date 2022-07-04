@@ -1,4 +1,4 @@
-name: eslint
+name: UI Tests
 
 on:
     push:
@@ -11,8 +11,8 @@ env:
     node-version: 16.x
 
 jobs:
-    eslint-main:
-        name: Liting ui.apps directory ...
+    ui-lint-main:
+        name: Linting ui.apps directory ...
         runs-on: ubuntu-latest
 
         steps:
@@ -28,8 +28,8 @@ jobs:
                 run: npm run lint
                 working-directory: ui.apps
 
-    eslint-website:
-        name: Liting docs/website directory ...
+    ui-lint-website:
+        name: Linting docs/website directory ...
         runs-on: ubuntu-latest
 
         steps:
