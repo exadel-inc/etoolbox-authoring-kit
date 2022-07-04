@@ -7,11 +7,10 @@ import {range} from '@exadel/esl/modules/esl-utils/misc/array';
 
 export class EAKBanner extends ESLBaseElement {
   static is = 'eak-banner';
-
   static TARGETS = 'g > path';
 
-  @attr({defaultValue: '2'}) public targetsNumber: string;
-  @attr({defaultValue: '4000'}) public iterationTime: string;
+  @attr({defaultValue: 2, parser: parseInt}) public targetsNumber: number;
+  @attr({defaultValue: 4000, parser: parseInt}) public iterationTime: number;
 
   private _animateTimer: number = 0;
   private _$active: SVGGeometryElement[] = [];
@@ -30,7 +29,7 @@ export class EAKBanner extends ESLBaseElement {
 
   @memoize()
   public get $lines(): SVGGeometryElement[] {
-    return Array.from(document.querySelectorAll(EAKBanner.TARGETS));
+    return Array.from(this.querySelectorAll(EAKBanner.TARGETS));
   }
 
   public get $randomLine(): SVGGeometryElement {
@@ -48,8 +47,10 @@ export class EAKBanner extends ESLBaseElement {
 
   @bind
   protected _onIteration(): void {
-    const $candidates = range(+this.targetsNumber, () => this.$randomLine);
-    const delay: number = +this.iterationTime / +this.targetsNumber;
+    const $candidates = range(this.targetsNumber, () => this.$randomLine);
+    const delay: number = this.iterationTime / this.targetsNumber;
+
+    if (!$candidates.length) return;
 
     this._$active.forEach((line: SVGGeometryElement, i) => {
       window.setTimeout(() => {
@@ -70,6 +71,6 @@ export class EAKBanner extends ESLBaseElement {
 
     this._$active = $candidates;
 
-    this._animateTimer = window.setTimeout(this._onIteration, +this.iterationTime);
+    this._animateTimer = window.setTimeout(this._onIteration, this.iterationTime);
   }
 }

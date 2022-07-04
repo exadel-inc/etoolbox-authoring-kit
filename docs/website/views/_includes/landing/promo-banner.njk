@@ -1,6 +1,9 @@
 {% from 'landing/banner.njk' import banner %}
-{% set bgFile = 'promo-banner-waves.svg' %}
-
-<div class="banner banner-promo">
-  {{ banner(landing.promo.title,landing.promo.description,landing.promo.buttons,bgFile) }}
-</div>
+<eak-banner class="banner banner-promo" targets-number="0">
+  {{ banner({
+    title: landing.promo.title,
+    description: landing.promo.description,
+    buttons: landing.promo.buttons,
+    bgIcon: 'promo-banner-waves.svg'
+  }) }}
+</eak-banner>

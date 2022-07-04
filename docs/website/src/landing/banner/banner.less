@@ -1,11 +1,5 @@
 @import (reference) "../../common/variables.less";
 
-eak-banner {
-  @media @lg-xl {
-    margin-bottom: 50px;
-  }
-}
-
 .banner {
   display: flex;
   position: relative;
@@ -104,6 +98,12 @@ eak-banner {
 
     &-secondary {
         stroke: @secondary-blue;
+    }
+  }
+
+  &-top {
+    @media @lg-xl {
+      margin-bottom: 50px;
     }
   }
 
