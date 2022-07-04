@@ -1,17 +1,5 @@
 @import (reference) "../../common/variables.less";
 
-@features-marker: escape('
-  <svg width="19" height="150" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="17.0146" y1="1.28171" x2="1.28171" y2="100%" stroke="@{landing-blue}" stroke-width="2" stroke-linecap="round"/>
-  </svg>
-');
-
-@features-marker-xs: escape('
-  <svg width="7" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="6.10438" y1="0.884513" x2="0.884513" y2="30" stroke="@{landing-blue}" stroke-width="2" stroke-linecap="round"/>
-  </svg>
-');
-
 .features {
   &-container {
     @media @sm-xl {
@@ -45,15 +33,35 @@
   }
 
   &-item {
+    position: relative;
     padding-left: 1.5rem;
     margin: 1rem 0;
-    background: url('data:image/svg+xml, @{features-marker-xs}') no-repeat 0 3px;
 
     @media @md-xl {
       margin: 2rem 0;
       padding-left: 2rem;
       padding-right: 3rem;
-      background: url('data:image/svg+xml, @{features-marker}') no-repeat 0 3px;
+    }
+  }
+
+  &-item::before {
+    content: '';
+    background: @primary-blue;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 32px;
+    transform: rotate(8deg);
+    transform-origin: bottom left;
+
+    @media @md-xl {
+      left: 5px;
+      width: 2px;
+      height: 100%;
+      transform: rotate(7deg);
+      transform-origin: bottom left;
     }
   }
 }

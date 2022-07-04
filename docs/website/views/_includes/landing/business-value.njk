@@ -2,9 +2,7 @@
   <ul class="bv-list container">
     {% for value in landing.businessValue %}
       <li class="bv-block">
-        <div role="presentation">
-          {% include "../../../static/assets/helpers/light-slash.svg" %}
-        </div>
+        <div class="bv-divider"></div>
         <div class="bv-item">
           <strong class="bv-item-title mb-1">{{ value.title }}</strong>
           <p class="bv-item-description">{{ value.content }}</p>

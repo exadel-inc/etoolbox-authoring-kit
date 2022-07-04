@@ -29,17 +29,32 @@
     align-items: center;
     padding: 0.5rem 0;
     flex: 1 1 23%;
+  }
 
-    svg {
-      width: 49px;
+  &-divider {
+    position: relative;
+    width: 50px;
+    height: 100px;
 
-      height: 100px;
+    @media @md-xl {
+      height: 130px;
+    }
+
+    &::after {
+      content: '';
+      background-color: @landing-blue;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 2px;
+      transform-origin: bottom left;
+
+      // TODO: make more explicit
+      transform: rotate(0.46rad);
+      height: sqrt(50*50 + 100*100);
       @media @md-xl {
-        height: 130px;
-      }
-
-      line {
-        stroke: @landing-blue;
+        transform: rotate(0.3666rad);
+        height: sqrt(50*50 + 130*130);
       }
     }
   }
