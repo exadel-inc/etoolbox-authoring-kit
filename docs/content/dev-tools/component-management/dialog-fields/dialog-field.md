@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Dialog Field
+seoTitle: Dialog Field - Exadel Authoring Kit
 order: 1
 -->
 ## Defining dialog fields
@@ -156,9 +157,7 @@ The resulting widget sequence will be: the text field for *namePrefix*, the text
 <u>Important notice</u>: it is recommended that you always use `@Place(before/after)` or *ranking* with
 <u>method-based widgets</u> because it is not guaranteed that the JVM reports methods in the same order (unlike class fields).
 
-***
-
-#### See also
+### See also
 
 - [Configuring RichTextEditor](./configuring-rte.md)
 - [Laying out your dialogs](../dialog-layout.md)

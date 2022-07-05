@@ -2,14 +2,7 @@ const MarkdownIt = require('markdown-it');
 const MarkdownItAnchor = require('markdown-it-anchor');
 const {highlight} = require('./prismjs.lib');
 
-// const {resolveLink} = require('../helpers/resolveLink');
-// const {setCorrectImageSrc} = require('../helpers/setCorrectImageSrc')
-
 const markdown = MarkdownIt({html: true, highlight, linkify: true});
-
-//markdown.use(linkResolver);
-// .use(require('markdown-it-anchor'), {level:2, slugify, tabIndex:false})
-// .use((md) =>setCorrectImageSrc(md));
 
 const slugify = (heading) => {
   heading = String(heading).trim().toLowerCase();

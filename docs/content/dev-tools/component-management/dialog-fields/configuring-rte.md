@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Configuring RTE
+seoTitle: Configuring RTE - Exadel Authoring Kit
 order: 3
 -->
 ## Configuring RichTextEditor

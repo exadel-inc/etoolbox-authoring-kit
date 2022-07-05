@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Common Use Cases
+seoTitle: Common Use Cases - Exadel Authoring Kit
 order: 2
 -->
 ## Common use cases

@@ -1,24 +1,17 @@
 @import (reference) "../../common/variables.less";
 
-esl-d-sidebar {
+eak-sidebar {
   display: block;
-
-  color: @nav-dark-fg;
-  background: @nav-dark-bg;
-
+  background: @white-bg;
   position: fixed;
   top: @header-height-mobile;
   z-index: 10;
+  box-shadow: 0 5px 8px 0 rgba(0, 66, 94, .5);
   /* stylelint-disable */
   height: calc(~'100vh - @{header-height-mobile}');
   height: calc(~'var(--100vh, 100vh) - @{header-height-mobile}');
   /* stylelint-enable */
   max-width: 0;
-
-  box-shadow: 4px 8px 8px 0 rgba(0, 0, 0, .5);
-  @media @md-xl {
-    box-shadow: 4px 0 8px 0 rgba(0, 0, 0, .5);
-  }
 
   &[animation] {
     transition: max-width .5s ease-in-out, visibility .5s linear;
@@ -38,7 +31,7 @@ esl-d-sidebar {
   }
 
   @media @xs-sm {
-    &:not(.esl-d-sidebar) {
+    &:not(.eak-sidebar) {
       display: none;
     }
     visibility: hidden;
@@ -50,23 +43,22 @@ esl-d-sidebar {
   @media @md-xl {
     position: relative;
     top: 0;
+    box-shadow: none;
     /* stylelint-disable */
     height: 100vh;
     height: var(--100vh, 100vh);
     /* stylelint-enable */
     max-width: 72px;
+
+    .landing-layout & {
+      display: none;
+    }
   }
 
   &.open {
     max-width: 100vw;
     @media @md-xl {
       max-width: 17.875rem;
-    }
-  }
-
-  @media @md-xl {
-    .landing-layout & {
-      display: none;
     }
   }
 }

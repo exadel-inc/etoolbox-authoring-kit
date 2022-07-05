@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Component Structure
+seoTitle: Component Structure - Exadel Authoring Kit
 order: 1
 -->
 ## Creating AEM Components with ToolKit annotations
@@ -309,8 +310,7 @@ public class DummyComponent {
 ```
 Else you can use a nested class annotated with `FixedColumns` for that purpose.
 
-***
-#### See also
+### See also
 
 - [Laying out your dialog](./dialog-layout.md)
 - [Configuring RichTextEditor](./dialog-fields/configuring-rte.md)

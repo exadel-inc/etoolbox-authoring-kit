@@ -1,51 +1,32 @@
 /* Colors */
-@primary-blue: #0097E7;
-@secondary-blue: #8bc2ff;
+@primary-blue: #0082CA;
+@secondary-blue: #65BDEA;
 
-@body-bg: #f8f8f8;
-@body-fg: rgba(22, 0, 27, .9);
+@white-bg: #fff;
+@gray-bg: #F2F6F7;
+@light-blue-bg: #EAF4F8;
+
+@body-fg: #333638;
+@landing-fg: #000;
 
 @link-fg: @primary-blue;
 @link-hover-fg: @primary-blue;
 @link-hover-underline: @primary-blue;
 
-@landing-bg-color: #004368;
-@landing-fg-color: #fff;
+@nav-hover: @primary-blue;
+@nav-accent: #004368;
 
-@nav-dark-bg: @landing-bg-color;
-@nav-dark-fg: #fff;
-@nav-dark-hover: @secondary-blue;
-@nav-dark-selected: #00a2ff;
-@nav-dark-accent: #3eb2ff;
-
-@landing-blue: #65BDEA;
-@landing-mint: #03E2AE;
-
-@features-color: #03E2B3;
-
-
-// Text helpers
-.text {
-  &-gray {
-    color: #6c757d !important;
-  }
-  &-white {
-    color: #fff !important;
-  }
-}
-
-// Borders
-.border {
-  border: 1px solid @secondary-blue !important;
-  border-radius: 8px;
-}
+@landing-blue: @primary-blue;
+@landing-sec-blue: mix(@landing-blue, #fff, 80%);
+@landing-sec-light-blue: #d0ebf9;
 
 // Svg
-.fill {
-  &-light svg {
-    fill: #fff !important;
-  }
-  &-primary svg {
+.fill-primary {
+  svg {
     fill: @primary-blue;
+  }
+
+  &:hover {
+    svg { fill: @landing-sec-blue; }
   }
 }

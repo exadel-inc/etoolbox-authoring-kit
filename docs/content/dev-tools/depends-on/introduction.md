@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Introduction
+seoTitle: Introduction - Exadel Authoring Kit
 order: 1
 -->
 

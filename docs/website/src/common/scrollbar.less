@@ -1,20 +1,20 @@
 @import (reference) "./variables.less";
 
-esl-scrollbar.scrollbar-blue,
-.scrollbar-blue esl-scrollbar {
-  @scroll-arrows-color-esc: escape(@primary-blue);
-
+.esl-scrollbar {
   .scrollbar-track {
-    background: fade(@primary-blue, 90%);
+    background: fadeout(@secondary-blue, 70%);
   }
 
   .scrollbar-thumb {
-    background: fade(@primary-blue, 40%);
+    background: fadeout(@primary-blue, 70%);
   }
 
   &[dragging] .scrollbar-thumb {
-    background: fade(@primary-blue, 60%);
+    background: fadeout(@primary-blue, 50%);
+    box-shadow: inset 0 0 4px 0 @secondary-blue;
   }
+
+  @scroll-arrows-color-esc: escape(@primary-blue);
 
   &:not([horizontal]) .scrollbar-track {
     &::before,
@@ -22,7 +22,6 @@ esl-scrollbar.scrollbar-blue,
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 10' xml:space='preserve'%3E%3Cpolyline points='0,0 8,8 16,0' fill='none' stroke='@{scroll-arrows-color-esc}' stroke-width='5'/%3E%3C/svg%3E");
     }
   }
-
   &[horizontal] .scrollbar-track {
     &::before,
     &::after {

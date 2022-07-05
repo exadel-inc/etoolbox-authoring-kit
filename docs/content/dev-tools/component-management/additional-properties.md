@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Additional Properties
+seoTitle: Additional Properties - Exadel Authoring Kit
 order: 4
 -->
 
