@@ -44,7 +44,6 @@ public @interface AllowedChildren {
      * to any template.
      * <p>You can use wildcards, e.g. {@code "/conf/acme/settings/wcm/*", "*templates/design2/homepage",
      * "*templates/design2/*"}.
-     * <p><u>Note</u>: this setting should not be used to specify static templates.
      * @return Optional {@code String} value, or an array of strings
      */
     String[] templates() default {};
