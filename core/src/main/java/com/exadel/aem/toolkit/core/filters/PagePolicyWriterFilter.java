@@ -17,6 +17,7 @@ package com.exadel.aem.toolkit.core.filters;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.components.Component;
 import com.day.cq.wcm.api.components.ComponentEditConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestPathInfo;
 import org.apache.sling.api.resource.Resource;
@@ -54,10 +55,6 @@ public class PagePolicyWriterFilter implements Filter {
     private static final int LENGTH_TO_TRIM = "Granite.PolicyResolver.build('".length();
     private static final String SCRIPT_FORMAT = "<script>%s</script>";
 
-    private static final String MOCK = "Granite.PolicyResolver.build('{\"isEditConfig\":false,\"rules\":[{\"value\":[\"hpeweb/components/content/design3/myAccount/subscriptionItem\"],\"containers\":[\"header-nav\",\"secondary-nav\"]}]}"
-            .substring(LENGTH_TO_TRIM);
-
-
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -92,7 +89,12 @@ public class PagePolicyWriterFilter implements Filter {
                 .map(ComponentEditConfig::getListeners)
                 .map(map -> map.get("updatecomponentlist"))
                 .map(listener -> listener.substring(LENGTH_TO_TRIM, listener.length() - 2))
-                .orElse(MOCK);
+                .orElse(StringUtils.EMPTY);
+
+        if (StringUtils.isBlank(rules)) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
 
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("script.js");
         if (inputStream == null) {
