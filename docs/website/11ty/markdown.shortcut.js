@@ -7,7 +7,7 @@ const {markdown} = require('./markdown.lib');
 const {github, rewriteRules, urlPrefix} = require('./site.config');
 
 const recursiveCheckLinks = (arr, link, element, key) => {
-    arr.forEach(el=>{
+    arr.forEach((el) => {
         if (el.hasOwnProperty('fileName') && el.fileName === link) {
             element.setAttribute('href', `/${[key]}/${link.replace('.md', '')}`);
         }
