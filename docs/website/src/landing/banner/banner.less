@@ -108,7 +108,7 @@
   }
 
   &-promo {
-    background: linear-gradient(to bottom, @white-bg 0, transparent 100px), @light-blue-bg;
+    background: linear-gradient(to bottom, fadeout(@white-bg, 0%) 0, fadeout(@white-bg, 100%) 100px), @light-blue-bg;
 
     @media @lg-xl {
       padding: 50px 0;
