@@ -51,7 +51,7 @@
   &-btns-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    margin: -0.5rem;
     text-shadow: none;
 
     @media @xs-sm {
@@ -59,7 +59,7 @@
     }
 
     .btn {
-      margin-top: 0;
+      margin: 0.5rem;
       box-shadow: 0 0 30px 2px rgba(255,255,255, .8);
     }
   }
@@ -93,7 +93,7 @@
     }
 
     &-primary {
-      stroke: @landing-blue
+      stroke: @landing-blue;
     }
 
     &-secondary {
@@ -108,7 +108,7 @@
   }
 
   &-promo {
-    background: linear-gradient(to bottom, @white-bg 0, transparent 100px), @light-blue-bg;
+    background: linear-gradient(to bottom, fadeout(@white-bg, 0%) 0, fadeout(@white-bg, 100%) 100px), @light-blue-bg;
 
     @media @lg-xl {
       padding: 50px 0;
@@ -117,5 +117,9 @@
 
   &-promo &-waves > svg {
     max-height: calc(100% + 85px);
+  }
+
+  &-waves > svg {
+    transform: translate3d(0,0,0);
   }
 }
