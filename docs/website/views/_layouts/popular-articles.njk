@@ -15,13 +15,12 @@ layout: content
       </li>
     {# Search for articles only using its link (/content/..) #}
     {% else %}
-    {% set articleLink = article %}
-      {% for item in collections.all | filterArticles(articleLink) %}
+      {% for item in collections.all | equalByUrl(article) %}
         <li class="popular-articles-item">
           {% set text = item.data.content %}
-          <h4 class="mb-2">{{ text | articleHeader | striptags }}</h4>
-          <p class="popular-articles-content">{{ text | articleContent | striptags }}</p>
-          <a href="{{ item.data.page.filePathStem | url }}"> Learn More</a>
+          <h4 class="mb-2">{{ text | extractArticleHeader | striptags }}</h4>
+          <p class="popular-articles-content">{{ text | extractArticleContent | striptags }}</p>
+          <a href="{{ item.data.page.filePathStem | url }}">Learn More</a>
         </li>
       {% endfor %}
     {% endif %}

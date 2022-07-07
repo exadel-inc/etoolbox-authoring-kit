@@ -13,10 +13,13 @@
  */
 package com.exadel.aem.toolkit.plugin.writers;
 
+import java.util.Arrays;
 import javax.xml.transform.Transformer;
 
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
+import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
+import com.exadel.aem.toolkit.api.annotations.policies.PolicyTarget;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing subsidiary authoring process parameters for an AEM component,
@@ -49,6 +52,8 @@ class CqEditConfigWriter extends PackageEntryWriter {
      */
     @Override
     boolean canProcess(Class<?> componentClass) {
-        return componentClass.isAnnotationPresent(EditConfig.class);
+        return componentClass.isAnnotationPresent(EditConfig.class)
+                || Arrays.stream(componentClass.getAnnotationsByType(AllowedChildren.class))
+                .anyMatch(ac -> PolicyTarget.CURRENT.equals(ac.targetContainer()));
     }
 }

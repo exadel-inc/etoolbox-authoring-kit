@@ -1,0 +1,5 @@
+.coral3-Icon--etoolbox-lists {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' shape-rendering='geometricPrecision' text-rendering='geometricPrecision' image-rendering='optimizeQuality' fill-rule='evenodd' clip-rule='evenodd' viewBox='0 0 11641 11641'%3E%3Ccircle fill='%23666666' cx='5820' cy='5820' r='5820'/%3E%3Cpath fill='%23ffffff' d='M6360 4176c131,226 424,305 650,174 226,-131 305,-424 174,-650l-872 -1511c-95,-166 -273,-250 -452,-234 -178,-16 -356,71 -452,234l-3565 6175c-131,226 -51,519 174,650 226,131 519,52 650,-174l3192 -5529 500 865zm-2354 3968l5472 0c247,0 450,203 450,450l0 0c0,248 -203,450 -450,450l-5472 0c-247,0 -450,-203 -450,-450 0,-248 202,-450 450,-450zm865 -1501l3752 0c248,0 450,203 450,450l0 0c0,248 -203,450 -450,450l-3752 0c-247,0 -450,-203 -450,-450l0 0c0,-248 203,-450 450,-450zm855 -1501l2041 0c248,0 450,203 450,450l0 0c0,248 -203,450 -450,450l-2041 0c-248,0 -450,-203 -450,-450l0 0c0,-248 202,-450 450,-450z'/%3E%3C/svg%3E");
+    height: 3rem;
+    width: 3rem;
+}

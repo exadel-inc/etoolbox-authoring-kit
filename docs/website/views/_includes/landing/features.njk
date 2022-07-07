@@ -1,12 +1,12 @@
-<div class="features-container container mb-100">
-    <div class="features-header">
-        <h3>{{ landing.features.title }}</h3>
-    </div>
-    <div class="features-content">
-        <ul class="features-list">
-        {% for feature in landing.features.items %}
-            <li class="features-item">{{ feature }}</li>
-        {% endfor %}
-        </ul>
-    </div>
+<div class="features-container container">
+  <div class="features-header">
+    <h3>{{ landing.features.title }}</h3>
+  </div>
+  <div class="features-content">
+    <ul class="features-list unstyled-list">
+      {% for feature in landing.features.items %}
+        <li class="features-item">{{ feature }}</li>
+      {% endfor %}
+    </ul>
+  </div>
 </div>

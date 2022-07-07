@@ -22,20 +22,20 @@ The ToolKit is developed in the course of Exadel&trade; Marketing Technology Pra
 It is an open and growing project. The authors sincerely welcome creative input from the AEM community worldwide to bring the best programming techniques and design.
 
 ***
-> Learn more about the latest features of Exadel Authoring Kit for AEM by visiting our [_website_](https:/exadel-inc.github.io/etoolbox-authoring-kit)
+> Learn more about the latest features of Exadel Authoring Kit for AEM by visiting our [_website_](https://exadel-inc.github.io/etoolbox-authoring-kit)
 >
 ***
 
 ### Manuals
 
-Check out our comprehensive [manual](https:/exadel-inc.github.io/etoolbox-authoring-kit/content/getting-started/installation/) to learn all about ToolKit installation, usage and available tools.
+Check out our comprehensive [manual](https://exadel-inc.github.io/etoolbox-authoring-kit/content/getting-started/installation/) to learn all about ToolKit installation, usage and available tools.
 
 Also, you can take a look at these popular articles:
 - [Component management](docs/content/dev-tools/component-management/component-structure.md)
 - [Configuring RichTextEditor](docs/content/dev-tools/component-management/dialog-fields/configuring-rte.md)
-- [Programming dynamic dialog behavior: DependsOn plugin client library](docs/md/depends-on.md)
-- [Managing structured data with Exadel Toolbox Lists](docs/md/etoolbox-lists.md)
-- [Enhancing AEM Components' back-end with advanced Injectors](docs/md/injectors.md)
+- [Programming dynamic dialog behavior: DependsOn plugin client library](docs/content/dev-tools/depends-on/introduction.md)
+- [Managing structured data with Exadel Toolbox Lists](docs/content/authoring-tools/etoolbox-lists.md)
+- [Enhancing AEM Components' back-end with advanced Injectors](docs/content/dev-tools/injectors.md)
 
 ### Need more documentation?
 

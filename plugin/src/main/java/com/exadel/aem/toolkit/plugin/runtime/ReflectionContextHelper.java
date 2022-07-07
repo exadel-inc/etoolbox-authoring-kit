@@ -21,10 +21,11 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ClassUtils;
@@ -79,17 +80,17 @@ public class ReflectionContextHelper {
      * Returns the list of {@code AemComponent}-annotated and {@code @Dialog}-annotated classes within the scope of the
      * plugin to determine which of the component folders to process. If {@code componentsPath} is set for this
      * instance, the classes are tested to be under that path
-     * @return {@code List} of class references
+     * @return {@code Set} of class references
      */
-    public List<Class<?>> getComponentClasses() {
-        List<Class<?>> classesAnnotatedWithDialog = reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
+    public Set<Class<?>> getComponentClasses() {
+        Set<Class<?>> classesAnnotatedWithComponent = reflections.getTypesAnnotatedWith(AemComponent.class, true).stream()
             .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
-            .collect(Collectors.toList());
-        List<Class<?>> classesAnnotatedWithComponent = reflections.getTypesAnnotatedWith(AemComponent.class, true).stream()
+            .collect(Collectors.toSet());
+        Set<Class<?>> classesAnnotatedWithDialog = reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
             .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
 
-        List<Class<?>> componentViews = new ArrayList<>();
+        Set<Class<?>> componentViews = new HashSet<>();
         classesAnnotatedWithComponent.forEach(cls -> componentViews.addAll(Arrays.asList(cls.getAnnotation(AemComponent.class).views())));
         classesAnnotatedWithComponent.addAll(classesAnnotatedWithDialog.stream().filter(cls -> !componentViews.contains(cls)).collect(Collectors.toList()));
 

@@ -10,9 +10,7 @@
 
   @media @md-xl {
     height: @header-height-desktop;
-  }
 
-  @media @md-xl {
     .landing-layout & {
       background-color: transparent;
     }
@@ -49,8 +47,7 @@
     }
   }
 
-  &-li {
-    list-style-type: none;
+  &-item {
     font-size: 1rem;
 
     margin: 0 5px;
@@ -162,16 +159,16 @@
   }
 
   &-short-name {
-    display: none;
-    @media @xs {
-      display: inline-block;
+    display: inline-block;
+    @media @sm-xl {
+      display: none;
     }
   }
 
   &-long-name {
-    display: inline-block;
-    @media @xs {
-      display: none;
+    display: none;
+    @media @sm-xl {
+      display: inline-block;
     }
   }
 

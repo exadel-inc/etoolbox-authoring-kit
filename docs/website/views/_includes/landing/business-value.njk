@@ -1,13 +1,11 @@
-<div class="bv-container mx-0 mb-150">
-  <ul class="bv-list">
+<div class="bv-container">
+  <ul class="bv-list container">
     {% for value in landing.businessValue %}
-      <li class="bv-block mx-2">
-        <div role="presentation">
-          {% include "../../../static/assets/helpers/light-slash.svg" %}
-        </div>
-        <div class="bv-item mx-auto my-auto">
+      <li class="bv-block">
+        <div class="bv-divider"></div>
+        <div class="bv-item">
           <strong class="bv-item-title mb-1">{{ value.title }}</strong>
-          <p class="bv-item-description fw-400">{{ value.content }}</p>
+          <p class="bv-item-description">{{ value.content }}</p>
         </div>
       </li>
     {% endfor %}

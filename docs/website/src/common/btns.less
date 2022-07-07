@@ -2,11 +2,10 @@
 
 .btn {
   margin-top: 10px;
-  margin-right: 5%;
   padding: 10px 20px;
   display: block;
-  border-width: 1px;
-  border-style: solid;
+
+  border: 1px solid @landing-blue;
   border-radius: 8px;
   font-weight: 500;
   text-decoration: none;
@@ -18,9 +17,8 @@
   }
 
   &-primary {
-    border-color: @landing-blue;
-    background-color: @landing-blue;
     color: #fff;
+    background-color: @landing-blue;
 
     &:hover {
       color: #fff;
@@ -35,6 +33,7 @@
 
     &:hover {
       color: @landing-sec-blue;
+      border-color: @landing-sec-blue;
     }
   }
 }

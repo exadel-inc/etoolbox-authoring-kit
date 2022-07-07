@@ -1,22 +1,18 @@
 @import (reference) "../../common/variables.less";
 
 .article {
+  margin-bottom: 100px;
 
   &-title {
     text-align: left;
     margin-bottom: 30px;
-
-    @media @xs-sm {
-      width: 100%;
-    }
   }
 
   &-description {
-    width: 50%;
     margin-top: 24px;
 
-    @media @xs-md {
-      width: auto;
+    @media @lg-xl {
+      width: 50%;
     }
   }
 
@@ -25,35 +21,46 @@
   }
 
   &-content {
-    display: grid;
-    grid-template-columns: repeat(5,1fr);
-    grid-template-areas:
-    "first first first second second"
-    "first first first third third";
-    margin-bottom: 70px;
+    display: block;
+    margin-bottom: 30px;
 
-    @media @xs-sm {
-      display: block;
-      margin: 10px 0 15px;
+    @media @md-xl {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-areas:
+        "first second third"
+        "first fourth fifth";
+      margin-bottom: 50px;
+      grid-gap: 10px;
     }
   }
 
   &-link {
     display: block;
+    overflow: hidden;
     text-decoration: none;
     color: inherit;
 
+    border: 2px solid @light-blue-bg;
+    border-radius: 10px;
+    padding: 10px;
+
     &:hover {
-      color: inherit;
       text-decoration: none;
+      color: inherit;
+      background: @light-blue-bg;
+    }
+
+    @media @md-xl {
+      padding: 20px;
+      height: 100%;
     }
   }
 
   &-item {
-    padding: 5px;
-
-    @media @xs-sm {
-      padding: 0;
+    margin-bottom: 1rem;
+    @media @md-xl {
+      margin-bottom: 0;
     }
 
     &-title {
@@ -64,7 +71,6 @@
     &-taglist {
       display: flex;
       flex-wrap: wrap;
-      list-style-type: none;
       margin: 10px 0;
 
       &-tag {
@@ -86,14 +92,26 @@
     }
 
     &-img {
+      margin-bottom: 1rem;
+
+      @media @sm {
+        margin-bottom: 0;
+
+        &-container {
+          width: 40%;
+          float: left;
+          margin-right: 1rem;
+        }
+      }
+
       &.esl-image {
         height: auto;
       }
-
-      margin-bottom: 10px;
     }
 
-    &-content {
+    &-description {
+      font-size: 1rem;
+
       @media @md-xl {
         overflow: hidden;
         display: -webkit-box;
@@ -105,21 +123,22 @@
 
   &-first {
     grid-area: first;
-    @media @md-xl {
-      padding-right: 50px;
-    }
   }
-
   &-second {
     grid-area: second;
   }
-
   &-third {
     grid-area: third;
   }
+  &-fourth {
+    grid-area: fourth;
+  }
+  &-fifth {
+    grid-area: fifth;
+  }
 
-  &-center {
-    width: 100%;
+  &-btn {
+    display: flex;
     justify-content: center;
   }
 }
