@@ -16,8 +16,9 @@ const getContent = async (filePath) => {
   return content.replace(/(^)(<!--|-->)/gm, '$1---');
 }
 const getPaths = (fileName) => {
-  const filePath = path.join(INPUT_DIR, '/', fileName);
-  const outputPath = path.join(OUTPUT_DIR, '/', fileName);
+  const fileInitPath = fileName.replace('\.\.\\content\\', '');
+  const filePath = path.join(INPUT_DIR, '/', fileInitPath);
+  const outputPath = path.join(OUTPUT_DIR, '/', fileInitPath);
   return {filePath, outputPath};
 }
 const createFile = async (parsedContent, outputPath) => {
@@ -43,20 +44,18 @@ const createFile = async (parsedContent, outputPath) => {
 })();
 
 if(process.argv.includes('watch')){
-    const watch = chokidar.watch('../content');
+    const watch = chokidar.watch('../content', {usePolling:true, interval:2000});
 
-    watch.on('change', async (fileInitPath) => {
-      const fileName = fileInitPath.replace('\.\.\\content\\', '');
+    watch.on('change', async (fileName) => {
       const {filePath, outputPath} = getPaths(fileName);
 
       const parsedContent = await getContent(filePath);
-      await fs.promises.writeFile(outputPath, parsedContent);
+      await createFile(parsedContent, outputPath)
 
       console.log(`\t - ${fileName} - updated`);
     })
 
-    watch.on('add', async (fileInitPath) => {
-      const fileName = fileInitPath.replace('\.\.\\content\\', '');
+    watch.on('add', async (fileName) => {
       const {outputPath} = getPaths(fileName);
 
       createFile('', outputPath);
@@ -64,21 +63,11 @@ if(process.argv.includes('watch')){
       console.log(`\t - ${fileName} - added`);
     })
 
-    watch.on('unlink', async (fileInitPath) => {
-      const fileName = fileInitPath.replace('\.\.\\content\\', '');
+    watch.on('unlink', async (fileName) => {
       const {outputPath} = getPaths(fileName);
-
+      await createFile('', outputPath.replace(/\.(html|njk|md)/, '.yml'))
       await fs.promises.unlink(outputPath);
 
       console.log(`\t - ${fileName} - deleted`);
-    })
-
-    watch.on('unlinkDir', async (dirInitPath) => {
-      const dirname = dirInitPath.replace('\.\.\\content\\', '');
-
-      const {outputPath} = getPaths(dirname);
-      await del(outputPath);
-
-      console.log(`\t - ${dirname} deleted`);
     })
 }
