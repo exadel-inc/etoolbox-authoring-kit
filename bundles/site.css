@@ -1152,7 +1152,7 @@ eak-sidebar .sidebar-nav-secondary-link:hover {
 .banner-btns-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  margin: -0.5rem;
   text-shadow: none;
 }
 @media (min-width: 1px) and (max-width: 991px) {
@@ -1161,7 +1161,7 @@ eak-sidebar .sidebar-nav-secondary-link:hover {
   }
 }
 .banner-btns-container .btn {
-  margin-top: 0;
+  margin: 0.5rem;
   box-shadow: 0 0 30px 2px rgba(255, 255, 255, 0.8);
 }
 .banner-waves {
@@ -1202,7 +1202,7 @@ eak-sidebar .sidebar-nav-secondary-link:hover {
   }
 }
 .banner-promo {
-  background: linear-gradient(to bottom, #fff 0, transparent 100px), #EAF4F8;
+  background: linear-gradient(to bottom, #ffffff 0, rgba(255, 255, 255, 0) 100px), #EAF4F8;
 }
 @media (min-width: 1200px) and (max-width: 999999px) {
   .banner-promo {
@@ -1212,8 +1212,11 @@ eak-sidebar .sidebar-nav-secondary-link:hover {
 .banner-promo .banner-waves > svg {
   max-height: calc(100% + 85px);
 }
+.banner-waves > svg {
+  transform: translate3d(0, 0, 0);
+}
 .benefits {
-  background: linear-gradient(to bottom, #fff 0, transparent 100px), #EAF4F8;
+  background: linear-gradient(to bottom, #ffffff 0, rgba(255, 255, 255, 0) 100px), #EAF4F8;
 }
 .benefits-container {
   display: flex;
