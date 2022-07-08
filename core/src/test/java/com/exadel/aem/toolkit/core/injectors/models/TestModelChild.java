@@ -58,6 +58,9 @@ public class TestModelChild {
     @Child(name = "/content/jcr:content/list/nested-node/nested_list_item_2", prefix = "foo_", postfix = "_bar")
     private ListItemModel modelFilteredByPrefixAndPostfix;
 
+    @Child(name = "list/list_item_1006003058")
+    private NestedModel modelAdaptedFromRequest;
+
     @Child(name = "./", prefix = "prefix_")
     private Resource selfResourceFiltered;
 
@@ -107,6 +110,10 @@ public class TestModelChild {
 
     public ListItemModel getModelFilteredByPrefixAndPostfix() {
         return modelFilteredByPrefixAndPostfix;
+    }
+
+    public NestedModel getModelAdaptedFromRequest() {
+        return modelAdaptedFromRequest;
     }
 
     public Resource getSelfResourceFiltered() {

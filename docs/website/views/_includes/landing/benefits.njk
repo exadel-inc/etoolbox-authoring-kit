@@ -1,9 +1,11 @@
-<div class="benefits-container container d-flex mb-150">
+<div class="benefits">
+  <div class="benefits-container container">
     {% for benefit in landing.benefits %}
-        <div class="benefits-item">
+      <div class="benefits-item">
         {% include 'static/assets/landing/benefits/' + benefit.imgUrl %}
         <h5 class="benefits-title">{{benefit.title}}</h5>
-        <p class="fs-1">{{benefit.content}}</p>
-        </div>
+        <p class="benefits-description">{{benefit.content}}</p>
+      </div>
     {% endfor %}
+  </div>
 </div>

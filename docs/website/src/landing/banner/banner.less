@@ -6,87 +6,76 @@
 
   &-container {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-
     min-height: 500px;
-    margin-bottom: 200px;
+    margin-bottom: 50px;
+
+    @media @lg-xl {
+      margin-bottom: 100px;
+    }
+  }
+
+  &-title {
+    color: @landing-blue;
+
     @media @xs-sm {
-      margin-bottom: 50px;
+      text-align: center;
     }
   }
 
   &-content {
-    width: 75%;
-    flex-direction: column;
-    justify-content: center;
-    padding: 100px 0 100px;
+    width: 100%;
+    padding: 50px 0;
     z-index: 1;
     text-shadow: 1px 1px 2px #fff, 0 0 1em #fff;
 
-    & > h2 {
-      @media @xs-sm {
-        text-align: center;
-      }
+    @media @md-xl {
+      width: 75%;
+      padding: 100px 0;
     }
 
     &-section {
-      width: 80%;
-      @media @xs-sm {
-        width: 100%;
+      @media @md-xl {
+        width: 60%;
       }
     }
 
     &-text {
-      padding-right: 20%;
-      @media @xs-sm {
-        padding-right: 0;
+      text-align: center;
+
+      @media @md-xl {
+        text-align: left;
       }
-    }
-
-    @media @xs-sm {
-      width: 100%;
-    }
-  }
-
-  &-logo {
-    width: 40%;
-
-    & > svg {
-      position: absolute;
-      top: 20px;
-      right: -20px;
-    }
-
-    @media @xs-sm {
-      display: none;
     }
   }
 
   &-btns-container {
     display: flex;
     flex-wrap: wrap;
-    flex-direction: row;
+    margin: -0.5rem;
     text-shadow: none;
 
     @media @xs-sm {
-      width: 100%;
       justify-content: center;
     }
-    > .btn {
-      box-shadow: 0 0 30px 2px  rgba(255,255,255, .8);
+
+    .btn {
+      margin: 0.5rem;
+      box-shadow: 0 0 30px 2px rgba(255,255,255, .8);
     }
   }
 
   &-waves {
     position: absolute;
-    top: 50px;
+    top: 100px;
     left: 0;
     width: 100%;
     height: calc(100% - 50px);
 
     pointer-events: none;
+
+    @media @md-xl {
+      top: 50px;
+    }
 
     > svg {
       display: block;
@@ -96,12 +85,41 @@
       margin-top: -100px;
 
       path {
-        transition: all .25s linear;
+        transition: all 4s linear;
       }
       .animate {
-        stroke: mix(#fff, @landing-blue, 50%);
-        stroke-width: 1;
+        stroke-width: 2;
       }
     }
+
+    &-primary {
+      stroke: @landing-blue;
+    }
+
+    &-secondary {
+      stroke: @secondary-blue;
+    }
+  }
+
+  &-top {
+    @media @lg-xl {
+      margin-bottom: 50px;
+    }
+  }
+
+  &-promo {
+    background: linear-gradient(to bottom, fadeout(@white-bg, 0%) 0, fadeout(@white-bg, 100%) 100px), @light-blue-bg;
+
+    @media @lg-xl {
+      padding: 50px 0;
+    }
+  }
+
+  &-promo &-waves > svg {
+    max-height: calc(100% + 85px);
+  }
+
+  &-waves > svg {
+    transform: translate3d(0,0,0);
   }
 }

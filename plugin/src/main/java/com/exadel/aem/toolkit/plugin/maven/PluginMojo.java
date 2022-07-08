@@ -91,7 +91,6 @@ public class PluginMojo extends AbstractMojo {
             for (Class<?> componentClass : PluginRuntime.context().getReflection().getComponentClasses()) {
                 processedCount += packageWriter.write(componentClass) ? 1 : 0;
             }
-            PluginRuntime.context().getReflection().getComponentClasses().forEach(packageWriter::write);
         } catch (PluginException e) {
             throw new MojoExecutionException(String.format(PLUGIN_EXECUTION_EXCEPTION_MESSAGE,
                     e.getCause() != null ? e.getCause().getClass().getSimpleName() : e.getClass().getSimpleName(),

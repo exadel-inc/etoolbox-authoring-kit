@@ -3,12 +3,13 @@
 .popular-articles {
   &-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1, 100%);
     grid-gap: 50px;
-    @media @xs-md {
-      grid-template-columns: repeat(1, 1fr);
+    @media @lg-xl {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
+
   &-item {
     list-style: none;
   }
@@ -21,5 +22,13 @@
   &-subheader {
     color: @nav-accent;
     margin-bottom: 40px;
+  }
+
+  &-content {
+    margin-bottom: 5px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* number of lines to show */
+    -webkit-box-orient: vertical;
   }
 }

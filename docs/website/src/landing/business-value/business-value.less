@@ -2,63 +2,76 @@
 
 .bv {
   &-container {
-    padding: 5rem;
-    width: 100%;
-    height: max-content;
-    background-image: url("../assets/landing/bv-background.svg");
-    background-position: bottom left;
-    background-size: cover;
-    background-repeat: no-repeat;
-    align-content: center;
-    @media @sm {
-      padding: 2.5rem;
-      background-position: center left;
-    }
-    @media @xs {
-      padding: 0.5rem;
-      font-size: 14px;
+    background-color: @landing-sec-light-blue;
+    padding: 2rem;
+    margin-bottom: 75px;
+
+    @media @md-xl {
+      padding: 5rem 0;
+      margin-bottom: 150px;
     }
   }
 
   &-list {
-    margin: auto;
     display: flex;
-    flex-direction: row;
     justify-content: center;
     line-height: 1;
+
     @media @xs-sm {
-      width: 100%;
+      flex-direction: column;
       flex-wrap: wrap;
-    }
-    @media @sm {
-      padding-top: 1rem;
+      padding: 0;
     }
   }
 
   &-block {
     display: flex;
-    padding: 1rem 0;
+    align-items: center;
+    padding: 0.5rem 0;
     flex: 1 1 23%;
+  }
 
-    @media @xs-sm {
-      flex: 1 1 45%;
-      padding: 0.25rem;
+  &-divider {
+    position: relative;
+    width: 50px;
+    height: 100px;
+
+    @media @md-xl {
+      height: 130px;
+    }
+
+    &::after {
+      content: '';
+      background-color: @landing-blue;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 2px;
+      transform-origin: bottom left;
+
+      // TODO: make more explicit
+      transform: rotate(0.46rad);
+      height: sqrt(50*50 + 100*100);
+      @media @md-xl {
+        transform: rotate(0.3666rad);
+        height: sqrt(50*50 + 130*130);
+      }
     }
   }
 
   &-item {
-    text-align: center;
-    padding: 1rem 2rem;
+    text-align: start;
+    padding: 1rem;
+    line-height: 1.2em;
 
-    @media @xs {
-      text-align: start;
-      margin-left: 0!important;
-      margin-right: 0!important;
+    @media @lg-xl {
+      padding: 1rem 2rem;
     }
 
     &-title {
       display: block;
     }
+
     &-description {
       margin: 0;
     }

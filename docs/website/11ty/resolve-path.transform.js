@@ -38,9 +38,9 @@ class PathResolver {
     dom.body.querySelectorAll('img[src^="."]').forEach((img) => {
       const resolved = PathResolver.resolveLink(img.src, filePath);
       if (resolved !== img.src) console.info(blue(`Rewrite image source "${img.src}" to "${resolved}"`));
-      
-      const zoomImg = dom.createElement("eak-zoom-image")
-      zoomImg.setAttribute("data-src", resolved)
+
+      const zoomImg = dom.createElement('eak-zoom-image');
+      zoomImg.setAttribute('data-src', resolved);
 
       img.parentNode.replaceChild(zoomImg, img);
     });

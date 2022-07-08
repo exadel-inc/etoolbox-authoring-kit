@@ -1,17 +1,26 @@
-<eak-banner class="banner mb-50">
+{% set landingDir = 'static/assets/landing/' %}
+
+{% macro banner(cfg) %}
   <div class="banner-container container">
     <div class="banner-content">
-      <h2>{{ landing.marquee.title }}</h2>
+      {% if cfg.top %}
+        <h1 class="banner-title h2">{{ cfg.title }}</h1>
+      {% else %}
+        <h2 class="banner-title">{{ cfg.title }}</h2>
+      {% endif %}
       <div class="banner-content-section">
-        <p class="banner-content-text mb-4">{{ landing.marquee.description }}</p>
-        <div class="banner-btns-container">
-          <a href="{{ landing.urls.installationUrl | url }}" class="btn btn-blue">Get started</a>
-          <a href="{{ site.github.url }}" class="btn btn-blue btn-sec" target="_blank">Check it out</a>
-        </div>
+        <p class="banner-content-text mb-4">{{ cfg.description }}</p>
+        {% if cfg.buttons %}
+          <div class="banner-btns-container">
+            {# TODO: make buttons settings explicit #}
+            <a href="{{ cfg.buttons[0].link | url }}" class="btn btn-primary">{{ cfg.buttons[0].text }}</a>
+            <a href="{{ cfg.buttons[1].link }}" class="btn btn-secondary" target="_blank">{{ cfg.buttons[1].text }}</a>
+          </div>
+        {% endif %}
       </div>
     </div>
+    <div class="banner-waves">
+      {% include landingDir + cfg.bgIcon %}
+    </div>
   </div>
-  <div class="banner-waves">
-    {% include "static/assets/landing/banner-waves.svg" %}
-  </div>
-</eak-banner>
+{% endmacro %}

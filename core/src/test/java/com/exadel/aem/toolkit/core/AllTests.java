@@ -13,14 +13,13 @@
  */
 package com.exadel.aem.toolkit.core;
 
-import com.exadel.aem.toolkit.core.injectors.ChildInjectorTest;
-
-import com.exadel.aem.toolkit.core.injectors.ChildrenInjectorTest;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.exadel.aem.toolkit.core.injectors.ChildInjectorTest;
+import com.exadel.aem.toolkit.core.injectors.ChildrenInjectorTest;
+import com.exadel.aem.toolkit.core.injectors.I18nInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestParamInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestSelectorsInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestSuffixInjectorTest;
@@ -50,6 +49,7 @@ import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderTe
     RequestSuffixInjectorTest.class,
     ChildInjectorTest.class,
     ChildrenInjectorTest.class,
+    I18nInjectorTest.class,
 
     OptionProviderTest.class
 })

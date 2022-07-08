@@ -147,6 +147,7 @@ public class DialogConstants {
     public static final String PN_TRACKING_ELEMENT = "trackingElement";
     public static final String PN_TYPE = "type";
     public static final String PN_TYPE_HINT = "typeHint";
+    public static final String PN_UPDATE_COMPONENT_LIST = "updatecomponentlist";
     public static final String PN_USE_FIXED_INLINE_TOOLBAR = "useFixedInlineToolbar";
     public static final String PN_VALUE_MEMBER = "valueMember";
     public static final String PN_VALUE_TRANSFORM = "valueTransform";

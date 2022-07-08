@@ -10,18 +10,22 @@ landing:
     description: >
       Make AEM project setup simple and quick to market with our component-oriented
       open-source Exadel Authoring Kit for Adobe Experience Manager
+    buttons:
+      - link: content/getting-started/installation
+        text: Get started
+      - link: https://github.com/exadel-inc/etoolbox-authoring-kit
+        text: Check it out
 
   features:
     title: What’s the Exadel Authoring Kit for AEM all about?
     items:
-      - A smart thoroughly tested extension for AEM authoring interfaces
       - Meant for developers, authors, and business analysts working in an AEM environment
-      - Filled with reusable coding and visual patterns
       - Rich in utilities for handling AEM Sling models, modifying AEM component policy,
         and managing structured data
       - Automatically generates AEM Touch UI dialogs and adds responsive features to the
         dialogs
-
+      - A smart thoroughly tested extension for AEM authoring interfaces
+      - Filled with reusable coding and visual patterns
   benefits:
     - imgUrl: developer-friendly.svg
       title: Developer-friendly
@@ -84,15 +88,19 @@ landing:
 
     feed: 'https://exadel.com/news/tag/exadel-authoring-kit-for-aem/feed/'
     baseUrl: 'https://exadel.com'
-    count: 3
-    moreText: Learn more
+    count: 5
+    moreText: See more
 
     fallback:
-      image: "./assets/landing/article-section/img.jpg"
+      image: './assets/landing/article-section/img.jpg'
 
   promo:
     title: Let the kit get the job done!
     description: >
       Develop websites and components in Adobe Experience Manager
       with impeccable AEM project architecture, and diversify any AEM Touch UI dialog in Adobe Experience Manager components
-
+    buttons:
+      - link: content/getting-started/installation
+        text: Start now
+      - link: https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/index.html
+        text: Read the docs

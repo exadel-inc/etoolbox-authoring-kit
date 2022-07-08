@@ -21,12 +21,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.layouts.Column;
-import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
 
 /**
  * Represents an abstraction of a container section such as {@code Tab} or {@code AccordionPanel}
@@ -150,11 +150,11 @@ public abstract class Section {
         if (!(member instanceof MemberSource)) {
             return false;
         }
-        if (!member.tryAdaptTo(Place.class).isPresent()) {
+        if (!member.tryAdaptTo(PlaceSetting.class).isPresent()) {
             return isLayout && allowUndefined;
         }
 
-        String placeValue = StringUtils.strip(member.adaptTo(Place.class).value(), CoreConstants.SEPARATOR_SLASH);
+        String placeValue = StringUtils.strip(member.adaptTo(PlaceSetting.class).getValue(), CoreConstants.SEPARATOR_SLASH);
         return StringUtils.equals(placeValue, getTitle())
             || StringUtils.equals(placeValue, getFullTitle())
             || (StringUtils.isBlank(placeValue) && isLayout && allowUndefined);
