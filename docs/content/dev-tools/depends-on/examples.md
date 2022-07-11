@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Examples
+seoTitle: Examples - Exadel Authoring Kit
 order: 4
 -->
 ## Examples
@@ -473,7 +474,7 @@ public class Component {
     private String alertGetter;
 }
 ```
-***
+
 ### See also
 
 [Feeding data to selection widgets with OptionProvider](../option-provider.md)

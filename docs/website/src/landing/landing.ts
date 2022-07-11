@@ -1,1 +1,1 @@
-export * from './banner-logo/banner-logo';
+export * from './banner/banner';

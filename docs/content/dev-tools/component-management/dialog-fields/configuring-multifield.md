@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Configuring Multifield
+seoTitle: Configuring Multifield - Exadel Authoring Kit
 order: 5
 -->
 ## Multiplying fields
@@ -84,6 +85,6 @@ On the other hand, if you add `@Multiple` to a field marked with `@FieldSet`, a 
 
 Please note, however, that `@Multiple` is primarily designed for easy, "quick give me a multifield out of my single widget" cases. For more complicated cases it lacks tweaking capabilities that `@MultiField` itself has.
 
-***
-#### See also
-- [Grouping fields with FieldSet](./configuring-fieldset.md)
+### See also
+
+[Grouping fields with FieldSet](./configuring-fieldset.md)

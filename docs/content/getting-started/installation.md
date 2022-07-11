@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Installation
+seoTitle: Installation - Exadel Authoring Kit
 -->
 ## Installation
 
@@ -11,7 +12,7 @@ title: Installation
 <dependency>
    <groupId>com.exadel.etoolbox</groupId>
    <artifactId>etoolbox-authoring-kit-core</artifactId>
-   <version>2.2.0</version> <!-- prefer the latest stable version whenever possible -->
+   <version>2.2.0-SNAPSHOT</version> <!-- prefer the latest stable version whenever possible -->
     <scope>provided</scope> <!-- do not use compile or runtime scope!-->
 </dependency>
 ```
@@ -21,7 +22,7 @@ title: Installation
 <plugin>
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit-plugin</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.0-SNAPSHOT</version>
     <executions>
         <execution>
             <goals>
@@ -79,7 +80,7 @@ You need to do two steps.
 <dependency>
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit-all</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.0-SNAPSHOT</version>
     <type>content-package</type>
 </dependency>
 ```

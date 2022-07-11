@@ -1,45 +1,67 @@
 @import (reference) "../../common/variables.less";
+
 .features {
-    &-container {
-        flex-direction: row;
-        justify-content: space-between;
-        padding-top: 50px;
-        @media @xs {
-            flex-direction: column;
-        }
+  &-container {
+    @media @sm-xl {
+      padding-top: 100px;
     }
-    &-header {
-        padding-top: 1.25rem;
-        width: 33%;
-        &>h3 {
-            color: @features-color;
-        }
-        @media @xs {
-            width: 100%;
-            text-align: center;
-        }
+  }
+
+  &-header {
+    padding-top: 1.25rem;
+    width: 100%;
+    text-align: center;
+
+    @media @md-xl {
+      width: 60%;
+      text-align: left;
     }
-    &-content {
-        width: 60%;
-        margin-right: 2.1rem;
-        @media @xs {
-            width: 100%;
-            text-align: center;
-            padding: 2rem;
-        }
+
+    h3 {
+      color: @landing-blue;
     }
-    &-list {
-        display: flex;
-        flex-wrap: wrap;
+  }
+
+  &-list {
+    display: grid;
+    align-items: start;
+    grid-template-columns: 1fr;
+
+    @media @md-xl {
+      grid-template-columns: repeat(3, 1fr);
     }
-    &-item {
-        flex: 1 1 30%;
-        margin: 0 0.75rem 0.75rem;
-        padding: 0 0.75rem 0.75rem;
-        text-align: start;
-        list-style-image: url("../assets/helpers/slash.svg");
-        @media @xs {
-            flex: 1 1 100%;
-        }
+  }
+
+  &-item {
+    position: relative;
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+
+    @media @md-xl {
+      margin: 2rem 0;
+      padding-left: 2rem;
+      padding-right: 3rem;
     }
+  }
+
+  &-item::before {
+    content: '';
+    background: @primary-blue;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 32px;
+    transform: rotate(8deg);
+    transform-origin: bottom left;
+
+    @media @md-xl {
+      left: 5px;
+      width: 2px;
+      height: 100%;
+      transform: rotate(7deg);
+      transform-origin: bottom left;
+    }
+  }
 }

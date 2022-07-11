@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Configuring Fieldset
+seoTitle: Configuring Fieldset - Exadel Authoring Kit
 order: 4
 -->
 ## Grouping fields with FieldSet

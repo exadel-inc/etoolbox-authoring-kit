@@ -20,8 +20,9 @@ class PathResolver {
     if (!outputUrl.endsWith('.html')) return content;
     const filePath = path.dirname(outputUrl.replace(/dist\//, ''));
     const {window} = new JSDOM(content);
+
     PathResolver.resolveLinks(window.document.body, filePath);
-    PathResolver.resolveImages(window.document.body, filePath);
+    PathResolver.resolveImages(window.document, filePath);
     return window.document.documentElement.innerHTML;
   }
 
@@ -32,11 +33,16 @@ class PathResolver {
       link.href = resolved;
     });
   }
+
   static resolveImages(dom, filePath) {
-    dom.querySelectorAll('img[src^="."]').forEach((img) => {
+    dom.body.querySelectorAll('img[src^="."]').forEach((img) => {
       const resolved = PathResolver.resolveLink(img.src, filePath);
       if (resolved !== img.src) console.info(blue(`Rewrite image source "${img.src}" to "${resolved}"`));
-      img.src = resolved;
+
+      const zoomImg = dom.createElement('eak-zoom-image');
+      zoomImg.setAttribute('data-src', resolved);
+
+      img.parentNode.replaceChild(zoomImg, img);
     });
   }
 
