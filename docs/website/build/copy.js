@@ -7,23 +7,36 @@ const chokidar = require('chokidar');
 const INPUT_DIR = path.resolve(__dirname, '../../content');
 const INPUT_GLOB = '**/*.{md,html,njk}';
 const OUTPUT_DIR = path.resolve(__dirname, '../views/content');
+const DELETE_PATH = path.join(OUTPUT_DIR, '/', 'delete.yml');
+
+const DELAY = 5000;
 
 console.log(`Searching for files in ${INPUT_DIR}`);
 
-const getContent = async (filePath) => {
-  const file = await fs.promises.readFile(filePath);
+const getContent = async (inputPath) => {
+  const file = await fs.promises.readFile(inputPath);
   const content = file.toString();
   return content.replace(/(^)(<!--|-->)/gm, '$1---');
 }
+
 const getPaths = (fileName) => {
   const fileInitPath = fileName.replace('\.\.\\content\\', '');
-  const filePath = path.join(INPUT_DIR, '/', fileInitPath);
+  const inputPath = path.join(INPUT_DIR, '/', fileInitPath);
   const outputPath = path.join(OUTPUT_DIR, '/', fileInitPath);
-  return {filePath, outputPath};
+  return {inputPath, outputPath};
 }
-const createFile = async (parsedContent, outputPath) => {
+
+const createFile = async (inputPath, outputPath, fileName, exists) => {
+  const parsedContent = await getContent(inputPath);
   await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
   await fs.promises.writeFile(outputPath, parsedContent);
+  console.log(`\t - ${fileName} - ${exists?'updated':'added'}`);
+}
+
+const deleteFile = async (outputPath, fileName) => {
+  await fs.promises.writeFile(DELETE_PATH, '');
+  await fs.promises.unlink(outputPath);
+  console.log(`\t - ${fileName} - deleted`);
 }
 
 (async () => {
@@ -32,42 +45,41 @@ const createFile = async (parsedContent, outputPath) => {
   glob(INPUT_GLOB, {cwd: INPUT_DIR}, async (err, files) => {
     await Promise.all(
       files.map(async (fileName) => {
-        const {filePath, outputPath} = getPaths(fileName);
-        const parsedContent = await getContent(filePath);
-
-        createFile(parsedContent, outputPath);
-
-        console.log(`\t - File "${fileName}" processed`);
+        const {inputPath, outputPath} = getPaths(fileName);
+        createFile(inputPath, outputPath, fileName);
       })
     );
   });
 })();
 
 if(process.argv.includes('watch')){
-    const watch = chokidar.watch('../content', {usePolling:true, interval:2000});
+    const watch = chokidar.watch('../content');
+    let pathsToUpdate = [];
 
-    watch.on('change', async (fileName) => {
-      const {filePath, outputPath} = getPaths(fileName);
+    const updateData = async() => {
+      pathsToUpdate.forEach(async (path, idx) => {
+        const {inputPath, outputPath} = getPaths(path);
 
-      const parsedContent = await getContent(filePath);
-      await createFile(parsedContent, outputPath)
+        const isDeleted = !fs.existsSync(inputPath);
+        const exists = fs.existsSync(outputPath);
 
-      console.log(`\t - ${fileName} - updated`);
-    })
+        if(isDeleted) {
+          await deleteFile(outputPath, path);
+        } else {
+          createFile(inputPath, outputPath, path, exists);
+        }
 
-    watch.on('add', async (fileName) => {
-      const {outputPath} = getPaths(fileName);
+        if(pathsToUpdate.length - 1 === idx) pathsToUpdate = [];
+      })
+    }
+    const deferredsync = async (fileName) => {
+      !pathsToUpdate.includes(fileName) && pathsToUpdate.push(fileName)
+      let timer
+      clearTimeout(timer);
+      timer = setTimeout(()=>updateData(), DELAY);
+    }
 
-      createFile('', outputPath);
-
-      console.log(`\t - ${fileName} - added`);
-    })
-
-    watch.on('unlink', async (fileName) => {
-      const {outputPath} = getPaths(fileName);
-      await createFile('', outputPath.replace(/\.(html|njk|md)/, '.yml'))
-      await fs.promises.unlink(outputPath);
-
-      console.log(`\t - ${fileName} - deleted`);
-    })
+    watch.on('change', deferredsync);
+    watch.on('add', deferredsync);
+    watch.on('unlink', deferredsync);
 }
