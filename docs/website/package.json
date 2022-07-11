@@ -1,6 +1,6 @@
 {
   "name": "EAK",
-  "version": "2.1.2-SNAPSHOT",
+  "version": "2.2.0-SNAPSHOT",
   "description": "",
   "main": "index.js",
   "scripts": {
