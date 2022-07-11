@@ -7,7 +7,7 @@ const chokidar = require('chokidar');
 const INPUT_DIR = path.resolve(__dirname, '../../content');
 const INPUT_GLOB = '**/*.{md,html,njk}';
 const OUTPUT_DIR = path.resolve(__dirname, '../views/content');
-const DELETE_PATH = path.join(OUTPUT_DIR, '/', 'delete.yml');
+const DELETE_PATH = path.join(OUTPUT_DIR, '/', 'delete.tmp');
 
 const DELAY = 5000;
 
@@ -26,8 +26,9 @@ const getPaths = (fileName) => {
   return {inputPath, outputPath};
 }
 
-const createFile = async (inputPath, outputPath, fileName, exists) => {
+const createFile = async (inputPath, outputPath, fileName) => {
   const parsedContent = await getContent(inputPath);
+  const exists = fs.existsSync(outputPath);
   await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
   await fs.promises.writeFile(outputPath, parsedContent);
   console.log(`\t - ${fileName} - ${exists?'updated':'added'}`);
@@ -61,12 +62,11 @@ if(process.argv.includes('watch')){
         const {inputPath, outputPath} = getPaths(path);
 
         const isDeleted = !fs.existsSync(inputPath);
-        const exists = fs.existsSync(outputPath);
 
         if(isDeleted) {
           await deleteFile(outputPath, path);
         } else {
-          createFile(inputPath, outputPath, path, exists);
+          createFile(inputPath, outputPath, path);
         }
 
         if(pathsToUpdate.length - 1 === idx) pathsToUpdate = [];
