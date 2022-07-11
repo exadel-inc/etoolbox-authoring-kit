@@ -30,8 +30,8 @@
     });
 
     $(document).on('cq-editables-loaded', function (event) {
-        if (window.eakApplier) {
-            event.editables.forEach(e => window.eakApplier(e));
+        if (window.eakApplyTopLevelPolicy) {
+            event.editables.forEach(e => window.eakApplyTopLevelPolicy(e));
         }
     });
 
