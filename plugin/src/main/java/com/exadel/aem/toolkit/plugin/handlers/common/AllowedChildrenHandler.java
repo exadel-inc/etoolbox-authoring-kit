@@ -25,6 +25,7 @@ import com.exadel.aem.toolkit.api.annotations.policies.PolicyTarget;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -77,7 +78,7 @@ public class AllowedChildrenHandler implements Handler {
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
             .getOrCreateTarget(DialogConstants.NN_LISTENERS)
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_LISTENERS)
-            .attribute(DialogConstants.PN_UPDATE_COMPONENT_LIST, String.format(VALUE_POLICY_RESOLVER_FORMAT, json));
+            .attribute(CoreConstants.PN_UPDATE_COMPONENT_LIST, String.format(VALUE_POLICY_RESOLVER_FORMAT, json));
     }
 
     /**
