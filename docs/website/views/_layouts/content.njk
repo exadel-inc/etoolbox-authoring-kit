@@ -1,11 +1,14 @@
 {% extends './base.njk' %}
 {% set baseClass = 'sidebar-layout' %}
-
 {% block content %}
   {% include 'navigation/header.njk' %}
   {% include 'navigation/sidebar.njk' %}
   <main class="esl-scrollable-content">
-    <div class="content {{ containerCls or 'container markdown-container' }} {{ 'container-aside' if aside }}">
+    {% set contentHeader = page.url | seoHeader %}
+    <div class="content {{ containerCls or 'container markdown-container' }} {{ 'container-aside' if aside }} pt-4">
+      {% if contentHeader %}
+        <h1>{{ contentHeader }}</h1>
+      {% endif %}
       {{ content | safe or 'No content.' }}
     </div>
     <footer class="footer-compact container-fluid">
