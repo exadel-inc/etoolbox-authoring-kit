@@ -13,6 +13,10 @@ import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
 public class AllowedChildrenAnnotation {
 
+    private static final String RESOURCE_TYPES_ARRAY = "res/Type1, " +
+        "res/Type2, " +
+        "res/Type3";
+
     @AemComponent(
             title = TestConstants.DEFAULT_COMPONENT_TITLE,
             path = TestConstants.DEFAULT_COMPONENT_NAME
@@ -81,7 +85,7 @@ public class AllowedChildrenAnnotation {
             )
     )
     @AllowedChildren(
-            value = {"res/Type1", "res/Type2", "res/Type3"},
+            value = RESOURCE_TYPES_ARRAY,
             pagePaths = {"page/Path1, page/Path2"},
             pageResourceTypes = {"page/Res/Type1", "page/Res/Type2"},
             templates = {"template1, template2"},
