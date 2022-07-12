@@ -50,6 +50,7 @@ public class ResourceTypes {
     public static final String RADIOGROUP = "granite/ui/components/coral/foundation/form/radiogroup";
     public static final String RICHTEXT = "cq/gui/components/authoring/dialog/richtext";
     public static final String SELECT = "granite/ui/components/coral/foundation/form/select";
+    public static final String SLIDER = "etoolbox-authoring-kit/components/authoring/slider";
     public static final String SWITCH = "granite/ui/components/coral/foundation/form/switch";
     public static final String TABS = "granite/ui/components/coral/foundation/tabs";
     public static final String TAG = "cq/gui/components/coral/common/form/tagfield";
