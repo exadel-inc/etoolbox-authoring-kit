@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Customization
+seoTitle: Customization - Exadel Authoring Kit
 order: 6
 -->
 

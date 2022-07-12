@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Dialog Layout
+seoTitle: Dialog Layout - Exadel Authoring Kit
 order: 2
 -->
 
@@ -164,8 +165,7 @@ Multiple columns are placed side-by-side if the width of the dialog allows, or e
 
 Then again, same as for Tabs and Accordion, `@FixedColumns` can be used as an in-dialog widget. This is particularly useful when you need to render dialog content screen-centered, as within a Page properties' tab (see "Page properties" section in [Component Structure](./component-structure.md)). For the in-dialog usage two additional properties of `@FixedColumns` can be specified: *margin* and *maximized* (see the Javadoc for more detail).
 
-***
-#### See also
+### See also
 
 - [Component Structure](./component-structure.md)
 - [Reusing code and making it brief](./reusing-code.md)

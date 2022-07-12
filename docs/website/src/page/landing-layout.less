@@ -5,8 +5,8 @@
   display: flex;
   flex-direction: column;
 
-  color: @landing-fg-color;
-  background-color: @landing-bg-color;
+  color: @landing-fg;
+  background-color: @white-bg;
 
   main {
     height: 100%;
@@ -14,23 +14,17 @@
 
   .main-scroll {
     position: absolute;
-    z-index: 5;
-    right: -4px;
+    right: 0;
     bottom: 0;
+    z-index: 5;
+
     top: @header-height-mobile;
     @media @md-xl {
       top: @header-height-desktop;
     }
 
-    .scrollbar-thumb {
-      background: @primary-blue;
-    }
-    .scrollbar-track {
-      background: @secondary-blue;
-      opacity: .3;
-    }
     @media @xs {
-        opacity: 0;
+      display: none;
     }
   }
 }

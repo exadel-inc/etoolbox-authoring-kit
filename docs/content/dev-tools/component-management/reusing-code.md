@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Reusing Code
+seoTitle: Reusing Code - Exadel Authoring Kit
 order: 5
 -->
 ## Reusing code and making it brief

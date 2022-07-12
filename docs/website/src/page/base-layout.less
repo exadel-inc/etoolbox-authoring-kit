@@ -26,6 +26,11 @@ header {
 main {
   position: relative;
   flex: 1 1 auto;
+  overflow-x: hidden !important;
+}
+
+.content {
+  padding-top: 2rem;
 }
 
 .main-scrollbar {
@@ -50,7 +55,7 @@ main {
   transition: box-shadow .3s ease-in-out;
 
   .esl-scrollbar:not([at-start]) + & {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .5);
+    box-shadow: 0 1px 8px 0 rgba(0, 66, 94, .5);
   }
 
   @media @md-xl {

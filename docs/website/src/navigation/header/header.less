@@ -1,18 +1,16 @@
 @import (reference) "../../common/variables.less";
 
 .header {
-  z-index: 10;
+  z-index: 11;
 
-  color: @landing-fg-color;
-  background-color: @landing-bg-color;
+  color: @landing-fg;
+  background-color: @white-bg;
 
   height: @header-height-mobile;
 
   @media @md-xl {
     height: @header-height-desktop;
-  }
 
-  @media @md-xl {
     .landing-layout & {
       background-color: transparent;
     }
@@ -39,18 +37,17 @@
   }
 
   &-link {
-    color: @nav-dark-fg;
+    color: inherit;
     text-decoration: none;
     padding: 10px;
 
     &:hover {
-      color: @nav-dark-hover;
+      color: @nav-hover;
       text-decoration: none;
     }
   }
 
-  &-li {
-    list-style-type: none;
+  &-item {
     font-size: 1rem;
 
     margin: 0 5px;
@@ -126,8 +123,8 @@
     height: 22px;
     margin: 0 2px;
 
-    border-top: 2px solid white;
-    border-bottom: 2px solid white;
+    border-top: 2px solid @nav-accent;
+    border-bottom: 2px solid @nav-accent;
 
     transition: border .5s ease-in-out;
 
@@ -142,7 +139,7 @@
       top: 50%;
       left: 50%;
 
-      background: white;
+      background: @nav-accent;
 
       transform: translate(-50%, -50%);
       transition: transform .5s ease-in-out;
@@ -162,23 +159,21 @@
   }
 
   &-short-name {
-    display: none;
-    text-transform: uppercase;
-    @media @xs-md {
-      display: inline-block;
+    display: inline-block;
+    @media @sm-xl {
+      display: none;
     }
   }
 
   &-long-name {
-    display: inline-block;
-    @media @xs-md {
-      display: none;
+    display: none;
+    @media @sm-xl {
+      display: inline-block;
     }
   }
 
   &-short-name, &-long-name {
     font-size: 1.125rem;
     font-weight: 500;
-    margin-left: 11px;
   }
 }
