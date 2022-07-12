@@ -30,6 +30,7 @@ import com.exadel.aem.toolkit.core.lists.utils.ListHelperTest;
 import com.exadel.aem.toolkit.core.lists.utils.ListPageUtilTest;
 import com.exadel.aem.toolkit.core.lists.utils.ListResourceUtilTest;
 import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderTest;
+import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilterTest;
 
 /**
  * Shortcut class for running all available test cases in a batch
@@ -51,7 +52,9 @@ import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderTe
     ChildrenInjectorTest.class,
     I18nInjectorTest.class,
 
-    OptionProviderTest.class
+    OptionProviderTest.class,
+
+    TopLevelPolicyFilterTest.class
 })
 public class AllTests {
 }
