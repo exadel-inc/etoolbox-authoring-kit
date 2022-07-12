@@ -33,9 +33,9 @@ public class ArrayUtil {
 
     /**
      * Flattens the provided string array according to the rule of processing array-typed annotation properties. If the
-     * argument is a multi-value array, the method returns it as is. However, if it contains the single comma-separated
-     * string, the latter is considered an inline multi-value entity and is split by comma
-     * @param value Nullable array of strings
+     * argument is a multi-value array, the method returns it as is. However, if it contains a comma-separated
+     * string, the latter is considered an inline multi-value entity and is split by a comma
+     * @param value A nullable array of strings
      * @return Non-null flattened string array
      */
     public static String[] flatten(String[] value) {

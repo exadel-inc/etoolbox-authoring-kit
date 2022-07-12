@@ -246,7 +246,7 @@
     }
 
     /**
-     * Modifies the list of allowed components for the current container according to the mode of specified rule
+     * Modifies the list of allowed components for the current container according to the mode specified in a rule
      * @param rule - matched rule
      * @param allowed - array of allowed components; modified within the method by reference
      * @param editable - current container

@@ -84,7 +84,7 @@ public class TopLevelPolicyFilter implements Filter {
         String rules = Optional.ofNullable(pageInfo)
             .map(PageInfo::getResourceType)
             .map(resourceResolver::getResource)
-            .map(res -> res.adaptTo(Component.class))
+            .map(resource -> resource.adaptTo(Component.class))
             .map(Component::getDeclaredChildEditConfig)
             .map(ComponentEditConfig::getListeners)
             .map(map -> map.get(CoreConstants.PN_UPDATE_COMPONENT_LIST))
