@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Option Provider
+seoTitle: Option Provider - Exadel Authoring Kit
 order: 3
 -->
 ## Feeding data to selection widgets with OptionProvider
@@ -143,8 +144,6 @@ public class MyComponent {
 
 The facility that makes it possible to dynamically update selectable options is the _DependsOn_ action _"update-options"_ (see more on DependsOn actions [here](./depends-on/api.md)). It accepts any of the conventional _OptionProvider_ params described above in its `params` collection.
 
----
-
-#### See also
+### See also
 
 [Programming dynamic dialog behavior: DependsOn plugin client library](./depends-on/introduction.md)

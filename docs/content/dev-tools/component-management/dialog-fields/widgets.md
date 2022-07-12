@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: Widgets (A-Z)
+seoTitle: Widgets (A-Z) - Exadel Authoring Kit
 order: 2
 -->
 ## Widgets glossary

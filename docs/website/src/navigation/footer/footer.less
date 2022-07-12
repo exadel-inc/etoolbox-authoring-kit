@@ -1,70 +1,36 @@
 @import (reference) "../../common/variables.less";
 
 .footer {
-  @footer-primary: @primary-blue;
-  @footer-gradient: linear-gradient(to right, #131A2E, @footer-primary,@footer-primary, #ffffff, #131A2E) 47% 0%;
-  display: block;
-  @media @md-xl {
-    display: flex;
-    flex-direction: column;
-  }
-
-  &-margin {
-    margin-top: 100px;
-    @media @xs-sm {
-      margin-top: 250px;
-    }
-  }
-
-  &-link {
-    display: inline-block;
-    color: white;
-    padding: 10px;
-    outline-offset: -2px;
-    font-size: 1.125rem;
-
-    @media @md-xl {
-      font-size: 0.875rem;
-    }
-  }
-
-  &-list {
-    margin-top: 10px;
-    @media @md-xl {
-      margin-top: 0;
-    }
-  }
-
-  &-common-links-container {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    padding: 20px 10px;
-
-    @media @md-xl {
-      padding: 10px 0;
-      margin-bottom: 40px;
-    }
-  }
+  background-color: @light-blue-bg;
 
   &-common-links {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 10px;
     font-size: 0.9rem;
+
+    @media @md-xl {
+      padding: 10px 0 30px;
+    }
   }
-  &-common-links &-link {
+
+  &-copyright,
+  &-icon-link {
     padding: 0 10px;
-    font-size: inherit;
+  }
+
+  &-icon-link {
     > svg {
       width: 25px;
       height: 25px;
     }
   }
 
-  &-copyright {
-    padding: 0 10px;
-  }
-  &-copyright &-link {
-    font-size: inherit;
+  &-link {
+    display: inline-block;
+    color: inherit;
+    outline-offset: -2px;
     padding: 0;
-    outline-offset: 0;
   }
 }

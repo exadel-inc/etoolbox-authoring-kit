@@ -1,5 +1,4 @@
 // Reboot
-//
 // Normalization of HTML elements, manually forked from Normalize.css to remove
 // styles targeting irrelevant browsers while applying new styles.
 
@@ -29,7 +28,7 @@ body {
   text-align: left;
 }
 
-footer, header, main, nav, section {
+footer, header, main, nav {
   display: block;
 }
 
@@ -42,7 +41,6 @@ hr {
   height: 0;
   overflow: visible;
 
-  margin-top: 1rem;
   margin-bottom: 1rem;
   border: 0;
   border-top: 1px solid rgba(0, 0, 0, .1);
@@ -89,49 +87,20 @@ svg {
   vertical-align: middle;
 }
 
-label {
-  display: inline-block;
-  margin-bottom: 0.5rem;
-}
-
-input,
-button,
-select {
-  margin: 0;
+button {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
-}
 
-button,
-input {
   overflow: visible;
-}
-
-button,
-select {
-  text-transform: none;
-}
-
-select {
-  word-wrap: normal;
-}
-
-button,
-[type="button"],
-[type="reset"] {
   -webkit-appearance: button;
 }
 
-button:not(:disabled),
-[type="button"]:not(:disabled),
-[type="reset"]:not(:disabled) {
+button:not(:disabled) {
   cursor: pointer;
 }
 
-button::-moz-focus-inner,
-[type="button"]::-moz-focus-inner,
-[type="reset"]::-moz-focus-inner {
+button::-moz-focus-inner {
   padding: 0;
   border-style: none;
 }
@@ -142,30 +111,4 @@ button:focus {
   border: none;
   outline: none;
   background-color: transparent;
-}
-
-button {
-  border-radius: 0;
-}
-
-input[type="radio"] {
-  box-sizing: border-box;
-  padding: 0;
-}
-
-[hidden] {
-  display: none !important;
-}
-
-fieldset {
-  min-width: 0;
-  padding: 0;
-  margin: 0;
-  border: 0;
-}
-
-audio {
-  &::-webkit-media-controls-enclosure {
-    border: 1px solid rgba(0, 0, 0, .6);
-  }
 }

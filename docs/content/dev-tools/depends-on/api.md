@@ -1,6 +1,7 @@
 <!--
 layout: content
 title: API
+seoTitle: API - Exadel Authoring Kit
 order: 3
 -->
 
