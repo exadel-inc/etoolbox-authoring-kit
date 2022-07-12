@@ -117,7 +117,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <componentsPathBase>jcr_root/apps/${project.parent.artifactId}/lists/components</componentsPathBase>
+                    <componentsPathBase>jcr_root/apps/${project.parent.artifactId}</componentsPathBase>
                     <terminateOn>ALL</terminateOn>
                 </configuration>
             </plugin>

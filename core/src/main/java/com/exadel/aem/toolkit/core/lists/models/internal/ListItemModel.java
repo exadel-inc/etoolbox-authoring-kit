@@ -36,7 +36,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
  * Adapter class for a Sling resource representing a generic list item
  */
 @AemComponent(
-    path = "content/listItem",
+    path = "lists/components/content/listItem",
     title = "List Item",
     componentGroup = "Exadel Toolbox Lists"
 )
