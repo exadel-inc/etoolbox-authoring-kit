@@ -144,10 +144,9 @@ public class TopLevelPolicyFilter implements Filter {
 
     /**
      * Retrieves the stringified JSON describing the listeners for the current container out of the stored JavaScript
-     * function. This operation is needed to support the common format of policy definitions as provided by the {@code
+     * function. This operation is needed to support the common format of policy definitions
      * @param source Raw policy string
      * @return String value
-     * @AllowedChildren} handler
      */
     private static String extractListenersJsonObject(String source) {
         int startPos = StringUtils.indexOf(source, OPENING_BRACKET_QUOTE) + OPENING_BRACKET_QUOTE.length();
