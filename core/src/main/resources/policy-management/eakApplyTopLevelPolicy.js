@@ -1,4 +1,4 @@
-window.eakApplyTopLevelPolicy = (editable) => {
+window.eakApplyTopLevelPolicy = editable => {
     const rules = JSON.parse('%s').rules;
     const containers = rules.flatMap(rule => rule.containers);
     const resName = containers.find(container => editable.config.path.endsWith(container));
