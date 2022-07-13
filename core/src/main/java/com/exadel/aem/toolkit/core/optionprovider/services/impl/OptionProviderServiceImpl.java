@@ -90,7 +90,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
                 String suffix = getSuffix(pathParameter);
                 String url = StringUtils.removeEnd(pathParameter, suffix);
                 String json = getGetResponse(url);
-                JsonNode jsonNode = getValues(json, suffix);
+                JsonNode jsonNode = getJsonWithValues(json, suffix);
                 if (jsonNode == null) {
                     continue;
                 }
@@ -284,7 +284,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
      * @return the suffix of the url or empty String
      */
     private String getSuffix(String url) {
-        Pattern pattern = Pattern.compile(".+\\.?\\w+/(\\w+)$");
+        Pattern pattern = Pattern.compile(".+\\.\\w+/(.+)$");
         Matcher matcher = pattern.matcher(url);
         if (matcher.find()) {
             return matcher.group(1);
@@ -316,14 +316,21 @@ public class OptionProviderServiceImpl implements OptionProviderService {
     /**
      * Extract jsonNode from the json string by the json field name
      * @param json the json string
-     * @param field the field name
+     * @param suffix the suffix name
      * @return {@code JsonNode} object or null
      */
-    private JsonNode getValues(String json, String field) {
+    private JsonNode getJsonWithValues(String json, String suffix) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode jsonNode = objectMapper.readTree(json);
-            return StringUtils.isBlank(field) ? jsonNode : jsonNode.get(field);
+            if (StringUtils.isBlank(suffix)) {
+                return jsonNode;
+            }
+            String[] fields = suffix.split("/");
+            for (String field : fields) {
+                jsonNode = jsonNode.get(field);
+            }
+            return jsonNode;
         } catch (IOException e) {
             e.printStackTrace();
         }
