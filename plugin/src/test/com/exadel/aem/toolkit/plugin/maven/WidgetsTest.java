@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.plugin.maven;
 
+import com.exadel.aem.toolkit.test.widget.SliderWidget;
+
 import org.junit.Test;
 
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
@@ -175,6 +177,11 @@ public class WidgetsTest extends DefaultTestBase {
     @Test
     public void testSelect() {
         test(SelectWidget.class);
+    }
+
+    @Test
+    public void testSlider() {
+        test(SliderWidget.class);
     }
 
     @Test

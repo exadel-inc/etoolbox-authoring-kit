@@ -625,6 +625,29 @@ public class DialogWithDropdown {
 
 You can define an *optionProvider* that will produce options based on a variety of supported media such as a JCR node tree, a tag folder, etc. See the chapter on [OptionProvider](../../option-provider.md).
 
+### Slider
+
+* [@Slider](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/slider/Slider.html)
+* Resource type: /apps/etoolbox-authoring-kit/components/authoring/slider
+* See spec: [Slider](https://developer.adobe.com/experience-manager/reference-materials/6-5/coral-ui/coralui3/Coral.Slider.html)
+
+Used to provide slider in Touch UI dialogs. Here is a code snippet for a typical usage:
+
+```java
+public class DialogWithSlider {
+    @DialogField(label = "Number")
+    @Slider(
+        min = 10,
+        max = 200,
+        step = 2,
+        orientation = Orientation.VERTICAL,
+        filled = true,
+        value = 14
+    )
+    String number;
+}
+```
+
 ### Switch
 
 * [@Switch](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Switch.html)

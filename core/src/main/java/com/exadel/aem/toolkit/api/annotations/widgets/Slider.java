@@ -21,6 +21,8 @@ import java.lang.annotation.Target;
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.Orientation;
 
 @Target({ElementType.FIELD, ElementType.METHOD})
@@ -29,15 +31,19 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Orientation;
 @AnnotationRendering(properties = "all")
 public @interface Slider {
 
+    @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
     long min() default 0;
 
+    @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
     long max() default 100;
 
+    @ValueRestriction(ValueRestrictions.POSITIVE)
     long step() default 1;
 
     Orientation orientation() default Orientation.HORIZONTAL;
 
     boolean filled() default false;
 
+    @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
     long value() default 0;
 }
