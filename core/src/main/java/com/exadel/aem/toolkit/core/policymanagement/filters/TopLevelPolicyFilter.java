@@ -50,8 +50,8 @@ import com.exadel.aem.toolkit.core.policymanagement.models.PageInfo;
     property = {
         Constants.SERVICE_RANKING + ":Integer=" + Integer.MIN_VALUE,
         EngineConstants.SLING_FILTER_SCOPE + "=" + EngineConstants.FILTER_SCOPE_COMPONENT,
-        "sling.filter.resourceType=cq/gui/components/siteadmin/admin/page/winmode",
-        EngineConstants.SLING_FILTER_PATTERN + "=/libs/cq/gui/content/editor"
+        "sling.filter.resourceTypes=cq/gui/components/siteadmin/admin/page/winmode",
+        EngineConstants.SLING_FILTER_PATTERN + "=/mnt/overlay/wcm/core/content/editor/jcr:content"
     }
 )
 public class TopLevelPolicyFilter implements Filter {
@@ -93,9 +93,12 @@ public class TopLevelPolicyFilter implements Filter {
 
         String scriptNodeText = StringUtils.isNotBlank(rules) ? getScriptTagText(rules) : StringUtils.EMPTY;
 
-        if (StringUtils.isNotEmpty(scriptNodeText) && pageInfo != null) {
-            servletResponse.getWriter().write(String.format(META_TAG_FORMAT, pageInfo.getTemplate()));
-            servletResponse.getWriter().write(scriptNodeText);
+        if (pageInfo != null) {
+            servletResponse.getWriter().println(String.format(META_TAG_FORMAT, pageInfo.getTemplate()));
+        }
+
+        if (StringUtils.isNotEmpty(scriptNodeText))  {
+            servletResponse.getWriter().println(scriptNodeText);
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
