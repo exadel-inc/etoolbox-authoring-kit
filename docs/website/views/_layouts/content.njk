@@ -4,10 +4,10 @@
   {% include 'navigation/header.njk' %}
   {% include 'navigation/sidebar.njk' %}
   <main class="esl-scrollable-content">
-    {% set contentHeader = page.url | seoHeader %}
-    <div class="content {{ containerCls or 'container markdown-container' }} {{ 'container-aside' if aside }} pt-4">
-      {% if contentHeader %}
-        <h1>{{ contentHeader }}</h1>
+    <div class="content {{ containerCls or 'container markdown-container' }} {{ 'container-aside' if aside }}">
+      {% set fullPage = collections.content | findByPage(page) %}
+      {% if fullPage and fullPage.mainParentPage %}
+        <h1>{{ fullPage.mainParentPage.data.title }}</h1>
       {% endif %}
       {{ content | safe or 'No content.' }}
     </div>
