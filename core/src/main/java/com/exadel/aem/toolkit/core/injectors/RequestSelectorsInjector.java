@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.core.injectors;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -40,7 +41,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class RequestSelectorsInjector implements Injector {
+public class RequestSelectorsInjector extends BaseInjectorTemplateMethod<RequestSelectors, SlingHttpServletRequest>{
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestSelectorsInjector.class);
 
@@ -76,27 +77,39 @@ public class RequestSelectorsInjector implements Injector {
         AnnotatedElement element,
         @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
-        RequestSelectors annotation = element.getDeclaredAnnotation(RequestSelectors.class);
-        if (annotation == null) {
+        return super.getValue(adaptable,name,type,element,callbackRegistry);
+
+    }
+    @Override
+    public RequestSelectors getAnnotation(AnnotatedElement element) {
+        return element.getDeclaredAnnotation(RequestSelectors.class);
+    }
+    @Override
+    public SlingHttpServletRequest getAdaptable(Object object) {
+        return AdaptationUtil.getRequest(object);
+    }
+    @Override
+    public Supplier<Object> getAnnotationValueSupplier(Object request, String name, Type type, AnnotatedElement element, DisposalCallbackRegistry disposalCallbackRegistry, RequestSelectors annotation) {
+
+        return () -> {
+
+            if (TypeUtil.isValidCollection(type, String.class)) {
+                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
+                return Arrays.asList(slingHttpServletRequest.getRequestPathInfo().getSelectors());
+            }
+            if (TypeUtil.isValidArray(type, String.class)) {
+                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
+                return slingHttpServletRequest.getRequestPathInfo().getSelectors();
+            }
+            if (TypeUtil.isValidObjectType(type, String.class)) {
+                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
+                return slingHttpServletRequest.getRequestPathInfo().getSelectorString();
+            }
             return null;
-        }
-
-        SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
-        if (request == null) {
-            return null;
-        }
-
-        if (TypeUtil.isValidCollection(type, String.class)) {
-            return Arrays.asList(request.getRequestPathInfo().getSelectors());
-        }
-        if (TypeUtil.isValidArray(type, String.class)) {
-            return request.getRequestPathInfo().getSelectors();
-        }
-        if (TypeUtil.isValidObjectType(type, String.class)) {
-            return request.getRequestPathInfo().getSelectorString();
-        }
-
+        };
+    }
+    @Override
+    public void defaultMessage() {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
-        return null;
     }
 }

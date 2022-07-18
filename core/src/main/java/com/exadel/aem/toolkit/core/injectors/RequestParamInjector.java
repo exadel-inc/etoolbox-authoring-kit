@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
@@ -44,7 +45,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class RequestParamInjector implements Injector {
+public class RequestParamInjector extends BaseInjectorTemplateMethod<RequestParam, SlingHttpServletRequest> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestParamInjector.class);
 
@@ -80,48 +81,61 @@ public class RequestParamInjector implements Injector {
         @Nonnull AnnotatedElement element,
         @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
-        RequestParam annotation = element.getDeclaredAnnotation(RequestParam.class);
-        if (annotation == null) {
-            return null;
-        }
+        return super.getValue(adaptable,name,type,element,callbackRegistry);
+    }
 
-        SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
-        if (request == null) {
-            return null;
-        }
+    @Override
+    public RequestParam getAnnotation(AnnotatedElement element) {
+        return element.getDeclaredAnnotation(RequestParam.class);
+    }
+    @Override
+    public SlingHttpServletRequest getAdaptable(Object object) {
+        return AdaptationUtil.getRequest(object);
+    }
+    @Override
+    public Supplier<Object> getAnnotationValueSupplier(Object request, String name, Type type, AnnotatedElement element, DisposalCallbackRegistry disposalCallbackRegistry, RequestParam annotation) {
 
         String paramName = annotation.name().isEmpty() ? name : annotation.name();
 
-        if (TypeUtil.isValidObjectType(type, String.class)) {
-            return request.getParameter(paramName);
+        return () -> {
 
-        } else if (TypeUtil.isValidArray(type, String.class)) {
-            return getFilteredRequestParameters(request, paramName)
-                .map(RequestParameter::getString)
-                .toArray(String[]::new);
+            if (TypeUtil.isValidObjectType(type, String.class)) {
+                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
+                return slingHttpServletRequest.getParameter(paramName);
 
-        } else if (TypeUtil.isValidCollection(type, String.class)) {
-            return getFilteredRequestParameters(request, paramName)
-                .map(RequestParameter::getString)
-                .collect(Collectors.toList());
+            } else if (TypeUtil.isValidArray(type, String.class)) {
+                return getFilteredRequestParameters((SlingHttpServletRequest) request, paramName)
+                    .map(RequestParameter::getString)
+                    .toArray(String[]::new);
 
-        } else if (TypeUtil.isValidObjectType(type, RequestParameter.class)) {
-            return request.getRequestParameter(paramName);
+            } else if (TypeUtil.isValidCollection(type, String.class)) {
+                return getFilteredRequestParameters((SlingHttpServletRequest) request, paramName)
+                    .map(RequestParameter::getString)
+                    .collect(Collectors.toList());
 
-        } else if (TypeUtil.isValidCollection(type, RequestParameter.class)) {
-            return request.getRequestParameterList();
+            } else if (TypeUtil.isValidObjectType(type, RequestParameter.class)) {
+                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
+                return slingHttpServletRequest.getRequestParameter(paramName);
 
-        } else if (TypeUtil.isValidArray(type, RequestParameter.class)) {
-            return request.getRequestParameters(paramName);
+            } else if (TypeUtil.isValidCollection(type, RequestParameter.class)) {
+                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
+                return slingHttpServletRequest.getRequestParameterList();
 
-        } else if (TypeUtil.isValidObjectType(type, RequestParameterMap.class)) {
-            return request.getRequestParameterMap();
-        }
+            } else if (TypeUtil.isValidArray(type, RequestParameter.class)) {
+                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
+                return slingHttpServletRequest.getRequestParameters(paramName);
 
-        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
-        return null;
+            } else if (TypeUtil.isValidObjectType(type, RequestParameterMap.class)) {
+                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
+                return slingHttpServletRequest.getRequestParameterMap();
+            }
+            return null;
+        };
     }
-
+    @Override
+    public void defaultMessage() {
+        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
+    }
     /**
      * Retrieves the stream of {@link RequestParameter} objects extracted from the current Sling request filtered with
      * the given parameter name
