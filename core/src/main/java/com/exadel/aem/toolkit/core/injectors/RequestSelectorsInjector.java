@@ -20,8 +20,6 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
@@ -29,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSelectors;
-import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
@@ -41,7 +38,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class RequestSelectorsInjector extends BaseInjectorTemplateMethod<RequestSelectors, SlingHttpServletRequest>{
+public class RequestSelectorsInjector extends BaseInjectorTemplateMethod<RequestSelectors>{
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestSelectorsInjector.class);
 
@@ -58,52 +55,26 @@ public class RequestSelectorsInjector extends BaseInjectorTemplateMethod<Request
         return NAME;
     }
 
-    /**
-     * Attempts to inject a value into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
-     * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return The value to inject, or null in case injection is not possible
-     * @see Injector
-     */
-    @Override
-    public Object getValue(
-        @Nonnull Object adaptable,
-        String name,
-        @Nonnull Type type,
-        AnnotatedElement element,
-        @Nonnull DisposalCallbackRegistry callbackRegistry) {
-
-        return super.getValue(adaptable,name,type,element,callbackRegistry);
-
-    }
     @Override
     public RequestSelectors getAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(RequestSelectors.class);
     }
     @Override
-    public SlingHttpServletRequest getAdaptable(Object object) {
-        return AdaptationUtil.getRequest(object);
-    }
-    @Override
-    public Supplier<Object> getAnnotationValueSupplier(Object request, String name, Type type, AnnotatedElement element, DisposalCallbackRegistry disposalCallbackRegistry, RequestSelectors annotation) {
-
+    public Supplier<Object> getAnnotationValueSupplier(SlingHttpServletRequest request,
+                                                       String name,
+                                                       Type type,
+                                                       RequestSelectors annotation
+    ) {
         return () -> {
 
             if (TypeUtil.isValidCollection(type, String.class)) {
-                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
-                return Arrays.asList(slingHttpServletRequest.getRequestPathInfo().getSelectors());
+                return Arrays.asList(request.getRequestPathInfo().getSelectors());
             }
             if (TypeUtil.isValidArray(type, String.class)) {
-                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
-                return slingHttpServletRequest.getRequestPathInfo().getSelectors();
+                return request.getRequestPathInfo().getSelectors();
             }
             if (TypeUtil.isValidObjectType(type, String.class)) {
-                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
-                return slingHttpServletRequest.getRequestPathInfo().getSelectorString();
+                return request.getRequestPathInfo().getSelectorString();
             }
             return null;
         };

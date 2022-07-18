@@ -15,11 +15,11 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
+import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSuffix;
-import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
@@ -39,7 +38,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class RequestSuffixInjector implements Injector {
+public class RequestSuffixInjector extends BaseInjectorTemplateMethod<RequestSuffix> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestSuffixInjector.class);
 
@@ -56,43 +55,27 @@ public class RequestSuffixInjector implements Injector {
         return NAME;
     }
 
-    /**
-     * Attempts to inject a value into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
-     * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return The value to inject, or null in case injection is not possible
-     * @see Injector
-     */
     @Override
-    public Object getValue(
-        @Nonnull Object adaptable,
-        String name,
-        @Nonnull Type type,
-        AnnotatedElement element,
-        @Nonnull DisposalCallbackRegistry callbackRegistry) {
+    public RequestSuffix getAnnotation(AnnotatedElement element) {
+        return element.getDeclaredAnnotation(RequestSuffix.class);
+    }
 
-        RequestSuffix annotation = element.getDeclaredAnnotation(RequestSuffix.class);
-        if (annotation == null) {
+    @Override
+    public Supplier<Object> getAnnotationValueSupplier(SlingHttpServletRequest request, String name, Type type, RequestSuffix annotation) {
+        return () -> {
+
+            if (TypeUtil.isValidObjectType(type, String.class)) {
+                return request.getRequestPathInfo().getSuffix();
+
+            } else if (type.equals(Resource.class)) {
+                return request.getRequestPathInfo().getSuffixResource();
+            }
+
             return null;
-        }
-
-        SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
-        if (request == null) {
-            return null;
-        }
-
-        if (TypeUtil.isValidObjectType(type, String.class)) {
-            return request.getRequestPathInfo().getSuffix();
-
-        } else if (type.equals(Resource.class)) {
-            return request.getRequestPathInfo().getSuffixResource();
-        }
-
+        };
+    }
+    @Override
+    public void defaultMessage() {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
-        return null;
     }
 }

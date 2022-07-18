@@ -1,6 +1,8 @@
 package com.exadel.aem.toolkit.core.injectors;
 
-import org.apache.sling.api.adapter.Adaptable;
+import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 
@@ -9,22 +11,32 @@ import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
+import java.util.Objects;
 import java.util.function.Supplier;
 
-public abstract class BaseInjectorTemplateMethod<T extends Annotation, R extends Adaptable> implements Injector {
+public abstract class BaseInjectorTemplateMethod<T extends Annotation> implements Injector {
 
 
     protected T type;
-    protected R resource;
 
+    /**
+     * Attempts to inject a value into the given adaptable
+     * @param adaptable        A {@link SlingHttpServletRequest} instance
+     * @param name             Name of the Java class member to inject the value into
+     * @param type             Type of receiving Java class member
+     * @param annotatedElement {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
+     *                         annotation objects
+     * @param callbackRegistry {@link DisposalCallbackRegistry} object
+     * @return {@code Resource} or adapted object if successful. Otherwise, null is returned
+     */
     @CheckForNull
     @Override
     public Object getValue(
-        @Nonnull Object o,
+        @Nonnull Object adaptable,
         String name,
         @Nonnull Type type,
         @Nonnull AnnotatedElement annotatedElement,
-        @Nonnull DisposalCallbackRegistry disposalCallbackRegistry
+        @Nonnull DisposalCallbackRegistry callbackRegistry
     ) {
         T annotation = getAnnotation(annotatedElement);
 
@@ -32,18 +44,16 @@ public abstract class BaseInjectorTemplateMethod<T extends Annotation, R extends
             return null;
         }
 
-        R adaptable = getAdaptable(o);
+        SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
 
-        if(adaptable == null) {
+        if(Objects.isNull(request)) {
             return null;
         }
 
         Supplier<Object> annotationValueSupplier = getAnnotationValueSupplier(
-                                                adaptable,
+                                                request,
                                                 name,
                                                 type,
-                                                annotatedElement,
-                                                disposalCallbackRegistry,
                                                 annotation );
 
         Object value = annotationValueSupplier.get();
@@ -57,15 +67,11 @@ public abstract class BaseInjectorTemplateMethod<T extends Annotation, R extends
 
     public abstract T getAnnotation(AnnotatedElement element);
 
-    public abstract R getAdaptable(Object object);
-
 
     public abstract Supplier<Object> getAnnotationValueSupplier(
-        Object o,
+        SlingHttpServletRequest request,
         String name,
         Type type,
-        AnnotatedElement element,
-        DisposalCallbackRegistry disposalCallbackRegistry,
         T annotation
     );
 

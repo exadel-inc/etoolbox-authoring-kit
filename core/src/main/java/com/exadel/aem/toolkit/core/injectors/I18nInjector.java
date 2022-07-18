@@ -21,16 +21,17 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
+
+import com.exadel.aem.toolkit.api.annotations.injectors.RequestSuffix;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.i18n.ResourceBundleProvider;
-import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
@@ -41,10 +42,8 @@ import org.slf4j.LoggerFactory;
 import com.day.cq.i18n.I18n;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.I18N;
-import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
-import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
 /**
  * Injects into a Sling model an {@link com.day.cq.i18n.I18n} object that corresponds to the current locale, or else an
@@ -55,7 +54,7 @@ import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class I18nInjector implements Injector {
+public class I18nInjector extends BaseInjectorTemplateMethod<I18N> {
 
     private static final Logger LOG = LoggerFactory.getLogger(I18nInjector.class);
 
@@ -77,48 +76,33 @@ public class I18nInjector implements Injector {
         return NAME;
     }
 
-    /**
-     * Attempts to inject an {@code I18n} object or an internationalized string into the current adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
-     * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return The value to inject, or null in case injection is not possible
-     * @see Injector
-     * @see ListHelper
-     */
     @Override
-    public Object getValue(
-        @Nonnull Object adaptable,
-        String name,
-        @Nonnull Type type,
-        @Nonnull AnnotatedElement element,
-        @Nonnull DisposalCallbackRegistry callbackRegistry) {
+    public I18N getAnnotation(AnnotatedElement element) {
+        return element.getDeclaredAnnotation(I18N.class);
+    }
+    @Override
+    public Supplier<Object> getAnnotationValueSupplier(SlingHttpServletRequest request, String name, Type type, I18N annotation) {
+        return () -> {
+            String value = StringUtils.defaultIfEmpty(annotation.value(), name);
 
-        I18N annotation = element.getDeclaredAnnotation(I18N.class);
-        if (annotation == null) {
-            return null;
-        }
+            Function<Object, Locale> localeDetector = InstantiationUtil.getObjectInstance(annotation.localeDetector());
+            Locale locale = StringUtils.isNotBlank(annotation.locale())
+                ? getLocale(annotation.locale())
+                : getLocale(request, localeDetector);
 
-        String value = StringUtils.defaultIfEmpty(annotation.value(), name);
+            I18n i18n = getI18n(request, locale);
 
-        Function<Object, Locale> localeDetector = InstantiationUtil.getObjectInstance(annotation.localeDetector());
-        Locale locale = StringUtils.isNotBlank(annotation.locale())
-            ? getLocale(annotation.locale())
-            : getLocale(adaptable, localeDetector);
-
-        I18n i18n = getI18n(adaptable, locale);
-
-        if (isI18nType(type)) {
-            return i18n;
-        } else if (TypeUtil.isValidObjectType(type, String.class)) {
-            return i18n.get(value);
-        }
-
-        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
+            if (isI18nType(type)) {
+                return i18n;
+            } else if (TypeUtil.isValidObjectType(type, String.class)) {
+                return i18n.get(value);
+            }
         return null;
+        };
+    }
+    @Override
+    public void defaultMessage() {
+        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
     }
 
     /**
@@ -135,26 +119,26 @@ public class I18nInjector implements Injector {
     }
 
     /**
-     * Creates a new {@link Locale} object from the given adaptable object using the provided locale detector
-     * @param adaptable A {@link SlingHttpServletRequest} or a {@link Resource} instance
+     * Creates a new {@link Locale} object from the given request object using the provided locale detector
+     * @param request A {@link SlingHttpServletRequest}  instance
      * @param detector  A routine used to guess the proper locale from the current request or resource
      * @return {@code Locale} instance; might be null
      */
     private Locale getLocale(
-        Object adaptable,
+        SlingHttpServletRequest request,
         Function<Object, Locale> detector) {
 
-        return Optional.ofNullable(detector).map(d -> detector.apply(adaptable)).orElse(null);
+        return Optional.ofNullable(detector).map(d -> detector.apply(request)).orElse(null);
     }
 
     /**
      * Retrieves an {@link I18n} object for the given adaptable and locale
-     * @param adaptable A {@link SlingHttpServletRequest} or a {@link Resource} instance
+     * @param request A {@link SlingHttpServletRequest} instance
      * @param locale    A nullable {@link Locale} object
      * @return {@code I18n} instance
      */
-    private I18n getI18n(Object adaptable, Locale locale) {
-        SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
+    private I18n getI18n(SlingHttpServletRequest request, Locale locale) {
+
         if (request != null && locale != null) {
             return new I18n(request.getResourceBundle(locale));
         } else if (request != null) {

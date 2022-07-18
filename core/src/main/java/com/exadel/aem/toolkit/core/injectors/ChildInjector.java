@@ -15,7 +15,7 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
-import javax.annotation.CheckForNull;
+import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +23,6 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.adapter.AdapterManager;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.factory.ModelFactory;
-import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
@@ -32,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.Child;
-import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
@@ -44,7 +42,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class ChildInjector implements Injector {
+public class ChildInjector extends BaseInjectorTemplateMethod<Child> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChildInjector.class);
 
@@ -67,58 +65,47 @@ public class ChildInjector implements Injector {
     @Reference
     private AdapterManager adapterManager;
 
-    /**
-     * Attempts to inject a value into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
-     * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return {@code Resource} or adapted object if successful. Otherwise, null is returned
-     */
-    @CheckForNull
     @Override
-    public Object getValue(
-        @Nonnull Object adaptable,
-        String name,
-        @Nonnull Type type,
-        @Nonnull AnnotatedElement element,
-        @Nonnull DisposalCallbackRegistry callbackRegistry) {
+    public Child getAnnotation(AnnotatedElement element) {
+        return element.getDeclaredAnnotation(Child.class);
+    }
+    @Override
+    public Supplier<Object> getAnnotationValueSupplier(SlingHttpServletRequest request, String name, Type type, Child annotation) {
+        return () -> {
 
-        Child annotation = element.getDeclaredAnnotation(Child.class);
-        if (annotation == null) {
-            return null;
-        }
+            Resource adaptableResource = request.getResource();
 
-        Resource adaptableResource = AdaptationUtil.getResource(adaptable);
-        if (adaptableResource == null) {
-            return null;
-        }
+            String resourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
 
-        String resourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
-        Resource currentResource = adaptableResource.getChild(resourcePath);
-        if (currentResource == null) {
-            return null;
-        }
+            Resource currentResource = adaptableResource.getChild(resourcePath);
 
-        Resource preparedResource = InstantiationUtil.getFilteredResource(
-            currentResource,
-            annotation.prefix(),
-            annotation.postfix());
-
-        if (TypeUtil.isValidObjectType(type, Resource.class)) {
-            return preparedResource;
-        } else if (type instanceof Class) {
-            if (adaptable instanceof SlingHttpServletRequest && TypeUtil.isSlingRequestAdapter(modelFactory, type)) {
-                return adapterManager.getAdapter(
-                    AdaptationUtil.getRequest((SlingHttpServletRequest) adaptable, preparedResource),
-                    (Class<?>) type);
+            if (currentResource == null) {
+                return null;
             }
-            return preparedResource.adaptTo((Class<?>) type);
-        }
 
-        LOG.debug("Failed to inject child resource by the name \"{}\"", resourcePath);
-        return null;
+            Resource preparedResource = InstantiationUtil.getFilteredResource(
+                currentResource,
+                annotation.prefix(),
+                annotation.postfix()
+            );
+
+            if (TypeUtil.isValidObjectType(type, Resource.class)) {
+
+                return preparedResource;
+
+            } else if (type instanceof Class) {
+
+                if (TypeUtil.isSlingRequestAdapter(modelFactory, type)) {
+                    return adapterManager.getAdapter(request, (Class<?>) type);
+                }
+
+                return preparedResource.adaptTo((Class<?>) type);
+            }
+            return null;
+        };
+    }
+    @Override
+    public void defaultMessage() {
+        //LOG.debug("Failed to inject child resource by the name \"{}\"", resourcePath);
     }
 }

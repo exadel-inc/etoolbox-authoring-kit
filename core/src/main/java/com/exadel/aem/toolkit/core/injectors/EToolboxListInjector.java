@@ -20,13 +20,14 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import javax.annotation.Nonnull;
+
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
@@ -35,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.EToolboxList;
-import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
@@ -48,7 +48,7 @@ import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class EToolboxListInjector implements Injector {
+public class EToolboxListInjector extends BaseInjectorTemplateMethod<EToolboxList> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EToolboxListInjector.class);
 
@@ -65,48 +65,30 @@ public class EToolboxListInjector implements Injector {
         return NAME;
     }
 
-    /**
-     * Attempts to inject list entries into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
-     * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return The value to inject, or null in case injection is not possible
-     * @see Injector
-     * @see ListHelper
-     */
     @Override
-    public Object getValue(
-        @Nonnull Object adaptable,
-        String name,
-        @Nonnull Type type,
-        @Nonnull AnnotatedElement element,
-        @Nonnull DisposalCallbackRegistry callbackRegistry) {
+    public EToolboxList getAnnotation(AnnotatedElement element) {
+        return element.getDeclaredAnnotation(EToolboxList.class);
+    }
+    @Override
+    public Supplier<Object> getAnnotationValueSupplier(SlingHttpServletRequest request, String name, Type type, EToolboxList annotation) {
+        return () -> {
+            ResourceResolver resourceResolver = request.getResourceResolver();
 
-        EToolboxList annotation = element.getDeclaredAnnotation(EToolboxList.class);
-        if (annotation == null) {
+            if (TypeUtil.isValidRawType(type, Collection.class)) {
+                return getList(resourceResolver, annotation.value(), type);
+
+            } else if (TypeUtil.isValidRawType(type, Map.class)) {
+                return getMap(resourceResolver, annotation.value(), annotation.keyProperty(), type);
+
+            } else if (!(type instanceof ParameterizedType) && ((Class<?>) type).isArray()) {
+                return getArray(resourceResolver, annotation.value(), (Class<?>) type);
+            }
             return null;
-        }
-
-        ResourceResolver resourceResolver = AdaptationUtil.getResourceResolver(adaptable);
-        if (resourceResolver == null) {
-            return null;
-        }
-
-        if (TypeUtil.isValidRawType(type, Collection.class)) {
-            return getList(resourceResolver, annotation.value(), type);
-
-        } else if (TypeUtil.isValidRawType(type, Map.class)) {
-            return getMap(resourceResolver, annotation.value(), annotation.keyProperty(), type);
-
-        } else if (!(type instanceof ParameterizedType) && ((Class<?>) type).isArray()) {
-            return getArray(resourceResolver, annotation.value(), (Class<?>) type);
-        }
-
+        };
+    }
+    @Override
+    public void defaultMessage() {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
-        return null;
     }
 
     /**

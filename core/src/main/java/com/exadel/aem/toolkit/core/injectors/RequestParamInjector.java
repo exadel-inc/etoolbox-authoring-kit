@@ -24,8 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.request.RequestParameterMap;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
@@ -33,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestParam;
-import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
@@ -45,7 +42,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class RequestParamInjector extends BaseInjectorTemplateMethod<RequestParam, SlingHttpServletRequest> {
+public class RequestParamInjector extends BaseInjectorTemplateMethod<RequestParam> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestParamInjector.class);
 
@@ -62,72 +59,40 @@ public class RequestParamInjector extends BaseInjectorTemplateMethod<RequestPara
         return NAME;
     }
 
-    /**
-     * Attempts to inject a value into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
-     * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return The value to inject, or null in case injection is not possible
-     * @see Injector
-     */
-    @Override
-    public Object getValue(
-        @Nonnull Object adaptable,
-        String name,
-        @Nonnull Type type,
-        @Nonnull AnnotatedElement element,
-        @Nonnull DisposalCallbackRegistry callbackRegistry) {
-
-        return super.getValue(adaptable,name,type,element,callbackRegistry);
-    }
-
     @Override
     public RequestParam getAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(RequestParam.class);
     }
     @Override
-    public SlingHttpServletRequest getAdaptable(Object object) {
-        return AdaptationUtil.getRequest(object);
-    }
-    @Override
-    public Supplier<Object> getAnnotationValueSupplier(Object request, String name, Type type, AnnotatedElement element, DisposalCallbackRegistry disposalCallbackRegistry, RequestParam annotation) {
-
+    public Supplier<Object> getAnnotationValueSupplier(SlingHttpServletRequest request, String name, Type type, RequestParam annotation) {
         String paramName = annotation.name().isEmpty() ? name : annotation.name();
 
         return () -> {
 
             if (TypeUtil.isValidObjectType(type, String.class)) {
-                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
-                return slingHttpServletRequest.getParameter(paramName);
+                return request.getParameter(paramName);
 
             } else if (TypeUtil.isValidArray(type, String.class)) {
-                return getFilteredRequestParameters((SlingHttpServletRequest) request, paramName)
+                return getFilteredRequestParameters(request, paramName)
                     .map(RequestParameter::getString)
                     .toArray(String[]::new);
 
             } else if (TypeUtil.isValidCollection(type, String.class)) {
-                return getFilteredRequestParameters((SlingHttpServletRequest) request, paramName)
+                return getFilteredRequestParameters(request, paramName)
                     .map(RequestParameter::getString)
                     .collect(Collectors.toList());
 
             } else if (TypeUtil.isValidObjectType(type, RequestParameter.class)) {
-                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
-                return slingHttpServletRequest.getRequestParameter(paramName);
+                return request.getRequestParameter(paramName);
 
             } else if (TypeUtil.isValidCollection(type, RequestParameter.class)) {
-                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
-                return slingHttpServletRequest.getRequestParameterList();
+                return request.getRequestParameterList();
 
             } else if (TypeUtil.isValidArray(type, RequestParameter.class)) {
-                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
-                return slingHttpServletRequest.getRequestParameters(paramName);
+                return request.getRequestParameters(paramName);
 
             } else if (TypeUtil.isValidObjectType(type, RequestParameterMap.class)) {
-                SlingHttpServletRequest slingHttpServletRequest = (SlingHttpServletRequest) request;
-                return slingHttpServletRequest.getRequestParameterMap();
+                return request.getRequestParameterMap();
             }
             return null;
         };

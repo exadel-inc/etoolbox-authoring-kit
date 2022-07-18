@@ -20,9 +20,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -33,7 +33,6 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.adapter.AdapterManager;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.factory.ModelFactory;
-import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
@@ -55,7 +54,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class ChildrenInjector implements Injector {
+public class ChildrenInjector extends BaseInjectorTemplateMethod<Children> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChildrenInjector.class);
 
@@ -80,55 +79,43 @@ public class ChildrenInjector implements Injector {
         return NAME;
     }
 
-    /**
-     * Attempts to inject the collection of values into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
-     * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return Collection of {@code Resource} resources or adapted objects if successful. Otherwise, null is returned
-     */
-    @CheckForNull
     @Override
-    public Object getValue(
-        @Nonnull Object adaptable,
-        String name,
-        @Nonnull Type type,
-        @Nonnull AnnotatedElement element,
-        @Nonnull DisposalCallbackRegistry callbackRegistry) {
+    public Children getAnnotation(AnnotatedElement element) {
+        return element.getDeclaredAnnotation(Children.class);
+    }
+    @Override
+    public Supplier<Object> getAnnotationValueSupplier(SlingHttpServletRequest request, String name, Type type, Children annotation) {
+        return () -> {
+            Resource adaptableResource = request.getResource();
 
-        Children annotation = element.getDeclaredAnnotation(Children.class);
-        if (annotation == null) {
-            return null;
-        }
+            String resourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
 
-        Resource adaptableResource = AdaptationUtil.getResource(adaptable);
-        if (adaptableResource == null) {
-            return null;
-        }
+            if (!TypeUtil.isValidCollection(type) && !TypeUtil.isValidArray(type)) {
+                return null;
+            }
 
-        if (!TypeUtil.isValidCollection(type) && !TypeUtil.isValidArray(type)) {
-            return null;
-        }
+            Resource currentResource = adaptableResource.getChild(resourcePath);
 
-        String resourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
-        Resource currentResource = adaptableResource.getChild(resourcePath);
-        if (currentResource == null) {
-            return null;
-        }
+            if (currentResource == null) {
+                return null;
+            }
 
-        List<Object> children = getFilteredInjectables(adaptable, currentResource, type, annotation);
-        if (CollectionUtils.isEmpty(children)) {
-            LOG.debug("Failed to inject child resources for the name \"{}\"", resourcePath);
-            return null;
-        }
+            List<Object> children = getFilteredInjectables(request, currentResource, type, annotation);
 
-        if (type instanceof Class<?> && ((Class<?>) type).isArray()) {
-            return toArray(children, (Class<?>) type);
-        }
-        return children;
+            if (CollectionUtils.isEmpty(children)) {
+                return null;
+            }
+
+            if (type instanceof Class<?> && ((Class<?>) type).isArray()) {
+                return toArray(children, (Class<?>) type);
+            }
+
+            return children;
+        };
+    }
+    @Override
+    public void defaultMessage() {
+        //LOG.debug("Failed to inject child resources for the name \"{}\"", resourcePath);
     }
 
     /**
