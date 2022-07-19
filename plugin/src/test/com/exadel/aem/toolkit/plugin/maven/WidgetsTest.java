@@ -13,8 +13,6 @@
  */
 package com.exadel.aem.toolkit.plugin.maven;
 
-import com.exadel.aem.toolkit.test.widget.SliderWidget;
-
 import org.junit.Test;
 
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
@@ -44,6 +42,7 @@ import com.exadel.aem.toolkit.test.widget.PathFieldWidget;
 import com.exadel.aem.toolkit.test.widget.RadioGroupWidget;
 import com.exadel.aem.toolkit.test.widget.RichTextEditorWidget;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
+import com.exadel.aem.toolkit.test.widget.SliderWidget;
 import com.exadel.aem.toolkit.test.widget.TabsWidget;
 import com.exadel.aem.toolkit.test.widget.TagFieldWidget;
 import com.exadel.aem.toolkit.test.widget.TextAreaWidget;

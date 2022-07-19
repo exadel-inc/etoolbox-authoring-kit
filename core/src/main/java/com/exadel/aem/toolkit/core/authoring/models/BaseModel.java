@@ -54,6 +54,10 @@ public class BaseModel {
         return name;
     }
 
+    public SlingHttpServletRequest getRequest() {
+        return request;
+    }
+
     public Object getValue() {
         if (request == null
             || request.getRequestPathInfo().getSuffixResource() == null

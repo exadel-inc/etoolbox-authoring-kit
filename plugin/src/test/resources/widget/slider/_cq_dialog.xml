@@ -18,6 +18,7 @@
                             sling:resourceType="etoolbox-authoring-kit/components/authoring/slider"
                             name="./number"
                             fieldLabel="Number"
+                            disabled="{Boolean}false"
                             renderHidden="{Boolean}false"
                             required="{Boolean}false"
                             min="{Long}10"

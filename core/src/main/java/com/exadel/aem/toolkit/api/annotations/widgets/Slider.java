@@ -19,8 +19,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.Orientation;
@@ -40,6 +42,7 @@ public @interface Slider {
     @ValueRestriction(ValueRestrictions.POSITIVE)
     long step() default 1;
 
+    @PropertyRendering(transform = StringTransformation.LOWERCASE)
     Orientation orientation() default Orientation.HORIZONTAL;
 
     boolean filled() default false;
