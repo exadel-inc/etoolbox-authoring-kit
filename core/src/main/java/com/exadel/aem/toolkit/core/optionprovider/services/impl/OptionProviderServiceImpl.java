@@ -59,6 +59,9 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Implements {@link OptionProviderService} to prepare option sets for Granite-compliant custom data sources
  * used in Granite UI widgets
@@ -66,9 +69,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component(service = OptionProviderService.class)
 public class OptionProviderServiceImpl implements OptionProviderService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(OptionProviderServiceImpl.class);
+
     private static final String FULL_STRING_MATCH_TEMPLATE = "^%s$";
     private static final String USER_WILDCARD_PATTERN = "(?<![\\\\'])\\*";
     private static final String REGEXP_WILDCARD_PATTERN = ".*";
+
+    private static final String REGEX_URL_SUFFIX = ".+\\.\\w+/(.+)$";
 
 
     /**
@@ -273,7 +280,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
             new URL(urlString);
             return true;
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            LOG.error("Can't get URL from {}", urlString, e);
         }
         return false;
     }
@@ -284,7 +291,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
      * @return the suffix of the url or empty String
      */
     private String getSuffix(String url) {
-        Pattern pattern = Pattern.compile(".+\\.\\w+/(.+)$");
+        Pattern pattern = Pattern.compile(REGEX_URL_SUFFIX);
         Matcher matcher = pattern.matcher(url);
         if (matcher.find()) {
             return matcher.group(1);
@@ -306,7 +313,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
             HttpResponse httpResponse = httpClient.execute(httpGet);
             return EntityUtils.toString(httpResponse.getEntity());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Can't get response from {}", url, e);
         } finally {
             httpGet.releaseConnection();
         }
@@ -326,13 +333,13 @@ public class OptionProviderServiceImpl implements OptionProviderService {
             if (StringUtils.isBlank(suffix)) {
                 return jsonNode;
             }
-            String[] fields = suffix.split("/");
+            String[] fields = suffix.split(CoreConstants.SEPARATOR_SLASH);
             for (String field : fields) {
                 jsonNode = jsonNode.get(field);
             }
             return jsonNode;
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Can't read json tree from {}", json, e);
         }
         return null;
     }
