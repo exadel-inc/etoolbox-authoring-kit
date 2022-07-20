@@ -13,19 +13,47 @@
  */
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import com.adobe.cq.commerce.common.ValueMapDecorator;
+import com.adobe.granite.ui.components.ds.ValueMapResource;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.tagging.TagConstants;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
+import com.exadel.aem.toolkit.core.optionprovider.servlets.OptionProviderServlet;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Encapsulates methods for resolving paths to datasources specified directly or via a reference to a path-containing
@@ -33,7 +61,14 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
  * @see OptionProviderService
  */
 class OptionSourceResolver {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OptionSourceResolver.class);
     private static final String PATH_JCR_CONTENT_LIST = "jcr:content/list";
+
+    private static final String REGEX_URL_SUFFIX = ".+\\.\\w+/(.+)$";
+
+    private static final String USER_AGENT_VALUE = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36";
+
 
     /**
      * Default (instantiation-restricting) constructor
@@ -52,11 +87,11 @@ class OptionSourceResolver {
      * @return {@code Resource} instance, or null
      */
     static Resource resolve(SlingHttpServletRequest request, String path, String fallbackPath) {
-        Resource result = resolvePath(request, path);
+        Resource result = isUrl(path) ? resolveUrl(request, path) : resolvePath(request, path);
         if (result != null) {
             return result;
         }
-        return resolvePath(request, fallbackPath);
+        return isUrl(fallbackPath) ? resolveUrl(request, fallbackPath) : resolvePath(request, fallbackPath);
     }
 
     /**
@@ -174,5 +209,107 @@ class OptionSourceResolver {
         } catch (RepositoryException | NullPointerException e) {
             return false;
         }
+    }
+
+    /**
+     * Checks if the String is URL
+     * @param urlString the URL string
+     * @return the result of the checking if String URL or not
+     */
+    static boolean isUrl(String urlString) {
+        try {
+            new URL(urlString);
+            return true;
+        } catch (MalformedURLException e) {
+            LOG.error("Can't get URL from {}", urlString, e);
+        }
+        return false;
+    }
+
+    /**
+     * Called from {@link OptionProviderServiceImpl#getOptions(SlingHttpServletRequest)} to get response as JsonNode
+     * @param pathParameter URL String for getting request
+     * @return {@code JsonNode} instance, or null
+     */
+    static Resource resolveUrl(SlingHttpServletRequest request, String pathParameter) {
+        String internalPath = getInternalPath(pathParameter);
+        String url = StringUtils.removeEnd(pathParameter, internalPath);
+        String json = getResponse(url);
+        JsonNode jsonWithValues = getJsonWithValues(json, internalPath);
+        return getResource(request, jsonWithValues);
+    }
+
+    /**
+     * Extracts the path to the target node within the JSON structure from the URL.
+     * This path can be specified if we need not from the root
+     * @param url The URL of the JSON
+     * @return String value, can be empty if need to read data from the root
+     */
+    static String getInternalPath(String url) {
+        Pattern pattern = Pattern.compile(REGEX_URL_SUFFIX);
+        Matcher matcher = pattern.matcher(url);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return StringUtils.EMPTY;
+    }
+
+    /**
+     * Makes GET request to the URL and returns a JSON response
+     * @param url the URL String
+     * @return the JSON response as a String or empty String
+     */
+    static String getResponse(String url) {
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader(HttpHeaders.USER_AGENT, USER_AGENT_VALUE);
+        httpGet.setHeader(HttpHeaders.CONTENT_TYPE, OptionProviderServlet.CONTENT_TYPE_JSON);
+        HttpResponse httpResponse = null;
+        try {
+            httpResponse = httpClient.execute(httpGet);
+            return EntityUtils.toString(httpResponse.getEntity());
+        } catch (IOException e) {
+            LOG.error("Can't get a response from {}", url, e);
+        } finally {
+            if (httpResponse != null) {
+                EntityUtils.consumeQuietly(httpResponse.getEntity());
+            }
+            httpGet.releaseConnection();
+        }
+        return StringUtils.EMPTY;
+    }
+
+    /**
+     * Extract jsonNode from the JSON string by the JSON field name
+     * @param json the JSON string
+     * @param suffix the suffix name
+     * @return {@code JsonNode} object or null
+     */
+    static JsonNode getJsonWithValues(String json, String suffix) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            JsonNode jsonNode = objectMapper.readTree(json);
+            if (StringUtils.isBlank(suffix)) {
+                return jsonNode;
+            }
+            String[] fields = suffix.split(CoreConstants.SEPARATOR_SLASH);
+            for (String field : fields) {
+                jsonNode = jsonNode.get(field);
+            }
+            return jsonNode;
+        } catch (IOException e) {
+            LOG.error("Can't read JSON tree from {}", json, e);
+        }
+        return null;
+    }
+
+    static Resource getResource(SlingHttpServletRequest request, JsonNode jsonNode) {
+        List<Resource> children = StreamSupport.stream(Spliterators.spliteratorUnknownSize(jsonNode.elements(), Spliterator.ORDERED), false)
+            .map(element -> StreamSupport.stream(Spliterators.spliteratorUnknownSize(element.fields(), Spliterator.ORDERED), false)
+                .collect(Collectors.toMap(Map.Entry::getKey, field -> (Object) field.getValue().textValue())))
+            .map(ValueMapDecorator::new)
+            .map(valueMap -> new ValueMapResource(request.getResourceResolver(), StringUtils.EMPTY, StringUtils.EMPTY, valueMap))
+            .collect(Collectors.toList());
+        return new ValueMapResource(request.getResourceResolver(), StringUtils.EMPTY, StringUtils.EMPTY, new ValueMapDecorator(Collections.emptyMap()), children);
     }
 }
