@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
@@ -84,37 +83,35 @@ public class ChildrenInjector extends BaseInjectorTemplateMethod<Children> {
         return element.getDeclaredAnnotation(Children.class);
     }
     @Override
-    public Supplier<Object> getAnnotationValueSupplier(SlingHttpServletRequest request, String name, Type type, Children annotation) {
-        return () -> {
-            Resource adaptableResource = request.getResource();
+    public Object getValue(Object adaptable, String name, Type type, Children annotation) {
 
-            String resourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
+        Resource adaptableResource = AdaptationUtil.getResource(adaptable);
+        if (adaptableResource == null) {
+            return null;
+        }
 
-            if (!TypeUtil.isValidCollection(type) && !TypeUtil.isValidArray(type)) {
-                return null;
-            }
+        if (!TypeUtil.isValidCollection(type) && !TypeUtil.isValidArray(type)) {
+            return null;
+        }
 
-            Resource currentResource = adaptableResource.getChild(resourcePath);
+        String resourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
+        Resource currentResource = adaptableResource.getChild(resourcePath);
+        if (currentResource == null) {
+            return null;
+        }
 
-            if (currentResource == null) {
-                return null;
-            }
+        List<Object> children = getFilteredInjectables(adaptable, currentResource, type, annotation);
+        if (CollectionUtils.isEmpty(children)) {
+            return null;
+        }
 
-            List<Object> children = getFilteredInjectables(request, currentResource, type, annotation);
-
-            if (CollectionUtils.isEmpty(children)) {
-                return null;
-            }
-
-            if (type instanceof Class<?> && ((Class<?>) type).isArray()) {
-                return toArray(children, (Class<?>) type);
-            }
-
-            return children;
-        };
+        if (type instanceof Class<?> && ((Class<?>) type).isArray()) {
+            return toArray(children, (Class<?>) type);
+        }
+        return children;
     }
     @Override
-    public void defaultMessage() {
+    public void logError(Object message) {
         //LOG.debug("Failed to inject child resources for the name \"{}\"", resourcePath);
     }
 

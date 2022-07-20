@@ -17,25 +17,33 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.apache.sling.api.SlingHttpServletRequest;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+
+import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 
 /**
  * Used in {@link com.exadel.aem.toolkit.core.injectors.I18nInjector} to provide detection of locale based on the
  * current resource page
  */
-public class PageLocaleDetector implements Function<SlingHttpServletRequest, Locale> {
+public class PageLocaleDetector implements Function<Object, Locale> {
 
     /**
-     * Retrieves a locale value for the provided request object
-     * @param request An instance ofnSlingHttpServletRequest.class request;
+     * Retrieves a locale value for the provided adaptable object
+     * @param adaptable An adaptable; usually a {@code SlingHttpServletRequest} or a {@code Resource}
      * @return Locale instance
      */
     @Override
-    public Locale apply(SlingHttpServletRequest request) {
-        Page page = Optional.ofNullable(request.getResourceResolver().adaptTo(PageManager.class))
-            .map(pageManager -> pageManager.getContainingPage(request.getResource()))
+    public Locale apply(Object adaptable) {
+        ResourceResolver resourceResolver = AdaptationUtil.getResourceResolver(adaptable);
+        Resource resource = AdaptationUtil.getResource(adaptable);
+        if (resourceResolver == null || resource == null) {
+            return null;
+        }
+        Page page = Optional.ofNullable(resourceResolver.adaptTo(PageManager.class))
+            .map(pageManager -> pageManager.getContainingPage(resource))
             .orElse(null);
         if (page == null) {
             return null;
@@ -43,3 +51,4 @@ public class PageLocaleDetector implements Function<SlingHttpServletRequest, Loc
         return page.getLanguage();
     }
 }
+

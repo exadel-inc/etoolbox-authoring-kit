@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
-import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -28,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSuffix;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
-
+import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 /**
  * Injects into a Sling model the value of the {@code suffix} or {@code suffixResource} properties
  * of the {@link SlingHttpServletRequest} obtained via {@link org.apache.sling.api.request.RequestPathInfo}
@@ -61,21 +60,25 @@ public class RequestSuffixInjector extends BaseInjectorTemplateMethod<RequestSuf
     }
 
     @Override
-    public Supplier<Object> getAnnotationValueSupplier(SlingHttpServletRequest request, String name, Type type, RequestSuffix annotation) {
-        return () -> {
+    public Object getValue(Object adaptable, String name, Type type, RequestSuffix annotation) {
 
-            if (TypeUtil.isValidObjectType(type, String.class)) {
-                return request.getRequestPathInfo().getSuffix();
+        SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
 
-            } else if (type.equals(Resource.class)) {
-                return request.getRequestPathInfo().getSuffixResource();
-            }
-
+        if(request == null) {
             return null;
-        };
+        }
+
+        if (TypeUtil.isValidObjectType(type, String.class)) {
+            return request.getRequestPathInfo().getSuffix();
+
+        } else if (type.equals(Resource.class)) {
+            return request.getRequestPathInfo().getSuffixResource();
+        }
+        return null;
     }
+
     @Override
-    public void defaultMessage() {
+    public void logError(Object message) {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
     }
 }

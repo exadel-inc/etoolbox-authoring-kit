@@ -13,8 +13,6 @@
  */
 package com.exadel.aem.toolkit.core.injectors.i18n;
 
-import org.apache.sling.api.SlingHttpServletRequest;
-
 import java.util.Locale;
 import java.util.function.Function;
 
@@ -23,15 +21,15 @@ import java.util.function.Function;
  * functionality. Technically, it always returns a {@code null} locale so that the injector could internally refer to
  * the value stored in user preferences or else to the global default
  */
-public class NativeLocaleDetector implements Function<SlingHttpServletRequest, Locale> {
+public class NativeLocaleDetector implements Function<Object, Locale> {
 
     /**
      * Retrieves a locale value for the provided adaptable object
-     * @param request An instance ofnSlingHttpServletRequest.class request;
+     * @param adaptable An instance ofnSlingHttpServletRequest.class request;
      * @return Locale instance
      */
     @Override
-    public Locale apply(SlingHttpServletRequest request) {
+    public Locale apply(Object adaptable) {
         return null;
     }
 }

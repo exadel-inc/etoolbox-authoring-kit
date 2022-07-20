@@ -21,16 +21,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
-
-import com.exadel.aem.toolkit.api.annotations.injectors.RequestSuffix;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.i18n.ResourceBundleProvider;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
@@ -42,8 +40,10 @@ import org.slf4j.LoggerFactory;
 import com.day.cq.i18n.I18n;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.I18N;
+import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
+
 
 /**
  * Injects into a Sling model an {@link com.day.cq.i18n.I18n} object that corresponds to the current locale, or else an
@@ -57,10 +57,9 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 public class I18nInjector extends BaseInjectorTemplateMethod<I18N> {
 
     private static final Logger LOG = LoggerFactory.getLogger(I18nInjector.class);
+    private static final Pattern LOCALE_PARTS_SPLITTER = Pattern.compile("[/_-]");
 
     public static final String NAME = "eak-etoolbox-i18n-injector";
-
-    private static final Pattern LOCALE_PARTS_SPLITTER = Pattern.compile("[/_-]");
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE)
     private List<ResourceBundleProvider> resourceBundleProviders;
@@ -81,27 +80,25 @@ public class I18nInjector extends BaseInjectorTemplateMethod<I18N> {
         return element.getDeclaredAnnotation(I18N.class);
     }
     @Override
-    public Supplier<Object> getAnnotationValueSupplier(SlingHttpServletRequest request, String name, Type type, I18N annotation) {
-        return () -> {
-            String value = StringUtils.defaultIfEmpty(annotation.value(), name);
+    public Object getValue(Object adaptable, String name, Type type, I18N annotation) {
+        String value = StringUtils.defaultIfEmpty(annotation.value(), name);
 
-            Function<Object, Locale> localeDetector = InstantiationUtil.getObjectInstance(annotation.localeDetector());
-            Locale locale = StringUtils.isNotBlank(annotation.locale())
-                ? getLocale(annotation.locale())
-                : getLocale(request, localeDetector);
+        Function<Object, Locale> localeDetector = InstantiationUtil.getObjectInstance(annotation.localeDetector());
+        Locale locale = StringUtils.isNotBlank(annotation.locale())
+            ? getLocale(annotation.locale())
+            : getLocale(adaptable, localeDetector);
 
-            I18n i18n = getI18n(request, locale);
+        I18n i18n = getI18n(adaptable, locale);
 
-            if (isI18nType(type)) {
-                return i18n;
-            } else if (TypeUtil.isValidObjectType(type, String.class)) {
-                return i18n.get(value);
-            }
+        if (isI18nType(type)) {
+            return i18n;
+        } else if (TypeUtil.isValidObjectType(type, String.class)) {
+            return i18n.get(value);
+        }
         return null;
-        };
     }
     @Override
-    public void defaultMessage() {
+    public void logError(Object message) {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
     }
 
@@ -119,26 +116,26 @@ public class I18nInjector extends BaseInjectorTemplateMethod<I18N> {
     }
 
     /**
-     * Creates a new {@link Locale} object from the given request object using the provided locale detector
-     * @param request A {@link SlingHttpServletRequest}  instance
+     * Creates a new {@link Locale} object from the given adaptable object using the provided locale detector
+     * @param adaptable A {@link SlingHttpServletRequest} or a {@link Resource} instance
      * @param detector  A routine used to guess the proper locale from the current request or resource
      * @return {@code Locale} instance; might be null
      */
     private Locale getLocale(
-        SlingHttpServletRequest request,
+        Object adaptable,
         Function<Object, Locale> detector) {
 
-        return Optional.ofNullable(detector).map(d -> detector.apply(request)).orElse(null);
+        return Optional.ofNullable(detector).map(d -> detector.apply(adaptable)).orElse(null);
     }
 
     /**
      * Retrieves an {@link I18n} object for the given adaptable and locale
-     * @param request A {@link SlingHttpServletRequest} instance
+     * @param adaptable A {@link SlingHttpServletRequest} or a {@link Resource} instance
      * @param locale    A nullable {@link Locale} object
      * @return {@code I18n} instance
      */
-    private I18n getI18n(SlingHttpServletRequest request, Locale locale) {
-
+    private I18n getI18n(Object adaptable, Locale locale) {
+        SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request != null && locale != null) {
             return new I18n(request.getResourceBundle(locale));
         } else if (request != null) {
@@ -161,4 +158,5 @@ public class I18nInjector extends BaseInjectorTemplateMethod<I18N> {
     private static boolean isI18nType(Type value) {
         return value instanceof Class<?> && ClassUtils.isAssignable((Class<?>) value, I18n.class);
     }
+
 }

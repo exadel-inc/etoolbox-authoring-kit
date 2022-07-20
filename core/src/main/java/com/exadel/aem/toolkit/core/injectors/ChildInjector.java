@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
-import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.Child;
+import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
@@ -70,42 +70,40 @@ public class ChildInjector extends BaseInjectorTemplateMethod<Child> {
         return element.getDeclaredAnnotation(Child.class);
     }
     @Override
-    public Supplier<Object> getAnnotationValueSupplier(SlingHttpServletRequest request, String name, Type type, Child annotation) {
-        return () -> {
+    public Object getValue(Object adaptable, String name, Type type, Child annotation) {
 
-            Resource adaptableResource = request.getResource();
+        Resource adaptableResource = AdaptationUtil.getResource(adaptable);
 
-            String resourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
-
-            Resource currentResource = adaptableResource.getChild(resourcePath);
-
-            if (currentResource == null) {
-                return null;
-            }
-
-            Resource preparedResource = InstantiationUtil.getFilteredResource(
-                currentResource,
-                annotation.prefix(),
-                annotation.postfix()
-            );
-
-            if (TypeUtil.isValidObjectType(type, Resource.class)) {
-
-                return preparedResource;
-
-            } else if (type instanceof Class) {
-
-                if (TypeUtil.isSlingRequestAdapter(modelFactory, type)) {
-                    return adapterManager.getAdapter(request, (Class<?>) type);
-                }
-
-                return preparedResource.adaptTo((Class<?>) type);
-            }
+        if (adaptableResource == null) {
             return null;
-        };
+        }
+
+        String resourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
+        Resource currentResource = adaptableResource.getChild(resourcePath);
+        if (currentResource == null) {
+            return null;
+        }
+
+        Resource preparedResource = InstantiationUtil.getFilteredResource(
+            currentResource,
+            annotation.prefix(),
+            annotation.postfix()
+        );
+
+        if (TypeUtil.isValidObjectType(type, Resource.class)) {
+            return preparedResource;
+        } else if (type instanceof Class) {
+            if (adaptable instanceof SlingHttpServletRequest && TypeUtil.isSlingRequestAdapter(modelFactory, type)) {
+                return adapterManager.getAdapter(
+                    AdaptationUtil.getRequest((SlingHttpServletRequest) adaptable, preparedResource),
+                    (Class<?>) type);
+            }
+            return preparedResource.adaptTo((Class<?>) type);
+        }
+        return null;
     }
     @Override
-    public void defaultMessage() {
-        //LOG.debug("Failed to inject child resource by the name \"{}\"", resourcePath);
+    public void logError(Object message) {
+        //  LOG.debug("Failed to inject child resource by the name \"{}\"", resourcePath);
     }
 }

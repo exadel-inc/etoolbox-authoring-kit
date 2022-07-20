@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
@@ -32,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestParam;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
-
+import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 /**
  * Injects into a Sling model the value of a HTTP request parameter (multiple parameters) obtained
  * via a {@code SlingHttpServletRequest} object
@@ -64,43 +63,51 @@ public class RequestParamInjector extends BaseInjectorTemplateMethod<RequestPara
         return element.getDeclaredAnnotation(RequestParam.class);
     }
     @Override
-    public Supplier<Object> getAnnotationValueSupplier(SlingHttpServletRequest request, String name, Type type, RequestParam annotation) {
-        String paramName = annotation.name().isEmpty() ? name : annotation.name();
+    public Object getValue(Object adaptable,
+                                     String name,
+                                     Type type,
+                                     RequestParam annotation) {
 
-        return () -> {
+        SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
 
-            if (TypeUtil.isValidObjectType(type, String.class)) {
-                return request.getParameter(paramName);
-
-            } else if (TypeUtil.isValidArray(type, String.class)) {
-                return getFilteredRequestParameters(request, paramName)
-                    .map(RequestParameter::getString)
-                    .toArray(String[]::new);
-
-            } else if (TypeUtil.isValidCollection(type, String.class)) {
-                return getFilteredRequestParameters(request, paramName)
-                    .map(RequestParameter::getString)
-                    .collect(Collectors.toList());
-
-            } else if (TypeUtil.isValidObjectType(type, RequestParameter.class)) {
-                return request.getRequestParameter(paramName);
-
-            } else if (TypeUtil.isValidCollection(type, RequestParameter.class)) {
-                return request.getRequestParameterList();
-
-            } else if (TypeUtil.isValidArray(type, RequestParameter.class)) {
-                return request.getRequestParameters(paramName);
-
-            } else if (TypeUtil.isValidObjectType(type, RequestParameterMap.class)) {
-                return request.getRequestParameterMap();
-            }
+        if(request == null) {
             return null;
-        };
+        }
+
+        name = StringUtils.defaultIfEmpty(annotation.name(), name);
+
+        if (TypeUtil.isValidObjectType(type, String.class)) {
+            return request.getParameter(name);
+
+        } else if (TypeUtil.isValidArray(type, String.class)) {
+            return getFilteredRequestParameters(request, name)
+                .map(RequestParameter::getString)
+                .toArray(String[]::new);
+
+        } else if (TypeUtil.isValidCollection(type, String.class)) {
+            return getFilteredRequestParameters(request, name)
+                .map(RequestParameter::getString)
+                .collect(Collectors.toList());
+
+        } else if (TypeUtil.isValidObjectType(type, RequestParameter.class)) {
+            return request.getRequestParameter(name);
+
+        } else if (TypeUtil.isValidCollection(type, RequestParameter.class)) {
+            return request.getRequestParameterList();
+
+        } else if (TypeUtil.isValidArray(type, RequestParameter.class)) {
+            return request.getRequestParameters(name);
+
+        } else if (TypeUtil.isValidObjectType(type, RequestParameterMap.class)) {
+            return request.getRequestParameterMap();
+        }
+        return null;
     }
     @Override
-    public void defaultMessage() {
+    public void logError(Object message) {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
     }
+
     /**
      * Retrieves the stream of {@link RequestParameter} objects extracted from the current Sling request filtered with
      * the given parameter name
@@ -114,4 +121,5 @@ public class RequestParamInjector extends BaseInjectorTemplateMethod<RequestPara
             .stream()
             .filter(requestParameter -> StringUtils.equals(name, requestParameter.getName()));
     }
+
 }
