@@ -6,9 +6,12 @@
   <main class="esl-scrollable-content">
     <div class="content {{ containerCls or 'container markdown-container' }} {{ 'container-aside' if aside }}">
       {% set fullPage = collections.content | findByPage(page) %}
-      {% if fullPage and fullPage.mainParentPage %}
-        <h1>{{ fullPage.mainParentPage.data.title }}</h1>
+      {% set mainPageTitle = fullPage.mainParentPage.data.title %}
+
+      {% if fullPage and fullPage.mainParentPage and mainPageTitle !== fullPage.data.title %}
+        <h1>{{ mainPageTitle }}</h1>
       {% endif %}
+      
       {{ content | safe or 'No content.' }}
     </div>
     <footer class="footer-compact container-fluid">
