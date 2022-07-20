@@ -10,6 +10,7 @@ const DOCS_PATH = path.join(ROOT_PATH, 'docs');
 
 class PathResolver {
   static rules = rewriteRules.map(PathResolver.createRule);
+
   static createRule({glob, regexp, value}) {
     if (typeof regexp === 'string') regexp = new RegExp(regexp, 'i');
     if (typeof glob === 'string') regexp = (new Minimatch(glob)).makeRe();
@@ -29,9 +30,17 @@ class PathResolver {
   static resolveLinks(dom, filePath) {
     dom.querySelectorAll('a[href^="."]').forEach((link) => {
       const resolved = PathResolver.resolveLink(link.href, filePath);
+
       if (resolved !== link.href) console.info(blue(`Rewrite link "${link.href}" to "${resolved}"`));
       link.href = resolved;
     });
+
+    dom.querySelectorAll('a[href^="https:"]').forEach((link) => {
+      //if(!link.href.includes("/etoolbox-authoring-kit"))
+        link.target = "_blank";
+        link.rel = "noopener norefferer";
+    })
+   
   }
 
   static resolveImages(dom, filePath) {
