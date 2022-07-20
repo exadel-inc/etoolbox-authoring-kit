@@ -19,10 +19,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Spliterator;
@@ -33,6 +31,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
+
+import com.exadel.aem.toolkit.core.optionprovider.servlets.OptionProviderServlet;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.collections4.CollectionUtils;
@@ -78,6 +78,8 @@ public class OptionProviderServiceImpl implements OptionProviderService {
 
     private static final String REGEX_URL_SUFFIX = ".+\\.\\w+/(.+)$";
 
+    private static final String USER_AGENT_VALUE = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36";
+
 
     /**
     * {@inheritDoc}
@@ -94,10 +96,10 @@ public class OptionProviderServiceImpl implements OptionProviderService {
         // For each of the datasource paths, try retrieve a list of JCR-stored options or if the datasource path is URL, try retrieve a list of options during the response of GET request
         for (PathParameters pathParameters : parameters.getPathParameters()) {
             String pathParameter = pathParameters.getPath();
-            if (isValidUrl(pathParameter)) {
+            if (isUrl(pathParameter)) {
                 String suffix = getSuffix(pathParameter);
                 String url = StringUtils.removeEnd(pathParameter, suffix);
-                String json = getGetResponse(url);
+                String json = getResponse(url);
                 JsonNode jsonNode = getJsonWithValues(json, suffix);
                 if (jsonNode == null) {
                     continue;
@@ -262,11 +264,11 @@ public class OptionProviderServiceImpl implements OptionProviderService {
     }
 
     /**
-     * Checks if the url valid
-     * @param urlString the url
-     * @return the result of check is url valid or not
+     * Checks if the URL valid
+     * @param urlString the URL string
+     * @return the result of the checking if String URL or not
      */
-    private boolean isValidUrl(String urlString) {
+    private boolean isUrl(String urlString) {
         try {
             new URL(urlString);
             return true;
@@ -277,9 +279,9 @@ public class OptionProviderServiceImpl implements OptionProviderService {
     }
 
     /**
-     * Extracts suffix from the url
-     * @param url the url
-     * @return the suffix of the url or empty String
+     * Extracts suffix from the URL
+     * @param url the URL String
+     * @return the suffix of the URL String or empty String
      */
     private String getSuffix(String url) {
         Pattern pattern = Pattern.compile(REGEX_URL_SUFFIX);
@@ -291,20 +293,20 @@ public class OptionProviderServiceImpl implements OptionProviderService {
     }
 
     /**
-     * Makes GET request to the url and return json response
-     * @param url the url
-     * @return the json response as a String or empty String
+     * Makes GET request to the URL and returns a JSON response
+     * @param url the URL String
+     * @return the JSON response as a String or empty String
      */
-    private String getGetResponse(String url) {
+    private String getResponse(String url) {
         HttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
-        httpGet.setHeader(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36");
-        httpGet.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+        httpGet.setHeader(HttpHeaders.USER_AGENT, USER_AGENT_VALUE);
+        httpGet.setHeader(HttpHeaders.CONTENT_TYPE, OptionProviderServlet.CONTENT_TYPE_JSON);
         try {
             HttpResponse httpResponse = httpClient.execute(httpGet);
             return EntityUtils.toString(httpResponse.getEntity());
         } catch (IOException e) {
-            LOG.error("Can't get response from {}", url, e);
+            LOG.error("Can't get a response from {}", url, e);
         } finally {
             httpGet.releaseConnection();
         }
@@ -312,8 +314,8 @@ public class OptionProviderServiceImpl implements OptionProviderService {
     }
 
     /**
-     * Extract jsonNode from the json string by the json field name
-     * @param json the json string
+     * Extract jsonNode from the JSON string by the JSON field name
+     * @param json the JSON string
      * @param suffix the suffix name
      * @return {@code JsonNode} object or null
      */
@@ -330,7 +332,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
             }
             return jsonNode;
         } catch (IOException e) {
-            LOG.error("Can't read json tree from {}", json, e);
+            LOG.error("Can't read JSON tree from {}", json, e);
         }
         return null;
     }
