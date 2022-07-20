@@ -34,6 +34,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -173,12 +174,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
     private List<Option> getOptions(ResourceResolver resourceResolver, PathParameters parameters, JsonNode jsonNode) {
         if (jsonNode.isArray()) {
             return StreamSupport.stream(Spliterators.spliteratorUnknownSize(jsonNode.elements(), Spliterator.ORDERED), false)
-                .map(element -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put(parameters.getTextMember(), element.get(parameters.getTextMember()).textValue());
-                    map.put(parameters.getValueMember(), element.get(parameters.getValueMember()).textValue());
-                    return map;
-                })
+                .map(element -> ImmutableMap.<String, Object>of(parameters.getTextMember(), element.get(parameters.getTextMember()).textValue(), parameters.getValueMember(), element.get(parameters.getValueMember()).textValue()))
                 .map(ValueMapDecorator::new)
                 .map(valueMap -> new ValueMapResource(resourceResolver, StringUtils.EMPTY, StringUtils.EMPTY, valueMap))
                 .map(resource -> getOption(resource, parameters, StringUtils.EMPTY))
@@ -186,12 +182,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
                 .collect(Collectors.toList());
         }
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(jsonNode.fields(), Spliterator.ORDERED), false)
-            .map(field -> {
-                Map<String, Object> map = new HashMap<>();
-                map.put(parameters.getTextMember(), field.getKey());
-                map.put(parameters.getValueMember(), field.getValue().textValue());
-                return map;
-            })
+            .map(field -> ImmutableMap.<String, Object>of(parameters.getTextMember(), field.getKey(), parameters.getValueMember(), field.getValue().textValue()))
             .map(ValueMapDecorator::new)
             .map(valueMap -> new ValueMapResource(resourceResolver, StringUtils.EMPTY, StringUtils.EMPTY, valueMap))
             .map(resource -> getOption(resource, parameters, StringUtils.EMPTY))
