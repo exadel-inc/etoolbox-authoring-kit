@@ -13,9 +13,6 @@
  */
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,45 +20,27 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
 
-import com.exadel.aem.toolkit.core.optionprovider.servlets.OptionProviderServlet;
-
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
-import com.adobe.cq.commerce.common.ValueMapDecorator;
-import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implements {@link OptionProviderService} to prepare option sets for Granite-compliant custom data sources
@@ -75,11 +54,6 @@ public class OptionProviderServiceImpl implements OptionProviderService {
     private static final String FULL_STRING_MATCH_TEMPLATE = "^%s$";
     private static final String USER_WILDCARD_PATTERN = "(?<![\\\\'])\\*";
     private static final String REGEXP_WILDCARD_PATTERN = ".*";
-
-    private static final String REGEX_URL_SUFFIX = ".+\\.\\w+/(.+)$";
-
-    private static final String USER_AGENT_VALUE = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36";
-
 
     /**
     * {@inheritDoc}
@@ -95,23 +69,11 @@ public class OptionProviderServiceImpl implements OptionProviderService {
 
         // For each of the datasource paths, try retrieve a list of JCR-stored options or if the datasource path is URL, try retrieve a list of options during the response of GET request
         for (PathParameters pathParameters : parameters.getPathParameters()) {
-            String pathParameter = pathParameters.getPath();
-            if (isUrl(pathParameter)) {
-                String suffix = getSuffix(pathParameter);
-                String url = StringUtils.removeEnd(pathParameter, suffix);
-                String json = getResponse(url);
-                JsonNode jsonNode = getJsonWithValues(json, suffix);
-                if (jsonNode == null) {
-                    continue;
-                }
-                options.addAll(getOptions(request.getResourceResolver(), pathParameters, jsonNode));
-            } else {
-                Resource datasourceResource = OptionSourceResolver.resolve(request, pathParameter, pathParameters.getFallbackPath());
-                if (datasourceResource == null || datasourceResource instanceof NonExistingResource) {
-                    continue;
-                }
-                options.addAll(getOptions(datasourceResource, pathParameters));
+            Resource datasourceResource = OptionSourceResolver.resolve(request, pathParameters.getPath(), pathParameters.getFallbackPath());
+            if (datasourceResource == null || datasourceResource instanceof NonExistingResource) {
+                continue;
             }
+            options.addAll(getOptions(datasourceResource, pathParameters));
         }
 
         // Transform the resulting collection to sortable list and sort it as optioned by user
@@ -164,32 +126,6 @@ public class OptionProviderServiceImpl implements OptionProviderService {
                 .map(child -> getOption(child, parameters, defaultValueMember))
                 .filter(Option::isValid)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Called from {@link OptionProviderServiceImpl#getOptions(SlingHttpServletRequest)} to extract a list
-     * of {@link Option} items from the particular json
-     * @param jsonNode {@code JsonNode} instance representing json from GET request
-     * @param parameters Path-related user settings that came with the request
-     * @return {@code List<DataSourceOption>} object, or an empty list
-     */
-    private List<Option> getOptions(ResourceResolver resourceResolver, PathParameters parameters, JsonNode jsonNode) {
-        if (jsonNode.isArray()) {
-            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(jsonNode.elements(), Spliterator.ORDERED), false)
-                .map(element -> ImmutableMap.<String, Object>of(parameters.getTextMember(), element.get(parameters.getTextMember()).textValue(), parameters.getValueMember(), element.get(parameters.getValueMember()).textValue()))
-                .map(ValueMapDecorator::new)
-                .map(valueMap -> new ValueMapResource(resourceResolver, StringUtils.EMPTY, StringUtils.EMPTY, valueMap))
-                .map(resource -> getOption(resource, parameters, StringUtils.EMPTY))
-                .filter(Option::isValid)
-                .collect(Collectors.toList());
-        }
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(jsonNode.fields(), Spliterator.ORDERED), false)
-            .map(field -> ImmutableMap.<String, Object>of(parameters.getTextMember(), field.getKey(), parameters.getValueMember(), field.getValue().textValue()))
-            .map(ValueMapDecorator::new)
-            .map(valueMap -> new ValueMapResource(resourceResolver, StringUtils.EMPTY, StringUtils.EMPTY, valueMap))
-            .map(resource -> getOption(resource, parameters, StringUtils.EMPTY))
-            .filter(Option::isValid)
-            .collect(Collectors.toList());
     }
 
     /**
@@ -261,79 +197,5 @@ public class OptionProviderServiceImpl implements OptionProviderService {
                 || pattern.matcher(option.getText()).matches()))
             .collect(Collectors.toList());
         options.removeAll(excludedOptions);
-    }
-
-    /**
-     * Checks if the URL valid
-     * @param urlString the URL string
-     * @return the result of the checking if String URL or not
-     */
-    private boolean isUrl(String urlString) {
-        try {
-            new URL(urlString);
-            return true;
-        } catch (MalformedURLException e) {
-            LOG.error("Can't get URL from {}", urlString, e);
-        }
-        return false;
-    }
-
-    /**
-     * Extracts suffix from the URL
-     * @param url the URL String
-     * @return the suffix of the URL String or empty String
-     */
-    private String getSuffix(String url) {
-        Pattern pattern = Pattern.compile(REGEX_URL_SUFFIX);
-        Matcher matcher = pattern.matcher(url);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return StringUtils.EMPTY;
-    }
-
-    /**
-     * Makes GET request to the URL and returns a JSON response
-     * @param url the URL String
-     * @return the JSON response as a String or empty String
-     */
-    private String getResponse(String url) {
-        HttpClient httpClient = HttpClients.createDefault();
-        HttpGet httpGet = new HttpGet(url);
-        httpGet.setHeader(HttpHeaders.USER_AGENT, USER_AGENT_VALUE);
-        httpGet.setHeader(HttpHeaders.CONTENT_TYPE, OptionProviderServlet.CONTENT_TYPE_JSON);
-        try {
-            HttpResponse httpResponse = httpClient.execute(httpGet);
-            return EntityUtils.toString(httpResponse.getEntity());
-        } catch (IOException e) {
-            LOG.error("Can't get a response from {}", url, e);
-        } finally {
-            httpGet.releaseConnection();
-        }
-        return StringUtils.EMPTY;
-    }
-
-    /**
-     * Extract jsonNode from the JSON string by the JSON field name
-     * @param json the JSON string
-     * @param suffix the suffix name
-     * @return {@code JsonNode} object or null
-     */
-    private JsonNode getJsonWithValues(String json, String suffix) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            JsonNode jsonNode = objectMapper.readTree(json);
-            if (StringUtils.isBlank(suffix)) {
-                return jsonNode;
-            }
-            String[] fields = suffix.split(CoreConstants.SEPARATOR_SLASH);
-            for (String field : fields) {
-                jsonNode = jsonNode.get(field);
-            }
-            return jsonNode;
-        } catch (IOException e) {
-            LOG.error("Can't read JSON tree from {}", json, e);
-        }
-        return null;
     }
 }
