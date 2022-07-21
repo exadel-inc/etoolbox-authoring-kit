@@ -30,6 +30,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -41,7 +42,6 @@ import org.slf4j.LoggerFactory;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.optionprovider.servlets.OptionProviderServlet;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -104,7 +104,7 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
 
         HttpGet httpGet = new HttpGet(url);
         httpGet.setHeader(HttpHeaders.USER_AGENT, HTTP_USER_AGENT);
-        httpGet.setHeader(HttpHeaders.CONTENT_TYPE, OptionProviderServlet.CONTENT_TYPE_JSON);
+        httpGet.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
         HttpResponse httpResponse = null;
 
         try {

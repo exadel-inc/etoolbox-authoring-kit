@@ -56,7 +56,7 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
         "sling.servlet.methods=" + HttpConstants.METHOD_GET
     })
 public class OptionProviderServlet extends SlingSafeMethodsServlet {
-    public static final String CONTENT_TYPE_JSON = "application/json;charset=utf-8";
+    private static final String CONTENT_TYPE_JSON = "application/json;charset=utf-8";
 
     private static final String QUERY_KEY_OUTPUT = "output";
     private static final String QUERY_VALUE_JSON = "json";
