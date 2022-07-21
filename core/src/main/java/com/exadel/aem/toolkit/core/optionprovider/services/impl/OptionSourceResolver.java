@@ -19,6 +19,7 @@ import java.util.Objects;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import com.day.cq.commons.jcr.JcrConstants;
@@ -57,15 +58,20 @@ interface OptionSourceResolver {
      * @return {@code Resource} instance, or null
      */
     static Resource resolve(SlingHttpServletRequest request, String uri, String fallbackUri) {
-        Resource result = isUrl(uri)
-            ? HTTP_RESOLVER.resolve(request, uri)
-            : JCR_RESOLVER.resolve(request, uri);
+        OptionSourceResolver predefinedResolver = (OptionSourceResolver) request.getAttribute(OptionSourceResolver.class.getName());
+        OptionSourceResolver effectiveResolver = ObjectUtils.firstNonNull(
+            predefinedResolver,
+            isUrl(uri) ? HTTP_RESOLVER : JCR_RESOLVER);
+
+        Resource result = effectiveResolver.resolve(request, uri);
         if (result != null) {
             return result;
         }
-        return isUrl(fallbackUri)
-            ? HTTP_RESOLVER.resolve(request, fallbackUri)
-            : JCR_RESOLVER.resolve(request, fallbackUri);
+
+        effectiveResolver = ObjectUtils.firstNonNull(
+            predefinedResolver,
+            isUrl(fallbackUri) ? HTTP_RESOLVER : JCR_RESOLVER);
+        return effectiveResolver.resolve(request, fallbackUri);
     }
 
     /**

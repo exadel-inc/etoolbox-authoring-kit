@@ -58,6 +58,22 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
     private static final String HTTP_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36";
     private static final int HTTP_TIMEOUT = 10_000;
 
+    private HttpClient httpClient;
+
+    /**
+     * Default constructor
+     */
+    public HttpOptionSourceResolver() {
+    }
+
+    /**
+     * Creates a new class instance with the pre-defined {@link HttpClient} (useful for testing)
+     * @param httpClient {@code HttpClient} instance
+     */
+    HttpOptionSourceResolver(HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -71,6 +87,45 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
     }
 
     /**
+     * Attempts an HTTP request to the given endpoint and retrieves the payload of the response
+     * @param url Address of the endpoint
+     * @return String value; can be an empty string
+     */
+    private String getResponseContent(String url) {
+        RequestConfig requestConfig = RequestConfig
+            .custom()
+            .setConnectTimeout(HTTP_TIMEOUT)
+            .setConnectionRequestTimeout(HTTP_TIMEOUT)
+            .setSocketTimeout(HTTP_TIMEOUT)
+            .build();
+
+        HttpClient effectiveHttpClient = httpClient != null
+            ? httpClient
+            : HttpClientBuilder
+                .create()
+                .setDefaultRequestConfig(requestConfig)
+                .build();
+
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader(HttpHeaders.USER_AGENT, HTTP_USER_AGENT);
+        httpGet.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
+        HttpResponse httpResponse = null;
+
+        try {
+            httpResponse = effectiveHttpClient.execute(httpGet);
+            return EntityUtils.toString(httpResponse.getEntity());
+        } catch (IOException e) {
+            LOG.error("Could not get a response from {}", url, e);
+        } finally {
+            if (httpResponse != null) {
+                EntityUtils.consumeQuietly(httpResponse.getEntity());
+            }
+            httpGet.releaseConnection();
+        }
+        return StringUtils.EMPTY;
+    }
+
+    /**
      * Extracts the path to the target node within the JSON structure from the URL. This path can be specified if the
      * option datasource does not begin from the "root" of the JSON structure
      * @param url The URL of the endpoint serving JSON data
@@ -80,43 +135,6 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
         Matcher matcher = INTERNAL_PATH_PATTERN.matcher(url);
         if (matcher.find()) {
             return matcher.group(1);
-        }
-        return StringUtils.EMPTY;
-    }
-
-    /**
-     * Attempts an HTTP request to the given endpoint and retrieves the payload of the response
-     * @param url Address of the endpoint
-     * @return String value; can be an empty string
-     */
-    private static String getResponseContent(String url) {
-        RequestConfig requestConfig = RequestConfig
-            .custom()
-            .setConnectTimeout(HTTP_TIMEOUT)
-            .setConnectionRequestTimeout(HTTP_TIMEOUT)
-            .setSocketTimeout(HTTP_TIMEOUT)
-            .build();
-
-        HttpClient httpClient = HttpClientBuilder
-            .create()
-            .setDefaultRequestConfig(requestConfig)
-            .build();
-
-        HttpGet httpGet = new HttpGet(url);
-        httpGet.setHeader(HttpHeaders.USER_AGENT, HTTP_USER_AGENT);
-        httpGet.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
-        HttpResponse httpResponse = null;
-
-        try {
-            httpResponse = httpClient.execute(httpGet);
-            return EntityUtils.toString(httpResponse.getEntity());
-        } catch (IOException e) {
-            LOG.error("Could not get a response from {}", url, e);
-        } finally {
-            if (httpResponse != null) {
-                EntityUtils.consumeQuietly(httpResponse.getEntity());
-            }
-            httpGet.releaseConnection();
         }
         return StringUtils.EMPTY;
     }
