@@ -39,11 +39,11 @@ import org.apache.http.util.EntityUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.tagging.TagConstants;
-import com.adobe.cq.commerce.common.ValueMapDecorator;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
