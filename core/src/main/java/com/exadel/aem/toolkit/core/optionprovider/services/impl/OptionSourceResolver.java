@@ -63,7 +63,7 @@ class OptionSourceResolver {
     private static final Logger LOG = LoggerFactory.getLogger(OptionSourceResolver.class);
     private static final String PATH_JCR_CONTENT_LIST = "jcr:content/list";
 
-    private static final String REGEX_URL_SUFFIX = ".+\\.\\w+/(.+)$";
+    private static final Pattern INTERNAL_PATH_PATTERN = Pattern.compile(".+\\.\\w+/(.+)$");
 
     private static final String USER_AGENT_VALUE = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36";
 
@@ -219,7 +219,6 @@ class OptionSourceResolver {
             new URL(urlString);
             return true;
         } catch (MalformedURLException e) {
-            LOG.error("Can't get URL from {}", urlString, e);
         }
         return false;
     }
@@ -232,9 +231,9 @@ class OptionSourceResolver {
     static Resource resolveUrl(SlingHttpServletRequest request, String pathParameter) {
         String internalPath = getInternalPath(pathParameter);
         String url = StringUtils.removeEnd(pathParameter, internalPath);
-        String json = getResponse(url);
-        JsonNode jsonWithValues = getJsonWithValues(json, internalPath);
-        return getResource(request, jsonWithValues);
+        String json = getJson(url);
+        JsonNode jsonWithValues = parseJson(json, internalPath);
+        return createResource(request, jsonWithValues);
     }
 
     /**
@@ -244,8 +243,7 @@ class OptionSourceResolver {
      * @return String value, can be empty if need to read data from the root
      */
     static String getInternalPath(String url) {
-        Pattern pattern = Pattern.compile(REGEX_URL_SUFFIX);
-        Matcher matcher = pattern.matcher(url);
+        Matcher matcher = INTERNAL_PATH_PATTERN.matcher(url);
         if (matcher.find()) {
             return matcher.group(1);
         }
@@ -257,7 +255,7 @@ class OptionSourceResolver {
      * @param url the URL String
      * @return the JSON response as a String or empty String
      */
-    static String getResponse(String url) {
+    static String getJson(String url) {
         HttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
         httpGet.setHeader(HttpHeaders.USER_AGENT, USER_AGENT_VALUE);
@@ -283,7 +281,7 @@ class OptionSourceResolver {
      * @param suffix the suffix name
      * @return {@code JsonNode} object or null
      */
-    static JsonNode getJsonWithValues(String json, String suffix) {
+    static JsonNode parseJson(String json, String suffix) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode jsonNode = objectMapper.readTree(json);
@@ -296,12 +294,12 @@ class OptionSourceResolver {
             }
             return jsonNode;
         } catch (IOException e) {
-            LOG.error("Can't read JSON tree from {}", json, e);
+            LOG.error("Can't read JSON tree", e);
         }
         return null;
     }
 
-    static Resource getResource(SlingHttpServletRequest request, JsonNode jsonNode) {
+    static Resource createResource(SlingHttpServletRequest request, JsonNode jsonNode) {
         List<Resource> children;
         if (jsonNode.isArray()) {
             children = StreamSupport.stream(Spliterators.spliteratorUnknownSize(jsonNode.elements(), Spliterator.ORDERED), false)
