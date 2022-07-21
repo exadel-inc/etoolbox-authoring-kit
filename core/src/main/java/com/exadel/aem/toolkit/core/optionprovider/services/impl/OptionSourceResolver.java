@@ -29,9 +29,6 @@ import java.util.stream.StreamSupport;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import com.adobe.cq.commerce.common.ValueMapDecorator;
-import com.adobe.granite.ui.components.ds.ValueMapResource;
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -42,11 +39,12 @@ import org.apache.http.util.EntityUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.tagging.TagConstants;
+import com.adobe.cq.commerce.common.ValueMapDecorator;
+import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
@@ -304,12 +302,21 @@ class OptionSourceResolver {
     }
 
     static Resource getResource(SlingHttpServletRequest request, JsonNode jsonNode) {
-        List<Resource> children = StreamSupport.stream(Spliterators.spliteratorUnknownSize(jsonNode.elements(), Spliterator.ORDERED), false)
-            .map(element -> StreamSupport.stream(Spliterators.spliteratorUnknownSize(element.fields(), Spliterator.ORDERED), false)
-                .collect(Collectors.toMap(Map.Entry::getKey, field -> (Object) field.getValue().textValue())))
-            .map(ValueMapDecorator::new)
-            .map(valueMap -> new ValueMapResource(request.getResourceResolver(), StringUtils.EMPTY, StringUtils.EMPTY, valueMap))
-            .collect(Collectors.toList());
+        List<Resource> children;
+        if (jsonNode.isArray()) {
+            children = StreamSupport.stream(Spliterators.spliteratorUnknownSize(jsonNode.elements(), Spliterator.ORDERED), false)
+                .map(element -> StreamSupport.stream(Spliterators.spliteratorUnknownSize(element.fields(), Spliterator.ORDERED), false)
+                    .collect(Collectors.toMap(Map.Entry::getKey, field -> (Object) field.getValue().textValue())))
+                .map(ValueMapDecorator::new)
+                .map(valueMap -> new ValueMapResource(request.getResourceResolver(), StringUtils.EMPTY, StringUtils.EMPTY, valueMap))
+                .collect(Collectors.toList());
+        } else {
+            Map<String, Object> sourceMap = StreamSupport.stream(Spliterators.spliteratorUnknownSize(jsonNode.fields(), Spliterator.ORDERED), false)
+                .collect(Collectors.toMap(Map.Entry::getKey, field -> field.getValue().textValue()));
+            ValueMapDecorator valueMapDecorator = new ValueMapDecorator(sourceMap);
+            ValueMapResource valueMapResource = new ValueMapResource(request.getResourceResolver(), StringUtils.EMPTY, StringUtils.EMPTY, valueMapDecorator);
+            children = Collections.singletonList(valueMapResource);
+        }
         return new ValueMapResource(request.getResourceResolver(), StringUtils.EMPTY, StringUtils.EMPTY, new ValueMapDecorator(Collections.emptyMap()), children);
     }
 }
