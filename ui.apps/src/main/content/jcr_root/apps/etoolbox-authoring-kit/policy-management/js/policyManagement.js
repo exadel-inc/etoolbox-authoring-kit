@@ -255,11 +255,9 @@
         if (rule.mode === 'OVERRIDE') {
             allowed.length = 0;
         } else if (editable.config.eakIsRoot) {
-            if (ns.pageInfo.editableTemplate) {
-                allowed.push(...ns.author.pageDesign[editable.config.eakResourceName]?.components || []);
-            } else {
-                allowed.push(...ns.author.pageDesign.page[editable.config.eakResourceName]?.components || []);
-            }
+            const componentsSource = ns.author.pageDesign.page || ns.author.pageDesign;
+            const existingComponents = componentsSource[editable.config.eakResourceName]?.components || [];
+            allowed.push(...existingComponents);
         }
         if (rule.value) {
             allowed.push(...rule.value);
