@@ -13,9 +13,6 @@ import java.util.Objects;
 
 public abstract class BaseInjectorTemplateMethod<AnnotationType extends Annotation> implements Injector {
 
-
-    AnnotationType type;
-
     /**
      * Attempts to inject a value into the given adaptable
      * @param adaptable        A {@link SlingHttpServletRequest} instance
@@ -44,7 +41,8 @@ public abstract class BaseInjectorTemplateMethod<AnnotationType extends Annotati
         Object value = getValue(adaptable, name, type, annotation);
 
         if (Objects.isNull(value)) {
-            logError(value);
+            logError(type);
+            logError(name);
         }
 
         return value;
@@ -59,5 +57,11 @@ public abstract class BaseInjectorTemplateMethod<AnnotationType extends Annotati
         AnnotationType annotation
     );
 
-    abstract void logError(Object message);
+    public void logError(Type type) {
+        // implement if needed
+    }
+
+    public void logError(String object) {
+        // implement if needed
+    }
 }

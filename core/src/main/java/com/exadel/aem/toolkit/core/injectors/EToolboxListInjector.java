@@ -89,7 +89,7 @@ public class EToolboxListInjector extends BaseInjectorTemplateMethod<EToolboxLis
         return null;
     }
     @Override
-    public void logError(Object message) {
+    public void logError(Type type) {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
     }
 

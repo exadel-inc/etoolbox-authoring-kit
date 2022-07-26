@@ -78,7 +78,7 @@ public class RequestSuffixInjector extends BaseInjectorTemplateMethod<RequestSuf
     }
 
     @Override
-    public void logError(Object message) {
+    public void logError(Type type) {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
     }
 }

@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSelectors;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+
 /**
  * Injects into a Sling model the value of the {@code selectors} property of the {@link SlingHttpServletRequest}
  * obtained via {@link org.apache.sling.api.request.RequestPathInfo}
@@ -83,7 +84,7 @@ public class RequestSelectorsInjector extends BaseInjectorTemplateMethod<Request
         return null;
     }
     @Override
-    public void logError(Object message) {
+    public void logError(Type type) {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
     }
 }

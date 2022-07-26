@@ -146,7 +146,7 @@ public class TypeUtil {
         if (ArrayUtils.isEmpty(allowedTypes)) {
             return true;
         }
-        return Arrays.asList(allowedTypes).contains(value) || value.equals(Object.class);
+        return Arrays.asList(allowedTypes).contains(ClassUtils.primitiveToWrapper(value)) || value.equals(Object.class);
     }
 
     /**

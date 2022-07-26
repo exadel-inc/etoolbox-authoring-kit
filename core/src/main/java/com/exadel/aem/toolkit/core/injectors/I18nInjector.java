@@ -98,7 +98,7 @@ public class I18nInjector extends BaseInjectorTemplateMethod<I18N> {
         return null;
     }
     @Override
-    public void logError(Object message) {
+    public void logError(Type type) {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
     }
 

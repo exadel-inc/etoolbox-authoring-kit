@@ -69,6 +69,7 @@ public class ChildInjector extends BaseInjectorTemplateMethod<Child> {
     public Child getAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(Child.class);
     }
+
     @Override
     public Object getValue(Object adaptable, String name, Type type, Child annotation) {
 
@@ -103,7 +104,7 @@ public class ChildInjector extends BaseInjectorTemplateMethod<Child> {
         return null;
     }
     @Override
-    public void logError(Object message) {
-        //  LOG.debug("Failed to inject child resource by the name \"{}\"", resourcePath);
+    public void logError(String resourcePath) {
+          LOG.debug("Failed to inject child resource by the name \"{}\"", resourcePath);
     }
 }

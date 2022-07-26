@@ -15,11 +15,10 @@ import com.exadel.aem.toolkit.api.annotations.injectors.RequestAttribute;
 public class TestModelRequestAttribute {
 
     @RequestAttribute
-    private String param1;
-    @RequestAttribute(name = "param1")
+    private String sameOldStringParam;
+    @RequestAttribute(name = "sameOldStringParam")
     private String namedParam;
 
-    private Object paramObjectType;
 
     @RequestAttribute(name = "stringsList")
     private List<String> requestAttributeStringList;
@@ -40,14 +39,11 @@ public class TestModelRequestAttribute {
     private Integer[] requestAttributeIntegerArray;
 
 
-    public String getParam1() {
-        return param1;
+    public String getSameOldStringParam() {
+        return sameOldStringParam;
     }
     public String getNamedParam() {
         return namedParam;
-    }
-    public Object getParamObjectType() {
-        return paramObjectType;
     }
     public List<String> getRequestAttributeStringList() {
         return requestAttributeStringList;

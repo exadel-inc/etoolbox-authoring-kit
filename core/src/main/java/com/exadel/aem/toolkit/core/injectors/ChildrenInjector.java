@@ -111,8 +111,8 @@ public class ChildrenInjector extends BaseInjectorTemplateMethod<Children> {
         return children;
     }
     @Override
-    public void logError(Object message) {
-        //LOG.debug("Failed to inject child resources for the name \"{}\"", resourcePath);
+    public void logError(String resourcePath) {
+        LOG.debug("Failed to inject child resources for the name \"{}\"", resourcePath);
     }
 
     /**
