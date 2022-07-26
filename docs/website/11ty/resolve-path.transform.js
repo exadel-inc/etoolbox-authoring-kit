@@ -3,7 +3,7 @@ const {blue} = require('kleur');
 const {JSDOM} = require('jsdom');
 const {Minimatch} = require('minimatch');
 const {rewriteRules} = require('./site.config');
-const {isDev} = require('./env.config');
+const {url} = require('./site.config');
 
 const ROOT_PATH = path.resolve('../../..');
 const DOCS_PATH = path.join(ROOT_PATH, 'docs');
@@ -35,13 +35,8 @@ class PathResolver {
       link.href = resolved;
     });
 
-    const domain = isDev ? "localhost" : "exadel-inc";
-    const domainRegex = /.+\/\/|www.|\..+/g;
-
     dom.querySelectorAll('a[href^="https"]').forEach((link) => {
-      const linkDomain = link.href.replace(domainRegex, '');
-
-      if(linkDomain === domain) return;
+      if(link.href.startsWith(url)) return;
 
       link.target = "_blank";
       link.rel = "noopener norefferer";
