@@ -1,0 +1,19 @@
+{
+  "jcr:primaryType": "nt:unstructured",
+  "acme": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType": "cq:PageContent",
+      "jcr:title": "Acme Corp."
+    },
+    "page": {
+      "jcr:primaryType": "cq:Page",
+      "jcr:content": {
+        "jcr:primaryType": "cq:PageContent",
+        "sling:resourceType": "acme/components/pages/generic",
+        "cq:template": "some-template",
+        "jcr:title": "Page"
+      }
+    }
+  }
+}

@@ -22,13 +22,13 @@ The ToolKit is developed in the course of Exadel&trade; Marketing Technology Pra
 It is an open and growing project. The authors sincerely welcome creative input from the AEM community worldwide to bring the best programming techniques and design.
 
 ***
-> Learn more about the latest features of Exadel Authoring Kit for AEM by visiting our [_website_](https://exadel-inc.github.io/etoolbox-authoring-kit)
+> Learn more about the latest features of Exadel Authoring Kit for AEM by visiting our [_website_](https://authoring-kit.com)
 >
 ***
 
 ### Manuals
 
-Check out our comprehensive [manual](https://exadel-inc.github.io/etoolbox-authoring-kit/content/getting-started/installation/) to learn all about ToolKit installation, usage and available tools.
+Check out our comprehensive [manual](https://authoring-kit.com/content/getting-started/installation/) to learn all about ToolKit installation, usage and available tools.
 
 Also, you can take a look at these popular articles:
 - [Component management](docs/content/dev-tools/component-management/component-structure.md)

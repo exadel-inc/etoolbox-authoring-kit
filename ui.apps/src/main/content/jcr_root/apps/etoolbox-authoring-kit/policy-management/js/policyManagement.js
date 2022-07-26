@@ -22,6 +22,19 @@
 
     ns.PolicyResolver.cache = new Map();
 
+    $(document).on('cq-page-design-loaded', function (event) {
+        if (!event.pageDesign) {
+            ns.author.pageDesign = {};
+        }
+        ns.author.pageDesign['fake-policies'] = { components: [] };
+    });
+
+    $(document).on('cq-editables-loaded', function (event) {
+        if (window.eakApplyTopLevelPolicy) {
+            event.editables.forEach(e => window.eakApplyTopLevelPolicy(e));
+        }
+    });
+
     ns.PolicyResolver.build = function (rules) {
         return function (cell, allowed, componentList) {
             resolve(allowed, componentList, this, rules);
@@ -45,10 +58,10 @@
         const config = JSON.parse(configJson);
         const settings = getContainerProperties(editable, ns.author, !config.isEditConfig);
         const applicableRule = config.rules.find(rule => isRuleApplicable(rule, settings, componentList));
-        applicableRule.mode = applicableRule.mode || 'OVERRIDE';
 
         if (applicableRule) {
-            applyRule(applicableRule, allowed, componentList);
+            applicableRule.mode = applicableRule.mode || 'OVERRIDE';
+            applyRule(applicableRule, allowed, editable);
         }
         ns.PolicyResolver.cache.set(editable.path, allowed);
     }
@@ -63,7 +76,7 @@
      */
     function getContainerProperties(editable, graniteAuthor, skipFirstParent) {
         return {
-            template: graniteAuthor.pageInfo.editableTemplate ? graniteAuthor.pageInfo.editableTemplate : '',
+            template: document.querySelector('[name="cq:template"]').content,
             pageResType: graniteAuthor.pageInfo.pageResourceType,
             parentsResTypes: editable.getAllParents().map(parent => parent.type).slice(skipFirstParent ? 1 : 0).reverse(),
             pagePath: editable.path.substring(0, editable.path.indexOf('/jcr:content')),
@@ -233,14 +246,18 @@
     }
 
     /**
-     * Modifies the list of allowed components for the current container according to the mode of specified rule
+     * Modifies the list of allowed components for the current container according to the mode specified in a rule
      * @param rule - matched rule
      * @param allowed - array of allowed components; modified within the method by reference
-     * @param componentList - list of all components available in the instance
+     * @param editable - current container
      */
-    function applyRule(rule, allowed, componentList) {
+    function applyRule(rule, allowed, editable) {
         if (rule.mode === 'OVERRIDE') {
             allowed.length = 0;
+        } else if (editable.config.eakIsRoot) {
+            const componentsSource = ns.author.pageDesign.page || ns.author.pageDesign;
+            const existingComponents = componentsSource[editable.config.eakResourceName]?.components || [];
+            allowed.push(...existingComponents);
         }
         if (rule.value) {
             allowed.push(...rule.value);

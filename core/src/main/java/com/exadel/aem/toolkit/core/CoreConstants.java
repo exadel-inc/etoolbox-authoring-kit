@@ -29,6 +29,7 @@ public class CoreConstants {
     public static final String PN_PREPEND = "prepend";
     public static final String PN_SELECTED = "selected";
     public static final String PN_TEXT = "text";
+    public static final String PN_UPDATE_COMPONENT_LIST = "updatecomponentlist";
     public static final String PN_VALUE = "value";
 
     public static final String PARAMETER_ID = "@id";
