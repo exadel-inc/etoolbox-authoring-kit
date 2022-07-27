@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class RequestAttributeInjector extends BaseInjectorTemplateMethod<RequestAttribute> {
+public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestAttributeInjector.class);
 

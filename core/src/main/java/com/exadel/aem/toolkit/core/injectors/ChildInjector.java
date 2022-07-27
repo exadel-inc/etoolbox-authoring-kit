@@ -42,7 +42,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class ChildInjector extends BaseInjectorTemplateMethod<Child> {
+public class ChildInjector extends BaseInjector<Child> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChildInjector.class);
 

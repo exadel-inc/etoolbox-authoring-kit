@@ -41,7 +41,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class RequestParamInjector extends BaseInjectorTemplateMethod<RequestParam> {
+public class RequestParamInjector extends BaseInjector<RequestParam> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestParamInjector.class);
 

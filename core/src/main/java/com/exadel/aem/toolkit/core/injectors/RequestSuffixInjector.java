@@ -37,7 +37,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class RequestSuffixInjector extends BaseInjectorTemplateMethod<RequestSuffix> {
+public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestSuffixInjector.class);
 

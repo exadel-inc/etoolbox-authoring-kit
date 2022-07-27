@@ -47,7 +47,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class EToolboxListInjector extends BaseInjectorTemplateMethod<EToolboxList> {
+public class EToolboxListInjector extends BaseInjector<EToolboxList> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EToolboxListInjector.class);
 

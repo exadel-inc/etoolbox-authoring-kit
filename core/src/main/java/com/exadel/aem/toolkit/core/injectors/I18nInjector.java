@@ -54,7 +54,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class I18nInjector extends BaseInjectorTemplateMethod<I18N> {
+public class I18nInjector extends BaseInjector<I18N> {
 
     private static final Logger LOG = LoggerFactory.getLogger(I18nInjector.class);
     private static final Pattern LOCALE_PARTS_SPLITTER = Pattern.compile("[/_-]");
