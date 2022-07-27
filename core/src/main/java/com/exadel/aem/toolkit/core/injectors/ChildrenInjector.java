@@ -78,10 +78,17 @@ public class ChildrenInjector extends BaseInjectorTemplateMethod<Children> {
         return NAME;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Children getAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(Children.class);
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getValue(Object adaptable, String name, Type type, Children annotation) {
 
@@ -110,9 +117,13 @@ public class ChildrenInjector extends BaseInjectorTemplateMethod<Children> {
         }
         return children;
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void logError(String resourcePath) {
-        LOG.debug("Failed to inject child resources for the name \"{}\"", resourcePath);
+    public void logError(String object) {
+        LOG.debug("Failed to inject child resources for the name \"{}\"", object);
     }
 
     /**

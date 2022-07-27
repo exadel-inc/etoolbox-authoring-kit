@@ -59,11 +59,17 @@ public class RequestSuffixInjector extends BaseInjectorTemplateMethod<RequestSuf
         return element.getDeclaredAnnotation(RequestSuffix.class);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Object getValue(Object adaptable, String name, Type type, RequestSuffix annotation) {
+    public Object getValue(
+        Object adaptable,
+        String name,
+        Type type,
+        RequestSuffix annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
-
         if(request == null) {
             return null;
         }
@@ -74,9 +80,13 @@ public class RequestSuffixInjector extends BaseInjectorTemplateMethod<RequestSuf
         } else if (type.equals(Resource.class)) {
             return request.getRequestPathInfo().getSuffixResource();
         }
+
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void logError(Type type) {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);

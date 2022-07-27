@@ -55,15 +55,23 @@ public class RequestSelectorsInjector extends BaseInjectorTemplateMethod<Request
         return NAME;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RequestSelectors getAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(RequestSelectors.class);
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Object getValue(Object adaptable,
-                           String name,
-                           Type type,
-                           RequestSelectors annotation) {
+    public Object getValue(
+        Object adaptable,
+        String name,
+        Type type,
+        RequestSelectors annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
 
@@ -83,6 +91,10 @@ public class RequestSelectorsInjector extends BaseInjectorTemplateMethod<Request
 
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void logError(Type type) {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);

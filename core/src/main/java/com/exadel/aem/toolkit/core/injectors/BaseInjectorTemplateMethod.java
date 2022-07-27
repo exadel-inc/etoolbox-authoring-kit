@@ -1,6 +1,7 @@
 package com.exadel.aem.toolkit.core.injectors;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 
@@ -15,7 +16,7 @@ public abstract class BaseInjectorTemplateMethod<AnnotationType extends Annotati
 
     /**
      * Attempts to inject a value into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} instance
+     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance.
      * @param name             Name of the Java class member to inject the value into
      * @param type             Type of receiving Java class member
      * @param annotatedElement {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
@@ -33,13 +34,11 @@ public abstract class BaseInjectorTemplateMethod<AnnotationType extends Annotati
         @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
         AnnotationType annotation = getAnnotation(annotatedElement);
-
         if (Objects.isNull(annotation)) {
             return null;
         }
 
         Object value = getValue(adaptable, name, type, annotation);
-
         if (Objects.isNull(value)) {
             logError(type);
             logError(name);
@@ -48,8 +47,22 @@ public abstract class BaseInjectorTemplateMethod<AnnotationType extends Annotati
         return value;
     }
 
+    /**
+     * Getting the annotation class based on elements declared annotation
+     * The necessary implementation is in the descendant classes
+     * @param element        A {@link AnnotatedElement} element
+     * @return {@code AnnotationType} implementation of the {@link Annotation} interface
+     */
     abstract AnnotationType getAnnotation(AnnotatedElement element);
 
+    /**
+     * Extracting value from a {@link SlingHttpServletRequest} or a {@link Resource} instance.
+     * The necessary implementation is need to implemented in the descendant classes
+     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
+     * @param name             Name of the Java class member to inject the value into
+     * @param type             Type of receiving Java class member
+     * @return {@code Resource} or adapted object if successful. Otherwise, null is returned
+     */
     abstract Object getValue(
         Object adaptable,
         String name,
@@ -57,11 +70,21 @@ public abstract class BaseInjectorTemplateMethod<AnnotationType extends Annotati
         AnnotationType annotation
     );
 
-    public void logError(Type type) {
+    /**
+     * logging a message when an attempt to inject a value into an annotated element fails
+     * The necessary implementation is need to implemented in the descendant classes
+     * @param type             Type of receiving Java class member
+     */
+     void logError(Type type) {
         // implement if needed
     }
 
-    public void logError(String object) {
+    /**
+     * logging a object when an attempt to inject a value into an annotated element fails
+     * The necessary implementation is need to implemented in the descendant classes
+     * @param  object            name/value or another annotations variable
+     */
+     void logError(String object) {
         // implement if needed
     }
 }

@@ -58,15 +58,23 @@ public class RequestParamInjector extends BaseInjectorTemplateMethod<RequestPara
         return NAME;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RequestParam getAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(RequestParam.class);
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Object getValue(Object adaptable,
-                                     String name,
-                                     Type type,
-                                     RequestParam annotation) {
+    public Object getValue(
+        Object adaptable,
+        String name,
+        Type type,
+        RequestParam annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
 
@@ -101,8 +109,13 @@ public class RequestParamInjector extends BaseInjectorTemplateMethod<RequestPara
         } else if (TypeUtil.isValidObjectType(type, RequestParameterMap.class)) {
             return request.getRequestParameterMap();
         }
+
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void logError(Type type) {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);

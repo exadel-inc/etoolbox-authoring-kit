@@ -31,12 +31,20 @@ public class TestModelRequestAttribute {
 
     @RequestAttribute(name = "stringArray")
     private String[] requestAttributeStringArray;
-    @RequestAttribute(name = "longArray")
-    private Long[] requestAttributeLongArray;
-    @RequestAttribute(name = "booleanArray")
-    private Boolean[] requestAttributeBooleanArray;
-    @RequestAttribute(name = "integerArray")
-    private Integer[] requestAttributeIntegerArray;
+
+    @RequestAttribute(name = "wrappedBooleanArray")
+    private Boolean[] requestAttributeBooleanArrayWrapped;
+    @RequestAttribute(name = "notWrappedBooleanArray")
+    private boolean[] requestAttributeBooleanArrayNotWrapped;
+
+    @RequestAttribute(name = "wrappedIntegerArray")
+    private Integer[] requestAttributeIntegerArrayWrapped;
+    @RequestAttribute(name = "notWrappedIntegerArray")
+    private int[] requestAttributeIntegerArrayNotWrapped;
+    @RequestAttribute(name = "wrappedLongArray")
+    private Long[] requestAttributeLongArrayWrapped;
+    @RequestAttribute(name = "notWrappedLongArray")
+    private long[] requestAttributeLongArrayNotWrapped;
 
 
     public String getSameOldStringParam() {
@@ -62,16 +70,26 @@ public class TestModelRequestAttribute {
     public List<Long> getRequestAttributeLongList() {
         return requestAttributeLongList;
     }
+
     public String[] getRequestAttributeStringArray() {
         return requestAttributeStringArray;
     }
-    public Long[] getRequestAttributeLongArray() {
-        return requestAttributeLongArray;
+    public Boolean[] getRequestAttributeBooleanArrayWrapped() {
+        return requestAttributeBooleanArrayWrapped;
     }
-    public Boolean[] getRequestAttributeBooleanArray() {
-        return requestAttributeBooleanArray;
+    public boolean[] getRequestAttributeBooleanArrayNotWrapped() {
+        return requestAttributeBooleanArrayNotWrapped;
     }
-    public Integer[] getRequestAttributeIntegerArray() {
-        return requestAttributeIntegerArray;
+    public Integer[] getRequestAttributeIntegerArrayWrapped() {
+        return requestAttributeIntegerArrayWrapped;
+    }
+    public int[] getRequestAttributeIntegerArrayNotWrapped() {
+        return requestAttributeIntegerArrayNotWrapped;
+    }
+    public Long[] getRequestAttributeLongArrayWrapped() {
+        return requestAttributeLongArrayWrapped;
+    }
+    public long[] getRequestAttributeLongArrayNotWrapped() {
+        return requestAttributeLongArrayNotWrapped;
     }
 }

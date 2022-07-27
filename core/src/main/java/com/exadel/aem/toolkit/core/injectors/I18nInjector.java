@@ -75,10 +75,17 @@ public class I18nInjector extends BaseInjectorTemplateMethod<I18N> {
         return NAME;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public I18N getAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(I18N.class);
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getValue(Object adaptable, String name, Type type, I18N annotation) {
         String value = StringUtils.defaultIfEmpty(annotation.value(), name);
@@ -95,6 +102,7 @@ public class I18nInjector extends BaseInjectorTemplateMethod<I18N> {
         } else if (TypeUtil.isValidObjectType(type, String.class)) {
             return i18n.get(value);
         }
+
         return null;
     }
     @Override

@@ -65,16 +65,21 @@ public class ChildInjector extends BaseInjectorTemplateMethod<Child> {
     @Reference
     private AdapterManager adapterManager;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Child getAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(Child.class);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getValue(Object adaptable, String name, Type type, Child annotation) {
 
         Resource adaptableResource = AdaptationUtil.getResource(adaptable);
-
         if (adaptableResource == null) {
             return null;
         }
@@ -103,8 +108,12 @@ public class ChildInjector extends BaseInjectorTemplateMethod<Child> {
         }
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void logError(String resourcePath) {
-          LOG.debug("Failed to inject child resource by the name \"{}\"", resourcePath);
+    public void logError(String object) {
+          LOG.debug("Failed to inject child resource by the name \"{}\"", object);
     }
 }

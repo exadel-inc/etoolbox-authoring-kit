@@ -64,15 +64,21 @@ public class EToolboxListInjector extends BaseInjectorTemplateMethod<EToolboxLis
         return NAME;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public EToolboxList getAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(EToolboxList.class);
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getValue(Object adaptable, String name, Type type, EToolboxList annotation) {
 
         ResourceResolver resourceResolver = AdaptationUtil.getResourceResolver(adaptable);
-
         if(resourceResolver == null) {
             return null;
         }
@@ -86,8 +92,13 @@ public class EToolboxListInjector extends BaseInjectorTemplateMethod<EToolboxLis
         } else if (!(type instanceof ParameterizedType) && ((Class<?>) type).isArray()) {
             return getArray(resourceResolver, annotation.value(), (Class<?>) type);
         }
+
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void logError(Type type) {
         LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
