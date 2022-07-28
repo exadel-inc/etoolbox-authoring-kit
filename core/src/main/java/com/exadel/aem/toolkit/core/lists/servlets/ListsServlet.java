@@ -193,8 +193,9 @@ public class ListsServlet extends SlingSafeMethodsServlet {
             this.itemResourceType = itemResourceType;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
+        @Nonnull
+        @SuppressWarnings("unchecked")
         public Iterator<Resource> iterator() {
             Iterator<Resource> it = new PagingIterator<>(resources.iterator(), offset, limit);
 

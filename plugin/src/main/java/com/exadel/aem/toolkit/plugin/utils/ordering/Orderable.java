@@ -115,8 +115,8 @@ class Orderable<T> {
      * Sets the position of the current object in an ordered collection
      * @param position Integer value signifying the position
      */
-    public void setPosition(int positionInAllNodes) {
-        this.positionInAllNodes = positionInAllNodes;
+    public void setPosition(int position) {
+        this.positionInAllNodes = position;
     }
 
     /**

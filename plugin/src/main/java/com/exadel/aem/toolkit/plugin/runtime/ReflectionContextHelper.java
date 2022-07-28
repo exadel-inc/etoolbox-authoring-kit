@@ -72,7 +72,7 @@ public class ReflectionContextHelper {
     }
 
     /* --------------------------
-       Retrieving manages classes
+       Retrieving managed classes
        -------------------------- */
 
     /**

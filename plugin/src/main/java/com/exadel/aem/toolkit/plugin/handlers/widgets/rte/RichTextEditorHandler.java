@@ -94,8 +94,8 @@ public class RichTextEditorHandler implements Handler {
      * @param annotation Current {@link RichTextEditor} instance
      * @param target     Resulting {@code Target} object
      */
-    public void accept(RichTextEditor rteAnnotation, Target target) {
-        this.rteAnnotation = rteAnnotation;
+    public void accept(RichTextEditor annotation, Target target) {
+        this.rteAnnotation = annotation;
         // create the four basic builders: for ./uiSettings/cui/inline, ./uiSettings/cui/dialogFullScreen,
         // ./uiSettings/cui/tableEditOptions, and ./rtePlugins
         RteNodeWithListBuilder inlineBuilder = new RteNodeWithListBuilder(DialogConstants.NN_INLINE, DialogConstants.PN_TOOLBAR);
@@ -167,16 +167,16 @@ public class RichTextEditorHandler implements Handler {
         if (rtePlugins.exists(DialogConstants.NN_UNDO)) {
             rtePlugins
                 .getTarget(DialogConstants.NN_UNDO)
-                .attributes(rteAnnotation, member -> DialogConstants.PN_MAX_UNDO_STEPS.equals(member.getName()));
+                .attributes(annotation, member -> DialogConstants.PN_MAX_UNDO_STEPS.equals(member.getName()));
         }
 
         rtePlugins
             .getOrCreateTarget(DialogConstants.NN_KEYS)
-            .attributes(rteAnnotation, member -> DialogConstants.PN_TAB_SIZE.equals(member.getName()));
+            .attributes(annotation, member -> DialogConstants.PN_TAB_SIZE.equals(member.getName()));
 
         if (rtePlugins.exists(DialogConstants.NN_LISTS)) {
             rtePlugins.getTarget(DialogConstants.NN_LISTS)
-                .attributes(rteAnnotation, member -> DialogConstants.PN_INDENT_SIZE.equals(member.getName()));
+                .attributes(annotation, member -> DialogConstants.PN_INDENT_SIZE.equals(member.getName()));
 
         }
 
