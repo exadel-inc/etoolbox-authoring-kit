@@ -50,6 +50,7 @@ import com.exadel.aem.toolkit.plugin.utils.StringUtil;
  * Implements {@link Target} to manage a tree-like data structure that is further rendered in a Granite UI component
  * or component configurations
  */
+@SuppressWarnings("HiddenField") // Allows to pass {@code name} arguments in attribute constructors
 class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandlerAcceptor {
 
     private static final String PARENT_PATH = "..";
