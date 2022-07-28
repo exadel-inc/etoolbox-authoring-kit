@@ -34,15 +34,14 @@ import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
-
-import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.lists.ListConstants;
-import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+
+import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.lists.ListConstants;
+import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 /**
  * Contains methods for manipulation with List Resource

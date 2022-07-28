@@ -24,8 +24,6 @@ import javax.annotation.Nonnull;
 import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 
-import com.exadel.aem.toolkit.core.lists.ListConstants;
-
 import org.apache.commons.collections.iterators.TransformIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -51,6 +49,7 @@ import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.EmptyDataSource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.lists.ListConstants;
 
 /**
  * Provides the collection of AEM resources that either represent Exadel Toolbox Lists or serve as folders for Exadel Toolbox Lists
