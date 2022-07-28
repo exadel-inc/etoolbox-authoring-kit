@@ -109,7 +109,8 @@ class ListResourceUtil {
 
     /**
      * Converts a key-value map to the list of {@link ValueMapResource} objects
-     * @param values {@code Map} instance that will be converted to the {@link ValueMapResource}
+     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
+     * @param values           {@code Map} instance that will be converted to the {@link ValueMapResource}
      * @return List of {@link ValueMapResource} objects
      */
     public static List<Resource> mapToValueMapResources(ResourceResolver resourceResolver, Map<String, Object> values) {

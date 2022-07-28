@@ -36,8 +36,8 @@ class RteTreeWithListsBuilder extends RteNodeBuilderBase {
 
     /**
      * Initializes a class instance
-     * @param tagName String representing the name of the node being built
-     * @param attributeName String representing the name of feature
+     * @param tagName       A string representing the name of the node being built
+     * @param attributeName A string representing the name of the feature
      */
     RteTreeWithListsBuilder(
         String tagName,
@@ -47,8 +47,8 @@ class RteTreeWithListsBuilder extends RteNodeBuilderBase {
 
     /**
      * Instance constructor
-     * @param tagName String representing the name of the node being built
-     * @param attributeName String representing the name of feature
+     * @param tagName                A string representing the name of the node being built
+     * @param attributeName          A string representing the name of the feature
      * @param addPluginIdsToFeatures Defines whether plugin IDs should be stored
      */
     RteTreeWithListsBuilder(
@@ -77,9 +77,9 @@ class RteTreeWithListsBuilder extends RteNodeBuilderBase {
     @Override
     public void store(String pluginId, String feature) {
         String mapKey = StringUtils.substringBefore(feature, RichTextEditorHandler.PLUGIN_FEATURE_SEPARATOR);
-        // If pluginId is the same as 'plugin#' part in feature token, do not duplicate the 'plugin' part in the map
-        // otherwise store feature token as it comes (might be needed if this is a popover builder, and it contains tokens
-        // (i.e. buttons) that come from different plugins)
+        // If pluginId is the same as 'plugin#' part in the feature token, do not duplicate the 'plugin' part in the map.
+        // Otherwise, store feature token as it comes (might be needed if this is a popover builder, and it contains tokens
+        // (i.e., buttons) that come from different plugins)
         String mapValue = (StringUtils.isNoneEmpty(pluginId, mapKey) && !pluginId.equals(mapKey))
                 ? feature
                 : StringUtils.substringAfter(feature, RichTextEditorHandler.PLUGIN_FEATURE_SEPARATOR);
@@ -113,6 +113,7 @@ class RteTreeWithListsBuilder extends RteNodeBuilderBase {
 
     /**
      * Creates a nested XML node within the tree-like XML config
+     * @param parent   The node to attach the current instance to
      * @param pluginId RTE Plugin name
      * @param features Feature identifiers
      */

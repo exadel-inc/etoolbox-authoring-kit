@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/anchorbutton/index.html">
  * AnchorButton</a> component in Granite UI.
- * AnchorButton represents a standard HTML hyperlink ({@code <a>}) that is styled like a button
+ * AnchorButton represents a standard HTML hyperlink ({@code <a></a>}) that is styled like a button
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

@@ -73,6 +73,7 @@ class Orderable<T> {
 
     /**
      * Assigns to the current instance an {@code Orderable} object that would represent its {@code before} hint
+     * @param before {@code Orderable} instance
      */
     void setBefore(Orderable<T> before) { // package-friendly setter for test cases
         this.before = before;
@@ -88,6 +89,7 @@ class Orderable<T> {
 
     /**
      * Assigns to the current instance an {@code Orderable} object that would represent its {@code after} hint
+     * @param after {@code Orderable} instance
      */
     public void setAfter(Orderable<T> after) { // package-friendly setter for test cases
         this.after = after;
@@ -111,6 +113,7 @@ class Orderable<T> {
 
     /**
      * Sets the position of the current object in an ordered collection
+     * @param position Integer value signifying the position
      */
     public void setPosition(int positionInAllNodes) {
         this.positionInAllNodes = positionInAllNodes;

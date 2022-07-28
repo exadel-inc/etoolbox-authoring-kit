@@ -29,9 +29,9 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
 
 /**
- * Represents an abstraction of a container section such as {@code Tab} or {@code AccordionPanel}
- * that contains a list of members designed to be rendered within this container element.
- * Used to compose an ordered "containers to container members" build-up for a component class
+ * Represents an abstraction of a container section such as {@code Tab} or {@code AccordionPanel} that contains a list
+ * of members designed to be rendered within this container element. Used to compose an ordered "containers to container
+ * members" build-up for a component class
  */
 public abstract class Section {
 
@@ -93,7 +93,8 @@ public abstract class Section {
     }
 
     /**
-     * Returns true if the current section is a dedicated section that represents an ignored block in the current layout
+     * Returns true if the current section is a dedicated section that represents an ignored block in the current
+     * layout
      * @return True or false
      */
     public boolean isIgnored() {
@@ -113,14 +114,19 @@ public abstract class Section {
        ------------------------ */
 
     /**
-     * Merges a foreign {@code ContainerInfo} to the current instance, basically by adding other instance's fields
-     * while preserving the same  reference
+     * Merges a foreign {@code ContainerInfo} to the current instance, basically by adding other instance's fields while
+     * preserving the same  reference
      * @param other Foreign {@code ContainerInfo} object
      */
     public void merge(Section other) {
         sources.addAll(other.getSources());
     }
 
+    /**
+     * Gets whether the current section corresponds to the given title with either a short or a full variant
+     * @param title String value
+     * @return True or false
+     */
     public boolean isMatch(String title) {
         return StringUtils.equalsAny(title, getTitle(), getFullTitle());
     }
@@ -142,8 +148,8 @@ public abstract class Section {
      * Gets whether the provided member source object fits into this section judging by its placement setting
      * @param member         {@code Source} object representing a non-null member source
      * @param allowUndefined True to accept members that do not have a placement setting (can be of use if this is the
-     *                       first or "default" section in a section array). Note: this flag is only applicable to layout
-     *                       sections. In-dialog sections do not allow members with the undefined placement
+     *                       first or "default" section in a section array). Note: this flag is only applicable to
+     *                       layout sections. In-dialog sections do not allow members with the undefined placement
      * @return True or false
      */
     public boolean canContain(Source member, boolean allowUndefined) {
@@ -165,7 +171,8 @@ public abstract class Section {
        --------------- */
 
     /**
-     * Produces for further rendering the data structure that represents a container section with required attributes set
+     * Produces for further rendering the data structure that represents a container section with required attributes
+     * set
      * @param host {@code Target} object represents the container to append section nodes to
      * @return {@code Target} element being a child of the given target, or the provided target itself
      */
@@ -183,7 +190,7 @@ public abstract class Section {
      * @return {@code Section} instance, or null in case of a null or unsupported annotation passed as the argument
      */
     @SuppressWarnings("deprecation") // Processing of container.Tab is retained for compatibility and will be removed
-                                     // in a version after 2.0.2
+    // in a version after 2.0.2
     public static Section from(Annotation value, boolean isLayout) {
         if (value == null) {
             return null;
@@ -205,7 +212,7 @@ public abstract class Section {
 
     /**
      * Creates a new {@link Section} instance for the given {@link Tab} instance
-     * @param value The {@code Tab} object to process
+     * @param value    The {@code Tab} object to process
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      * @return {@code Section} instance, or null in case of a null object passed as the argument
      */
@@ -217,8 +224,9 @@ public abstract class Section {
     }
 
     /**
-     * Creates a new {@link Section} instance for the given {@link com.exadel.aem.toolkit.api.annotations.container.Tab} instance
-     * @param value The {@code Tab} object to process
+     * Creates a new {@link Section} instance for the given {@link com.exadel.aem.toolkit.api.annotations.container.Tab}
+     * instance
+     * @param value    The {@code Tab} object to process
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      * @return {@code Section} instance, or null in case of a null object passed as the argument
      */
@@ -233,7 +241,7 @@ public abstract class Section {
 
     /**
      * Creates a new {@link Section} instance for the given {@link AccordionPanel} instance
-     * @param value The {@code AccordionPanel} object to process
+     * @param value    The {@code AccordionPanel} object to process
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      * @return {@code Section} instance, or null in case of a null object passed as the argument
      */
@@ -246,9 +254,9 @@ public abstract class Section {
 
     /**
      * Creates a new {@link Section} instance for the given {@link Column} instance
-     * @param value The {@code Column} object to process
+     * @param value    The {@code Column} object to process
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
-     * @return {@code Section} instance, or null in case of a null object passed as the argument
+     * @return {@code Section} instance or null in case of a null object passed as the argument
      */
     public static Section from(Column value, boolean isLayout) {
         if (value == null) {
@@ -257,6 +265,12 @@ public abstract class Section {
         return new ColumnSection(value, isLayout);
     }
 
+    /**
+     * Creates a new {@link Section} instance for the given title. This section will be designed in a way that it will
+     * not be rendered in UI
+     * @param title Title of the new section
+     * @return {@code Section} instance
+     */
     public static Section ignored(String title) {
         return new IgnoredSection(title);
     }

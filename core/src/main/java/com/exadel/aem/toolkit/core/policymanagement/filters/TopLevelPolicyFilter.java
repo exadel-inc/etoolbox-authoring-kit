@@ -129,7 +129,7 @@ public class TopLevelPolicyFilter implements Filter {
     }
 
     /**
-     * Reads the stored script template and retrieves an embeddable {@code <script></script} tag populated with the
+     * Reads the stored script template and retrieves an embeddable {@code <script/>} tag populated with the
      * given policy rules
      * @param rules String value representing policy rules
      * @return String value or null if the bundle resource is not present

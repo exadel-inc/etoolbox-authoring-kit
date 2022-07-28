@@ -45,6 +45,7 @@ abstract class RteNodeBuilderBase {
 
     /**
      * Sets the node name for the node this {@code Builder} will create
+     * @param name The name of the node
      */
     public void setName(String name) {
         this.name = name;
@@ -68,6 +69,7 @@ abstract class RteNodeBuilderBase {
 
     /**
      * Sets the postprocessing routine for this {@code Builder}
+     * @param postprocessing The {@code Consumer} that encapsulates the postprocessing
      */
     void setPostprocessing(Consumer<Target> postprocessing) {
         this.postprocessing = postprocessing;
@@ -83,20 +85,21 @@ abstract class RteNodeBuilderBase {
 
     /**
      * Sets the filtering routine to sort in acceptable feature tokens for this {@code Builder}
+     * @param filter The {@code BiPredicate} instance that signifies the filter
      */
     void setFilter(BiPredicate<String, String> filter) {
         this.filter = filter;
     }
 
     /**
-     * Stores RichTextEditor feature to configuration node
+     * Stores RichTextEditor feature to the configuration node
      * @param pluginId RTE Plugin name
      * @param feature  Feature identifier
      */
     abstract void store(String pluginId, String feature);
 
     /**
-     * Stores many RichTextEditor features of the same RTE plugin to configuration XML markup
+     * Stores many RichTextEditor features of the same RTE plugin to the configuration markup
      * @param pluginId RTE Plugin name
      * @param features Feature identifiers
      */
@@ -106,6 +109,7 @@ abstract class RteNodeBuilderBase {
 
     /**
      * Creates and returns the configuration node
+     * @param parent The node to attach the current instance to
      * @return {@code Element} instance representing the config node
      */
     abstract Target build(Target parent);

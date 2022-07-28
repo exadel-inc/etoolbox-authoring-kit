@@ -73,7 +73,7 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     /**
      * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest}
      * a {@code DataSource} object filled with all child pages under the current root path, which are either
-     * lists themselves, or folders that may contain lists inside.
+     * the lists themselves, or folders that may contain lists inside.
      * The result is then limited by {@code offset} and {@code limit} parameter values.
      * @param request  {@code SlingHttpServletRequest} instance
      * @param response {@code SlingHttpServletResponse} instance
@@ -116,7 +116,7 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Checks whether the resource is a Exadel Toolbox List page
+     * Checks whether the resource is an EToolbox List page
      * @param resolver {@code ResourceResolver} object
      * @param resource {@code Resource} instance
      * @return True or false
@@ -142,7 +142,7 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Checks whether the resource contains child resources which are either pages, or folders that can contain EToolbox
+     * Checks whether the resource contains child resources which are either pages or folders that can enclose EToolbox
      * Lists
      * @param resource {@code Resource} instance
      * @return True or false
@@ -178,7 +178,7 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Implements the {@code DataSource} pattern for displaying matched resources in pages
+     * Implements the {@code DataSource} pattern for displaying matched resources on pages
      */
     private static class PagingDataSource extends AbstractDataSource {
         private final List<Resource> resources;

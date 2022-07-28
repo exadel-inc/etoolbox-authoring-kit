@@ -72,7 +72,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
 
     /**
      * Initializes a class instance with the instance name and parent reference specified
-     * @param name   Non-blank string representing the name of the new instance
+     * @param name   A non-blank string representing the name of the new instance
      * @param parent Nullable {@code Target} object that will serve as the parent reference
      */
     TargetImpl(String name, Target parent) {

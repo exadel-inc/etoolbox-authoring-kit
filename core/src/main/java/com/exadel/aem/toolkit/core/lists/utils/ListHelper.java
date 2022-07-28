@@ -259,7 +259,6 @@ public class ListHelper {
         return listPage;
     }
 
-
     /* -----------------------
        Private utility methods
        ----------------------- */

@@ -30,16 +30,24 @@ import com.exadel.aem.toolkit.plugin.sources.Sources;
 
 /**
  * Implements {@code BiConsumer} to modify {@link Target} instance in the way that it copies applicable values from
- * another {@code Target} the current Granite UI component inherits via the {@link Extends} mechanism
+ * another {@code Target} that the current Granite UI component inherits via the {@link Extends} mechanism
  */
 public class InheritanceHandler implements BiConsumer<Source, Target> {
+
     private final BiConsumer<Source, Target> descendantChain;
+
+    /**
+     * Creates a new {@code InheritanceHandler} instance
+     * @param descendantChain A handler or a conveyor of handlers that should be executed for the current {@code Source}
+     *                        and {@code Target}
+     */
     public InheritanceHandler(BiConsumer<Source, Target> descendantChain) {
         this.descendantChain = descendantChain;
     }
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code
+     * Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
@@ -86,10 +94,10 @@ public class InheritanceHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Finds among the annotations of the provided {@code Source} the first annotation that defines a widget (i.e. has
-     * a valid {@link ResourceType} meta-annotation)
+     * Finds among the annotations of the provided {@code Source} the first annotation that defines a widget (i.e., has a
+     * valid {@link ResourceType} meta-annotation)
      * @param source Current {@link Source} instance
-     * @return {@code Annotation} object or null in case no compliant annotation found
+     * @return {@code Annotation} object or null in case no compliant annotation is found
      */
     private static Annotation getReferencedWidgetAnnotation(Source source) {
         return Arrays.stream(source.adaptTo(Annotation[].class))

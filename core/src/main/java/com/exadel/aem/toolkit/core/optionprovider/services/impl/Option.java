@@ -209,7 +209,6 @@ class Option {
         return resource.getName();
     }
 
-
     /**
      * Gets a builder for a new {@link Option} instance
      * @return {@code DataSourceEntryBuilder} object

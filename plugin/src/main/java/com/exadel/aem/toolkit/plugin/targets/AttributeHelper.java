@@ -75,8 +75,8 @@ public class AttributeHelper<T, V> {
     }
 
     /**
-     * Sets name of current instance. Suitable for chained initialization of XmlAttributeSettingHelper
-     * @param name Provisional name
+     * Sets the name of the current instance. Suitable for chained initialization of XmlAttributeSettingHelper
+     * @param value Provisional name
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
     public AttributeHelper<T,V> withName(String name) {
@@ -86,8 +86,8 @@ public class AttributeHelper<T, V> {
 
     /**
      * Sets a merger for the current instance. Suitable for chained initialization of XmlAttributeSettingHelper
-     * @param merger Function that manages an existing attribute value, and a new one (whether to keep only one of them
-     *               or combine/merge)
+     * @param value A function that manages an existing attribute value, and a new one (whether to keep only one of them
+     *              or combine/merge)
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
     public AttributeHelper<T,V> withMerger(BinaryOperator<String> merger) {
@@ -193,8 +193,9 @@ public class AttributeHelper<T, V> {
     }
 
     /**
-     * Gets whether this string, as an arbitrary user-set value representation, is valid to be stored as an XML attribute
-     * @param value String representing a user-set value
+     * Gets whether this string, as an arbitrary user-set value representation, is valid to be stored as an XML
+     * attribute
+     * @param value A string representing a user-set value
      * @return True or false
      */
     private boolean isValid(String value) {
@@ -267,9 +268,8 @@ public class AttributeHelper<T, V> {
        ------------- */
 
     /**
-     * Retrieves an {@link AttributeHelper.Builder} aimed at creating helper object for manipulation with XML
-     * elements. This is mainly to be used with notation such as
-     * {@code AttributeSettingHelper.forXmlTarget().forAnnotationProperty(...)}
+     * Retrieves an {@link AttributeHelper.Builder} aimed at creating helper object for manipulation with XML elements.
+     * This is mainly to be used with notation such as {@code AttributeSettingHelper.forXmlTarget().forAnnotationProperty(...)}
      * @return {@link AttributeHelper.Builder} instance
      */
     public static Builder<Element> forXmlTarget() {
@@ -288,13 +288,15 @@ public class AttributeHelper<T, V> {
 
     /**
      * Builds instances of {@link AttributeHelper} for a particular attribute-storing media type
+     * @param <T> Type of managed entity
      */
     public static class Builder<T> {
         private final Class<T> holderType;
 
         /**
          * Creates a new {@code Builder} instance
-         * @param holderType {@code Class<?>} reference representing the type of media where attributes values are stored
+         * @param holderType {@code Class<?>} reference representing the type of media where attributes values are
+         *                   stored
          */
         private Builder(Class<T> holderType) {
             this.holderType = holderType;
@@ -375,7 +377,7 @@ public class AttributeHelper<T, V> {
         }
 
         /**
-         * Gets whether a value of specific type can be rendered to a Granite-compliant entity
+         * Gets whether a value of a specific type can be rendered to a Granite-compliant entity
          * @param valueType Annotation's property {@code Class}
          * @return True or false
          */

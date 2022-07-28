@@ -114,7 +114,6 @@ class PathParameters {
         return new Builder();
     }
 
-
     /**
      * Implements the builder pattern for the {@link PathParameters}
      */

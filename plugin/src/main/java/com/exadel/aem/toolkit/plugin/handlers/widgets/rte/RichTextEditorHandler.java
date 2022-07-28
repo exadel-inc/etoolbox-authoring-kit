@@ -62,15 +62,25 @@ public class RichTextEditorHandler implements Handler {
     private RichTextEditor rteAnnotation;
     private final boolean renderDialogFullScreenNode;
 
+    /**
+     * Initializes a new handler instance
+     */
     public RichTextEditorHandler() {
         this(true);
     }
+
+    /**
+     * Initializes a new handler instance
+     * @param renderDialogFullScreenNode Sets whether this handler will create the node named {@code dialogFullScreen}
+     *                                   (not needed in the in-place editing UI but is required otherwise)
+     */
     public RichTextEditorHandler(boolean renderDialogFullScreenNode) {
         this.renderDialogFullScreenNode = renderDialogFullScreenNode;
     }
 
     /**
-     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
+     * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code
+     * Target}
      * @param source {@code Source} object used for data retrieval
      * @param target Resulting {@code Target} object
      */
@@ -81,8 +91,8 @@ public class RichTextEditorHandler implements Handler {
 
     /**
      * Processes the user-defined data and writes it to XML entity
-     * @param rteAnnotation Current {@link RichTextEditor} instance
-     * @param target        Resulting {@code Target} object
+     * @param annotation Current {@link RichTextEditor} instance
+     * @param target     Resulting {@code Target} object
      */
     public void accept(RichTextEditor rteAnnotation, Target target) {
         this.rteAnnotation = rteAnnotation;
@@ -126,7 +136,8 @@ public class RichTextEditorHandler implements Handler {
                 inlineBuilder.build(cui);
             }
         }
-        // if .fullscreenFeatures() are set, build nodes './fullscreen' and './dialogFullScreen' (latter if needed) from .fullscreenFeatures()
+        // In case .fullscreenFeatures() are set, build nodes './fullscreen' and './dialogFullScreen' (latter if needed)
+        // from .fullscreenFeatures()
         fullScreenBuilder.build(cui);
         fullScreenBuilder.setName(DialogConstants.NN_DIALOG_FULL_SCREEN);
         if (renderDialogFullScreenNode) fullScreenBuilder.build(cui);
@@ -168,11 +179,12 @@ public class RichTextEditorHandler implements Handler {
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to facilitate single feature token from the
-     * {@link RichTextEditor#features()} or {@link RichTextEditor#fullscreenFeatures()} collection to one or more appropriate
+     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to facilitate single feature token from the {@link
+     * RichTextEditor#features()} or {@link RichTextEditor#fullscreenFeatures()} collection to one or more appropriate
      * {@code XmlNodeBuilder}-s
-     * @param featureItem      A mutually linked pair consisting of a {@code XmlNodeBuilder} for either {@code features()}
-     *                         or {@code fullscreenFeatures()} or the current RTE config, and a particular feature token
+     * @param featureItem      A mutually linked pair consisting of a {@code XmlNodeBuilder} for either {@code
+     *                         features()} or {@code fullscreenFeatures()} or the current RTE config, and a particular
+     *                         feature token
      * @param tableEditBuilder Additional {@code XmlNodeBuilder} for the tables node
      * @param pluginsBuilder   Additional {@code XmlNodeBuilder} for the plugins node
      */
@@ -213,8 +225,8 @@ public class RichTextEditorHandler implements Handler {
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create if necessary and then retrieve
-     * the {@code icons} node for the RichTextEditor markup
+     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create if necessary and then retrieve the
+     * {@code icons} node for the RichTextEditor markup
      * @param parent {@code Target} instance representing the Granite node that stores the RTE config
      */
     private void getIconsNode(Target parent) {
@@ -243,10 +255,9 @@ public class RichTextEditorHandler implements Handler {
         );
     }
 
-
     /**
-     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create if necessary and then retrieve
-     * the {@code specialCharsConfig} node for the RichTextEditor XML markup
+     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create if necessary and then retrieve the
+     * {@code specialCharsConfig} node for the RichTextEditor XML markup
      * @param parent {@code Target} instance representing the Granite node that stores the RTE config
      */
     private void getSpecialCharactersNode(Target parent) {
@@ -315,8 +326,8 @@ public class RichTextEditorHandler implements Handler {
     }
 
     /**
-     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create and append a node representing
-     * {@code htmlRules} to the RichTextEditor XML markup
+     * Called by {@link RichTextEditorHandler#accept(Source, Target)} to create and append a node representing {@code
+     * htmlRules} to the RichTextEditor XML markup
      * @param parent {@code Target} instance representing the Granite node that stores the RTE config
      */
     private void populateHtmlLinkRules(Target parent) {
@@ -350,7 +361,7 @@ public class RichTextEditorHandler implements Handler {
 
     /**
      * Extracts tokens within a {@code [feature#token, feature#token2]} unit
-     * @param array String representing a multitude of feature tokens
+     * @param array A string representing a multitude of feature tokens
      * @return {@code String[]} array with the extracted feature tokens
      */
     private static String[] getNestedTokens(String array) {
@@ -358,7 +369,8 @@ public class RichTextEditorHandler implements Handler {
     }
 
     /**
-     * Gets whether the provided target can only produce an empty XML markup node (the one without any attributes or children)
+     * Gets whether the provided target can only produce an empty XML markup node (the one without any attributes or
+     * children)
      * @param target {@code Target} object to test
      * @return True or false
      */
@@ -369,8 +381,8 @@ public class RichTextEditorHandler implements Handler {
     }
 
     /**
-     * Modifies the provided {@code Target} object  by removing its children that comply with
-     * {@link RichTextEditorHandler#isEmpty(Target)} method
+     * Modifies the provided {@code Target} object  by removing its children that comply with {@link
+     * RichTextEditorHandler#isEmpty(Target)} method
      * @param target {@code Target} object to test
      */
     private static void clearEmpty(Target target) {
@@ -379,7 +391,7 @@ public class RichTextEditorHandler implements Handler {
     }
 
     /**
-     * Gets a string representation of a {@link Characters} object for using with the child targets creation. The return
+     * Gets a string representation of a {@link Characters} object for use with the child targets creation. The return
      * value differs depending on whether it is a character range or a particular entity
      * @param characters {@code Characters} annotation
      * @return String value
