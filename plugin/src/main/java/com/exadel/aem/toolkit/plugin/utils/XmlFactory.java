@@ -53,7 +53,6 @@ public class XmlFactory {
     );
     public static final String XML_NAMESPACE_PREFIX = "xmlns:";
 
-
     /**
      * Default (instantiation-restricting) constructor
      */

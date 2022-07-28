@@ -84,7 +84,6 @@ public class StringUtil {
         }
     }
 
-
     /* ---------------------------
        Formatting collection types
        --------------------------- */
@@ -139,7 +138,6 @@ public class StringUtil {
             return String.format(TYPE_TOKEN_TEMPLATE, valueType.getSimpleName()) + String.format(ARRAY_TEMPLATE, collectionPart);
         }
     }
-
 
     /* -------------------
        Parsing collections

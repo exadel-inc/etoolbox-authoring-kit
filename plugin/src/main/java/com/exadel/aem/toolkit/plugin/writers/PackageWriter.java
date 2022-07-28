@@ -73,7 +73,6 @@ public class PackageWriter implements AutoCloseable {
     private static final String MULTIPLE_MODULES_EXCEPTION_MESSAGE = "Multiple modules available for %s while processing component %s";
     private static final String UNRECOGNIZED_MODULE_EXCEPTION_MESSAGE = "Unrecognized component module %s while processing component %s";
 
-
     /* -----------------------------
        Class fields and constructors
        ----------------------------- */
@@ -90,7 +89,6 @@ public class PackageWriter implements AutoCloseable {
         this.emptyEditConfigWriter = new EmptyCqEditConfigWriter(writers.get(0).getTransformer());
     }
 
-
     /* ------------------------
        Public interface members
        ------------------------ */
@@ -103,7 +101,6 @@ public class PackageWriter implements AutoCloseable {
             throw new PluginException(CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE, e);
         }
     }
-
 
     /* ----------------
        Instance members
@@ -283,7 +280,6 @@ public class PackageWriter implements AutoCloseable {
         return componentClass.isAnnotationPresent(AemComponent.class)
             && componentClass.getAnnotation(AemComponent.class).writeMode().equals(WriteMode.CREATE);
     }
-
 
     /* ---------------
        Factory methods

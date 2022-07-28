@@ -95,11 +95,9 @@ public class AttributeHelper<T, V> {
         return this;
     }
 
-
     /* --------------
        Values setting
        -------------- */
-
 
     /**
      * Stores the attribute value defined by the wrapped {@code Annotation} property to the given target
@@ -163,7 +161,6 @@ public class AttributeHelper<T, V> {
         setValue(StringUtil.format(validValues, getTypeHintValueType()), target);
     }
 
-
     /**
      * Assigns a {@code String}-casted attribute value to the given target
      * @param value  String to store as the attribute
@@ -217,11 +214,9 @@ public class AttributeHelper<T, V> {
             : valueType;
     }
 
-
     /* --------------
        Values casting
        -------------- */
-
 
     /**
      * Tries to cast a generic value to the current instance's type
@@ -267,11 +262,9 @@ public class AttributeHelper<T, V> {
         return transformation.apply(value);
     }
 
-
     /* -------------
        Factory logic
        ------------- */
-
 
     /**
      * Retrieves an {@link AttributeHelper.Builder} aimed at creating helper object for manipulation with XML

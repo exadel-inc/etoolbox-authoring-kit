@@ -266,7 +266,6 @@ public class AnnotationUtil {
         return modification.cast(result);
     }
 
-
     /**
      * Wraps up a method from an {@code Annotation} signature by name, with {@link NoSuchMethodException} handled
      * @param annotationType Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)

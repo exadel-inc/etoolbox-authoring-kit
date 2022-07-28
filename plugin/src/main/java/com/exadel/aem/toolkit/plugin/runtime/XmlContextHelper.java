@@ -63,7 +63,6 @@ public class XmlContextHelper implements XmlUtility {
      */
     private static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
-
     /* ---------------------------------
        Instance members and constructors
        --------------------------------- */

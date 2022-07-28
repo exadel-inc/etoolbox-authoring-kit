@@ -71,7 +71,6 @@ public class ReflectionContextHelper {
     private ReflectionContextHelper() {
     }
 
-
     /* --------------------------
        Retrieving manages classes
        -------------------------- */
@@ -235,7 +234,6 @@ public class ReflectionContextHelper {
         }
     }
 
-
     /* ---------------------
        Retrieving validators
        --------------------- */
@@ -255,7 +253,6 @@ public class ReflectionContextHelper {
             .collect(Collectors.toList());
         return validators;
     }
-
 
     /* ----------------
        Common utilities
@@ -278,7 +275,6 @@ public class ReflectionContextHelper {
         }
         return null;
     }
-
 
     /* ---------------
        Factory methods

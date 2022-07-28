@@ -57,7 +57,6 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
 
     static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
-
     /* -----------------------------
        Local fields and constructors
        ----------------------------- */
@@ -85,7 +84,6 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
         this.scope = parent != null ? parent.getScope() : Scopes.COMPONENT;
         this.attributes.put(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
     }
-
 
     /* -----------------
        Naming operations
