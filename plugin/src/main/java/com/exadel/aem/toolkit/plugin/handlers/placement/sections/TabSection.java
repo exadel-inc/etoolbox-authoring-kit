@@ -41,7 +41,7 @@ class TabSection extends Section {
      * @param tab      {@code Tab} object this helper wraps
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */
-    public TabSection(Tab tab, boolean isLayout) {
+    TabSection(Tab tab, boolean isLayout) {
         super(isLayout);
         this.tab = tab;
     }

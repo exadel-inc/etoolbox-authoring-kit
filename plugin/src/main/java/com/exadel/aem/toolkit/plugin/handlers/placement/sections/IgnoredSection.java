@@ -28,7 +28,7 @@ class IgnoredSection extends Section {
      * Instance constructor
      * @param title Title of the section
      */
-    public IgnoredSection(String title) {
+    IgnoredSection(String title) {
         super(false);
         this.title = title;
     }

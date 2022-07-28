@@ -34,7 +34,7 @@ class Orderable<T> {
      * @param id    Name of the instance
      * @param value The wrapped object (payload)
      */
-    public Orderable(T value, String id) {
+    Orderable(T value, String id) {
         this(value, id, 0);
     }
 
@@ -45,7 +45,7 @@ class Orderable<T> {
      * @param rank  Optional number representing a pre-defined item rank (such as the {@link
      *              com.exadel.aem.toolkit.api.annotations.widgets.DialogField}'s {@code ranking} property
      */
-    public Orderable(T value, String id, int rank) {
+    Orderable(T value, String id, int rank) {
         this.id = id;
         this.value = value;
         this.rank = rank;

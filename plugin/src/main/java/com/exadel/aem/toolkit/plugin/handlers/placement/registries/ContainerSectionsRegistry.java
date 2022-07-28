@@ -53,7 +53,7 @@ class ContainerSectionsRegistry extends SectionsRegistry {
      * @param source {@code Source} instance used as the data supplier for the markup
      * @param target The root of rendering for the current component
      */
-    public ContainerSectionsRegistry(Source source, Target target) {
+    ContainerSectionsRegistry(Source source, Target target) {
         super(
             collectSections(source, getTitlePrefix(source, target)),
             collectIgnoredSections(source));
