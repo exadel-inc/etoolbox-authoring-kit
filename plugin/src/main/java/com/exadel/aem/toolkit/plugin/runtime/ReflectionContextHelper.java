@@ -91,11 +91,13 @@ public class ReflectionContextHelper {
 
         Set<Class<?>> componentViews = new HashSet<>();
         classesAnnotatedWithComponent.forEach(cls -> componentViews.addAll(Arrays.asList(cls.getAnnotation(AemComponent.class).views())));
-        classesAnnotatedWithComponent.addAll(classesAnnotatedWithDialog.stream().filter(cls -> !componentViews.contains(cls)).collect(Collectors.toList()));
+        classesAnnotatedWithComponent.addAll(classesAnnotatedWithDialog
+            .stream()
+            .filter(cls -> !componentViews.contains(cls))
+            .collect(Collectors.toList()));
 
         return classesAnnotatedWithComponent;
     }
-
 
     /* -------------------
        Retrieving handlers

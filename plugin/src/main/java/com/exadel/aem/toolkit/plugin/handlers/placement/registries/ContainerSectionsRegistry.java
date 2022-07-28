@@ -43,8 +43,10 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
  */
 class ContainerSectionsRegistry extends SectionsRegistry {
 
-    private static final Predicate<Target> CONTAINER_PREDICATE = node -> ResourceTypes.CONTAINER.equals(node.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE));
-    private static final Predicate<Target> WIDGET_NODE_PREDICATE = node -> !node.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, StringUtils.EMPTY).isEmpty();
+    private static final Predicate<Target> CONTAINER_PREDICATE = node ->
+        ResourceTypes.CONTAINER.equals(node.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE));
+    private static final Predicate<Target> WIDGET_NODE_PREDICATE = node ->
+        !node.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, StringUtils.EMPTY).isEmpty();
 
     /**
      * Creates a new registry instance

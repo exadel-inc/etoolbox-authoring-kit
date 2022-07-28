@@ -53,10 +53,13 @@ public class InheritanceHandler implements BiConsumer<Source, Target> {
      */
     @Override
     public void accept(Source source, Target target) {
-        if (descendantChain == null) return;
+        if (descendantChain == null) {
+            return;
+        }
         Deque<Source> inheritanceTree = getInheritanceTree(source);
         while (!inheritanceTree.isEmpty()) {
-            descendantChain.accept(inheritanceTree.pollLast(), target); // to render 'ancestors' of context source starting from next handler in chain
+            // This is to render 'ancestors' of context source starting from next handler in chain
+            descendantChain.accept(inheritanceTree.pollLast(), target);
         }
     }
 
@@ -75,13 +78,16 @@ public class InheritanceHandler implements BiConsumer<Source, Target> {
         while (extendsAnnotation != null) {
             String referencedFieldName = extendsAnnotation.field().isEmpty() ? source.getName() : extendsAnnotation.field();
             try {
-                Source referencedField = Sources.fromMember(extendsAnnotation.value().getDeclaredField(referencedFieldName), extendsAnnotation.value());
+                Source referencedField = Sources.fromMember(
+                    extendsAnnotation.value().getDeclaredField(referencedFieldName),
+                    extendsAnnotation.value());
                 if (referencedField.equals(source) || result.contains(referencedField)) { // to avoid circular references
                     break;
                 }
                 Annotation referencedFieldWidgetAnnotation = getReferencedWidgetAnnotation(referencedField);
                 if (referencedFieldWidgetAnnotation != null
-                    && widgetAnnotation.annotationType().equals(referencedFieldWidgetAnnotation.annotationType())) { // to avoid mixing up props of different components
+                    // to avoid mixing up props of different components
+                    && widgetAnnotation.annotationType().equals(referencedFieldWidgetAnnotation.annotationType())) {
                     result.add(referencedField);
                 }
                 extendsAnnotation = referencedField.adaptTo(Extends.class);

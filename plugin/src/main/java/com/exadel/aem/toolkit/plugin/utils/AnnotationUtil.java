@@ -326,7 +326,11 @@ public class AnnotationUtil {
          *                         routines, each a function accepting a source object, and a variadic array of
          *                         Object-typed arguments
          */
-        private ExtensionInvocationHandler(T source, Class<U> targetType, Map<String, BiFunction<T, Object[], R>> extensionMethods) {
+        private ExtensionInvocationHandler(
+            T source,
+            Class<U> targetType,
+            Map<String, BiFunction<T, Object[], R>> extensionMethods) {
+
             this.source = source;
             this.targetType = targetType;
             this.extensionMethods = extensionMethods;

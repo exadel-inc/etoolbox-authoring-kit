@@ -71,7 +71,7 @@ public class DateTimeSetting {
             return dateTimeInstance;
         }
         try {
-            if (StringUtils.isNotBlank(dateTimeValue.timezone())) { // the following induces exception if any of DateTime parameters is invalid
+            if (StringUtils.isNotBlank(dateTimeValue.timezone())) {
                 return ZonedDateTime.of(
                     dateTimeValue.year(),
                     dateTimeValue.month(),

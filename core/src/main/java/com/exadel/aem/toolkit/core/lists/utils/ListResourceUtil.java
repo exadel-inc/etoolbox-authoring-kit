@@ -76,7 +76,11 @@ class ListResourceUtil {
      * @param properties       Properties of the list entry
      * @throws PersistenceException If the list item could not be created
      */
-    public static void createListItem(ResourceResolver resourceResolver, Resource parent, Map<String, Object> properties) throws PersistenceException {
+    public static void createListItem(
+        ResourceResolver resourceResolver,
+        Resource parent,
+        Map<String, Object> properties)
+        throws PersistenceException {
         Map<String, Object> valueMapWithoutSystemProps = excludeSystemProperties(properties);
         valueMapWithoutSystemProps.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ListConstants.LIST_ITEM_RESOURCE_TYPE);
         resourceResolver.create(parent, ResourceUtil.createUniqueChildName(parent, CoreConstants.PN_LIST_ITEM), valueMapWithoutSystemProps);

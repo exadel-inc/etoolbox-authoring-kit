@@ -109,7 +109,9 @@ public class XmlContextHelper implements XmlUtility {
         }
         if (properties != null) {
             properties.forEach((key, value) -> {
-                if (StringUtils.isNoneBlank(key, value)) element.setAttribute(key, value);
+                if (StringUtils.isNoneBlank(key, value)) {
+                    element.setAttribute(key, value);
+                }
             });
         }
         return element;
@@ -603,7 +605,9 @@ public class XmlContextHelper implements XmlUtility {
         if (element == null) {
             return true;
         }
-        if (element.hasChildNodes() || element.getAttributes().getLength() > 1) return false;
+        if (element.hasChildNodes() || element.getAttributes().getLength() > 1) {
+            return false;
+        }
         return DialogConstants.PN_PRIMARY_TYPE.equals(element.getAttributes().item(0).getNodeName());
     }
 

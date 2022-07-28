@@ -139,7 +139,9 @@ public class Validation {
     private String getLogMessage(Object value) {
         if (value != null && ClassUtils.isAssignable(value.getClass(), Annotation.class)) {
             String argumentSubstring = StringUtils.substringBetween(value.toString(), ARGUMENT_LIST_OPENER, ARGUMENT_LIST_FINISHER);
-            if (argumentSubstring == null) argumentSubstring = value.toString();
+            if (argumentSubstring == null) {
+                argumentSubstring = value.toString();
+            }
             return String.format(LOG_ANNOTATION_PATTERN,
                     ((Annotation) value).annotationType().getSimpleName(),
                     argumentSubstring,

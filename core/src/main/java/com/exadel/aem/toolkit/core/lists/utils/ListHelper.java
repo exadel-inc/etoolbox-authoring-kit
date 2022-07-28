@@ -189,7 +189,7 @@ public class ListHelper {
             return null;
         }
 
-        Class<?> modelType = CollectionUtils.isNotEmpty(values)? values.get(0).getClass() : null;
+        Class<?> modelType = CollectionUtils.isNotEmpty(values) ? values.get(0).getClass() : null;
 
         Function<Object, Map<String, Object>> mapping = ListResourceUtil.getMappingFunction(modelType);
 

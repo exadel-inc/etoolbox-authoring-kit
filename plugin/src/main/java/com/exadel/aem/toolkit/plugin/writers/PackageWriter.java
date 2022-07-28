@@ -146,7 +146,8 @@ public class PackageWriter implements AutoCloseable {
     public boolean write(Class<?> componentClass) {
         String providedComponentPath = getComponentPath(componentClass);
         if (StringUtils.isBlank(providedComponentPath)) {
-            ValidationException validationException = new ValidationException(COMPONENT_NAME_MISSING_EXCEPTION_MESSAGE + componentClass.getSimpleName());
+            String exceptionMessage = COMPONENT_NAME_MISSING_EXCEPTION_MESSAGE + componentClass.getSimpleName();
+            ValidationException validationException = new ValidationException(exceptionMessage);
             PluginRuntime.context().getExceptionHandler().handle(validationException);
             return false;
         }
@@ -188,7 +189,12 @@ public class PackageWriter implements AutoCloseable {
         // via "Insert new component" popup or component rail; also the in-place editing popup won't be displayed.
         // To mitigate this, we need to create a minimal cq:editConfig node
         if (viewsByWriter.keySet().stream().noneMatch(writer ->
-            StringUtils.equalsAny(writer.getScope(), Scopes.CQ_DIALOG, Scopes.CQ_EDIT_CONFIG, Scopes.CQ_DESIGN_DIALOG, Scopes.CQ_CHILD_EDIT_CONFIG))) {
+            StringUtils.equalsAny(
+                writer.getScope(),
+                Scopes.CQ_DIALOG,
+                Scopes.CQ_EDIT_CONFIG,
+                Scopes.CQ_DESIGN_DIALOG,
+                Scopes.CQ_CHILD_EDIT_CONFIG))) {
             viewsByWriter.put(emptyEditConfigWriter, componentClass);
         }
 

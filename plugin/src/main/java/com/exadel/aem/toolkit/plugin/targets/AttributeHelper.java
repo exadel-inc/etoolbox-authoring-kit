@@ -79,8 +79,8 @@ public class AttributeHelper<T, V> {
      * @param value Provisional name
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    public AttributeHelper<T,V> withName(String name) {
-        this.name = name;
+    public AttributeHelper<T, V> withName(String value) {
+        this.name = value;
         return this;
     }
 
@@ -90,8 +90,8 @@ public class AttributeHelper<T, V> {
      *              or combine/merge)
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    public AttributeHelper<T,V> withMerger(BinaryOperator<String> merger) {
-        this.valueMerger = merger;
+    public AttributeHelper<T, V> withMerger(BinaryOperator<String> value) {
+        this.valueMerger = value;
         return this;
     }
 
@@ -187,7 +187,7 @@ public class AttributeHelper<T, V> {
     private void removeAttributeFrom(T target) {
         if (Element.class.equals(holderType)) {
             ((Element) target).removeAttribute(name);
-        } else if (Target.class.equals(holderType)){
+        } else if (Target.class.equals(holderType)) {
             ((Target) target).getAttributes().remove(name);
         }
     }
@@ -345,7 +345,7 @@ public class AttributeHelper<T, V> {
          * @return New {@code AttributeHelper} instance
          */
         public <V> AttributeHelper<T, V> forNamedValue(String name, Class<V> valueType) {
-            AttributeHelper<T,V> attributeSetter = new AttributeHelper<>(holderType, valueType);
+            AttributeHelper<T, V> attributeSetter = new AttributeHelper<>(holderType, valueType);
             if (!fits(valueType)) {
                 return attributeSetter;
             }

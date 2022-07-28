@@ -371,7 +371,8 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             return match;
         }
         for (Target child : current.getChildren()) {
-            if ((match = findChild(child, filter)) != null) {
+            match = findChild(child, filter);
+            if (match != null) {
                 return match;
             }
         }

@@ -75,7 +75,12 @@ public class TopLevelPolicyFilter implements Filter {
      * {@inheritDoc}
      */
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(
+        ServletRequest servletRequest,
+        ServletResponse servletResponse,
+        FilterChain filterChain)
+        throws IOException, ServletException {
+
         SlingHttpServletRequest request = ((SlingHttpServletRequest) servletRequest);
         ResourceResolver resourceResolver = request.getResourceResolver();
 

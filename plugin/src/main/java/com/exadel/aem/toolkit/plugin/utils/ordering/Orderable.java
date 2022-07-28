@@ -124,8 +124,12 @@ class Orderable<T> {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         @SuppressWarnings("unchecked")
         Orderable<T> orderable = (Orderable<T>) o;

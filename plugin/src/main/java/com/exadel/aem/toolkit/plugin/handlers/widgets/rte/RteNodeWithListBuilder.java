@@ -80,8 +80,12 @@ class RteNodeWithListBuilder extends RteNodeBuilderBase {
         if (!isEmpty()) {
             Target result = parent.getOrCreateTarget(getName());
             result.attribute(getAttributeName(), argumentList.toString().replace(" ", ""));
-            if (childBuilder != null) childBuilder.build(result);
-            if (getPostprocessing() != null) getPostprocessing().accept(result);
+            if (childBuilder != null) {
+                childBuilder.build(result);
+            }
+            if (getPostprocessing() != null) {
+                getPostprocessing().accept(result);
+            }
             return result;
         }
         return null;
