@@ -137,8 +137,9 @@ public class ListsServlet extends SlingSafeMethodsServlet {
      */
     private static boolean isFolder(Resource resource) {
         String primaryType = resource.getValueMap().get(JcrConstants.JCR_PRIMARYTYPE, StringUtils.EMPTY);
-        return primaryType.equals(JcrConstants.NT_FOLDER) || primaryType.equals(JcrResourceConstants.NT_SLING_FOLDER) ||
-            primaryType.equals(JcrResourceConstants.NT_SLING_ORDERED_FOLDER);
+        return primaryType.equals(JcrConstants.NT_FOLDER)
+            || primaryType.equals(JcrResourceConstants.NT_SLING_FOLDER)
+            || primaryType.equals(JcrResourceConstants.NT_SLING_ORDERED_FOLDER);
     }
 
     /**

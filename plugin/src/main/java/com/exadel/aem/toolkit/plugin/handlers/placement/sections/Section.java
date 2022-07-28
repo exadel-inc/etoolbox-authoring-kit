@@ -75,9 +75,9 @@ public abstract class Section {
      * @return String value
      */
     private String getFullTitle() {
-        return StringUtils.stripEnd(StringUtils.defaultString(titlePrefix), CoreConstants.SEPARATOR_SLASH) +
-            CoreConstants.SEPARATOR_SLASH +
-            getTitle();
+        return StringUtils.stripEnd(StringUtils.defaultString(titlePrefix), CoreConstants.SEPARATOR_SLASH)
+            + CoreConstants.SEPARATOR_SLASH
+            + getTitle();
     }
 
     /* ---------------

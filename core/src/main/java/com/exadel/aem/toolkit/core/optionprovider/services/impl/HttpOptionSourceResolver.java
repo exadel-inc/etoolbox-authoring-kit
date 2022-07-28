@@ -55,7 +55,8 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
 
     private static final Pattern INTERNAL_PATH_PATTERN = Pattern.compile(".+\\.json/(.+)$", Pattern.CASE_INSENSITIVE);
 
-    private static final String HTTP_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36";
+    private static final String HTTP_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36";
     private static final int HTTP_TIMEOUT = 10_000;
 
     private HttpClient httpClient;

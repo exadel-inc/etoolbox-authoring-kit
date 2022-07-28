@@ -51,8 +51,8 @@ abstract class ContainerHandler {
     static final Function<MemberSource, List<Class<?>>> ANNOTATED_MEMBER_TYPE_AND_REPORTING_CLASS =
         memberSource -> Arrays.asList(memberSource.getValueType(), memberSource.getReportingClass());
 
-    private static final String RECURSION_MESSAGE_TEMPLATE = "Recursive rendering prohibited: a member of type \"%s\" " +
-        "was set to be rendered within a container created with a member of type \"%s\"";
+    private static final String RECURSION_MESSAGE_TEMPLATE = "Recursive rendering prohibited: a member of type \"%s\" "
+        + "was set to be rendered within a container created with a member of type \"%s\"";
 
     /* ----------------------------------
        Retrieving members for a container

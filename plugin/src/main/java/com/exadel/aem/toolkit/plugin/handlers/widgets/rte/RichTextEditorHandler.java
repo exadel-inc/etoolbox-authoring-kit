@@ -333,7 +333,7 @@ public class RichTextEditorHandler implements Handler {
             .collect(Collectors.toList());
         if (!nonDefaultAllowPropsNames.isEmpty()) {
             Target allowBasicsNode = htmlPasteRulesNode.getOrCreateTarget(DialogConstants.NN_ALLOW_BASICS);
-            // default values are all 'true' so non-defaults are 'false'
+            // default values are all 'true', so non-defaults are 'false'
             nonDefaultAllowPropsNames.forEach(fieldName -> allowBasicsNode.attribute(fieldName, false));
         }
         String blockTags = rules.allowedBlockTags().length == 0
@@ -397,9 +397,9 @@ public class RichTextEditorHandler implements Handler {
      * @return True or false
      */
     private static boolean isEmpty(Target target) {
-        return target.getAttributes().size() == 1 &&
-            target.getAttributes().containsKey(DialogConstants.PN_PRIMARY_TYPE) &&
-            target.getChildren().isEmpty();
+        return target.getAttributes().size() == 1
+            && target.getAttributes().containsKey(DialogConstants.PN_PRIMARY_TYPE)
+            && target.getChildren().isEmpty();
     }
 
     /**
