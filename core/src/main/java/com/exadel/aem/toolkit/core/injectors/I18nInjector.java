@@ -59,9 +59,9 @@ public class I18nInjector implements Injector {
 
     private static final Logger LOG = LoggerFactory.getLogger(I18nInjector.class);
 
-    private static final Pattern LOCALE_PARTS_SPLITTER = Pattern.compile("[/_-]");
-
     public static final String NAME = "eak-etoolbox-i18n-injector";
+
+    private static final Pattern LOCALE_PARTS_SPLITTER = Pattern.compile("[/_-]");
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE)
     private List<ResourceBundleProvider> resourceBundleProviders;
