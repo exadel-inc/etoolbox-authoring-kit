@@ -179,6 +179,10 @@
         <module name="ArrayTypeStyle"/>
         <module name="TodoComment"/>
         <module name="UpperEll"/>
+        <module name="MatchXpath">
+            <property name="query" value="//VARIABLE_DEF[./IDENT[@text='LOG']]/preceding-sibling::VARIABLE_DEF"/>
+            <message key="matchxpath.match" value="Logger must be the first declaration in a class"/>
+        </module>
 
         <!-- This rule is added because we cannot remove the VARIABLE_DEF token from the EmptyLineSeparator as it affects
              detecting empty lines around methods -->
@@ -189,8 +193,8 @@
 
         <!-- This rule is to allow private LOG constant go first in the declarations block -->
         <module name="SuppressionXpathSingleFilter">
-            <property name="checks" value="DeclarationOrder"/>
-            <property name="query" value="//*[preceding::VARIABLE_DEF[./IDENT[@text='LOG']]]"/>
+            <property name="checks" value="DeclarationOrderCheck"/>
+            <property name="query" value="//VARIABLE_DEF[preceding-sibling::VARIABLE_DEF[1]/IDENT[@text='LOG']]/MODIFIERS"/>
         </module>
 
         <module name="SuppressWarningsHolder"/>
