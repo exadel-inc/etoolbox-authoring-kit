@@ -2,6 +2,7 @@
 
 .popular-articles {
   &-container {
+    padding: 0 !important; // override global markdown style for ul 
     display: grid;
     grid-template-columns: repeat(1, 100%);
     grid-gap: 50px;
@@ -14,14 +15,8 @@
     list-style: none;
   }
 
-  &-title {
-    color: @nav-accent;
-    margin-bottom: 24px;
-  }
-
   &-subheader {
-    color: @nav-accent;
-    margin-bottom: 40px;
+    margin-bottom: 40px !important;// override global markdown style for h2 
   }
 
   &-content {
