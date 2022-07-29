@@ -35,13 +35,15 @@ class PathResolver {
       link.href = resolved;
     });
 
+    const domain = new URL(url).hostname;
     dom.querySelectorAll('a[href^="https"]').forEach((link) => {
-      if(link.href.startsWith(url)) return;
-
-      link.target = "_blank";
-      link.rel = "noopener norefferer";
+      const linkDomain = new URL(link.href).hostname;
+      
+      if(domain !== linkDomain) {
+        link.target = "_blank";
+        link.rel = "noopener norefferer";
+      }
     })
-   
   }
 
   static resolveImages(dom, filePath) {
