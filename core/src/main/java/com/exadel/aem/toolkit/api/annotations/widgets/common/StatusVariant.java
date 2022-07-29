@@ -26,6 +26,10 @@ public enum StatusVariant {
 
     private final String value;
 
+    /**
+     * Initializes a new enum value
+     * @param value String representation of the value
+     */
     StatusVariant(String value) {
         this.value = value;
     }

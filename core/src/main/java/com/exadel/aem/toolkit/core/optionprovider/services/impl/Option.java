@@ -221,6 +221,7 @@ class Option {
      * Implements builder pattern for the {@link Option}. Ensures that the {@code DataSourceEntry} fields
      * are initialized with proper defaults
      */
+    @SuppressWarnings("MissingJavadocMethod")
     static class Builder {
         private final Option dataSourceOption = new Option();
 

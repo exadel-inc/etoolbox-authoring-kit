@@ -59,6 +59,10 @@ class Orderable<T> {
         return id;
     }
 
+    /**
+     * Retrieves the rank value
+     * @return Integer value
+     */
     public int getRank() {
         return rank;
     }

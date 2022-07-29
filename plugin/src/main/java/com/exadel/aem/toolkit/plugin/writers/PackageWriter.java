@@ -82,6 +82,14 @@ public class PackageWriter implements AutoCloseable {
     private final List<PackageEntryWriter> writers;
     private final EmptyCqEditConfigWriter emptyEditConfigWriter;
 
+    /**
+     * Initializes a new {@link PackageWriter} instance
+     * @param fileSystem         The {@link FileSystem} to create {@code PackageWriter} for
+     * @param componentsPathBase Optional string value representing the root file system path under which components are
+     *                           placed
+     * @param writers            Collection of {@link PackageEntryWriter} objects that are invoked one by one for
+     *                           storing rendered file data
+     */
     private PackageWriter(FileSystem fileSystem, String componentsPathBase, List<PackageEntryWriter> writers) {
         this.fileSystem = fileSystem;
         this.componentsPathBase = componentsPathBase;
@@ -137,9 +145,9 @@ public class PackageWriter implements AutoCloseable {
     }
 
     /**
-     * Stores AEM component's authoring markup into the package. To do this, several package entry writers,
-     * e.g. for populating {@code .content.xml}, {@code _cq_dialog.xml}, {@code _cq_editConfig.xml}, etc.
-     * are called in sequence. If the component is split into several "modules" (views), each is processed separately
+     * Stores AEM component's authoring markup into the package. To do this, several package entry writers, e.g. for
+     * populating {@code .content.xml}, {@code _cq_dialog.xml}, {@code _cq_editConfig.xml}, etc. are called in sequence.
+     * If the component is split into several "modules" (views), each is processed separately
      * @param componentClass Current {@code Class} instance
      * @return True if at least one file/node was stored in the component's folder; otherwise, false
      */
@@ -207,11 +215,11 @@ public class PackageWriter implements AutoCloseable {
     }
 
     /**
-     * Collects a registry of views available for the given AEM component and matches each view to an appropriate
-     * {@link PackageEntryWriter}
+     * Collects a registry of views available for the given AEM component and matches each view to an appropriate {@link
+     * PackageEntryWriter}
      * @param componentClass Current {@code Class} instance
-     * @return {@code Map} that exposes {@code PackageEntryWriter} instances as keys and the matched component views
-     * as values
+     * @return {@code Map} that exposes {@code PackageEntryWriter} instances as keys and the matched component views as
+     * values
      */
     private Map<PackageEntryWriter, Class<?>> getComponentViews(Class<?> componentClass) {
         Class<?>[] referencedViews = Optional
@@ -261,7 +269,8 @@ public class PackageWriter implements AutoCloseable {
        --------------- */
 
     /**
-     * Retrieves the path specified for the current component in either {@link AemComponent} or {@link Dialog} annotation
+     * Retrieves the path specified for the current component in either {@link AemComponent} or {@link Dialog}
+     * annotation
      * @param componentClass The {@code Class<?>} to get the path for
      * @return String value
      */
@@ -319,8 +328,8 @@ public class PackageWriter implements AutoCloseable {
     }
 
     /**
-     * Initializes an instance of {@link PackageWriter} profiled for the particular {@link FileSystem} representing
-     * the structure of the package
+     * Initializes an instance of {@link PackageWriter} profiled for the particular {@link FileSystem} representing the
+     * structure of the package
      * @param fileSystem         Current {@link FileSystem} instance
      * @param projectName        Name of the project this file system contains information for
      * @param componentsPathBase Path to the sub-folder within package under which AEM component folders are situated

@@ -25,6 +25,9 @@ public class ElementSizeConstants {
     public static final String MEDIUM = "M";
     public static final String LARGE = "L";
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private ElementSizeConstants() {
     }
 }

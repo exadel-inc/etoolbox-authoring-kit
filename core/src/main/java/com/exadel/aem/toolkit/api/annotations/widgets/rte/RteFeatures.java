@@ -70,6 +70,9 @@ public class RteFeatures {
     public static final String FEATURE_SEPARATOR = ",";
     public static final String END_POPOVER = "]";
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private RteFeatures() {}
 
     public static class Popovers {
@@ -147,6 +150,9 @@ public class RteFeatures {
             + SUBSUPERSCRIPT_SUPERSCRIPT
             + END_POPOVER;
 
+        /**
+         * Default (instantiation-preventing) constructor
+         */
         private Popovers() {}
     }
 
@@ -170,6 +176,9 @@ public class RteFeatures {
             public static final String REMOVETABLE = "table#removetable";
             public static final String EXITTABLEEDITING = "table#exitTableEditing";
 
+            /**
+             * Default (instantiation-preventing) constructor
+             */
             private TablePanel() {}
         }
 
@@ -194,6 +203,9 @@ public class RteFeatures {
             + TablePanel.EXITTABLEEDITING
             + END_POPOVER;
 
+        /**
+         * Default (instantiation-preventing) constructor
+         */
         private Panels() {}
     }
 }

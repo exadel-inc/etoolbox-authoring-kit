@@ -52,8 +52,8 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.ListConstants;
 
 /**
- * Provides the collection of AEM resources that either represent Exadel Toolbox Lists or serve as folders for Exadel Toolbox Lists
- * to be displayed in the Exadel Toolbox Lists console
+ * Provides the collection of AEM resources that either represent Exadel Toolbox Lists or serve as folders for Exadel
+ * Toolbox Lists to be displayed in the Exadel Toolbox Lists console
  */
 @Component(
     service = Servlet.class,
@@ -70,10 +70,10 @@ public class ListsServlet extends SlingSafeMethodsServlet {
     private transient ExpressionResolver expressionResolver;
 
     /**
-     * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest}
-     * a {@code DataSource} object filled with all child pages under the current root path, which are either
-     * the lists themselves, or folders that may contain lists inside.
-     * The result is then limited by {@code offset} and {@code limit} parameter values.
+     * Processes {@code GET} requests to the current endpoint to add to the {@code SlingHttpServletRequest} a {@code
+     * DataSource} object filled with all child pages under the current root path, which are either the lists
+     * themselves, or folders that may contain lists inside. The result is then limited by {@code offset} and {@code
+     * limit} parameter values.
      * @param request  {@code SlingHttpServletRequest} instance
      * @param response {@code SlingHttpServletResponse} instance
      */
@@ -163,6 +163,11 @@ public class ListsServlet extends SlingSafeMethodsServlet {
         return resource.getName().startsWith(PREFIX_REP) || resource.getName().equals(JcrConstants.JCR_CONTENT);
     }
 
+    /**
+     * Retrieves the children of the given {@code Resource} as a stream of objects
+     * @param resource Parent resource
+     * @return {@code Stream} instance
+     */
     private static Stream<Resource> getChildrenStream(Resource resource) {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(resource.listChildren(), Spliterator.ORDERED), false);
     }
@@ -186,6 +191,13 @@ public class ListsServlet extends SlingSafeMethodsServlet {
         private final int limit;
         private final String itemResourceType;
 
+        /**
+         * Initializes a new datasource with the paging capabilities
+         * @param resources        List of resources exposed by this datasource
+         * @param offset           Paging offset
+         * @param limit            Max number of displayed resources
+         * @param itemResourceType The exposed resource type
+         */
         private PagingDataSource(List<Resource> resources, int offset, int limit, String itemResourceType) {
             this.resources = resources;
             this.offset = offset;

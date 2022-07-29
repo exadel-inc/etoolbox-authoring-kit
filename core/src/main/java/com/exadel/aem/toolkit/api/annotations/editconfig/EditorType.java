@@ -23,5 +23,8 @@ public class EditorType {
     public static final String EMPTY = "empty";
     public static final String HYBRID = "hybrid";
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private EditorType() {}
 }

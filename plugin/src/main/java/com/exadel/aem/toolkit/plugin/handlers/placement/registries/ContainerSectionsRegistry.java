@@ -139,6 +139,11 @@ class ContainerSectionsRegistry extends SectionsRegistry {
         return String.join(CoreConstants.SEPARATOR_SLASH, resultChunks);
     }
 
+    /**
+     * Retrieves the list of identifiers (titles) of all the ignored sections for the given {@link Source}
+     * @param source {@code Source} instance matching the current container
+     * @return List of strings; can be a non-null empty list
+     */
     private static List<String> collectIgnoredSections(Source source) {
         Set<String> result = new HashSet<>(collectIgnored(source));
         result.addAll(collectIgnored(Sources.fromClass(source.adaptTo(MemberSource.class).getReportingClass())));

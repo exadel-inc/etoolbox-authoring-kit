@@ -21,8 +21,8 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 
 /**
- * Represents a generic builder for a {@code RichTextEditor} configuration markup.
- * Required by {@link RichTextEditorHandler#accept(Source, Target)}
+ * Represents a generic builder for a {@code RichTextEditor} configuration markup. Required by {@link
+ * RichTextEditorHandler#accept(Source, Target)}
  */
 abstract class RteNodeBuilderBase {
     private String name;
@@ -30,6 +30,11 @@ abstract class RteNodeBuilderBase {
     private BiPredicate<String, String> filter;
     private Consumer<Target> postprocessing;
 
+    /**
+     * Initializes a new builder instance for the given tag and attribute
+     * @param tagName       String value; a non-empty string is expected
+     * @param attributeName String value; a non-empty string is expected
+     */
     RteNodeBuilderBase(String tagName, String attributeName) {
         this.name = tagName;
         this.attributeName = attributeName;
