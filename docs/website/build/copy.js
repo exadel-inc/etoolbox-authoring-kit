@@ -26,18 +26,15 @@ const getPaths = (fileName) => {
   return { inputPath, outputPath };
 }
 
-const createFile = async (inputPath, outputPath, fileName) => {
+const createFileCopy = async (inputPath, outputPath) => {
   const parsedContent = await getContent(inputPath);
-  const exists = fs.existsSync(outputPath);
   await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
   await fs.promises.writeFile(outputPath, parsedContent);
-  console.log(`\t - ${fileName} - ${exists ? 'updated' : 'added'}`);
 }
 
-const deleteFile = async (outputPath, fileName) => {
+const deleteFile = async (outputPath) => {
   await fs.promises.writeFile(DELETE_PATH, '');
   await fs.promises.unlink(outputPath);
-  console.log(`\t - ${fileName} - deleted`);
 }
 
 (async () => {
@@ -47,7 +44,7 @@ const deleteFile = async (outputPath, fileName) => {
     await Promise.all(
       files.map(async (fileName) => {
         const { inputPath, outputPath } = getPaths(fileName);
-        createFile(inputPath, outputPath, fileName);
+        createFileCopy(inputPath, outputPath);
       })
     );
   });
@@ -65,21 +62,23 @@ if (process.argv.includes('watch')) {
       const isDeleted = !fs.existsSync(inputPath);
 
       if (isDeleted) {
-        await deleteFile(outputPath, path);
+        await deleteFile(outputPath);
+        console.log(`\t - ${path} - deleted`)
       } else {
-        await createFile(inputPath, outputPath, path);
+        await createFileCopy(inputPath, outputPath);
+        console.log(`\t - ${path} - updated`);
       }
     })
     pathsToUpdate.clear();
   }
 
-  const deferredsync = async (fileName) => {
+  const deferredSync = async (fileName) => {
     pathsToUpdate.add(fileName);
     clearTimeout(timer);
     timer = setTimeout(() => updateData(), DELAY);
   }
 
-  watch.on('change', deferredsync);
-  watch.on('add', deferredsync);
-  watch.on('unlink', deferredsync);
+  watch.on('change', deferredSync);
+  watch.on('add', deferredSync);
+  watch.on('unlink', deferredSync);
 }
