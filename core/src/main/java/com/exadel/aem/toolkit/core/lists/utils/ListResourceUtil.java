@@ -49,6 +49,11 @@ import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
  */
 class ListResourceUtil {
 
+    private static final List<String> PROPERTIES_TO_IGNORE = Arrays.asList(
+        "jcr:createdBy", "jcr:created", "cq:lastModified", "cq:lastModifiedBy", "jcr:lastModified", "jcr:lastModifiedBy",
+        "cq:lastReplicationAction", "cq:lastReplicatedBy", "cq:lastReplicated"
+    );
+
     private static final ObjectMapper OBJECT_MAPPER;
 
     static {
@@ -61,11 +66,6 @@ class ListResourceUtil {
      */
     private ListResourceUtil() {
     }
-
-    private static final List<String> PROPERTIES_TO_IGNORE = Arrays.asList(
-        "jcr:createdBy", "jcr:created", "cq:lastModified", "cq:lastModifiedBy", "jcr:lastModified", "jcr:lastModifiedBy",
-        "cq:lastReplicationAction", "cq:lastReplicatedBy", "cq:lastReplicated"
-    );
 
     /**
      * Create a {@link com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel} resource under {@code parent}

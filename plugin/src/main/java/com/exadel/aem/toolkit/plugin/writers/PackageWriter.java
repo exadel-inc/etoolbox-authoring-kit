@@ -53,7 +53,8 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
- * Implements actions needed to store collected/processed data into AEM package, optimal for use in "try-with-resources" block
+ * Implements actions needed to store collected/processed data into AEM package, optimal for use in "try-with-resources"
+ * block
  */
 public class PackageWriter implements AutoCloseable {
 
@@ -233,7 +234,7 @@ public class PackageWriter implements AutoCloseable {
             .collect(Collectors.toList());
 
         Map<PackageEntryWriter, Class<?>> result = new HashMap<>();
-        for (Class<?> view: allViews) {
+        for (Class<?> view : allViews) {
             List<PackageEntryWriter> matchedWriters = writers
                 .stream()
                 .filter(w -> w.canProcess(view))
@@ -340,12 +341,12 @@ public class PackageWriter implements AutoCloseable {
         try {
             Transformer transformer = XmlFactory.newDocumentTransformer();
             writers = Arrays.asList(
-                    new ContentXmlWriter(transformer),
-                    new CqDialogWriter(transformer, Scopes.CQ_DIALOG),
-                    new CqDialogWriter(transformer, Scopes.CQ_DESIGN_DIALOG),
-                    new CqEditConfigWriter(transformer),
-                    new CqChildEditConfigWriter(transformer),
-                    new CqHtmlTagWriter(transformer)
+                new ContentXmlWriter(transformer),
+                new CqDialogWriter(transformer, Scopes.CQ_DIALOG),
+                new CqDialogWriter(transformer, Scopes.CQ_DESIGN_DIALOG),
+                new CqEditConfigWriter(transformer),
+                new CqChildEditConfigWriter(transformer),
+                new CqHtmlTagWriter(transformer)
             );
         } catch (TransformerConfigurationException e) {
             // Exceptions caught here are due to possible XXE security vulnerabilities, so no further handling

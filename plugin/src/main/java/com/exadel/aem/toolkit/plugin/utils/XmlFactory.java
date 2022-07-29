@@ -30,16 +30,8 @@ import com.google.common.collect.ImmutableMap;
  * Contains utility methods for creating and transforming XML entities
  */
 public class XmlFactory {
-    /**
-     * Security features as per XML External entity protection cheat sheet
-     * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html">here</a>
-     */
-    private static final Map<String, Boolean> DOCUMENT_BUILDER_FACTORY_SECURITY_FEATURES = ImmutableMap.of(
-        XMLConstants.FEATURE_SECURE_PROCESSING, true,
-        "http://apache.org/xml/features/disallow-doctype-decl", true,
-        "http://xml.org/sax/features/external-general-entities", false,
-        "http://xml.org/sax/features/external-parameter-entities", false,
-        "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+    public static final String XML_NAMESPACE_PREFIX = "xmlns:";
 
     /**
      * XML namespaces typically present in an AEM component markup
@@ -51,7 +43,17 @@ public class XmlFactory {
         "cq", "http://www.day.com/jcr/cq/1.0",
         "granite", "http://www.adobe.com/jcr/granite/1.0"
     );
-    public static final String XML_NAMESPACE_PREFIX = "xmlns:";
+
+    /**
+     * Security features as per XML External entity protection cheat sheet
+     * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html">here</a>
+     */
+    private static final Map<String, Boolean> DOCUMENT_BUILDER_FACTORY_SECURITY_FEATURES = ImmutableMap.of(
+        XMLConstants.FEATURE_SECURE_PROCESSING, true,
+        "http://apache.org/xml/features/disallow-doctype-decl", true,
+        "http://xml.org/sax/features/external-general-entities", false,
+        "http://xml.org/sax/features/external-parameter-entities", false,
+        "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 
     /**
      * Default (instantiation-restricting) constructor
@@ -66,19 +68,6 @@ public class XmlFactory {
      */
     public static Document newDocument() throws ParserConfigurationException {
         return createDocumentBuilder().newDocument();
-    }
-
-    /**
-     * Creates a {@link Transformer} instance compliant with XML security attributes
-     * @return {@code Transformer} object
-     * @throws TransformerConfigurationException in case security attributes cannot be set
-     */
-    public static Transformer newDocumentTransformer() throws TransformerConfigurationException {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
-        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, StringUtils.EMPTY);
-        return transformerFactory.newTransformer();
     }
 
     /**
@@ -97,5 +86,18 @@ public class XmlFactory {
         documentBuilderFactory.setXIncludeAware(false);
         documentBuilderFactory.setExpandEntityReferences(false);
         return documentBuilderFactory.newDocumentBuilder();
+    }
+
+    /**
+     * Creates a {@link Transformer} instance compliant with XML security attributes
+     * @return {@code Transformer} object
+     * @throws TransformerConfigurationException in case security attributes cannot be set
+     */
+    public static Transformer newDocumentTransformer() throws TransformerConfigurationException {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, StringUtils.EMPTY);
+        return transformerFactory.newTransformer();
     }
 }

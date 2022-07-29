@@ -47,10 +47,11 @@ import com.exadel.aem.toolkit.plugin.validators.Validation;
  */
 @Handles(RichTextEditor.class)
 public class RichTextEditorHandler implements Handler {
+    static final String PLUGIN_FEATURE_SEPARATOR = "#";
+
     private static final String KEYWORD_AUTO = "auto";
 
     private static final String FEATURE_ALL = "*";
-    static final String PLUGIN_FEATURE_SEPARATOR = "#";
 
     private static final String FEATURE_TOKEN = "(?:[\\w-]+#[\\w-:]+|-)";
     private static final Pattern FEATURE_TOKEN_PATTERN = Pattern.compile(String.format("^%s$", FEATURE_TOKEN));

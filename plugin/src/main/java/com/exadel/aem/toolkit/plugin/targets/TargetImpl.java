@@ -53,10 +53,10 @@ import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 @SuppressWarnings("HiddenField") // Allows to pass {@code name} arguments in attribute constructors
 class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandlerAcceptor {
 
+    static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
+
     private static final String PARENT_PATH = "..";
     private static final String SELF_PATH = ".";
-
-    static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
     /* -----------------------------
        Local fields and constructors
@@ -196,7 +196,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
 
     @Override
     public Target getTarget(String path) {
-        return getTarget(path, false);
+        return getTargetInternal(path, false);
     }
 
     /**
@@ -204,7 +204,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
      */
     @Override
     public Target getOrCreateTarget(String path) {
-        return getTarget(path, true);
+        return getTargetInternal(path, true);
     }
 
     /**
@@ -245,7 +245,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
      * @param createIfMissing True to create a {@code Target} for the unmatched path segment; otherwise, false
      * @return New {@code Target} instance
      */
-    private Target getTarget(String path, boolean createIfMissing) {
+    private Target getTargetInternal(String path, boolean createIfMissing) {
         if (StringUtils.isBlank(path)) {
             return null;
         }
@@ -258,7 +258,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             Target current = this;
             while (!pathChunks.isEmpty()) {
                 String currentChunk = pathChunks.poll();
-                current = ((TargetImpl) current).getTarget(currentChunk, createIfMissing);
+                current = ((TargetImpl) current).getTargetInternal(currentChunk, createIfMissing);
                 if (current == null) {
                     break;
                 }

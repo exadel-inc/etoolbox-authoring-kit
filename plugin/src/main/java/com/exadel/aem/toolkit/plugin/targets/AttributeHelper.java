@@ -364,6 +364,18 @@ public class AttributeHelper<T, V> {
         }
 
         /**
+         * Gets whether a value of a specific type can be rendered to a Granite-compliant entity
+         * @param valueType Annotation's property {@code Class}
+         * @return True or false
+         */
+        private static boolean fits(Class<?> valueType) {
+            return valueType.equals(String.class)
+                || valueType.equals(Long.class)
+                || valueType.equals(Double.class)
+                || valueType.equals(Boolean.class);
+        }
+
+        /**
          * Retrieves an eligible object type for a method ({@code Enum}s being cast to {@code String}s)
          * @param method {@code Method} instance representing an annotation property
          * @return Object type
@@ -374,18 +386,6 @@ public class AttributeHelper<T, V> {
                 return String.class;
             }
             return ClassUtils.primitiveToWrapper(effectiveType);
-        }
-
-        /**
-         * Gets whether a value of a specific type can be rendered to a Granite-compliant entity
-         * @param valueType Annotation's property {@code Class}
-         * @return True or false
-         */
-        private static boolean fits(Class<?> valueType) {
-            return valueType.equals(String.class)
-                || valueType.equals(Long.class)
-                || valueType.equals(Double.class)
-                || valueType.equals(Boolean.class);
         }
     }
 }
