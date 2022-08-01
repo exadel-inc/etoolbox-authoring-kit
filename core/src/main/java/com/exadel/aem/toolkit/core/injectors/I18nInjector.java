@@ -35,8 +35,6 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.day.cq.i18n.I18n;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.I18N;
@@ -49,14 +47,13 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
  * Injects into a Sling model an {@link com.day.cq.i18n.I18n} object that corresponds to the current locale, or else an
  * internationalized string value
  * @see I18N
- * @see Injector
+ * @see BaseInjector
  */
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
 public class I18nInjector extends BaseInjector<I18N> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(I18nInjector.class);
     private static final Pattern LOCALE_PARTS_SPLITTER = Pattern.compile("[/_-]");
 
     public static final String NAME = "eak-etoolbox-i18n-injector";
@@ -104,10 +101,6 @@ public class I18nInjector extends BaseInjector<I18N> {
         }
 
         return null;
-    }
-    @Override
-    public void logError(Type type) {
-        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
     }
 
     /**

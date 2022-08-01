@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.core.injectors;
 
 /**
  * Contains constant values used across the injectors logic
- * TODO for next commit: move injectors names to the class. Create method that return name depending on value
  */
 class InjectorConstants {
 

@@ -26,8 +26,6 @@ import org.apache.sling.api.request.RequestParameterMap;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestParam;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
@@ -36,14 +34,12 @@ import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
  * Injects into a Sling model the value of a HTTP request parameter (multiple parameters) obtained
  * via a {@code SlingHttpServletRequest} object
  * @see RequestParam
- * @see Injector
+ * @see BaseInjector
  */
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
 public class RequestParamInjector extends BaseInjector<RequestParam> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RequestParamInjector.class);
 
     public static final String NAME = "eak-request-parameter-injector";
 
@@ -82,43 +78,35 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
             return null;
         }
 
-        name = StringUtils.defaultIfEmpty(annotation.name(), name);
+        String paramName = StringUtils.defaultIfBlank(annotation.name(), name);
 
         if (TypeUtil.isValidObjectType(type, String.class)) {
-            return request.getParameter(name);
+            return request.getParameter(paramName);
 
         } else if (TypeUtil.isValidArray(type, String.class)) {
-            return getFilteredRequestParameters(request, name)
+            return getFilteredRequestParameters(request, paramName)
                 .map(RequestParameter::getString)
                 .toArray(String[]::new);
 
         } else if (TypeUtil.isValidCollection(type, String.class)) {
-            return getFilteredRequestParameters(request, name)
+            return getFilteredRequestParameters(request, paramName)
                 .map(RequestParameter::getString)
                 .collect(Collectors.toList());
 
         } else if (TypeUtil.isValidObjectType(type, RequestParameter.class)) {
-            return request.getRequestParameter(name);
+            return request.getRequestParameter(paramName);
 
         } else if (TypeUtil.isValidCollection(type, RequestParameter.class)) {
             return request.getRequestParameterList();
 
         } else if (TypeUtil.isValidArray(type, RequestParameter.class)) {
-            return request.getRequestParameters(name);
+            return request.getRequestParameters(paramName);
 
         } else if (TypeUtil.isValidObjectType(type, RequestParameterMap.class)) {
             return request.getRequestParameterMap();
         }
 
         return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void logError(Type type) {
-        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
     }
 
     /**

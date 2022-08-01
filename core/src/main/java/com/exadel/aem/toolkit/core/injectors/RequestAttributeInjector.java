@@ -1,15 +1,5 @@
 package com.exadel.aem.toolkit.core.injectors;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.models.spi.Injector;
-import org.osgi.framework.Constants;
-import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
@@ -18,20 +8,39 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.spi.Injector;
+import org.osgi.framework.Constants;
+import org.osgi.service.component.annotations.Component;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestAttribute;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
-
+/**
+ * Injects into a Sling model the value of a HTTP request attribute
+ * via a {@code SlingHttpServletRequest} object
+ * @see RequestAttribute
+ * @see BaseInjector
+ */
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
 public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RequestAttributeInjector.class);
-
     public static final String NAME = "eak-request-attribute-injector";
 
+    public static final Class<?>[] ALLOWED_TYPES = new Class[] {
+        Integer.class,
+        Long.class,
+        Boolean.class,
+        Calendar.class,
+        String.class
+    };
 
     @Nonnull
     @Override
@@ -49,24 +58,23 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
         Type type,
         RequestAttribute annotation) {
 
-        Object result;
-
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
-        name = StringUtils.defaultIfEmpty(annotation.name(), name);
-        Object attribute = request.getAttribute(name);
+        if (Objects.isNull(request)) {
+            return null;
+        }
 
+        String attributeName = StringUtils.defaultIfBlank(annotation.name(), name);
+        Object attribute = request.getAttribute(attributeName);
         if (Objects.isNull(attribute)) {
             return null;
         }
 
-        result = getByType(attribute, Integer.class, type)
-            .orElse(getByType(attribute, Long.class, type)
-                .orElse(getByType(attribute, Boolean.class, type)
-                    .orElse(getByType(attribute, Calendar.class, type)
-                        .orElse(getByType(attribute, String.class, type)
-                            .orElse(attribute)))));
-
-        return result;
+        return Stream.of(ALLOWED_TYPES)
+            .map(clazz -> getByType(attribute, clazz, type))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .findFirst()
+            .orElse(attribute);
     }
 
     /**
@@ -75,14 +83,6 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
     @Override
     public RequestAttribute getAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(RequestAttribute.class);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void logError(Type type) {
-        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
     }
 
     /**
@@ -110,9 +110,11 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
             Class<?> componentType = ((Class<?>) type).getComponentType();
 
             if (componentType.isPrimitive()) {
-                return Optional.of(unwrapArray(attribute, componentType));
+                //unwrap array
+                return Optional.of(transformArray(attribute, componentType));
             } else {
-                return Optional.of(wrapArray(attribute, componentType));
+                //wrap array
+                return Optional.of(transformArray(attribute, componentType));
             }
 
         } else if (TypeUtil.isValidCollection(type, comparingType)) {
@@ -120,7 +122,8 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
 
             if (attribute.getClass().equals(Object[].class)) {
                 Object[] array = (Object[]) attribute;
-                T[] parametrizedArray = (T[]) wrapArray(array, comparingType);
+                //unwrap array
+                T[] parametrizedArray = (T[]) transformArray(array, comparingType);
                 attributesList = Arrays.asList(parametrizedArray);
             } else {
                 attributesList = (List<T>) attribute;
@@ -134,18 +137,7 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
         return result;
     }
 
-    private Object unwrapArray(Object wrapperArray, Class<?> primitiveType) {
-        int length = Array.getLength(wrapperArray);
-        Object primitiveArray = Array.newInstance(primitiveType, length);
-
-        for (int i = 0; i < length; ++i) {
-            Array.set(primitiveArray, i, Array.get(wrapperArray, i));
-        }
-
-        return primitiveArray;
-    }
-
-    private Object wrapArray(Object primitiveArray, Class<?> wrapperType) {
+    private Object transformArray(Object primitiveArray, Class<?> wrapperType) {
         int length = Array.getLength(primitiveArray);
         Object wrapperArray = Array.newInstance(wrapperType, length);
 

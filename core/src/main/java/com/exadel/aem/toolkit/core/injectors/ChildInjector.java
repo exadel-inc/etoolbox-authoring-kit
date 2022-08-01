@@ -26,8 +26,6 @@ import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.Child;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
@@ -37,14 +35,12 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 /**
  * Injects into a Sling model a child resource or a secondary model that is adapted from a child resource
  * @see Child
- * @see Injector
+ * @see BaseInjector
  */
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
 public class ChildInjector extends BaseInjector<Child> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ChildInjector.class);
 
     public static final String NAME = "eak-child-resource-injector";
 
@@ -107,13 +103,5 @@ public class ChildInjector extends BaseInjector<Child> {
             return preparedResource.adaptTo((Class<?>) type);
         }
         return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void logError(String object) {
-          LOG.debug("Failed to inject child resource by the name \"{}\"", object);
     }
 }

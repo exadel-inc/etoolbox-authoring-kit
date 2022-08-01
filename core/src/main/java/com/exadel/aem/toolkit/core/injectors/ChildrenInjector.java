@@ -36,8 +36,6 @@ import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.Children;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
@@ -48,14 +46,12 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
  * Injects into a Sling model a collection of resources or secondary models that are derived from resources according to
  * the type of the underlying array or the parameter type of the underlying collection
  * @see Children
- * @see Injector
+ * @see BaseInjector
  */
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
 public class ChildrenInjector extends BaseInjector<Children> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ChildrenInjector.class);
 
     public static final String NAME = "eak-children-resource-injector";
 
@@ -116,14 +112,6 @@ public class ChildrenInjector extends BaseInjector<Children> {
             return toArray(children, (Class<?>) type);
         }
         return children;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void logError(String object) {
-        LOG.debug("Failed to inject child resources for the name \"{}\"", object);
     }
 
     /**

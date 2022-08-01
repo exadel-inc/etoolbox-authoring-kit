@@ -22,8 +22,6 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSuffix;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
@@ -32,14 +30,12 @@ import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
  * Injects into a Sling model the value of the {@code suffix} or {@code suffixResource} properties
  * of the {@link SlingHttpServletRequest} obtained via {@link org.apache.sling.api.request.RequestPathInfo}
  * @see RequestSuffix
- * @see Injector
+ * @see BaseInjector
  */
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
 public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RequestSuffixInjector.class);
 
     public static final String NAME = "eak-request-suffix-injector";
 
@@ -84,11 +80,4 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void logError(Type type) {
-        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
-    }
 }

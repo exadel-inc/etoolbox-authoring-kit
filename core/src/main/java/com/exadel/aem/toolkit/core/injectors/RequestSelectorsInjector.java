@@ -22,8 +22,6 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSelectors;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
@@ -33,14 +31,12 @@ import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
  * Injects into a Sling model the value of the {@code selectors} property of the {@link SlingHttpServletRequest}
  * obtained via {@link org.apache.sling.api.request.RequestPathInfo}
  * @see RequestSelectors
- * @see Injector
+ * @see BaseInjector
  */
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
 public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RequestSelectorsInjector.class);
 
     public static final String NAME = "eak-request-selectors-injector";
 
@@ -92,11 +88,4 @@ public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void logError(Type type) {
-        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
-    }
 }

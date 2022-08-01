@@ -25,7 +25,7 @@ public class NativeLocaleDetector implements Function<Object, Locale> {
 
     /**
      * Retrieves a locale value for the provided adaptable object
-     * @param adaptable An instance ofnSlingHttpServletRequest.class request;
+     * @param adaptable An adaptable; usually a {@code SlingHttpServletRequest} or a {@code Resource}
      * @return Locale instance
      */
     @Override

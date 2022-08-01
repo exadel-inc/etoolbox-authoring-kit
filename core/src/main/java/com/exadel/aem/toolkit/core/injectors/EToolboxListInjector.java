@@ -23,15 +23,11 @@ import java.util.Map;
 import java.util.stream.IntStream;
 import javax.annotation.Nonnull;
 
-
-
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.EToolboxList;
@@ -42,14 +38,12 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
  * Injects into a Sling model entries of an EToolbox List obtained via a {@code ResourceResolver} instance
  * @see ListHelper
  * @see EToolboxList
- * @see Injector
+ * @see BaseInjector
  */
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
 public class EToolboxListInjector extends BaseInjector<EToolboxList> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(EToolboxListInjector.class);
 
     public static final String NAME = "eak-etoolbox-list-injector";
 
@@ -79,7 +73,7 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
     public Object getValue(Object adaptable, String name, Type type, EToolboxList annotation) {
 
         ResourceResolver resourceResolver = AdaptationUtil.getResourceResolver(adaptable);
-        if(resourceResolver == null) {
+        if (resourceResolver == null) {
             return null;
         }
 
@@ -94,14 +88,6 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
         }
 
         return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void logError(Type type) {
-        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
     }
 
     /**
