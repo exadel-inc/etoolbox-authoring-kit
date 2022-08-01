@@ -19,15 +19,25 @@
                             name="./number"
                             fieldLabel="Number"
                             disabled="{Boolean}false"
+                            ranged="{Boolean}true"
                             renderHidden="{Boolean}false"
                             required="{Boolean}false"
+                            startValue="{Long}4"
+                            endValue="{Long}10"
                             min="{Long}10"
                             max="{Long}200"
                             step="{Long}2"
                             orientation="vertical"
                             filled="{Boolean}true"
-                            value="{Long}14"
-                            />
+                            value="{Long}14">
+                        <items jcr:primaryType="nt:unstructured">
+                            <option_1 jcr:primaryType="nt:unstructured" text="First" value="{Long}1"/>
+                            <option_2 jcr:primaryType="nt:unstructured" text="Second" value="{Long}2"/>
+                            <option_3 jcr:primaryType="nt:unstructured" text="Third" value="{Long}3"/>
+                            <option_4 jcr:primaryType="nt:unstructured" text="Fourth" value="{Long}4"/>
+                            <option_5 jcr:primaryType="nt:unstructured" text="Fifth" value="{Long}5"/>
+                        </items>
+                    </number>
                 </items>
             </column>
         </items>

@@ -13,7 +13,13 @@
  */
 package com.exadel.aem.toolkit.core.authoring.models;
 
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
@@ -22,6 +28,7 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.slider.SliderItem;
 
 @Model(adaptables = SlingHttpServletRequest.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 @AemComponent(
@@ -30,6 +37,9 @@ import com.exadel.aem.toolkit.core.CoreConstants;
     resourceSuperType = "etoolbox-authoring-kit/components/authoring/base"
 )
 public class Slider extends BaseModel {
+
+    @SlingObject
+    private Resource resource;
 
     @SlingObject
     private SlingHttpServletRequest request;
@@ -55,6 +65,34 @@ public class Slider extends BaseModel {
     @ValueMapValue
     private boolean filled;
 
+    @ValueMapValue
+    private String startValue;
+
+    @ValueMapValue
+    private String endValue;
+
+    @ValueMapValue
+    private boolean ranged;
+
+    @ValueMapValue
+    private SliderItem[] items;
+
+    @ValueMapValue
+    private Map<String, String> itemsMap;
+
+    @PostConstruct
+    private void init() {
+        itemsMap = new HashMap<>();
+        Resource resourceChild = resource.getChild(CoreConstants.NN_ITEMS);
+        if (resourceChild != null) {
+            Iterator<Resource> resources = resourceChild.listChildren();
+            while (resources.hasNext()) {
+                Resource it = resources.next();
+                itemsMap.put(it.getValueMap().get(CoreConstants.PN_VALUE, String.class), it.getValueMap().get(CoreConstants.PN_TEXT, String.class));
+            }
+        }
+    }
+
     public int getMin() {
         return min;
     }
@@ -78,5 +116,25 @@ public class Slider extends BaseModel {
     @Override
     public Object getDefaultValue() {
         return defaultValue;
+    }
+
+    public String getStartValue() {
+        return startValue;
+    }
+
+    public String getEndValue() {
+        return endValue;
+    }
+
+    public boolean isRanged() {
+        return ranged;
+    }
+
+    public SliderItem[] getItems() {
+        return items;
+    }
+
+    public Map<String, String> getItemsMap() {
+        return itemsMap;
     }
 }
