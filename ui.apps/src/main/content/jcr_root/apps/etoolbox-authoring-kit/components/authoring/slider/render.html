@@ -24,9 +24,9 @@
               filled="${slider.filled}"
               value="${slider.value}"
               data-sly-element="${slider.ranged ? 'coral-rangedslider' : 'coral-slider' @ context='unsafe'}">
-    <sly data-sly-list.item="${slider.itemsMap}">
+    <sly data-sly-list.item="${slider.items}">
         <coral-slider-item value="${item}">
-            ${slider.itemsMap[item]}
+            ${slider.items[item]}
         </coral-slider-item>
     </sly>
 </coral-slider>
