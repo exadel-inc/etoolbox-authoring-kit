@@ -41,8 +41,8 @@
      */
     function patchFindAllowedComponentsFromPolicy() {
         const original = ns.author.components._findAllowedComponentsFromPolicy;
-        ns.author.components._findAllowedComponentsFromPolicy = function _findAllowedComponentsFromPolicyPatched () {
-          return original.apply(this, arguments) || [];
+        ns.author.components._findAllowedComponentsFromPolicy = function _findAllowedComponentsFromPolicyPatched() {
+            return original.apply(this, arguments) || [];
         };
     }
 
