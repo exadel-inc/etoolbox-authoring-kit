@@ -27,23 +27,38 @@ class PathResolver {
     return window.document.documentElement.innerHTML;
   }
 
+  static isValidUrl(urlString) {
+		let url;
+
+		try { 
+	    url = new URL(urlString); 
+	  }
+	  catch(e) { 
+	    return false; 
+	  }
+
+	  return url.protocol === "http:" || url.protocol === "https:";
+	}
+
   static resolveLinks(dom, filePath) {
-    dom.querySelectorAll('a[href^="."]').forEach((link) => {
-      const resolved = PathResolver.resolveLink(link.href, filePath);
-
-      if (resolved !== link.href) console.info(blue(`Rewrite link "${link.href}" to "${resolved}"`));
-      link.href = resolved;
-    });
-
     const domain = new URL(url).hostname;
-    dom.querySelectorAll('a[href^="https"]').forEach((link) => {
-      const linkDomain = new URL(link.href).hostname;
-      
-      if(domain !== linkDomain) {
-        link.target = "_blank";
-        link.rel = "noopener norefferer";
+
+    dom.querySelectorAll('a[href]').forEach((link) => {
+      if (link.href.startsWith('.')) {
+        const resolved = PathResolver.resolveLink(link.href, filePath);
+
+        if (resolved !== link.href) console.info(blue(`Rewrite link "${link.href}" to "${resolved}"`));
+        link.href = resolved;
       }
-    })
+      else if(PathResolver.isValidUrl(link.href)){
+        const linkDomain = new URL(link.href).hostname;
+      
+        if(domain !== linkDomain) {
+          link.target = "_blank";
+          link.rel = "noopener norefferer";
+        }
+      }
+    });
   }
 
   static resolveImages(dom, filePath) {
