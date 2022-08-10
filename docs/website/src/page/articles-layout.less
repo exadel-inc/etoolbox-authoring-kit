@@ -1,8 +1,12 @@
 @import "../common/variables.less";
 
+#popular-articles-list {
+  padding: 0;
+}
+
 .popular-articles {
   &-container {
-    padding: 0 !important; // override global markdown style for ul 
+    margin-top: 40px;
     display: grid;
     grid-template-columns: repeat(1, 100%);
     grid-gap: 50px;
@@ -13,10 +17,6 @@
 
   &-item {
     list-style: none;
-  }
-
-  &-subheader {
-    margin-bottom: 40px !important;// override global markdown style for h2 
   }
 
   &-content {
