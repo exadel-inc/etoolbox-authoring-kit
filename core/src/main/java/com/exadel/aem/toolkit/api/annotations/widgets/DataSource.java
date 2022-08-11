@@ -34,7 +34,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 public @interface DataSource {
 
     /**
-     * Defines the path to the component in JCR
+     * Defines the {@code sling:resourceType} attribute of a {@code datasource node} of the current widget
      * @return Non-blank string
      */
     @ValueRestriction(ValueRestrictions.NOT_BLANK_OR_DEFAULT)
