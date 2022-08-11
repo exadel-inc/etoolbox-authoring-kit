@@ -19,6 +19,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 
 /**
@@ -32,11 +34,11 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 public @interface DataSource {
 
     /**
-     * When set to a non-blank string, stores as the {@code sling:resourceType} attribute of a {@code datasource node}
-     * of the current widget
-     * @return String value
+     * Defines the {@code sling:resourceType} attribute of a {@code datasource node} of the current widget
+     * @return Non-blank string
      */
-    String resourceType() default "";
+    @ValueRestriction(ValueRestrictions.NOT_BLANK_OR_DEFAULT)
+    String resourceType();
 
     /**
      * When set to a non-blank string, stores as the {@code path} attribute of a {@code datasource node}

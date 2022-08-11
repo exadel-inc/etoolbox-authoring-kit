@@ -60,7 +60,7 @@ public @interface Select {
      * of provided {@link DataSource} annotation
      * @return {@code @DataSource} instance
      */
-    DataSource datasource() default @DataSource;
+    DataSource datasource() default @DataSource(resourceType = "");
 
     /**
      * Indicates if the user is able to select multiple options
