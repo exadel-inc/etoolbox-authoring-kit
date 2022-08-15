@@ -45,12 +45,13 @@ class PathResolver {
 
     dom.querySelectorAll('a[href]').forEach((link) => {
       if (link.href.startsWith('.')) {
-        const resolved = PathResolver.resolveLink(link.href, filePath);
+        const resolved = PathResolver.processRewriteRules(link.href, filePath);
 
         if (resolved !== link.href) console.info(blue(`Rewrite link "${link.href}" to "${resolved}"`));
         link.href = resolved;
       }
-      else if(PathResolver.isValidUrl(link.href)){
+
+      if(PathResolver.isValidUrl(link.href)){
         const linkDomain = new URL(link.href).hostname;
       
         if(domain !== linkDomain) {
