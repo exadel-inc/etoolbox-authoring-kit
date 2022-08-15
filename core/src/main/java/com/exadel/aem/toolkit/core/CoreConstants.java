@@ -18,6 +18,7 @@ package com.exadel.aem.toolkit.core;
  */
 public class CoreConstants {
     public static final String NN_ITEM = "item";
+    public static final String NN_ITEMS = "items";
     public static final String NN_LIST = "list";
 
     public static final String PN_APPEND = "append";

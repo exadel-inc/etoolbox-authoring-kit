@@ -648,6 +648,34 @@ public class DialogWithSlider {
 }
 ```
 
+You can define SliderItems in order to have text label items. You can also achieve ranged slider with two handlers by specifying "ranged = true".
+
+The following is an example of a ranged slider with label items:
+
+```java
+public class DialogWithRangedSlider {
+    @DialogField(label = "Number")
+    @Slider(ranged = true,
+        items = {
+            @SliderItem(text = "First", value = 1),
+            @SliderItem(text = "Second", value = 2),
+            @SliderItem(text = "Third", value = 3),
+            @SliderItem(text = "Fourth", value = 4),
+            @SliderItem(text = "Fifth", value = 5)
+        },
+        startValue = 4,
+        endValue = 10,
+        min = 10,
+        max = 200,
+        step = 2,
+        orientation = Orientation.VERTICAL,
+        filled = true,
+        value = 14
+    )
+    String number;
+}
+```
+
 ### Switch
 
 * [@Switch](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/Switch.html)

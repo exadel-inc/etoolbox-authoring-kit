@@ -16,8 +16,9 @@ package com.exadel.aem.toolkit.test.widget;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Slider;
+import com.exadel.aem.toolkit.api.annotations.widgets.slider.Slider;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.Orientation;
+import com.exadel.aem.toolkit.api.annotations.widgets.slider.SliderItem;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
@@ -29,7 +30,16 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONEN
 @SuppressWarnings("unused")
 public class SliderWidget {
     @DialogField(label = "Number")
-    @Slider(
+    @Slider(ranged = true,
+        items = {
+            @SliderItem(text = "First", value = 1),
+            @SliderItem(text = "Second", value = 2),
+            @SliderItem(text = "Third", value = 3),
+            @SliderItem(text = "Fourth", value = 4),
+            @SliderItem(text = "Fifth", value = 5)
+        },
+        startValue = 4,
+        endValue = 10,
         min = 10,
         max = 200,
         step = 2,

@@ -14,13 +14,19 @@
 
 <sly data-sly-use.slider="com.exadel.aem.toolkit.core.authoring.models.Slider"></sly>
 <coral-slider tooltips
-    class="coral-Form-field"
-    data-sly-attribute="${slider.commonAttributes}"
-    name="${slider.name}"
-    min="${slider.min}"
-    max="${slider.max}"
-    step="${slider.step}"
-    orientation="${slider.orientation}"
-    filled="${slider.filled}"
-    value="${slider.value}">
+              class="coral-Form-field eak-nowrap"
+              data-sly-attribute="${slider.commonAttributes}"
+              name="${slider.name}"
+              min="${slider.min}"
+              max="${slider.max}"
+              step="${slider.step}"
+              orientation="${slider.orientation}"
+              filled="${slider.filled}"
+              value="${slider.value}"
+              data-sly-element="${slider.ranged ? 'coral-rangedslider' : 'coral-slider' @ context='unsafe'}">
+    <sly data-sly-list.item="${slider.items}">
+        <coral-slider-item value="${item}">
+            ${slider.items[item]}
+        </coral-slider-item>
+    </sly>
 </coral-slider>

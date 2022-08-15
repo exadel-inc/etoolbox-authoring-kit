@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets;
+package com.exadel.aem.toolkit.api.annotations.widgets.slider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -49,4 +49,12 @@ public @interface Slider {
 
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
     long value() default 0;
+
+    boolean ranged() default false;
+
+    SliderItem[] items() default {};
+
+    long startValue() default 2;
+
+    long endValue() default 8;
 }
