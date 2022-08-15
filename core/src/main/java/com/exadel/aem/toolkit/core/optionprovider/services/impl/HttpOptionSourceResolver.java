@@ -40,11 +40,10 @@ import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
-
-import com.exadel.aem.toolkit.core.CoreConstants;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Implements {@link OptionSourceResolver} to facilitate extracting option datasources from HTTP endpoints
@@ -55,7 +54,8 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
 
     private static final Pattern INTERNAL_PATH_PATTERN = Pattern.compile(".+\\.json/(.+)$", Pattern.CASE_INSENSITIVE);
 
-    private static final String HTTP_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36";
+    private static final String HTTP_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36";
     private static final int HTTP_TIMEOUT = 10_000;
 
     private HttpClient httpClient;
@@ -63,7 +63,7 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
     /**
      * Default constructor
      */
-    public HttpOptionSourceResolver() {
+    HttpOptionSourceResolver() {
     }
 
     /**

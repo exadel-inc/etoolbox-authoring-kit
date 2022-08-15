@@ -39,8 +39,8 @@ import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 /**
- * Contains utility methods to perform {@code annotation - to - plain Java object} and {@code annotation - to - annotation}
- * value conversions for the sake of proper dialog markup rendering
+ * Contains utility methods to perform {@code annotation - to - plain Java object} and {@code annotation - to -
+ * annotation} value conversions for the sake of proper dialog markup rendering
  */
 public class AnnotationUtil {
     private static final String INVOCATION_EXCEPTION_MESSAGE_TEMPLATE = "Could not invoke method '%s' on %s";
@@ -52,8 +52,8 @@ public class AnnotationUtil {
     }
 
     /**
-     * Retrieves property value of the specified annotation. This method wraps up exception handling, therefore, can be
-     * used within functional calls, etc
+     * Retrieves the property value of the specified annotation. This method wraps up exception handling, therefore, can
+     * be used within functional calls, etc
      * @param annotation The annotation used for value retrieval
      * @param method     {@code Method} object representing the annotation's property
      * @return Method invocation result, or null if an internal exception was thrown
@@ -63,8 +63,8 @@ public class AnnotationUtil {
     }
 
     /**
-     * Retrieves property value of the specified annotation. This method wraps up exception handling, therefore, can be
-     * used within functional calls, etc
+     * Retrieves the property value of the specified annotation. This method wraps up exception handling, therefore, can
+     * be used within functional calls, etc
      * @param annotation   The annotation used for value retrieval
      * @param method       {@code Method} object representing the annotation's property
      * @param defaultValue Value to return in case of an exception
@@ -117,9 +117,9 @@ public class AnnotationUtil {
     }
 
     /**
-     * Retrieves a list of properties of an {@code Annotation} object to which non-default values have been set
-     * as a key-value map. The keys are the method names this annotation possesses, and the values are the results
-     * of methods' invocation
+     * Retrieves a list of properties of an {@code Annotation} object to which non-default values have been set as a
+     * key-value map. The keys are the method names this annotation possesses, and the values are the results of
+     * methods' invocation
      * @param annotation The annotation instance to analyze
      * @return List of {@code Method} instances that represent properties initialized with non-defaults
      */
@@ -171,10 +171,9 @@ public class AnnotationUtil {
     }
 
     /**
-     * Creates in runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with only some fields
-     * set to a non-default value, others voided
-     * This method is used to render the same {@code Annotation} object differently (like two or more different sets of values)
-     * depending on the values specified
+     * Creates in runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with only some
+     * fields set to a non-default value, others voided This method is used to render the same {@code Annotation} object
+     * differently (like two or more different sets of values) depending on the values specified
      * @param source       {@code Annotation} instance to produce a facade for
      * @param type         Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
      * @param voidedFields The fields to be voided, a list of non-blank Strings
@@ -194,9 +193,9 @@ public class AnnotationUtil {
     }
 
     /**
-     * Gets a filter routine to select properties of the given annotation eligible for automatic mapping.
-     * If one of the property-mapping annotations is present in the annotation given, the filter combs through
-     * the methods and picks those satisfying the mapping; otherwise a neutral (pass-all) filter is imposed
+     * Gets a filter routine to select properties of the given annotation eligible for automatic mapping. If one of the
+     * property-mapping annotations is present in the annotation given, the filter combs through the methods and picks
+     * those satisfying the mapping; otherwise a neutral (pass-all) filter is imposed
      * @param annotation {@code Annotation} object to use methods from
      * @return {@code Predicate<Method>} instance
      */
@@ -236,18 +235,18 @@ public class AnnotationUtil {
     /**
      * Extends an object in runtime by casting it to an extension interface and applying additional methods
      * @param value        Source object, typically final or one coming from outside the user scope
-     * @param modification {@code Class} object representing an interface that {@code value} implements,
-     *                     or an extending interface of such
-     * @param methods      {@code Map<String, Function>} of named routines that represent the new and/or modified methods
-     *                     that {@code value} must expose. Each routine accepts a source object,
-     *                     and a variadic array of {@code Object}-typed arguments
+     * @param modification {@code Class} object representing an interface that {@code value} implements, or an extending
+     *                     interface of such
+     * @param methods      {@code Map<String, Function>} of named routines that represent the new and/or modified
+     *                     methods that {@code value} must expose. Each routine accepts a source object and a variadic
+     *                     array of {@code Object}-typed arguments
      * @param <T>          The {@code Class} of the source object
-     * @param <U>          The interface exposing modified methods that the {@code value} implements, or an interface bearing
-     *                     newly added methods that extends one of the interfaces implemented by {@code value}
-     * @param <R>          The return type of extension methods. Must be fallen back to {@code Object} type of narrower generic
-     *                     type in case returns are to be differently typed
-     * @return The {@code <U>}-typed extension object, or else null if {@code modification} is null, or else
-     * the {@code methods} map is empty
+     * @param <U>          The interface exposing modified methods that the {@code value} implements, or an interface
+     *                     bearing newly added methods that extends one of the interfaces implemented by {@code value}
+     * @param <R>          The return type of extension methods. Must be fallen back to {@code Object} type of narrower
+     *                     generic type in case returns are to be differently typed
+     * @return The {@code <U>}-typed extension object, or else null if {@code modification} is null, or else the {@code
+     * methods} map is empty
      */
     private static <T, U, R> U genericModify(T value, Class<U> modification, Map<String, BiFunction<T, Object[], R>> methods) {
         if (modification == null) {
@@ -265,7 +264,6 @@ public class AnnotationUtil {
             new ExtensionInvocationHandler<>(value, modification, methods));
         return modification.cast(result);
     }
-
 
     /**
      * Wraps up a method from an {@code Annotation} signature by name, with {@link NoSuchMethodException} handled
@@ -304,9 +302,11 @@ public class AnnotationUtil {
     }
 
     /**
-     * Implements {@link InvocationHandler} mechanism for creating object extension
-     * per the {@link AnnotationUtil#genericModify(Object, Class, Map)} signature
+     * Implements {@link InvocationHandler} mechanism for creating object extension per the {@link
+     * AnnotationUtil#genericModify(Object, Class, Map)} signature
      * @param <T> The {@code Class} of the source object
+     * @param <U> The interface exposing modified methods that the {@code value} implements, or an interface bearing
+     *            newly added methods that extends one of the interfaces implemented by {@code value}
      * @param <R> The return type of the extension methods defined for this instance
      */
     private static class ExtensionInvocationHandler<T, U, R> implements InvocationHandler {
@@ -320,11 +320,17 @@ public class AnnotationUtil {
         /**
          * Initializes a class instance
          * @param source           The object to extend
-         * @param extensionMethods {@code Map} composed of extension method names, String-typed,
-         *                         and the extension routines, each a function accepting a source object, and
-         *                         a variadic array of Object-typed arguments
+         * @param targetType       {@code Class} object representing an interface that {@code value} implements, or an
+         *                         extending interface of such
+         * @param extensionMethods {@code Map} composed of extension method names, String-typed, and the extension
+         *                         routines, each a function accepting a source object, and a variadic array of
+         *                         Object-typed arguments
          */
-        private ExtensionInvocationHandler(T source, Class<U> targetType, Map<String, BiFunction<T, Object[], R>> extensionMethods) {
+        private ExtensionInvocationHandler(
+            T source,
+            Class<U> targetType,
+            Map<String, BiFunction<T, Object[], R>> extensionMethods) {
+
             this.source = source;
             this.targetType = targetType;
             this.extensionMethods = extensionMethods;

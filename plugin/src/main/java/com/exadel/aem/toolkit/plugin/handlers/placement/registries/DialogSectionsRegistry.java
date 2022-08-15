@@ -49,7 +49,7 @@ class DialogSectionsRegistry extends SectionsRegistry {
      * @param annotationTypes Collection of {@code Class<?>} objects representing types of container sections to
      *                        process
      */
-    public DialogSectionsRegistry(Source source, Target target, List<Class<? extends Annotation>> annotationTypes) {
+    DialogSectionsRegistry(Source source, Target target, List<Class<? extends Annotation>> annotationTypes) {
         super(
             collectSections(source.adaptTo(Class.class), target.getScope(), annotationTypes),
             collectIgnored(source));

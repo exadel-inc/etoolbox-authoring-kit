@@ -70,68 +70,92 @@ public class RteFeatures {
     public static final String FEATURE_SEPARATOR = ",";
     public static final String END_POPOVER = "]";
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private RteFeatures() {}
 
     public static class Popovers {
-        public static final String CONTROL_ALL = BEGIN_POPOVER +
-                CONTROL_SAVE + FEATURE_SEPARATOR +
-                CONTROL_CLOSE + END_POPOVER;
-        public static final String EDIT_ALL = BEGIN_POPOVER +
-                EDIT_CUT + FEATURE_SEPARATOR +
-                EDIT_COPY + FEATURE_SEPARATOR +
-                EDIT_PASTE_DEFAULT + FEATURE_SEPARATOR +
-                EDIT_PASTE_PLAINTEXT + FEATURE_SEPARATOR +
-                EDIT_PASTE_WORDHTML + END_POPOVER;
-        public static final String EDIT_CUT_COPY_PASTEDEFAULT = BEGIN_POPOVER +
-                EDIT_CUT + FEATURE_SEPARATOR +
-                EDIT_COPY + FEATURE_SEPARATOR +
-                EDIT_PASTE_DEFAULT + END_POPOVER;
-        public static final String EDIT_CUT_COPY_PASTEPLAIN = BEGIN_POPOVER +
-                EDIT_CUT + FEATURE_SEPARATOR +
-                EDIT_COPY + FEATURE_SEPARATOR +
-                EDIT_PASTE_PLAINTEXT + END_POPOVER;
-        public static final String EDIT_CUT_COPY_PASTEWORDHTML = BEGIN_POPOVER +
-                EDIT_CUT + FEATURE_SEPARATOR +
-                EDIT_COPY + FEATURE_SEPARATOR +
-                EDIT_PASTE_WORDHTML + END_POPOVER;
-        public static final String FINDREPLACE_ALL = BEGIN_POPOVER +
-                FINDREPLACE_FIND + FEATURE_SEPARATOR +
-                FINDREPLACE_REPLACE + END_POPOVER;
-        public static final String FORMAT_ALL = BEGIN_POPOVER +
-                FORMAT_BOLD + FEATURE_SEPARATOR +
-                FORMAT_ITALIC + FEATURE_SEPARATOR +
-                FORMAT_UNDERLINE + END_POPOVER;
-        public static final String JUSTIFY_ALL = BEGIN_POPOVER +
-                JUSTIFY_LEFT + FEATURE_SEPARATOR +
-                JUSTIFY_CENTER + FEATURE_SEPARATOR +
-                JUSTIFY_RIGHT + END_POPOVER;
-        public static final String LINKS_ALL = BEGIN_POPOVER +
-                LINKS_MODIFYLINK + FEATURE_SEPARATOR +
-                LINKS_ANCHOR + FEATURE_SEPARATOR +
-                LINKS_UNLINK + END_POPOVER;
-        public static final String LINKS_MODIFY_DELETE = BEGIN_POPOVER +
-                LINKS_MODIFYLINK + FEATURE_SEPARATOR +
-                LINKS_UNLINK + END_POPOVER;
-        public static final String LISTS_ALL = BEGIN_POPOVER +
-                LISTS_ORDERED + FEATURE_SEPARATOR +
-                LISTS_UNORDERED + FEATURE_SEPARATOR +
-                LISTS_INDENT + FEATURE_SEPARATOR +
-                LISTS_OUTDENT + END_POPOVER;
-        public static final String LISTS_ORDERED_UNORDERD = BEGIN_POPOVER +
-                LISTS_ORDERED + FEATURE_SEPARATOR +
-                LISTS_UNORDERED + END_POPOVER;
-        public static final String MISCTOOLS_ALL = BEGIN_POPOVER +
-                MISCTOOLS_SPECIALCHARS + FEATURE_SEPARATOR +
-                MISCTOOLS_SOURCEEDIT + END_POPOVER;
-        public static final String PARAFORMAT = BEGIN_POPOVER +
-                "paraformat#paraformat:getFormats:paraformat-pulldown" + END_POPOVER;
-        public static final String STYLES = BEGIN_POPOVER +
-                "styles#styles:getStyles:styles-pulldown" + END_POPOVER;
-        public static final String SUBSUPERSCRIPT_ALL = BEGIN_POPOVER +
-                SUBSUPERSCRIPT_SUBSCRIPT + FEATURE_SEPARATOR +
-                SUBSUPERSCRIPT_SUPERSCRIPT + END_POPOVER;
+        public static final String CONTROL_ALL = BEGIN_POPOVER
+            + CONTROL_SAVE + FEATURE_SEPARATOR
+            + CONTROL_CLOSE
+            + END_POPOVER;
+        public static final String EDIT_ALL = BEGIN_POPOVER
+            + EDIT_CUT + FEATURE_SEPARATOR
+            + EDIT_COPY + FEATURE_SEPARATOR
+            + EDIT_PASTE_DEFAULT + FEATURE_SEPARATOR
+            + EDIT_PASTE_PLAINTEXT + FEATURE_SEPARATOR
+            + EDIT_PASTE_WORDHTML
+            + END_POPOVER;
+        public static final String EDIT_CUT_COPY_PASTEDEFAULT = BEGIN_POPOVER
+            + EDIT_CUT + FEATURE_SEPARATOR
+            + EDIT_COPY + FEATURE_SEPARATOR
+            + EDIT_PASTE_DEFAULT
+            + END_POPOVER;
+        public static final String EDIT_CUT_COPY_PASTEPLAIN = BEGIN_POPOVER
+            + EDIT_CUT + FEATURE_SEPARATOR
+            + EDIT_COPY + FEATURE_SEPARATOR
+            + EDIT_PASTE_PLAINTEXT
+            + END_POPOVER;
+        public static final String EDIT_CUT_COPY_PASTEWORDHTML = BEGIN_POPOVER
+            + EDIT_CUT + FEATURE_SEPARATOR
+            + EDIT_COPY + FEATURE_SEPARATOR
+            + EDIT_PASTE_WORDHTML
+            + END_POPOVER;
+        public static final String FINDREPLACE_ALL = BEGIN_POPOVER
+            + FINDREPLACE_FIND + FEATURE_SEPARATOR
+            + FINDREPLACE_REPLACE
+            + END_POPOVER;
+        public static final String FORMAT_ALL = BEGIN_POPOVER
+            + FORMAT_BOLD + FEATURE_SEPARATOR
+            + FORMAT_ITALIC + FEATURE_SEPARATOR
+            + FORMAT_UNDERLINE
+            + END_POPOVER;
+        public static final String JUSTIFY_ALL = BEGIN_POPOVER
+            + JUSTIFY_LEFT + FEATURE_SEPARATOR
+            + JUSTIFY_CENTER + FEATURE_SEPARATOR
+            + JUSTIFY_RIGHT
+            + END_POPOVER;
+        public static final String LINKS_ALL = BEGIN_POPOVER
+            + LINKS_MODIFYLINK + FEATURE_SEPARATOR
+            + LINKS_ANCHOR + FEATURE_SEPARATOR
+            + LINKS_UNLINK
+            + END_POPOVER;
+        public static final String LINKS_MODIFY_DELETE = BEGIN_POPOVER
+            + LINKS_MODIFYLINK + FEATURE_SEPARATOR
+            + LINKS_UNLINK
+            + END_POPOVER;
+        public static final String LISTS_ALL = BEGIN_POPOVER
+            + LISTS_ORDERED + FEATURE_SEPARATOR
+            + LISTS_UNORDERED + FEATURE_SEPARATOR
+            + LISTS_INDENT + FEATURE_SEPARATOR
+            + LISTS_OUTDENT
+            + END_POPOVER;
+        public static final String LISTS_ORDERED_UNORDERD = BEGIN_POPOVER
+            + LISTS_ORDERED + FEATURE_SEPARATOR
+            + LISTS_UNORDERED
+            + END_POPOVER;
+        public static final String MISCTOOLS_ALL = BEGIN_POPOVER
+            + MISCTOOLS_SPECIALCHARS + FEATURE_SEPARATOR
+            + MISCTOOLS_SOURCEEDIT
+            + END_POPOVER;
+        public static final String PARAFORMAT = BEGIN_POPOVER
+            + "paraformat#paraformat:getFormats:paraformat-pulldown"
+            + END_POPOVER;
+        public static final String STYLES = BEGIN_POPOVER
+            + "styles#styles:getStyles:styles-pulldown"
+            + END_POPOVER;
+        public static final String SUBSUPERSCRIPT_ALL = BEGIN_POPOVER
+            + SUBSUPERSCRIPT_SUBSCRIPT + FEATURE_SEPARATOR
+            + SUBSUPERSCRIPT_SUPERSCRIPT
+            + END_POPOVER;
+
+        /**
+         * Default (instantiation-preventing) constructor
+         */
         private Popovers() {}
     }
+
     public static class Panels {
         public static class TablePanel {
             public static final String INSERTCOLUMN_BEFORE = "table#insertcolumn-before";
@@ -151,27 +175,37 @@ public class RteFeatures {
             public static final String ENSUREPARAGRAPH = "table#ensureparagraph";
             public static final String REMOVETABLE = "table#removetable";
             public static final String EXITTABLEEDITING = "table#exitTableEditing";
+
+            /**
+             * Default (instantiation-preventing) constructor
+             */
             private TablePanel() {}
         }
-        public static final String TABLE = RteFeatures.BEGIN_POPOVER +
-                TABLE_TABLE + FEATURE_SEPARATOR +
-                TablePanel.MODIFYTABLEANDCELL + FEATURE_SEPARATOR +
-                TablePanel.INSERTCOLUMN_BEFORE + FEATURE_SEPARATOR +
-                TablePanel.INSERTCOLUMN_AFTER + FEATURE_SEPARATOR +
-                TablePanel.REMOVECOLUMN + FEATURE_SEPARATOR +
-                TablePanel.INSERTROW_BEFORE + FEATURE_SEPARATOR +
-                TablePanel.INSERTROW_AFTER + FEATURE_SEPARATOR +
-                TablePanel.REMOVEROW + FEATURE_SEPARATOR +
-                TablePanel.MERGECELLS_RIGHT + FEATURE_SEPARATOR +
-                TablePanel.MERGECELLS_DOWN + FEATURE_SEPARATOR +
-                TablePanel.MERGECELLS + FEATURE_SEPARATOR +
-                TablePanel.SPLITCELL_HORIZONTAL + FEATURE_SEPARATOR +
-                TablePanel.SPLITCELL_VERTICAL + FEATURE_SEPARATOR +
-                TablePanel.SELECTCOLUMN + FEATURE_SEPARATOR +
-                TablePanel.SELECTROW + FEATURE_SEPARATOR +
-                TablePanel.ENSUREPARAGRAPH + FEATURE_SEPARATOR +
-                TablePanel.REMOVETABLE + FEATURE_SEPARATOR +
-                TablePanel.EXITTABLEEDITING + END_POPOVER;
+
+        public static final String TABLE = RteFeatures.BEGIN_POPOVER
+            + TABLE_TABLE + FEATURE_SEPARATOR
+            + TablePanel.MODIFYTABLEANDCELL + FEATURE_SEPARATOR
+            + TablePanel.INSERTCOLUMN_BEFORE + FEATURE_SEPARATOR
+            + TablePanel.INSERTCOLUMN_AFTER + FEATURE_SEPARATOR
+            + TablePanel.REMOVECOLUMN + FEATURE_SEPARATOR
+            + TablePanel.INSERTROW_BEFORE + FEATURE_SEPARATOR
+            + TablePanel.INSERTROW_AFTER + FEATURE_SEPARATOR
+            + TablePanel.REMOVEROW + FEATURE_SEPARATOR
+            + TablePanel.MERGECELLS_RIGHT + FEATURE_SEPARATOR
+            + TablePanel.MERGECELLS_DOWN + FEATURE_SEPARATOR
+            + TablePanel.MERGECELLS + FEATURE_SEPARATOR
+            + TablePanel.SPLITCELL_HORIZONTAL + FEATURE_SEPARATOR
+            + TablePanel.SPLITCELL_VERTICAL + FEATURE_SEPARATOR
+            + TablePanel.SELECTCOLUMN + FEATURE_SEPARATOR
+            + TablePanel.SELECTROW + FEATURE_SEPARATOR
+            + TablePanel.ENSUREPARAGRAPH + FEATURE_SEPARATOR
+            + TablePanel.REMOVETABLE + FEATURE_SEPARATOR
+            + TablePanel.EXITTABLEEDITING
+            + END_POPOVER;
+
+        /**
+         * Default (instantiation-preventing) constructor
+         */
         private Panels() {}
     }
 }

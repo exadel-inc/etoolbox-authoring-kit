@@ -53,7 +53,8 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
- * Implements actions needed to store collected/processed data into AEM package, optimal for use in "try-with-resources" block
+ * Implements actions needed to store collected/processed data into AEM package, optimal for use in "try-with-resources"
+ * block
  */
 public class PackageWriter implements AutoCloseable {
 
@@ -73,7 +74,6 @@ public class PackageWriter implements AutoCloseable {
     private static final String MULTIPLE_MODULES_EXCEPTION_MESSAGE = "Multiple modules available for %s while processing component %s";
     private static final String UNRECOGNIZED_MODULE_EXCEPTION_MESSAGE = "Unrecognized component module %s while processing component %s";
 
-
     /* -----------------------------
        Class fields and constructors
        ----------------------------- */
@@ -83,13 +83,20 @@ public class PackageWriter implements AutoCloseable {
     private final List<PackageEntryWriter> writers;
     private final EmptyCqEditConfigWriter emptyEditConfigWriter;
 
+    /**
+     * Initializes a new {@link PackageWriter} instance
+     * @param fileSystem         The {@link FileSystem} to create {@code PackageWriter} for
+     * @param componentsPathBase Optional string value representing the root file system path under which components are
+     *                           placed
+     * @param writers            Collection of {@link PackageEntryWriter} objects that are invoked one by one for
+     *                           storing rendered file data
+     */
     private PackageWriter(FileSystem fileSystem, String componentsPathBase, List<PackageEntryWriter> writers) {
         this.fileSystem = fileSystem;
         this.componentsPathBase = componentsPathBase;
         this.writers = writers;
         this.emptyEditConfigWriter = new EmptyCqEditConfigWriter(writers.get(0).getTransformer());
     }
-
 
     /* ------------------------
        Public interface members
@@ -103,7 +110,6 @@ public class PackageWriter implements AutoCloseable {
             throw new PluginException(CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE, e);
         }
     }
-
 
     /* ----------------
        Instance members
@@ -140,16 +146,17 @@ public class PackageWriter implements AutoCloseable {
     }
 
     /**
-     * Stores AEM component's authoring markup into the package. To do this, several package entry writers,
-     * e.g. for populating {@code .content.xml}, {@code _cq_dialog.xml}, {@code _cq_editConfig.xml}, etc.
-     * are called in sequence. If the component is split into several "modules" (views), each is processed separately
+     * Stores AEM component's authoring markup into the package. To do this, several package entry writers, e.g. for
+     * populating {@code .content.xml}, {@code _cq_dialog.xml}, {@code _cq_editConfig.xml}, etc. are called in sequence.
+     * If the component is split into several "modules" (views), each is processed separately
      * @param componentClass Current {@code Class} instance
      * @return True if at least one file/node was stored in the component's folder; otherwise, false
      */
     public boolean write(Class<?> componentClass) {
         String providedComponentPath = getComponentPath(componentClass);
         if (StringUtils.isBlank(providedComponentPath)) {
-            ValidationException validationException = new ValidationException(COMPONENT_NAME_MISSING_EXCEPTION_MESSAGE + componentClass.getSimpleName());
+            String exceptionMessage = COMPONENT_NAME_MISSING_EXCEPTION_MESSAGE + componentClass.getSimpleName();
+            ValidationException validationException = new ValidationException(exceptionMessage);
             PluginRuntime.context().getExceptionHandler().handle(validationException);
             return false;
         }
@@ -191,7 +198,12 @@ public class PackageWriter implements AutoCloseable {
         // via "Insert new component" popup or component rail; also the in-place editing popup won't be displayed.
         // To mitigate this, we need to create a minimal cq:editConfig node
         if (viewsByWriter.keySet().stream().noneMatch(writer ->
-            StringUtils.equalsAny(writer.getScope(), Scopes.CQ_DIALOG, Scopes.CQ_EDIT_CONFIG, Scopes.CQ_DESIGN_DIALOG, Scopes.CQ_CHILD_EDIT_CONFIG))) {
+            StringUtils.equalsAny(
+                writer.getScope(),
+                Scopes.CQ_DIALOG,
+                Scopes.CQ_EDIT_CONFIG,
+                Scopes.CQ_DESIGN_DIALOG,
+                Scopes.CQ_CHILD_EDIT_CONFIG))) {
             viewsByWriter.put(emptyEditConfigWriter, componentClass);
         }
 
@@ -204,11 +216,11 @@ public class PackageWriter implements AutoCloseable {
     }
 
     /**
-     * Collects a registry of views available for the given AEM component and matches each view to an appropriate
-     * {@link PackageEntryWriter}
+     * Collects a registry of views available for the given AEM component and matches each view to an appropriate {@link
+     * PackageEntryWriter}
      * @param componentClass Current {@code Class} instance
-     * @return {@code Map} that exposes {@code PackageEntryWriter} instances as keys and the matched component views
-     * as values
+     * @return {@code Map} that exposes {@code PackageEntryWriter} instances as keys and the matched component views as
+     * values
      */
     private Map<PackageEntryWriter, Class<?>> getComponentViews(Class<?> componentClass) {
         Class<?>[] referencedViews = Optional
@@ -222,7 +234,7 @@ public class PackageWriter implements AutoCloseable {
             .collect(Collectors.toList());
 
         Map<PackageEntryWriter, Class<?>> result = new HashMap<>();
-        for (Class<?> view: allViews) {
+        for (Class<?> view : allViews) {
             List<PackageEntryWriter> matchedWriters = writers
                 .stream()
                 .filter(w -> w.canProcess(view))
@@ -258,7 +270,8 @@ public class PackageWriter implements AutoCloseable {
        --------------- */
 
     /**
-     * Retrieves the path specified for the current component in either {@link AemComponent} or {@link Dialog} annotation
+     * Retrieves the path specified for the current component in either {@link AemComponent} or {@link Dialog}
+     * annotation
      * @param componentClass The {@code Class<?>} to get the path for
      * @return String value
      */
@@ -283,7 +296,6 @@ public class PackageWriter implements AutoCloseable {
         return componentClass.isAnnotationPresent(AemComponent.class)
             && componentClass.getAnnotation(AemComponent.class).writeMode().equals(WriteMode.CREATE);
     }
-
 
     /* ---------------
        Factory methods
@@ -317,8 +329,8 @@ public class PackageWriter implements AutoCloseable {
     }
 
     /**
-     * Initializes an instance of {@link PackageWriter} profiled for the particular {@link FileSystem} representing
-     * the structure of the package
+     * Initializes an instance of {@link PackageWriter} profiled for the particular {@link FileSystem} representing the
+     * structure of the package
      * @param fileSystem         Current {@link FileSystem} instance
      * @param projectName        Name of the project this file system contains information for
      * @param componentsPathBase Path to the sub-folder within package under which AEM component folders are situated
@@ -329,12 +341,12 @@ public class PackageWriter implements AutoCloseable {
         try {
             Transformer transformer = XmlFactory.newDocumentTransformer();
             writers = Arrays.asList(
-                    new ContentXmlWriter(transformer),
-                    new CqDialogWriter(transformer, Scopes.CQ_DIALOG),
-                    new CqDialogWriter(transformer, Scopes.CQ_DESIGN_DIALOG),
-                    new CqEditConfigWriter(transformer),
-                    new CqChildEditConfigWriter(transformer),
-                    new CqHtmlTagWriter(transformer)
+                new ContentXmlWriter(transformer),
+                new CqDialogWriter(transformer, Scopes.CQ_DIALOG),
+                new CqDialogWriter(transformer, Scopes.CQ_DESIGN_DIALOG),
+                new CqEditConfigWriter(transformer),
+                new CqChildEditConfigWriter(transformer),
+                new CqHtmlTagWriter(transformer)
             );
         } catch (TransformerConfigurationException e) {
             // Exceptions caught here are due to possible XXE security vulnerabilities, so no further handling

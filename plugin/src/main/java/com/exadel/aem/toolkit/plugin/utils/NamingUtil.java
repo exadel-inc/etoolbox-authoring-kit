@@ -126,7 +126,7 @@ public class NamingUtil {
      */
     public static String stripGetterPrefix(String value) {
         if (StringUtils.startsWith(value, PREFIX_GET)) {
-            return Character.toLowerCase(value.charAt(3)) + value.substring(4);
+            return Character.toLowerCase(value.charAt(PREFIX_GET.length())) + value.substring(PREFIX_GET.length() + 1);
         }
         return value;
     }

@@ -71,9 +71,8 @@ public class ReflectionContextHelper {
     private ReflectionContextHelper() {
     }
 
-
     /* --------------------------
-       Retrieving manages classes
+       Retrieving managed classes
        -------------------------- */
 
     /**
@@ -92,11 +91,13 @@ public class ReflectionContextHelper {
 
         Set<Class<?>> componentViews = new HashSet<>();
         classesAnnotatedWithComponent.forEach(cls -> componentViews.addAll(Arrays.asList(cls.getAnnotation(AemComponent.class).views())));
-        classesAnnotatedWithComponent.addAll(classesAnnotatedWithDialog.stream().filter(cls -> !componentViews.contains(cls)).collect(Collectors.toList()));
+        classesAnnotatedWithComponent.addAll(classesAnnotatedWithDialog
+            .stream()
+            .filter(cls -> !componentViews.contains(cls))
+            .collect(Collectors.toList()));
 
         return classesAnnotatedWithComponent;
     }
-
 
     /* -------------------
        Retrieving handlers
@@ -235,7 +236,6 @@ public class ReflectionContextHelper {
         }
     }
 
-
     /* ---------------------
        Retrieving validators
        --------------------- */
@@ -255,7 +255,6 @@ public class ReflectionContextHelper {
             .collect(Collectors.toList());
         return validators;
     }
-
 
     /* ----------------
        Common utilities
@@ -278,7 +277,6 @@ public class ReflectionContextHelper {
         }
         return null;
     }
-
 
     /* ---------------
        Factory methods

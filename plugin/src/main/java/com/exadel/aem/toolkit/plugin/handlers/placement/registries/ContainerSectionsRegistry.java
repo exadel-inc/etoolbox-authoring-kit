@@ -43,15 +43,17 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
  */
 class ContainerSectionsRegistry extends SectionsRegistry {
 
-    private static final Predicate<Target> CONTAINER_PREDICATE = node -> ResourceTypes.CONTAINER.equals(node.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE));
-    private static final Predicate<Target> WIDGET_NODE_PREDICATE = node -> !node.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, StringUtils.EMPTY).isEmpty();
+    private static final Predicate<Target> CONTAINER_PREDICATE = node ->
+        ResourceTypes.CONTAINER.equals(node.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE));
+    private static final Predicate<Target> WIDGET_NODE_PREDICATE = node ->
+        !node.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE, StringUtils.EMPTY).isEmpty();
 
     /**
      * Creates a new registry instance
      * @param source {@code Source} instance used as the data supplier for the markup
      * @param target The root of rendering for the current component
      */
-    public ContainerSectionsRegistry(Source source, Target target) {
+    ContainerSectionsRegistry(Source source, Target target) {
         super(
             collectSections(source, getTitlePrefix(source, target)),
             collectIgnoredSections(source));
@@ -137,6 +139,11 @@ class ContainerSectionsRegistry extends SectionsRegistry {
         return String.join(CoreConstants.SEPARATOR_SLASH, resultChunks);
     }
 
+    /**
+     * Retrieves the list of identifiers (titles) of all the ignored sections for the given {@link Source}
+     * @param source {@code Source} instance matching the current container
+     * @return List of strings; can be a non-null empty list
+     */
     private static List<String> collectIgnoredSections(Source source) {
         Set<String> result = new HashSet<>(collectIgnored(source));
         result.addAll(collectIgnored(Sources.fromClass(source.adaptTo(MemberSource.class).getReportingClass())));

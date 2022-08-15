@@ -22,5 +22,8 @@ public class ActionConstants {
     public static final String INSERT = "insert";
     public static final String COPYMOVE = "copymove";
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private ActionConstants() {}
 }

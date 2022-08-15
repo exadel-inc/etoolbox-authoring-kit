@@ -33,7 +33,7 @@ class AccordionPanelSection extends Section {
      * @param panel    {@code AccordionPanel} object
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */
-    public AccordionPanelSection(AccordionPanel panel, boolean isLayout) {
+    AccordionPanelSection(AccordionPanel panel, boolean isLayout) {
         super(isLayout);
         this.panel = panel;
     }

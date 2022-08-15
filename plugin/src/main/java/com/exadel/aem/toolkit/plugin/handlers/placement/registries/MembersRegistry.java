@@ -158,7 +158,7 @@ public class MembersRegistry {
          * Initializes this instance with the given {@code Source} object and the default state
          * @param member {@code Source} object referring a class member; a non-null value is expected
          */
-        public Entry(Source member) {
+        Entry(Source member) {
             this.member = member;
             this.state = EntryState.AVAILABLE;
         }

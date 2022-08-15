@@ -20,12 +20,12 @@ import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
- * Represents a provider of options for option-selecting Granite UI components, such as {@link com.exadel.aem.toolkit.api.annotations.widgets.select.Select}
- * or {@link com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup}. An OptionProvider manages one or more
- * sources, such as Exadel Toolbox Lists, ACS Commons lists, tag folders, arbitrary JCR nodes with their children, etc., and
- * renders the cumulative set of options. Above all, options can be set or appended to the list indicatively, i.e.
- * via a string array, without the need to query for JCR values. For each of the options, specific title, value, and HTML
- * attributes can be set
+ * Represents a provider of options for option-selecting Granite UI components, such as {@link
+ * com.exadel.aem.toolkit.api.annotations.widgets.select.Select} or {@link com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup}.
+ * An OptionProvider manages one or more sources, such as Exadel Toolbox Lists, ACS Commons lists, tag folders,
+ * arbitrary JCR nodes with their children, etc., and renders the cumulative set of options. Above all, options can be
+ * set or appended to the list indicatively, i.e. via a string array, without the need to query for JCR values. For each
+ * of the options, specific title, value, and HTML attributes can be set
  */
 @Retention(RetentionPolicy.RUNTIME)
 @AnnotationRendering(properties = "!prepend,!append")
@@ -38,18 +38,18 @@ public @interface OptionProvider {
     OptionSource[] value() default {};
 
     /**
-     * Allows specifying options that will be prepended to the list provided by JCR source(-s). If no {@code OptionSource}s
-     * are specified, the option set can as well consist exclusively of options declared here, or be the composition of
-     * values stored in {@code OptionProvider#prepend} and {@code OptionProvider#append}.
+     * Allows specifying options that will be prepended to the list provided by JCR source(-s). If no {@code
+     * OptionSource}s are specified, the option set can as well consist exclusively of options declared here, or be the
+     * composition of values stored in {@code OptionProvider#prepend} and {@code OptionProvider#append}.
      * <p>The specified values must follow the {@code "Title:value"} format</p>
      * @return Optional string value, or an array of strings
      */
     String[] prepend() default {};
 
     /**
-     * Allows specifying options that will be appended to the list provided by JCR source(-s). If no {@code OptionSource}s
-     * are specified, the option set can as well consist exclusively of options declared here, or be the composition of
-     * values stored in {@code OptionProvider#prepend} and {@code OptionProvider#append}.
+     * Allows specifying options that will be appended to the list provided by JCR source(-s). If no {@code
+     * OptionSource}s are specified, the option set can as well consist exclusively of options declared here, or be the
+     * composition of values stored in {@code OptionProvider#prepend} and {@code OptionProvider#append}.
      * <p>The specified values must follow the {@code "Title:value"} format</p>
      * @return Optional string value, or an array of strings
      */
@@ -57,8 +57,8 @@ public @interface OptionProvider {
 
     /**
      * Allows specifying options coming from a JCR source(-s) that need to be excluded from the list. Strings passed
-     * here are expected match values or else titles of unwanted options. The matching is case-insensitive. {@code *}
-     * is used as the wildcard symbol
+     * here are expected match values or else titles of unwanted options. The matching is case-insensitive. {@code *} is
+     * used as the wildcard symbol
      * @return Optional string value, or an array of strings
      */
     String[] exclude() default {};

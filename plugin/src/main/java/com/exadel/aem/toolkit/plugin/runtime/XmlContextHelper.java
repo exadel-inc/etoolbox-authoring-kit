@@ -58,11 +58,10 @@ import com.exadel.aem.toolkit.plugin.validators.Validation;
 public class XmlContextHelper implements XmlUtility {
 
     /**
-     * Default routine to manage the merging of two values of an XML attribute by suppressing existing value
-     * in favor of a non-empty new one
+     * Default routine to manage the merging of two values of an XML attribute by suppressing existing value in favor of
+     * a non-empty new one
      */
     private static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
-
 
     /* ---------------------------------
        Instance members and constructors
@@ -95,6 +94,9 @@ public class XmlContextHelper implements XmlUtility {
         Element creation
      */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Element createNodeElement(String name, String nodeType, Map<String, String> properties, String resourceType) {
         Element element = getDocument().createElement(getValidName(name));
@@ -107,37 +109,57 @@ public class XmlContextHelper implements XmlUtility {
         }
         if (properties != null) {
             properties.forEach((key, value) -> {
-                if (StringUtils.isNoneBlank(key, value)) element.setAttribute(key, value);
+                if (StringUtils.isNoneBlank(key, value)) {
+                    element.setAttribute(key, value);
+                }
             });
         }
         return element;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Element createNodeElement(String name, String nodeType, Map<String, String> properties) {
         return createNodeElement(name, nodeType, properties, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Element createNodeElement(String name, Map<String, String> properties, String resourceType) {
         return createNodeElement(name, null, properties, resourceType);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Element createNodeElement(String name, String resourceType) {
         return createNodeElement(name, null, new HashMap<>(), resourceType);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Element createNodeElement(String name, Map<String, String> properties) {
         return createNodeElement(name, null, properties);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Element createNodeElement(String name) {
         return createNodeElement(name, null, new HashMap<>());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Element createNodeElement(String name, Annotation source) {
         return createNodeElement(annotation -> name, source);
@@ -164,21 +186,33 @@ public class XmlContextHelper implements XmlUtility {
         Element naming
      */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getValidName(String name) {
         return NamingUtil.getValidNodeName(name, CoreConstants.NN_ITEM);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getValidSimpleName(String name) {
         return NamingUtil.getValidNodeName(name, CoreConstants.NN_ITEM);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getValidFieldName(String name) {
         return NamingUtil.getValidNodeName(name, DialogConstants.NN_FIELD);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getUniqueName(String name, String defaultValue, Element context) {
         return NamingUtil.getUniqueName(name, defaultValue, context);
@@ -189,6 +223,9 @@ public class XmlContextHelper implements XmlUtility {
         Setting arbitrary attributes
      */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAttribute(Element element, String name, Double value) {
         AttributeHelper
@@ -197,6 +234,9 @@ public class XmlContextHelper implements XmlUtility {
             .setValue(value, element);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAttribute(Element element, String name, Long value) {
         AttributeHelper
@@ -205,6 +245,9 @@ public class XmlContextHelper implements XmlUtility {
             .setValue(value, element);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAttribute(Element element, String name, Boolean value) {
         AttributeHelper
@@ -213,6 +256,9 @@ public class XmlContextHelper implements XmlUtility {
             .setValue(value, element);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAttribute(Element element, String name, String value) {
         AttributeHelper
@@ -221,11 +267,17 @@ public class XmlContextHelper implements XmlUtility {
             .setValue(value, element);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAttribute(Element element, String name, List<String> values) {
         setAttribute(element, name, values, XmlContextHelper::mergeStringAttributes);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAttribute(Element element, String name, List<String> values, BinaryOperator<String> attributeMerger) {
         AttributeHelper
@@ -235,11 +287,17 @@ public class XmlContextHelper implements XmlUtility {
             .setValue(values, element);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAttribute(Element element, String name, Annotation source) {
         setAttribute(element, name, source, DEFAULT_ATTRIBUTE_MERGER);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAttribute(Element element, String name, Annotation source, BinaryOperator<String> attributeMerger) {
         setAttribute(() -> element, name, source, attributeMerger);
@@ -260,8 +318,8 @@ public class XmlContextHelper implements XmlUtility {
      * @param elementSupplier Routine that generates and/or returns an {@code Element} node
      * @param name            Attribute name, same as the annotation property name
      * @param source          Annotation to look for a value in
-     * @param attributeMerger Function that manages an existing attribute value and a new one
-     *                        in the case when a new value is set to an existing {@code Element}
+     * @param attributeMerger A function that manages an existing attribute value and a new one in the case when a new
+     *                        value is set to an existing {@code Element}
      */
     private static void setAttribute(Supplier<Element> elementSupplier,
                                      String name,
@@ -293,11 +351,17 @@ public class XmlContextHelper implements XmlUtility {
         Mapping annotation properties
      */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mapProperties(Element element, Annotation annotation) {
         mapProperties(element, annotation, Collections.emptyList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mapProperties(Element element, Annotation annotation, String scope) {
         List<String> skippedFields = Arrays.stream(annotation.annotationType().getDeclaredMethods())
@@ -307,6 +371,9 @@ public class XmlContextHelper implements XmlUtility {
         mapProperties(element, annotation, skippedFields);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mapProperties(Element element, Annotation annotation, List<String> skipped) {
         if (!annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)
@@ -376,8 +443,8 @@ public class XmlContextHelper implements XmlUtility {
     }
 
     /**
-     * Gets whether this annotation method falls within the specified scope. True if no scope specified
-     * for method (that is, the method is applicable to any scope
+     * Gets whether this annotation method falls within the specified scope. True if no scope specified for method (that
+     * is, the method is applicable to any scope
      * @param method {@code Method} instance representing a property of an annotation
      * @param scope  String representing a valid scope
      * @return True or false
@@ -395,6 +462,9 @@ public class XmlContextHelper implements XmlUtility {
         Child elements
      */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Element appendNonemptyChildElement(Element parent, Element child) {
         if (parent == null || isBlankElement(child)) {
@@ -404,14 +474,13 @@ public class XmlContextHelper implements XmlUtility {
     }
 
     /**
-     * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
-     * The appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
-     * or a child node
-     * If a child node with the same name already exists, it is updated with attribute values of the arriving node
+     * Tries to append provided {@code Element} node as a child to a parent {@code Element} node. The appended node must
+     * be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType}, or a child node If a
+     * child node with the same name already exists, it is updated with attribute values of the arriving node
      * @param parent          Element to serve as parent
      * @param child           Element to serve as child
-     * @param attributeMerger Function that manages an existing attribute value and a new one
-     *                        in the case when a new value is set to an existing {@code Element}
+     * @param attributeMerger Function that manages an existing attribute value and a new one in the case when a new
+     *                        value is set to an existing {@code Element}
      * @return Appended child
      */
     public Element appendNonemptyChildElement(Element parent, Element child, BinaryOperator<String> attributeMerger) {
@@ -453,9 +522,9 @@ public class XmlContextHelper implements XmlUtility {
 
     /**
      * Merges string attributes of two {@code Element} nodes, e.g. when a child node is appended to a parent node that
-     * already has another child with the same name, the existing child is updated with values from the newcomer.
-     * The default way of merging is to replace the first string with a non-blank second string if they do not look
-     * like JCR lists, or merge lists otherwise
+     * already has another child with the same name, the existing child is updated with values from the newcomer. The
+     * default way of merging is to replace the first string with a non-blank second string if they do not look like JCR
+     * lists, or merge lists otherwise
      * @param first  First (e.g. existing) Element node
      * @param second Second (e.g. rendered anew) Element node
      * @return {@code Element} node with merged attribute values
@@ -469,6 +538,9 @@ public class XmlContextHelper implements XmlUtility {
         return StringUtil.format(result, String.class);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Element getOrAddChildElement(Element parent, String childName) {
         return getChildElement(parent,
@@ -476,6 +548,9 @@ public class XmlContextHelper implements XmlUtility {
             parentElement -> (Element) parentElement.appendChild(createNodeElement(childName)));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Element getChildElement(Element parent, String childName) {
         return getChildElement(parent, childName, p -> null);
@@ -485,7 +560,8 @@ public class XmlContextHelper implements XmlUtility {
      * Retrieve child {@code Element} node of the specified node by name
      * @param parent           Element to analyze
      * @param childName        Name of the child to look for
-     * @param fallbackSupplier Routine that returns a fallback Element instance if parent node does not exist or child not found
+     * @param fallbackSupplier A routine that returns a fallback Element instance if parent node does not exist or child
+     *                         not found
      * @return Element instance
      */
     public Element getChildElement(Element parent, String childName, UnaryOperator<Element> fallbackSupplier) {
@@ -520,7 +596,8 @@ public class XmlContextHelper implements XmlUtility {
     }
 
     /**
-     * Gets whether current {@code Element} is null, or is blank, i.e. has neither attributes, save for JCR type, nor children
+     * Gets whether current {@code Element} is null, or is blank, i.e. has neither attributes, save for JCR type, nor
+     * children
      * @param element Element to check
      * @return True or false
      */
@@ -528,7 +605,9 @@ public class XmlContextHelper implements XmlUtility {
         if (element == null) {
             return true;
         }
-        if (element.hasChildNodes() || element.getAttributes().getLength() > 1) return false;
+        if (element.hasChildNodes() || element.getAttributes().getLength() > 1) {
+            return false;
+        }
         return DialogConstants.PN_PRIMARY_TYPE.equals(element.getAttributes().item(0).getNodeName());
     }
 
@@ -537,6 +616,9 @@ public class XmlContextHelper implements XmlUtility {
         Data attributes
      */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void appendDataAttributes(Element element, Data[] data) {
         if (ArrayUtils.isEmpty(data)) {
@@ -545,6 +627,9 @@ public class XmlContextHelper implements XmlUtility {
         appendDataAttributes(element, Arrays.stream(data).collect(Collectors.toMap(Data::name, Data::value)));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void appendDataAttributes(Element element, Map<String, String> data) {
         if (data == null || data.isEmpty()) {

@@ -122,7 +122,7 @@ public class AdaptationUtil {
      * the pre-defined {@code Resource} as its bundled resource
      */
     private static class SlingHttpServletRequestFacade extends SlingHttpServletRequestWrapper {
-        private Resource resource;
+        private final Resource resource;
 
         /**
          * Creates a new instance that is based on the given {@code SlingHttpServletRequest} while reporting the given
@@ -130,7 +130,7 @@ public class AdaptationUtil {
          * @param request  {@code SlingHttpServletRequest} instance used for the decoration
          * @param resource Sling resource that the resulting request will report as its bundled resource
          */
-        public SlingHttpServletRequestFacade(SlingHttpServletRequest request, Resource resource) {
+        SlingHttpServletRequestFacade(SlingHttpServletRequest request, Resource resource) {
             super(request);
             this.resource = resource;
         }

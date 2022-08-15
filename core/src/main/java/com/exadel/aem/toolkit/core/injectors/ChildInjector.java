@@ -50,6 +50,12 @@ public class ChildInjector implements Injector {
 
     public static final String NAME = "eak-child-resource-injector";
 
+    @Reference
+    private ModelFactory modelFactory;
+
+    @Reference
+    private AdapterManager adapterManager;
+
     /**
      * Retrieves the name of the current instance
      * @return String value
@@ -60,12 +66,6 @@ public class ChildInjector implements Injector {
     public String getName() {
         return NAME;
     }
-
-    @Reference
-    private ModelFactory modelFactory;
-
-    @Reference
-    private AdapterManager adapterManager;
 
     /**
      * Attempts to inject a value into the given adaptable

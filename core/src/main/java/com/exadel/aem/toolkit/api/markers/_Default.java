@@ -16,6 +16,6 @@ package com.exadel.aem.toolkit.api.markers;
 /**
  * Used to mark an empty or default class reference
  */
-@SuppressWarnings("squid:S114") // "_" symbol prepended to signify this is a "reserved" class name
+@SuppressWarnings({"squid:S114", "TypeName"}) // "_" symbol prepended to signify this is a "reserved" class name
 public interface _Default {
 }

@@ -39,7 +39,7 @@ public class DropTargetsHandler implements BiConsumer<Source, Target> {
     @Override
     public void accept(Source source, Target target) {
         EditConfig editConfig = source.adaptTo(EditConfig.class);
-        if(editConfig.dropTargets().length == 0){
+        if (editConfig.dropTargets().length == 0) {
             return;
         }
         Target dropTargetsElement = target.getOrCreateTarget(DialogConstants.NN_DROP_TARGETS);
