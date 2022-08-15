@@ -27,37 +27,28 @@ class PathResolver {
     return window.document.documentElement.innerHTML;
   }
 
-  static isValidUrl(urlString) {
-		let url;
-
-		try { 
-	    url = new URL(urlString); 
-	  }
-	  catch(e) { 
-	    return false; 
-	  }
-
-	  return url.protocol === "http:" || url.protocol === "https:";
-	}
-
-  static resolveLinks(dom, filePath) {
+  static isExternal(urlString) {
     const domain = new URL(url).hostname;
 
+    try {
+      const link = new URL(urlString);
+      const isHttp = link.protocol === 'http:' || link.protocol === 'https:';
+
+      return isHttp && domain !== link.hostname;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static resolveLinks(dom, filePath) {
     dom.querySelectorAll('a[href]').forEach((link) => {
-      if (link.href.startsWith('.')) {
-        const resolved = PathResolver.processRewriteRules(link.href, filePath);
+      const resolved = PathResolver.resolveLink(link.href, filePath);
+      if (resolved !== link.href) console.info(blue(`Rewrite link "${link.href}" to "${resolved}"`));
+      link.href = resolved;
 
-        if (resolved !== link.href) console.info(blue(`Rewrite link "${link.href}" to "${resolved}"`));
-        link.href = resolved;
-      }
-
-      if(PathResolver.isValidUrl(link.href)){
-        const linkDomain = new URL(link.href).hostname;
-      
-        if(domain !== linkDomain) {
-          link.target = "_blank";
-          link.rel = "noopener norefferer";
-        }
+      if (PathResolver.isExternal(link.href)) {
+        link.target = '_blank';
+        link.rel = 'noopener norefferer';
       }
     });
   }
@@ -78,6 +69,8 @@ class PathResolver {
     if (link.startsWith('http:') || link.startsWith('https:')) return link;
     // link.match(/.+\.md/)
     if (link.startsWith('.')) return PathResolver.processRewriteRules(link, filePath);
+
+    return link;
   }
 
   static processRewriteRules(link, filePath) {
