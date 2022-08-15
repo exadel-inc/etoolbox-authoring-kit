@@ -22,17 +22,11 @@
 
     ns.PolicyResolver.cache = new Map();
 
-    $(document).on('cq-page-design-loaded', function (event) {
-        if (!event.pageDesign) {
-            ns.author.pageDesign = {};
-        }
-        ns.author.pageDesign['fake-policies'] = { components: [] };
-    });
-
     $(document).on('cq-editables-loaded', function (event) {
         if (window.eakApplyTopLevelPolicy) {
             event.editables.forEach(e => window.eakApplyTopLevelPolicy(e));
         }
+        patchFindAllowedComponentsFromPolicy();
     });
 
     ns.PolicyResolver.build = function (rules) {
@@ -40,6 +34,17 @@
             resolve(allowed, componentList, this, rules);
         };
     };
+
+    /**
+     * Modifies the OOTB {@code _findAllowedComponentsFromPolicy} function to make it return an empty array instead of
+     * an {@code undefined} value
+     */
+    function patchFindAllowedComponentsFromPolicy() {
+        const original = ns.author.components._findAllowedComponentsFromPolicy;
+        ns.author.components._findAllowedComponentsFromPolicy = function _findAllowedComponentsFromPolicyPatched() {
+            return original.apply(this, arguments) || [];
+        };
+    }
 
     /**
      * Modifies the list of allowed components for the current container according to the set of rules
@@ -254,10 +259,6 @@
     function applyRule(rule, allowed, editable) {
         if (rule.mode === 'OVERRIDE') {
             allowed.length = 0;
-        } else if (editable.config.eakIsRoot) {
-            const componentsSource = ns.author.pageDesign.page || ns.author.pageDesign;
-            const existingComponents = componentsSource[editable.config.eakResourceName]?.components || [];
-            allowed.push(...existingComponents);
         }
         if (rule.value) {
             allowed.push(...rule.value);
