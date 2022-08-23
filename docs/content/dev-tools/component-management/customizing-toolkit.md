@@ -273,12 +273,19 @@ There are many more possibilities. For greater detail, see the inline documentat
 
 Just like *Source*, *Target* is an adaptable entity. By default, *Target* adapts to `DomAdapter` with the possibility of being serialized to an XML DOM document. You can apply any custom adapters in the way described in the "Source object" section.
 
-### Debugging custom logic
+### Debugging custom plugin logic
 
-You can debug the ToolKit's plugin while building your AEM app. In order to do so, run your build in debug mode:
+You can debug the ToolKit's plugin while building your AEM project. In order to do so, you need to:
 
+1) Make sure that the two projects are open each in its own window of your IDE:
+- the Toolkit itself,
+- and the "target" project (the one that contains the Toolkit plugin in its POM file).
+2) Launch the build of the **target** project with `mvndebug` instead of `mvn`. Do it like.
 ```
-mvnDebug clean install -Pinstall-assets
+mvnDebug clean install -PautoInstallPackage
 ```
+(Mind that the build won't technically start off before the next step. `mvnDebug` just establishes a listener service and waits for an incoming connection).
+3) Switch to the Toolkit's IDE window. Start the remote debug session with _localhost_ as the host and port _8000_. Most convenient is to create a new "Run/debug configuration" with these parameters in your IDE. The rest of the parameters will remain default.
+4) Now the actual build process starts. You can set breakpoints in the plugin's code and operate as usual.
 
-Afterward, you can set breakpoints in your IDE, start a debugging session, and connect to the build process. The port is 8000.
+Read more on debugging a Maven plugin e.g. [here](https://spin.atomicobject.com/2020/08/20/maven-debugging-intellij/).
